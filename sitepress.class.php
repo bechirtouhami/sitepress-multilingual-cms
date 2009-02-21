@@ -337,21 +337,6 @@ class SitePress{
         add_meta_box('icl_div', __('Language options', 'sitepress'), array($this,'meta_box'), 'page', 'normal', 'high');
     }
     
-    function get_element_language_details($el_id, $el_type='post'){
-        global $wpdb;
-        $details = $wpdb->get_row("SELECT 
-            t.id, t.trid, t.language_code, t.source_language_code, l.english_name, lt.name AS display_language 
-            FROM {$wpdb->prefix}icl_translations t 
-                JOIN {$wpdb->prefix}icl_languages l ON t.language_code = l.code                
-                JOIN {$wpdb->prefix}icl_languages_translations lt 
-                    ON l.code=lt.language_code                
-            WHERE                 
-                element_type='{$el_type}' AND element_id='{$el_id}'
-                AND lt.display_language_code = '{$this->get_default_language()}'
-                ");    
-          return $details;
-    }
-        
     function set_element_language_details($el_id, $el_type='post', $trid, $language_code){
         global $wpdb;
         if($trid){
@@ -377,16 +362,31 @@ class SitePress{
         $this->set_element_language_details($post_id, 'post', $trid, $language_code);
     }
     
+    function get_element_translations($trid){        
+        global $wpdb;  
+        if($trid){
+            $sel_add = ', t.language_code, t.element_id';
+            $join_add = "LEFT JOIN {$wpdb->prefix}icl_translations t ON l.code = t.language_code";
+            $where_add = "AND (t.trid='{$trid}' OR t.trid IS NULL)"; 
+        }          
+        $translations = $wpdb->get_results("
+            SELECT l.english_name, lt.name AS display_name {$sel_add}
+            FROM {$wpdb->prefix}icl_languages l 
+                 JOIN
+                 {$wpdb->prefix}icl_languages_translations lt ON l.code=lt.language_code
+                 {$join_add}
+            WHERE l.active=1 AND lt.display_language_code = '{$this->get_default_language()}' {$where_add}
+        ");
+        return $translations;
+    }
+    
     function meta_box($post){
-        $active_languages = $this->get_active_languages();
-        $default_language = $this->get_default_language();        
-        $language_details = $this->get_element_language_details($post->ID,'post');
-        
-        if($language_details){
-            $selected_language = $language_details->language_code;
-        }else{
-            $selected_language = $default_language;
-        }
+        global $wpdb;            
+        $res = $wpdb->get_row("SELECT trid, language_code FROM {$wpdb->prefix}icl_translations WHERE element_id='{$post->ID}' AND element_type='post'");
+        $trid = $res->trid;
+        $element_lang_code = $res->language_code;
+        $translations = $this->get_element_translations($trid);
+        $selected_language = $element_lang_code?$element_lang_code:$this->get_default_language();
         include ICL_PLUGIN_PATH . '/menu/post_menu.php';
     }
     
