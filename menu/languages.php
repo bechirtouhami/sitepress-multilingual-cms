@@ -14,7 +14,7 @@
                 <?php echo __('This list shows the languages that are enabled for this site. Select the default language for contents.','sitepress'); ?><br />
                 <ul id="icl_enabled_languages">
                         <?php foreach($active_languages as $lang): $is_default = ($sitepress->get_default_language()==$lang['code']); ?>
-                    <li <?php if($is_default):?>class="default_language"<?php endif;?>><label><input name="default_language" type="radio" value="<?php echo $lang['code'] ?>" <?php if($is_default):?>checked="checked"<?php endif;?> /> <?php echo $lang['english_name'] ?> <?php if($is_default):?>(<?php echo __('default') ?>)<?php endif?></label></li>
+                    <li <?php if($is_default):?>class="default_language"<?php endif;?>><label><input name="default_language" type="radio" value="<?php echo $lang['code'] ?>" <?php if($is_default):?>checked="checked"<?php endif;?> /> <?php echo $lang['display_name'] ?> <?php if($is_default):?>(<?php echo __('default') ?>)<?php endif?></label></li>
                     <?php endforeach ?>
                 </ul>
                 <br clear="all" />
@@ -29,7 +29,7 @@
                     <?php foreach($languages as $lang): ?>
                         <li><label><input type="checkbox" value="<?php echo $lang['code'] ?>" <?php if($lang['active']):?>checked="checked"<?php endif;?> 
                         <?php if($sitepress->get_default_language()==$lang['code']):?>disabled="disabled"<?php endif;?>/>
-                            <?php if($lang['major']):?><strong><?php endif;?><?php echo $lang['english_name'] ?><?php if($lang['major']):?></strong><?php endif;?></label></li>
+                            <?php if($lang['major']):?><strong><?php endif;?><?php echo $lang['display_name'] ?><?php if($lang['major']):?></strong><?php endif;?></label></li>
                     <?php endforeach ?>
                     </ul>
                     <br clear="all">

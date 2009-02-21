@@ -5,7 +5,7 @@ Plugin URI: http://sitepress.org/
 Description: SitePress
 Author: ICanLocalize
 Author URI: http://sitepress.org/
-Version: 1.0
+Version: 0.1
 */
 
 /*
@@ -39,8 +39,6 @@ $sitepress = new SitePress();
 // activation hook
 register_activation_hook( __FILE__, 'icl_sitepress_activate' );
 register_deactivation_hook(__FILE__, 'icl_sitepress_deactivate');
-
-
 
 
 /*

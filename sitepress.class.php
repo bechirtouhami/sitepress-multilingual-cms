@@ -18,6 +18,12 @@ class SitePress{
         // Process post requests
         add_action('init',array($this,'process_forms'));           
         
+        // Post/page language box
+        add_action('admin_head',array($this,'post_edit_language_options'));        
+        
+        // Post/page save actions
+        add_action('save_post',array($this,'save_post_actions'));        
+        
         
     }
     
@@ -31,28 +37,10 @@ class SitePress{
                     $active_langs = $this->get_active_languages();
                     foreach($active_langs as $lang){
                         $is_default = ($this->get_default_language()==$lang['code']);
-                        ?><li <?php if($is_default):?>class="default_language"<?php endif;?>><label><input type="radio" name="default_language" value="<?php echo $lang['code'] ?>" <?php if($is_default):?>checked="checked"<?php endif;?>> <?php echo $lang['english_name'] ?><?php if($is_default):?> (<?php echo __('default') ?>)<?php endif?></label></li><?php
+                        ?><li <?php if($is_default):?>class="default_language"<?php endif;?>><label><input type="radio" name="default_language" value="<?php echo $lang['code'] ?>" <?php if($is_default):?>checked="checked"<?php endif;?>> <?php echo $lang['display_name'] ?><?php if($is_default):?> (<?php echo __('default') ?>)<?php endif?></label></li><?php
                     } 
                     ?>
                     <?php echo '|'; ?>
-                    <?php if(count($active_langs) > 1): ?>
-                        <?php foreach($active_langs as $lang): ?>            
-                            <li>
-                                <label><input class="icl_tr_from" type="checkbox" name="icl_lng_from_<?php echo $lang['code']?>" id="icl_lng_from_<?php echo $lang['code']?>" <?php if($this->get_icl_translation_enabled($lang['code'])): ?>checked="checked"<?php endif?> />
-                                <?php printf(__('Translate from %s to these languages','sitepress'), $lang['english_name']) ?></label>
-                                <ul id="icl_tr_pair_sub_<?php echo $lang['code'] ?>" <?php if(!$this->get_icl_translation_enabled($lang['code'])): ?>style="display:none"<?php endif?>>
-                                <?php foreach($active_langs as $langto): if($lang['code']==$langto['code']) continue; ?>        
-                                    <li>
-                                        <label><input class="icl_tr_to" type="checkbox" name="icl_lng_to_<?php echo $lang['code']?>_<?php echo $langto['code']?>" id="icl_lng_from_<?php echo $lang['code']?>_<?php echo $langto['code']?>" <?php if($this->get_icl_translation_enabled($lang['code'],$langto['code'])): ?>checked="checked"<?php endif?> />
-                                        <?php echo $langto['english_name'] ?></label>
-                                    </li>    
-                                <?php endforeach; ?>
-                                </ul>
-                            </li>    
-                        <?php endforeach; ?>
-                    <?php else:?>
-                        <li><?php echo __('After you configure more languages for your blog, the translation options will show here', 'sitepress'); ?></li>
-                    <?php endif; ?>
                     <?php                                       
                 }else{
                     echo '0';
@@ -177,9 +165,12 @@ class SitePress{
     function get_active_languages(){
         global $wpdb;
         $res = $wpdb->get_results("
-            SELECT id, code, english_name, active 
-            FROM {$wpdb->prefix}icl_languages            
-            WHERE active=1 ORDER BY major DESC, english_name ASC", ARRAY_A);
+            SELECT code, english_name, active, lt.name AS display_name 
+            FROM {$wpdb->prefix}icl_languages l
+                JOIN {$wpdb->prefix}icl_languages_translations lt ON l.code=lt.language_code           
+            WHERE 
+                active=1 AND lt.display_language_code = '{$this->get_default_language()}' 
+            ORDER BY major DESC, english_name ASC", ARRAY_A);        
         $languages = array();
         foreach($res as $r){
             $languages[] = $r;
@@ -202,7 +193,13 @@ class SitePress{
     
     function get_languages(){
         global $wpdb;
-        $res = $wpdb->get_results("SELECT id, code, english_name, major, active FROM {$wpdb->prefix}icl_languages ORDER BY major DESC, english_name ASC", ARRAY_A);
+        $res = $wpdb->get_results("
+            SELECT 
+                code, english_name, major, active, lt.name AS display_name   
+            FROM {$wpdb->prefix}icl_languages l
+                JOIN {$wpdb->prefix}icl_languages_translations lt ON l.code=lt.language_code           
+            WHERE lt.display_language_code = '{$this->get_default_language()}' 
+            ORDER BY major DESC, english_name ASC", ARRAY_A);
         $languages = array();
         foreach($res as $r){
             $languages[] = $r;
@@ -334,6 +331,67 @@ class SitePress{
             
         }
     }
+
+    function post_edit_language_options(){
+        add_meta_box('icl_div', __('Language options', 'sitepress'), array($this,'meta_box'), 'post', 'normal', 'high');
+        add_meta_box('icl_div', __('Language options', 'sitepress'), array($this,'meta_box'), 'page', 'normal', 'high');
+    }
+    
+    function get_element_language_details($el_id, $el_type='post'){
+        global $wpdb;
+        $details = $wpdb->get_row("SELECT 
+            t.id, t.trid, t.language_code, t.source_language_code, l.english_name, lt.name AS display_language 
+            FROM {$wpdb->prefix}icl_translations t 
+                JOIN {$wpdb->prefix}icl_languages l ON t.language_code = l.code                
+                JOIN {$wpdb->prefix}icl_languages_translations lt 
+                    ON l.code=lt.language_code                
+            WHERE                 
+                element_type='{$el_type}' AND element_id='{$el_id}'
+                AND lt.display_language_code = '{$this->get_default_language()}'
+                ");    
+          return $details;
+    }
+        
+    function set_element_language_details($el_id, $el_type='post', $trid, $language_code){
+        global $wpdb;
+        if($trid){
+            $wpdb->update($wpdb->prefix.'icl_translations', array('language_code'=>$language_code), array('trid'=>$trid,'element_type'=>$el_type,'element_id'=>$el_id));
+        }else{
+            $trid = 1 + $wpdb->get_var("SELECT MAX(trid) FROM {$wpdb->prefix}icl_translations");
+            $wpdb->insert($wpdb->prefix.'icl_translations', 
+                array(
+                    'trid'=>$trid,
+                    'element_type'=>$el_type, 
+                    'element_id'=>$el_id,
+                    'language_code'=>$language_code
+                )
+            );    
+        }
+    }
+        
+    function save_post_actions($pidd){
+        if($_POST['autosave']) return;
+        $post_id = $_POST['post_ID'];
+        $trid = $_POST['icl_trid'];
+        $language_code = $_POST['icl_post_language'];
+        $this->set_element_language_details($post_id, 'post', $trid, $language_code);
+    }
+    
+    function meta_box($post){
+        $active_languages = $this->get_active_languages();
+        $default_language = $this->get_default_language();        
+        $language_details = $this->get_element_language_details($post->ID,'post');
+        
+        if($language_details){
+            $selected_language = $language_details->language_code;
+        }else{
+            $selected_language = $default_language;
+        }
+        include ICL_PLUGIN_PATH . '/menu/post_menu.php';
+    }
+    
+    
+    
     
 }  
 ?>

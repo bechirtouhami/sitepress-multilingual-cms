@@ -16,12 +16,12 @@
         <?php foreach($active_languages as $lang): ?>            
             <li>
                 <label><input class="icl_tr_from" type="checkbox" name="icl_lng_from_<?php echo $lang['code']?>" id="icl_lng_from_<?php echo $lang['code']?>" <?php if($sitepress->get_icl_translation_enabled($lang['code'])): ?>checked="checked"<?php endif?> />
-                <?php printf(__('Translate from %s to these languages','sitepress'), $lang['english_name']) ?></label>
+                <?php printf(__('Translate from %s to these languages','sitepress'), $lang['display_name']) ?></label>
                 <ul id="icl_tr_pair_sub_<?php echo $lang['code'] ?>" <?php if(!$sitepress->get_icl_translation_enabled($lang['code'])): ?>style="display:none"<?php endif?>>
                 <?php foreach($active_languages as $langto): if($lang['code']==$langto['code']) continue; ?>        
                     <li>
                         <label><input class="icl_tr_to" type="checkbox" name="icl_lng_to_<?php echo $lang['code']?>_<?php echo $langto['code']?>" id="icl_lng_from_<?php echo $lang['code']?>_<?php echo $langto['code']?>" <?php if($sitepress->get_icl_translation_enabled($lang['code'],$langto['code'])): ?>checked="checked"<?php endif?> />
-                        <?php echo $langto['english_name'] ?></label>
+                        <?php echo $langto['display_name'] ?></label>
                     </li>    
                 <?php endforeach; ?>
                 </ul>

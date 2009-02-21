@@ -8,8 +8,8 @@ function icl_sitepress_activate(){
         $sql = " 
         CREATE TABLE `{$table_name}` (
             `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
-            `english_name` VARCHAR( 128 ) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL ,
-            `code` VARCHAR( 2 ) NOT NULL ,
+            `code` VARCHAR( 7 ) NOT NULL ,
+            `english_name` VARCHAR( 128 ) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL ,            
             `major` TINYINT NOT NULL DEFAULT '0', 
             `active` TINYINT NOT NULL ,
             UNIQUE KEY `code` (`code`),
@@ -24,9 +24,11 @@ function icl_sitepress_activate(){
         $sql = "
         CREATE TABLE `{$table_name}` (
             `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
-            `language_id` INT NOT NULL ,
-            `display_language_id` INT NOT NULL ,
-            `name` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL
+            `language_code`  VARCHAR( 7 ) NOT NULL ,
+            `display_language_code` VARCHAR( 7 ) NOT NULL ,            
+            `name` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+            KEY `language_code` (`language_code`),
+            KEY `display_language_code` (`display_language_code`)
         )";
         $wpdb->query($sql);
     }
@@ -40,8 +42,9 @@ function icl_sitepress_activate(){
             `element_type` ENUM( 'post', 'page', 'category', 'tag' ) NOT NULL DEFAULT 'post',
             `element_id` BIGINT NOT NULL ,
             `trid` BIGINT NOT NULL ,
-            `language_id` INT NOT NULL ,
-            `source_language_id` INT NULL
+            `language_code` VARCHAR( 7 ) NOT NULL,
+            `source_language_code` VARCHAR( 7 ) NOT NULL,
+            UNIQUE KEY `translation` (`element_type`,`elelement_id`,`language_code`)
         )";
         $wpdb->query($sql);
     } 
@@ -257,17 +260,15 @@ function icl_sitepress_activate(){
     //$wpdb->query("TRUNCATE TABLE " . $wpdb->prefix . 'icl_languages');
     foreach($langs_names as $key=>$val){
         $wpdb->insert($wpdb->prefix . 'icl_languages', array('english_name'=>$key, 'code'=>$lang_codes[$key], 'major'=>$val['major']));
-        $lang_ids[$key] = mysql_insert_id();
     }
     
     //$wpdb->query("TRUNCATE TABLE " . $wpdb->prefix . 'icl_languages_translations');
-    if($lang_ids)
-    foreach($langs_names as $lang=>$val){
+    foreach($langs_names as $lang=>$val){        
         foreach($val['tr'] as $k=>$display){        
             if(!trim($display)){
                 $display = $lang;
             }
-            $wpdb->insert($wpdb->prefix . 'icl_languages_translations', array('language_id'=>$lang_ids[$lang], 'display_language_id'=>$lang_ids[$k], 'name'=>$display));
+            $wpdb->insert($wpdb->prefix . 'icl_languages_translations', array('language_code'=>$lang_codes[$lang], 'display_language_code'=>$lang_codes[$k], 'name'=>$display));
         }    
     }
     
