@@ -1,0 +1,56 @@
+#icl_enabled_languages{
+    margin-bottom: 10px;    
+}
+#icl_enabled_languages input{
+    visibility: hidden;
+}
+
+#icl_save_default_button, #icl_cancel_default_button{
+    display: none;    
+}
+#icl_save_default_button, #icl_cancel_default_button, #icl_save_language_selection, #icl_cancel_language_selection{
+    color:#E68A00;
+}
+
+#icl_avail_languages_picker{
+    margin: 5px 0 5px 0;        
+    display: none;
+}
+#icl_avail_languages_picker ul, #icl_enabled_languages{
+    list-style: none;
+    margin: 0;
+    padding: 0;        
+}
+#icl_avail_languages_picker li, #icl_enabled_languages li{
+    float:left;
+    width:170px;    
+}
+#icl_enabled_languages li.default_language{
+    font-weight: bold;
+}
+#icl_avail_languages_picker li:hover{
+    color:#f00;
+}
+.icl_ajx_response{
+    color:#E68A00;
+    display: none;    
+}
+
+#icl_language_pairs{
+    /*display: none;*/    
+}
+#icl_language_pairs li{
+    background-color:#eee;
+    border:1px solid #ccc;
+    padding:5px;
+}
+#icl_language_pairs ul{
+    /*display:none;*/
+    margin:10px;
+}
+#icl_language_pairs ul li{
+    border:none; 
+    float:none;
+    width:auto; 
+    padding:0px;  
+}

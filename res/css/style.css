@@ -1,0 +1,21 @@
+.icl-account-setup{
+    width:70%;
+}
+.icl_form_errors{
+    border:1px solid #fff;
+    background-color: #f99;
+    color:#fff;
+    width:65%;
+    padding: 5px;
+}
+.icl_form_errors ul{
+    list-style: circle;
+    margin-left:20px;
+}
+.icl_form_success{
+    border:1px solid #fff;
+    background-color: #336600;
+    color:#fff;
+    width:65%;
+    padding: 5px;
+}
