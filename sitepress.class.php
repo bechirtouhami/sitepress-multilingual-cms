@@ -16,14 +16,17 @@ class SitePress{
         add_action('admin_menu', array($this, 'administration_menu'));
         
         // Process post requests
-        add_action('init',array($this,'process_forms'));           
+        add_action('init', array($this,'process_forms'));           
         
         // Post/page language box
-        add_action('admin_head',array($this,'post_edit_language_options'));        
+        add_action('admin_head', array($this,'post_edit_language_options'));        
         
         // Post/page save actions
-        add_action('save_post',array($this,'save_post_actions'));        
+        add_action('save_post', array($this,'save_post_actions'));        
+        // Post/page delete actions
+        add_action('delete_post', array($this,'delete_post_actions'));        
         
+        add_filter('posts_join', array($this,'posts_join_filter'));
         
     }
     
@@ -340,7 +343,16 @@ class SitePress{
     function set_element_language_details($el_id, $el_type='post', $trid, $language_code){
         global $wpdb;
         if($trid){
-            $wpdb->update($wpdb->prefix.'icl_translations', array('language_code'=>$language_code), array('trid'=>$trid,'element_type'=>$el_type,'element_id'=>$el_id));
+            if($wpdb->get_var("SELECT id FROM {$wpdb->prefix}icl_translations WHERE element_type='post' AND element_id='{$el_id}' AND trid='{$trid}'")){
+                //case of language change
+                $wpdb->update($wpdb->prefix.'icl_translations', 
+                    array('language_code'=>$language_code), 
+                    array('trid'=>$trid, 'element_type'=>$el_type, 'element_id'=>$el_id));                
+            }else{
+                // case of adding a new language
+                $wpdb->insert($wpdb->prefix.'icl_translations', 
+                    array('trid'=>$trid, 'element_type'=>$el_type, 'element_id'=>$el_id, 'language_code'=>$language_code));
+            }
         }else{
             $trid = 1 + $wpdb->get_var("SELECT MAX(trid) FROM {$wpdb->prefix}icl_translations");
             $wpdb->insert($wpdb->prefix.'icl_translations', 
@@ -362,32 +374,58 @@ class SitePress{
         $this->set_element_language_details($post_id, 'post', $trid, $language_code);
     }
     
-    function get_element_translations($trid){        
+    function delete_post_actions($post_id){
+        global $wpdb;
+        $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE element_type='post' AND element_id='{$post_id}' LIMIT 1");
+    }
+    
+    function get_element_translations($trid, $el_type='post'){        
         global $wpdb;  
         if($trid){
-            $sel_add = ', t.language_code, t.element_id';
-            $join_add = "LEFT JOIN {$wpdb->prefix}icl_translations t ON l.code = t.language_code";
-            $where_add = "AND (t.trid='{$trid}' OR t.trid IS NULL)"; 
-        }          
-        $translations = $wpdb->get_results("
-            SELECT l.english_name, lt.name AS display_name {$sel_add}
+            $sel_add = ', t.element_id';
+            if($el_type=='post'){
+                $sel_add .= ', p.post_title';
+            }
+            $join_add = " LEFT JOIN {$wpdb->prefix}icl_translations t ON l.code = t.language_code";
+            if($el_type=='post'){
+                $join_add .= " LEFT JOIN {$wpdb->posts} p ON t.element_id=p.ID";
+            }
+                         
+            $where_add = " AND (t.trid='{$trid}' OR t.trid IS NULL)"; 
+        }   
+        $query = "
+            SELECT l.code, l.english_name, lt.name AS display_name {$sel_add}
             FROM {$wpdb->prefix}icl_languages l 
                  JOIN
                  {$wpdb->prefix}icl_languages_translations lt ON l.code=lt.language_code
                  {$join_add}
             WHERE l.active=1 AND lt.display_language_code = '{$this->get_default_language()}' {$where_add}
-        ");
+        ";       
+        $translations = $wpdb->get_results($query);
+        echo mysql_error();
         return $translations;
     }
     
     function meta_box($post){
-        global $wpdb;            
-        $res = $wpdb->get_row("SELECT trid, language_code FROM {$wpdb->prefix}icl_translations WHERE element_id='{$post->ID}' AND element_type='post'");
-        $trid = $res->trid;
-        $element_lang_code = $res->language_code;
-        $translations = $this->get_element_translations($trid);
+        global $wpdb;   
+        if($post->ID){
+            $res = $wpdb->get_row("SELECT trid, language_code FROM {$wpdb->prefix}icl_translations WHERE element_id='{$post->ID}' AND element_type='post'");
+            $trid = $res->trid;
+            $element_lang_code = $res->language_code;
+        }else{
+            $trid = $_GET['trid'];
+            $element_lang_code = $_GET['lang'];
+        }                 
+        $translations = $this->get_element_translations($trid, 'post');
         $selected_language = $element_lang_code?$element_lang_code:$this->get_default_language();
         include ICL_PLUGIN_PATH . '/menu/post_menu.php';
+    }
+    
+    function posts_join_filter($join){
+        global $wpdb;
+        $lang = $_GET['lang']?$_GET['lang']:$this->get_default_language();
+        $join .= " JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->posts}.ID = t.element_id AND t.element_type='post' AND language_code='{$lang}'";
+        return $join;
     }
     
     
