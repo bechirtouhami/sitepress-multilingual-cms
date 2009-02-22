@@ -13,15 +13,13 @@
     <p><?php echo __('Translations', 'sitepress') ?> (<a href="javascript:;" 
         onclick="jQuery('#icl_translations_table').toggle();if(jQuery(this).html()=='<?php echo __('hide','sitepress')?>') jQuery(this).html('<?php echo __('show','sitepress')?>'); else jQuery(this).html('<?php echo __('hide','sitepress')?>')"><?php echo __('show','sitepress')?></a>)</p>
     <table width="100%" id="icl_translations_table" style="display:none">
-    <th align="left"><?php echo __('English name', 'sitepress') ?></th>
-    <th align="left"><?php echo __('Native name', 'sitepress') ?></th>
+    <th align="left"><?php echo __('Language', 'sitepress') ?></th>
     <th align="left"><?php echo __('Title', 'sitepress') ?></th>
     <th align="right"><?php echo __('Operations', 'sitepress') ?></th>
     <?php foreach($translations as $t):?>
     <tr>
-        <td><?php echo $t->english_name ?></td>
         <td><?php echo $t->display_name ?></td>
-        <td><?php echo $t->post_title?$t->post_title:__('n/a','sitepress') ?></td>
+        <td><?php echo $t->post_title?'<a href="'.get_permalink($t->element_id).'" title="View">'.$t->post_title.'</a>':__('n/a','sitepress') ?></td>
         <td align="right">
             <?php if(!$t->element_id):?>
             <a href="<?php echo get_option('siteurl')?>/wp-admin/<?php echo $post->post_type ?>-new.php?trid=<?php echo $trid ?>&lang=<?php echo $t->code ?>"><?php echo __('add','sitepress') ?></a>

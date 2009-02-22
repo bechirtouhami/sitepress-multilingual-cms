@@ -44,7 +44,7 @@ function icl_sitepress_activate(){
             `trid` BIGINT NOT NULL ,
             `language_code` VARCHAR( 7 ) NOT NULL,
             `source_language_code` VARCHAR( 7 ) NOT NULL,
-            UNIQUE KEY `translation` (`element_type`,`elelement_id`,`language_code`)
+            UNIQUE KEY `translation` (`element_type`,`element_id`,`language_code`)
         )";
         $wpdb->query($sql);
     } 
