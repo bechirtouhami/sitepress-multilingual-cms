@@ -48,9 +48,10 @@ function saveDefaultLanguage(){
                 jQuery('#icl_enabled_languages li input').removeAttr('checked');
                 jQuery('#icl_enabled_languages li input[value="'+def_lang+'"]').attr('checked','checked');
                 jQuery('#icl_enabled_languages input[value="'+spl[1]+'"]').parent().html(jQuery('#icl_enabled_languages input[value="'+spl[1]+'"]').parent().html().replace('('+icl_default_mark+')',''));
-                doneEditingDefaultLanguage();                        
+                doneEditingDefaultLanguage();     
+                fadeInAjxResp('#icl_ajx_response',icl_ajx_saved);                                         
             }else{                        
-                fadeInAjxResp(icl_ajx_error,true);
+                fadeInAjxResp('#icl_ajx_response',icl_ajx_error);                                         
             }                    
         }
     });
