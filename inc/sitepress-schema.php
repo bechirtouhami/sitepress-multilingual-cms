@@ -42,8 +42,8 @@ function icl_sitepress_activate(){
             `element_type` ENUM( 'post', 'page', 'category', 'tag' ) NOT NULL DEFAULT 'post',
             `element_id` BIGINT NOT NULL ,
             `trid` BIGINT NOT NULL ,
-            `language_code` VARCHAR( 7 ) NOT NULL,
-            `source_language_code` VARCHAR( 7 ) NOT NULL,
+            `language_code` VARCHAR( 7 ) ,
+            `source_language_code` VARCHAR( 7 ),
             UNIQUE KEY `translation` (`element_type`,`element_id`,`language_code`)
         )";
         $wpdb->query($sql);

@@ -14,3 +14,4 @@ function fadeInAjxResp(spot, msg, err){
 function fadeOutAjxResp(spot){
     jQuery(spot).fadeOut();
 }
+

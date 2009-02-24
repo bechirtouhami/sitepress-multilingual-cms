@@ -27,6 +27,10 @@ class SitePress{
         add_action('delete_post', array($this,'delete_post_actions'));        
         
         add_filter('posts_join', array($this,'posts_join_filter'));
+        global $pagenow;
+        if(in_array($pagenow, array('edit-pages.php','edit.php'))){
+            add_action('admin_head', array($this,'language_filter'));
+        }
         
     }
     
@@ -343,15 +347,25 @@ class SitePress{
     function set_element_language_details($el_id, $el_type='post', $trid, $language_code){
         global $wpdb;
         if($trid){
+            //get source
+            $src_language_code = $wpdb->get_var("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE trid={$trid} AND source_language_code IS NULL");                
+            
             if($wpdb->get_var("SELECT id FROM {$wpdb->prefix}icl_translations WHERE element_type='post' AND element_id='{$el_id}' AND trid='{$trid}'")){
                 //case of language change
                 $wpdb->update($wpdb->prefix.'icl_translations', 
-                    array('language_code'=>$language_code), 
+                    array('language_code'=>$language_code, 'source_language_code'=>$src_language_code), 
                     array('trid'=>$trid, 'element_type'=>$el_type, 'element_id'=>$el_id));                
             }else{
                 // case of adding a new language
                 $wpdb->insert($wpdb->prefix.'icl_translations', 
-                    array('trid'=>$trid, 'element_type'=>$el_type, 'element_id'=>$el_id, 'language_code'=>$language_code));
+                    array(
+                        'trid'=>$trid, 
+                        'element_type'=>$el_type, 
+                        'element_id'=>$el_id, 
+                        'language_code'=>$language_code,
+                        'source_language_code'=>$src_language_code
+                        )
+                );
             }
         }else{
             $trid = 1 + $wpdb->get_var("SELECT MAX(trid) FROM {$wpdb->prefix}icl_translations");
@@ -371,6 +385,7 @@ class SitePress{
         $post_id = $_POST['post_ID'];
         $trid = $_POST['icl_trid'];
         $language_code = $_POST['icl_post_language'];
+        
         $this->set_element_language_details($post_id, 'post', $trid, $language_code);
     }
     
@@ -381,51 +396,77 @@ class SitePress{
     
     function get_element_translations($trid, $el_type='post'){        
         global $wpdb;  
-        if($trid){
-            $sel_add = ', t.element_id';
+        if($trid){            
             if($el_type=='post'){
-                $sel_add .= ', p.post_title';
-            }
-            $join_add = " LEFT JOIN {$wpdb->prefix}icl_translations t ON l.code = t.language_code";
+                $sel_add = ', p.post_title';
+            }            
             if($el_type=='post'){
-                $join_add .= " LEFT JOIN {$wpdb->posts} p ON t.element_id=p.ID";
+                $join_add = " LEFT JOIN {$wpdb->posts} p ON t.element_id=p.ID";
             }
                          
-            $where_add = " AND (t.trid='{$trid}' OR t.trid IS NULL)"; 
+            $where_add = " AND t.trid='{$trid}'"; 
         }   
         $query = "
-            SELECT l.code, l.english_name, lt.name AS display_name {$sel_add}
-            FROM {$wpdb->prefix}icl_languages l 
-                 JOIN
-                 {$wpdb->prefix}icl_languages_translations lt ON l.code=lt.language_code
+            SELECT t.language_code, t.element_id {$sel_add}
+            FROM {$wpdb->prefix}icl_translations t
                  {$join_add}
-            WHERE l.active=1 AND lt.display_language_code = '{$this->get_default_language()}' {$where_add}
+            WHERE 1 {$where_add}
         ";       
-        $translations = $wpdb->get_results($query);
-        echo mysql_error();
+        $ret = $wpdb->get_results($query);        
+        foreach($ret as $t){
+            $translations[$t->language_code] = $t;
+        }        
         return $translations;
     }
     
     function meta_box($post){
         global $wpdb;   
+        $active_languages = $this->get_active_languages();
         if($post->ID){
-            $res = $wpdb->get_row("SELECT trid, language_code FROM {$wpdb->prefix}icl_translations WHERE element_id='{$post->ID}' AND element_type='post'");
+            $res = $wpdb->get_row("SELECT trid, language_code, source_language_code FROM {$wpdb->prefix}icl_translations WHERE element_id='{$post->ID}' AND element_type='post'");
             $trid = $res->trid;
             $element_lang_code = $res->language_code;
         }else{
             $trid = $_GET['trid'];
             $element_lang_code = $_GET['lang'];
         }                 
-        $translations = $this->get_element_translations($trid, 'post');
+        $translations = $this->get_element_translations($trid, 'post');        
         $selected_language = $element_lang_code?$element_lang_code:$this->get_default_language();
+        
         include ICL_PLUGIN_PATH . '/menu/post_menu.php';
     }
     
     function posts_join_filter($join){
         global $wpdb;
-        $lang = $_GET['lang']?$_GET['lang']:$this->get_default_language();
-        $join .= " JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->posts}.ID = t.element_id AND t.element_type='post' AND language_code='{$lang}'";
+        $this_lang = $_GET['lang']?$_GET['lang']:$this->get_default_language();
+        $join .= " JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->posts}.ID = t.element_id 
+                    AND t.element_type='post' AND language_code='{$this_lang}'";
         return $join;
+    }
+    
+    function language_filter(){
+        global $wpdb;
+        $this_lang = $_GET['lang']?$_GET['lang']:$this->get_default_language();
+        $active_languages = $this->get_active_languages();
+        foreach($active_languages as $lang){
+            if(!$wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE language_code='{$lang['code']}' AND element_type='post'")) continue;            
+            if($lang['code']== $this_lang){
+                $px = '<strong>'; 
+                $sx = '</strong>';
+            }else{
+                $px = '<a href="?lang='.$lang['code'].'">';
+                $sx = '</a>';
+            }
+            $as[] =  $px . $lang['display_name'] . $sx;
+        }
+        $allas = join(' | ', $as);
+        ?>
+        <script type="text/javascript">
+        addLoadEvent(function(){        
+            jQuery(".subsubsub").append('<br /> <span id="icl_subsubsub"><?php echo $allas ?></span>');
+        });
+        </script>
+        <?php
     }
     
     
