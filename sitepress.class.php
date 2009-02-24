@@ -4,7 +4,7 @@ class SitePress{
     private $settings;
     
     function __construct(){
-        
+        global $wpdb;
         $this->settings = get_option('icl_sitepress_settings');
         
         // Ajax feedback
@@ -32,6 +32,13 @@ class SitePress{
             add_action('admin_head', array($this,'language_filter'));
         }
         
+        add_filter('wp_list_pages_excludes', array($this, 'exclude_other_language_pages'));
+        
+        /* ?????????? */
+        if(isset($_GET['lang']) && $_GET['lang'] != $this->get_default_language()){
+            add_filter('the_permalink', array($this, 'permalink_filter'));   
+            add_filter('page_link', array($this, 'permalink_filter'));   
+        }
     }
     
     function ajax_responses(){
@@ -378,6 +385,7 @@ class SitePress{
                 )
             );    
         }
+        return $trid;
     }
         
     function save_post_actions($pidd){
@@ -425,12 +433,19 @@ class SitePress{
         if($post->ID){
             $res = $wpdb->get_row("SELECT trid, language_code, source_language_code FROM {$wpdb->prefix}icl_translations WHERE element_id='{$post->ID}' AND element_type='post'");
             $trid = $res->trid;
-            $element_lang_code = $res->language_code;
+            if($trid){                
+                $element_lang_code = $res->language_code;
+            }else{
+                $trid = $this->set_element_language_details($post->ID,'post',null,$this->get_default_language);
+                $element_lang_code = $this->get_default_language();
+            }            
         }else{
             $trid = $_GET['trid'];
             $element_lang_code = $_GET['lang'];
         }                 
-        $translations = $this->get_element_translations($trid, 'post');        
+        if($trid){
+            $translations = $this->get_element_translations($trid, 'post');        
+        }        
         $selected_language = $element_lang_code?$element_lang_code:$this->get_default_language();
         
         include ICL_PLUGIN_PATH . '/menu/post_menu.php';
@@ -438,24 +453,50 @@ class SitePress{
     
     function posts_join_filter($join){
         global $wpdb;
-        $this_lang = $_GET['lang']?$_GET['lang']:$this->get_default_language();
-        $join .= " JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->posts}.ID = t.element_id 
-                    AND t.element_type='post' AND language_code='{$this_lang}'";
+        $this_lang = $_GET['lang']?$wpdb->escape($_GET['lang']):$this->get_default_language();
+        if('all' != $this_lang){ 
+            $cond = "AND language_code='{$this_lang}'";
+            $ljoin = "";
+        }else{
+            $cond = '';
+            $ljoin = "LEFT";
+        }
+        $join .= "{$ljoin} JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->posts}.ID = t.element_id 
+                    AND t.element_type='post' {$cond} ";
         return $join;
     }
     
     function language_filter(){
-        global $wpdb;
+        global $wpdb, $pagenow;
+        if($pagenow=='edit.php'){
+            $type = 'post';
+        }else{
+            $type = 'page';
+        }
         $this_lang = $_GET['lang']?$_GET['lang']:$this->get_default_language();
         $active_languages = $this->get_active_languages();
+        
+        $res = $wpdb->get_results("
+            SELECT language_code, COUNT(p.ID) AS c FROM {$wpdb->prefix}icl_translations t 
+            JOIN {$wpdb->posts} p ON t.element_id=p.ID
+            WHERE t.element_type='post' AND p.post_type='{$type}'
+            GROUP BY language_code            
+            ");         
+        foreach($res as $r){
+            $langs[$r->language_code] = $r->c;
+        } 
+        $langs['all'] = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type='{$type}'");               
+        $active_languages[] = array('code'=>'all','display_name'=>__('All languages','sitepress'));
         foreach($active_languages as $lang){
-            if(!$wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE language_code='{$lang['code']}' AND element_type='post'")) continue;            
             if($lang['code']== $this_lang){
                 $px = '<strong>'; 
-                $sx = '</strong>';
+                $sx = ' ('. intval($langs[$lang['code']]) .')</strong>';
+            }elseif(!isset($langs[$lang['code']])){
+                $px = '<span>';
+                $sx = '</span>';
             }else{
                 $px = '<a href="?lang='.$lang['code'].'">';
-                $sx = '</a>';
+                $sx = '</a> ('. $langs[$lang['code']] .')';
             }
             $as[] =  $px . $lang['display_name'] . $sx;
         }
@@ -469,7 +510,23 @@ class SitePress{
         <?php
     }
     
+    function exclude_other_language_pages($s){
+        global $wpdb;
+        $this_lang = $_GET['lang']?$wpdb->escape($_GET['lang']):$this->get_default_language();
+        $excl_pages = $wpdb->get_col("
+            SELECT p.ID FROM {$wpdb->posts} p 
+            LEFT JOIN {$wpdb->prefix}icl_translations t ON (p.ID = t.element_id OR t.element_id IS NULL)
+            WHERE t.element_type='post' AND p.post_type='page' AND t.language_code <> '{$this_lang}'
+            ");
+        return array_merge($s, $excl_pages);
+    }
     
+    /* ?????????? */
+    function permalink_filter($p){
+        global $wpdb;
+        $this_lang = $_GET['lang']?$wpdb->escape($_GET['lang']):$this->get_default_language();
+        return $p . '?lang=' . $this_lang;
+    }
     
     
 }  
