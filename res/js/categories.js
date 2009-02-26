@@ -9,4 +9,3 @@ jQuery(document).ready(function(){
     jQuery('#icl_category_menu').remove();
         
 });
-

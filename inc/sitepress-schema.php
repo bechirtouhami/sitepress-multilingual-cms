@@ -298,6 +298,7 @@ function icl_sitepress_activate(){
             'notify_before_translations' => 1,
             'translate_new_content' => 0,
             'interview_translators' => 0,
+            'existing_content_language_verified' => 0,
             'default_language'  => $blog_default_lang
         );        
         add_option('icl_sitepress_settings', $settings, '', true);        
