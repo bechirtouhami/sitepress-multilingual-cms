@@ -117,6 +117,11 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings = $sitepress->get_settings();
         echo intval($iclsettings['cms_login'] && $iclsettings['cms_password']);
         break;
+    case 'save_language_negotiation_type':
+        $iclsettings['language_negotiation_type'] = $_POST['icl_language_negotiation_type'];
+        $sitepress->save_settings($iclsettings);
+        echo 1;
+        break;
     default:
         echo __('Invalid action','sitepress');                
 }    

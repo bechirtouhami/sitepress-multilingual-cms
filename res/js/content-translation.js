@@ -18,6 +18,7 @@ function toggleTranslationPairsSub(){
 }
 
 function saveLanguagePairs(){
+    fadeInAjxResp('#icl_ajx_response', icl_ajxloaderimg);
     var qargs = new Array();
     qargs.push(jQuery('#icl_language_pairs_form').serialize());
     jQuery.ajax({
@@ -40,6 +41,7 @@ function iclSaveForm(){
     var formname = jQuery(this).attr('name');
     jQuery('form[name="'+formname+'"] .icl_form_errors').html('').hide();
     ajx_resp = jQuery('form[name="'+formname+'"] .icl_ajx_response').attr('id');
+    fadeInAjxResp('#'+ajx_resp, icl_ajxloaderimg);
     jQuery.ajax({
         type: "POST",
         url: icl_ajx_url,

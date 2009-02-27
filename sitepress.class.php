@@ -60,8 +60,11 @@ class SitePress{
                 add_action('admin_head', array($this,'terms_language_filter'));
                 add_filter('list_terms_exclusions', array($this, 'exclude_other_terms'));
             }
+            
+            // the language selector widget
+            add_action('plugins_loaded', array($this, 'language_selector_widget_init'));
         }
-        
+                
     }
     
     function ajax_responses(){
@@ -137,6 +140,18 @@ class SitePress{
         }
         return $languages;
     }
+    
+    function get_language_details($code){
+        global $wpdb;
+        $language = $wpdb->get_row("
+            SELECT 
+                code, english_name, major, active, lt.name AS display_name   
+            FROM {$wpdb->prefix}icl_languages l
+                JOIN {$wpdb->prefix}icl_languages_translations lt ON l.code=lt.language_code           
+            WHERE lt.display_language_code = '{$this->get_default_language()}' AND code='{$code}'
+            ORDER BY major DESC, english_name ASC", ARRAY_A);
+        return $language;
+    }
 
     function get_default_language(){        
         return $this->settings['default_language'];
@@ -192,6 +207,7 @@ class SitePress{
         var icl_ajx_error = '<?php echo __('Error: data not saved') ?>';
         var icl_default_mark = '<?php echo __('default') ?>';     
         var icl_this_lang = '<?php echo isset($_GET['lang'])?$_GET['lang']:$this->get_default_language() ?>';   
+        var icl_ajxloaderimg = '<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif';
         </script>
         <?php
         wp_enqueue_script('sitepress-scripts', ICL_PLUGIN_URL . '/res/js/scripts.js', array(), '0.1');
@@ -474,15 +490,7 @@ class SitePress{
             ");
         return array_merge($s, $excl_pages);
     }
-    
-    /* ?????????? */
-    function permalink_filter($p){
-        global $wpdb;
-        $this_lang = $_GET['lang']?$wpdb->escape($_GET['lang']):$this->get_default_language();
-        return $p . '?lang=' . $this_lang;
-    }
-        
-    /* categories - start */
+            
     function edit_term_form($term){                
         global $wpdb, $pagenow;
         $element_id = $term->term_taxonomy_id;    
@@ -592,8 +600,56 @@ class SitePress{
         $exclusions .= ' AND term_taxonomy_id NOT IN ('.join(',',$exclude).')';
         return $exclusions;
     }
-    /* categories - end */
     
+    
+    /* ?????????? */
+    function language_url($code){
+        return get_option('home').'?lang='.$code;
+    }
+    function permalink_filter($p){
+        global $wpdb;
+        $this_lang = $_GET['lang']?$wpdb->escape($_GET['lang']):$this->get_default_language();
+        return $p . '?lang=' . $this_lang;
+    }    
+    
+    function language_selector_widget_init(){
+        
+        function language_selector_widget(){
+            global $sitepress;
+            echo $before_widget;
+            echo $before_title; 
+            $w_active_languages = $sitepress->get_active_languages();
+            $this_lang = $_GET['lang']?$_GET['lang']:$sitepress->get_default_language();
+            $w_this_lang = $sitepress->get_language_details($this_lang);
+                       
+            $user_agent = $_SERVER['HTTP_USER_AGENT'];
+            if(preg_match('#MSIE ([0-9]+)\.[0-9]#',$user_agent,$matches)){
+                $ie_ver = $matches[1];
+            }
+            
+            include ICL_PLUGIN_PATH . '/menu/language-selector.php';
+            
+        }
+        wp_register_sidebar_widget('icl_languages_selector', __('Language Selector', 'sitepress'), 'language_selector_widget');
+        
+        
+        function icl_lang_sel_nav_css($show = true){            
+            $link_tag = '<link rel="stylesheet" href="'. ICL_PLUGIN_URL . '/res/css/language-selector.css?v=0.1" type="text/css" media="all" />';
+            if(!$show){
+                return $link_tag;
+            }else{
+                echo $link_tag;
+            }
+        }
+        add_action('init','icl_lang_sel_nav_ob_start');
+        add_action('wp_head','icl_lang_sel_nav_ob_end');
+        function icl_lang_sel_nav_ob_start(){ ob_start('icl_lang_sel_nav_prepend_css'); }
+        function icl_lang_sel_nav_ob_end(){ ob_end_flush();}
+        function icl_lang_sel_nav_prepend_css($buf){
+            return preg_replace('#</title>#i','</title>' . PHP_EOL . PHP_EOL . icl_lang_sel_nav_css(false), $buf);
+        }    
+        
+    }
     
 }  
 ?>

@@ -6,6 +6,7 @@ addLoadEvent(function(){
     jQuery('#icl_cancel_language_selection').click(hideLanguagePicker);
     jQuery('#icl_save_language_selection').click(saveLanguageSelection);                        
     jQuery('#icl_enabled_languages input').attr('disabled','disabled');    
+    jQuery('#icl_save_language_negotiation_type').submit(saveLanguageNegotiationType);    
 });
 function editingDefaultLanguage(){
     jQuery('#icl_change_default_button').hide();
@@ -68,6 +69,7 @@ function hideLanguagePicker(){
     jQuery('#icl_change_default_button').fadeIn();
 } 
 function saveLanguageSelection(){
+    fadeInAjxResp('#icl_ajx_response', icl_ajxloaderimg);
     var arr = jQuery('#icl_avail_languages_picker ul input[type="checkbox"]');            
     var sel_lang = new Array();
     jQuery.each(arr, function() {
@@ -93,7 +95,25 @@ function saveLanguageSelection(){
 
     hideLanguagePicker();
     
-}       
+}   
+
+function saveLanguageNegotiationType(){
+    fadeInAjxResp('#icl_ajx_response2', icl_ajxloaderimg);
+    jQuery.ajax({
+        type: "POST",
+        url: icl_ajx_url,
+        data: "icl_ajx_action=save_language_negotiation_type&"+jQuery(this).serialize(),
+        success: function(msg){
+            spl = msg.split('|');
+            if(spl[0]=='1'){
+                fadeInAjxResp('#icl_ajx_response2', icl_ajx_saved);                         
+            }else{                        
+                fadeInAjxResp('#icl_ajx_response2', icl_ajx_error,true);
+            }                    
+        }
+    });
+    return false;
+}    
 
 
 
