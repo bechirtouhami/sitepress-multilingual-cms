@@ -604,8 +604,26 @@ class SitePress{
     
     /* ?????????? */
     function language_url($code){
-        return get_option('home').'?lang='.$code;
+        $home = get_option('home');        
+        switch($this->settings['language_negotiation_type']){
+            case '1': 
+                $url = rtrim($home,'/') . '/' . $code;
+                break;
+            case '2': 
+                $exp = explode('.',$home);
+                if(count($exp)==2){
+                    $url = str_replace('http://', 'http://'.$code.'.', $home);
+                }else{
+                    $url = preg_replace('#^http://([^.]+)\.(.*)$#i', 'http://'.$code.'.$2', $home);
+                }                
+                break;                
+            case '3':
+            default:
+                $url = $home . '?lang=' . $code;
+        }
+        return $url;
     }
+    
     function permalink_filter($p){
         global $wpdb;
         $this_lang = $_GET['lang']?$wpdb->escape($_GET['lang']):$this->get_default_language();
