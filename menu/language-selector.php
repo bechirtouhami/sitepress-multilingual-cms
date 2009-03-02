@@ -4,7 +4,7 @@
             <?php if(isset($ie_ver) && $ie_ver <= 6): ?><table><tr><td><?php endif ?>
             <ul>
                 <?php foreach($w_active_languages as $lang): if($lang['code']==$w_this_lang['code']) continue; ?>
-                <li><a href="<?php echo $sitepress->language_url($lang['code']) ?>"><?php echo $lang['display_name']?></a></li>
+                <li><a href="<?php echo $lang['translated_url']?>"><?php echo $lang['display_name']?></a></li>
                 <?php endforeach; ?>
             </ul>
             <?php if(isset($ie_ver) && $ie_ver <= 6): ?></td></tr></table></a><?php endif ?> 

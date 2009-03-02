@@ -3,6 +3,13 @@
     $active_languages = $sitepress->get_active_languages();            
     $languages = $sitepress->get_languages();            
     $sitepress_settings = $sitepress->get_settings();
+    foreach($active_languages as $lang){
+        if($lang['code']!=$sitepress->get_default_language()){
+            $sample_lang = $lang;
+            break;
+        }
+    }
+    $default_language = $sitepress->get_language_details($sitepress->get_default_language());
 ?>
 <div class="wrap">
     <div id="icon-options-general" class="icon32"><br /></div>
@@ -61,33 +68,77 @@
             </tr>
         </table>
         
-        <h3><?php echo __('Choose how to determine which language visitors see contents in', 'sitepress') ?></h3>    
-        <form id="icl_save_language_negotiation_type">
-        <ul>
-            <li>
-                <label>
-                    <input type="radio" name="icl_language_negotiation_type" value="1" <?php if($sitepress_settings['language_negotiation_type']==1):?>checked="checked"<?php endif?> />
-                    <?php echo sprintf(__('Different languages in directories (%s - Default language, %s/es - Spanish, etc.)', 'sitepress'), get_option('home'), get_option('home')) ?>
-                </label>
-            </li>
-            <li>
-                <label>
-                    <input type="radio" name="icl_language_negotiation_type" value="2" <?php if($sitepress_settings['language_negotiation_type']==2):?>checked="checked"<?php endif?> />
-                    <?php echo __('A different domain per language', 'sitepress') ?>
-                </label>
-            </li>
-            <li>
-                <label>
-                    <input type="radio" name="icl_language_negotiation_type" value="3" <?php if($sitepress_settings['language_negotiation_type']==3):?>checked="checked"<?php endif?> />
-                    <?php echo sprintf(__('Language name added as a parameter (%s?lang=es - Spanish)', 'sitepress'),get_option('home')) ?>
-                </label>
-            </li>
-        </ul>
-        <p>
-            <input class="button" name="save" value="<?php echo __('Save') ?>" type="submit" />
-            <span class="icl_ajx_response" id="icl_ajx_response2"></span>
-        </p>
-        </form>
+        <span id="icl_lnt">
+        <?php if(count($active_languages) > 1): ?>            
+            <h3><?php echo __('Choose how to determine which language visitors see contents in', 'sitepress') ?></h3>    
+            <form id="icl_save_language_negotiation_type">
+            <ul>
+                <li>
+                    <label>
+                        <input type="radio" name="icl_language_negotiation_type" value="1" <?php if($sitepress_settings['language_negotiation_type']==1):?>checked="checked"<?php endif?> />
+                        <?php echo sprintf(__('Different languages in directories (%s - %s, %s/%s - %s, etc.)', 'sitepress'), get_option('home'), $default_language['display_name'] , get_option('home'), $sample_lang['code'], $sample_lang['display_name'] ) ?>
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="radio" name="icl_language_negotiation_type" value="2" <?php if($sitepress_settings['language_negotiation_type']==2):?>checked="checked"<?php endif?> />
+                        <?php echo __('A different domain per language', 'sitepress') ?>
+                    </label>
+                </li>
+                <li>
+                    <label>
+                        <input type="radio" name="icl_language_negotiation_type" value="3" <?php if($sitepress_settings['language_negotiation_type']==3):?>checked="checked"<?php endif?> />
+                        <?php echo sprintf(__('Language name added as a parameter (%s?lang=%s - %s)', 'sitepress'),get_option('home'),$sample_lang['code'],$sample_lang['display_name']) ?>
+                    </label>
+                </li>
+            </ul>
+            <p>
+                <input class="button" name="save" value="<?php echo __('Save') ?>" type="submit" />
+                <span class="icl_ajx_response" id="icl_ajx_response2"></span>
+            </p>
+            </form>            
+        <?php endif; ?>
+        </span>
+        
+        <span id="icl_lso">
+        <?php if(count($active_languages) > 1): ?>            
+            <h3><?php echo __('Language switcher options', 'sitepress') ?></h3>    
+            <form id="icl_save_language_switcher_options">
+            <ul>
+                <li>
+                    <label>
+                        <input type="checkbox" name="icl_lso_header" <?php if($sitepress_settings['icl_lso_header']==1):?>checked="checked"<?php endif?> />
+                        <?php echo sprintf(__('Include automatically in the header', 'sitepress')) ?>
+                    </label>
+                </li>
+                <li>
+                    <p><?php echo __('When translation is missing', 'sitepress')?></p>
+                    <ul>
+                        <li>
+                            <label>
+                                <input type="radio" name="icl_lso_handle_empty" <?php if(!$sitepress_settings['icl_lso_link_empty']):?>checked="checked"<?php endif?> />
+                                <?php echo __('Skip language', 'sitepress') ?>
+                            </label>
+                        </li>
+                        <li>
+                        <label>
+                            <input type="radio" name="icl_lso_handle_empty" <?php if($sitepress_settings['icl_lso_link_empty']==1):?>checked="checked"<?php endif?> />
+                            <?php echo __('Link to home of language for missing translations', 'sitepress') ?>
+                        </label>                    
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <p>
+                <input class="button" name="save" value="<?php echo __('Save') ?>" type="submit" />
+                <span class="icl_ajx_response" id="icl_ajx_response2"></span>
+            </p>
+            </form>            
+        <?php endif; ?>
+        </span>
+        
     <?php endif; ?>
+    
+
     
 </div>

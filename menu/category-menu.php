@@ -16,7 +16,7 @@
     <th align="left"><?php echo __('Language', 'sitepress') ?></th>
     <th align="left"><?php echo __('Name', 'sitepress') ?></th>
     <th align="right"><?php echo __('Operations', 'sitepress') ?></th>
-    <?php foreach($active_languages as $lang):?>
+    <?php foreach($active_languages as $lang): if($this_lang==$lang['code']) continue;?>
     <tr>
         <td><?php echo $lang['display_name'] ?></td>
         <td><?php echo isset($translations[$lang['code']]->name)?'<a href="'.get_category_link($translations[$lang['code']]->term_id).'" title="View">'.$translations[$lang['code']]->name.'</a>':__('n/a','sitepress') ?></td>

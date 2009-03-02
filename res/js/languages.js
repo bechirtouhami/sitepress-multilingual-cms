@@ -86,10 +86,14 @@ function saveLanguageSelection(){
             if(spl[0]=='1'){
                 fadeInAjxResp('#icl_ajx_response', icl_ajx_saved);                         
                 jQuery('#icl_enabled_languages').html(spl[1]);
-                jQuery('#icl_language_pairs').html(spl[2]);
             }else{                        
                 fadeInAjxResp('#icl_ajx_response', icl_ajx_error,true);
-            }                    
+            } 
+            if(spl[2]=='1'){
+                jQuery('#icl_lnt').load(location + ' #icl_lnt');
+            }else if(spl[2]=='-1'){
+                jQuery('#icl_lnt').fadeOut();
+            }                   
         }
     });
 

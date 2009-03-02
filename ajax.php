@@ -12,20 +12,36 @@ if(!isset($sitepress)) $sitepress = new SitePress();
 
 switch($_REQUEST['icl_ajx_action']){
     case 'set_active_languages':
+        $resp = array();
+        $old_active_languages_count = count($sitepress->get_active_languages($lang_codes));
         $lang_codes = explode(',',$_POST['langs']);
         if($sitepress->set_active_languages($lang_codes)){                    
-            echo '1|';
+            $resp[0] = 1;
             $active_langs = $sitepress->get_active_languages();
+            $iclresponse ='';
             foreach($active_langs as $lang){
                 $is_default = ($sitepress->get_default_language()==$lang['code']);
-                ?><li <?php if($is_default):?>class="default_language"<?php endif;?>><label><input type="radio" name="default_language" value="<?php echo $lang['code'] ?>" <?php if($is_default):?>checked="checked"<?php endif;?>> <?php echo $lang['display_name'] ?><?php if($is_default):?> (<?php echo __('default') ?>)<?php endif?></label></li><?php
-            } 
-            ?>
-            <?php echo '|'; ?>
-            <?php                                       
+                $iclresponse .= '<li ';
+                if($is_default) $iclresponse .= 'class="default_language"';
+                $iclresponse .= '><label><input type="radio" name="default_language" value="' . $lang['code'] .'" ';
+                if($is_default) $iclresponse .= 'checked="checked"';
+                $iclresponse .= '>' . $lang['display_name'];
+                if($is_default) $iclresponse .= '('. __('default') . ')';
+                $iclresponse .= '</label></li>';                
+            }  
+            $resp[1] = $iclresponse;
+            // response 1 - blog got more than 2 languages; -1 blog reduced to 1 language; 0 - no change            
+            if(count($lang_codes) > 1){
+                $resp[2] = 1;
+            }elseif($old_active_languages_count > 1 && count($lang_codes) < 2){
+                $resp[2] = -1;
+            }else{
+                $resp[2] = 0;
+            }  
         }else{
-            echo '0';
+            $resp[0] = 0;
         }
+        echo join('|',$resp);
         break;
     case 'set_default_language':
         $previous_default = $sitepress->get_default_language();
