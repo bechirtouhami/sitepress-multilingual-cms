@@ -766,7 +766,7 @@ class SitePress{
                         unset($w_active_languages[$k]);
                     }                    
                 }
-                if(!$skip_lang){
+                if(!$skip_lang && !is_home()){
                     $w_active_languages[$k] = $lang;
                 }                
             }          
