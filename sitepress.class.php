@@ -758,15 +758,15 @@ class SitePress{
                 }elseif(is_tag() && isset($translations[$lang['code']]->name)){
                     $lang['translated_url'] = get_tag_link($translations[$lang['code']]->term_id);
                 }else{
-                    if($this->settings['icl_lso_link_empty']){
+                    if($this->settings['icl_lso_link_empty'] || is_home()){
                         $lang['translated_url'] = $this->language_url($lang['code']);
                         $skip_lang = false;
                     }else{
-                        $skip_lang = true;
-                        unset($w_active_languages[$k]);
+                        $skip_lang = true; 
+                        unset($w_active_languages[$k]);                       
                     }                    
                 }
-                if(!$skip_lang && !is_home()){
+                if(!$skip_lang){
                     $w_active_languages[$k] = $lang;
                 }                
             }          
