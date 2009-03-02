@@ -758,9 +758,17 @@ class SitePress{
                 }elseif(is_tag() && isset($translations[$lang['code']]->name)){
                     $lang['translated_url'] = get_tag_link($translations[$lang['code']]->term_id);
                 }else{
-                    $lang['translated_url'] = $this->language_url($lang['code']);
+                    if($this->settings['icl_lso_link_empty']){
+                        $lang['translated_url'] = $this->language_url($lang['code']);
+                        $skip_lang = false;
+                    }else{
+                        $skip_lang = true;
+                        unset($w_active_languages[$k]);
+                    }                    
                 }
-                $w_active_languages[$k] = $lang;
+                if(!$skip_lang){
+                    $w_active_languages[$k] = $lang;
+                }                
             }          
             
             include ICL_PLUGIN_PATH . '/menu/language-selector.php';

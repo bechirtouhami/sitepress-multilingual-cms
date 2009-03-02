@@ -133,9 +133,15 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings = $sitepress->get_settings();
         echo intval($iclsettings['cms_login'] && $iclsettings['cms_password']);
         break;
-    case 'save_language_negotiation_type':
+    case 'icl_save_language_negotiation_type':
         $iclsettings['language_negotiation_type'] = $_POST['icl_language_negotiation_type'];
         $sitepress->save_settings($iclsettings);
+        echo 1;
+        break;
+    case 'icl_save_language_switcher_options':
+        $iclsettings['icl_lso_header'] = intval($_POST['icl_lso_header']);
+        $iclsettings['icl_lso_link_empty'] = intval($_POST['icl_lso_link_empty']);
+        $sitepress->save_settings($iclsettings);    
         echo 1;
         break;
     default:

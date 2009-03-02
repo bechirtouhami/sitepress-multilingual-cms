@@ -300,6 +300,8 @@ function icl_sitepress_activate(){
             'interview_translators' => 0,
             'existing_content_language_verified' => 0,
             'language_negotiation_type' => 3,
+            'icl_lso_header' => 0, 
+            'icl_lso_link_empty' => 0,
             'default_language'  => $blog_default_lang
         );        
         add_option('icl_sitepress_settings', $settings, '', true);        

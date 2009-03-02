@@ -71,7 +71,7 @@
         <span id="icl_lnt">
         <?php if(count($active_languages) > 1): ?>            
             <h3><?php echo __('Choose how to determine which language visitors see contents in', 'sitepress') ?></h3>    
-            <form id="icl_save_language_negotiation_type">
+            <form id="icl_save_language_negotiation_type" name="icl_save_language_negotiation_type">
             <ul>
                 <li>
                     <label>
@@ -101,13 +101,14 @@
         </span>
         
         <span id="icl_lso">
-        <?php if(count($active_languages) > 1): ?>            
+        <?php if(count($active_languages) > 1):?>            
             <h3><?php echo __('Language switcher options', 'sitepress') ?></h3>    
-            <form id="icl_save_language_switcher_options">
+            <form id="icl_save_language_switcher_options" name="icl_save_language_switcher_options">
+            <p class="icl_form_errors" style="display:none"></p>
             <ul>
                 <li>
                     <label>
-                        <input type="checkbox" name="icl_lso_header" <?php if($sitepress_settings['icl_lso_header']==1):?>checked="checked"<?php endif?> />
+                        <input type="checkbox" name="icl_lso_header" value="1" <?php if($sitepress_settings['icl_lso_header']==1):?>checked="checked"<?php endif?> />
                         <?php echo sprintf(__('Include automatically in the header', 'sitepress')) ?>
                     </label>
                 </li>
@@ -116,13 +117,13 @@
                     <ul>
                         <li>
                             <label>
-                                <input type="radio" name="icl_lso_handle_empty" <?php if(!$sitepress_settings['icl_lso_link_empty']):?>checked="checked"<?php endif?> />
+                                <input type="radio" name="icl_lso_link_empty" value="0" <?php if(!$sitepress_settings['icl_lso_link_empty']):?>checked="checked"<?php endif?> />
                                 <?php echo __('Skip language', 'sitepress') ?>
                             </label>
                         </li>
                         <li>
                         <label>
-                            <input type="radio" name="icl_lso_handle_empty" <?php if($sitepress_settings['icl_lso_link_empty']==1):?>checked="checked"<?php endif?> />
+                            <input type="radio" name="icl_lso_link_empty" value="1" <?php if($sitepress_settings['icl_lso_link_empty']==1):?>checked="checked"<?php endif?> />
                             <?php echo __('Link to home of language for missing translations', 'sitepress') ?>
                         </label>                    
                         </li>
@@ -131,7 +132,7 @@
             </ul>
             <p>
                 <input class="button" name="save" value="<?php echo __('Save') ?>" type="submit" />
-                <span class="icl_ajx_response" id="icl_ajx_response2"></span>
+                <span class="icl_ajx_response" id="icl_ajx_response3"></span>
             </p>
             </form>            
         <?php endif; ?>
