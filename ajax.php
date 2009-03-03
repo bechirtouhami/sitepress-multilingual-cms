@@ -29,6 +29,7 @@ switch($_REQUEST['icl_ajx_action']){
                 if($is_default) $iclresponse .= '('. __('default') . ')';
                 $iclresponse .= '</label></li>';                
             }  
+            $iclresponse .= $default_blog_category;
             $resp[1] = $iclresponse;
             // response 1 - blog got more than 2 languages; -1 blog reduced to 1 language; 0 - no change            
             if(count($lang_codes) > 1){
@@ -42,6 +43,8 @@ switch($_REQUEST['icl_ajx_action']){
             $resp[0] = 0;
         }
         echo join('|',$resp);
+        $default_categories = $sitepress->get_default_categories();
+        print_r($default_categories);        
         break;
     case 'set_default_language':
         $previous_default = $sitepress->get_default_language();

@@ -2,10 +2,24 @@
 class SitePress{
    
     private $settings;
+    private $active_languages;
     
     function __construct(){
         global $wpdb;
         $this->settings = get_option('icl_sitepress_settings');
+        
+        $res = $wpdb->get_results("
+            SELECT code, english_name, active, lt.name AS display_name 
+            FROM {$wpdb->prefix}icl_languages l
+                JOIN {$wpdb->prefix}icl_languages_translations lt ON l.code=lt.language_code           
+            WHERE 
+                active=1 AND lt.display_language_code = '{$this->get_default_language()}' 
+            ORDER BY major DESC, english_name ASC", ARRAY_A);        
+        $languages = array();
+        foreach($res as $r){
+            $languages[] = $r;
+        }        
+        $this->active_languages = $languages; 
         
         // Ajax feedback
         if(isset($_POST['icl_ajx_action'])){
@@ -99,19 +113,7 @@ class SitePress{
     }    
     
     function get_active_languages(){
-        global $wpdb;
-        $res = $wpdb->get_results("
-            SELECT code, english_name, active, lt.name AS display_name 
-            FROM {$wpdb->prefix}icl_languages l
-                JOIN {$wpdb->prefix}icl_languages_translations lt ON l.code=lt.language_code           
-            WHERE 
-                active=1 AND lt.display_language_code = '{$this->get_default_language()}' 
-            ORDER BY major DESC, english_name ASC", ARRAY_A);        
-        $languages = array();
-        foreach($res as $r){
-            $languages[] = $r;
-        }
-        return $languages;
+        return $this->active_languages;
     }
     
     function set_active_languages($arr){
@@ -675,6 +677,7 @@ class SitePress{
         }
         return $p;
     }    
+    
     function category_permalink_filter($p, $cat_id){
         global $wpdb;
         $cat_id = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id={$cat_id} AND taxonomy='category'");
@@ -683,7 +686,8 @@ class SitePress{
             $p = $p . '?lang=' . $element_lang_details->language_code;
         }
         return $p;
-    }        
+    }  
+          
     function tag_permalink_filter($p, $tag){
         global $wpdb;        
         if(is_object($tag)){                        
@@ -707,8 +711,7 @@ class SitePress{
             $sitepress->language_selector();
         }
         wp_register_sidebar_widget('icl_languages_selector', __('Language Selector', 'sitepress'), 'language_selector_widget');
-        
-        
+                
         function icl_lang_sel_nav_css($show = true){            
             $link_tag = '<link rel="stylesheet" href="'. ICL_PLUGIN_URL . '/res/css/language-selector.css?v=0.1" type="text/css" media="all" />';
             if(!$show){
@@ -719,8 +722,11 @@ class SitePress{
         }
         add_action('init','icl_lang_sel_nav_ob_start');
         add_action('wp_head','icl_lang_sel_nav_ob_end');
+        
         function icl_lang_sel_nav_ob_start(){ ob_start('icl_lang_sel_nav_prepend_css'); }
+        
         function icl_lang_sel_nav_ob_end(){ ob_end_flush();}
+        
         function icl_lang_sel_nav_prepend_css($buf){
             return preg_replace('#</title>#i','</title>' . PHP_EOL . PHP_EOL . icl_lang_sel_nav_css(false), $buf);
         }    
@@ -772,6 +778,18 @@ class SitePress{
             }          
             
             include ICL_PLUGIN_PATH . '/menu/language-selector.php';
+    }
+    
+    function get_default_categories(){
+        $default_categories_all = $this->settings['default_categories'];
+        foreach($this->active_languages as $l) $alcodes[] = $l['code'];
+        foreach($default_categories_all as $c){
+            if(in_array($c, $alcodes)){
+                $default_categories[] = $c;
+            }
+        }
+        
+        return $default_categories;            
     }
     
 }  
