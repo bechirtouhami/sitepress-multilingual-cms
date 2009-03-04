@@ -80,6 +80,15 @@ class SitePress{
             // custom hook for adding the language selector to the template
             add_action('icl_language_selector', array($this, 'language_selector'));
         }
+        
+        //$this->settings['default_categories'] = array('en'=>79);
+        //$this->save_settings();
+        
+        // short circuit get default category
+        add_filter('pre_option_default_category', array($this, 'pre_option_default_category'));
+        add_filter('the_category', array($this,'the_category_name_filter'));
+        add_filter('get_terms', array($this,'get_terms_filter'));
+        add_filter('single_cat_title', array($this,'the_category_name_filter'));
                 
     }
     
@@ -101,10 +110,12 @@ class SitePress{
         add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Absolute Links','sitepress'), __('Absolute Links','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/absolute-links.php'); 
     }
 
-    function save_settings($settings){
-        foreach($settings as $k=>$v){
-            $this->settings[$k] = $v;
-        }        
+    function save_settings($settings=null){
+        if(!is_null($settings)){
+            foreach($settings as $k=>$v){
+                $this->settings[$k] = $v;
+            }        
+        }
         update_option('icl_sitepress_settings', $this->settings);
     }
 
@@ -126,6 +137,20 @@ class SitePress{
             $wpdb->update($wpdb->prefix.'icl_languages', array('active'=>0), array('1'=>'1'));
             $wpdb->query("UPDATE {$wpdb->prefix}icl_languages SET active=1 WHERE code IN {$codes}");            
         }
+        
+        $res = $wpdb->get_results("
+            SELECT code, english_name, active, lt.name AS display_name 
+            FROM {$wpdb->prefix}icl_languages l
+                JOIN {$wpdb->prefix}icl_languages_translations lt ON l.code=lt.language_code           
+            WHERE 
+                active=1 AND lt.display_language_code = '{$this->get_default_language()}' 
+            ORDER BY major DESC, english_name ASC", ARRAY_A);        
+        $languages = array();
+        foreach($res as $r){
+            $languages[] = $r;
+        }        
+        $this->active_languages = $languages; 
+        
         return true;
     }
     
@@ -212,6 +237,7 @@ class SitePress{
         var icl_default_mark = '<?php echo __('default') ?>';     
         var icl_this_lang = '<?php echo isset($_GET['lang'])?$_GET['lang']:$this->get_default_language() ?>';   
         var icl_ajxloaderimg = '<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif';
+        var icl_cat_adder_msg = '<?php echo __('To add categories that already exist in other languages go to the <a href="categories.php">category management page</a>','sitepress')?>';
         </script>
         <?php
         wp_enqueue_script('sitepress-scripts', ICL_PLUGIN_URL . '/res/js/scripts.js', array(), '0.1');
@@ -371,11 +397,22 @@ class SitePress{
     }
         
     function save_post_actions($pidd){
+        global $wpdb;
         if($_POST['autosave']) return;
         $post_id = $_POST['post_ID'];
         $trid = $_POST['icl_trid'];
         $language_code = $_POST['icl_post_language'];
         
+        // new categories created inline go to the correct language
+        if(isset($_POST['post_category']))
+        foreach($_POST['post_category'] as $cat){
+            echo $cat;
+            echo PHP_EOL;
+            $ttid = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id={$cat} AND taxonomy='category'");
+            $wpdb->update($wpdb->prefix.'icl_translations', 
+                array('language_code'=>$_POST['icl_post_language']), 
+                array('element_id'=>$ttid, 'element_type'=>'category'));
+        }
         $this->set_element_language_details($post_id, 'post', $trid, $language_code);
     }
     
@@ -534,7 +571,6 @@ class SitePress{
         global $wpdb;
         
         // case of ajax inline category creation
-        // TODO - fix bug when a category is added inline for a new post!
         if(isset($_POST['_ajax_nonce']) && $_POST['action']=='add-category'){
             $referer = $_SERVER['HTTP_REFERER'];
             $url_pieces = parse_url($referer);
@@ -617,7 +653,7 @@ class SitePress{
     
     function exclude_other_terms($exclusions, $args){                
         global $wpdb, $pagenow;
-        if($args['type']=='category'){
+        if($args['type']=='category' || in_array($pagenow, array('post-new.php','post.php'))){
             $element_type = $taxonomy = 'category';
         }else{
             $element_type = 'tag';
@@ -782,14 +818,40 @@ class SitePress{
     
     function get_default_categories(){
         $default_categories_all = $this->settings['default_categories'];
+        
         foreach($this->active_languages as $l) $alcodes[] = $l['code'];
-        foreach($default_categories_all as $c){
+        foreach($default_categories_all as $c=>$v){
             if(in_array($c, $alcodes)){
-                $default_categories[] = $c;
+                $default_categories[$c] = $v;
             }
         }
         
         return $default_categories;            
+    }
+    
+    function set_default_categories($def_cat){
+        $this->settings['default_categories'] = $def_cat;
+        $this->save_settings();
+    }
+    
+    function pre_option_default_category($setting){
+        global $wpdb;
+        if(isset($_POST['icl_post_language'])){
+            $ttid = $this->settings['default_categories'][$_POST['icl_post_language']];
+            return $tid = $wpdb->get_var("SELECT term_id FROM {$wpdb->term_taxonomy} WHERE term_taxonomy_id={$ttid} AND taxonomy='category'");
+        }
+        return false;
+    }
+    
+    function the_category_name_filter($name){        
+        return preg_replace('#(.*) @(.*)#i','$1',$name);
+    }
+    
+    function get_terms_filter($terms){
+        foreach($terms as $k=>$v){
+            $terms[$k]->name = $this->the_category_name_filter($terms[$k]->name);
+        }
+        return $terms;
     }
     
 }  

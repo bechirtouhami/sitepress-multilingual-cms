@@ -19,6 +19,10 @@ switch($_REQUEST['icl_ajx_action']){
             $resp[0] = 1;
             $active_langs = $sitepress->get_active_languages();
             $iclresponse ='';
+            $default_categories = $sitepress->get_default_categories();            
+            $default_category_main = $wpdb->get_var("SELECT name FROM {$wpdb->terms} t JOIN {$wpdb->term_taxonomy} tx ON t.term_id=tx.term_id
+                WHERE term_taxonomy_id='{$default_categories[$sitepress->get_default_language()]}' AND taxonomy='category'");            
+            $default_category_trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id={$default_categories[$sitepress->get_default_language()]} AND element_type='category'");
             foreach($active_langs as $lang){
                 $is_default = ($sitepress->get_default_language()==$lang['code']);
                 $iclresponse .= '<li ';
@@ -28,7 +32,28 @@ switch($_REQUEST['icl_ajx_action']){
                 $iclresponse .= '>' . $lang['display_name'];
                 if($is_default) $iclresponse .= '('. __('default') . ')';
                 $iclresponse .= '</label></li>';                
-            }  
+                
+                if(!in_array($lang['code'],array_keys($default_categories))){
+                   // Create category for language
+                   // add it to defaults                   
+                   $tr_cat = $default_category_main . ' @' . $lang['code'];
+                   $tr_cat_san = sanitize_title_with_dashes($default_category_main . '-' . $lang['code']); 
+                   $term_id = $wpdb->get_var("SELECT term_id FROM {$wpdb->terms} WHERE name='{$tr_cat}'");
+                   if(!$term_id){
+                       $wpdb->query("INSERT INTO {$wpdb->terms}(name, slug) VALUES('{$tr_cat}','{$tr_cat_san}') ON DUPLICATE KEY UPDATE slug = CONCAT(slug,'".rand(1,1000)."')");
+                       $term_id = mysql_insert_id();                       
+                   }
+                   $term_taxonomy_id = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id={$term_id} AND taxonomy='category'");
+                   if(!$term_taxonomy_id){
+                        $wpdb->query("INSERT INTO {$wpdb->term_taxonomy}(term_id, taxonomy) VALUES('{$term_id}','category')") ;
+                        $term_taxonomy_id = mysql_insert_id();                        
+                   }
+                   $default_categories[$lang['code']] = $term_taxonomy_id;                   
+                   $wpdb->query("INSERT INTO {$wpdb->prefix}icl_translations(element_id,element_type,trid,language_code,source_language_code) 
+                    VALUES('{$term_taxonomy_id}','category','{$default_category_trid}','{$lang['code']}','{$sitepress->get_default_language()}')");
+                }
+            } 
+            $sitepress->set_default_categories($default_categories) ;                        
             $iclresponse .= $default_blog_category;
             $resp[1] = $iclresponse;
             // response 1 - blog got more than 2 languages; -1 blog reduced to 1 language; 0 - no change            
@@ -43,8 +68,6 @@ switch($_REQUEST['icl_ajx_action']){
             $resp[0] = 0;
         }
         echo join('|',$resp);
-        $default_categories = $sitepress->get_default_categories();
-        print_r($default_categories);        
         break;
     case 'set_default_language':
         $previous_default = $sitepress->get_default_language();

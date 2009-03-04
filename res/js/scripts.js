@@ -1,3 +1,8 @@
+jQuery(document).ready(function(){
+    if(jQuery('#category-adder').html()){
+        jQuery('#category-adder').prepend('<p>'+icl_cat_adder_msg+'</p>');
+    }
+});
 function fadeInAjxResp(spot, msg, err){
     if(err != undefined){
         col = jQuery(spot).css('color');

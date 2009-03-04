@@ -257,12 +257,12 @@ function icl_sitepress_activate(){
         'Slavic'    => 'sla'
     );
 
-    //$wpdb->query("TRUNCATE TABLE " . $wpdb->prefix . 'icl_languages');
+    $wpdb->query("TRUNCATE TABLE " . $wpdb->prefix . 'icl_languages');
     foreach($langs_names as $key=>$val){
         $wpdb->insert($wpdb->prefix . 'icl_languages', array('english_name'=>$key, 'code'=>$lang_codes[$key], 'major'=>$val['major']));
     }
     
-    //$wpdb->query("TRUNCATE TABLE " . $wpdb->prefix . 'icl_languages_translations');
+    $wpdb->query("TRUNCATE TABLE " . $wpdb->prefix . 'icl_languages_translations');
     foreach($langs_names as $lang=>$val){        
         foreach($val['tr'] as $k=>$display){        
             if(!trim($display)){
