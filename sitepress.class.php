@@ -86,9 +86,9 @@ class SitePress{
         
         // short circuit get default category
         add_filter('pre_option_default_category', array($this, 'pre_option_default_category'));
-        add_filter('the_category', array($this,'the_category_name_filter'));
-        add_filter('get_terms', array($this,'get_terms_filter'));
-        add_filter('single_cat_title', array($this,'the_category_name_filter'));
+        #add_filter('the_category', array($this,'the_category_name_filter'));
+        #add_filter('get_terms', array($this,'get_terms_filter'));
+        #add_filter('single_cat_title', array($this,'the_category_name_filter'));
                 
     }
     
@@ -836,8 +836,9 @@ class SitePress{
     
     function pre_option_default_category($setting){
         global $wpdb;
-        if(isset($_POST['icl_post_language'])){
-            $ttid = $this->settings['default_categories'][$_POST['icl_post_language']];
+        if(isset($_POST['icl_post_language']) && $_POST['icl_post_language'] || isset($_GET['lang'])){
+            $lang = isset($_POST['icl_post_language'])  && $_POST['icl_post_language']?$_POST['icl_post_language']:$_GET['lang'];
+            $ttid = $this->settings['default_categories'][$lang];
             return $tid = $wpdb->get_var("SELECT term_id FROM {$wpdb->term_taxonomy} WHERE term_taxonomy_id={$ttid} AND taxonomy='category'");
         }
         return false;
