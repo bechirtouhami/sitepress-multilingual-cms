@@ -2,6 +2,7 @@ jQuery(document).ready(function(){
     if(jQuery('#category-adder').html()){
         jQuery('#category-adder').prepend('<p>'+icl_cat_adder_msg+'</p>');
     }
+    jQuery('select[name="icl_post_language"]').change(iclPostLanguageSwitch);
 });
 function fadeInAjxResp(spot, msg, err){
     if(err != undefined){
@@ -42,4 +43,37 @@ function iclSaveForm(){
         }
     });
     return false;     
+}
+
+function iclPostLanguageSwitch(){
+    var lang = jQuery(this).attr('value');
+    var ajx = location.href.replace(/#(.*)$/,'');
+    if(-1 == location.href.indexOf('?')){
+        url_glue='?';
+    }else{
+        url_glue='&';
+    }
+    
+    if(jQuery('#parent_id').length > 0){
+        jQuery('#parent_id').load(ajx+url_glue+'lang='+lang + ' #parent_id option',{lang_switch:jQuery('#post_ID').attr('value')}, function(){
+            if(-1 == jQuery('#parent_id').html().indexOf('selected="selected"')){
+                jQuery('#parent_id').attr('value','');
+            }        
+        });
+    }else if(jQuery('#categorydiv').length > 0){
+        var ltlhlpr = document.createElement('div');
+        ltlhlpr.setAttribute('style','display:none');
+        ltlhlpr.setAttribute('id','icl_ltlhlpr');
+        jQuery(this).append(ltlhlpr);
+        jQuery('#categorydiv').slideUp();
+        jQuery('#icl_ltlhlpr').load(ajx+url_glue+'lang='+lang + ' #categorydiv',{}, function(){
+            /*alert(jQuery('#icl_ltlhlpr div').html());*/
+            jQuery('#categorydiv').html(jQuery('#icl_ltlhlpr div').html());
+            jQuery('#categorydiv').slideDown();
+            jQuery('#icl_ltlhlpr').remove();    
+            jQuery('#category-adder').prepend('<p>'+icl_cat_adder_msg+'</p>');
+        });        
+    }
+    
+    
 }

@@ -48,6 +48,10 @@ class SitePress{
             }
             
             add_filter('wp_list_pages_excludes', array($this, 'exclude_other_language_pages'));
+            add_filter('get_pages', array($this, 'exclude_other_language_pages2'));
+            add_filter('wp_dropdown_pages', array($this, 'wp_dropdown_pages'));
+            
+            
 
             // posts and pages links filters            
             add_filter('post_link', array($this, 'permalink_filter'),1,2);   
@@ -86,9 +90,17 @@ class SitePress{
         
         // short circuit get default category
         add_filter('pre_option_default_category', array($this, 'pre_option_default_category'));
-        #add_filter('the_category', array($this,'the_category_name_filter'));
-        #add_filter('get_terms', array($this,'get_terms_filter'));
-        #add_filter('single_cat_title', array($this,'the_category_name_filter'));
+        add_filter('the_category', array($this,'the_category_name_filter'));
+        add_filter('get_terms', array($this,'get_terms_filter'));
+        add_filter('single_cat_title', array($this,'the_category_name_filter'));
+        
+        // adiacent posts links
+        add_filter('get_previous_post_join', array($this,'get_adiacent_post_join'));
+        add_filter('get_next_post_join', array($this,'get_adiacent_post_join'));
+        add_filter('get_previous_post_where', array($this,'get_adiacent_post_where'));
+        add_filter('get_next_post_where', array($this,'get_adiacent_post_where'));
+        
+        
                 
     }
     
@@ -399,9 +411,14 @@ class SitePress{
     function save_post_actions($pidd){
         global $wpdb;
         if($_POST['autosave']) return;
-        $post_id = $_POST['post_ID'];
+        if($_POST['action']=='post-quickpress-publish'){
+            $post_id = $pidd;            
+            $language_code = $this->get_default_language();
+        }else{
+            $post_id = $_POST['post_ID'];
+            $language_code = $_POST['icl_post_language'];
+        }        
         $trid = $_POST['icl_trid'];
-        $language_code = $_POST['icl_post_language'];
         
         // new categories created inline go to the correct language
         if(isset($_POST['post_category']))
@@ -540,6 +557,55 @@ class SitePress{
             ");
         return array_merge($s, $excl_pages);
     }
+    
+    function exclude_other_language_pages2($arr){
+        global $wpdb;
+        $this_lang = $_GET['lang']?$wpdb->escape($_GET['lang']):$this->get_default_language();
+        $excl_pages = $wpdb->get_col("
+            SELECT p.ID FROM {$wpdb->posts} p 
+            LEFT JOIN {$wpdb->prefix}icl_translations t ON (p.ID = t.element_id OR t.element_id IS NULL)
+            WHERE t.element_type='post' AND p.post_type='page' AND t.language_code <> '{$this_lang}'
+            ");
+        foreach($arr as $page){
+            if(!in_array($page->ID,$excl_pages)){
+                $filtered_pages[] = $page;
+            }
+        }        
+        return $filtered_pages;
+    }
+    
+    function wp_dropdown_pages($output){        
+        global $wpdb;
+        if(isset($_POST['lang_switch'])){
+            $post_id = $wpdb->escape($_POST['lang_switch']);            
+            $lang = $wpdb->escape($_GET['lang']);
+            $parent = $wpdb->get_var("SELECT post_parent FROM {$wpdb->posts} WHERE ID={$post_id}");
+            $trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id='{$parent}' AND element_type='post'");
+            $translated_parent_id = $wpdb->get_var("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid='{$trid}' AND element_type='post' AND language_code='{$lang}'");
+            if($translated_parent_id){
+                $output = str_replace('selected="selected"','',$output);
+                $output = str_replace('value="'.$translated_parent_id.'"','value="'.$translated_parent_id.'" selected="selected"',$output);
+            }
+        }elseif(isset($_GET['lang']) && isset($_GET['trid'])){
+            $lang = $wpdb->escape($_GET['lang']);
+            $trid = $wpdb->escape($_GET['trid']);
+            $elements_id = $wpdb->get_col("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid='{$trid}' AND element_type='post'");
+            foreach($elements_id as $element_id){
+                $parent = $wpdb->get_var("SELECT post_parent FROM {$wpdb->posts} WHERE ID={$element_id}");
+                $trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id='{$parent}' AND element_type='post'");
+                $translated_parent_id = $wpdb->get_var("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid='{$trid}' AND element_type='post' AND language_code='{$lang}'");
+                if($translated_parent_id) break;
+            }
+            if($translated_parent_id){
+                $output = str_replace('selected="selected"','',$output);
+                $output = str_replace('value="'.$translated_parent_id.'"','value="'.$translated_parent_id.'" selected="selected"',$output);
+            }            
+        }
+        if(!$output){
+            $output = '<select id="parent_id"><option value="">' . __('Main Page (no parent)') . '</option></select>';
+        }
+        return $output;
+    }
             
     function edit_term_form($term){                
         global $wpdb, $pagenow;
@@ -586,7 +652,10 @@ class SitePress{
         // case of adding a tag via post save
         if($_POST['action']=='editpost'){
             $term_lang = $_POST['icl_post_language'];        
+        }elseif($_POST['action']=='post-quickpress-publish'){
+            $term_lang = $this->get_default_language();
         }
+        
         
         
         $trid = isset($_POST['icl_trid'])?$_POST['icl_trid']:null;        
@@ -708,8 +777,13 @@ class SitePress{
             $pid = $pid->ID;
         }
         $element_lang_details = $this->get_element_language_details($pid,'post');
-        if($this->get_default_language() != $element_lang_details->language_code){
-            $p = $p . '?lang=' . $element_lang_details->language_code;
+        if($element_lang_details->language_code && $this->get_default_language() != $element_lang_details->language_code){
+            if(strpos($p,'?')){
+                $urlglue = '&';
+            }else{
+                $urlglue = '?';
+            }
+            $p = $p . $urlglue . 'lang=' . $element_lang_details->language_code;
         }
         return $p;
     }    
@@ -854,6 +928,21 @@ class SitePress{
         }
         return $terms;
     }
+    
+    // adiacent posts links
+    function get_adiacent_post_join($join){
+        global $wpdb;
+        $join .= " JOIN {$wpdb->prefix}icl_translations t ON t.element_id = p.ID AND t.element_type='post'";        
+        return $join;
+    }    
+    
+    function get_adiacent_post_where($where){
+        global $wpdb;
+        $this_lang = $_GET['lang']?$wpdb->escape($_GET['lang']):$this->get_default_language();        
+        $where .= " AND language_code = '{$this_lang}'";
+        return $where;
+    }
+    
     
 }  
 ?>

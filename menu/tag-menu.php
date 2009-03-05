@@ -18,16 +18,13 @@
     <?php foreach($active_languages as $lang): if($this_lang==$lang['code']) continue;?>
     <tr>
         <td><?php echo $lang['display_name'] ?></td>
-        <td><?php echo isset($translations[$lang['code']]->name)?'<a href="'.get_tag_link($translations[$lang['code']]->term_id).'" title="View">'.$translations[$lang['code']]->name.'</a>':__('n/a','sitepress') ?></td>
+        <td><?php echo isset($translations[$lang['code']]->name)?'<a href="'.$edit_link.'" title="'.__('Edit','sitepress').'">'.$translations[$lang['code']]->name.'</a>':__('n/a','sitepress') ?></td>
         <td align="right">
             <?php if(!isset($translations[$lang['code']]->element_id)):?>
+            <?php $edit_link = "edit-tags.php?action=edit&amp;tag_ID=" . $translations[$lang['code']]->term_id; ?>                        
             <a href="edit-tags.php?trid=<?php echo $trid ?>&lang=<?php echo $lang['code'] ?>"><?php echo __('add','sitepress') ?></a>
             <?php else: ?>
-            <?php 
-                $edit_link = "edit-tags.php?action=edit&amp;tag_ID=" . $translations[$lang['code']]->term_id;
-                $delete_link = wp_nonce_url("edit-tags.php?action=delete&amp;tag_ID=".$translations[$lang['code']]->term_id, 'delete-tag_' . $translations[$lang['code']]->term_id);
-            ?>            
-            <a href="<?php echo $edit_link ?>"><?php echo __('edit','sitepress') ?></a> | <a href="<?php echo $delete_link ?>"><?php echo __('delete','sitepress') ?></a>
+            <a href="<?php echo get_tag_link($translations[$lang['code']]->term_id) ?>" target="_blank"><?php echo __('View','sitepress') ?></a>
             <?php endif; ?>        
         </td>
     </tr>
