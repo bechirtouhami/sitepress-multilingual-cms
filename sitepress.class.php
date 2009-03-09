@@ -3,6 +3,7 @@ class SitePress{
    
     private $settings;
     private $active_languages;
+    private $this_lang;
     
     function __construct(){
         global $wpdb;
@@ -20,6 +21,13 @@ class SitePress{
             $languages[] = $r;
         }        
         $this->active_languages = $languages; 
+        
+        if(isset($_GET['lang'])){
+            $this->this_lang = rtrim($_GET['lang'],'/');             
+        }else{
+            $this->this_lang = $this->get_default_language();
+        }        
+        
         
         // Ajax feedback
         if(isset($_POST['icl_ajx_action'])){
@@ -100,6 +108,20 @@ class SitePress{
         add_filter('get_previous_post_where', array($this,'get_adiacent_post_where'));
         add_filter('get_next_post_where', array($this,'get_adiacent_post_where'));
         
+        // feeds links
+        add_filter('feed_link', array($this,'feed_link'));
+        
+        // commenting links
+        add_filter('post_comments_feed_link', array($this,'post_comments_feed_link'));
+        add_filter('trackback_url', array($this,'trackback_url'));
+        add_filter('user_trailingslashit', array($this,'user_trailingslashit'),1, 2);        
+        
+        // date based archives
+        add_filter('year_link', array($this,'archives_link'));
+        add_filter('month_link', array($this,'archives_link'));
+        add_filter('day_link', array($this,'archives_link'));
+        add_filter('getarchives_join', array($this,'getarchives_join'));
+        add_filter('getarchives_where', array($this,'getarchives_where'));
         
                 
     }
@@ -198,6 +220,10 @@ class SitePress{
         return $this->settings['default_language'];
     }
     
+    function get_current_language(){
+        return $this->this_lang;
+    }
+    
     function set_default_language($code){        
         $iclsettings['default_language'] = $code;
         $this->save_settings($iclsettings);
@@ -247,7 +273,7 @@ class SitePress{
         var icl_ajx_saved = '<?php echo __('Data saved') ?>';
         var icl_ajx_error = '<?php echo __('Error: data not saved') ?>';
         var icl_default_mark = '<?php echo __('default') ?>';     
-        var icl_this_lang = '<?php echo isset($_GET['lang'])?$_GET['lang']:$this->get_default_language() ?>';   
+        var icl_this_lang = '<?php echo $this->this_lang ?>';   
         var icl_ajxloaderimg = '<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif';
         var icl_cat_adder_msg = '<?php echo __('To add categories that already exist in other languages go to the <a href="categories.php">category management page</a>','sitepress')?>';
         </script>
@@ -490,9 +516,8 @@ class SitePress{
     
     function posts_join_filter($join){
         global $wpdb;
-        $this_lang = $_GET['lang']?$wpdb->escape($_GET['lang']):$this->get_default_language();
-        if('all' != $this_lang){ 
-            $cond = "AND language_code='{$this_lang}'";
+        if('all' != $this->this_lang){ 
+            $cond = "AND language_code='{$wpdb->escape($this->this_lang)}'";
             $ljoin = "";
         }else{
             $cond = '';
@@ -510,7 +535,6 @@ class SitePress{
         }else{
             $type = 'page';
         }
-        $this_lang = $_GET['lang']?$_GET['lang']:$this->get_default_language();
         $active_languages = $this->get_active_languages();
         
         $res = $wpdb->get_results("
@@ -525,7 +549,7 @@ class SitePress{
         $langs['all'] = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type='{$type}'");               
         $active_languages[] = array('code'=>'all','display_name'=>__('All languages','sitepress'));
         foreach($active_languages as $lang){
-            if($lang['code']== $this_lang){
+            if($lang['code']== $this->this_lang){
                 $px = '<strong>'; 
                 $sx = ' ('. intval($langs[$lang['code']]) .')</strong>';
             }elseif(!isset($langs[$lang['code']])){
@@ -549,22 +573,20 @@ class SitePress{
     
     function exclude_other_language_pages($s){
         global $wpdb;
-        $this_lang = $_GET['lang']?$wpdb->escape($_GET['lang']):$this->get_default_language();
         $excl_pages = $wpdb->get_col("
             SELECT p.ID FROM {$wpdb->posts} p 
             LEFT JOIN {$wpdb->prefix}icl_translations t ON (p.ID = t.element_id OR t.element_id IS NULL)
-            WHERE t.element_type='post' AND p.post_type='page' AND t.language_code <> '{$this_lang}'
+            WHERE t.element_type='post' AND p.post_type='page' AND t.language_code <> '{$wpdb->escape($this->this_lang)}'
             ");
         return array_merge($s, $excl_pages);
     }
     
     function exclude_other_language_pages2($arr){
         global $wpdb;
-        $this_lang = $_GET['lang']?$wpdb->escape($_GET['lang']):$this->get_default_language();
         $excl_pages = $wpdb->get_col("
             SELECT p.ID FROM {$wpdb->posts} p 
             LEFT JOIN {$wpdb->prefix}icl_translations t ON (p.ID = t.element_id OR t.element_id IS NULL)
-            WHERE t.element_type='post' AND p.post_type='page' AND t.language_code <> '{$this_lang}'
+            WHERE t.element_type='post' AND p.post_type='page' AND t.language_code <> '{$wpdb->escape($this->this_lang)}'
             ");
         foreach($arr as $page){
             if(!in_array($page->ID,$excl_pages)){
@@ -682,7 +704,6 @@ class SitePress{
             $element_type = 'tag';
             $taxonomy = 'post_tag';
         }
-        $this_lang = $_GET['lang']?$_GET['lang']:$this->get_default_language();
         $active_languages = $this->get_active_languages();
         
         $res = $wpdb->get_results("
@@ -698,7 +719,7 @@ class SitePress{
         $langs['all'] = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->term_taxonomy} WHERE taxonomy='{$taxonomy}'");               
         $active_languages[] = array('code'=>'all','display_name'=>__('All languages','sitepress'));
         foreach($active_languages as $lang){
-            if($lang['code']== $this_lang){
+            if($lang['code']== $this->this_lang){
                 $px = '<strong>'; 
                 $sx = ' ('. intval($langs[$lang['code']]) .')</strong>';
             }elseif(!isset($langs[$lang['code']])){
@@ -731,8 +752,8 @@ class SitePress{
         if($_GET['lang']=='all'){
             return $exclusions;
         }
-        if(isset($_GET['lang'])){
-            $this_lang = $wpdb->escape($_GET['lang']);
+        if($this->this_lang != $this->get_default_language()){
+            $this_lang = $wpdb->escape($this->this_lang);
         }elseif(isset($_GET['post'])){
             $element_lang_details = $this->get_element_language_details($_GET['post'],'post');
             $this_lang = $element_lang_details->language_code;
@@ -751,22 +772,28 @@ class SitePress{
     }
         
     function language_url($code){
-        $home = get_option('home');        
+        $abshome = preg_replace('@\?lang=' . $this->this_lang . '@i','',get_option('home'));
         switch($this->settings['language_negotiation_type']){
             case '1': 
-                $url = rtrim($home,'/') . '/' . $code;
+                $url = rtrim($abshome,'/') . '/' . $code;
                 break;
             case '2': 
-                $exp = explode('.',$home);
+                $exp = explode('.',$abshome);
                 if(count($exp)==2){
-                    $url = str_replace('http://', 'http://'.$code.'.', $home);
+                    $url = str_replace('http://', 'http://'.$code.'.', $abshome);
                 }else{
-                    $url = preg_replace('#^http://([^.]+)\.(.*)$#i', 'http://'.$code.'.$2', $home);
+                    $url = preg_replace('#^http://([^.]+)\.(.*)$#i', 'http://'.$code.'.$2', $abshome);
                 }                
                 break;                
             case '3':
             default:
-                $url = $home . '?lang=' . $code;
+                $url = $abshome;
+                if($code != $this->get_default_language()){
+                    $url .= '?lang=' . $code;
+                }else{
+                    $url .= '/';
+                }
+                  
         }
         return $url;
     }
@@ -846,7 +873,7 @@ class SitePress{
     function language_selector(){
             global $wpdb, $post, $cat, $tag_id;
             $w_active_languages = $this->get_active_languages();
-            $this_lang = $_GET['lang']?$_GET['lang']:$this->get_default_language();
+            $this_lang = $this->this_lang;
             $w_this_lang = $this->get_language_details($this_lang);
                        
             $user_agent = $_SERVER['HTTP_USER_AGENT'];
@@ -864,7 +891,9 @@ class SitePress{
                 $tag_id = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id={$tag_id} AND taxonomy='post_tag'");
                 $trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id='{$tag_id}' AND element_type='tag'");                
                 $translations = $this->get_element_translations($trid,'tag');                
-            }              
+            }elseif(is_archive()){      
+                $translations = array();
+            }
     
             foreach($w_active_languages as $k=>$lang){                
                 if(is_singular() && isset($translations[$lang['code']]->post_title)){
@@ -873,6 +902,17 @@ class SitePress{
                     $lang['translated_url'] = get_category_link($translations[$lang['code']]->term_id);
                 }elseif(is_tag() && isset($translations[$lang['code']]->name)){
                     $lang['translated_url'] = get_tag_link($translations[$lang['code']]->term_id);
+                }elseif(is_archive()){
+                    global $wp_query, $icl_archive_url_filter_off;
+                    $icl_archive_url_filter_off = true;
+                    if($wp_query->is_year){
+                        $lang['translated_url'] = $this->archive_url(get_year_link( $wp_query->query_vars['year'] ), $lang['code']);
+                    }elseif($wp_query->is_month){
+                        $lang['translated_url'] = $this->archive_url(get_month_link( $wp_query->query_vars['year'], $wp_query->query_vars['monthnum'] ), $lang['code']);
+                    }elseif($wp_query->is_day){
+                        $lang['translated_url'] = $this->archive_url(get_day_link( $wp_query->query_vars['year'], $wp_query->query_vars['monthnum'], $wp_query->query_vars['day'] ), $lang['code']);
+                    }
+                    
                 }else{
                     if($this->settings['icl_lso_link_empty'] || is_home()){
                         $lang['translated_url'] = $this->language_url($lang['code']);
@@ -938,10 +978,104 @@ class SitePress{
     
     function get_adiacent_post_where($where){
         global $wpdb;
-        $this_lang = $_GET['lang']?$wpdb->escape($_GET['lang']):$this->get_default_language();        
-        $where .= " AND language_code = '{$this_lang}'";
+        $where .= " AND language_code = '{$wpdb->escape($this->this_lang)}'";
         return $where;
     }
+    
+    // feeds links
+    function feed_link($out){
+        if($this->this_lang != $this->get_default_language()){
+            if(strpos($out,'?')){
+                $urlglue = '&';
+            }else{
+                $urlglue = '?';
+            }
+            $out .= $urlglue . 'lang=' . $this->this_lang;        
+        }
+        return $out;
+    }
+    
+    // commenting links
+    function post_comments_feed_link($out){
+        switch($this->settings['language_negotiation_type']){
+            case '1': //TBD
+                break;
+            case '2': //TBD
+                break;
+            default:
+                $out = preg_replace('@\?lang=([a-z-]+)/@i','',$out) . '?lang='.$this->this_lang;
+        }
+        return $out;
+    }
+    
+    function trackback_url($out){
+        switch($this->settings['language_negotiation_type']){
+            case '1': //TBD
+                break;
+            case '2': //TBD
+                break;
+            default:
+                $out = preg_replace('@\?lang=([a-z-]+)/@i','',$out) . '?lang='.$this->this_lang;
+        }
+        return $out;
+    }
+    
+    function user_trailingslashit($string, $type_of_url){
+        // fixes comment link for when the comments list pagination is enabled
+        if($type_of_url=='comment'){
+            $string = preg_replace('@(.*)/\?lang=([a-z-]+)/(.*)@is','$1/$3?lang=$2', $string);
+        }
+        return $string;
+    }
+    
+    // archives links
+    function getarchives_join($join){
+        global $wpdb;
+        $join .= " JOIN {$wpdb->prefix}icl_translations t ON t.element_id = {$wpdb->posts}.ID AND t.element_type='post'";        
+        return $join;        
+    }
+    
+    function getarchives_where($where){
+        global $wpdb;
+        $where .= " AND language_code = '{$wpdb->escape($this->this_lang)}'";
+        return $where;                
+    } 
+       
+    function archives_link($out){
+        global $icl_archive_url_filter_off; 
+        if(!$icl_archive_url_filter_off){
+            if($this->this_lang != $this->get_default_language()){
+                if(strpos($out,'?')){
+                    $urlglue = '&';
+                }else{
+                    $urlglue = '?';
+                }
+                $out = $this->archive_url($out, $this->this_lang);
+            }        
+        }       
+        $icl_archive_url_filter_off = false;
+        return $out;
+    }
+    
+    function archive_url($url, $lang){
+        if($lang != $this->get_default_language()){
+            if(strpos($url,'?')){
+                $urlglue = '&';
+            }else{
+                $urlglue = '?';
+            }
+            switch($this->settings['language_negotiation_type']){
+                case '1': //TBD
+                    break;
+                case '2': //TBD
+                    break;
+                default:
+                    $url .=  $urlglue . 'lang=' . $lang;                                   
+            }        
+        }
+        return $url;
+    }
+    
     
     
 }  

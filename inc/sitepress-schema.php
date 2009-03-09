@@ -38,7 +38,7 @@ function icl_sitepress_activate(){
     if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
         $sql = "
         CREATE TABLE `{$table_name}` (
-            `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+            `translation_id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
             `element_type` ENUM( 'post', 'page', 'category', 'tag' ) NOT NULL DEFAULT 'post',
             `element_id` BIGINT NOT NULL ,
             `trid` BIGINT NOT NULL ,

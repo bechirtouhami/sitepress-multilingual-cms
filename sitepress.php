@@ -32,6 +32,7 @@ define('ICL_PLUGIN_URL', rtrim(get_option('siteurl'),'/') . '/wp-content/' . bas
 
 require ICL_PLUGIN_PATH . '/inc/constants.inc';
 require ICL_PLUGIN_PATH . '/inc/sitepress-schema.php';
+require ICL_PLUGIN_PATH . '/inc/icl-recent-comments-widget.php';
 require ICL_PLUGIN_PATH . '/sitepress.class.php';
 
 $sitepress = new SitePress();
