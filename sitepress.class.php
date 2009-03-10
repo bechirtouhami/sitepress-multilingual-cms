@@ -22,13 +22,8 @@ class SitePress{
         }        
         $this->active_languages = $languages; 
         
-        if(isset($_GET['lang'])){
-            $this->this_lang = rtrim($_GET['lang'],'/');             
-        }else{
-            $this->this_lang = $this->get_default_language();
-        }        
-        
-        
+        add_action('init', array($this,'init'));
+                
         // Ajax feedback
         if(isset($_POST['icl_ajx_action'])){
             add_action('init', array($this,'ajax_responses'));
@@ -50,6 +45,9 @@ class SitePress{
             add_action('delete_post', array($this,'delete_post_actions'));        
             
             add_filter('posts_join', array($this,'posts_join_filter'));
+            add_filter('comment_feed_join', array($this,'comment_feed_join'));
+            
+            
             global $pagenow;
             if(in_array($pagenow, array('edit-pages.php','edit.php'))){
                 add_action('admin_head', array($this,'language_filter'));
@@ -93,8 +91,7 @@ class SitePress{
             add_action('icl_language_selector', array($this, 'language_selector'));
             
             // front end js
-            add_action('wp_head', array($this, 'front_end_js'));
-            
+            add_action('wp_head', array($this, 'front_end_js'));            
         }
         
         // short circuit get default category
@@ -125,7 +122,63 @@ class SitePress{
         add_filter('getarchives_where', array($this,'getarchives_where'));
         if($this->settings['language_home']){
             add_filter('pre_option_home', array($this,'pre_option_home'));
-        }        
+        }     
+        
+        // language negotiation
+        add_action('query_vars', array($this,'query_vars'));
+                
+    }
+        
+    function init(){
+        if(defined('WP_ADMIN')){
+            if(isset($_GET['lang'])){
+                $this->this_lang = rtrim($_GET['lang'],'/');             
+            }else{
+                $this->this_lang = $this->get_default_language();
+            }
+        }else{
+            $al = $this->get_active_languages();
+            foreach($al as $l){
+                $active_languages[] = $l['code'];
+            }
+            $s = $_SERVER['HTTPS']=='on'?'s':'';
+            $request = 'http' . $s . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+            $home = get_option('home');
+            $url_parts = parse_url($home);
+            $blog_path = $url_parts['path']?$url_parts['path']:'/';
+            switch($this->settings['language_negotiation_type']){
+                case 1:
+                    $path  = str_replace($home,'',$request);                
+                    $exp = explode('/',trim($path,'/'));                                        
+                    if(in_array($exp[0], $active_languages)){
+                        $this->this_lang = $exp[0];
+                        $_SERVER['REQUEST_URI'] = preg_replace('@^'. $blog_path . '/' . $this->this_lang.'@i', $blog_path ,$_SERVER['REQUEST_URI']);
+                    }else{
+                        $this->this_lang = $this->get_default_language();
+                    }
+                    break;
+                case 2:    
+                    $exp = explode('.', $_SERVER['HTTP_HOST']);
+                    if(count($exp) > 2){
+                        $lang = $exp[0];
+                        if(in_array($lang, $active_languages)){
+                            $this->this_lang = $lang;
+                        }else{
+                            $this->this_lang = $this->get_default_language();
+                        }                        
+                    }else{
+                        $this->this_lang = $this->get_default_language();
+                    }
+                    break;
+                case 3:
+                default:
+                    if(isset($_GET['lang'])){
+                        $this->this_lang = rtrim($_GET['lang'],'/');             
+                    }else{
+                        $this->this_lang = $this->get_default_language();
+                    }
+            }
+        }
     }
         
     function ajax_responses(){
@@ -362,10 +415,10 @@ class SitePress{
                 $_POST['icl_form_success'] = __('ICanLocalize account details reset','sitepress');            
                 break;
             case $nonce_icl_initial_language:
-                $iclsettings['existing_content_language_verified'] = 1;
-                $this->save_settings($iclsettings);
                 $this->prepopulate_translations($_POST['icl_initial_language_code']);
                 $wpdb->update($wpdb->prefix . 'icl_languages', array('active'=>'1'), array('code'=>$_POST['icl_initial_language_code']));
+                $iclsettings['existing_content_language_verified'] = 1;
+                $this->save_settings($iclsettings);                                
                 break;
             
         }
@@ -532,6 +585,14 @@ class SitePress{
         }
         $join .= "{$ljoin} JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->posts}.ID = t.element_id 
                     AND t.element_type='post' {$cond} ";
+        return $join;
+    }
+
+    function comment_feed_join($join){
+        global $wpdb, $wp_query;        
+        $wp_query->query_vars['is_comment_feed'] = true;
+        $join .= "JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->comments}.comment_post_ID = t.element_id 
+                    AND t.element_type='post' {$cond} AND language_code='{$wpdb->escape($this->this_lang)}'";
         return $join;
     }
     
@@ -777,47 +838,60 @@ class SitePress{
         $exclusions .= ' AND term_taxonomy_id NOT IN ('.join(',',$exclude).')';
         return $exclusions;
     }
-        
-    function language_url($code){
-        $abshome = preg_replace('@\?lang=' . $this->this_lang . '@i','',get_option('home'));
+    
+    // converts WP generated url to language specific based on plugin settings
+    function convert_url($url, $code=null){
+        if(is_null($code)){
+            $code = $this->this_lang;
+        }
+        $abshome = preg_replace('@\?lang=' . $code . '@i','',get_option('home'));
         switch($this->settings['language_negotiation_type']){
-            case '1': 
-                $url = rtrim($abshome,'/') . '/' . $code;
+            case '1':                 
+                if($code != $this->get_default_language()){
+                    $url = str_replace($abshome, $abshome . '/' . $code, $url);
+                }                
                 break;
             case '2': 
                 $exp = explode('.',$abshome);
                 if(count($exp)==2){
-                    $url = str_replace('http://', 'http://'.$code.'.', $abshome);
+                    $url = str_replace('http://', 'http://'.$code.'.', $url);
                 }else{
-                    $url = preg_replace('#^http://([^.]+)\.(.*)$#i', 'http://'.$code.'.$2', $abshome);
+                    $url = preg_replace('#^http://([^.]+)\.(.*)$#i', 'http://'.$code.'.$2', $url);
                 }                
                 break;                
             case '3':
             default:
-                $url = $abshome;
-                if($code != $this->get_default_language()){
-                    $url .= '?lang=' . $code;
+                if(false===strpos($url,'?')){
+                    $url_glue = '?';
                 }else{
-                    $url .= '/';
+                    $url_glue = '&';
                 }
-                  
+                if($code != $this->get_default_language()){
+                    $url .= $url_glue . 'lang=' . $code;
+                }
         }
+      return $url;  
+    } 
+        
+    function language_url($code){
+        $abshome = get_option('home');
+        if($this->settings['language_negotiation_type'] == 1 || $this->settings['language_negotiation_type'] == 2){
+            $url = trailingslashit($this->convert_url($abshome, $code));
+        }else{
+            $url = $this->convert_url($abshome, $code);
+        }
+        
         return $url;
     }
     
-    function permalink_filter($p, $pid){
+    function permalink_filter($p, $pid){        
         global $wpdb;
         if(is_object($pid)){                        
             $pid = $pid->ID;
         }
-        $element_lang_details = $this->get_element_language_details($pid,'post');
+        $element_lang_details = $this->get_element_language_details($pid,'post');        
         if($element_lang_details->language_code && $this->get_default_language() != $element_lang_details->language_code){
-            if(strpos($p,'?')){
-                $urlglue = '&';
-            }else{
-                $urlglue = '?';
-            }
-            $p = $p . $urlglue . 'lang=' . $element_lang_details->language_code;
+            $p = $this->convert_url($p, $element_lang_details->language_code);
         }
         return $p;
     }    
@@ -827,7 +901,7 @@ class SitePress{
         $cat_id = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id={$cat_id} AND taxonomy='category'");
         $element_lang_details = $this->get_element_language_details($cat_id,'category');
         if($this->get_default_language() != $element_lang_details->language_code){
-            $p = $p . '?lang=' . $element_lang_details->language_code;
+            $p = $this->convert_url($p);
         }
         return $p;
     }  
@@ -841,7 +915,7 @@ class SitePress{
         }        
         $element_lang_details = $this->get_element_language_details($tag_id,'tag');
         if($this->get_default_language() != $element_lang_details->language_code){
-            $p = $p . '?lang=' . $element_lang_details->language_code;
+            $p = $this->convert_url($p);
         }
         return $p;
     }            
@@ -910,7 +984,7 @@ class SitePress{
                     $lang['translated_url'] = get_category_link($translations[$lang['code']]->term_id);
                 }elseif(is_tag() && isset($translations[$lang['code']]->name)){
                     $lang['translated_url'] = get_tag_link($translations[$lang['code']]->term_id);
-                }elseif(is_archive()){
+                }elseif(is_archive() && !is_tag()){
                     global $wp_query, $icl_archive_url_filter_off;
                     $icl_archive_url_filter_off = true;
                     if($wp_query->is_year){
@@ -920,6 +994,7 @@ class SitePress{
                     }elseif($wp_query->is_day){
                         $lang['translated_url'] = $this->archive_url(get_day_link( $wp_query->query_vars['year'], $wp_query->query_vars['monthnum'], $wp_query->query_vars['day'] ), $lang['code']);
                     }
+                    $icl_archive_url_filter_off = false;
                 }elseif(is_search()){
                     $url_glue = strpos($this->language_url($lang['code']),'?')===false ? '?' : '&';
                     $lang['translated_url'] = $this->language_url($lang['code']) . $url_glue . 's=' . $_GET['s'];                                        
@@ -934,7 +1009,7 @@ class SitePress{
                 }
                 if(!$skip_lang){
                     $w_active_languages[$k] = $lang;                    
-                }                                
+                }                      
             }          
             include ICL_PLUGIN_PATH . '/menu/language-selector.php';
     }
@@ -993,40 +1068,16 @@ class SitePress{
     
     // feeds links
     function feed_link($out){
-        if($this->this_lang != $this->get_default_language()){
-            if(strpos($out,'?')){
-                $urlglue = '&';
-            }else{
-                $urlglue = '?';
-            }
-            $out .= $urlglue . 'lang=' . $this->this_lang;        
-        }
-        return $out;
+        return $this->convert_url($out);
     }
     
     // commenting links
     function post_comments_feed_link($out){
-        switch($this->settings['language_negotiation_type']){
-            case '1': //TBD
-                break;
-            case '2': //TBD
-                break;
-            default:
-                $out = preg_replace('@\?lang=([a-z-]+)/@i','',$out) . '?lang='.$this->this_lang;
-        }
-        return $out;
+        return $this->convert_url($out);
     }
     
     function trackback_url($out){
-        switch($this->settings['language_negotiation_type']){
-            case '1': //TBD
-                break;
-            case '2': //TBD
-                break;
-            default:
-                $out = preg_replace('@\?lang=([a-z-]+)/@i','',$out) . '?lang='.$this->this_lang;
-        }
-        return $out;
+        return $this->convert_url($out);
     }
     
     function user_trailingslashit($string, $type_of_url){
@@ -1051,51 +1102,37 @@ class SitePress{
     } 
        
     function archives_link($out){
-        global $icl_archive_url_filter_off; 
+        global $icl_archive_url_filter_off;                 
         if(!$icl_archive_url_filter_off){
-            if($this->this_lang != $this->get_default_language()){
-                if(strpos($out,'?')){
-                    $urlglue = '&';
-                }else{
-                    $urlglue = '?';
-                }
-                $out = $this->archive_url($out, $this->this_lang);
-            }        
+            $out = $this->archive_url($out, $this->this_lang);
         }       
         $icl_archive_url_filter_off = false;
         return $out;
     }
     
-    function archive_url($url, $lang){
-        if($lang != $this->get_default_language()){
-            if(strpos($url,'?')){
-                $urlglue = '&';
-            }else{
-                $urlglue = '?';
-            }
-            switch($this->settings['language_negotiation_type']){
-                case '1': //TBD
-                    break;
-                case '2': //TBD
-                    break;
-                default:
-                    $url .=  $urlglue . 'lang=' . $lang;                                   
-            }        
-        }
+    function archive_url($url, $lang){        
+        $url = $this->convert_url($url, $lang);
         return $url;
     }
     
     // TO REVISE
-    function pre_option_home(){  
-        $dbbt = debug_backtrace();        
+    function pre_option_home(){                              
+        $dbbt = debug_backtrace();                                     
         if($dbbt[3]['file'] == realpath(TEMPLATEPATH . '/header.php')){
-            $ret = rtrim($this->language_url($this->this_lang),'/');
+            $ret = $this->language_url($this->this_lang);                                       
         }else{
             $ret = false;
         }
         return $ret;
     }
     
+    function query_vars($public_query_vars){
+        $public_query_vars[] = 'lang';
+        global $wp_query;
+        $_GET['lang'] = $this->this_lang;
+        $wp_query->query_vars['lang'] = $this->this_lang;                    
+        return $public_query_vars;
+    }
     
 }  
 ?>

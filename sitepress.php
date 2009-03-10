@@ -40,8 +40,7 @@ $sitepress = new SitePress();
 // activation hook
 register_activation_hook( __FILE__, 'icl_sitepress_activate' );
 register_deactivation_hook(__FILE__, 'icl_sitepress_deactivate');
-
-
+       
 /*
 //sample hook posts filter menu
 add_action('restrict_manage_posts', 'sp_posts_language_filter_menu');
