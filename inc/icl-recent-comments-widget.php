@@ -97,8 +97,8 @@ function icl_wp_widget_recent_comments_style() {
  */
 function icl_wp_widget_recent_comments_register() {
     $widget_ops = array('classname' => 'widget_recent_comments', 'description' => __( 'The most recent comments' ) );
-    wp_register_sidebar_widget('recent-comments', __('Recent Comments@'), 'icl_wp_widget_recent_comments', $widget_ops);
-    wp_register_widget_control('recent-comments', __('Recent Comments@'), 'icl_wp_widget_recent_comments_control');
+    wp_register_sidebar_widget('recent-comments', __('Recent Comments'), 'icl_wp_widget_recent_comments', $widget_ops);
+    wp_register_widget_control('recent-comments', __('Recent Comments'), 'icl_wp_widget_recent_comments_control');
 
     if ( is_active_widget('icl_wp_widget_recent_comments') )
         add_action('wp_head', 'icl_wp_widget_recent_comments_style');

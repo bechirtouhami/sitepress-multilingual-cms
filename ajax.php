@@ -170,6 +170,11 @@ switch($_REQUEST['icl_ajx_action']){
         $sitepress->save_settings($iclsettings);    
         echo 1;
         break;
+    case 'icl_lang_more_options':
+        $iclsettings['language_home'] = $_POST['icl_language_home'];
+        $sitepress->save_settings($iclsettings);
+        echo 1; 
+       break;        
     default:
         echo __('Invalid action','sitepress');                
 }    

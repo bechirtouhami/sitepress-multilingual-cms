@@ -29,8 +29,7 @@
             &nbsp;
             <input class="button" name="save" value="<?php echo __('Save') ?>" type="submit" />
         </p>
-        </form>
-    
+        </form>        
     <?php else: ?>
     
         <h3><?php echo __('Site Languages', 'sitepress') ?></h3>    
@@ -67,7 +66,6 @@
                 </td>
             </tr>
         </table>
-        
         <span id="icl_lnt">
         <?php if(count($active_languages) > 1): ?>            
             <h3><?php echo __('Choose how to determine which language visitors see contents in', 'sitepress') ?></h3>    
@@ -137,6 +135,19 @@
             </form>            
         <?php endif; ?>
         </span>
+        
+        <h3><?php echo __('More options', 'sitepress') ?></h3>
+        <form id="icl_lang_more_options" name="icl_lang_more_options">
+        <p>
+            <label><input type="checkbox" id="icl_language_home" name="icl_language_home" <?php if($sitepress_settings['language_home']): ?>checked="checked"<?php endif; ?> value="1" />
+            <?php echo __('Use language specific home pages', 'sitepress') ?></label>
+        </p>
+        <p>
+            <input class="button" name="save" value="<?php echo __('Save') ?>" type="submit" />
+            <span class="icl_ajx_response" id="icl_ajx_response_mo"></span>
+        </p>
+        </form>
+        
         
     <?php endif; ?>
     

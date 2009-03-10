@@ -304,6 +304,7 @@ function icl_sitepress_activate(){
             'language_negotiation_type' => 3,
             'icl_lso_header' => 0, 
             'icl_lso_link_empty' => 0,
+            'language_home' => 1,
             'default_language'  => $blog_default_lang,
             'default_categories' => array($blog_default_lang => $blog_default_cat_tax_id)
         );        

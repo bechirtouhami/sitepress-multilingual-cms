@@ -8,6 +8,7 @@ addLoadEvent(function(){
     jQuery('#icl_enabled_languages input').attr('disabled','disabled');    
     jQuery('#icl_save_language_negotiation_type').submit(iclSaveForm);    
     jQuery('#icl_save_language_switcher_options').submit(iclSaveForm);    
+    jQuery('#icl_lang_more_options').submit(iclSaveForm);    
     
 });
 function editingDefaultLanguage(){

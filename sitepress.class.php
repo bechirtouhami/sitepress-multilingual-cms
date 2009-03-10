@@ -91,10 +91,11 @@ class SitePress{
             
             // custom hook for adding the language selector to the template
             add_action('icl_language_selector', array($this, 'language_selector'));
+            
+            // front end js
+            add_action('wp_head', array($this, 'front_end_js'));
+            
         }
-        
-        //$this->settings['default_categories'] = array('en'=>79);
-        //$this->save_settings();
         
         // short circuit get default category
         add_filter('pre_option_default_category', array($this, 'pre_option_default_category'));
@@ -122,10 +123,11 @@ class SitePress{
         add_filter('day_link', array($this,'archives_link'));
         add_filter('getarchives_join', array($this,'getarchives_join'));
         add_filter('getarchives_where', array($this,'getarchives_where'));
-        
-                
+        if($this->settings['language_home']){
+            add_filter('pre_option_home', array($this,'pre_option_home'));
+        }        
     }
-    
+        
     function ajax_responses(){
         global $wpdb;
         // moved
@@ -264,7 +266,7 @@ class SitePress{
         return $this->settings['site_id'] && $this->settings['access_key'];
     }
     
-    function js_scripts_setup(){
+    function js_scripts_setup(){        
         $page = basename($_GET['page']);
         $page_basename = str_replace('.php','',$page);
         ?>
@@ -282,6 +284,11 @@ class SitePress{
         if($page_basename){
             wp_enqueue_script('sitepress-' . $page_basename, ICL_PLUGIN_URL . '/res/js/'.$page_basename.'.js', array(), '0.1');
         }
+    }
+    
+    function front_end_js(){
+        echo '<script type="text/javascript">var icl_lang = \''.$this->this_lang.'\';</script>';        
+        echo '<script type="text/javascript" src="'. ICL_PLUGIN_URL . '/res/js/sitepress.js"></script>';        
     }
     
     function js_scripts_categories(){
@@ -895,7 +902,8 @@ class SitePress{
                 $translations = array();
             }
     
-            foreach($w_active_languages as $k=>$lang){                
+            foreach($w_active_languages as $k=>$lang){
+                $skip_lang = false;    
                 if(is_singular() && isset($translations[$lang['code']]->post_title)){
                     $lang['translated_url'] = get_permalink($translations[$lang['code']]->element_id);
                 }elseif(is_category() && isset($translations[$lang['code']]->name)){
@@ -912,7 +920,9 @@ class SitePress{
                     }elseif($wp_query->is_day){
                         $lang['translated_url'] = $this->archive_url(get_day_link( $wp_query->query_vars['year'], $wp_query->query_vars['monthnum'], $wp_query->query_vars['day'] ), $lang['code']);
                     }
-                    
+                }elseif(is_search()){
+                    $url_glue = strpos($this->language_url($lang['code']),'?')===false ? '?' : '&';
+                    $lang['translated_url'] = $this->language_url($lang['code']) . $url_glue . 's=' . $_GET['s'];                                        
                 }else{
                     if($this->settings['icl_lso_link_empty'] || is_home()){
                         $lang['translated_url'] = $this->language_url($lang['code']);
@@ -923,10 +933,9 @@ class SitePress{
                     }                    
                 }
                 if(!$skip_lang){
-                    $w_active_languages[$k] = $lang;
-                }                
+                    $w_active_languages[$k] = $lang;                    
+                }                                
             }          
-            
             include ICL_PLUGIN_PATH . '/menu/language-selector.php';
     }
     
@@ -1076,6 +1085,16 @@ class SitePress{
         return $url;
     }
     
+    // TO REVISE
+    function pre_option_home(){  
+        $dbbt = debug_backtrace();        
+        if($dbbt[3]['file'] == realpath(TEMPLATEPATH . '/header.php')){
+            $ret = rtrim($this->language_url($this->this_lang),'/');
+        }else{
+            $ret = false;
+        }
+        return $ret;
+    }
     
     
 }  
