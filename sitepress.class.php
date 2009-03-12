@@ -154,7 +154,7 @@ class SitePress{
             $request = 'http' . $s . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
             $home = get_option('home');
             $url_parts = parse_url($home);
-            $blog_path = $url_parts['path']?$url_parts['path']:'/';
+            $blog_path = $url_parts['path']?$url_parts['path']:'';            
             switch($this->settings['language_negotiation_type']){
                 case 1:
                     $path  = str_replace($home,'',$request);                
@@ -187,9 +187,7 @@ class SitePress{
                         $this->this_lang = $this->get_default_language();
                     }
             }
-        }
-        
-        $this->locale();
+        }        
     }
         
     function ajax_responses(){
@@ -1020,7 +1018,7 @@ class SitePress{
                     $url_glue = strpos($this->language_url($lang['code']),'?')===false ? '?' : '&';
                     $lang['translated_url'] = $this->language_url($lang['code']) . $url_glue . 's=' . $_GET['s'];                                        
                 }else{
-                    if($this->settings['icl_lso_link_empty'] || is_home()){
+                    if($this->settings['icl_lso_link_empty'] || is_home() || is_404()){
                         $lang['translated_url'] = $this->language_url($lang['code']);
                         $skip_lang = false;
                     }else{
