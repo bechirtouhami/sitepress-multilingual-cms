@@ -54,3 +54,10 @@
     width:auto; 
     padding:0px;  
 }
+
+table.language_domains{
+    margin:6px;
+}
+.language_domains td, .language_domains input{
+    font-size: 11px;
+}

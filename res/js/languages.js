@@ -6,9 +6,10 @@ addLoadEvent(function(){
     jQuery('#icl_cancel_language_selection').click(hideLanguagePicker);
     jQuery('#icl_save_language_selection').click(saveLanguageSelection);                        
     jQuery('#icl_enabled_languages input').attr('disabled','disabled');    
-    jQuery('#icl_save_language_negotiation_type').submit(iclSaveForm);    
+    jQuery('#icl_save_language_negotiation_type').submit(iclSaveLanguageNegotiationType);    
     jQuery('#icl_save_language_switcher_options').submit(iclSaveForm);    
     jQuery('#icl_lang_more_options').submit(iclSaveForm);    
+    jQuery('input[name="icl_language_negotiation_type"]').change(iclLntDomains)
     
 });
 function editingDefaultLanguage(){
@@ -103,3 +104,77 @@ function saveLanguageSelection(){
     hideLanguagePicker();
     
 }   
+
+function iclLntDomains(){
+    if(jQuery(this).attr('checked') && jQuery(this).attr('id')=='icl_lnt_domains'){
+        jQuery(this).parent().parent().append('<div id="icl_lnt_domains_box"></div>');
+        jQuery('#icl_lnt_domains_box').html(icl_ajxloaderimg);
+        jQuery('#icl_save_language_negotiation_type input[type="submit"]').attr('disabled','disabled');
+        jQuery('#icl_lnt_domains_box').load(icl_ajx_url, {icl_ajx_action:'language_domains'}, function(resp){
+            jQuery('#icl_save_language_negotiation_type input[type="submit"]').removeAttr('disabled');
+        })
+    }else{
+        if(jQuery('#icl_lnt_domains_box').length){
+            jQuery('#icl_lnt_domains_box').fadeOut('fast', function(){jQuery('#icl_lnt_domains_box').remove()});        
+        }        
+    }
+    
+}
+
+function iclSaveLanguageNegotiationType(){
+    var formname = jQuery(this).attr('name');
+    var form_errors = false;
+    jQuery('form[name="'+formname+'"] .icl_form_errors').html('').hide();
+    jQuery('form[name="'+formname+'"] input').css('color','#000');
+    ajx_resp = jQuery('form[name="'+formname+'"] .icl_ajx_response').attr('id');
+    fadeInAjxResp('#'+ajx_resp, icl_ajxloaderimg);
+    jQuery.ajaxSetup({async: false});
+    var used_urls = new Array(jQuery('#icl_ln_home').html());
+    jQuery('.validate_language_domain').each(function(){        
+        if(jQuery(this).attr('checked')){
+            var lang = jQuery(this).attr('value');
+            jQuery('#ajx_ld_'+lang).html(icl_ajxloaderimg);
+            var lang_td = jQuery('#icl_validation_result_'+lang);
+            var lang_domain_input = jQuery('#language_domain_'+lang); 
+            if(used_urls.indexOf(lang_domain_input.attr('value')) != -1 ){
+                jQuery('#ajx_ld_'+lang).html('');
+                lang_domain_input.css('color','#f00');
+                form_errors = true;
+            }else{
+                used_urls.push(lang_domain_input.attr('value'));            
+                lang_domain_input.css('color','#000');
+                jQuery('#ajx_ld_'+lang).load(icl_ajx_url, 
+                    {icl_ajx_action:'validate_language_domain',url:lang_domain_input.attr('value')}, 
+                    function(resp){
+                        jQuery('#ajx_ld_'+lang).html('');
+                        if(resp=='0'){
+                            lang_domain_input.css('color','#f00');
+                            form_errors = true;
+                            
+                        }
+                });
+            }
+        }        
+    });
+    jQuery.ajaxSetup({async: true});
+    if(form_errors){        
+        fadeInAjxResp('#'+ajx_resp, icl_ajx_error,true);
+        return false;
+    }    
+    jQuery.ajax({
+        type: "POST",
+        url: icl_ajx_url,
+        data: "icl_ajx_action="+jQuery(this).attr('name')+"&"+jQuery(this).serialize(),
+        success: function(msg){
+            spl = msg.split('|');
+            if(spl[0]=='1'){
+                fadeInAjxResp('#'+ajx_resp, icl_ajx_saved);                                         
+            }else{                        
+                jQuery('form[name="'+formname+'"] .icl_form_errors').html(spl[1]);
+                jQuery('form[name="'+formname+'"] .icl_form_errors').fadeIn()
+                fadeInAjxResp('#'+ajx_resp, icl_ajx_error,true);
+            }  
+        }
+    });
+    return false;     
+}

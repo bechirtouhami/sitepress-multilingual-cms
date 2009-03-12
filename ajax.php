@@ -161,6 +161,7 @@ switch($_REQUEST['icl_ajx_action']){
         break;
     case 'icl_save_language_negotiation_type':
         $iclsettings['language_negotiation_type'] = $_POST['icl_language_negotiation_type'];
+        $iclsettings['language_domains'] = $_POST['language_domains'];
         $sitepress->save_settings($iclsettings);
         echo 1;
         break;
@@ -175,6 +176,55 @@ switch($_REQUEST['icl_ajx_action']){
         $sitepress->save_settings($iclsettings);
         echo 1; 
        break;        
+    case 'language_domains':
+        $active_languages = $sitepress->get_active_languages();
+        $default_language = $sitepress->get_default_language();
+        $iclsettings = $sitepress->get_settings();
+        $language_domains = $iclsettings['language_domains'];        
+        echo '<table class="language_domains">';
+        foreach($active_languages as $lang){
+            $home = get_option('home');
+            if($lang['code']!=$default_language){
+                if(isset($language_domains[$lang['code']])){
+                    $sugested_url = $language_domains[$lang['code']];
+                }else{
+                    $url_parts = parse_url($home);                    
+                    $exp = explode('.' , $url_parts['host']);                    
+                    if(count($exp) < 3){
+                        $sugested_url = $url_parts['scheme'] . '://' . $lang['code'] . '.' . $url_parts['host'] . $url_parts['path'];    
+                    }else{
+                        array_shift($exp);                        
+                        $sugested_url = $url_parts['scheme'] . '://' . $lang['code'] . '.' . join('.' , $exp) . $url_parts['path'];    
+                    }            
+                }
+            }
+            
+            echo '<tr>';
+            echo '<td>' . $lang['display_name'] . '</td>';
+            if($lang['code']==$default_language){
+                echo '<td id="icl_ln_home">' . $home . '</td>';
+                echo '<td>&nbsp;</td>';
+                echo '<td>&nbsp;</td>';
+            }else{
+                echo '<td><input type="text" id="language_domain_'.$lang['code'].'" name="language_domains['.$lang['code'].']" value="'.$sugested_url.'" size="40" /></td>';
+                echo '<td id="icl_validation_result_'.$lang['code'].'"><label><input class="validate_language_domain" type="checkbox" name="validate_language_domains[]" value="'.$lang['code'].'" checked="checked" /> ' . __('Validate on save', 'sitepress') . '</label></td><td><span id="ajx_ld_'.$lang['code'].'"></span></td>';
+            }                        
+            echo '</tr>';
+        }
+        echo '</table>';
+        break;
+    case 'validate_language_domain':
+        if(false === strpos($_POST['url'],'?')){$url_glue='?';}else{$url_glue='&';}
+        $url = $_POST['url'] . $url_glue . '____icl_validate_domain=1';
+        $client = new WP_Http();
+        $response = $client->request($url, 'timeout=15');
+        if(!is_wp_error($response) && ($response['response']['code']=='200') && ($response['body'] == '<!--'.get_option('home').'-->')){
+            echo 1;
+        }else{
+            echo 0;
+        }        
+        
+        break;
     default:
         echo __('Invalid action','sitepress');                
 }    

@@ -79,9 +79,29 @@
                 </li>
                 <li>
                     <label>
-                        <input type="radio" name="icl_language_negotiation_type" value="2" <?php if($sitepress_settings['language_negotiation_type']==2):?>checked="checked"<?php endif?> />
+                        <input id="icl_lnt_domains" type="radio" name="icl_language_negotiation_type" value="2" <?php if($sitepress_settings['language_negotiation_type']==2):?>checked="checked"<?php endif?> />
                         <?php echo __('A different domain per language', 'sitepress') ?>
                     </label>
+                    <?php if($sitepress_settings['language_negotiation_type']==2):?>                    
+                    <div id="icl_lnt_domains_box">
+                    <table class="language_domains">
+                    <?php foreach($active_languages as $lang) :?>
+                    <tr>
+                        <td><?php echo $lang['display_name'] ?></td>
+                        <?php if($lang['code']==$sitepress->get_default_language()): ?>                        
+                        <td id="icl_ln_home"><?php echo get_option('home') ?></td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <?php else: ?>
+                        <td><input type="text" id="language_domain_<?php echo $lang['code'] ?>" name="language_domains[<?php echo $lang['code'] ?>]" value="<?php echo $sitepress_settings['language_domains'][$lang['code']] ?>" size="40" /></td>
+                        <td><label><input class="validate_language_domain" type="checkbox" name="validate_language_domains[]" value="<?php echo $lang['code'] ?>" checked="checked" /> <?php echo  __('Validate on save', 'sitepress') ?></td>
+                        <td><span id="ajx_ld_<?php echo $lang['code'] ?>"></span></td>
+                        <?php endif; ?>
+                    </tr>
+                    <?php endforeach; ?>
+                    </table>
+                    </div>
+                    <?php endif; ?>
                 </li>
                 <li>
                     <label>

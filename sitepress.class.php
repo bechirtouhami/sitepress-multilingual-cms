@@ -126,10 +126,14 @@ class SitePress{
         
         // language negotiation
         add_action('query_vars', array($this,'query_vars'));
+        
+        // 
+        add_filter('language_attributes', array($this, 'language_attributes'));
                 
+        if(isset($_GET['____icl_validate_domain'])){ echo '<!--'.get_option('home').'-->'; exit; }                        
     }
         
-    function init(){
+    function init(){        
         if(defined('WP_ADMIN')){
             if(isset($_GET['lang'])){
                 $this->this_lang = rtrim($_GET['lang'],'/');             
@@ -1134,5 +1138,14 @@ class SitePress{
         return $public_query_vars;
     }
     
+    function language_attributes($output){
+        if(preg_match('#lang="[a-z-]+"#i',$output)){
+            $output = preg_replace('#lang="([a-z-]+)"#i', 'lang="'.$this->this_lang.'"', $output);
+        }else{
+            $output .= ' lang="'.$this->this_lang.'"';
+        }
+        return $output;
+    }
+        
 }  
 ?>
