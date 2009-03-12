@@ -77,10 +77,20 @@
                         <?php echo sprintf(__('Different languages in directories (%s - %s, %s/%s - %s, etc.)', 'sitepress'), get_option('home'), $default_language['display_name'] , get_option('home'), $sample_lang['code'], $sample_lang['display_name'] ) ?>
                     </label>
                 </li>
+                <?php 
+                if(defined('WPMU_PLUGIN_DIR')){
+                    $icl_lnt_disabled = 'disabled="disabled" ';
+                }else{
+                    $icl_lnt_disabled = '';
+                } 
+                ?>
                 <li>
                     <label>
-                        <input id="icl_lnt_domains" type="radio" name="icl_language_negotiation_type" value="2" <?php if($sitepress_settings['language_negotiation_type']==2):?>checked="checked"<?php endif?> />
+                        <input <?php echo $icl_lnt_disabled ?>id="icl_lnt_domains" type="radio" name="icl_language_negotiation_type" value="2" <?php if($sitepress_settings['language_negotiation_type']==2):?>checked="checked"<?php endif?> />
                         <?php echo __('A different domain per language', 'sitepress') ?>
+                        <?php if($icl_lnt_disabled): ?>
+                        <span class="icl_error_text"><?php echo __('This option is not yet available for WPMU', 'sitepress')?></span>
+                        <?php endif; ?>
                     </label>
                     <?php if($sitepress_settings['language_negotiation_type']==2):?>                    
                     <div id="icl_lnt_domains_box">
@@ -102,7 +112,7 @@
                     </table>
                     </div>
                     <?php endif; ?>
-                </li>
+                </li>                
                 <li>
                     <label>
                         <input type="radio" name="icl_language_negotiation_type" value="3" <?php if($sitepress_settings['language_negotiation_type']==3):?>checked="checked"<?php endif?> />

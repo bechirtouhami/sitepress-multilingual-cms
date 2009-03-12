@@ -32,6 +32,7 @@ define('ICL_PLUGIN_URL', rtrim(get_option('siteurl'),'/') . '/wp-content/' . bas
 
 require ICL_PLUGIN_PATH . '/inc/constants.inc';
 require ICL_PLUGIN_PATH . '/inc/sitepress-schema.php';
+require ICL_PLUGIN_PATH . '/inc/template-functions.php';
 require ICL_PLUGIN_PATH . '/inc/icl-recent-comments-widget.php';
 require ICL_PLUGIN_PATH . '/sitepress.class.php';
 
@@ -40,6 +41,20 @@ $sitepress = new SitePress();
 // activation hook
 register_activation_hook( __FILE__, 'icl_sitepress_activate' );
 register_deactivation_hook(__FILE__, 'icl_sitepress_deactivate');
+       
+       
+       
+$table_name = $wpdb->prefix.'icl_locale_map';
+if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
+    $sql = "
+        CREATE TABLE `{$table_name}` (
+            `code` VARCHAR( 8 ) NOT NULL ,
+            `locale` VARCHAR( 8 ) NOT NULL ,
+            UNIQUE (`code` ,`locale`)
+        )";
+    $wpdb->query($sql);
+} 
+       
        
 /*
 //sample hook posts filter menu

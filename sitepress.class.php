@@ -22,7 +22,7 @@ class SitePress{
         }        
         $this->active_languages = $languages; 
         
-        add_action('init', array($this,'init'));
+        add_action('plugins_loaded', array($this,'init'));
                 
         // Ajax feedback
         if(isset($_POST['icl_ajx_action'])){
@@ -129,10 +129,15 @@ class SitePress{
         
         // 
         add_filter('language_attributes', array($this, 'language_attributes'));
-                
+        
+        //
+        if($this->this_lang != $this->get_default_language()){
+            add_action('locale', array($this, 'locale'));
+        }                                        
+                                        
         if(isset($_GET['____icl_validate_domain'])){ echo '<!--'.get_option('home').'-->'; exit; }                        
     }
-        
+                        
     function init(){        
         if(defined('WP_ADMIN')){
             if(isset($_GET['lang'])){
@@ -183,6 +188,8 @@ class SitePress{
                     }
             }
         }
+        
+        $this->locale();
     }
         
     function ajax_responses(){
@@ -284,8 +291,19 @@ class SitePress{
     }
     
     function set_default_language($code){        
+        global $wpdb;
         $iclsettings['default_language'] = $code;
         $this->save_settings($iclsettings);
+        
+        // change WP locale
+        $locale = $wpdb->get_var("SELECT locale FROM {$wpdb->prefix}icl_locale_map WHERE code='{$code}'");
+        if($locale){
+            update_option('WPLANG', $locale);
+        }
+        if($code != 'en' && !file_exists(ABSPATH . WPINC . '/languages/' . $locale . '.mo')){
+            return 1; //locale not installed
+        }
+        
         return true;
     }
     
@@ -848,31 +866,30 @@ class SitePress{
         if(is_null($code)){
             $code = $this->this_lang;
         }
-        $abshome = preg_replace('@\?lang=' . $code . '@i','',get_option('home'));
-        switch($this->settings['language_negotiation_type']){
-            case '1':                 
-                if($code != $this->get_default_language()){
+        
+        if($code != $this->get_default_language()){
+            $abshome = preg_replace('@\?lang=' . $code . '@i','',get_option('home'));
+            switch($this->settings['language_negotiation_type']){
+                case '1':                 
                     $url = str_replace($abshome, $abshome . '/' . $code, $url);
-                }                
-                break;
-            case '2': 
-                $exp = explode('.',$abshome);
-                if(count($exp)==2){
-                    $url = str_replace('http://', 'http://'.$code.'.', $url);
-                }else{
-                    $url = preg_replace('#^http://([^.]+)\.(.*)$#i', 'http://'.$code.'.$2', $url);
-                }                
-                break;                
-            case '3':
-            default:
-                if(false===strpos($url,'?')){
-                    $url_glue = '?';
-                }else{
-                    $url_glue = '&';
-                }
-                if($code != $this->get_default_language()){
+                    break;
+                case '2': 
+                    $exp = explode('.',$abshome);
+                    if(count($exp)==2){
+                        $url = str_replace('http://', 'http://'.$code.'.', $url);
+                    }else{
+                        $url = preg_replace('#^http://([^.]+)\.(.*)$#i', 'http://'.$code.'.$2', $url);
+                    }                
+                    break;                
+                case '3':
+                default:
+                    if(false===strpos($url,'?')){
+                        $url_glue = '?';
+                    }else{
+                        $url_glue = '&';
+                    }
                     $url .= $url_glue . 'lang=' . $code;
-                }
+            }
         }
       return $url;  
     } 
@@ -1146,6 +1163,16 @@ class SitePress{
         }
         return $output;
     }
+    
+    function locale(){
+        global $wpdb, $locale;
+        $l = $wpdb->get_var("SELECT locale FROM {$wpdb->prefix}icl_locale_map WHERE code='{$this->this_lang}'");
+        if($l){
+            $locale = $l;
+        }
+        return $locale;
+    }
+    
         
 }  
 ?>

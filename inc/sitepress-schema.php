@@ -48,6 +48,19 @@ function icl_sitepress_activate(){
         )";
         $wpdb->query($sql);
     } 
+
+    // translations
+    $table_name = $wpdb->prefix.'icl_locale_map';
+    if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
+        $sql = "
+            CREATE TABLE `{$table_name}` (
+                `code` VARCHAR( 8 ) NOT NULL ,
+                `locale` VARCHAR( 8 ) NOT NULL ,
+                UNIQUE (`code` ,`locale`)
+            )";
+        $wpdb->query($sql);
+    } 
+       
        
     delete_option('icl_sitepress_version');
     add_option('icl_sitepress_version', ICL_SITEPRESS_VERSION, '', true);
@@ -271,7 +284,7 @@ function icl_sitepress_activate(){
             $wpdb->insert($wpdb->prefix . 'icl_languages_translations', array('language_code'=>$lang_codes[$lang], 'display_language_code'=>$lang_codes[$k], 'name'=>$display));
         }    
     }
-    
+        
     // try to determine the blog language
     $blog_default_lang = 0;
     if($blog_lang = get_option('WPLANG')){

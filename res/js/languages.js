@@ -53,8 +53,13 @@ function saveDefaultLanguage(){
                 jQuery('#icl_enabled_languages li input').removeAttr('checked');
                 jQuery('#icl_enabled_languages li input[value="'+def_lang+'"]').attr('checked','checked');
                 jQuery('#icl_enabled_languages input[value="'+spl[1]+'"]').parent().html(jQuery('#icl_enabled_languages input[value="'+spl[1]+'"]').parent().html().replace('('+icl_default_mark+')',''));
-                doneEditingDefaultLanguage();     
-                fadeInAjxResp('#icl_ajx_response',icl_ajx_saved);                                         
+                doneEditingDefaultLanguage();                     
+                fadeInAjxResp('#icl_ajx_response',icl_ajx_saved);                  
+                if(spl[2]){
+                    jQuery('#icl_ajx_response').html(spl[2]);
+                }else{
+                    location.href = location.href+'&updated=true';
+                }                
             }else{                        
                 fadeInAjxResp('#icl_ajx_response',icl_ajx_error);                                         
             }                    

@@ -71,10 +71,13 @@ switch($_REQUEST['icl_ajx_action']){
         break;
     case 'set_default_language':
         $previous_default = $sitepress->get_default_language();
-        if($sitepress->set_default_language($_POST['lang'])){
-            echo '1|'.$previous_default;
+        if($response = $sitepress->set_default_language($_POST['lang'])){
+            echo '1|'.$previous_default.'|';
         }else{
-            echo'0';
+            echo'0||' ;
+        }
+        if(1 === $response){
+            echo __('Wordpress language file (.mo) is missing. Keeping existing display language.', 'sitepress');
         }
         break;
     case 'save_language_pairs':                
