@@ -4,6 +4,7 @@ jQuery(document).ready(function(){
     }
     jQuery('select[name="icl_post_language"]').change(iclPostLanguageSwitch);
 });
+
 function fadeInAjxResp(spot, msg, err){
     if(err != undefined){
         col = jQuery(spot).css('color');
@@ -74,6 +75,5 @@ function iclPostLanguageSwitch(){
             jQuery('#category-adder').prepend('<p>'+icl_cat_adder_msg+'</p>');
         });        
     }
-    
-    
 }
+

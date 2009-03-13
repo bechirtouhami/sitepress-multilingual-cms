@@ -61,3 +61,13 @@ table.language_domains{
 .language_domains td, .language_domains input{
     font-size: 11px;
 }
+
+a#toggle-theme-localization{
+    text-decoration: none;
+}
+#icl_theme_localization{
+    display: none;
+}
+#icl_theme_localization input{
+    font-size: 80%;
+}

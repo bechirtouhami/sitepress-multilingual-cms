@@ -17,9 +17,11 @@ class SitePress{
                 active=1 AND lt.display_language_code = '{$this->get_default_language()}' 
             ORDER BY major DESC, english_name ASC", ARRAY_A);        
         $languages = array();
-        foreach($res as $r){
-            $languages[] = $r;
-        }        
+        if($res){
+            foreach($res as $r){
+                $languages[] = $r;
+            }        
+        }
         $this->active_languages = $languages; 
         
         add_action('plugins_loaded', array($this,'init'));
@@ -33,7 +35,9 @@ class SitePress{
         add_action('admin_menu', array($this, 'administration_menu'));
         
         // Process post requests
-        add_action('init', array($this,'process_forms'));           
+        if(!empty($_POST)){
+            add_action('init', array($this,'process_forms'));           
+        }        
         
         if($this->settings['existing_content_language_verified']){
             // Post/page language box
@@ -384,6 +388,19 @@ class SitePress{
         require_once ICL_PLUGIN_PATH . '/lib/Snoopy.class.php';
         require_once ICL_PLUGIN_PATH . '/lib/xml2array.php';
         require_once ICL_PLUGIN_PATH . '/lib/icl_api.php';
+        
+        if(isset($_POST['icl_post_action'])){
+            switch($_POST['icl_post_action']){
+                case 'save_theme_localization':
+                    foreach($_POST as $k=>$v){
+                        if(0 !== strpos($k, 'locale_file_name_') || !trim($v)) continue;
+                        $locales[str_replace('locale_file_name_','',$k)] = $v;                                                
+                    }
+                    $this->set_locale_file_names($locales);
+                    break;
+            }
+            return;
+        }
         $nonce_icl_create_account = wp_create_nonce('icl_create_account');
         $nonce_icl_configure_account = wp_create_nonce('icl_configure_account');
         $nonce_icl_logout = wp_create_nonce('icl_logout');
@@ -1170,6 +1187,44 @@ class SitePress{
         }
         return $locale;
     }
+    
+    function get_locale_file_names(){
+        global $wpdb;
+        $locales = array();
+        $res = $wpdb->get_results("
+            SELECT lm.code, locale 
+            FROM {$wpdb->prefix}icl_locale_map lm JOIN {$wpdb->prefix}icl_languages l ON lm.code = l.code AND l.active=1");
+        foreach($res as $row){
+            if($row->code=='en') continue;
+            $locales[$row->code] = $row->locale;
+        }
+        return $locales;        
+    }
+    
+    function set_locale_file_names($locale_file_names_pairs){
+        global $wpdb;
+        $lfn = $this->get_locale_file_names();
+        
+        $new = array_diff($locale_file_names_pairs, $lfn);        
+        if(!empty($new)){
+            foreach($new as $code=>$locale){
+                $wpdb->insert($wpdb->prefix.'icl_locale_map', array('code'=>$code,'locale'=>$locale));
+            }
+        }
+        
+        $remove = array_diff($lfn, $locale_file_names_pairs);
+        if(!empty($remove)){
+            $wpdb->query("DELETE FROM {$wpdb->prefix}icl_locale_map WHERE code IN (".join(',', array_map(create_function('$a','return "\'".$a."\'";'),array_keys($remove))).")");
+        }
+        
+        $update = array_diff($locale_file_names_pairs, $remove);
+        foreach($update as $code=>$locale){
+            $wpdb->update($wpdb->prefix.'icl_locale_map', array('locale'=>$locale), array('code'=>$code));
+        }
+        
+        return true;        
+    }
+    
     
         
 }  
