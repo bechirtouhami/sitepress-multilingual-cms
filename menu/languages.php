@@ -196,7 +196,7 @@
             
             <span id="icl_tl">
             <?php if(count($active_languages) > 1): ?>                            
-            <h3><?php echo __('Theme localization', 'sitepress') ?> <a href="#toggle-theme-localization" style="text-decoration:none"><?php echo __('show','sitepress') ?></a><a href="#toggle-theme-localization" style="display:none;text-decoration:none;"><?php echo __('hide','sitepress') ?></a> <span id="icl_tl_arrow">&darr;</span></h3>
+            <h3 style="display:inline"><?php echo __('Theme localization', 'sitepress') ?></h3>&nbsp;<a href="#toggle-theme-localization" style="text-decoration:none"><?php echo __('show','sitepress') ?></a><a href="#toggle-theme-localization" style="display:none;text-decoration:none;"><?php echo __('hide','sitepress') ?></a> <span id="icl_tl_arrow">&darr;</span>
             <form id="icl_theme_localization" name="icl_lang_more_options" method="post">
             <input type="hidden" name="icl_post_action" value="save_theme_localization" />
             <span id="icl_theme_localization_wrap">
@@ -261,6 +261,7 @@
             
             </form>
             <?php endif; ?>
+            <br /><br />
             </span>    
         </span>
     <?php endif; ?>
