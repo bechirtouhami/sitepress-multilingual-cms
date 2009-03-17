@@ -543,6 +543,10 @@ class SitePress{
         }        
         $trid = $_POST['icl_trid'];
         
+        if($_POST['post_type']=='page'){
+            icl_rearrange_page_order();
+        }
+        
         // new categories created inline go to the correct language
         if(isset($_POST['post_category']))
         foreach($_POST['post_category'] as $cat){

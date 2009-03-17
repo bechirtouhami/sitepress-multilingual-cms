@@ -176,6 +176,7 @@ switch($_REQUEST['icl_ajx_action']){
         break;
     case 'icl_lang_more_options':
         $iclsettings['language_home'] = $_POST['icl_language_home'];
+        $iclsettings['page_ordering_option'] = $_POST['icl_page_ordering_option'];        
         $sitepress->save_settings($iclsettings);
         echo 1; 
        break;        

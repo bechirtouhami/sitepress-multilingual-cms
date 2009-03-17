@@ -179,6 +179,14 @@
                 <?php echo __('Use language specific home pages', 'sitepress') ?></label>
             </p>
             <p>
+                <?php echo __('What will be the display order of translated posts, pages and categories?', 'sitepress'); ?>
+                <ul>
+                    <li><label><input type="radio" name="icl_page_ordering_option" value="1" <?php if($sitepress_settings['page_ordering_option']==1): ?>checked="checked"<?php endif; ?> /> <?php echo __('According to the order of the default language','sitepress') ?></label></li>
+                    <li><label><input type="radio" name="icl_page_ordering_option" value="2" <?php if($sitepress_settings['page_ordering_option']==2): ?>checked="checked"<?php endif; ?> /> <?php echo __('According to the order of the original language','sitepress') ?></label></li>
+                    <li><label><input type="radio" name="icl_page_ordering_option" value="3" <?php if($sitepress_settings['page_ordering_option']==3): ?>checked="checked"<?php endif; ?> /> <?php echo __('Maintain independent order for each language','sitepress') ?></label></li>
+                </ul>
+            </p>
+            <p>
                 <input class="button" name="save" value="<?php echo __('Save') ?>" type="submit" />
                 <span class="icl_ajx_response" id="icl_ajx_response_mo"></span>
             </p>
