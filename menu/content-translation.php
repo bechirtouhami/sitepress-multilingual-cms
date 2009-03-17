@@ -66,11 +66,11 @@
         <table class="form-table icl-account-setup">
         <tr class="form-field">
             <th scope="row">CMS User</th>
-            <td><input name="user[cms_login]" type="text" value="<?php echo $sitepress_settings['cms_login']?>" /></td>
+            <td><input name="user[cms_login]" type="text" value="<?php echo $sitepress_settings['cms_login']?>" size="32" style="width:200px;" /></td>
         </tr>
         <tr class="form-field">
             <th scope="row">CMS Password</th>
-            <td><input name="user[cms_password]" type="password" value="<?php echo $sitepress_settings['cms_password']?>" /></td>
+            <td><input name="user[cms_password]" type="password" value="<?php echo $sitepress_settings['cms_password']?>"  size="32" style="width:200px;" /></td>
         </tr>  
         <tr>
             <td colspan="2"><?php echo __('* You need to supply the credentials of an editor account in order for our system to fetch contents and returns translations to WordPress','sitepress')?></td>

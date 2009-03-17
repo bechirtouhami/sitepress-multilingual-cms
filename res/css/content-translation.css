@@ -1,0 +1,22 @@
+#icl_language_pairs{
+    /*display: none;*/    
+}
+#icl_language_pairs li{
+    background-color:#eee;
+    border:1px solid #ccc;
+    padding:5px;
+}
+#icl_language_pairs ul{
+    /*display:none;*/
+    margin:10px;
+}
+#icl_language_pairs ul li{
+    border:none; 
+    float:none;
+    width:auto; 
+    padding:0px;  
+}
+
+.icon32{
+    background: transparent url(../img/icon.png) no-repeat !important;    
+}

@@ -139,10 +139,16 @@
                 <p class="icl_form_errors" style="display:none"></p>
                 <ul>
                     <li>
+                        <?php echo __('To add a language switcher to your theme, insert this code to header.php:') ?>
+                        <code class="php">
+                            &lt;?php do_action('icl_language_selector'); ?&gt;
+                        </code>
+                        <?php /*
                         <label>
                             <input type="checkbox" name="icl_lso_header" value="1" <?php if($sitepress_settings['icl_lso_header']==1):?>checked="checked"<?php endif?> />
                             <?php echo sprintf(__('Include automatically in the header', 'sitepress')) ?>
                         </label>
+                        */ ?>
                     </li>
                     <li>
                         <p><?php echo __('When translation is missing', 'sitepress')?></p>

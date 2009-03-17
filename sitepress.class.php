@@ -201,8 +201,8 @@ class SitePress{
     
     function administration_menu(){
         add_action('admin_print_scripts', array($this,'js_scripts_setup'));
-        add_action('admin_head', array($this,'css_setup'));
-        add_menu_page(__('SitePress','sitepress'), __('SitePress','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/languages.php');        
+        add_action('admin_print_styles', array($this,'css_setup'));
+        add_menu_page(__('SitePress','sitepress'), __('SitePress','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/languages.php',null, ICL_PLUGIN_URL . '/res/img/icon16.png');        
         add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Languages','sitepress'), __('Languages','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/languages.php'); 
         if($this->settings['existing_content_language_verified']){
             add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Content Translation','sitepress'), __('Content Translation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/content-translation.php'); 
@@ -358,7 +358,7 @@ class SitePress{
         </script>
         <?php
         wp_enqueue_script('sitepress-scripts', ICL_PLUGIN_URL . '/res/js/scripts.js', array(), '0.1');
-        if($page_basename){
+        if($page_basename && file_exists(ICL_PLUGIN_PATH . '/res/js/'.$page_basename.'.js')){
             wp_enqueue_script('sitepress-' . $page_basename, ICL_PLUGIN_URL . '/res/js/'.$page_basename.'.js', array(), '0.1');
         }
     }
@@ -377,10 +377,12 @@ class SitePress{
     }
     
     function css_setup(){
-        ?>
-        <link rel="stylesheet" href="<?php echo ICL_PLUGIN_URL ?>/res/css/languages.css?v=0.1" type="text/css" media="all" />
-        <link rel="stylesheet" href="<?php echo ICL_PLUGIN_URL ?>/res/css/style.css?v=0.1" type="text/css" media="all" />
-        <?php
+        $page = basename($_GET['page']);
+        $page_basename = str_replace('.php','',$page);        
+        wp_enqueue_style('sitepress-style', ICL_PLUGIN_URL . '/res/css/style.css', array(), '0.1');
+        if($page_basename && file_exists(ICL_PLUGIN_PATH . '/res/css/'.$page_basename.'.css')){
+            wp_enqueue_style('sitepress-' . $page_basename, ICL_PLUGIN_URL . '/res/css/'.$page_basename.'.css', array(), '0.1');
+        }        
     }
     
     function process_forms(){

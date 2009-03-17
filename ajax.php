@@ -226,8 +226,16 @@ switch($_REQUEST['icl_ajx_action']){
             echo 1;
         }else{
             echo 0;
-        }        
-        
+        }                
+        break;
+    case 'nav_read_more':
+        echo @htmlentities(file_get_contents(ICL_PLUGIN_PATH . '/modules/cms-navigation/readme.txt'));
+        break;
+    case 'nav_save':
+        $iclsettings = $sitepress->get_settings();
+        $iclsettings['modules']['cms-navigation'] = $_POST['enabled'];         
+        $sitepress->save_settings($iclsettings);
+        echo __('Data saved', 'sitepress');
         break;
     default:
         echo __('Invalid action','sitepress');                

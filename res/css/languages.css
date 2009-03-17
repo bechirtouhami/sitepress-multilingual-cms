@@ -31,29 +31,6 @@
 #icl_avail_languages_picker li:hover{
     color:#f00;
 }
-.icl_ajx_response{
-    color:#E68A00;
-    display: none;    
-}
-
-#icl_language_pairs{
-    /*display: none;*/    
-}
-#icl_language_pairs li{
-    background-color:#eee;
-    border:1px solid #ccc;
-    padding:5px;
-}
-#icl_language_pairs ul{
-    /*display:none;*/
-    margin:10px;
-}
-#icl_language_pairs ul li{
-    border:none; 
-    float:none;
-    width:auto; 
-    padding:0px;  
-}
 
 table.language_domains{
     margin:6px;
@@ -71,3 +48,8 @@ a#toggle-theme-localization{
 #icl_theme_localization input{
     font-size: 80%;
 }
+
+.icon32{
+    background: transparent url(../img/icon.png) no-repeat !important;    
+}
+
