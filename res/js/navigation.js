@@ -13,11 +13,14 @@ addLoadEvent(function(){
             jQuery('#icl_nav_read_more').fadeOut();
         }
     });
-    jQuery('#icl_enable_nav_but').click(function(){
-        enabled = jQuery('#icl_enable_nav').attr('checked')?1:0;
-        jQuery('#icl_enable_nav_ajxresp').show().load(icl_ajx_url,{icl_ajx_action:'nav_save',enabled:enabled}, function(){
-            window.setTimeout("jQuery('#icl_enable_nav_ajxresp').fadeOut()", 3000);
-        });
+    jQuery('#icl_navigation_show_cat_menu').change(function(){
+        if(jQuery(this).attr('checked')){
+            jQuery('label[for="icl_navigation_cat_menu_title"]').fadeIn();
+        }else{
+            jQuery('label[for="icl_navigation_cat_menu_title"]').fadeOut();
+        }
     })
+    jQuery('#icl_navigation_form').submit(iclSaveForm);
+    
 });
 

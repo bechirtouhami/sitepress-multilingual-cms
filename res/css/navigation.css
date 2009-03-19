@@ -3,3 +3,6 @@
     height:400px;
     display:none;
 }
+.icon32{
+    background: transparent url(../img/icon.png) no-repeat !important;    
+}

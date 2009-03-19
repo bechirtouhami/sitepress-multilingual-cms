@@ -39,6 +39,8 @@ require ICL_PLUGIN_PATH . '/inc/functions.php';
 
 $sitepress = new SitePress();
 
+require ICL_PLUGIN_PATH . '/modules/cms-navigation/cms-navigation.php';
+
 // activation hook
 register_activation_hook( __FILE__, 'icl_sitepress_activate' );
 register_deactivation_hook(__FILE__, 'icl_sitepress_deactivate');

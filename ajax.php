@@ -231,11 +231,15 @@ switch($_REQUEST['icl_ajx_action']){
     case 'nav_read_more':
         echo @htmlentities(file_get_contents(ICL_PLUGIN_PATH . '/modules/cms-navigation/readme.txt'));
         break;
-    case 'nav_save':
+    case 'icl_navigation_form':        
         $iclsettings = $sitepress->get_settings();
-        $iclsettings['modules']['cms-navigation'] = $_POST['enabled'];         
+        foreach($_POST as $k=>$v){
+            if($k=='icl_ajx_action') continue;
+            $name = str_replace('icl_navigation_','',$k);
+            $iclsettings['modules']['cms-navigation'][$name] = $v;
+        }
         $sitepress->save_settings($iclsettings);
-        echo __('Data saved', 'sitepress');
+        echo '1|';
         break;
     default:
         echo __('Invalid action','sitepress');                
