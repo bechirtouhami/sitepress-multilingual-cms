@@ -146,34 +146,6 @@ class SitePress{
         
     }
       
-    function pre_option_page_on_front(){
-        global $wpdb;
-        $page_on_front_sc = 0;
-        $page_on_front = $wpdb->get_var("SELECT option_value FROM {$wpdb->options} WHERE option_name='page_on_front'");
-        $trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id='{$page_on_front}' AND element_type='post'");
-        $translations = $wpdb->get_results("SELECT element_id, language_code FROM {$wpdb->prefix}icl_translations WHERE trid={$trid}");
-        foreach($translations as $t){
-            if($t->language_code==$this->this_lang){
-                $page_on_front_sc = $t->element_id;
-            }
-        }        
-        return $page_on_front_sc;
-    }        
-    function pre_option_page_for_posts(){
-        global $wpdb;
-        $page_for_posts_sc = 0;
-        $page_for_posts = $wpdb->get_var("SELECT option_value FROM {$wpdb->options} WHERE option_name='page_for_posts'");
-        $trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id='{$page_for_posts}' AND element_type='post'");
-        $translations = $wpdb->get_results("SELECT element_id, language_code FROM {$wpdb->prefix}icl_translations WHERE trid={$trid}");
-        foreach($translations as $t){
-            if($t->language_code==$this->this_lang){
-                $page_for_posts_sc = $t->element_id;
-            }
-        }        
-        $page_for_posts_sc;        
-        return $page_for_posts_sc;
-    }        
-    
                         
     function init(){        
         if(defined('WP_ADMIN')){
@@ -1289,6 +1261,35 @@ class SitePress{
         
         return true;        
     }
+    
+    function pre_option_page_on_front(){
+        global $wpdb;
+        $page_on_front_sc = 0;
+        $page_on_front = $wpdb->get_var("SELECT option_value FROM {$wpdb->options} WHERE option_name='page_on_front'");
+        $trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id='{$page_on_front}' AND element_type='post'");
+        $translations = $wpdb->get_results("SELECT element_id, language_code FROM {$wpdb->prefix}icl_translations WHERE trid={$trid}");
+        foreach($translations as $t){
+            if($t->language_code==$this->this_lang){
+                $page_on_front_sc = $t->element_id;
+            }
+        }        
+        return $page_on_front_sc;
+    }      
+      
+    function pre_option_page_for_posts(){
+        global $wpdb;
+        $page_for_posts_sc = 0;
+        $page_for_posts = $wpdb->get_var("SELECT option_value FROM {$wpdb->options} WHERE option_name='page_for_posts'");
+        $trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id='{$page_for_posts}' AND element_type='post'");
+        $translations = $wpdb->get_results("SELECT element_id, language_code FROM {$wpdb->prefix}icl_translations WHERE trid={$trid}");
+        foreach($translations as $t){
+            if($t->language_code==$this->this_lang){
+                $page_for_posts_sc = $t->element_id;
+            }
+        }        
+        $page_for_posts_sc;        
+        return $page_for_posts_sc;
+    }        
     
     
         

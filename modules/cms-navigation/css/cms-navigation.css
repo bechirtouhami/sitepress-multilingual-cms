@@ -65,16 +65,24 @@
 #menu-wrap ul a:hover ul{visibility:visible; }
 
 
-#menu-wrap li div.selected{    
+#menu-wrap li.selected_page{    
     color: #004D99;
     background-color: #5798d0;
-    border-right:1px solid #5798d0;
-    padding:5px 10px;
-    color: #004D99;
-    width: 100%; 
     line-height:20px;
 }
-#menu-wrap ul ul li a.selected, #menu-wrap li ul li.current-cat a{    
+#menu-wrap li.selected_subpage{    
+    color: #004D99;
+    background-color: #B3D9FF;
+    line-height:25px;
+    padding-left:10px; 
+    padding-right: 11px;    
+}
+#menu-wrap li.selected_subpage a, #menu-wrap li.selected_subpage a:visited{
+    background-color: #B3D9FF;
+    padding-right:0; 
+    padding-left:0; 
+}
+#menu-wrap ul ul li a.selected{    
     background-color: #D0D8F0;
     color: #004D99;
 }
@@ -106,4 +114,7 @@ ul li.cms-nav-sub-section:before{
 .cms-nav-left-menu li{
     position: relative;
     margin:4px 8px 2px 8px;
+}
+.cms-nav-left-menu li.selected_page_side{
+    
 }

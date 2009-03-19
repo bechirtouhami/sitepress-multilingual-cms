@@ -128,7 +128,7 @@ class CMSNavigation{
     }    
     
     function cms_navigation_menu_nav(){
-        global $sitepress, $wpdb, $post, $cms_nav_ie_ver;
+        global $sitepress, $wpdb, $post, $cms_nav_ie_ver, $wp_query;
         
         $order = $this->settings['page_order']?$this->settings['page_order']:'menu_order';
         $show_cat_menu = $this->settings['show_cat_menu']?$this->settings['show_cat_menu']:false;
@@ -193,6 +193,39 @@ class CMSNavigation{
                     $blog_url = get_option('home');
                     $blog_name = $cat_menu_title;                
                 }
+                
+                $cat_menu_selected = '';
+                if(is_single() || is_category() || $wp_query->is_posts_page){
+                    $cat_menu_selected = ' class="selected_page"';
+                }
+                if(is_single() && !is_page()){
+                    $cats = get_the_category();
+                    foreach((array)$cats as $cat){ $post_cats[] = $cat->cat_ID;}
+                }
+                $categories = get_categories('child_of=0');
+                if($categories){
+                    echo '<li'.$cat_menu_selected.'><a class="trigger" href="'.$blog_url.'">'.$blog_name;
+                    if(!isset($cms_nav_ie_ver) || $cms_nav_ie_ver > 6) echo '</a>';
+                    if(isset($cms_nav_ie_ver) && $cms_nav_ie_ver <= 6) echo '<table><tr><td>';
+                    echo '<ul>';
+                    foreach($categories as $cat){
+                        echo '<li';
+                        if(in_array($cat->cat_ID, (array)$post_cats)){ $post_in_this_cat++; }
+                        if($wp_query->query_vars['cat']==$cat->cat_ID || $post_in_this_cat==1 ){
+                            echo ' class="selected_subpage"';
+                        } 
+                        echo  '>';
+                        echo '<a href="'.get_category_link($cat->cat_ID).'">';
+                        echo apply_filters('single_cat_title', $cat->cat_name);
+                        echo '</a>';
+                        echo '</li>';                            
+                    }
+                    echo '</ul>';
+                    if(isset($cms_nav_ie_ver) && $cms_nav_ie_ver <= 6) echo '</td></tr></table></a>';
+                    echo '</li>';
+                }                
+                
+                
                 $cat_menu_selected = '';
                 if(is_single() || is_category()){
                     $cat_menu_selected = ' selected';
@@ -205,10 +238,12 @@ class CMSNavigation{
                 $cont = preg_replace('@^<li([^>]*)><a([^>]*)>([^<]*)</a><ul>@im','<li$1><a$2>$3<!--[if IE 7]><!--></a><!--<![endif]--><!--[if lte IE 6]><table><tr><td><![endif]--><ul>',$cont);         
                 $cont = preg_replace('@</li>\Z@im', '</li><!--[if lte IE 6]></td></tr></table></a><![endif]-->',  $cont);
                 echo $cont;
+                
             }
             ?></ul></div><br class="cms-nav-clearit" /><?php
         }
     }    
+
     
     function cms_navigation_page_navigation(){
         if(!is_page()) return;

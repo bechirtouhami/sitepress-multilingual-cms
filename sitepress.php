@@ -24,7 +24,7 @@ Version: 0.1
     You should have received a copy of the GNU General Public License
     along with ICanLocalize Translator.  If not, see <http://www.gnu.org/licenses/>.
 */
-
+       
 
 define('ICL_SITEPRESS_VERSION', '1.0');
 define('ICL_PLUGIN_PATH', dirname(__FILE__));
