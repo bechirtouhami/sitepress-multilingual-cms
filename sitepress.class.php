@@ -572,7 +572,7 @@ class SitePress{
         $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE element_type='post' AND element_id='{$post_id}' LIMIT 1");
     }
     
-    function get_element_translations($trid, $el_type='post'){        
+    function get_element_translations($trid, $el_type='post', $skip_empty = false){        
         global $wpdb;  
         if($trid){            
             if($el_type=='post'){
@@ -598,7 +598,7 @@ class SitePress{
         ";       
         $ret = $wpdb->get_results($query);        
         foreach($ret as $t){
-            if(($el_type=='tag' || $el_type=='category') && $t->instances==0) continue;
+            if(($el_type=='tag' || $el_type=='category') && $t->instances==0 && $skip_empty) continue;
             $translations[$t->language_code] = $t;
         }        
         return $translations;
@@ -1023,11 +1023,13 @@ class SitePress{
             }elseif(is_category()){
                 $cat_id = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id={$cat} AND taxonomy='category'");
                 $trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id='{$cat_id}' AND element_type='category'");                
-                $translations = $this->get_element_translations($trid,'category');                
+                $skip_empty = true;
+                $translations = $this->get_element_translations($trid,'category', $skip_empty);                
             }elseif(is_tag()){
                 $tag_id = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id={$tag_id} AND taxonomy='post_tag'");
                 $trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id='{$tag_id}' AND element_type='tag'");                
-                $translations = $this->get_element_translations($trid,'tag');                
+                $skip_empty = true;
+                $translations = $this->get_element_translations($trid,'tag', $skip_empty);                
             }elseif(is_archive()){      
                 $translations = array();
             }elseif( 'page' == get_option('show_on_front') && ($wp_query->queried_object_id == get_option('page_on_front') || $wp_query->queried_object_id == get_option('page_for_posts')) ){
