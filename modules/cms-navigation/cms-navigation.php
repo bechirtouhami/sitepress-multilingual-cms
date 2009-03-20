@@ -75,7 +75,7 @@ class CMSNavigation{
             if($page_on_front){
                 ?><a href="<?php echo get_permalink($page_on_front); ?>"><?php echo get_the_title($page_on_front) ?></a> &raquo; <?php
             }elseif(!is_home() || (is_home() && !$page_on_front && $page_for_posts)){
-                ?><a href="<?php echo $sitepress->language_url() ?>"><?php echo __('Home') ?></a> &raquo; <?php
+                ?><a href="<?php echo $sitepress->language_url() ?>"><?php echo __('Home', 'sitepress') ?></a> &raquo; <?php
             }
         }
         
@@ -115,16 +115,16 @@ class CMSNavigation{
             }
             single_cat_title();
         }elseif(is_tag()){
-            echo __('Articles tagged ') ,'&#8216;'; 
+            echo __('Articles tagged ', 'sitepress') ,'&#8216;'; 
             single_tag_title();
             echo '&#8217;';    
         }elseif (is_month()){
             echo the_time('F, Y');
         }elseif (is_search()){
-            echo __('Search for: '), strip_tags(get_query_var('s'));
+            echo __('Search for: ', 'sitepress'), strip_tags(get_query_var('s'));
         /*    
         }elseif (is_404()){
-            echo __('Not found');
+            echo __('Not found', 'sitepress');
         */
         }        
     }    
@@ -346,7 +346,7 @@ class CMSNavigation{
     }    
     
     function cms_navigation_page_edit_options(){
-        add_meta_box('cmsnavdiv', __('CMS Navigation'), array($this, 'cms_navigation_meta_box'), 'page', 'normal', 'high');
+        add_meta_box('cmsnavdiv', __('CMS Navigation', 'sitepress'), array($this, 'cms_navigation_meta_box'), 'page', 'normal', 'high');
     }
 
     function cms_navigation_meta_box($post){
@@ -361,14 +361,14 @@ class CMSNavigation{
         if($cms_nav_minihome){ $cms_nav_minihome = 'checked="checked"'; }
         ?>
         <p>
-        <label><input type="checkbox" value="1" name="exclude_from_top_nav" <?php echo $top_nav_excluded ?> />&nbsp; <?php echo __('Exclude from the top navigation') ?></label> &nbsp;
-        <label><input type="checkbox" value="1" name="cms_nav_minihome" <?php echo $cms_nav_minihome ?> />&nbsp; <?php echo __('Mini home (don\'t list child pages for this page)') ?></label>
+        <label><input type="checkbox" value="1" name="exclude_from_top_nav" <?php echo $top_nav_excluded ?> />&nbsp; <?php echo __('Exclude from the top navigation', 'sitepress') ?></label> &nbsp;
+        <label><input type="checkbox" value="1" name="cms_nav_minihome" <?php echo $cms_nav_minihome ?> />&nbsp; <?php echo __('Mini home (don\'t list child pages for this page)', 'sitepress') ?></label>
         </p>
         <p>
-        <?php echo __('Section')?>
+        <?php echo __('Section', 'sitepress')?>
         <?php if(!empty($sections)): ?>
             <select name="cms_nav_section">    
-            <option value=''><?php echo __('--none--') ?></option>
+            <option value=''><?php echo __('--none--', 'sitepress') ?></option>
             <?php foreach($sections as $s):?>
             <option <?php if($s==$cms_nav_section) echo 'selected="selected"'?>><?php echo $s ?></option>
             <?php endforeach; ?>        
@@ -376,7 +376,7 @@ class CMSNavigation{
         <?php endif; ?>    
         <input type="text" name="cms_nav_section_new" value="" <?php if(!empty($sections)): ?>style="display:none"<?php endif; ?> />
         <?php if(!empty($sections)): ?>
-        <a href="javascript:;" id="cms_nav_add_section"><?php echo __('enter new') ?></a>
+        <a href="javascript:;" id="cms_nav_add_section"><?php echo __('enter new', 'sitepress') ?></a>
         <?php endif; ?>    
         </p>
         <?php
@@ -393,11 +393,11 @@ class CMSNavigation{
                 jQuery("select[name='cms_nav_section']").show();
                 jQuery("input[name='cms_nav_section_new']").hide();
                 jQuery("input[name='cms_nav_section_new']").attr('value','');
-                jQuery(this).html('<?php echo __('enter new') ?>');                                    
+                jQuery(this).html('<?php echo __('enter new', 'sitepress') ?>');                                    
             }else{
                 jQuery("select[name='cms_nav_section']").hide();
                 jQuery("input[name='cms_nav_section_new']").show();            
-                jQuery(this).html('<?php echo __('cancel') ?>');
+                jQuery(this).html('<?php echo __('cancel', 'sitepress') ?>');
             }
             
         }
