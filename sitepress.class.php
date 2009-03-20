@@ -903,7 +903,9 @@ class SitePress{
             $abshome = preg_replace('@\?lang=' . $code . '@i','',get_option('home'));
             switch($this->settings['language_negotiation_type']){
                 case '1':                 
+                    if($abshome==$url) $url .= '/';
                     $url = str_replace($abshome, $abshome . '/' . $code, $url);
+                    
                     break;
                 case '2': 
                     $exp = explode('.',$abshome);
@@ -1006,7 +1008,7 @@ class SitePress{
     }
     
     function language_selector(){
-            global $wpdb, $post, $cat, $tag_id;
+            global $wpdb, $post, $cat, $tag_id, $wp_query;
             $w_active_languages = $this->get_active_languages();
             $this_lang = $this->this_lang;
             $w_this_lang = $this->get_language_details($this_lang);
@@ -1028,19 +1030,26 @@ class SitePress{
                 $translations = $this->get_element_translations($trid,'tag');                
             }elseif(is_archive()){      
                 $translations = array();
+            }elseif( 'page' == get_option('show_on_front') && $wp_query->queried_object_id == get_option('page_for_posts') ){
+                $trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id='{$wp_query->queried_object_id}' AND element_type='post'");                
+                $translations = $this->get_element_translations($trid,'post');                
             }
-            
-            $page_on_front = $wpdb->get_var("SELECT option_value FROM {$wpdb->options} WHERE option_name='page_on_front'");
-            if ( 'page' == get_option('show_on_front') && $page_on_front ){
-                $trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id='{$page_on_front}' AND element_type='post'");
-                $homepage_translations = $wpdb->get_results("SELECT element_id, language_code FROM {$wpdb->prefix}icl_translations WHERE trid={$trid}");
-                //print_r($translations);
-            } 
              
             foreach($w_active_languages as $k=>$lang){
-                $skip_lang = false;    
-                if(is_singular() && isset($translations[$lang['code']]->post_title)){                    
-                    $lang['translated_url'] = get_page_link($translations[$lang['code']]->element_id);
+                $skip_lang = false;                    
+                if(is_singular() && isset($translations[$lang['code']]->post_title) || $wp_query->queried_object_id == get_option('page_for_posts')){                    
+                    $this_lang_tmp = $this->this_lang; 
+                    $this->this_lang = $lang['code']; 
+                    $lang_page_on_front = get_option('page_on_front');                     
+                    $lang_page_for_posts = get_option('page_for_posts');                                         
+                    $this->this_lang = $this_lang_tmp; 
+                    if ( 'page' == get_option('show_on_front') && $translations[$lang['code']]->element_id == $lang_page_on_front ){
+                        $lang['translated_url'] = $this->language_url($lang['code']); 
+                    }elseif('page' == get_option('show_on_front') && $translations[$lang['code']]->element_id == $lang_page_for_posts){
+                        $lang['translated_url'] = get_permalink($lang_page_for_posts);
+                    }else{
+                        $lang['translated_url'] = get_permalink($translations[$lang['code']]->element_id);
+                    }
                 }elseif(is_category()){
                     if(isset($translations[$lang['code']])){
                         $lang['translated_url'] = get_category_link($translations[$lang['code']]->term_id);
@@ -1293,7 +1302,7 @@ class SitePress{
             if($t->language_code==$this->this_lang){
                 $page_for_posts_sc = $t->element_id;
             }
-        }        
+        }                    
         $page_for_posts_sc;        
         return $page_for_posts_sc;
     }        

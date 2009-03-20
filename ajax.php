@@ -230,11 +230,11 @@ switch($_REQUEST['icl_ajx_action']){
         break;
     case 'icl_navigation_form':        
         $iclsettings = $sitepress->get_settings();
-        foreach($_POST as $k=>$v){
-            if($k=='icl_ajx_action') continue;
-            $name = str_replace('icl_navigation_','',$k);
-            $iclsettings['modules']['cms-navigation'][$name] = $v;
-        }
+        $iclsettings['modules']['cms-navigation']['page_order'] = $_POST['icl_navigation_page_order'];
+        $iclsettings['modules']['cms-navigation']['show_cat_menu'] = $_POST['icl_navigation_show_cat_menu'];
+        $iclsettings['modules']['cms-navigation']['cat_menu_title'] = $_POST['icl_navigation_cat_menu_title'];
+        $iclsettings['modules']['cms-navigation']['heading_start'] = $_POST['icl_navigation_heading_start'];
+        $iclsettings['modules']['cms-navigation']['heading_end'] = $_POST['icl_navigation_heading_end'];
         $sitepress->save_settings($iclsettings);
         echo '1|';
         break;

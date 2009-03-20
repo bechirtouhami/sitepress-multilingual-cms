@@ -187,6 +187,7 @@ class CMSNavigation{
                 <?php
             }
             //add categories
+            
             if($show_cat_menu){
                 if($page_for_posts){
                     $blog_url = get_permalink($page_for_posts);

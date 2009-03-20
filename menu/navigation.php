@@ -51,7 +51,7 @@
     </form>  
     
     
-    <p><?php echo __('Instruction for adding the navigation to your theme', 'sitepress')?></p>
+    <h4><?php echo __('Instructions for adding the navigation to your theme', 'sitepress')?></h4>
     
     <table class="widefat" cellspacing="0">
     <thead>
@@ -70,20 +70,21 @@
             <td scope="col">header.php</td>          
         </tr>
         <tr>
-            <td scope="col" nowrap="nowrap"><?php echo __('Breadcrumbs trails ', 'sitepress') ?></td>          
+            <td scope="col" nowrap="nowrap"><?php echo __('Breadcrumbs trails', 'sitepress') ?></td>          
             <td scope="col"><?php echo __('Lists the path back to the home page', 'sitepress') ?></td>          
             <td scope="col" nowrap="nowrap"><code>&lt;?php  do_action('icl_navigation_breadcrumb'); ?&gt;</code></td>          
-            <td scope="col"><?php printf(__('%s or %s and %s'), 'header.php', 'single.php', 'page.php');?></td>          
+            <td scope="col"><?php printf(__('%s or %s, %s, %s, %s and %s'), 'header.php', 'single.php', 'page.php', 'archive.php', 'tag.php', 'search.php');?></td>          
         </tr>
         <tr>
-            <td scope="col" nowrap="nowrap"><?php echo __('Sidebar navigation ', 'sitepress') ?></td>          
+            <td scope="col" nowrap="nowrap"><?php echo __('Sidebar navigation', 'sitepress'); ?> <sup>*</sup></td>          
             <td scope="col"><?php echo __('Local navigation tree with page siblings, parent and brothers', 'sitepress') ?></td>          
             <td scope="col" nowrap="nowrap"><code>&lt;?php  do_action('icl_navigation_sidebar'); ?&gt;</code></td>          
             <td scope="col">sidebar.php</td>          
         </tr>        
     </tbody>        
     </table>    
-
+    <p><sup>*</sup> <?php echo __('You can also add the sidebar navigation as a <a href="widgets.php">widget</a>.', 'sitepress')?></p>
+    
     <p><?php echo __('To customize the appearance of the navigation elements, you will need to override the styling provided in the plugin\'s CSS file.', 'sitepress')?></p>
     
     <p><?php printf(__('Visit %s for full CSS customization information.', 'sitepress'), '<a href="http://sitepress.org">sitepress.org</a>')?></p>
