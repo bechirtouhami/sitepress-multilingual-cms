@@ -22,7 +22,6 @@ function icl_wp_widget_recent_comments($args) {
             WHERE comment_approved = '1' AND language_code = '{$sitepress->get_current_language()}'
             ORDER BY comment_date_gmt DESC LIMIT $number
         ");
-        echo mysql_error();
         wp_cache_add( 'recent_comments-'.$sitepress->get_current_language(), $comments, 'widget' );
     }
 ?>
