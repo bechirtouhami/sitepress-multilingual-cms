@@ -36,6 +36,9 @@ require ICL_PLUGIN_PATH . '/inc/template-functions.php';
 require ICL_PLUGIN_PATH . '/inc/icl-recent-comments-widget.php';
 require ICL_PLUGIN_PATH . '/sitepress.class.php';
 require ICL_PLUGIN_PATH . '/inc/functions.php';
+if(defined('WP_ADMIN')){
+    require ICL_PLUGIN_PATH . '/inc/php-version-check.php';
+}
 
 $sitepress = new SitePress();
 
