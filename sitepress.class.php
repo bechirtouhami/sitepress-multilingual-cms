@@ -307,7 +307,7 @@ class SitePress{
         if($locale){
             update_option('WPLANG', $locale);
         }
-        if($code != 'en' && !file_exists(ABSPATH . WPINC . '/languages/' . $locale . '.mo')){
+        if($code != 'en' && !file_exists(ABSPATH . LANGDIR . '/' . $locale . '.mo')){
             return 1; //locale not installed
         }
         
