@@ -981,8 +981,8 @@ class SitePress{
             echo $before_widget;
             echo $before_title; 
             $sitepress->language_selector();
-        }
-        wp_register_sidebar_widget('icl_languages_selector', __('Language Selector', 'sitepress'), 'language_selector_widget');
+        }        
+        register_sidebar_widget(__('Language Selector', 'sitepress'), 'language_selector_widget', 'icl_languages_selector');
                 
         function icl_lang_sel_nav_css($show = true){            
             $link_tag = '<link rel="stylesheet" href="'. ICL_PLUGIN_URL . '/res/css/language-selector.css?v=0.1" type="text/css" media="all" />';
@@ -1029,11 +1029,18 @@ class SitePress{
             }elseif(is_archive()){      
                 $translations = array();
             }
+            
+            $page_on_front = $wpdb->get_var("SELECT option_value FROM {$wpdb->options} WHERE option_name='page_on_front'");
+            if ( 'page' == get_option('show_on_front') && $page_on_front ){
+                $trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id='{$page_on_front}' AND element_type='post'");
+                $homepage_translations = $wpdb->get_results("SELECT element_id, language_code FROM {$wpdb->prefix}icl_translations WHERE trid={$trid}");
+                //print_r($translations);
+            } 
              
             foreach($w_active_languages as $k=>$lang){
                 $skip_lang = false;    
-                if(is_singular() && isset($translations[$lang['code']]->post_title)){
-                    $lang['translated_url'] = get_permalink($translations[$lang['code']]->element_id);
+                if(is_singular() && isset($translations[$lang['code']]->post_title)){                    
+                    $lang['translated_url'] = get_page_link($translations[$lang['code']]->element_id);
                 }elseif(is_category()){
                     if(isset($translations[$lang['code']])){
                         $lang['translated_url'] = get_category_link($translations[$lang['code']]->term_id);
@@ -1201,8 +1208,8 @@ class SitePress{
     
     function query_vars($public_query_vars){
         $public_query_vars[] = 'lang';
-        global $wp_query;
-        $_GET['lang'] = $this->this_lang;
+        global $wp_query;        
+        //$_GET['lang'] = $this->this_lang;
         $wp_query->query_vars['lang'] = $this->this_lang;                    
         return $public_query_vars;
     }

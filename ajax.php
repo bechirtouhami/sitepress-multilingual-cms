@@ -228,9 +228,6 @@ switch($_REQUEST['icl_ajx_action']){
             echo 0;
         }                
         break;
-    case 'nav_read_more':
-        echo @htmlentities(file_get_contents(ICL_PLUGIN_PATH . '/modules/cms-navigation/readme.txt'));
-        break;
     case 'icl_navigation_form':        
         $iclsettings = $sitepress->get_settings();
         foreach($_POST as $k=>$v){

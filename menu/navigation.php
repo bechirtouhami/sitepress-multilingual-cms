@@ -50,22 +50,44 @@
     
     </form>  
     
-    <p>
-    <code>&lt;?php do_action('icl_navigation_breadcrumb'); ?&gt;</code>    
-    </p>
+    
+    <p><?php echo __('Instruction for adding the navigation to your theme', 'sitepress')?></p>
+    
+    <table class="widefat" cellspacing="0">
+    <thead>
+        <tr>
+            <th scope="col"><?php echo __('Navigation element', 'sitepress') ?></th>
+            <th scope="col"><?php echo __('Description', 'sitepress') ?></th>
+            <th scope="col"><?php echo __('HTML to add', 'sitepress') ?></th>        
+            <th scope="col"><?php echo __('Where to add', 'sitepress') ?></th>        
+        </tr>        
+    </thead>        
+    <tbody>
+        <tr>
+            <td scope="col" nowrap="nowrap"><?php echo __('Top navigation', 'sitepress') ?></td>          
+            <td scope="col"><?php echo __('A list of the top level pages with drop down menus for second level menus. Can optionally contain the post categories', 'sitepress') ?></td>          
+            <td scope="col" nowrap="nowrap"><code>&lt;?php  do_action('icl_navigation_menu'); ?&gt;</code></td>          
+            <td scope="col">header.php</td>          
+        </tr>
+        <tr>
+            <td scope="col" nowrap="nowrap"><?php echo __('Breadcrumbs trails ', 'sitepress') ?></td>          
+            <td scope="col"><?php echo __('Lists the path back to the home page', 'sitepress') ?></td>          
+            <td scope="col" nowrap="nowrap"><code>&lt;?php  do_action('icl_navigation_breadcrumb'); ?&gt;</code></td>          
+            <td scope="col"><?php printf(__('%s or %s and %s'), 'header.php', 'single.php', 'page.php');?></td>          
+        </tr>
+        <tr>
+            <td scope="col" nowrap="nowrap"><?php echo __('Sidebar navigation ', 'sitepress') ?></td>          
+            <td scope="col"><?php echo __('Local navigation tree with page siblings, parent and brothers', 'sitepress') ?></td>          
+            <td scope="col" nowrap="nowrap"><code>&lt;?php  do_action('icl_navigation_sidebar'); ?&gt;</code></td>          
+            <td scope="col">sidebar.php</td>          
+        </tr>        
+    </tbody>        
+    </table>    
 
-    <p>
-    <code>&lt;?php  do_action('icl_navigation_menu'); ?&gt;</code>    
-    </p>
-
-    <p>
-    <code>&lt;?php  do_action('icl_navigation_sidebar'); ?&gt;</code>    
-    </p>
+    <p><?php echo __('To customize the appearance of the navigation elements, you will need to override the styling provided in the plugin\'s CSS file.', 'sitepress')?></p>
+    
+    <p><?php printf(__('Visit %s for full CSS customization information.', 'sitepress'), '<a href="http://sitepress.org">sitepress.org</a>')?></p>
     
     
-    
-    <a href="#read-more"><?php echo __('Read more(+)', 'sitepress') ?></a>
-    
-    <textarea id="icl_nav_read_more" readonly="readonly"></textarea>
     
 </div>

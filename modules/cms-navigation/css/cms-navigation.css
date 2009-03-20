@@ -102,19 +102,19 @@ ul li.cms-nav-sub-section:before{
     content: '' !important;
 }
 
-.cms-nav-left-menu ul, .cms-nav-left-menu li, .cms-nav-left-menu a{
+.cms-nav-sidebar ul, .cms-nav-sidebar li, .cms-nav-sidebar a{
     padding:0;
     margin:0;    
 }
-.cms-nav-left-menu{
+.cms-nav-sidebar{
     list-style: none;
     padding:0;
     margin:0;
 }
-.cms-nav-left-menu li{
+.cms-nav-sidebar li{
     position: relative;
     margin:4px 8px 2px 8px;
 }
-.cms-nav-left-menu li.selected_page_side{
+.cms-nav-sidebar li.selected_page_side{
     
 }

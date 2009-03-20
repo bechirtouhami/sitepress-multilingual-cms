@@ -56,6 +56,8 @@ class CMSNavigation{
         add_action('admin_head', array($this, 'cms_navigation_js'));
         
         add_action('init', array($this, 'cms_navigation_css'));
+        
+        add_action('plugins_loaded', array($this, 'sidebar_navigation_widget_init'));
     }
     
     function cms_navigation_breadcrumb(){
@@ -223,27 +225,11 @@ class CMSNavigation{
                     echo '</ul>';
                     if(isset($cms_nav_ie_ver) && $cms_nav_ie_ver <= 6) echo '</td></tr></table></a>';
                     echo '</li>';
-                }                
-                
-                
-                $cat_menu_selected = '';
-                if(is_single() || is_category()){
-                    $cat_menu_selected = ' selected';
-                }
-                ob_start();
-                wp_list_categories('title_li=<a class="trigger'.$cat_menu_selected.'" href="'.$blog_url.'">'.$blog_name.'</a>'.
-                    '&current_category='.intval(get_query_var('cat')).'&depth=1');
-                $cont = ob_get_contents();    
-                ob_end_clean();           
-                $cont = preg_replace('@^<li([^>]*)><a([^>]*)>([^<]*)</a><ul>@im','<li$1><a$2>$3<!--[if IE 7]><!--></a><!--<![endif]--><!--[if lte IE 6]><table><tr><td><![endif]--><ul>',$cont);         
-                $cont = preg_replace('@</li>\Z@im', '</li><!--[if lte IE 6]></td></tr></table></a><![endif]-->',  $cont);
-                echo $cont;
-                
+                }                                
             }
             ?></ul></div><br class="cms-nav-clearit" /><?php
         }
     }    
-
     
     function cms_navigation_page_navigation(){
         if(!is_page()) return;
@@ -295,9 +281,9 @@ class CMSNavigation{
             $sections[$s->section][] = $s->ID;    
         }
         ksort($sections);    
+        echo '<ul class="cms-nav-sidebar">';
         foreach($sections as $sec_name=>$sec){
-            ?>
-            <ul class="cms-nav-left-menu">
+            ?>            
                 <?php if($sec_name): ?>
                 <li class="cms-nav-sub-section"><?php echo $sec_name ?></li>
                 <?php endif; ?>
@@ -308,10 +294,10 @@ class CMSNavigation{
                             $this->__cms_navigation_child_pages_recursive($s, $order); 
                         }                
                 ?></li>
-                <?php endforeach;?>
-            </ul>
+                <?php endforeach;?>            
             <?php
         }
+        echo '</ul>';
     }
 
     function __cms_navigation_child_pages_recursive($pid, $order){
@@ -424,6 +410,12 @@ class CMSNavigation{
         $stylesheet = rtrim(get_option('siteurl'),'/') . '/' . $path . '/res'; 
         wp_enqueue_style('cms-navigation-style', ICL_PLUGIN_URL . '/modules/cms-navigation/css/cms-navigation.css', array(), '0.1');            
     }
+    
+    function sidebar_navigation_widget_init(){
+        function sidebar_navigation_widget(){
+            global $iclCMSNavigation;                
+            $iclCMSNavigation->cms_navigation_page_navigation();
+        }
+        register_sidebar_widget(__('Sidebar Navigation', 'sitepress'), 'sidebar_navigation_widget', 'icl_sidebar_navigation');
+    }
 }
-
-$iclCMSNavigation = new CMSNavigation();
