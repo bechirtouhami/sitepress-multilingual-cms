@@ -346,6 +346,7 @@ class SitePress{
     }
     
     function js_scripts_setup(){        
+        global $pagenow, $wpdb;
         $page = basename($_GET['page']);
         $page_basename = str_replace('.php','',$page);
         ?>
@@ -363,8 +364,20 @@ class SitePress{
         if($page_basename && file_exists(ICL_PLUGIN_PATH . '/res/js/'.$page_basename.'.js')){
             wp_enqueue_script('sitepress-' . $page_basename, ICL_PLUGIN_URL . '/res/js/'.$page_basename.'.js', array(), '0.1');
         }
-    }
-    
+        if('options-reading.php' == $pagenow ){
+                list($warn_home, $warn_posts) = $this->verify_home_and_blog_pages_translations();
+        }
+        ?>
+        <?php if($warn_home || $warn_posts): ?>
+        <script type="text/javascript">        
+        addLoadEvent(function(){
+        jQuery('input[name="show_on_front"]').parent().parent().parent().parent().append('<?php echo $warn_home . $warn_posts ?>');
+        });
+        </script>
+        <?php endif; ?>
+        <?php
+        }
+       
     function front_end_js(){
         echo '<script type="text/javascript">var icl_lang = \''.$this->this_lang.'\';</script>';        
         echo '<script type="text/javascript" src="'. ICL_PLUGIN_URL . '/res/js/sitepress.js"></script>';        
@@ -1324,7 +1337,48 @@ class SitePress{
             }                    
         }
         return $page_for_posts_sc;
-    }        
-        
+    } 
+    
+    function verify_home_and_blog_pages_translations(){
+        global $wpdb;
+        $warn_home = $warn_posts = '';
+        if( 'page' == get_option('show_on_front')){
+            $page_on_front = get_option('page_on_front');
+            $page_home_trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id={$page_on_front} AND element_type='post'");
+            $page_home_translations = $this->get_element_translations($page_home_trid, 'post');                 
+            $missing_home = array();               
+            foreach($this->active_languages as $lang){
+             if(!isset($page_home_translations[$lang['code']])){
+                 $missing_home[] = '<a href="page-new.php?trid='.$page_home_trid.'&lang='.$lang['code'].'" title="'.__('add translation', 'sitepress').'">' . $lang['display_name'] . '</a>';
+             }
+            }
+            if(!empty($missing_home)){
+             $warn_home  = '<div class="icl_form_errors" style="font-weight:bold">';
+             $warn_home .= sprintf(__('Your home page does not exist in %s', 'sitepress'), join(', ', $missing_home));
+             $warn_home .= '<br />';
+             $warn_home .= '<a href="page.php?action=edit&post='.$page_on_front.'">' . __('Edit this page to add translations', 'sitepress') . '</a>';
+             $warn_home .= '</div>';
+            }
+
+            $page_for_posts = get_option('page_for_posts');
+            $page_posts_trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id={$page_for_posts} AND element_type='post'");
+            $page_posts_translations = $this->get_element_translations($page_posts_trid, 'post');                 
+            $missing_posts = array();               
+            foreach($this->active_languages as $lang){
+             if(!isset($page_posts_translations[$lang['code']])){
+                 $missing_posts[] = '<a href="page-new.php?trid='.$page_posts_trid.'&lang='.$lang['code'].'" title="'.__('add translation', 'sitepress').'">' . $lang['display_name'] . '</a>';
+             }
+            }
+            if(!empty($missing_posts)){
+             $warn_posts  = '<div class="icl_form_errors" style="font-weight:bold">';
+             $warn_posts .= sprintf(__('Your blog page does not exist in %s', 'sitepress'), join(', ', $missing_posts));
+             $warn_posts .= '<br />';
+             $warn_posts .= '<a href="page.php?action=edit&post='.$page_for_posts.'">' . __('Edit this page to add translations', 'sitepress') . '</a>';
+             $warn_posts .= '</div>';
+            }         
+        }    
+        return array($warn_home, $warn_posts);                     
+    }   
+    
 }  
 ?>
