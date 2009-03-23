@@ -975,11 +975,12 @@ class SitePress{
     
     function language_selector_widget_init(){
         
-        function language_selector_widget(){            
+        function language_selector_widget($args){            
             global $sitepress;
+            extract($args, EXTR_SKIP);
             echo $before_widget;
-            echo $before_title; 
             $sitepress->language_selector();
+            echo $after_widget;
         }        
         register_sidebar_widget(__('Language Selector', 'sitepress'), 'language_selector_widget', 'icl_languages_selector');
                 

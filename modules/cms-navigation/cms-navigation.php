@@ -413,9 +413,12 @@ class CMSNavigation{
     }
     
     function sidebar_navigation_widget_init(){
-        function sidebar_navigation_widget(){
+        function sidebar_navigation_widget($args){
+            extract($args, EXTR_SKIP);
+            echo $before_widget;
             global $iclCMSNavigation;                
             $iclCMSNavigation->cms_navigation_page_navigation();
+            echo $after_widget;
         }
         register_sidebar_widget(__('Sidebar Navigation', 'sitepress'), 'sidebar_navigation_widget', 'icl_sidebar_navigation');
     }
