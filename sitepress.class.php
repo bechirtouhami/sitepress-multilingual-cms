@@ -554,8 +554,6 @@ class SitePress{
         // new categories created inline go to the correct language
         if(isset($_POST['post_category']))
         foreach($_POST['post_category'] as $cat){
-            echo $cat;
-            echo PHP_EOL;
             $ttid = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id={$cat} AND taxonomy='category'");
             $wpdb->update($wpdb->prefix.'icl_translations', 
                 array('language_code'=>$_POST['icl_post_language']), 
@@ -1150,7 +1148,7 @@ class SitePress{
     
     function get_terms_filter($terms){
         foreach($terms as $k=>$v){
-            $terms[$k]->name = $this->the_category_name_filter($terms[$k]->name);
+            if(isset($terms[$k]->name)) $terms[$k]->name = $this->the_category_name_filter($terms[$k]->name);
         }
         return $terms;
     }
