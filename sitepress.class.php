@@ -16,6 +16,13 @@ class SitePress{
             WHERE 
                 active=1 AND lt.display_language_code = '{$this->get_default_language()}' 
             ORDER BY major DESC, english_name ASC", ARRAY_A);        
+        echo "
+            SELECT code, english_name, active, lt.name AS display_name 
+            FROM {$wpdb->prefix}icl_languages l
+                JOIN {$wpdb->prefix}icl_languages_translations lt ON l.code=lt.language_code           
+            WHERE 
+                active=1 AND lt.display_language_code = '{$this->get_default_language()}' 
+            ORDER BY major DESC, english_name ASC";
         $languages = array();
         if($res){
             foreach($res as $r){
@@ -1019,9 +1026,6 @@ class SitePress{
     function language_selector(){
             global $wpdb, $post, $cat, $tag_id, $wp_query;
             $w_active_languages = $this->get_active_languages();
-            echo '<pre>';
-            print_r($w_active_languages);
-            echo '</pre>';
             $this_lang = $this->this_lang;
             $w_this_lang = $this->get_language_details($this_lang);
                        
