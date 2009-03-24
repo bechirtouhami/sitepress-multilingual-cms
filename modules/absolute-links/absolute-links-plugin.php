@@ -299,9 +299,9 @@ class AbsoluteLinksPlugin{
         
         delete_post_meta($post_id,'_alp_broken_links');
          
-        $post = $wpdb->get_row("SELECT * FROM {$wpdb->posts} WHERE ID={$post_id}");        
-        $int = preg_match_all('#<a([^>]*)href="('.rtrim(get_option('home'),'/').'/([^"^>]+))"([^>]*)>#i',$post->post_content,$alp_matches);        
-        
+        $post = $wpdb->get_row("SELECT * FROM {$wpdb->posts} WHERE ID={$post_id}"); 
+        $home_url = $sitepress->language_url($_POST['icl_post_language']);
+        $int = preg_match_all('#<a([^>]*)href="('.rtrim($home_url,'/').'/([^"^>]+))"([^>]*)>#i',$post->post_content,$alp_matches);        
         $sitepress_settings = $sitepress->get_settings();
         
         if($int){   
@@ -313,6 +313,8 @@ class AbsoluteLinksPlugin{
                         $exp = explode('/', $m, 2);                
                         $lang = $exp[0];
                         $m = $exp[1];
+                }elseif($sitepress_settings['language_negotiation_type']==2){
+                    //
                 }
                 
                 $pathinfo = '';
@@ -402,7 +404,7 @@ class AbsoluteLinksPlugin{
                         }else{
                             $langprefix = '';
                         }
-                        $perm_url = rtrim(get_option('home'),'/'). $langprefix .'/'.$m;
+                        $perm_url = rtrim($home_url,'/'). $langprefix .'/'.$m;
                         $regk = '@href="('.$perm_url.')"@i';                        
                         $regv = 'href="' . '/' . ltrim($url_parts['path'],'/') . '?' . $qvid . '=' . $p->ID.'"';
                         $def_url[$regk] = $regv;
