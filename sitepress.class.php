@@ -1019,6 +1019,9 @@ class SitePress{
     function language_selector(){
             global $wpdb, $post, $cat, $tag_id, $wp_query;
             $w_active_languages = $this->get_active_languages();
+            echo '<pre>';
+            print_r($w_active_languages);
+            echo '</pre>';
             $this_lang = $this->this_lang;
             $w_this_lang = $this->get_language_details($this_lang);
                        
