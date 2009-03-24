@@ -324,7 +324,7 @@ function icl_sitepress_activate(){
         );        
         add_option('icl_sitepress_settings', $settings, '', true);        
     }    
-    
+                                                                     
 }
 
 function icl_sitepress_deactivate(){

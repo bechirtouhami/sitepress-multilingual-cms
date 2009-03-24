@@ -25,9 +25,9 @@ Version: 1.4
     along with CMS Navigation.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-define('CMS_NAVIGATION_VERSION', 0.3);
-if(is_admin() && !in_array($pagenow, array('page.php','page-new.php'))) return;
 
+if(is_admin() && !in_array($pagenow, array('page.php','page-new.php'))) return;
+define('CMS_NAVIGATION_VERSION', 0.3);
 
 if(!defined('PHP_EOL')){
     define ('PHP_EOL',"\r\n");
@@ -37,17 +37,20 @@ class CMSNavigation{
     var $settings;
     function __construct(){
         $this->CMSNavigation();
-    }
+    } 
+      
     function CMSNavigation(){
+        
         global $cms_nav_ie_ver, $sitepress;
-        $sitepress_settings = $sitepress->get_settings();
+        if(!isset($sitepress)) $sitepress = new SitePress();
+        $sitepress_settings = $sitepress->get_settings();        
         $this->settings = $sitepress_settings['modules']['cms-navigation'];
-                
+        
         $cms_nav_user_agent = $_SERVER['HTTP_USER_AGENT'];
         if(preg_match('#MSIE ([0-9]+)\.[0-9]#',$cms_nav_user_agent,$matches)){
             $cms_nav_ie_ver = $matches[1];
         }
-                
+        
         add_action('icl_navigation_breadcrumb', array($this, 'cms_navigation_breadcrumb'));
         add_action('icl_navigation_menu', array($this, 'cms_navigation_menu_nav'));
         add_action('icl_navigation_sidebar', array($this, 'cms_navigation_page_navigation'));
@@ -58,7 +61,8 @@ class CMSNavigation{
         add_action('init', array($this, 'cms_navigation_css'));
         
         add_action('plugins_loaded', array($this, 'sidebar_navigation_widget_init'));
-    }
+        
+    } 
     
     function cms_navigation_breadcrumb(){
         global $post, $sitepress;
