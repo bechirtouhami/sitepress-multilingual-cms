@@ -46,7 +46,7 @@ class AbsoluteLinksPlugin{
         
         $path = dirname(substr(__FILE__, strpos(__FILE__,'wp-content')));
         $path = str_replace('\\','/',$path);
-        $this->plugin_url = get_option('siteurl') . $path;
+        $this->plugin_url = rtrim(get_option('siteurl'),'/') .'/' . $path;
         
     }
     
@@ -165,6 +165,7 @@ class AbsoluteLinksPlugin{
                     jQuery('#alp_re_scan_but').attr('value','<?php echo __('Scan', 'sitepress') ?>');    
                     window.clearTimeout(req_timer);
                     jQuery('#alp_ajx_ldr_1').fadeOut();
+                    location.reload();
                 }
                 alp_scan_started = !alp_scan_started;
                 return false;
@@ -248,6 +249,7 @@ class AbsoluteLinksPlugin{
                             window.clearTimeout(req_rev_timer);
                             jQuery('#alp_revert_urls').removeAttr('disabled');                            
                             jQuery('#alp_revert_urls').attr('value','<?php echo __('Start', 'sitepress')?>');                            
+                            location.reload();
                         }else{
                             jQuery('#alp_rev_items_left').html(msg + ' <?php echo __('items left', 'sitepress')?>');
                             req_rev_timer = window.setTimeout(alp_do_revert_urls,3000);
@@ -287,7 +289,7 @@ class AbsoluteLinksPlugin{
     
     function process_post($post_id){
         global $wpdb;
-        global $wp_rewrite;
+        global $wp_rewrite, $sitepress;
         if(!isset($wp_rewrite)){
             require_once ABSPATH . WPINC . '/rewrite.php'; 
             $wp_rewrite = new WP_Rewrite();
@@ -300,13 +302,21 @@ class AbsoluteLinksPlugin{
         $post = $wpdb->get_row("SELECT * FROM {$wpdb->posts} WHERE ID={$post_id}");        
         $int = preg_match_all('#<a([^>]*)href="('.rtrim(get_option('home'),'/').'/([^"^>]+))"([^>]*)>#i',$post->post_content,$alp_matches);        
         
+        $sitepress_settings = $sitepress->get_settings();
+        
         if($int){   
             $url_parts = parse_url(rtrim(get_option('home'),'/').'/');                                                    
             foreach($alp_matches[3] as $k=>$m){
                 if(0===strpos($m,'wp-content')) continue;
                 
+                if($sitepress_settings['language_negotiation_type']==1){
+                        $exp = explode('/', $m, 2);                
+                        $lang = $exp[0];
+                        $m = $exp[1];
+                }
+                
                 $pathinfo = '';
-                $req_uri = '/' . $m;
+                $req_uri = '/' . $m;                
                 $req_uri_array = explode('?', $req_uri);
                 $req_uri = $req_uri_array[0];
                 $self = '/index.php';
@@ -387,7 +397,12 @@ class AbsoluteLinksPlugin{
                             $qvid = 'page_id';
                         }
                         
-                        $perm_url = rtrim(get_option('home'),'/').'/'.$m;
+                        if($sitepress_settings['language_negotiation_type']==1){
+                            $langprefix = '/' . $lang;
+                        }else{
+                            $langprefix = '';
+                        }
+                        $perm_url = rtrim(get_option('home'),'/'). $langprefix .'/'.$m;
                         $regk = '@href="('.$perm_url.')"@i';                        
                         $regv = 'href="' . '/' . ltrim($url_parts['path'],'/') . '?' . $qvid . '=' . $p->ID.'"';
                         $def_url[$regk] = $regv;

@@ -8,4 +8,6 @@
     <h2><?php echo __('Setup SitePress', 'sitepress') ?></h2>    
     
     <h3><?php echo __('Absolute links', 'sitepress') ?></h3>    
+    
+    <?php $iclAbsoluteLinks->management_page_content(); ?>
 </div>

@@ -4,7 +4,7 @@
     <input type="submit" name="re_scan" value="<?php echo __('Scan', 'sitepress') ?>" id="alp_re_scan_but" <?php if(!$total_posts_pages):?>disabled="disabled"<?php endif;?> class="button-secondary action" title="<?php echo __('Replace permalinks with absolute links in posts that have not been checked', 'sitepress'); ?>" />
     <input type="submit" name="re_scan" value="<?php echo __('Scan ALL posts', 'sitepress') ?>" id="alp_re_scan_but_all" class="button-secondary action"
         title="<?php echo __('Replace permalinks with absolute links in all blog posts', 'sitepress'); ?>" />
-    <img id="alp_ajx_ldr_1" src="<?php echo $iclAbsoluteLinks->plugin_url ?>/img/ajax-loader.gif" width="16" height="16" style="display:none" align="baseline" />
+    <img id="alp_ajx_ldr_1" src="<?php echo $this->plugin_url ?>/img/ajax-loader.gif" width="16" height="16" style="display:none" align="baseline" />
     </p>
     
     
@@ -18,8 +18,8 @@
     </tr>
     </thead>
     
-    <?php if($iclAbsoluteLinks->broken_links): ?>
-        <?php foreach($iclAbsoluteLinks->broken_links as $bl):$links = unserialize($bl->links); if(is_string($links)) $links = unserialize($links); ?>    
+    <?php if($this->broken_links): ?>
+        <?php foreach($this->broken_links as $bl):$links = unserialize($bl->links); if(is_string($links)) $links = unserialize($links); ?>    
         <tr>
             <td rowspan="<?php echo count($links)+1 ?>" valign="top" style="background-color:#eee">
                 <a title="Edit post" href="<?php echo get_edit_post_link($bl->ID) ?>"><?php echo $bl->post_title?></a>
@@ -49,7 +49,7 @@
     <?php echo __('Revert absolute urls to permalinks', 'sitepress') ?> <input type="button" id="alp_revert_urls" value="<?php echo __('Start', 'sitepress')?>" class="button-secondary action" <?php if(!$total_posts_pages_processed): ?>disabled="disabled"<?php endif; ?> 
     title="<?php echo __('Change absolute links back to Wordpress permalinks', 'sitepress'); ?>" /> 
         <span id="alp_rev_items_left"><?php if($total_posts_pages_processed){ echo $total_posts_pages_processed; echo ' '; echo __('items in queue', 'sitepress'); } ?></span>
-        <img id="alp_ajx_ldr_2" src="<?php echo $iclAbsoluteLinks->plugin_url ?>/img/ajax-loader.gif" width="16" height="16" style="display:none" align="baseline" />
+        <img id="alp_ajx_ldr_2" src="<?php echo $this->plugin_url ?>/img/ajax-loader.gif" width="16" height="16" style="display:none" align="baseline" />
     </p>
     
 </div>

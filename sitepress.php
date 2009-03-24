@@ -49,7 +49,6 @@ $iclCMSNavigation = new CMSNavigation();
 require ICL_PLUGIN_PATH . '/modules/absolute-links/absolute-links-plugin.php';
 $iclAbsoluteLinks = new AbsoluteLinksPlugin();
 
-
 // activation hook
 register_activation_hook( __FILE__, 'icl_sitepress_activate' );
 register_deactivation_hook(__FILE__, 'icl_sitepress_deactivate');
