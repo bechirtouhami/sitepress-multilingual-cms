@@ -11,7 +11,7 @@
     <h2><?php echo __('Setup SitePress', 'sitepress') ?></h2>    
     
     <h3><?php echo __('About Sticky Links', 'sitepress') ?></h3>    
-
+    
     <p><?php echo __('SitePress can turn internal links to posts and pages into sticky links. What this means is that links to pages and posts will automatically update if their URL changes. There are many reasons why page URL changes:', 'sitepress'); ?></p>
     <ul style="list-style:disc;margin-left:20px;">
         <li><?php echo __('The slug changes.', 'sitepress'); ?></li>
