@@ -211,7 +211,7 @@ class SitePress{
             add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Comments Translation','sitepress'), __('Comments Translation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/comments-translation.php'); 
         }
         add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Navigation','sitepress'), __('Navigation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/navigation.php'); 
-        add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Absolute Links','sitepress'), __('Absolute Links','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/absolute-links.php'); 
+        add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Sticky links','sitepress'), __('Sticky links','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/absolute-links.php'); 
     }
 
     function save_settings($settings=null){
