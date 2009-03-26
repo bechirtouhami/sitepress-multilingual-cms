@@ -10,7 +10,7 @@
        
     <?php if(count($active_languages) > 1): ?>
         <h3><?php echo __('Translations pairs','sitepress') ?></h3>    
-        <form id="icl_language_pairs_form" name="icl_language_pairs_form">
+        <form id="icl_language_pairs_form" name="icl_language_pairs_form" action="">
         <ul id="icl_language_pairs" >    
             <?php foreach($active_languages as $lang): ?>            
                 <li>
@@ -33,7 +33,7 @@
         <br clear="all" />    
         
         <h3><?php echo __('Translation options','sitepress') ?></h3>    
-        <form name="icl_more_options">
+        <form name="icl_more_options" action="">
         <table class="form-table icl-account-setup">
         <tr>
             <td>
@@ -47,7 +47,7 @@
                 <?php echo __('Translate new contents when published', 'sitepress') ?></label>
             </td>
         </tr>       
-        <tr  coslpan="2">        
+        <tr>        
             <td>
                 <label><input name="icl_interview_translators" type="radio" value="0" <?php if(!$sitepress_settings['interview_translators']): ?>checked="checked"<?php endif;?> /> <?php echo __('ICanLocalize will assign translators for this work', 'sitepress'); ?></label><br />
                 <label><input name="icl_interview_translators" type="radio" value="1" <?php if($sitepress_settings['interview_translators']): ?>checked="checked"<?php endif;?> /> <?php echo __('I want to interview my translators', 'sitepress'); ?></label>
@@ -61,7 +61,7 @@
         </form>
         
         <h3 id="icleditoraccount"><?php echo __('Editor account for WordPress access','sitepress') ?></h3>        
-        <form name="icl_editor_account">
+        <form name="icl_editor_account" action="">
         <p class="icl_form_errors" style="display:none"></p>
         <table class="form-table icl-account-setup">
         <tr class="form-field">
@@ -154,15 +154,13 @@
             </form>    
             
          <?php else: // if account configured ?>   
-         
+            <form action="<?php echo $_SERVER['REQUEST_URI'] ?>#icl_create_account_form" method="post">
             <p>
-                <?php echo __('Your ICanLocalize account is configured', 'sitepress'); ?>
-                <form action="<?php echo $_SERVER['REQUEST_URI'] ?>#icl_create_account_form" method="post">
+                <?php echo __('Your ICanLocalize account is configured', 'sitepress'); ?>                
                 <?php wp_nonce_field('icl_logout') ?>    
-                <input class="button" name="logout" value="<?php echo __('Reset ICanLocalize account configuration') ?>" type="submit" />
-                </form>
+                <input class="button" name="logout" value="<?php echo __('Reset ICanLocalize account configuration') ?>" type="submit" />                
             </p>
-            
+            </form>
          <?php endif; ?>
      
     <?php else:?>

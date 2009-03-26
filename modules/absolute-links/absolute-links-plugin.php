@@ -174,7 +174,7 @@ class AbsoluteLinksPlugin{
             function alp_send_request(offset){
                 jQuery.ajax({
                     type: "POST",
-                    url: "<?php echo $_SERVER['REQUEST_URI'] ?>",
+                    url: "<?php echo htmlentities($_SERVER['REQUEST_URI']) ?>",
                     data: "alp_ajx_action=rescan&amp;offset="+offset,
                     success: function(msg){                        
                         if(-1==msg || msg==0){
@@ -202,7 +202,7 @@ class AbsoluteLinksPlugin{
                 jQuery('#alp_re_scan_but').removeAttr('disabled');    
                 jQuery.ajax({
                     type: "POST",
-                    url: "<?php echo $_SERVER['REQUEST_URI'] ?>",
+                    url: "<?php echo htmlentities($_SERVER['REQUEST_URI']) ?>",
                     data: "alp_ajx_action=rescan_reset",
                     success: function(msg){    
                         if(msg){
@@ -220,7 +220,7 @@ class AbsoluteLinksPlugin{
                 orig_url = jQuery('#alp_bl_'+spl[5]).html();
                 jQuery.ajax({
                     type: "POST",
-                    url: "<?php echo $_SERVER['REQUEST_URI'] ?>",
+                    url: "<?php echo htmlentities($_SERVER['REQUEST_URI']) ?>",
                     data: "alp_ajx_action=use_suggestion&amp;sug_id="+sug_id+"&amp;post_id="+post_id+"&amp;orig_url="+orig_url,
                     success: function(msg){                                                    
                         spl = msg.split('|');
@@ -240,7 +240,7 @@ class AbsoluteLinksPlugin{
                 jQuery('#alp_revert_urls').attr('value','<?php echo __('Running', 'sitepress') ?>');
                 jQuery.ajax({
                     type: "POST",
-                    url: "<?php echo $_SERVER['REQUEST_URI'] ?>",
+                    url: "<?php echo htmlentities($_SERVER['REQUEST_URI']) ?>",
                     data: "alp_ajx_action=alp_revert_urls",
                     success: function(msg){                                                    
                         if(-1==msg || msg==0){
