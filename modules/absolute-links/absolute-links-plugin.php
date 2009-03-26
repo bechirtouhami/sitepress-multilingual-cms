@@ -146,7 +146,7 @@ class AbsoluteLinksPlugin{
     
     function js_scripts(){
         ?>
-        <script>
+        <script type="text/javascript">
             addLoadEvent(function(){                     
                 jQuery('#alp_re_scan_but').click(alp_toogle_scan);                
                 jQuery('#alp_re_scan_but_all').click(alp_reset_scan_flags);
@@ -175,7 +175,7 @@ class AbsoluteLinksPlugin{
                 jQuery.ajax({
                     type: "POST",
                     url: "<?php echo $_SERVER['REQUEST_URI'] ?>",
-                    data: "alp_ajx_action=rescan&offset="+offset,
+                    data: "alp_ajx_action=rescan&amp;offset="+offset,
                     success: function(msg){                        
                         if(-1==msg || msg==0){
                             left = '0';
@@ -221,7 +221,7 @@ class AbsoluteLinksPlugin{
                 jQuery.ajax({
                     type: "POST",
                     url: "<?php echo $_SERVER['REQUEST_URI'] ?>",
-                    data: "alp_ajx_action=use_suggestion&sug_id="+sug_id+"&post_id="+post_id+"&orig_url="+orig_url,
+                    data: "alp_ajx_action=use_suggestion&amp;sug_id="+sug_id+"&amp;post_id="+post_id+"&amp;orig_url="+orig_url,
                     success: function(msg){                                                    
                         spl = msg.split('|');
                         jqthis.parent().html('<?php echo __('fixed', 'sitepress')?> - ' + spl[1]);

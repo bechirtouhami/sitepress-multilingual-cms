@@ -356,7 +356,7 @@ class SitePress{
         var icl_default_mark = '<?php echo __('default') ?>';     
         var icl_this_lang = '<?php echo $this->this_lang ?>';   
         var icl_ajxloaderimg = '<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif';
-        var icl_cat_adder_msg = '<?php echo __('To add categories that already exist in other languages go to the <a href="categories.php">category management page</a>','sitepress')?>';
+        var icl_cat_adder_msg = '<?php echo __('To add categories that already exist in other languages go to the &lt;a href="categories.php"&gt;category management page&lt;/a&gt;','sitepress')?>';
         </script>
         <?php
         wp_enqueue_script('sitepress-scripts', ICL_PLUGIN_URL . '/res/js/scripts.js', array(), '0.1');

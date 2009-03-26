@@ -27,7 +27,7 @@
     </p>
     
     
-    <span id="icl_alp_wrap">
+    <div id="icl_alp_wrap">
     <?php if($sitepress_settings['modules']['absolute-links']['enabled']):?>    
     <?php $iclAbsoluteLinks->management_page_content(); ?>    
     <?php else: ?>
@@ -40,5 +40,5 @@
         }
     ?>
     <?php endif; ?>
-    </span>
+    </div>
 </div>

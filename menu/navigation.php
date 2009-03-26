@@ -14,7 +14,7 @@
 
     
     <h4><?php echo __('Settings', 'sitepress')?></h4>
-    <form name="icl_navigation_form"  id="icl_navigation_form">
+    <form name="icl_navigation_form"  id="icl_navigation_form" action="">
     <p class="icl_form_errors" style="display:none"></p>
     <table class="form-table">
         <tr valign="top">
@@ -28,14 +28,14 @@
             </td>
         </tr>
         <tr valign="top">
-            <th scope="row"><?php echo __('Categories menu', 'sitepress')?></label></th>
+            <th scope="row"><?php echo __('Categories menu', 'sitepress')?></th>
             <td>
                 <label for="icl_navigation_show_cat_menu"><input type="checkbox" id="icl_navigation_show_cat_menu" name="icl_navigation_show_cat_menu" value="1" <?php if($cms_navigation_settings['show_cat_menu']): ?>checked="checked"<?php endif ?> /> <?php echo __('Show categories menu', 'sitepress')?></label>
                 <label for="icl_navigation_cat_menu_title" <?php if(!$cms_navigation_settings['show_cat_menu']): ?>style="display:none"<?php endif;?>><input type="text" id="icl_navigation_cat_menu_title" name="icl_navigation_cat_menu_title" value="<?php echo $cms_navigation_settings['cat_menu_title']?$cms_navigation_settings['cat_menu_title']:__('News','sitepress'); ?>" /> <?php echo __('Categories menu title', 'sitepress')?></label><input type="text" style="visibility:hidden" />                
             </td>
         </tr>
         <tr valign="top">
-            <th scope="row"><?php echo __('Sidebar pages menu', 'sitepress')?></label></th>
+            <th scope="row"><?php echo __('Sidebar pages menu', 'sitepress')?></th>
             <td>
                 <label for="icl_navigation_heading_start"><?php echo __('Heading start', 'sitepress')?> <input type="text" size="6" id="icl_navigation_heading_start" name="icl_navigation_heading_start" value="<?php echo $cms_navigation_settings['heading_start'] ?>" /></label>
                 <label for="icl_navigation_heading_end"><?php echo __('Heading end', 'sitepress')?> <input type="text" size="6" id="icl_navigation_heading_end" name="icl_navigation_heading_end" value="<?php echo $cms_navigation_settings['heading_end'] ?>" /></label>

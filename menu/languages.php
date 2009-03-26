@@ -48,7 +48,7 @@
                     <input id="icl_cancel_default_button" type="button" class="button-secondary action" value="<?php echo __('Cancel', 'sitepress') ?>" />                                    
                     <input id="icl_change_default_button" type="button" class="button-secondary action" value="<?php echo __('Change default language', 'sitepress') ?>" <?php if(count($active_languages) < 2): ?>style="display:none"<?php endif ?> />
                     
-                    <input id="icl_add_remove_button" type="button" class="button-secondary action" value="<?php echo __('Add / Remove languages', 'sitepress') ?>">
+                    <input id="icl_add_remove_button" type="button" class="button-secondary action" value="<?php echo __('Add / Remove languages', 'sitepress') ?>" />
                     <span class="icl_ajx_response" id="icl_ajx_response"></span>
                     <br clear="all" />
                     <div id="icl_avail_languages_picker">                
@@ -59,21 +59,21 @@
                                 <?php if($lang['major']):?><strong><?php endif;?><?php echo $lang['display_name'] ?><?php if($lang['major']):?></strong><?php endif;?></label></li>
                         <?php endforeach ?>
                         </ul>
-                        <br clear="all">
+                        <br clear="all" />
                         <div>
-                            <input id="icl_save_language_selection" type="button" class="button-secondary action" value="<?php echo __('Save language selection', 'sitepress') ?>">
-                            <input id="icl_cancel_language_selection" type="button" class="button-secondary action" value="<?php echo __('Cancel', 'sitepress') ?>">                                
+                            <input id="icl_save_language_selection" type="button" class="button-secondary action" value="<?php echo __('Save language selection', 'sitepress') ?>" />
+                            <input id="icl_cancel_language_selection" type="button" class="button-secondary action" value="<?php echo __('Cancel', 'sitepress') ?>" />                                
                         </div>
                     </div>
                 </td>
             </tr>
         </table>
         
-        <span id="icl_more_languages_wrap">
-            <span id="icl_lnt">
+        <div id="icl_more_languages_wrap">
+            <div id="icl_lnt">
             <?php if(count($active_languages) > 1): ?>            
                 <h3><?php echo __('Choose how to determine which language visitors see contents in', 'sitepress') ?></h3>    
-                <form id="icl_save_language_negotiation_type" name="icl_save_language_negotiation_type">
+                <form id="icl_save_language_negotiation_type" name="icl_save_language_negotiation_type" action="">
                 <ul>
                     <li>
                         <label>
@@ -130,12 +130,12 @@
                 </p>
                 </form>            
             <?php endif; ?>
-            </span>
+            </div>
             
-            <span id="icl_lso">
+            <div id="icl_lso">
             <?php if(count($active_languages) > 1):?>            
                 <h3><?php echo __('Language switcher options', 'sitepress') ?></h3>    
-                <form id="icl_save_language_switcher_options" name="icl_save_language_switcher_options">
+                <form id="icl_save_language_switcher_options" name="icl_save_language_switcher_options" action="">
                 <p class="icl_form_errors" style="display:none"></p>
                 <ul>
                     <li>
@@ -174,38 +174,38 @@
                 </p>
                 </form>            
             <?php endif; ?>
-            </span>
+            </div>
             
-            <span id="icl_mo">
+            <div id="icl_mo">
             <?php if(count($active_languages) > 1): ?>                            
             <h3><?php echo __('More options', 'sitepress') ?></h3>
-            <form id="icl_lang_more_options" name="icl_lang_more_options">        
+            <form id="icl_lang_more_options" name="icl_lang_more_options" action="">        
             <p>
                 <label><input type="checkbox" id="icl_language_home" name="icl_language_home" <?php if($sitepress_settings['language_home']): ?>checked="checked"<?php endif; ?> value="1" />
                 <?php echo __('Use language specific home pages', 'sitepress') ?></label>
             </p>
-            <p>
+            <div>
                 <?php echo __('What will be the display order of translated posts, pages and categories?', 'sitepress'); ?>
                 <ul>
                     <li><label><input type="radio" name="icl_page_ordering_option" value="1" <?php if($sitepress_settings['page_ordering_option']==1): ?>checked="checked"<?php endif; ?> /> <?php echo __('According to the order of the default language','sitepress') ?></label></li>
                     <li><label><input type="radio" name="icl_page_ordering_option" value="2" <?php if($sitepress_settings['page_ordering_option']==2): ?>checked="checked"<?php endif; ?> /> <?php echo __('According to the order of the original language','sitepress') ?></label></li>
                     <li><label><input type="radio" name="icl_page_ordering_option" value="3" <?php if($sitepress_settings['page_ordering_option']==3): ?>checked="checked"<?php endif; ?> /> <?php echo __('Maintain independent order for each language','sitepress') ?></label></li>
                 </ul>
-            </p>
+            </div>
             <p>
                 <input class="button" name="save" value="<?php echo __('Save') ?>" type="submit" />
                 <span class="icl_ajx_response" id="icl_ajx_response_mo"></span>
             </p>
             </form>
             <?php endif; ?>                            
-            </span>
+            </div>
             
-            <span id="icl_tl">
+            <div id="icl_tl">
             <?php if(count($active_languages) > 1): ?>                            
             <h3 style="display:inline"><?php echo __('Theme localization', 'sitepress') ?></h3>&nbsp;<a href="#toggle-theme-localization" style="text-decoration:none"><?php echo __('show','sitepress') ?></a><a href="#toggle-theme-localization" style="display:none;text-decoration:none;"><?php echo __('hide','sitepress') ?></a> <span id="icl_tl_arrow">&darr;</span>
-            <form id="icl_theme_localization" name="icl_lang_more_options" method="post">
+            <form id="icl_theme_localization" name="icl_lang_more_options" method="post" action="">
             <input type="hidden" name="icl_post_action" value="save_theme_localization" />
-            <span id="icl_theme_localization_wrap">
+            <div id="icl_theme_localization_wrap">
             <table id="icl_theme_localization_table" class="widefat" cellspacing="0">
             <thead>
             <tr>
@@ -259,7 +259,7 @@
             <?php endforeach; ?>                                                          
             </tbody>        
             </table>
-            </span>
+            </div>
             <p>
                 <input class="button" name="save" value="<?php echo __('Save') ?>" type="submit" />
                 <span class="icl_ajx_response" id="icl_ajx_response_fn"></span>
@@ -268,8 +268,8 @@
             </form>
             <?php endif; ?>
             <br /><br />
-            </span>    
-        </span>
+            </div>    
+        </div>
     <?php endif; ?>
     
     
