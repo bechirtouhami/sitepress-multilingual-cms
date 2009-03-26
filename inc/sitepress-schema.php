@@ -318,7 +318,7 @@ function icl_sitepress_activate(){
             'icl_lso_header' => 0, 
             'icl_lso_link_empty' => 0,
             'language_home' => 1,
-            'page_ordering_type' => 1,
+            'sync_page_ordering' => 1,
             'default_language'  => $blog_default_lang,
             'default_categories' => array($blog_default_lang => $blog_default_cat_tax_id)
         );        

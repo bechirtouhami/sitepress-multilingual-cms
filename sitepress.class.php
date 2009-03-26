@@ -206,8 +206,8 @@ class SitePress{
         add_menu_page(__('SitePress','sitepress'), __('SitePress','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/languages.php',null, ICL_PLUGIN_URL . '/res/img/icon16.png');        
         add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Languages','sitepress'), __('Languages','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/languages.php'); 
         if($this->settings['existing_content_language_verified']){
-            add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Content Translation','sitepress'), __('Content Translation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/content-translation.php'); 
-            add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Comments Translation','sitepress'), __('Comments Translation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/comments-translation.php'); 
+            //add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Content Translation','sitepress'), __('Content Translation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/content-translation.php'); 
+            //add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Comments Translation','sitepress'), __('Comments Translation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/comments-translation.php'); 
         }
         add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Navigation','sitepress'), __('Navigation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/navigation.php'); 
         add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Sticky links','sitepress'), __('Sticky links','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/absolute-links.php'); 
@@ -556,11 +556,20 @@ class SitePress{
         }else{
             $post_id = $_POST['post_ID'];
             $language_code = $_POST['icl_post_language'];
-        }        
-        $trid = $_POST['icl_trid'];
-        
-        if($_POST['post_type']=='page'){
-            icl_rearrange_page_order();
+        } 
+        if($_POST['action']=='inline-save'){
+            $res = $wpdb->get_row("SELECT trid, language_code FROM {$wpdb->prefix}icl_translations WHERE element_id={$post_id} AND element_type='post'"); 
+            $trid = $res->trid;
+            $language_code = $res->language_code;
+        }else{
+            $trid = $_POST['icl_trid'];
+        }       
+        if($trid && $_POST['post_type']=='page' && $this->settings['sync_page_ordering']){
+            $menu_order = $wpdb->escape($_POST['menu_order']);
+            $translated_pages = $wpdb->get_col("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid='{$trid}' AND element_id<>{$post_id}");
+            if(!empty($translated_pages)){
+                $wpdb->query("UPDATE {$wpdb->posts} SET menu_order={$menu_order} WHERE ID IN (".join(',', $translated_pages).")");
+            }            
         }
         
         // new categories created inline go to the correct language
@@ -694,7 +703,7 @@ class SitePress{
         ?>
         <script type="text/javascript">
         addLoadEvent(function(){        
-            jQuery(".subsubsub").append('&lt;br /&gt; &lt;span id="icl_subsubsub"&gt;<?php echo htmlentities($allas) ?>&lt;/span&gt;');
+            jQuery(".subsubsub").append('<br /><span id="icl_subsubsub"><?php echo $allas ?></span>');
         });
         </script>
         <?php

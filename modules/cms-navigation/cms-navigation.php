@@ -322,9 +322,10 @@ class CMSNavigation{
         <?php endif; 
     }    
     
-    function cms_navigation_update_post_settings($id){
-        if($_POST['post_type']!='page') return;
+    function cms_navigation_update_post_settings($id){        
+        if($_POST['post_type']!='page' || $_POST['action']=='inline-save') return;
         $post_id = $_POST['post_ID'];
+        
         if($_POST['exclude_from_top_nav']){
             update_post_meta($post_id, '_top_nav_excluded',1);
         }else{
