@@ -23,7 +23,7 @@
     
     <span style="position:absolute;" id="icl_ajax_loader_alp"></span>
     <p>
-        <label><input type="checkbox" name="icl_enable_absolute_links" <?php if($sitepress_settings['modules']['absolute-links']['enabled']):?>checked="checked"<?php endif;?>/> <?php echo __('Enable absolute links', 'sitepress') ?></label>        
+        <label><input type="checkbox" name="icl_enable_absolute_links" <?php if($sitepress_settings['modules']['absolute-links']['enabled']):?>checked="checked"<?php endif;?>/> <?php echo __('Enable sticky links', 'sitepress') ?></label>        
     </p>
     
     

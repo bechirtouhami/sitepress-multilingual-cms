@@ -1,9 +1,9 @@
 <div class="wrap">
     <p>
     <span id="alp_re_scan_toscan"><?php echo $total_posts_pages ?></span> <?php echo __('posts and pages not processed', 'sitepress')?>    
-    <input type="submit" name="re_scan" value="<?php echo __('Scan', 'sitepress') ?>" id="alp_re_scan_but" <?php if(!$total_posts_pages):?>disabled="disabled"<?php endif;?> class="button-secondary action" title="<?php echo __('Replace permalinks with absolute links in posts that have not been checked', 'sitepress'); ?>" />
+    <input type="submit" name="re_scan" value="<?php echo __('Scan', 'sitepress') ?>" id="alp_re_scan_but" <?php if(!$total_posts_pages):?>disabled="disabled"<?php endif;?> class="button-secondary action" title="<?php echo __('Replace permalinks with sticky links in posts that have not been checked', 'sitepress'); ?>" />
     <input type="submit" name="re_scan" value="<?php echo __('Scan ALL posts', 'sitepress') ?>" id="alp_re_scan_but_all" class="button-secondary action"
-        title="<?php echo __('Replace permalinks with absolute links in all blog posts', 'sitepress'); ?>" />
+        title="<?php echo __('Replace permalinks with sticky links in all blog posts', 'sitepress'); ?>" />
     <img id="alp_ajx_ldr_1" src="<?php echo $this->plugin_url ?>/img/ajax-loader.gif" width="16" height="16" style="display:none" alt="loading" />
     </p>
     
@@ -47,7 +47,7 @@
     
     <p>
     <?php echo __('Revert absolute urls to permalinks', 'sitepress') ?> <input type="button" id="alp_revert_urls" value="<?php echo __('Start', 'sitepress')?>" class="button-secondary action" <?php if(!$total_posts_pages_processed): ?>disabled="disabled"<?php endif; ?> 
-    title="<?php echo __('Change absolute links back to Wordpress permalinks', 'sitepress'); ?>" /> 
+    title="<?php echo __('Change sticky links back to Wordpress permalinks', 'sitepress'); ?>" /> 
         <span id="alp_rev_items_left"><?php if($total_posts_pages_processed){ echo $total_posts_pages_processed; echo ' '; echo __('items in queue', 'sitepress'); } ?></span>
         <img id="alp_ajx_ldr_2" src="<?php echo $this->plugin_url ?>/img/ajax-loader.gif" width="16" height="16" style="display:none" alt="loading" />
     </p>
