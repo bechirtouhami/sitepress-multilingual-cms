@@ -237,7 +237,7 @@ class CMSNavigation{
     }    
     
     function cms_navigation_page_navigation(){
-        if(!is_page()) return;
+        if(!is_page() || $_POST['autosave']) return;
         global $post, $wpdb;  
             
         $order = $this->settings['page_order']?$this->settings['page_order']:'menu_order';
