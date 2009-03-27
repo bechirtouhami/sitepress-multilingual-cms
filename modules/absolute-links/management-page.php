@@ -46,7 +46,7 @@
     </table>
     
     <p>
-    <?php echo __('Revert absolute urls to permalinks', 'sitepress') ?> <input type="button" id="alp_revert_urls" value="<?php echo __('Start', 'sitepress')?>" class="button-secondary action" <?php if(!$total_posts_pages_processed): ?>disabled="disabled"<?php endif; ?> 
+    <?php echo __('Revert sticky urls to permalinks', 'sitepress') ?> <input type="button" id="alp_revert_urls" value="<?php echo __('Start', 'sitepress')?>" class="button-secondary action" <?php if(!$total_posts_pages_processed): ?>disabled="disabled"<?php endif; ?> 
     title="<?php echo __('Change sticky links back to Wordpress permalinks', 'sitepress'); ?>" /> 
         <span id="alp_rev_items_left"><?php if($total_posts_pages_processed){ echo $total_posts_pages_processed; echo ' '; echo __('items in queue', 'sitepress'); } ?></span>
         <img id="alp_ajx_ldr_2" src="<?php echo $this->plugin_url ?>/img/ajax-loader.gif" width="16" height="16" style="display:none" alt="loading" />
