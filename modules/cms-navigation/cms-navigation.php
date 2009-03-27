@@ -169,7 +169,16 @@ class CMSNavigation{
             ?><div id="menu-wrap"><?php
             ?><ul id="cms-nav-top-menu"><?php
             foreach($pages as $p){
-                $subpages = $wpdb->get_col("SELECT ID FROM {$wpdb->posts} WHERE post_parent={$p} AND post_status='publish' ORDER BY {$order}");
+                $sections = array();
+                $subpages = $wpdb->get_results("
+                    SELECT p.ID, meta_value AS section
+                    FROM {$wpdb->posts} p LEFT JOIN {$wpdb->postmeta} m ON p.ID=m.post_id AND (meta_key='_cms_nav_section' OR meta_key IS NULL)
+                    WHERE p.post_parent={$p} AND p.post_status='publish' ORDER BY {$order}");                
+                foreach((array)$subpages as $s){
+                    $sections[$s->section][] = $s->ID;    
+                }
+                ksort($sections);  
+                    
                 if($p==$post->ID || in_array($p,$post->ancestors)){
                     $sel = true;
                 }else{
@@ -179,16 +188,21 @@ class CMSNavigation{
                     <?php if($subpages):?>
                         <?php if(isset($cms_nav_ie_ver) && $cms_nav_ie_ver <= 6): ?><table><tr><td><?php endif; ?>
                         <ul>
-                            <?php foreach($subpages as $sp): ?>
-                            <li<?php if($sp==$post->ID):?> class="selected_subpage"<?php endif?>><?php                            
-                                if($sp!=$post->ID):?><a href="<?php echo get_permalink($sp); ?>" <?php if(in_array($sp,$post->ancestors)): ?>class="selected"<?php endif;?>><?php endif?><?php echo get_the_title($sp) ?><?php if($sp!=$post->ID):?></a><?php endif                             
-                            ?></li>
+                            <?php foreach($sections as $sec_name=>$sec): ?>
+                                <?php if($sec_name): ?>
+                                <li class="section"><?php echo $sec_name ?></li>
+                                <?php endif; ?>
+                                <?php foreach($sec as $sp):?>                            
+                                <li<?php if($sp==$post->ID):?> class="selected_subpage"<?php endif?>><?php                            
+                                    if($sp!=$post->ID):?><a href="<?php echo get_permalink($sp); ?>" <?php if(in_array($sp,$post->ancestors)): ?>class="selected"<?php endif;?>><?php endif?><?php echo get_the_title($sp) ?><?php if($sp!=$post->ID):?></a><?php endif                             
+                                ?></li>
+                                <?php endforeach; ?>
                             <?php endforeach; ?>
                         </ul>
                         <?php if(isset($cms_nav_ie_ver) && $cms_nav_ie_ver <= 6): ?></td></tr></table></a><?php endif; ?>
                     <?php endif; ?>                    
                 </li>
-                <?php
+                <?php   
             }
             //add categories
             
@@ -237,7 +251,7 @@ class CMSNavigation{
     }    
     
     function cms_navigation_page_navigation(){
-        if(!is_page() || $_POST['autosave']) return;
+        if(!is_page()) return;
         global $post, $wpdb;  
             
         $order = $this->settings['page_order']?$this->settings['page_order']:'menu_order';
@@ -323,7 +337,7 @@ class CMSNavigation{
     }    
     
     function cms_navigation_update_post_settings($id){        
-        if($_POST['post_type']!='page' || $_POST['action']=='inline-save') return;
+        if($_POST['post_type']!='page' || $_POST['action']=='inline-save'  || $_POST['autosave']) return;
         $post_id = $_POST['post_ID'];
         
         if($_POST['exclude_from_top_nav']){
