@@ -5,7 +5,7 @@ Plugin URI: http://sitepress.org/
 Description: SitePress
 Author: ICanLocalize
 Author URI: http://sitepress.org/
-Version: 0.1
+Version: 0.9
 */
 
 /*
@@ -26,7 +26,7 @@ Version: 0.1
 */
        
 
-define('ICL_SITEPRESS_VERSION', '1.0');
+define('ICL_SITEPRESS_VERSION', '0.9');
 define('ICL_PLUGIN_PATH', dirname(__FILE__));
 define('ICL_PLUGIN_URL', rtrim(get_option('siteurl'),'/') . '/wp-content/' . basename(dirname(dirname(__FILE__))) . '/' . basename(dirname(__FILE__)) );
 
