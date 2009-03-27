@@ -11,13 +11,13 @@ Turns any WordPress site into a fully featured multilingual content management s
 
 WordPress is a great blogging platform with a potential of being an easy to use content management system. SitePress helps it go the extra mile.
 
-* Features *
+*Features*
 
  * **Multilingual content** support based on Drupal i18n architecture.
  * **CMS navigation** allows adding drop down menus, breadcrumbs trail and sidebar navigation (all wigetized).
  * Creates internal **Sticky Links** so that they never break.
 
-* Highlights (in no particular order) *
+*Highlights (in no particular order)*
 
 * When running a multilingual site, each page, post, tag or category has its own language. Translations for the same contents are grouped together, but not mixed in the database.
 * CMS navigation elements work together to provide accurate and easy to use site-wide navigation.
