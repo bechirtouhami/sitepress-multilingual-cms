@@ -647,8 +647,8 @@ class SitePress{
     function posts_join_filter($join){
         global $wpdb, $pagenow;
         //exceptions
-        if($pagenow=='upload.php'){
-            return $jon;    
+        if($pagenow=='upload.php' || $pagenow=='media-upload.php'){
+            return $join;    
         }
         
         if('all' != $this->this_lang){ 
