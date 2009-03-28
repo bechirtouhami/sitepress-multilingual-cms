@@ -645,7 +645,12 @@ class SitePress{
     }
     
     function posts_join_filter($join){
-        global $wpdb;
+        global $wpdb, $pagenow;
+        //exceptions
+        if($pagenow=='upload.php'){
+            return $jon;    
+        }
+        
         if('all' != $this->this_lang){ 
             $cond = "AND language_code='{$wpdb->escape($this->this_lang)}'";
             $ljoin = "";
