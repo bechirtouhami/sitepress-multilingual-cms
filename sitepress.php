@@ -58,8 +58,8 @@ if(isset($_POST['icl_enable_alp'])){
     $sitepress->save_settings($sitepress_settings);
 }
 if($sitepress_settings['modules']['absolute-links']['enabled']){
-    //require ICL_PLUGIN_PATH . '/modules/absolute-links/absolute-links-plugin.php';
-    //$iclAbsoluteLinks = new AbsoluteLinksPlugin();
+    require ICL_PLUGIN_PATH . '/modules/absolute-links/absolute-links-plugin.php';
+    $iclAbsoluteLinks = new AbsoluteLinksPlugin();
 }
 
 // activation hook
