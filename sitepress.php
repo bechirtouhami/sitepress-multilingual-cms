@@ -30,6 +30,11 @@ define('ICL_SITEPRESS_VERSION', '0.9.2');
 define('ICL_PLUGIN_PATH', dirname(__FILE__));
 define('ICL_PLUGIN_URL', rtrim(get_option('siteurl'),'/') . '/wp-content/' . basename(dirname(dirname(__FILE__))) . '/' . basename(dirname(__FILE__)) );
 
+require ICL_PLUGIN_PATH . '/inc/not-compatible-plugins.php';
+if(!empty($icl_ncp_plugins)){
+    return;
+}
+
 require ICL_PLUGIN_PATH . '/inc/constants.inc';
 require ICL_PLUGIN_PATH . '/inc/sitepress-schema.php';
 require ICL_PLUGIN_PATH . '/inc/template-functions.php';
@@ -39,6 +44,7 @@ require ICL_PLUGIN_PATH . '/inc/functions.php';
 if(defined('WP_ADMIN')){
     require ICL_PLUGIN_PATH . '/inc/php-version-check.php';
 }
+
 
 $sitepress = new SitePress();
 $sitepress_settings = $sitepress->get_settings();
@@ -52,8 +58,8 @@ if(isset($_POST['icl_enable_alp'])){
     $sitepress->save_settings($sitepress_settings);
 }
 if($sitepress_settings['modules']['absolute-links']['enabled']){
-    require ICL_PLUGIN_PATH . '/modules/absolute-links/absolute-links-plugin.php';
-    $iclAbsoluteLinks = new AbsoluteLinksPlugin();
+    //require ICL_PLUGIN_PATH . '/modules/absolute-links/absolute-links-plugin.php';
+    //$iclAbsoluteLinks = new AbsoluteLinksPlugin();
 }
 
 // activation hook
