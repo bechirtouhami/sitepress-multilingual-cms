@@ -45,7 +45,6 @@ if(defined('WP_ADMIN')){
     require ICL_PLUGIN_PATH . '/inc/php-version-check.php';
 }
 
-
 $sitepress = new SitePress();
 $sitepress_settings = $sitepress->get_settings();
 

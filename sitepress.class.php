@@ -346,8 +346,10 @@ class SitePress{
     
     function js_scripts_setup(){        
         global $pagenow, $wpdb;
-        $page = basename($_GET['page']);
-        $page_basename = str_replace('.php','',$page);
+        if(isset($_GET['page'])){
+            $page = basename($_GET['page']);
+            $page_basename = str_replace('.php','',$page);
+        }
         ?>
         <script type="text/javascript">        
         var icl_ajx_url = '<?php echo ICL_PLUGIN_URL ?>/ajax.php';
@@ -360,22 +362,20 @@ class SitePress{
         </script>
         <?php
         wp_enqueue_script('sitepress-scripts', ICL_PLUGIN_URL . '/res/js/scripts.js', array(), '0.1');
-        if($page_basename && file_exists(ICL_PLUGIN_PATH . '/res/js/'.$page_basename.'.js')){
+        if(isset($page_basename) && file_exists(ICL_PLUGIN_PATH . '/res/js/'.$page_basename.'.js')){
             wp_enqueue_script('sitepress-' . $page_basename, ICL_PLUGIN_URL . '/res/js/'.$page_basename.'.js', array(), '0.1');
         }
         if('options-reading.php' == $pagenow ){
                 list($warn_home, $warn_posts) = $this->verify_home_and_blog_pages_translations();
+                if($warn_home || $warn_posts){ ?>
+                <script type="text/javascript">        
+                addLoadEvent(function(){
+                jQuery('input[name="show_on_front"]').parent().parent().parent().parent().append('<?php echo $warn_home . $warn_posts ?>');
+                });
+                </script>
+                <?php } 
         }
-        ?>
-        <?php if($warn_home || $warn_posts): ?>
-        <script type="text/javascript">        
-        addLoadEvent(function(){
-        jQuery('input[name="show_on_front"]').parent().parent().parent().parent().append('<?php echo $warn_home . $warn_posts ?>');
-        });
-        </script>
-        <?php endif; ?>
-        <?php
-        }
+    }
        
     function front_end_js(){
         echo '<script type="text/javascript">var icl_lang = \''.$this->this_lang.'\';</script>';        
@@ -391,10 +391,12 @@ class SitePress{
     }
     
     function css_setup(){
-        $page = basename($_GET['page']);
-        $page_basename = str_replace('.php','',$page);        
+        if(isset($_GET['page'])){
+            $page = basename($_GET['page']);
+            $page_basename = str_replace('.php','',$page);        
+        }
         wp_enqueue_style('sitepress-style', ICL_PLUGIN_URL . '/res/css/style.css', array(), '0.1');
-        if($page_basename && file_exists(ICL_PLUGIN_PATH . '/res/css/'.$page_basename.'.css')){
+        if(isset($page_basename) && file_exists(ICL_PLUGIN_PATH . '/res/css/'.$page_basename.'.css')){
             wp_enqueue_style('sitepress-' . $page_basename, ICL_PLUGIN_URL . '/res/css/'.$page_basename.'.css', array(), '0.1');
         }        
     }

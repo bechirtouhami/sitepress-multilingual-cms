@@ -17,9 +17,9 @@ function icl_sitepress_activate(){
             `active` TINYINT NOT NULL ,
             UNIQUE KEY `code` (`code`),
             UNIQUE KEY `english_name` (`english_name`)
-        )";
+        )"; 
         $wpdb->query($sql);
-
+        
         //$langs_names is defined in ICL_PLUGIN_PATH . '/inc/lang-data.inc'
         foreach($langs_names as $key=>$val){
             $wpdb->insert($wpdb->prefix . 'icl_languages', array('english_name'=>$key, 'code'=>$lang_codes[$key], 'major'=>$val['major']));
@@ -119,7 +119,11 @@ function icl_sitepress_activate(){
             'language_home' => 1,
             'sync_page_ordering' => 1,
             'default_language'  => $blog_default_lang,
-            'default_categories' => array($blog_default_lang => $blog_default_cat_tax_id)
+            'default_categories' => array($blog_default_lang => $blog_default_cat_tax_id),
+            'modules' => array(
+                'absolute-links' => array('enabled'=>0),
+                'cms-navigation'=>array()
+                )
         );        
         add_option('icl_sitepress_settings', $settings, '', true);        
     }    
@@ -128,5 +132,30 @@ function icl_sitepress_activate(){
 
 function icl_sitepress_deactivate(){
     // don't do anything for now
-}  
+} 
+
+if(isset($_GET['activate'])){
+    if(!isset($wpdb)) global $wpdb;
+    $table_name = $wpdb->prefix.'icl_languages';
+    if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
+        add_action('admin_notices', 'icl_cant_create_table');
+        function icl_cant_create_table(){
+            echo '<div class="error"><ul><li><strong>';
+            echo __('SitePress cannot create the database tables! Make sure that your mysql user has the CREATE privilege', 'sitepress');
+            echo '</strong></li></ul></div>';        
+            $active_plugins = get_option('active_plugins');
+            $icl_sitepress_idx = array_search('sitepress-multilingual-cms/sitepress.php', $active_plugins);
+            if(false !== $icl_sitepress_idx){
+                unset($active_plugins[$icl_sitepress_idx]);
+                update_option('active_plugins', $active_plugins);
+                unset($_GET['activate']);
+                $recently_activated = get_option('recently_activated');
+                if(!isset($recently_activated['sitepress-multilingual-cms/sitepress.php'])){
+                    $recently_activated['sitepress-multilingual-cms/sitepress.php'] = time();
+                    update_option('recently_activated', $recently_activated);
+                }
+            }                
+        }
+    }   
+}
 ?>
