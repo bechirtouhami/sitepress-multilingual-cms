@@ -91,7 +91,10 @@
                             <?php echo sprintf(__('Different languages in directories (%s - %s, %s/%s - %s, etc.)', 'sitepress'), get_option('home'), $default_language['display_name'] , get_option('home'), $sample_lang['code'], $sample_lang['display_name'] ) ?>
                             <?php if($icl_folder_url_disabled):?>
                             <br />
-                            <span class="icl_error_text"><?php echo __('It appears that your web host does not support names in URLs. This is normally a result of URL rewriting not being available. Use the option &#8220;Language name added as a parameter&#8221; for language negotiation.', 'sitepress')?></span>
+                            <span class="icl_error_text" style="display:block;margin:10px;"><?php echo __('
+                            Languages per directories are disabled. This can be a result of either:<ol>
+                                <li>WordPress is installed in a directory (not root) and you\'re using default links.</li>
+                                <li>URL rewriting is not enabled in your web server.</li></ol>', 'sitepress')?></span>
                             <?php endif; ?>
                         </label>
                     </li>
