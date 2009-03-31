@@ -267,7 +267,7 @@ class SitePress{
             WHERE lt.display_language_code = '{$this->get_default_language()}' 
             ORDER BY major DESC, english_name ASC", ARRAY_A);
         $languages = array();
-        foreach($res as $r){
+        foreach((array)$res as $r){
             $languages[] = $r;
         }
         return $languages;
@@ -1169,7 +1169,15 @@ class SitePress{
     }
     
     function the_category_name_filter($name){        
-        return preg_replace('#(.*) @(.*)#i','$1',$name);
+        if(false === strpos($name, '@')) return $name;
+        if(false !== strpos($name, '<a')){
+            $name_sh = strip_tags($name);
+            $exp = explode('@', $name_sh);
+            $name = str_replace($name_sh, trim($exp[0]),$name);
+        }else{
+            $name = preg_replace('#(.*) @(.*)#i','$1',$name);
+        }
+        return $name;
     }
     
     function get_terms_filter($terms){
