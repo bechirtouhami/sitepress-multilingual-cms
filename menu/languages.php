@@ -75,14 +75,29 @@
                 <h3><?php echo __('Choose how to determine which language visitors see contents in', 'sitepress') ?></h3>    
                 <form id="icl_save_language_negotiation_type" name="icl_save_language_negotiation_type" action="">
                 <ul>
+                    <?php
+                    $client = new WP_Http();
+                    if(false === strpos($_POST['url'],'?')){$url_glue='?';}else{$url_glue='&';}
+                    $response = $client->request(get_option('home') . '/' . $sample_lang['code'] . $url_glue . '____icl_validate_domain=1', 'timeout=15');
+                    if(!is_wp_error($response) && ($response['response']['code']=='200') && ($response['body'] == '<!--'.get_option('home').'-->')){
+                        $icl_folder_url_disabled = false;
+                    }else{
+                        $icl_folder_url_disabled = true;
+                    }                    
+                    ?>
                     <li>
                         <label>
-                            <input type="radio" name="icl_language_negotiation_type" value="1" <?php if($sitepress_settings['language_negotiation_type']==1):?>checked="checked"<?php endif?> />
+                            <input <?php if($icl_folder_url_disabled):?>disabled="disabled"<?php endif?> type="radio" name="icl_language_negotiation_type" value="1" <?php if($sitepress_settings['language_negotiation_type']==1):?>checked="checked"<?php endif?> />                            
                             <?php echo sprintf(__('Different languages in directories (%s - %s, %s/%s - %s, etc.)', 'sitepress'), get_option('home'), $default_language['display_name'] , get_option('home'), $sample_lang['code'], $sample_lang['display_name'] ) ?>
+                            <?php if($icl_folder_url_disabled):?>
+                            <br />
+                            <span class="icl_error_text"><?php echo __('It appears that your web host does not support names in URLs. This is normally a result of URL rewriting not being available. Use the option &#8220;Language name added as a parameter&#8221; for language negotiation.', 'sitepress')?></span>
+                            <?php endif; ?>
                         </label>
                     </li>
                     <?php 
-                    if(defined('WPMU_PLUGIN_DIR')){
+                    global $wpmu_version;
+                    if(isset($wpmu_version)){
                         $icl_lnt_disabled = 'disabled="disabled" ';
                     }else{
                         $icl_lnt_disabled = '';
