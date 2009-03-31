@@ -1,10 +1,10 @@
 <?php
 if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '0.9.3', '<')){
     require_once(ICL_PLUGIN_PATH . '/inc/lang-data.inc');      
-    $wpdb->query("UPDATE {$wpdb->prefix}icl_languages SET english_name='Norwegian Bokmal', code='nb' WHERE english_name='Norwegian'");      
-    foreach($langs_names['Norwegian Bokmal']['tr'] as $k=>$display){        
+    $wpdb->query("UPDATE {$wpdb->prefix}icl_languages SET english_name='Norwegian Bokmål', code='nb' WHERE english_name='Norwegian'");      
+    foreach($langs_names['Norwegian Bokmål']['tr'] as $k=>$display){        
         if(!trim($display)){
-            $display = 'Norwegian Bokmal';
+            $display = 'Norwegian Bokmål';
         }
         $wpdb->insert($wpdb->prefix . 'icl_languages_translations', array('language_code'=>'nb', 'display_language_code'=>$lang_codes[$k], 'name'=>$display));          
     }   
