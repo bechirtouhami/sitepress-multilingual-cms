@@ -62,5 +62,12 @@ Learn more about it in the [Sticky links usage](http://sitepress.org/home/gettin
 
 == Version History ==
 
-* Version 0.9
+* Version 0.9.2
 	* First public release
+* Version 0.9.3 - bug fix release
+	* Fixed the Media Library (which the plugin disabled in the previous release).
+	* Checks against collision with other plugins (CMS-navigation and Absolute-links).
+	* Verified that per-directory language URLs can be implemented in WP.
+	* Split Portuguese to Brazilian and Portuguese (European) Portuguese.
+	* Fixed broken HTML in default category name for translations.
+	* Verify that the plugin can create the required database tables and warn if not.
