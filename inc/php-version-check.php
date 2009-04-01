@@ -1,5 +1,5 @@
 <?php
-  if(version_compare(phpversion(), '6', '<')){
+  if(version_compare(phpversion(), '5', '<')){
       add_action('admin_notices', 'icl_php_version_warn');
       
       function icl_php_version_warn(){
