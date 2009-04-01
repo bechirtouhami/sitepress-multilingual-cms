@@ -19,6 +19,7 @@
               $recently_activated['sitepress-multilingual-cms/sitepress.php'] = time();
               update_option('recently_activated', $recently_activated);
           }
-      }      
+      }  
+      define('PHP_VERSION_INCOMPATIBLE', true);    
   }  
 ?>

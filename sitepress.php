@@ -43,6 +43,7 @@ require ICL_PLUGIN_PATH . '/sitepress.class.php';
 require ICL_PLUGIN_PATH . '/inc/functions.php';
 if(defined('WP_ADMIN')){
     require ICL_PLUGIN_PATH . '/inc/php-version-check.php';
+    if(defined('PHP_VERSION_INCOMPATIBLE')) return;
 }
 
 $sitepress = new SitePress();
