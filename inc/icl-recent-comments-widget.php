@@ -17,10 +17,10 @@ function icl_wp_widget_recent_comments($args) {
 
     if ( !$comments = wp_cache_get( 'recent_comments-'.$sitepress->get_current_language(), 'widget' ) ) {
         $comments = $wpdb->get_results("
-            SELECT * FROM $wpdb->comments c
+            SELECT * FROM {$wpdb->comments} c
                 JOIN {$wpdb->prefix}icl_translations t ON c.comment_post_id = t.element_id AND t.element_type='post'
-            WHERE comment_approved = '1' AND language_code = '{$sitepress->get_current_language()}'
-            ORDER BY comment_date_gmt DESC LIMIT $number
+            WHERE comment_approved = '1' AND language_code = '".$sitepress->get_current_language()."'
+            ORDER BY comment_date_gmt DESC LIMIT {$number}
         ");
         wp_cache_add( 'recent_comments-'.$sitepress->get_current_language(), $comments, 'widget' );
     }

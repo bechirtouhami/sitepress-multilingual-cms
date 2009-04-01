@@ -141,8 +141,7 @@ class SitePress{
         add_filter('pre_option_page_for_posts', array($this,'pre_option_page_for_posts'));
         
     }
-      
-                        
+                              
     function init(){        
         if(defined('WP_ADMIN')){
             if(isset($_GET['lang'])){
@@ -931,12 +930,7 @@ class SitePress{
                     
                     break;
                 case '2': 
-                    $exp = explode('.',$abshome);
-                    if(count($exp)==2){
-                        $url = str_replace('http://', 'http://'.$code.'.', $url);
-                    }else{
-                        $url = preg_replace('#^http://([^.]+)\.(.*)$#i', 'http://'.$code.'.$2', $url);
-                    }                
+                    $url = $this->settings['language_domains'][$code];
                     break;                
                 case '3':
                 default:
