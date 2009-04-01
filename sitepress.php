@@ -30,6 +30,10 @@ define('ICL_SITEPRESS_VERSION', '0.9.3');
 define('ICL_PLUGIN_PATH', dirname(__FILE__));
 define('ICL_PLUGIN_URL', rtrim(get_option('siteurl'),'/') . '/wp-content/' . basename(dirname(dirname(__FILE__))) . '/' . basename(dirname(__FILE__)) );
 
+if(defined('WP_ADMIN')){
+    require ICL_PLUGIN_PATH . '/inc/php-version-check.php';
+    if(defined('PHP_VERSION_INCOMPATIBLE')) return;
+}
 require ICL_PLUGIN_PATH . '/inc/not-compatible-plugins.php';
 if(!empty($icl_ncp_plugins)){
     return;
@@ -41,10 +45,6 @@ require ICL_PLUGIN_PATH . '/inc/template-functions.php';
 require ICL_PLUGIN_PATH . '/inc/icl-recent-comments-widget.php';
 require ICL_PLUGIN_PATH . '/sitepress.class.php';
 require ICL_PLUGIN_PATH . '/inc/functions.php';
-if(defined('WP_ADMIN')){
-    require ICL_PLUGIN_PATH . '/inc/php-version-check.php';
-    if(defined('PHP_VERSION_INCOMPATIBLE')) return;
-}
 
 $sitepress = new SitePress();
 $sitepress_settings = $sitepress->get_settings();
