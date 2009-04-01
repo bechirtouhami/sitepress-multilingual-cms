@@ -172,16 +172,8 @@ class SitePress{
                     break;
                 case 2:    
                     $exp = explode('.', $_SERVER['HTTP_HOST']);
-                    if(count($exp) > 2){
-                        $lang = $exp[0];
-                        if(in_array($lang, $active_languages)){
-                            $this->this_lang = $lang;
-                        }else{
-                            $this->this_lang = $this->get_default_language();
-                        }                        
-                    }else{
-                        $this->this_lang = $this->get_default_language();
-                    }
+                    $__l = array_search('http' . $s . '://' . $_SERVER['HTTP_HOST'] . $blog_path, $this->settings['language_domains']);
+                    $this->this_lang = $__l?$__l:$this->get_default_language(); 
                     break;
                 case 3:
                 default:
