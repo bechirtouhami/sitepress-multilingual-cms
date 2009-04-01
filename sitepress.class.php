@@ -141,7 +141,8 @@ class SitePress{
         add_filter('pre_option_page_for_posts', array($this,'pre_option_page_for_posts'));
         
     }
-                              
+      
+                        
     function init(){        
         if(defined('WP_ADMIN')){
             if(isset($_GET['lang'])){
@@ -172,8 +173,16 @@ class SitePress{
                     break;
                 case 2:    
                     $exp = explode('.', $_SERVER['HTTP_HOST']);
-                    $__l = array_search('http' . $s . '://' . $_SERVER['HTTP_HOST'] . $blog_path, $this->settings['language_domains']);
-                    $this->this_lang = $__l?$__l:$this->get_default_language(); 
+                    if(count($exp) > 2){
+                        $lang = $exp[0];
+                        if(in_array($lang, $active_languages)){
+                            $this->this_lang = $lang;
+                        }else{
+                            $this->this_lang = $this->get_default_language();
+                        }                        
+                    }else{
+                        $this->this_lang = $this->get_default_language();
+                    }
                     break;
                 case 3:
                 default:
@@ -197,8 +206,8 @@ class SitePress{
         add_menu_page(__('SitePress','sitepress'), __('SitePress','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/languages.php',null, ICL_PLUGIN_URL . '/res/img/icon16.png');        
         add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Languages','sitepress'), __('Languages','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/languages.php'); 
         if($this->settings['existing_content_language_verified']){
-            //add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Content Translation','sitepress'), __('Content Translation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/content-translation.php'); 
-            //add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Comments Translation','sitepress'), __('Comments Translation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/comments-translation.php'); 
+            add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Content Translation','sitepress'), __('Content Translation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/content-translation.php'); 
+            add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Comments Translation','sitepress'), __('Comments Translation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/comments-translation.php'); 
         }
         add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Navigation','sitepress'), __('Navigation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/navigation.php'); 
         add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Sticky links','sitepress'), __('Sticky links','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/absolute-links.php'); 
@@ -258,7 +267,7 @@ class SitePress{
             WHERE lt.display_language_code = '{$this->get_default_language()}' 
             ORDER BY major DESC, english_name ASC", ARRAY_A);
         $languages = array();
-        foreach((array)$res as $r){
+        foreach($res as $r){
             $languages[] = $r;
         }
         return $languages;
@@ -337,10 +346,8 @@ class SitePress{
     
     function js_scripts_setup(){        
         global $pagenow, $wpdb;
-        if(isset($_GET['page'])){
-            $page = basename($_GET['page']);
-            $page_basename = str_replace('.php','',$page);
-        }
+        $page = basename($_GET['page']);
+        $page_basename = str_replace('.php','',$page);
         ?>
         <script type="text/javascript">        
         var icl_ajx_url = '<?php echo ICL_PLUGIN_URL ?>/ajax.php';
@@ -353,20 +360,22 @@ class SitePress{
         </script>
         <?php
         wp_enqueue_script('sitepress-scripts', ICL_PLUGIN_URL . '/res/js/scripts.js', array(), '0.1');
-        if(isset($page_basename) && file_exists(ICL_PLUGIN_PATH . '/res/js/'.$page_basename.'.js')){
+        if($page_basename && file_exists(ICL_PLUGIN_PATH . '/res/js/'.$page_basename.'.js')){
             wp_enqueue_script('sitepress-' . $page_basename, ICL_PLUGIN_URL . '/res/js/'.$page_basename.'.js', array(), '0.1');
         }
         if('options-reading.php' == $pagenow ){
                 list($warn_home, $warn_posts) = $this->verify_home_and_blog_pages_translations();
-                if($warn_home || $warn_posts){ ?>
-                <script type="text/javascript">        
-                addLoadEvent(function(){
-                jQuery('input[name="show_on_front"]').parent().parent().parent().parent().append('<?php echo $warn_home . $warn_posts ?>');
-                });
-                </script>
-                <?php } 
         }
-    }
+        ?>
+        <?php if($warn_home || $warn_posts): ?>
+        <script type="text/javascript">        
+        addLoadEvent(function(){
+        jQuery('input[name="show_on_front"]').parent().parent().parent().parent().append('<?php echo $warn_home . $warn_posts ?>');
+        });
+        </script>
+        <?php endif; ?>
+        <?php
+        }
        
     function front_end_js(){
         echo '<script type="text/javascript">var icl_lang = \''.$this->this_lang.'\';</script>';        
@@ -382,12 +391,10 @@ class SitePress{
     }
     
     function css_setup(){
-        if(isset($_GET['page'])){
-            $page = basename($_GET['page']);
-            $page_basename = str_replace('.php','',$page);        
-        }
+        $page = basename($_GET['page']);
+        $page_basename = str_replace('.php','',$page);        
         wp_enqueue_style('sitepress-style', ICL_PLUGIN_URL . '/res/css/style.css', array(), '0.1');
-        if(isset($page_basename) && file_exists(ICL_PLUGIN_PATH . '/res/css/'.$page_basename.'.css')){
+        if($page_basename && file_exists(ICL_PLUGIN_PATH . '/res/css/'.$page_basename.'.css')){
             wp_enqueue_style('sitepress-' . $page_basename, ICL_PLUGIN_URL . '/res/css/'.$page_basename.'.css', array(), '0.1');
         }        
     }
@@ -549,20 +556,11 @@ class SitePress{
         }else{
             $post_id = $_POST['post_ID'];
             $language_code = $_POST['icl_post_language'];
-        } 
-        if($_POST['action']=='inline-save'){
-            $res = $wpdb->get_row("SELECT trid, language_code FROM {$wpdb->prefix}icl_translations WHERE element_id={$post_id} AND element_type='post'"); 
-            $trid = $res->trid;
-            $language_code = $res->language_code;
-        }else{
-            $trid = $_POST['icl_trid'];
-        }       
-        if($trid && $_POST['post_type']=='page' && $this->settings['sync_page_ordering']){
-            $menu_order = $wpdb->escape($_POST['menu_order']);
-            $translated_pages = $wpdb->get_col("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid='{$trid}' AND element_id<>{$post_id}");
-            if(!empty($translated_pages)){
-                $wpdb->query("UPDATE {$wpdb->posts} SET menu_order={$menu_order} WHERE ID IN (".join(',', $translated_pages).")");
-            }            
+        }        
+        $trid = $_POST['icl_trid'];
+        
+        if($_POST['post_type']=='page'){
+            icl_rearrange_page_order();
         }
         
         // new categories created inline go to the correct language
@@ -638,12 +636,7 @@ class SitePress{
     }
     
     function posts_join_filter($join){
-        global $wpdb, $pagenow;
-        //exceptions
-        if($pagenow=='upload.php' || $pagenow=='media-upload.php'){
-            return $join;    
-        }
-        
+        global $wpdb;
         if('all' != $this->this_lang){ 
             $cond = "AND language_code='{$wpdb->escape($this->this_lang)}'";
             $ljoin = "";
@@ -701,7 +694,7 @@ class SitePress{
         ?>
         <script type="text/javascript">
         addLoadEvent(function(){        
-            jQuery(".subsubsub").append('<br /><span id="icl_subsubsub"><?php echo $allas ?></span>');
+            jQuery(".subsubsub").append('&lt;br /&gt; &lt;span id="icl_subsubsub"&gt;<?php echo htmlentities($allas) ?>&lt;/span&gt;');
         });
         </script>
         <?php
@@ -922,7 +915,12 @@ class SitePress{
                     
                     break;
                 case '2': 
-                    $url = $this->settings['language_domains'][$code];
+                    $exp = explode('.',$abshome);
+                    if(count($exp)==2){
+                        $url = str_replace('http://', 'http://'.$code.'.', $url);
+                    }else{
+                        $url = preg_replace('#^http://([^.]+)\.(.*)$#i', 'http://'.$code.'.$2', $url);
+                    }                
                     break;                
                 case '3':
                 default:
@@ -1157,15 +1155,7 @@ class SitePress{
     }
     
     function the_category_name_filter($name){        
-        if(false === strpos($name, '@')) return $name;
-        if(false !== strpos($name, '<a')){
-            $name_sh = strip_tags($name);
-            $exp = explode('@', $name_sh);
-            $name = str_replace($name_sh, trim($exp[0]),$name);
-        }else{
-            $name = preg_replace('#(.*) @(.*)#i','$1',$name);
-        }
-        return $name;
+        return preg_replace('#(.*) @(.*)#i','$1',$name);
     }
     
     function get_terms_filter($terms){
