@@ -71,3 +71,6 @@ Learn more about it in the [Sticky links usage](http://sitepress.org/home/gettin
 	* Split Portuguese to Brazilian and Portuguese (European) Portuguese.
 	* Fixed broken HTML in default category name for translations.
 	* Verify that the plugin can create the required database tables and warn if not.
+* Version 0.9.4 - bug fix release
+	* Custom domains per language work correctly (forced to SitePress defaults before)
+	* Prevents from being activated on PHP4 (SitePress only runs on PHP5)
