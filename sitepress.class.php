@@ -97,6 +97,7 @@ class SitePress{
             add_action('wp_head', array($this, 'front_end_js'));            
             
             add_action('restrict_manage_posts', array($this, 'restrict_manage_posts'));
+            add_action('admin_print_scripts-edit-pages.php', array($this,'restrict_manage_pages'));
         }
         
         // short circuit get default category
@@ -1391,8 +1392,18 @@ class SitePress{
         return array($warn_home, $warn_posts);                     
     }   
     
+    // adds the language parameter to the admin post filtering/search
     function restrict_manage_posts(){
         echo '<input type="hidden" name="lang" value="'.$this->this_lang.'">';
+    }
+    
+    // adds the language parameter to the admin pages search
+    function restrict_manage_pages(){
+        ?>
+        <script type="text/javascript">        
+        addLoadEvent(function(){jQuery('p.search-box').append('<input type="hidden" name="lang" value="<?php echo $this->this_lang ?>">');});
+        </script>        
+        <?php
     }
     
 }  
