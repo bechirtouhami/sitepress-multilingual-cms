@@ -164,7 +164,9 @@ switch($_REQUEST['icl_ajx_action']){
         break;
     case 'icl_save_language_negotiation_type':
         $iclsettings['language_negotiation_type'] = $_POST['icl_language_negotiation_type'];
-        $iclsettings['language_domains'] = $_POST['language_domains'];
+        if($_POST['language_domains']){
+            $iclsettings['language_domains'] = $_POST['language_domains'];
+        }        
         $sitepress->save_settings($iclsettings);
         echo 1;
         break;
