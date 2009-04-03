@@ -8,7 +8,7 @@ else
 header("Cache-Control: no-cache, must-revalidate"); 
 header("Expires: Sat, 16 Aug 1980 05:00:00 GMT"); 
 
-if(!isset($sitepress)) $sitepress = new SitePress();
+if(!isset($sitepress) && class_exists('SitePress')) $sitepress = new SitePress();
 
 switch($_REQUEST['icl_ajx_action']){
     case 'set_active_languages':
@@ -237,6 +237,13 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings['modules']['cms-navigation']['heading_end'] = $_POST['icl_navigation_heading_end'];
         $sitepress->save_settings($iclsettings);
         echo '1|';
+        break;
+    case 'icl_phpinfo':
+        ob_start();
+        phpinfo();
+        $phpinfo = ob_get_contents();
+        ob_end_clean();
+        echo $phpinfo;
         break;
     default:
         echo __('Invalid action','sitepress');                
