@@ -95,6 +95,8 @@ class SitePress{
             
             // front end js
             add_action('wp_head', array($this, 'front_end_js'));            
+            
+            add_action('restrict_manage_posts', array($this, 'restrict_manage_posts'));
         }
         
         // short circuit get default category
@@ -1388,6 +1390,10 @@ class SitePress{
         }    
         return array($warn_home, $warn_posts);                     
     }   
+    
+    function restrict_manage_posts(){
+        echo '<input type="hidden" name="lang" value="'.$this->this_lang.'">';
+    }
     
 }  
 ?>
