@@ -238,13 +238,6 @@ switch($_REQUEST['icl_ajx_action']){
         $sitepress->save_settings($iclsettings);
         echo '1|';
         break;
-    case 'icl_phpinfo':
-        ob_start();
-        phpinfo();
-        $phpinfo = ob_get_contents();
-        ob_end_clean();
-        echo $phpinfo;
-        break;
     default:
         echo __('Invalid action','sitepress');                
 }    
