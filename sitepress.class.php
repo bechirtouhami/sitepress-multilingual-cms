@@ -98,6 +98,8 @@ class SitePress{
             
             add_action('restrict_manage_posts', array($this, 'restrict_manage_posts'));
             add_action('admin_print_scripts-edit-pages.php', array($this,'restrict_manage_pages'));
+            
+            add_filter('get_edit_post_link', array($this, 'get_edit_post_link'), 1, 2);
         }
         
         // short circuit get default category
@@ -200,7 +202,7 @@ class SitePress{
         add_menu_page(__('SitePress','sitepress'), __('SitePress','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/languages.php',null, ICL_PLUGIN_URL . '/res/img/icon16.png');        
         add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Languages','sitepress'), __('Languages','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/languages.php'); 
         if($this->settings['existing_content_language_verified']){
-            //add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Content Translation','sitepress'), __('Content Translation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/content-translation.php'); 
+            add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Content Translation','sitepress'), __('Content Translation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/content-translation.php'); 
             //add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Comments Translation','sitepress'), __('Comments Translation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/comments-translation.php'); 
         }
         add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Navigation','sitepress'), __('Navigation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/navigation.php'); 
@@ -352,7 +354,7 @@ class SitePress{
         var icl_default_mark = '<?php echo __('default') ?>';     
         var icl_this_lang = '<?php echo $this->this_lang ?>';   
         var icl_ajxloaderimg = '<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif';
-        var icl_cat_adder_msg = '<?php echo __('To add categories that already exist in other languages go to the &lt;a href="categories.php"&gt;category management page&lt;/a&gt;','sitepress')?>';
+        var icl_cat_adder_msg = '<?php echo __('To add categories that already exist in other languages go to the <a href="categories.php">category management page</a>','sitepress')?>';
         </script>
         <?php
         wp_enqueue_script('sitepress-scripts', ICL_PLUGIN_URL . '/res/js/scripts.js', array(), '0.1');
@@ -451,6 +453,7 @@ class SitePress{
                     $this->save_settings($iclsettings);
                     if($user['create_account']==1){
                         $_POST['icl_form_success'] = __('Account created','sitepress');
+                        include_once ICL_PLUGIN_PATH . '/modules/icl-translation/db-scheme.php';
                     }else{
                         $_POST['icl_form_success'] = __('Project added','sitepress');
                     }
@@ -1404,6 +1407,15 @@ class SitePress{
         addLoadEvent(function(){jQuery('p.search-box').append('<input type="hidden" name="lang" value="<?php echo $this->this_lang ?>">');});
         </script>        
         <?php
+    }
+    
+    function get_edit_post_link($link, $id){
+        global $wpdb;
+        $lang = $wpdb->get_var("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE element_id={$id} AND element_type='post'");
+        if($lang != $this->get_default_language()){
+            $link .= '&lang=' . $lang;
+        }        
+        return $link;
     }
     
 }  

@@ -37,7 +37,7 @@ if(defined('WP_ADMIN')){
 require ICL_PLUGIN_PATH . '/inc/not-compatible-plugins.php';
 if(!empty($icl_ncp_plugins)){
     return;
-}
+}   
 require ICL_PLUGIN_PATH . '/inc/upgrade.php';
 require ICL_PLUGIN_PATH . '/inc/constants.inc';
 require ICL_PLUGIN_PATH . '/inc/sitepress-schema.php';
@@ -48,6 +48,7 @@ require ICL_PLUGIN_PATH . '/inc/functions.php';
 
 $sitepress = new SitePress();
 $sitepress_settings = $sitepress->get_settings();
+
 
 // modules load
 require ICL_PLUGIN_PATH . '/modules/cms-navigation/cms-navigation.php';
@@ -60,6 +61,9 @@ if(isset($_POST['icl_enable_alp'])){
 if($sitepress_settings['modules']['absolute-links']['enabled']){
     require ICL_PLUGIN_PATH . '/modules/absolute-links/absolute-links-plugin.php';
     $iclAbsoluteLinks = new AbsoluteLinksPlugin();
+}
+if(!empty($sitepress_settings['language_pairs'])){
+    require ICL_PLUGIN_PATH . '/modules/icl-translation/icl-translation.php';
 }
 
 // activation hook
