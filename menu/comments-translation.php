@@ -5,7 +5,7 @@
 ?>
 <div class="wrap">
     <div id="icon-options-general" class="icon32"><br /></div>
-    <h2><?php echo __('Setup SitePress', 'sitepress') ?></h2>    
+    <h2><?php echo __('Setup WPML', 'sitepress') ?></h2>    
     
     <h3><?php echo __('Comments translation', 'sitepress') ?></h3>    
 </div>

@@ -141,7 +141,7 @@ if(isset($_GET['activate'])){
         add_action('admin_notices', 'icl_cant_create_table');
         function icl_cant_create_table(){
             echo '<div class="error"><ul><li><strong>';
-            echo __('SitePress cannot create the database tables! Make sure that your mysql user has the CREATE privilege', 'sitepress');
+            echo __('WPML cannot create the database tables! Make sure that your mysql user has the CREATE privilege', 'sitepress');
             echo '</strong></li></ul></div>';        
             $active_plugins = get_option('active_plugins');
             $icl_sitepress_idx = array_search('sitepress-multilingual-cms/sitepress.php', $active_plugins);

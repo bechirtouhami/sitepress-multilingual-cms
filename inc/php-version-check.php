@@ -14,7 +14,7 @@ if($_GET['icl_phpinfo']==1){
       
       function icl_php_version_warn(){
           echo '<div class="error"><ul><li><strong>';
-          echo __('SitePress cannot be activated because your version of PHP is too old. To run correctly, you must have PHP5 installed.<br /> We recommend that you contact your hosting company and request them to switch you to PHP5.', 'sitepress');
+          echo __('WPML cannot be activated because your version of PHP is too old. To run correctly, you must have PHP5 installed.<br /> We recommend that you contact your hosting company and request them to switch you to PHP5.', 'sitepress');
           echo sprintf('<br />PHP reports version %s -  (<a href="#phpinfo">show detailed phpinfo</a>)',phpversion());
           echo '</strong></li></ul>';     
           echo '<div id="phpinfo_container"></div>';               

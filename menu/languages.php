@@ -14,7 +14,7 @@
 ?>
 <div class="wrap">
     <div id="icon-options-general" class="icon32"><br /></div>
-    <h2><?php echo __('Setup SitePress', 'sitepress') ?></h2>    
+    <h2><?php echo __('Setup WPML', 'sitepress') ?></h2>    
     
     <?php if(!$sitepress_settings['existing_content_language_verified']): ?>
         <h3><?php echo __('Current content language', 'sitepress') ?></h3>    

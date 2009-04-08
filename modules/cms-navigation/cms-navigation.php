@@ -1,7 +1,7 @@
 <?php 
 /*
 Plugin Name: CMS Navigation Simple
-Plugin URI: http://sitepress.org/wordpress-cms-plugins/cms-navigation-plugin/
+Plugin URI: http://wpml.org/wordpress-cms-plugins/cms-navigation-plugin/
 Description: Adds CMS navigation functions to WP posts and pages
 Author: ICanLocalize
 Author URI: http://www.icanlocalize.com

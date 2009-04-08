@@ -26,13 +26,13 @@ if(!empty($icl_ncp_plugins)){
     function icl_incomp_plugins_warn(){
         global $icl_ncp_plugins;
         echo '<div class="error"><ul><li><strong>';
-        echo __('SitePress cannot be activated together with these older plugins:', 'sitepress');
+        echo __('WPML cannot be activated together with these older plugins:', 'sitepress');
         echo '<ul style="list-style:disc;margin:20px;">';
         foreach($icl_ncp_plugins as $incp){
             echo '<li>'.$incp.'</li>';
         }
         echo '</ul>';
-        echo __('SitePress will be deactivated', 'sitepress');
+        echo __('WPML will be deactivated', 'sitepress');
         echo '</strong></li></ul></div>';        
     }
 }else{

@@ -1,11 +1,11 @@
 <?php
 /*
-Plugin Name: SitePress Multilingual CMS
-Plugin URI: http://sitepress.org/
-Description: SitePress
+Plugin Name: WPML - Multilingual CMS
+Plugin URI: http://wpml.org/
+Description: WPML - Multilingual CMS
 Author: ICanLocalize
-Author URI: http://sitepress.org/
-Version: 0.9.4
+Author URI: http://wpml.org/
+Version: 0.9.5
 */
 
 /*

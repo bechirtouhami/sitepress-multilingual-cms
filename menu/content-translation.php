@@ -6,7 +6,7 @@
 ?>
 <div class="wrap">
     <div id="icon-options-general" class="icon32"><br /></div>
-    <h2><?php echo __('Setup SitePress', 'sitepress') ?></h2>    
+    <h2><?php echo __('Setup WPML', 'sitepress') ?></h2>    
        
     <?php if(count($active_languages) > 1): ?>
         <h3><?php echo __('Translations pairs','sitepress') ?></h3>    

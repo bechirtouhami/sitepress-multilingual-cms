@@ -6,7 +6,7 @@
 
 <div class="wrap">
     <div id="icon-options-general" class="icon32"><br /></div>
-    <h2><?php echo __('Setup SitePress', 'sitepress') ?></h2>    
+    <h2><?php echo __('Setup WPML', 'sitepress') ?></h2>    
     
     <h3><?php echo __('Navigation', 'sitepress') ?></h3>    
     
@@ -87,7 +87,7 @@
     
     <p><?php echo __('To customize the appearance of the navigation elements, you will need to override the styling provided in the plugin\'s CSS file.', 'sitepress')?></p>
     
-    <p><?php printf(__('Visit %s for full CSS customization information.', 'sitepress'), '<a href="http://sitepress.org">sitepress.org</a>')?></p>
+    <p><?php printf(__('Visit %s for full CSS customization information.', 'sitepress'), '<a href="http://wpml.org">wpml.org</a>')?></p>
     
     
     
