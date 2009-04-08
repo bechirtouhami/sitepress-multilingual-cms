@@ -5,7 +5,7 @@ Plugin URI: http://wpml.org/
 Description: WPML - Multilingual CMS
 Author: ICanLocalize
 Author URI: http://wpml.org/
-Version: 0.9.5
+Version: 0.9.4
 */
 
 /*
