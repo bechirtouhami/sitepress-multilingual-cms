@@ -1,4 +1,4 @@
-=== WPML - Multilingual CMS ===
+=== WPML Multilingual CMS ===
 Contributors: ICanLocalize
 Tags: CMS, navigation, menus, menu, dropdown, css, sidebar, pages, i18n, translation, localization, language, multilingual, SitePress, WPML
 Requires at least: 2.6

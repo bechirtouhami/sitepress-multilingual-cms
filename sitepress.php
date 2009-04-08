@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin Name: WPML - Multilingual CMS
+Plugin Name: WPML Multilingual CMS
 Plugin URI: http://wpml.org/
-Description: WPML - Multilingual CMS
+Description: WPML Multilingual CMS
 Author: ICanLocalize
 Author URI: http://wpml.org/
 Version: 0.9.5
