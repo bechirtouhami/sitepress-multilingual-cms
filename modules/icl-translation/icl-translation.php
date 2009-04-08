@@ -4,11 +4,20 @@ require_once ICL_PLUGIN_PATH . '/lib/xml2array.php';
 require_once ICL_PLUGIN_PATH . '/lib/icl_api.php';
 require_once ICL_PLUGIN_PATH . '/modules/icl-translation/constants.inc';
 
+if(isset($_POST['translation_dashboard_filter'])){
+    $icl_translation_filter = $_POST['filter'];
+}
 
 add_action('save_post', 'icl_translation_save_md5');
 add_action('admin_menu', 'icl_translation_admin_menu');
+add_action('admin_print_scripts', 'icl_translation_js');
+
 function icl_translation_admin_menu(){
     add_management_page(__('Translation dashboard', 'sitepress'), __('Translation dashboard', 'sitepress'), 'create_posts', dirname(__FILE__).'/icl-translation-dashboard.php');
+}
+
+function icl_translation_js(){
+    wp_enqueue_script('icl-translation-scripts', ICL_PLUGIN_URL . '/modules/icl-translation/js/icl-translation.js', array(), '0.1');
 }
 
 
@@ -148,23 +157,38 @@ function icl_translation_save_md5($p){
     
 }
 
-function icl_translation_get_documents(){
+function icl_translation_get_documents($lang, $tstatus, $status=false, $type=false){
     global $wpdb;
     
+    //print_r($icl_translation_filter);
+    
     $where = "WHERE 1";
-    $where .= " AND p.post_type IN ('post','page')";
+    if($tstatus=='not'){
+        $where .= " AND (c.rid IS NULL OR n.md5<>c.md5)";
+    }
+    if($type){
+        $where .= " AND p.post_type = '{$type}'";
+    }else{
+        $where .= " AND p.post_type IN ('post','page')";
+    }    
+    if($status){
+        $where .= " AND p.post_status = '{$status}'";
+    }        
+    $where .= " AND t.language_code='{$lang}'";
     
     $sql = "
-        SELECT p.iD as post_id, p.post_title, p.post_type, p.post_status, 
+        SELECT p.ID as post_id, p.post_title, p.post_type, p.post_status, 
             c.rid,
             n.md5<>c.md5 AS updated
         FROM {$wpdb->posts} p
+            JOIN {$wpdb->prefix}icl_translations t ON p.ID = t.element_id AND element_type='post'
             LEFT JOIN {$wpdb->prefix}icl_node n ON p.ID = n.nid
             LEFT JOIN {$wpdb->prefix}icl_content_status c ON c.nid=p.ID
         {$where}                
         ORDER BY p.post_date DESC
     ";
     $results = $wpdb->get_results($sql);
+
     
     $sql = "
         SELECT p.ID as post_id, COUNT(r.rid) AS inprogress_count 
