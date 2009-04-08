@@ -13,7 +13,7 @@ add_action('admin_menu', 'icl_translation_admin_menu');
 add_action('admin_print_scripts', 'icl_translation_js');
 
 function icl_translation_admin_menu(){
-    add_management_page(__('Translation dashboard', 'sitepress'), __('Translation dashboard', 'sitepress'), 'create_posts', dirname(__FILE__).'/icl-translation-dashboard.php');
+    add_management_page(__('Translation Dashboard', 'sitepress'), __('Translation Dashboard', 'sitepress'), 'edit_posts', dirname(__FILE__).'/icl-translation-dashboard.php');
 }
 
 function icl_translation_js(){

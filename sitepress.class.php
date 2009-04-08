@@ -431,8 +431,7 @@ class SitePress{
                 $user['cms_login'] = $this->settings['cms_login'];
                 $user['cms_password'] = $this->settings['cms_password'];                
                 $user['interview_translators'] = $this->settings['interview_translators'];
-            
-                $icl_query = new ICanLocalizeQuery();
+                            
                 // prepare language pairs
                 $language_pairs = $this->settings['language_pairs'];
                 foreach($language_pairs as $k=>$v){
@@ -444,20 +443,20 @@ class SitePress{
                         $lang_pairs['to_language'.$incr] = $english_to;
                     }                    
                 }
+                $icl_query = new ICanLocalizeQuery();
                 list($site_id, $access_key) = $icl_query->createAccount(array_merge($user,$lang_pairs));                
                 if(!$site_id){
                     $_POST['icl_form_errors'] = $access_key;
-                }else{
+                }else{                    
                     $iclsettings['site_id'] = $site_id;
                     $iclsettings['access_key'] = $access_key;
                     $this->save_settings($iclsettings);
                     if($user['create_account']==1){
-                        $_POST['icl_form_success'] = __('Account created','sitepress');
-                        include_once ICL_PLUGIN_PATH . '/modules/icl-translation/db-scheme.php';
+                        $_POST['icl_form_success'] = __('Account created','sitepress');                        
                     }else{
                         $_POST['icl_form_success'] = __('Project added','sitepress');
                     }
-                    
+                    include_once ICL_PLUGIN_PATH . '/modules/icl-translation/db-scheme.php';
                 }
                 break;
             case $nonce_icl_logout:

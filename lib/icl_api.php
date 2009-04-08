@@ -5,7 +5,7 @@ class ICanLocalizeQuery{
       private $access_key;
       private $error = null;
 
-      function __construct($site_id, $access_key){             
+      function __construct($site_id=null, $access_key=null){             
             $this->site_id = $site_id;
             $this->access_key = $access_key;
       } 

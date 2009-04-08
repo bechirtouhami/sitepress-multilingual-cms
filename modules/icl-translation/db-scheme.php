@@ -9,7 +9,6 @@
         ) 
   ";
   $wpdb->query($icl_translation_sql);
-
   $icl_translation_sql = "
         CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}icl_content_status` (
         `rid` BIGINT NOT NULL ,
