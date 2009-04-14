@@ -131,6 +131,7 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings['notify_before_translations']=$_POST['icl_notify_before_translations']?1:0; 
         $iclsettings['translate_new_content']=$_POST['icl_translate_new_content']?1:0; 
         $iclsettings['interview_translators'] = $_POST['icl_interview_translators'];
+        $iclsettings['translation_pickup_method'] = $_POST['icl_translation_pickup_method'];        
         $sitepress->save_settings($iclsettings);
         echo 1; 
        break;
@@ -239,6 +240,13 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings['modules']['cms-navigation']['heading_end'] = $_POST['icl_navigation_heading_end'];
         $sitepress->save_settings($iclsettings);
         echo '1|';
+        break;
+        
+    case 'send_translation_request':
+        $post_id = $_POST['post_id'];
+        $target_languages = explode(',', $_POST['target_languages']);
+        $post_type = $_POST['type'];
+        echo icl_translation_send_post($post_id, $target_languages, $post_type);
         break;
     default:
         echo __('Invalid action','sitepress');                

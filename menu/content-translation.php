@@ -48,16 +48,25 @@
             </td>
         </tr>       
         <tr>        
-            <td>
+            <td colspan="2">
                 <label><input name="icl_interview_translators" type="radio" value="0" <?php if(!$sitepress_settings['interview_translators']): ?>checked="checked"<?php endif;?> /> <?php echo __('ICanLocalize will assign translators for this work', 'sitepress'); ?></label><br />
                 <label><input name="icl_interview_translators" type="radio" value="1" <?php if($sitepress_settings['interview_translators']): ?>checked="checked"<?php endif;?> /> <?php echo __('I want to interview my translators', 'sitepress'); ?></label>
             </td>
         </tr>      
+        <tr>
+            <td colspan="2">
+                <?php echo __('Translation pickup method', 'sitepress') ?><br />                
+                <label><input type="radio" name="icl_translation_pickup_method" value="0" <?php if(!$sitepress_settings['translation_pickup_method']): ?>checked="checked"<?php endif;?> /> <?php echo __('Translations will be posted back to this website via XML-RPC') ?></label>
+                &nbsp;&nbsp;&nbsp;
+                <label><input type="radio" name="icl_translation_pickup_method" value="1" <?php if($sitepress_settings['translation_pickup_method']): ?>checked="checked"<?php endif;?> /> <?php echo __('Poll for translations periodically') ?></label>
+            </td>
+        </tr>
         </table>
         <p class="submit">
             <input class="button" name="create account" value="<?php echo __('Save', 'sitepress') ?>" type="submit" />
             <span class="icl_ajx_response" id="icl_ajx_response2"></span>    
         </p>
+        
         </form>
         
         <h3 id="icleditoraccount"><?php echo __('Editor account for WordPress access','sitepress') ?></h3>        
