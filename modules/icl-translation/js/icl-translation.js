@@ -29,7 +29,7 @@ jQuery(document).ready(function(){
         
     });
     
-    jQuery('#icl-tr-sel-doc').click(function(){
+    jQuery('#icl-tr-sel-doc').click(function(){        
         none_selected = true;
         jQuery('table.fixed td :checkbox').each(function(){            
             if(jQuery(this).attr('checked')) none_selected = false; 
@@ -73,6 +73,7 @@ jQuery(document).ready(function(){
     });
     
     jQuery('#icl-tr-opt :checkbox').click(function(){
+        iclUpdateTranslationEstimate();
         if(jQuery(this).attr('checked')){
             jQuery('#icl-tr-sel-doc').removeAttr('disabled');    
         }else{
@@ -85,9 +86,12 @@ jQuery(document).ready(function(){
             }
         }
     })
+        
 });
 
 function iclUpdateTranslationEstimate(n, set){
+    var selected_languages_count = getSelectedLanguagesCount();
+    if(n == undefined) n = 0;
     if(set != undefined){
         words = parseInt(n) ;
     }else{
@@ -95,7 +99,17 @@ function iclUpdateTranslationEstimate(n, set){
     }    
     if(words=='') words = '0';
     jQuery('#icl-estimated-words-count').html(words);
-    quote = Math.round(100 * words * 0.07, 2)/100;
+    quote = Math.round(100 * words * 0.07 * selected_languages_count, 2)/100;
     if(quote=='') quote = '0';
     jQuery('#icl-estimated-quote').html(quote);
+}
+
+function getSelectedLanguagesCount(){
+    var selected_languages_count = 0;
+    jQuery('#icl-tr-opt :checkbox').each(function(){
+        if(jQuery(this).attr('checked')){
+            selected_languages_count++;
+        }
+    });
+    return selected_languages_count;    
 }

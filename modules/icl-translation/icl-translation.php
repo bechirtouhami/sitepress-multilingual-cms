@@ -15,6 +15,27 @@ add_action('admin_print_scripts', 'icl_translation_js');
 
 //wp_enqueue_style('icl-translation-style', ICL_PLUGIN_URL . '/modules/icl-translation/css/style.css', array(), '0.1');
 
+if($_GET['debug']):
+$iclq = new ICanLocalizeQuery($sitepress_settings['site_id'], $sitepress_settings['access_key']);
+$pending_requests = $iclq->cms_requests();
+foreach($pending_requests as $pr){
+    $request_id = $pr['id'];
+    $tr_details = $wpdb->get_col("SELECT target FROM {$wpdb->prefix}icl_core_status WHERE rid=".$request_id);
+    $trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations t JOIN {$wpdb->prefix}icl_content_status c ON t.element_id = c.nid AND t.element_type='post' AND c.rid=".$request_id);
+    foreach($tr_details as $lang){
+        $translation = $iclq->cms_do_download($request_id, $lang);           
+        $iclq->cms_update_request_status($request_id, CMS_REQUEST_DONE, $lang);
+        //print_r($translation);
+        if($translation){
+            $ret = icl_add_post_translation($trid, $lang, $translation['title'], $translation['body'], $translation['categories'], $translation['tags'], $request_id);
+            if($ret){
+                $iclq->cms_update_request_status($request_id, CMS_REQUEST_DONE, $lang);
+            }            
+        }        
+    }
+}
+endif;
+
 function icl_translation_admin_menu(){
     add_management_page(__('Translation Dashboard', 'sitepress'), __('Translation Dashboard', 'sitepress'), 'edit_posts', dirname(__FILE__).'/icl-translation-dashboard.php');
 }
@@ -86,13 +107,12 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
             );    
         $data['contents']['tags'] = array(
                 'translate'=>1,
-                'data'=> implode(',', array_map(create_function('$e', 'return \'"\'.base64_encode($e).\'"\';'), $post_categories)),
+                'data'=> implode(',', array_map(create_function('$e', 'return \'"\'.base64_encode($e).\'"\';'), $post_tags)),
                 'format'=>'csv_base64'
             );                
     }
-    
     $xml = $iclq->build_cms_request_xml($data, $orig_lang, $target_languages, $previous_rid);
-    $res = $iclq->send_request($xml, $target_languages, $orig_lang);
+    $res = $iclq->send_request($xml, $post->post_title, $target_languages, $orig_lang);
     
     if($res > 0){
         if($previous_rid){
@@ -190,7 +210,7 @@ function icl_translation_get_documents($lang, $tstatus, $status=false, $type=fal
             LEFT JOIN {$wpdb->prefix}icl_content_status c ON c.nid=p.ID
         {$where}                
         ORDER BY p.post_date DESC 
-        LIMIT {$offset}, 10
+        LIMIT {$offset}, {$limit}
     ";
     $results = $wpdb->get_results($sql);
     $pids = array();
@@ -233,5 +253,53 @@ function icl_translation_delete_post($post_id){
     $rid = $wpdb->get_var("SELECT rid FORM {$wpdb->prefix}icl_content_status WHERE nid=".$post_id);
     $wpdb->query("DELETE FORM {$wpdb->prefix}icl_content_status WHERE nid=".$post_id);
     $wpdb->query("DELETE FORM {$wpdb->prefix}icl_core_status WHERE rid=".$rid);
+}
+
+function icl_add_post_translation($trid, $lang, $title, $body, $categories, $tags, $rid){
+    global $wpdb;
+    $lang_code = $wpdb->get_var("SELECT code FROM {$wpdb->prefix}icl_languages WHERE english_name='".$wpdb->escape($lang)."'");
+    if(!$lang_code){        
+        return false;
+    }
+        
+    $original_post_details = $wpdb->get_row("
+        SELECT p.post_author, t.language_code
+        FROM {$wpdb->prefix}icl_translations t 
+        JOIN {$wpdb->posts} p ON t.element_id = p.ID
+        WHERE t.element_type='post' AND trid='{$trid}' AND (source_language_code IS NULL OR source_language_code ='')
+    ");
+
+    
+    // is update?
+    $post_id = $wpdb->get_var("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE element_type='post' AND trid='{$trid}' AND language_code='{$lang_code}'");
+    if($post_id){
+        $is_update = true;
+        $postarr['post_ID'] = $_POST['post_ID'] = $post_id;
+    }else{
+        $is_update = false;
+    } 
+    
+    $postarr['post_title'] = $title;
+    $postarr['post_content'] = $body;
+    $postarr['tags_input'] = join(',',$tags);
+    //$postarr['post_category'] = join(',',$tags);
+    $postarr['post_author'] = $original_post_details->post_author;  
+    $_POST['trid'] = $trid;
+    $_POST['lang'] = $lang_code;
+    $new_post_id = wp_insert_post($postarr);
+    if(!$new_post_id){
+        return false;
+    }
+    
+    // record trids
+    if(!$is_update){
+        $wpdb->insert($wpdb->prefix.'icl_translations', array('element_type'=>'post', 'element_id'=>$new_post_id, 'trid'=> $trid, 'language_code'=>$lang_code, 'source_language_code'=>$original_post_details->language_code));
+    }
+    
+    // update translation status
+    $wpdb->update($wpdb->prefix.'icl_core_status', array('status'=>CMS_REQUEST_DONE), array('rid'=>$rid, 'target'=>$lang));
+    // 
+    
+    return true;
 }
 ?>

@@ -42,7 +42,7 @@ class ICanLocalizeQuery{
         }
     }
     
-    function _request($request, $method='GET', $formvars=null, $formfiles=null){
+    function _request($request, $method='GET', $formvars=null, $formfiles=null, $gzipped = false){
         $c = new IcanSnoopy();
         $c->_fp_timeout = 3;
         $url_parts = parse_url($request);
@@ -65,6 +65,9 @@ class ICanLocalizeQuery{
             $this->error = $c->error;
             return false;
         }
+        if($gzipped){
+            $c->results = gzdecode($c->results);
+        }        
         $results = xml2array($c->results,1);                
         if($results['info']['status']['attr']['err_code']=='-1'){
             $this->error = $results['info']['status']['value'];            
@@ -72,7 +75,11 @@ class ICanLocalizeQuery{
         }
         return $results;
     }
-       
+    
+    function _request_gz($request_url){
+        $gzipped = true;
+        return $this->_request($request_url, 'GET', null, null, $gzipped);
+    }   
        
     function build_cms_request_xml($data, $orig_lang, $langs, $previous_rid = false, $linkTo = '') {
         if($previous_rid){
@@ -90,7 +97,10 @@ class ICanLocalizeQuery{
         $xml .= $tab.'<link url="'.$data['url'].'" />'.$nl;
         $xml .= $tab.'<contents>'.$nl;
         foreach($data['contents'] as $key=>$val){
-            $xml .= $tab.$tab.'<content type="'.$key.'" translate="'.$val['translate'].'" data=\''.$val['data'].'\' format="'.$val['format'].'" />'.$nl;    
+            if($key=='categories' || $key == 'tags'){$quote="'";}else{$quote='"';}
+            $xml .= $tab.$tab.'<content type="'.$key.'" translate="'.$val['translate'].'" data='.$quote.$val['data'].$quote;
+            if(isset($val['format'])) $xml .= ' format="'.$val['format'].'"';
+            $xml .=  ' />'.$nl;    
         }        
         $xml .= $tab.'</contents>'.$nl;
         $xml .= $tab.'<cms_target_languages>'.$nl;
@@ -98,11 +108,11 @@ class ICanLocalizeQuery{
             $xml .= $tab.$tab.'<target_language lang="'.utf8_encode($lang).'" />'.$nl;    
         }                
         $xml .= $tab.'</cms_target_languages>'.$nl;
-        $xml .= '</cms_request_details>';
+        $xml .= '</cms_request_details>';        
         return $xml;
     }
       
-    function send_request($xml, $to_languages, $orig_language){
+    function send_request($xml, $title, $to_languages, $orig_language){
         $request_url = ICL_API_ENDPOINT . '/websites/'. $this->site_id . '/cms_requests.xml';
         
         $parameters['accesskey'] = $this->access_key;
@@ -114,6 +124,7 @@ class ICanLocalizeQuery{
         }
         $parameters['orig_language'] = $orig_language;          
         $parameters['file1[description]'] = 'cms_request_details';          
+        $parameters['title'] = $title;          
         
         //$parameters['list_type'] = 'post';          
         //$parameters['list_id'] = $timestamp;          
@@ -135,8 +146,75 @@ class ICanLocalizeQuery{
         return $res;
         
         
-    }      
+    }   
+    
+    
+    function cms_requests(){
+        $request_url = ICL_API_ENDPOINT . '/websites/' . $this->site_id . '/cms_requests.xml?filter=pickup&accesskey=' . $this->access_key;        
+        $res = $this->_request($request_url);
+        if(empty($res['info']['pending_cms_requests']['cms_request'])){
+            $pending_requests = array();
+        }elseif(count($res['info']['pending_cms_requests']['cms_request'])==1){
+            $pending_requests[0] = $res['info']['pending_cms_requests']['cms_request']['attr']; 
+        }else{
+            foreach($res['info']['pending_cms_requests']['cms_request'] as $req){
+                $pending_requests[] = $req['attr'];
+            }
+        }
+        return $pending_requests;
+    }   
+    
+    function cms_request_details($request_id, $language){
+        $request_url = ICL_API_ENDPOINT . '/websites/' . $this->site_id . '/cms_requests/'.$request_id.'/cms_download.xml?accesskey=' . $this->access_key . '&language=' . $language;                
+        $res = $this->_request($request_url);
+        if(isset($res['info']['cms_download'])){
+            return $res['info']['cms_download'];
+        }else{
+            return array();
+        }
+    }
+    
+    function cms_do_download($request_id, $language){
+        $request_url = ICL_API_ENDPOINT . '/websites/' . $this->site_id . '/cms_requests/'.$request_id.'/cms_download?accesskey=' . $this->access_key . '&language=' . $language;                        
+        $res = $this->_request_gz($request_url);        
+        $content = $res['cms_request_details']['contents']['content'];
+        $translation = array();
+        if($content)
+        foreach($content as $c){
+            if($c['attr']['type']=='tags' || $c['attr']['type']=='categories'){
+                $exp = explode(',',$c['translations']['translation']['attr']['data']);
+                $arr = array();
+                foreach($exp as $e){
+                    $arr[] = base64_decode(html_entity_decode($e));
+                }
+                $c['translations']['translation']['attr']['data'] = $arr;
+            }
+            $translation[$c['attr']['type']] = $c['translations']['translation']['attr']['data'];
+        }
+        return $translation;
+    }
+    
+    function cms_update_request_status($request_id, $status, $language){
+        $request_url = ICL_API_ENDPOINT . '/websites/' . $this->site_id . '/cms_requests/'.$request_id.'/update_status.xml';                            
+        $parameters['accesskey'] = $this->access_key;
+        $parameters['status'] = $status;
+        $parameters['language'] = $language;
+        
+        $res = $this->_request($request_url, 'POST' , $parameters);
+        
+        return ($res['result']['attr']['error_code']==0);
+    }
     
 }
-  
+
+if(!function_exists('gzdecode')):  
+    function gzdecode($data){
+      $g=tempnam('/tmp','ff');
+      @file_put_contents($g,$data);
+      ob_start();
+      readgzfile($g);
+      $d=ob_get_clean();
+      return $d;
+    }  
+endif;    
 ?>

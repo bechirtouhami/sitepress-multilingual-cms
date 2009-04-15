@@ -423,7 +423,7 @@ class SitePress{
             case $nonce_icl_create_account:
             case $nonce_icl_configure_account:
                 $user = $_POST['user'];
-                $user['platform_kind'] = 1;
+                $user['platform_kind'] = 2; // TO BE CHANGED LATER
                 $user['blogid'] = $wpdb->blogid?$wpdb->blogid:1;
                 $user['url'] = get_option('home');
                 $user['title'] = get_option('blogname');

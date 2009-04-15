@@ -51,7 +51,7 @@
 <div class="wrap">
     <div id="icon-options-general" class="icon32"><br /></div>
     <h2><?php echo __('Translation Dashboard', 'sitepress') ?></h2>    
-    
+    <a href="<?php echo $_SERVER['REQUEST_URI'] ?>&debug=1">DEBUG: FETCH TRANSLATIONS</a>
     <form method="post" name="translation-dashboard-filter" action="tools.php?page=sitepress-multilingual-cms/modules/icl-translation/icl-translation-dashboard.php">
     <table class="form-table">
         <tr valign="top">
@@ -111,31 +111,39 @@
                 <td scope="col" colspan="5" align="center"><?php echo __('No documents found', 'sitepress') ?></td>
             </tr>                
             <?php else:?>
-            <?php foreach($documents as $doc): $oddcolumn=!$oddcolumn?>
+            <?php foreach($documents as $doc): $oddcolumn=!$oddcolumn; ?>
+            <?php 
+            $not_translatable = false;
+            if($doc->rid){
+                if(isset($doc->in_progress) && $doc->in_progress > 0){                        
+                    $tr_status = __('In progress', 'sitepress');
+                    $not_translatable = true;
+                }elseif($doc->updated){                            
+                    $tr_status = __('Needs update', 'sitepress');
+                }else{
+                    $tr_status = __('Complete', 'sitepress');
+                    $not_translatable = true;
+                }
+            }else{
+                $tr_status = __('Not Translated', 'sitepress');
+            }
+            
+            ?>            
             <tr<?php if($oddcolumn): ?> class="alternate"<?php endif;?>>
-                <td scope="col"><input type="checkbox" value="<?php echo $doc->post_id ?>" name="post[]" /></td>
+                <td scope="col">
+                    <?php if(!$not_translatable): ?>
+                    <input type="checkbox" value="<?php echo $doc->post_id ?>" name="post[]" />
+                    <?php endif; ?>
+                </td>
                 <td scope="col" class="post-title column-title">
                     <a href="<?php echo get_edit_post_link($doc->post_id) ?>"><?php echo $doc->post_title ?></a>
+                    <?php if(!$not_translatable): ?>
                     <span id="icl-cw-<?php echo $doc->post_id ?>" style="display:none"><?php echo $wc = count(explode(' ',$doc->post_title)) + count(explode(' ', strip_tags($doc->post_content))); $wctotal+=$wc; ?></span>
+                    <?php endif; ?>
                     </td>
                 <td scope="col"><?php echo $icl_post_types[$doc->post_type]; ?></td>
                 <td scope="col"><?php echo $icl_post_statuses[$doc->post_status]; ?></td>
-                <td scope="col" id="icl-tr-status-<?php echo $doc->post_id ?>">
-                    <?php 
-                    if($doc->rid){
-                        if(isset($doc->in_progress) && $doc->in_progress > 0){                        
-                            echo __('Translation in progress', 'sitepress');
-                        }elseif($doc->updated){                            
-                            echo __('Translation needs update', 'sitepress');
-                        }else{
-                            echo __('Translation complete', 'sitepress');
-                        }
-                    }else{
-                        echo __('Not Translated', 'sitepress');
-                    }
-                    
-                    ?>
-                </td>
+                <td scope="col" id="icl-tr-status-<?php echo $doc->post_id ?>"><?php echo $tr_status ?></td>
             </tr>                            
             <?php endforeach;?>
             <?php endif;?>
@@ -163,7 +171,7 @@
             'total' => $wp_query->max_num_pages,
             'current' => $_GET['paged'],
             'add_args' => $icl_translation_filter 
-        ));
+        ));         
     ?>
     <?php if ( $page_links ) { ?>
     <div class="tablenav-pages"><?php $page_links_text = sprintf( '<span class="displaying-num">' . __( 'Displaying %s&#8211;%s of %s' ) . '</span>%s',
