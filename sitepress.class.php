@@ -188,7 +188,7 @@ class SitePress{
                         $this->this_lang = $this->get_default_language();
                     }
             }
-        }        
+        }
     }
         
     function ajax_responses(){
@@ -547,7 +547,7 @@ class SitePress{
         
     function save_post_actions($pidd){
         global $wpdb;
-        if($_POST['autosave']) return;
+        if($_POST['autosave'] || $_POST['skip_sitepress_actions']) return;
         if($_POST['action']=='post-quickpress-publish'){
             $post_id = $pidd;            
             $language_code = $this->get_default_language();
@@ -819,15 +819,13 @@ class SitePress{
             $term_lang = $this->get_default_language();
         }
         
-        
-        
-        $trid = isset($_POST['icl_trid'])?$_POST['icl_trid']:null;        
+        // has trid only when it's a translation of another tag             
+        $trid = isset($_POST['icl_trid']) && (isset($_POST['icl_tag_language']) || isset($_POST['icl_category_language']))?$_POST['icl_trid']:null;        
         $el_type = $wpdb->get_var("SELECT taxonomy FROM {$wpdb->term_taxonomy} WHERE term_taxonomy_id={$tt_id}");
         if($el_type == 'post_tag') $el_type = 'tag'; 
         if(!isset($term_lang)){
             $term_lang = $_POST['icl_'.$el_type.'_language'];        
-        }
-        
+        }        
         $this->set_element_language_details($tt_id, $el_type, $trid, $term_lang);                
     }
     
@@ -1161,7 +1159,7 @@ class SitePress{
         return false;
     }
     
-    function the_category_name_filter($name){        
+    function the_category_name_filter($name){            
         if(false === strpos($name, '@')) return $name;
         if(false !== strpos($name, '<a')){
             $name_sh = strip_tags($name);

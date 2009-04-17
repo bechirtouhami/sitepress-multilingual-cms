@@ -49,7 +49,6 @@ require ICL_PLUGIN_PATH . '/inc/functions.php';
 $sitepress = new SitePress();
 $sitepress_settings = $sitepress->get_settings();
 
-
 // modules load
 require ICL_PLUGIN_PATH . '/modules/cms-navigation/cms-navigation.php';
 $iclCMSNavigation = new CMSNavigation();

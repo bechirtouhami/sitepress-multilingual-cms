@@ -179,7 +179,7 @@ class ICanLocalizeQuery{
         $res = $this->_request_gz($request_url);        
         $content = $res['cms_request_details']['contents']['content'];
         $translation = array();
-        if($content)
+        if($content)        
         foreach($content as $c){
             if($c['attr']['type']=='tags' || $c['attr']['type']=='categories'){
                 $exp = explode(',',$c['translations']['translation']['attr']['data']);
@@ -189,7 +189,11 @@ class ICanLocalizeQuery{
                 }
                 $c['translations']['translation']['attr']['data'] = $arr;
             }
-            $translation[$c['attr']['type']] = $c['translations']['translation']['attr']['data'];
+            if(isset($c['translations'])){
+                $translation[$c['attr']['type']] = $c['translations']['translation']['attr']['data'];
+            }else{
+                $translation[$c['attr']['type']] = $c['attr']['data'];
+            }
         }
         return $translation;
     }
@@ -198,12 +202,15 @@ class ICanLocalizeQuery{
         $request_url = ICL_API_ENDPOINT . '/websites/' . $this->site_id . '/cms_requests/'.$request_id.'/update_status.xml';                            
         $parameters['accesskey'] = $this->access_key;
         $parameters['status'] = $status;
-        $parameters['language'] = $language;
+        if($language){
+            $parameters['language'] = $language;
+        }        
         
         $res = $this->_request($request_url, 'POST' , $parameters);
         
         return ($res['result']['attr']['error_code']==0);
     }
+    
     
 }
 
