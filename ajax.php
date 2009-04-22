@@ -132,37 +132,10 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings['translate_new_content']=$_POST['icl_translate_new_content']?1:0; 
         $iclsettings['interview_translators'] = $_POST['icl_interview_translators'];
         $iclsettings['translation_pickup_method'] = $_POST['icl_translation_pickup_method'];        
+        $iclsettings['translated_document_status'] = $_POST['icl_translation_document_status'];        
         $sitepress->save_settings($iclsettings);
         echo 1; 
        break;
-    case 'icl_editor_account':                
-        //validate user: username, password, editor
-        $u = wp_authenticate($_POST['user']['cms_login'],$_POST['user']['cms_password']);
-        if('WP_User' == get_class($u)){
-            $caps = array_keys($u->{$wpdb->prefix . 'capabilities'});
-            if(!in_array('editor',$caps) && !in_array('administrator',$caps)){
-                echo '0|' . __('The user has to be at least an \'Editor\'', 'sitepress');
-            }else{
-                // save settings
-                $iclsettings['cms_login'] = $_POST['user']['cms_login'];
-                $iclsettings['cms_password'] = $_POST['user']['cms_password'];
-                $sitepress->save_settings($iclsettings);
-                echo '1|';
-            }
-        }elseif('WP_Error' == get_class($u)){
-            echo '0|';
-            foreach($u->errors as $e){
-                $errs[] = $e[0];
-            }
-            echo join('<br />', $errs);                    
-        }else{
-            echo '0|' . __('Incorrect user', 'sitepress');
-        }
-        break;
-    case 'iclValidateUser':
-        $iclsettings = $sitepress->get_settings();
-        echo intval($iclsettings['cms_login'] && $iclsettings['cms_password']);
-        break;
     case 'icl_save_language_negotiation_type':
         $iclsettings['language_negotiation_type'] = $_POST['icl_language_negotiation_type'];
         if($_POST['language_domains']){

@@ -3,8 +3,6 @@ addLoadEvent(function(){
     jQuery('#icl_save_language_pairs').click(saveLanguagePairs);
     jQuery('form[name="icl_more_options"]').submit(iclSaveForm);
     jQuery('form[name="icl_editor_account"]').submit(iclSaveForm);
-    jQuery('#icl_user_fix').click(iclValidateUser);
-
 });
 
 function toggleTranslationPairsSub(){
@@ -35,13 +33,4 @@ function saveLanguagePairs(){
         }
     }); 
     
-}
-
-function iclValidateUser(){
-    jQuery.post(icl_ajx_url, { icl_ajx_action: "iclValidateUser" },
-      function(data){
-        if(data==1){    
-            location.reload();
-        }
-      }, "text");
 }

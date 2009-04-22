@@ -56,40 +56,25 @@
         <tr>
             <td colspan="2">
                 <?php echo __('Translation pickup method', 'sitepress') ?><br />                
-                <label><input type="radio" name="icl_translation_pickup_method" value="0" <?php if(!$sitepress_settings['translation_pickup_method']): ?>checked="checked"<?php endif;?> /> <?php echo __('Translations will be posted back to this website via XML-RPC') ?></label>
+                <label><input type="radio" name="icl_translation_pickup_method" value="0" <?php if(!$sitepress_settings['translation_pickup_method']): ?>checked="checked"<?php endif;?> /> <?php echo __('Translations will be posted back to this website via XML-RPC', 'sitepress') ?></label>
                 &nbsp;&nbsp;&nbsp;
-                <label><input type="radio" name="icl_translation_pickup_method" value="1" <?php if($sitepress_settings['translation_pickup_method']): ?>checked="checked"<?php endif;?> /> <?php echo __('Poll for translations periodically') ?></label>
+                <label><input type="radio" name="icl_translation_pickup_method" value="1" <?php if($sitepress_settings['translation_pickup_method']): ?>checked="checked"<?php endif;?> /> <?php echo __('Poll for translations periodically', 'sitepress') ?></label>
             </td>
         </tr>
+        <tr>
+            <td colspan="2">
+                <?php echo __('Translated document status', 'sitepress') ?><br />                
+                <label><input type="radio" name="icl_translation_document_status" value="0" <?php if(!$sitepress_settings['translated_document_status']): ?>checked="checked"<?php endif;?> /> <?php echo __('Draft', 'sitepress') ?></label>
+                &nbsp;&nbsp;&nbsp;
+                <label><input type="radio" name="icl_translation_document_status" value="1" <?php if($sitepress_settings['translated_document_status']): ?>checked="checked"<?php endif;?> /> <?php echo __('Same as the original document', 'sitepress') ?></label>
+            </td>
+        </tr>        
         </table>
         <p class="submit">
             <input class="button" name="create account" value="<?php echo __('Save', 'sitepress') ?>" type="submit" />
             <span class="icl_ajx_response" id="icl_ajx_response2"></span>    
-        </p>
-        
+        </p>        
         </form>
-        
-        <h3 id="icleditoraccount"><?php echo __('Editor account for WordPress access','sitepress') ?></h3>        
-        <form name="icl_editor_account" action="">
-        <p class="icl_form_errors" style="display:none"></p>
-        <table class="form-table icl-account-setup">
-        <tr class="form-field">
-            <th scope="row">CMS User</th>
-            <td><input name="user[cms_login]" type="text" value="<?php echo $sitepress_settings['cms_login']?>" size="32" style="width:200px;" /></td>
-        </tr>
-        <tr class="form-field">
-            <th scope="row">CMS Password</th>
-            <td><input name="user[cms_password]" type="password" value="<?php echo $sitepress_settings['cms_password']?>"  size="32" style="width:200px;" /></td>
-        </tr>  
-        <tr>
-            <td colspan="2"><?php echo __('* You need to supply the credentials of an editor account in order for our system to fetch contents and returns translations to WordPress','sitepress')?></td>
-        </tr>          
-        </table>
-        <p class="submit">
-            <input class="button" name="editor_account" value="<?php echo __('Save', 'sitepress') ?>" type="submit" />
-            <span class="icl_ajx_response" id="icl_ajx_response3"></span>    
-        </p>
-        </form>    
         
         <h3 id="icl_create_account_form"><?php echo __('Configure your ICanLocalize account', 'sitepress') ?></h3>             
         <?php if($_POST['icl_form_errors'] || $icl_account_ready_errors):  ?>

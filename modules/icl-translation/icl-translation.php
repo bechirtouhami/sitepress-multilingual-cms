@@ -286,7 +286,7 @@ function icl_translation_delete_post($post_id){
 }
 
 function icl_add_post_translation($trid, $translation, $lang, $rid){
-    global $wpdb;
+    global $wpdb, $sitepress_settings;
     $lang_code = $wpdb->get_var("SELECT code FROM {$wpdb->prefix}icl_languages WHERE english_name='".$wpdb->escape($lang)."'");
     if(!$lang_code){        
         return false;
@@ -399,7 +399,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     }
     $postarr['post_author'] = $original_post_details->post_author;  
     $postarr['post_type'] = $original_post_details->post_type;  
-    $postarr['post_status'] = $original_post_details->post_status;  
+    $postarr['post_status'] = $sitepress_settings['translated_document_status'] ? $original_post_details->post_status : 'draft';  
     $_POST['trid'] = $trid;
     $_POST['lang'] = $lang_code;
     $_POST['skip_sitepress_actions'] = true;

@@ -145,8 +145,12 @@ class SitePress{
         add_filter('pre_option_page_on_front', array($this,'pre_option_page_on_front'));
         add_filter('pre_option_page_for_posts', array($this,'pre_option_page_for_posts'));
         
+        add_filter('option_sticky_posts', array($this,'option_sticky_posts'));
+                         
+        add_filter('request', array($this,'request_filter'));
+        
     }
-                              
+                                  
     function init(){        
         if(defined('WP_ADMIN')){
             if(isset($_GET['lang'])){
@@ -189,6 +193,8 @@ class SitePress{
                     }
             }
         }
+        
+        require ICL_PLUGIN_PATH . '/inc/template-constants.php';        
     }
         
     function ajax_responses(){
@@ -276,7 +282,7 @@ class SitePress{
                 code, english_name, major, active, lt.name AS display_name   
             FROM {$wpdb->prefix}icl_languages l
                 JOIN {$wpdb->prefix}icl_languages_translations lt ON l.code=lt.language_code           
-            WHERE lt.display_language_code = '{$this->get_default_language()}' AND code='{$code}'
+            WHERE lt.display_language_code = '{$this->this_lang}' AND code='{$code}'
             ORDER BY major DESC, english_name ASC", ARRAY_A);
         return $language;
     }
@@ -329,10 +335,6 @@ class SitePress{
             $errors[] = __('XML-RPC publishing protocol not enabled', 'sitepress') . 
                 ' <a href="'.get_option('siteurl').'/wp-admin/options-writing.php">'.__('Fix','sitepress').'</a>';
         }
-        if(!$this->settings['cms_login'] || !$this->settings['cms_password']){
-            $errors[] = __('CMS user not configured', 'sitepress') . 
-                ' <a href="#icleditoraccount" id="icl_user_fix">'.__('Fix','sitepress').'</a>';;                
-        }        
         return $errors;        
     }
     
@@ -428,8 +430,6 @@ class SitePress{
                 $user['url'] = get_option('home');
                 $user['title'] = get_option('blogname');
                 $user['description'] = get_option('blogdescription');
-                $user['cms_login'] = $this->settings['cms_login'];
-                $user['cms_password'] = $this->settings['cms_password'];                
                 $user['interview_translators'] = $this->settings['interview_translators'];
                             
                 // prepare language pairs
@@ -552,8 +552,8 @@ class SitePress{
             $post_id = $pidd;            
             $language_code = $this->get_default_language();
         }else{
-            $post_id = $_POST['post_ID'];
-            $language_code = $_POST['icl_post_language'];
+            $post_id = $_POST['post_ID']?$_POST['post_ID']:$pidd; //latter case for XML-RPC publishing
+            $language_code = $_POST['icl_post_language']?$_POST['icl_post_language']:$this->get_default_language(); //latter case for XML-RPC publishing
         } 
         if($_POST['action']=='inline-save'){
             $res = $wpdb->get_row("SELECT trid, language_code FROM {$wpdb->prefix}icl_translations WHERE element_id={$post_id} AND element_type='post'"); 
@@ -657,7 +657,7 @@ class SitePress{
             $ljoin = "LEFT";
         }
         $join .= "{$ljoin} JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->posts}.ID = t.element_id 
-                    AND t.element_type='post' {$cond} ";
+                    AND t.element_type='post' {$cond} ";        
         return $join;
     }
 
@@ -1414,6 +1414,23 @@ class SitePress{
         }        
         return $link;
     }
+    
+    function option_sticky_posts($posts){
+        global $wpdb;
+        if(is_array($posts)){
+            $posts = $wpdb->get_col("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE element_id IN (".join(',',$posts).") AND element_type='post' AND language_code = '{$this->this_lang}'");
+        }        
+        return $posts;
+    }
+    
+    function request_filter($request){
+        // bug http://forum.wpml.org/topic.php?id=5
+        if(!defined('WP_ADMIN') && $this->settings['language_negotiation_type']==3 && isset($request['lang'])){
+            unset($request['lang']);
+        }
+        return $request;
+    }
+    
     
 }  
 ?>

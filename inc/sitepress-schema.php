@@ -120,6 +120,7 @@ function icl_sitepress_activate(){
             'sync_page_ordering' => 1,
             'default_language'  => $blog_default_lang,
             'default_categories' => array($blog_default_lang => $blog_default_cat_tax_id),
+            'translated_document_status' => 0,
             'modules' => array(
                 'absolute-links' => array('enabled'=>0),
                 'cms-navigation'=>array()
