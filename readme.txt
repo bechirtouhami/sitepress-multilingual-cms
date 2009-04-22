@@ -55,6 +55,13 @@ If you're linking to *example.com/about_us* and that page changes to *example.co
 
 Learn more about it in the [Sticky links usage](http://wpml.org/home/getting-started-guide/sticky-links/) page.
 
+= Template integration = 
+
+Besides the hooks for adding the navigation elements the plugin defines the following constants which you can use in your template:
+* ICL_LANGUAGE_CODE - the current language code (e.g. en)
+* ICL_LANGUAGE_NAME - the current language name in the current language (e.g. Français)
+* ICL_LANGUAGE_NAME_EN - the current language name in English (e.g. French)
+
 == Installation ==
 
 1. Place the folder containing this file into the plugins folder
