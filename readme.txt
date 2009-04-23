@@ -84,7 +84,7 @@ These constants can be used to create language dependent design for your site.
 * Version 0.9.4 - bug fix release
 	* Custom domains per language work correctly (forced to WPML defaults before)
 	* Prevents from being activated on PHP4 (WPML only runs on PHP5)
-* Version 0.9.5 - bug fix release
+* Version 0.9.6 - bug fix release
 	* Fixed search in different languages
 	* Fixed page edit links in different languages
 	* Custom language domains don't change back to default when switching to different language negotiation scheme.
