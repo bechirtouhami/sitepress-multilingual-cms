@@ -43,7 +43,7 @@ WPML makes it easy to add CMS navigation to your website. It will let you create
 * Breadcrumbs trail showing how to get from each page to the home page (and all pages in between).
 * Sidebar navigation that shows pages next to the current one, arranged by their page hierarchy.
 
-All these elements are widget ready. You can include them in the theme or drop as widgets.
+The sidebar element is widget ready. You can include it in the theme or drop as a widget. The top-navigation and breadcrumbs trail should be included in the theme.
 
 For integration instruction in the theme, visit the [navigation usage](http://wpml.org/home/getting-started-guide/site-navigation/) page.
 
@@ -58,9 +58,12 @@ Learn more about it in the [Sticky links usage](http://wpml.org/home/getting-sta
 = Template integration = 
 
 Besides the hooks for adding the navigation elements the plugin defines the following constants which you can use in your template:
-* ICL_LANGUAGE_CODE - the current language code (e.g. en)
-* ICL_LANGUAGE_NAME - the current language name in the current language (e.g. Français)
-* ICL_LANGUAGE_NAME_EN - the current language name in English (e.g. French)
+
+* `ICL_LANGUAGE_CODE` - the current language code (e.g. fr).
+* `ICL_LANGUAGE_NAME` - the current language name in the current language (e.g. FranÃ§ais).
+* `ICL_LANGUAGE_NAME_EN` - the current language name in English (e.g. French).
+
+These constants can be used to create language dependent design for your site.
 
 == Installation ==
 
@@ -86,8 +89,8 @@ Besides the hooks for adding the navigation elements the plugin defines the foll
 	* Fixed page edit links in different languages
 	* Custom language domains don't change back to default when switching to different language negotiation scheme.
 * Version 0.9.7 - bug fix release
-    * fixed incorrect query when selecting categories in the admin panel - http://wpml.org/home/leave-feedback/comment-page-1/#comment-448
-    * posts created via XML-RPC get the right (default) language assigned
-    * translated homepage displays correctly for blogs configured with the language named passed as a parameter - http://forum.wpml.org/topic.php?id=5
-    * defined a few contants that can be used in templates - ICL_LANGUAGE_CODE, ICL_LANGUAGE_NAME, ICL_LANGUAGE_NAME_EN
-    * split the stylesheet for the CMS Navigation into structure and design - users will be able to copy the design stylesheet and use it to override the plugin default style from their theme stylesheet
+	* Posts created via XML-RPC are assigned to the default language.
+   	* Translated homepage displays correctly for blogs configured with 'language name passed as a parameter'.
+	* Defined a language contants that can be used in templates - `ICL_LANGUAGE_CODE`, `ICL_LANGUAGE_NAME`, `ICL_LANGUAGE_NAME_EN`.
+	* Split the stylesheet for the CMS Navigation into structure and design - users will be able to copy the design stylesheet and use it to override the plugin default style from their theme stylesheet.
+	* Fixed incorrect query when selecting categories in the admin panel, causing extra records to be added to the translation table when editing categories inline.
