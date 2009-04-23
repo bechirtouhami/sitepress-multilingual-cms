@@ -63,7 +63,7 @@ if($sitepress_settings['modules']['absolute-links']['enabled']){
 }
 
 if(!empty($sitepress_settings['language_pairs'])){
-    require ICL_PLUGIN_PATH . '/modules/icl-translation/icl-translation.php';
+    //require ICL_PLUGIN_PATH . '/modules/icl-translation/icl-translation.php';
 }
 
 // activation hook

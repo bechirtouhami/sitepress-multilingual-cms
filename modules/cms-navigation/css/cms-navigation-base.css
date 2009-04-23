@@ -1,4 +1,4 @@
-#menu-wrap {width:100%; height:30px; position:relative; z-index:100;background-color: #EEE;}
+#menu-wrap {width:100%; height:30px; position:relative; z-index:100;}
 /* hack to correct IE5.5 faulty box model */
 * html #menu-wrap {width:100%; w\idth:100%}
 /* remove all the bullets, borders and padding from the default list styling */

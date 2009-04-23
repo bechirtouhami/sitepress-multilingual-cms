@@ -399,7 +399,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     }
     $postarr['post_author'] = $original_post_details->post_author;  
     $postarr['post_type'] = $original_post_details->post_type;  
-    $postarr['post_status'] = $sitepress_settings['translated_document_status'] ? $original_post_details->post_status : 'draft';  
+    $postarr['post_status'] = $sitepress_settings['translated_document_status'] ? 'draft' : $original_post_details->post_status;  
     $_POST['trid'] = $trid;
     $_POST['lang'] = $lang_code;
     $_POST['skip_sitepress_actions'] = true;

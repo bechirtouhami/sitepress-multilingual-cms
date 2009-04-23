@@ -56,9 +56,9 @@
         <tr>
             <td colspan="2">
                 <?php echo __('Translation pickup method', 'sitepress') ?><br />                
-                <label><input type="radio" name="icl_translation_pickup_method" value="0" <?php if(!$sitepress_settings['translation_pickup_method']): ?>checked="checked"<?php endif;?> /> <?php echo __('Translations will be posted back to this website via XML-RPC', 'sitepress') ?></label>
+                <label><input type="radio" name="icl_translation_pickup_method" value="1" <?php if(!$sitepress_settings['translation_pickup_method']): ?>checked="checked"<?php endif;?> /> <?php echo __('Translations will be posted back to this website via XML-RPC', 'sitepress') ?></label>
                 &nbsp;&nbsp;&nbsp;
-                <label><input type="radio" name="icl_translation_pickup_method" value="1" <?php if($sitepress_settings['translation_pickup_method']): ?>checked="checked"<?php endif;?> /> <?php echo __('Poll for translations periodically', 'sitepress') ?></label>
+                <label><input type="radio" name="icl_translation_pickup_method" value="0" <?php if($sitepress_settings['translation_pickup_method']): ?>checked="checked"<?php endif;?> /> <?php echo __('Poll for translations periodically', 'sitepress') ?></label>
             </td>
         </tr>
         <tr>

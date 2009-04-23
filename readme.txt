@@ -85,4 +85,9 @@ Besides the hooks for adding the navigation elements the plugin defines the foll
 	* Fixed search in different languages
 	* Fixed page edit links in different languages
 	* Custom language domains don't change back to default when switching to different language negotiation scheme.
-
+* Version 0.9.7 - bug fix release
+    * fixed incorrect query when selecting categories in the admin panel - http://wpml.org/home/leave-feedback/comment-page-1/#comment-448
+    * posts created via XML-RPC get the right (default) language assigned
+    * translated homepage displays correctly for blogs configured with the language named passed as a parameter - http://forum.wpml.org/topic.php?id=5
+    * defined a few contants that can be used in templates - ICL_LANGUAGE_CODE, ICL_LANGUAGE_NAME, ICL_LANGUAGE_NAME_EN
+    * split the stylesheet for the CMS Navigation into structure and design - users will be able to copy the design stylesheet and use it to override the plugin default style from their theme stylesheet
