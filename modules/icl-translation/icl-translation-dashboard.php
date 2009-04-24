@@ -50,8 +50,7 @@
 ?>
 <div class="wrap">
     <div id="icon-options-general" class="icon32"><br /></div>
-    <h2><?php echo __('Translation Dashboard', 'sitepress') ?></h2>    
-    <a href="<?php echo $_SERVER['REQUEST_URI'] ?>&debug=1">DEBUG: FETCH TRANSLATIONS</a>
+    <h2><?php echo __('Translation Dashboard', 'sitepress') ?></h2>        
     <form method="post" name="translation-dashboard-filter" action="tools.php?page=sitepress-multilingual-cms/modules/icl-translation/icl-translation-dashboard.php">
     <table class="form-table">
         <tr valign="top">
@@ -195,5 +194,6 @@
     </ul>
     <span id="icl_message_1" style="display:none"><?php echo __('All documents sent to translation', 'sitepress')?></span>
     <span id="icl_message_2" style="display:none"><?php echo __('Translation in progress', 'sitepress')?></span>
-        
+    
+    <br /><br /><br /><br /><br /><br /><a href="<?php echo $_SERVER['REQUEST_URI'] ?>&debug=1">DEBUG: FETCH TRANSLATIONS</a>    
 </div>
