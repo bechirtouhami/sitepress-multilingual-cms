@@ -6,7 +6,7 @@ class SitePress{
     private $this_lang;
     
     function __construct(){
-        global $wpdb;
+        global $wpdb;       
         $this->settings = get_option('icl_sitepress_settings');        
         $res = $wpdb->get_results("
             SELECT code, english_name, active, lt.name AS display_name 

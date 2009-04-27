@@ -35,7 +35,7 @@ class AbsoluteLinksPlugin{
     function __construct(){  
         $this->settings = get_option('alp_settings');
         //add_action('admin_menu',array($this,'management_page'));
-        if($_POST['save_alp']){            
+        if(isset($_POST['save_alp']) && $_POST['save_alp']){            
             add_action('init', array($this,'save_settings'));           
         }
         add_action('save_post', array($this,'save_default_urls'));
@@ -71,7 +71,7 @@ class AbsoluteLinksPlugin{
     }
     
     function ajax_responses(){  
-        if(!$_POST['alp_ajx_action']){
+        if(!isset($_POST['alp_ajx_action'])){
             return;
         }
         global $wpdb;

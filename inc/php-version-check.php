@@ -1,5 +1,5 @@
 <?php
-if($_GET['icl_phpinfo']==1){
+if(isset($_GET['icl_phpinfo']) && $_GET['icl_phpinfo']==1){
     ob_start();
     phpinfo();
     $phpinfo = ob_get_contents();

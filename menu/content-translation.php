@@ -77,7 +77,7 @@
         </form>
         
         <h3 id="icl_create_account_form"><?php echo __('Configure your ICanLocalize account', 'sitepress') ?></h3>             
-        <?php if($_POST['icl_form_errors'] || $icl_account_ready_errors):  ?>
+        <?php if(isset($_POST['icl_form_errors']) || $icl_account_ready_errors):  ?>
         <div class="icl_form_errors">
             <?php echo $_POST['icl_form_errors'] ?>
             <?php if($icl_account_ready_errors):  ?>
@@ -91,7 +91,7 @@
         </div>
         <?php endif; ?>
         
-        <?php if($_POST['icl_form_success']):?>
+        <?php if(isset($_POST['icl_form_success'])):?>
         <p class="icl_form_success"><?php echo $_POST['icl_form_success'] ?></p>
         <?php endif; ?>  
           

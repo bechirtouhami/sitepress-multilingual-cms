@@ -18,8 +18,10 @@
             $status = $_GET['status'];
         }else{
             $status = false;
-            unset($icl_translation_filter['status_on']);
-            unset($icl_translation_filter['status']);
+            if(isset($icl_translation_filter)){
+                unset($icl_translation_filter['status_on']);
+                unset($icl_translation_filter['status']);                
+            }
         }
     }
 
@@ -30,8 +32,10 @@
             $type = $_GET['type'];
         }else{
             $type = false;
-            unset($icl_translation_filter['type_on']);
-            unset($icl_translation_filter['type']);
+            if(isset($icl_translation_filter)){
+                unset($icl_translation_filter['type_on']);
+                unset($icl_translation_filter['type']);
+            }
         }
     }   
     
@@ -109,7 +113,7 @@
             <tr>
                 <td scope="col" colspan="5" align="center"><?php echo __('No documents found', 'sitepress') ?></td>
             </tr>                
-            <?php else:?>
+            <?php else: $oddcolumn = false;?>
             <?php foreach($documents as $doc): $oddcolumn=!$oddcolumn; ?>
             <?php 
             $not_translatable = false;
@@ -169,7 +173,7 @@
             'next_text' => __('&raquo;'),
             'total' => $wp_query->max_num_pages,
             'current' => $_GET['paged'],
-            'add_args' => $icl_translation_filter 
+            'add_args' => isset($icl_translation_filter)?$icl_translation_filter:array() 
         ));         
     ?>
     <?php if ( $page_links ) { ?>

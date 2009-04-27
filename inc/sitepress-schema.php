@@ -1,12 +1,12 @@
 <?php
 function icl_sitepress_activate(){
     global $wpdb;
-    
+    global $EZSQL_ERROR;
     require_once(ICL_PLUGIN_PATH . '/inc/lang-data.inc');
     //defines $langs_names
-            
+    
     // languages table
-    $table_name = $wpdb->prefix.'icl_languages';
+    $table_name = $wpdb->prefix.'icl_languages';        
     if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
         $sql = " 
         CREATE TABLE `{$table_name}` (
@@ -128,7 +128,11 @@ function icl_sitepress_activate(){
         );        
         add_option('icl_sitepress_settings', $settings, '', true);        
     }    
-                                                                     
+       
+    if(defined('ICL_DEBUG_MODE') && ICL_DEBUG_MODE){
+        require_once ICL_PLUGIN_PATH . '/inc/functions.php';
+        icl_display_errors_stack(true);
+    }                                                              
 }
 
 function icl_sitepress_deactivate(){
@@ -159,4 +163,5 @@ if(isset($_GET['activate'])){
         }
     }   
 }
+
 ?>

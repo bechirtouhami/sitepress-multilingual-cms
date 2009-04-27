@@ -24,8 +24,9 @@ Version: 0.9.7
     You should have received a copy of the GNU General Public License
     along with ICanLocalize Translator.  If not, see <http://www.gnu.org/licenses/>.
 */
-       
-
+                          
+                          
+if(defined('ICL_SITEPRESS_VERSION')) return;
 define('ICL_SITEPRESS_VERSION', '0.9.7');
 define('ICL_PLUGIN_PATH', dirname(__FILE__));
 define('ICL_PLUGIN_URL', rtrim(get_option('siteurl'),'/') . '/wp-content/' . basename(dirname(dirname(__FILE__))) . '/' . basename(dirname(__FILE__)) );
@@ -69,3 +70,5 @@ if(!empty($sitepress_settings['language_pairs'])){
 // activation hook
 register_activation_hook( __FILE__, 'icl_sitepress_activate' );
 register_deactivation_hook(__FILE__, 'icl_sitepress_deactivate');
+
+?>
