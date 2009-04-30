@@ -63,9 +63,9 @@ if($sitepress_settings['modules']['absolute-links']['enabled']){
     $iclAbsoluteLinks = new AbsoluteLinksPlugin();
 }
 
-if(!empty($sitepress_settings['language_pairs'])){
-    require ICL_PLUGIN_PATH . '/modules/icl-translation/icl-translation.php';
-}
+//if(!empty($sitepress_settings['language_pairs'])){
+//    require ICL_PLUGIN_PATH . '/modules/icl-translation/icl-translation.php';
+//}
 
 // activation hook
 register_activation_hook( __FILE__, 'icl_sitepress_activate' );

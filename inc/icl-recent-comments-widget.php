@@ -7,7 +7,7 @@ function icl_wp_widget_recent_comments($args) {
     global $wpdb, $comments, $comment, $sitepress;
     extract($args, EXTR_SKIP);
     $options = get_option('widget_recent_comments');
-    $title = empty($options['title']) ? __('Recent Comments') : apply_filters('widget_title', $options['title']);
+    $title = empty($options['title']) ? __('Recent Comments', 'sitepress') : apply_filters('widget_title', $options['title']);
     if ( !$number = (int) $options['number'] )
         $number = 5;
     else if ( $number < 1 )
@@ -30,7 +30,7 @@ function icl_wp_widget_recent_comments($args) {
             <?php echo $before_title . $title . $after_title; ?>
             <ul id="recentcomments"><?php
             if ( $comments ) : foreach ( (array) $comments as $comment) :
-            echo  '<li class="recentcomments">' . sprintf(__('%1$s on %2$s'), get_comment_author_link(), '<a href="'. get_comment_link($comment->comment_ID) . '">' . get_the_title($comment->comment_post_ID) . '</a>') . '</li>';
+            echo  '<li class="recentcomments">' . sprintf(__('%1$s on %2$s', 'sitepress'), get_comment_author_link(), '<a href="'. get_comment_link($comment->comment_ID) . '">' . get_the_title($comment->comment_post_ID) . '</a>') . '</li>';
             endforeach; endif;?></ul>
         <?php echo $after_widget; ?>
 <?php
@@ -95,9 +95,9 @@ function icl_wp_widget_recent_comments_style() {
  * @since 2.2.0
  */
 function icl_wp_widget_recent_comments_register() {
-    $widget_ops = array('classname' => 'widget_recent_comments', 'description' => __( 'The most recent comments' ) );
-    wp_register_sidebar_widget('recent-comments', __('Recent Comments'), 'icl_wp_widget_recent_comments', $widget_ops);
-    wp_register_widget_control('recent-comments', __('Recent Comments'), 'icl_wp_widget_recent_comments_control');
+    $widget_ops = array('classname' => 'widget_recent_comments', 'description' => __( 'The most recent comments', 'sitepress') );
+    wp_register_sidebar_widget('recent-comments', __('Recent Comments', 'sitepress'), 'icl_wp_widget_recent_comments', $widget_ops);
+    wp_register_widget_control('recent-comments', __('Recent Comments', 'sitepress'), 'icl_wp_widget_recent_comments_control');
 
     if ( is_active_widget('icl_wp_widget_recent_comments') )
         add_action('wp_head', 'icl_wp_widget_recent_comments_style');
