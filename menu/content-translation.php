@@ -4,6 +4,7 @@
     $sitepress_settings = $sitepress->get_settings();
     $icl_account_ready_errors = $sitepress->icl_account_reqs();
 ?>
+<?php $sitepress->noscript_notice() ?>
 <div class="wrap">
     <div id="icon-options-general" class="icon32"><br /></div>
     <h2><?php echo __('Setup WPML', 'sitepress') ?></h2>    

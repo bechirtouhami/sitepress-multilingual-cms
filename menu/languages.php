@@ -12,6 +12,7 @@
     $default_language = $sitepress->get_language_details($sitepress->get_default_language());
     $locales = $sitepress->get_locale_file_names();
 ?>
+<?php $sitepress->noscript_notice() ?>
 <div class="wrap">
     <div id="icon-options-general" class="icon32"><br /></div>
     <h2><?php echo __('Setup WPML', 'sitepress') ?></h2>    

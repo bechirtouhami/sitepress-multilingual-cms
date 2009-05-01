@@ -129,7 +129,7 @@ class SitePress{
         add_filter('getarchives_join', array($this,'getarchives_join'));
         add_filter('getarchives_where', array($this,'getarchives_where'));
         if($this->settings['language_home']){
-            add_filter('pre_option_home', array($this,'pre_option_home'));
+            add_filter('pre_option_home', array($this,'pre_option_home'));            
         }     
         
         // language negotiation
@@ -149,8 +149,10 @@ class SitePress{
                          
         add_filter('request', array($this,'request_filter'));
         
+        add_action('init', array($this,'plugin_localization'));
+        
     }
-                                  
+                                      
     function init(){        
         if(defined('WP_ADMIN')){
             if(isset($_GET['lang'])){
@@ -194,9 +196,11 @@ class SitePress{
             }
         }
         
+        add_filter('get_pagenum_link', array($this,'get_pagenum_link_filter'));
+        
         require ICL_PLUGIN_PATH . '/inc/template-constants.php';        
     }
-        
+                
     function ajax_responses(){
         global $wpdb;
         // moved
@@ -357,7 +361,7 @@ class SitePress{
         var icl_this_lang = '<?php echo $this->this_lang ?>';   
         var icl_ajxloaderimg = '<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif';
         var icl_cat_adder_msg = '<?php echo __('To add categories that already exist in other languages go to the <a href="categories.php">category management page</a>','sitepress')?>';
-        </script>
+        </script>        
         <?php
         wp_enqueue_script('sitepress-scripts', ICL_PLUGIN_URL . '/res/js/scripts.js', array(), '0.1');
         if(isset($page_basename) && file_exists(ICL_PLUGIN_PATH . '/res/js/'.$page_basename.'.js')){
@@ -376,7 +380,7 @@ class SitePress{
     }
        
     function front_end_js(){
-        echo '<script type="text/javascript">var icl_lang = \''.$this->this_lang.'\';</script>';        
+        echo '<script type="text/javascript">var icl_lang = \''.$this->this_lang.'\';var icl_home = \''.$this->language_url().'\';</script>';        
         echo '<script type="text/javascript" src="'. ICL_PLUGIN_URL . '/res/js/sitepress.js"></script>';        
     }
     
@@ -1240,6 +1244,11 @@ class SitePress{
         $url = $this->convert_url($url, $lang);
         return $url;
     }
+   
+    // Navigation
+    function get_pagenum_link_filter($url){
+        return $this->convert_url($url, $this->this_lang);    
+    }
     
     // TO REVISE
     function pre_option_home(){                              
@@ -1278,10 +1287,11 @@ class SitePress{
         }        
         if($l){
             $locale = $l;
-        }
+        }    
+        load_textdomain('sitepress', TEMPLATEPATH . '/'.$locale.'.mo');
         return $locale;
     }
-    
+        
     function get_locale_file_names(){
         global $wpdb;
         $locales = array();
@@ -1431,6 +1441,15 @@ class SitePress{
         return $request;
     }
     
+    function plugin_localization(){
+        $plugins_dir = basename(dirname(ICL_PLUGIN_PATH));                      
+        $plugin_dir = basename(ICL_PLUGIN_PATH);            
+        load_plugin_textdomain( 'sitepress', 'wp-content/'.$plugins_dir.'/' . $plugin_dir . '/locale', $plugin_dir . '/locale');
+    }
+    
+    function noscript_notice(){
+        ?><noscript><div class="error"><?php echo __('WPML admin screens require JavaScript in order to display. JavaScript is currently off in your browser.', 'sitepress') ?></div></noscript><?php
+    }
     
 }  
 ?>

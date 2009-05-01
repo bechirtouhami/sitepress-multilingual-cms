@@ -15,7 +15,7 @@ if(defined('ICL_DEBUG_MODE') && ICL_DEBUG_MODE && !function_exists('icl_error_ha
     function icl_display_errors_stack($onactivate = false){        
         global $icl_errors_stack, $EZSQL_ERROR;
         if(isset($icl_errors_stack) || $EZSQL_ERROR){
-            echo '<div id="icl_display_errors_stack" style="font:11px Arial;background-color:pink;padding:10px;border:1px solid #f00;width:98%;top:0;background-color:rgba(255,192,203,0.95);max-height:500px;overflow:auto;z-index:1000';
+            echo '<div id="icl_display_errors_stack" style="font:11px Arial;background-color:pink;padding:10px;border:1px solid #f00;width:98%;top:0;background-color:rgba(255,192,203,0.95);max-height:500px;overflow:auto;z-index:1000;';
             if(!$onactivate){
                 echo 'position:fixed;';
             }

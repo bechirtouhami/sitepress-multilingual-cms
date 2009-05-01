@@ -19,5 +19,8 @@ addLoadEvent(function(){
     src = document.getElementById('s');   
     if(src){
         src.parentNode.appendChild(lhid);
-    }    
+    }
+    if(document.getElementById('searchform')){
+        document.getElementById('searchform').action=icl_home; 
+    }
 });

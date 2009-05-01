@@ -1,0 +1,628 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Mihai Grigori <mihaigrigori@gmail.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+
+msgid "%1$s on %2$s"
+msgstr "%1$s en %2$s"
+
+msgid "%s or %s, %s, %s, %s and %s"
+msgstr "%s o %s, %s, %s, %s y %s"
+
+msgid "%s words, %s USD (at 0.07 USD/word)"
+msgstr "%s palabras, %s USD (a 0.07 USD/palabra)"
+
+msgid "&laquo;"
+msgstr "&laquo;"
+
+msgid "&raquo;"
+msgstr "&raquo;"
+
+msgid "(at most 15)"
+msgstr "(máximo 15)"
+
+msgid "--none--"
+msgstr "--ninguno--"
+
+msgid "A different domain per language"
+msgstr "Un dominio distinto para cada idioma"
+
+msgid "A list of the top level pages with drop down menus for second level menus. Can optionally contain the post categories"
+msgstr "Una lista de las páginas del primer nivel con menúes desplegables para los menúes del segundo nivel. Pueden contener opcionalmente las categorías de las entradas."
+
+msgid "About Sticky Links"
+msgstr "Acerca de los enlaces adhesivos"
+
+msgid "Absolute Links"
+msgstr "Enlaces absolutos"
+
+msgid "Account created"
+msgstr "Cuenta creada"
+
+msgid "Add / Remove languages"
+msgstr "Agregar / Quitar idiomas"
+
+msgid "Add this project to my account"
+msgstr "Agregar este proyecto a mi cuenta"
+
+msgid "After you configure more languages for your blog, the translation options will show here"
+msgstr "Una vez que configures más idiomas para tu blog, las opciones de traducción aparecerán aquí."
+
+msgid "All documents"
+msgstr "Todos los documentos"
+
+msgid "All documents sent to translation"
+msgstr "Todos los documentos enviados para traducir"
+
+msgid "All languages"
+msgstr "Todos los idiomas"
+
+msgid "Alphabetically"
+msgstr "Alfabéticamente"
+
+msgid "Articles tagged "
+msgstr "Artículos con etiquetas"
+
+msgid "Before adding other languages, please select the language existing contents are written in:"
+msgstr "Antes de agregar otros idiomas, por favor seleccione el idioma en el que están escritos los contenidos existentes:"
+
+msgid "Before you create an ICanLocalize account you need to fix these:"
+msgstr "Antes de crear una cuenta de ICanLocalize, es necesario que repare lo siguiente:"
+
+msgid "Breadcrumbs trails"
+msgstr "Rutas de navegación"
+
+msgid "Broken Links"
+msgstr "Enlaces rotos"
+
+msgid "Broken link"
+msgstr "Enlace roto"
+
+msgid "CMS Navigation"
+msgstr "Exploración CMS"
+
+msgid "Cancel"
+msgstr "Cancelar"
+
+msgid "Categories menu"
+msgstr "Menú de categorías"
+
+msgid "Categories menu title"
+msgstr "Título del menú de categorías"
+
+msgid "Change default language"
+msgstr "Cambiar el idioma predeterminado"
+
+msgid "Change sticky links back to Wordpress permalinks"
+msgstr "Convertir los enlaces adhesivos en enlaces de Wordpress nuevamente."
+
+msgid "Choose how to determine which language visitors see contents in"
+msgstr "Seleccione cómo determinar en qué idioma los visitantes ven los contenidos"
+
+msgid "Close"
+msgstr "Cerrar"
+
+msgid "Code"
+msgstr "Código"
+
+msgid "Comments translation"
+msgstr "Traducción de los comentarios"
+
+msgid "Complete"
+msgstr "Completar"
+
+msgid "Configure your ICanLocalize account"
+msgstr "Configure su cuenta de ICanLocalize"
+
+msgid "Create a new ICanLocalize account"
+msgstr "Crear una cuenta de ICanLocalize nueva"
+
+msgid "Create account"
+msgstr "Crear cuenta"
+
+msgid "Creation time"
+msgstr "Hora de creación"
+
+msgid "Current content language"
+msgstr "Idioma de contenido actual"
+
+msgid "Data saved"
+msgstr "Datos guardados"
+
+msgid "Description"
+msgstr "Descripción"
+
+msgid "Different languages in directories (%s - %s, %s/%s - %s, etc.)"
+msgstr "Distintos idiomas en los directorios (%s - %s, %s/%s - %s, etc.)"
+
+msgid "Display"
+msgstr "Mostrar"
+
+msgid "Displaying %s&#8211;%s of %s"
+msgstr "Mostrando %s&#8211;%s de %s"
+
+msgid "Draft"
+msgstr "Borrador"
+
+msgid "Edit"
+msgstr "Editar"
+
+msgid "Edit this page to add translations"
+msgstr "Editar esta página para agregar traducciones"
+
+msgid "Enable sticky links"
+msgstr "Permitir enlaces adhesivos"
+
+msgid "Error:"
+msgstr "Error:"
+
+msgid "Error: data not saved"
+msgstr "Error: los datos no se han guardado"
+
+msgid "Exclude from the top navigation"
+msgstr "Excluir de la navegación superior"
+
+msgid "File exists."
+msgstr "El archivo existe."
+
+msgid "File not found!"
+msgstr "¡No se encontró el archivo!"
+
+msgid "Filter furter by:"
+msgstr "Seguir filtrando por:"
+
+msgid "Fix"
+msgstr "Reparar"
+
+msgid "HTML to add"
+msgstr "HTML para agregar"
+
+msgid "Heading end"
+msgstr "Fin del encabezado"
+
+msgid "Heading start"
+msgstr "Comienzo de encabezado"
+
+msgid "Home"
+msgstr "Inicio"
+
+msgid "I already have an account at ICanLocalize"
+msgstr "Ya tengo una cuenta en ICanLocalize"
+
+msgid "I want to interview my translators"
+msgstr "Deseo entrevistar a mis traductores"
+
+msgid "ICanLocalize account details reset"
+msgstr "Reestablecer los detalles de la cuenta de ICanLocalize"
+
+msgid "ICanLocalize will assign translators for this work"
+msgstr "ICanLocalize nombrará traductores para este trabajo"
+
+msgid "If you select to enable sticky links, internal links to pages and posts will never break. When the URL changes, all links to it will automatically update."
+msgstr "Si escoge habilitar los enlaces adhesivos los enlaces internos a las páginas y a las entradas nunca se romperán. Cuando la URL cambie, todos los enlaces a ella se actualizarán automáticamente."
+
+msgid "In progress"
+msgstr "En curso"
+
+msgid "Instructions for adding the navigation to your theme"
+msgstr "Instrucciones para agregar la barra de exploración en su diseño"
+
+msgid "Invalid action"
+msgstr "Acción no válida"
+
+msgid "Language"
+msgstr "Idioma"
+
+msgid "Language Selector"
+msgstr "Selector de idioma"
+
+msgid "Language name added as a parameter (%s?lang=%s - %s)"
+msgstr "Nombre del idioma agregado como parámetro (%s?lang=%s - %s)"
+
+msgid "Language options"
+msgstr "Opciones de idiomas"
+
+msgid "Language switcher options"
+msgstr "Opciones del selector de idiomas"
+
+msgid "Languages"
+msgstr "Idiomas"
+
+msgid "Link to home of language for missing translations"
+msgstr "Enlace hacia la página de inicio de idiomas para las traducciones faltantes"
+
+msgid "Lists the path back to the home page"
+msgstr "Incluye la ruta para regresar a la página de inicio"
+
+msgid "Local navigation tree with page siblings, parent and brothers"
+msgstr "Árbol de exploración local con páginas primarias, secundarias y del mismo nivel"
+
+msgid "Locale file name"
+msgstr "Nombre del archivo local"
+
+msgid "MO file in %s"
+msgstr "Archivo MO en %s"
+
+msgid "Main Page (no parent)"
+msgstr "Página Principal (no primaria)"
+
+msgid "Menu order"
+msgstr "Orden del menú"
+
+msgid "Mini home (don't list child pages for this page)"
+msgstr "Mini inicio (no incluya páginas para niños en esta página)"
+
+msgid "More options"
+msgstr "Más opciones"
+
+msgid "Name"
+msgstr "Nombre"
+
+msgid "Navigation"
+msgstr "Exploración"
+
+msgid "Navigation element"
+msgstr "Elemento de exploración"
+
+msgid "Needs update"
+msgstr "Necesita actualización"
+
+msgid "News"
+msgstr "Noticias"
+
+msgid "No documents found"
+msgstr "No se encontraron los documentos"
+
+msgid "No suggestions"
+msgstr "No hay sugerencias"
+
+msgid "Not Translated"
+msgstr "Sin traducir"
+
+msgid "Not translated or needs updating"
+msgstr "No está traducido o debe ser actualizado"
+
+msgid "Not updated on ICanLocalize: "
+msgstr "Sin actualizar en ICanLocalize: "
+
+msgid "Notify before sending translation jobs"
+msgstr "Notificar antres de enviar trabajos de traducción"
+
+msgid "Number of comments to show:"
+msgstr "Cantidad de comentarios para mostrar:"
+
+msgid "Operations"
+msgstr "Operaciones"
+
+msgid "Out-of-the-box support for full CMS navigation in your WordPress site including drop down menus, breadcrumbs trail and sidebar navigation."
+msgstr "Asistencia remota para la exploración CMS completa en su sitio de Wordpress que incluye menúes desplegables, ruta de navegación y barra de exploración."
+
+msgid "Page"
+msgstr "Página"
+
+msgid "Page order"
+msgstr "Orden de la página"
+
+msgid "Pending Review"
+msgstr "Pendiente de revisión"
+
+msgid "Permlink structure changes."
+msgstr "Cambios de la estructura del enlace permanente."
+
+msgid "Poll for translations periodically"
+msgstr "Sondear las traducciones periódicamente"
+
+msgid "Post"
+msgstr "Entrada"
+
+msgid "Post/page"
+msgstr "Entrada/página"
+
+msgid "Project added"
+msgstr "Proyecto agregado"
+
+msgid "Published"
+msgstr "Publicado"
+
+msgid "Recent Comments"
+msgstr "Comentarios recientes"
+
+msgid "Replace permalinks with sticky links in all blog posts"
+msgstr "Cambiar los enlaces permanentes por los enlaces adhesivos en todas las entradas del blog."
+
+msgid "Replace permalinks with sticky links in posts that have not been checked"
+msgstr "Sustituir los enlaces permanentes por los enlaces adhesivos en las entradas que no hayan sido controladas."
+
+msgid "Reset ICanLocalize account configuration"
+msgstr "Reestablecer la configuración de la cuenta de ICanLocalize"
+
+msgid "Revert sticky urls to permalinks"
+msgstr "Cambiar las urls adhesivas a enlaces permanentes"
+
+msgid "Running"
+msgstr "En ejecución"
+
+msgid "Same as the original document"
+msgstr "Igual al documento original"
+
+msgid "Save"
+msgstr "Guardar"
+
+msgid "Save Changes"
+msgstr "Guardar los cambios"
+
+msgid "Save default language"
+msgstr "Guardar el idioma predeterminado"
+
+msgid "Save language selection"
+msgstr "Guardar el idioma seleccionado"
+
+msgid "Scan"
+msgstr "Analizar"
+
+msgid "Scan ALL posts"
+msgstr "Examinar todas las entradas"
+
+msgid "Scheduled"
+msgstr "Programadas"
+
+msgid "Search for: "
+msgstr "Buscar: "
+
+msgid "Section"
+msgstr "Sección"
+
+msgid "Sending translation requests. Please wait!"
+msgstr "Se están enviando los pedidos de traducción. Espere por favor."
+
+msgid "Settings"
+msgstr "Configuración"
+
+msgid "Setup WPML"
+msgstr "Instalar WPML"
+
+msgid "Show categories menu"
+msgstr "Mostrar el menú de categorías"
+
+msgid "Show documents in:"
+msgstr "Mostrar documentos en:"
+
+msgid "Sidebar Navigation"
+msgstr "Barra de exploración"
+
+msgid "Sidebar navigation"
+msgstr "Barra de exploración"
+
+msgid "Sidebar pages menu"
+msgstr "Menú de páginas de la barra de exploración"
+
+msgid "Site Languages"
+msgstr "Idiomas del sitio"
+
+msgid "Skip language"
+msgstr "Omitir el idioma"
+
+msgid "Some links (%s) were converted to absolute. You can [a]return them to their original values[/a]"
+msgstr "Algunos enlaces (%s) fueron convertidos en absolutos. Puede [a]devolverles sus valores originales[/a]"
+
+msgid "Start"
+msgstr "Iniciar"
+
+msgid "Status"
+msgstr "Estado"
+
+msgid "Sticky links"
+msgstr "Enlaces adhesivos"
+
+msgid "Suggestions"
+msgstr "Sugerencias"
+
+msgid "Synchronize page order for translations"
+msgstr "Sincronizar el orden de las páginas para las traducciones"
+
+msgid "The most recent comments"
+msgstr "Comentarios más recientes"
+
+msgid "The page parent changes."
+msgstr "La página primaria cambia."
+
+msgid "The slug changes."
+msgstr "El campo de datos dinámico cambia."
+
+msgid "Theme localization"
+msgstr "Localización del diseño"
+
+msgid "This list shows the languages that are enabled for this site. Select the default language for contents."
+msgstr "Esta lista muestra los idiomas habilitados para este sitio. Seleccione el idioma predeterminado para los contenidos."
+
+msgid "This option is not yet available for WPMU"
+msgstr "Esta opción aún no está disponible para WPMU"
+
+msgid "Title"
+msgstr "Título"
+
+msgid "Title:"
+msgstr "Título:"
+
+msgid "To add a language switcher to your theme, insert this code to header.php:"
+msgstr "Para agregar un selector de idiomas a su diseño, inserte este código en header.php:"
+
+msgid "To add categories that already exist in other languages go to the <a href=\"categories.php\">category management page</a>"
+msgstr "Para agregar categorías ya existentes en otros idiomas, diríjase a <a href=\"categories.php\">category management page</a>"
+
+msgid "To customize the appearance of the navigation elements, you will need to override the styling provided in the plugin's CSS file."
+msgstr "Para personalizar el estilo de los elementos de exploración, tendrá que invalidar el diseño que trae el archivo CSS del complemento."
+
+msgid "Top navigation"
+msgstr "Barra de exploración superior"
+
+msgid "Translate from %s to these languages"
+msgstr "Traducir de %s a estos idiomas"
+
+msgid "Translate new contents when published"
+msgstr "Traducir los contenidos nuevos cuando sean publicados"
+
+msgid "Translate selected documents"
+msgstr "Traducir los documentos seleccionados"
+
+msgid "Translate to %s"
+msgstr "Traducir al %s"
+
+msgid "Translated document status"
+msgstr "Estado de los documentos traducidos"
+
+msgid "Translation"
+msgstr "Traducción"
+
+msgid "Translation Cost Estimate:"
+msgstr "Cálculo del costo de la traducción:"
+
+msgid "Translation Dashboard"
+msgstr "Panel de traducción"
+
+msgid "Translation Options"
+msgstr "Opciones de traducción"
+
+msgid "Translation in progress"
+msgstr "Traducción en curso"
+
+msgid "Translation options"
+msgstr "Opciones de traducción"
+
+msgid "Translation pickup method"
+msgstr "Método de recolección de la traducción"
+
+msgid "Translation status:"
+msgstr "Estado de la traducción:"
+
+msgid "Translation will only be available once this project has been added to your ICanLocalize account. Enter your login information below and click on 'Add this project to my account'."
+msgstr "La traducción solo estará disponible cuando este proyecto sea agregado a su cuenta de Icanlocalize. Escriba la información de ingreso abajo y pulse en 'Agregar este proyecto a mi cuenta'."
+
+msgid "Translation will only be available once your ICanLocalize account has been created. Complete this form and click on 'Create account'."
+msgstr "La traducción estará disponible una vez que se cree su cuenta de Icanlocalize. Complete este formulario y pulse en 'Crear cuenta'."
+
+msgid "Translations"
+msgstr "Traducciones"
+
+msgid "Translations pairs"
+msgstr "Pares de traducciones"
+
+msgid "Translations will be posted back to this website via XML-RPC"
+msgstr "Las traducciones serán enviadas nuevamente a este sitio web via XML-RPC"
+
+msgid "Type"
+msgstr "Tipo"
+
+msgid "Use language specific home pages"
+msgstr "Utilice páginas principales específicas para cada idioma."
+
+msgid "Validate on save"
+msgstr "Confirmar al guardar"
+
+msgid "View"
+msgstr "Ver"
+
+msgid "Visit %s for full CSS customization information."
+msgstr "Visite %s para obtener información más detallada sobre la personalización del CSS."
+
+msgid "WPML"
+msgstr "WPML"
+
+msgid "WPML can turn internal links to posts and pages into sticky links. What this means is that links to pages and posts will automatically update if their URL changes. There are many reasons why page URL changes:"
+msgstr "WPML puede convertir los enlaces internos a entradas y páginas en enlaces adhesivos. Esto quiere decir que los enlaces a las páginas y a las entradas se actualizarán automáticamente si la URL cambia. Existen muchas razones por las que las URLs cammbian:"
+
+msgid "WPML cannot be activated because your version of PHP is too old. To run correctly, you must have PHP5 installed.<br /> We recommend that you contact your hosting company and request them to switch you to PHP5."
+msgstr "No se puede activar WPML porque su versión de PHP es muy antigua. Para que funcione correctamente, debe tener instalada la PHP5.<br /> Le recomendamos que se ponga en contacto con su compañía de alojamiento y les pida que lo cambien a PHP5."
+
+msgid "WPML cannot be activated together with these older plugins:"
+msgstr "No se puede activar WPML junto con estos complementos más antiguos:"
+
+msgid "WPML cannot create the database tables! Make sure that your mysql user has the CREATE privilege"
+msgstr "¡WPML no puede crear las tablas de bases de datos! Asegúrese de que su usuario de mysql tenga el privilegio de CREAR."
+
+msgid "WPML will be deactivated"
+msgstr "WPML será desactivado"
+
+msgid "When translation is missing"
+msgstr "Cuando falta la traducción"
+
+msgid "When you edit a page (while sticky links are enabled) you will notice that links in that page change to the default WordPress links. This is a normal thing. Visitors will not see these &#8220;strange&#8221; links. Instead they will get links to the full URL."
+msgstr "Cuando edite una página (mientras los enlaces adhesivos estén habilitados) notará que los enlaces de la página cambian a los enlaces de WordPress predeterminados. Eso es normal. Los visitantes no verán estos enlaces &#8220;extraños&#8221;. En vez de ello tendrán enlaces a la URL completa."
+
+msgid "Where to add"
+msgstr "Dónde agregar"
+
+msgid "Wordpress language file (.mo) is missing. Keeping existing display language."
+msgstr "No se encontró el archivo de idioma de Wordpress (.mo). Se mantendrá el idioma para mostrar existente."
+
+msgid "XML-RPC publishing protocol not enabled"
+msgstr "El protocolo de publicación XML-RPC no está habilitado."
+
+msgid "You can also add the sidebar navigation as a <a href=\"widgets.php\">widget</a>."
+msgstr "También puede agregar la barra de exploración como un <a href=\"widgets.php\">widget</a>."
+
+msgid "Your ICanLocalize account is configured"
+msgstr "Su cuenta de ICanLocalize está configurada"
+
+msgid "Your home page does not exist in %s"
+msgstr "Su página principal no existe en %s"
+
+msgid ""
+"\\r\\n"
+"                            Languages per directories are disabled. This can be a result of either:<ol>\\r\\n"
+"                                <li>WordPress is installed in a directory (not root) and you're using default links.</li>\\r\\n"
+"                                <li>URL rewriting is not enabled in your web server.</li></ol>"
+msgstr ""
+"\\r\\n"
+"                            Los idiomas por directorios están deshabilitados. Esto se puede deber a que:<ol>\\r\\n"
+"                                <li>WordPress está instalado en una directorio (que no es raíz)y usted está utilizando enlaces predeterminados.</li>\\r\\n"
+"                                <li>La modifficación de URLs no está permitida en su servidor de red.</li></ol>"
+
+msgid "add"
+msgstr "agregar"
+
+msgid "add translation"
+msgstr "agregar la traducción"
+
+msgid "cancel"
+msgstr "cancelar"
+
+msgid "default"
+msgstr "predeterminado"
+
+msgid "empty"
+msgstr "vacío"
+
+msgid "enter new"
+msgstr "aceptar el nuevo"
+
+msgid "fixed"
+msgstr "reparado"
+
+msgid "hide"
+msgstr "ocultar"
+
+msgid "items in queue"
+msgstr "Elementos en la cola"
+
+msgid "items left"
+msgstr "elementos que faltan"
+
+msgid "n/a"
+msgstr "no está disponible"
+
+msgid "posts and pages not processed"
+msgstr "mensajes y páginas sin procesar"
+
+msgid "show"
+msgstr "Mostrar"
+
+msgid "use"
+msgstr "utilizar"
+

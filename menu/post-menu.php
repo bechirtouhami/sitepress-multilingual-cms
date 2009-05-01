@@ -1,3 +1,4 @@
+<?php $this->noscript_notice() ?>
 <p>
 <label for="icl_post_language"><?php echo __('Language', 'sitepress') ?></label>
 <select name="icl_post_language">

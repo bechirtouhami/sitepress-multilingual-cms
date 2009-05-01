@@ -3,7 +3,7 @@
     $sitepress_settings = $sitepress->get_settings();
     $cms_navigation_settings = $sitepress_settings['modules']['cms-navigation'];
 ?>
-
+<?php $sitepress->noscript_notice() ?>
 <div class="wrap">
     <div id="icon-options-general" class="icon32"><br /></div>
     <h2><?php echo __('Setup WPML', 'sitepress') ?></h2>    

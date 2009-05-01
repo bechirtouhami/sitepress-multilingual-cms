@@ -52,6 +52,7 @@
         'post'  =>__('Post', 'sitepress')
     )    
 ?>
+<?php $sitepress->noscript_notice() ?>
 <div class="wrap">
     <div id="icon-options-general" class="icon32"><br /></div>
     <h2><?php echo __('Translation Dashboard', 'sitepress') ?></h2>        

@@ -1,3 +1,4 @@
+<?php $this->noscript_notice() ?>
 <div id="icl_category_menu" style="display:none">
 <label for="icl_category_language"><?php echo __('Language', 'sitepress') ?></label>
 <select name="icl_category_language">
