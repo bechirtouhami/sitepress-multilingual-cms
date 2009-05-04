@@ -109,8 +109,6 @@ function icl_sitepress_activate(){
         $blog_default_cat = get_option('default_category');
         $blog_default_cat_tax_id = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id='{$blog_default_cat}' AND taxonomy='category'");
         $settings = array(
-            'notify_before_translations' => 1,
-            'translate_new_content' => 0,
             'interview_translators' => 0,
             'existing_content_language_verified' => 0,
             'language_negotiation_type' => 3,

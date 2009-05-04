@@ -1155,7 +1155,7 @@ class SitePress{
     
     function pre_option_default_category($setting){
         global $wpdb;
-        if(isset($_POST['icl_post_language']) && $_POST['icl_post_language'] || isset($_GET['lang'])){
+        if(isset($_POST['icl_post_language']) && $_POST['icl_post_language'] || (isset($_GET['lang']) && $_GET['lang']!='all')){
             $lang = isset($_POST['icl_post_language'])  && $_POST['icl_post_language']?$_POST['icl_post_language']:$_GET['lang'];
             $ttid = $this->settings['default_categories'][$lang];
             return $tid = $wpdb->get_var("SELECT term_id FROM {$wpdb->term_taxonomy} WHERE term_taxonomy_id={$ttid} AND taxonomy='category'");

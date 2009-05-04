@@ -8,7 +8,7 @@ if(isset($_POST['translation_dashboard_filter'])){
     $icl_translation_filter = $_POST['filter'];
 }
 
-add_action('save_post', 'icl_translation_save_md5');
+add_action('save_post', 'icl_translation_save_md5', 12); //takes a lower priority - allow other actions to happen
 add_action('delete_post', 'icl_translation_delete_post');
 add_action('admin_menu', 'icl_translation_admin_menu');
 add_action('admin_print_scripts', 'icl_translation_js');
@@ -177,9 +177,11 @@ function icl_translation_save_md5($p){
     if($_POST['action']=='post-quickpress-publish'){
         $post_id = $p;            
         $_POST['post_type']='post';
-    }else{
+    }elseif(isset($_POST['post_ID'])){
         $post_id = $_POST['post_ID'];
-    } 
+    }else{
+        $post_id = $p;
+    }
     
     $post = get_post($post_id);
     $post_type = $_POST['post_type'];
@@ -291,14 +293,9 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     if(!$lang_code){        
         return false;
     }
-    
-    // todo 
-    // pages hierarchy
-    // Category hierarchy needs to be rebuilt by the plugin.
-    // The user can select if translations should be published when received, add a translation review mode for when they are set to “Don’t Publish”.
-    
+        
     $original_post_details = $wpdb->get_row("
-        SELECT p.post_author, p.post_type, p.post_status, t.language_code
+        SELECT p.post_author, p.post_type, p.post_status, p.post_parent, p.menu_order, t.language_code
         FROM {$wpdb->prefix}icl_translations t 
         JOIN {$wpdb->posts} p ON t.element_id = p.ID
         WHERE t.element_type='post' AND trid='{$trid}' AND p.ID = '{$translation['original_id']}'
@@ -343,7 +340,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
             $tag_tr_tts = $wpdb->get_col("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE element_type='tag' AND language_code='{$lang_code}' AND trid IN (".join(',',$tag_trids).")");    
             $translated_tags = $wpdb->get_col("SELECT t.name FROM {$wpdb->terms} t JOIN {$wpdb->term_taxonomy} tx ON tx.term_id = t.term_id WHERE tx.taxonomy='post_tag' AND tx.term_taxonomy_id IN (".join(',',$tag_tr_tts).")");
         }
-            
+                     
         // deal with categories
         if(isset($translation['categories'])){
             $translated_cats = $translation['categories'];   
@@ -353,7 +350,20 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
                 //cat exists?
                 $term_taxonomy_id = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} tx JOIN {$wpdb->terms} tm ON tx.term_id = tm.term_id WHERE tm.name='".$wpdb->escape($v)."' AND taxonomy='category'");
                 if(!$term_taxonomy_id){  
-                    $tmp = wp_insert_term($v, 'category');
+                    // get original category parent id
+                    $original_category_parent_id = $wpdb->get_var("SELECT parent FROM {$wpdb->term_taxonomy} WHERE term_taxonomy_id=".$translated_cats_ids[$k]);
+                    if($original_category_parent_id){                        
+                        $original_category_parent_id = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE taxonomy='category' AND term_id=".$original_category_parent_id);
+                        $category_parent_trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_type='category' AND element_id=".$original_category_parent_id); 
+                        // get id of the translated category parent
+                        $category_parent_id = $wpdb->get_var("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE language_code='{$lang_code}' AND trid=".$category_parent_trid); 
+                        if($category_parent_id){
+                            $category_parent_id = $wpdb->get_var("SELECT term_id FROM {$wpdb->term_taxonomy} WHERE taxonomy='category' AND term_taxonomy_id=".$category_parent_id);
+                        }                        
+                    }else{
+                        $category_parent_id = 0;
+                    }
+                    $tmp = wp_insert_term($v, 'category', array('parent'=>$category_parent_id));
                     if(isset($tmp['term_taxonomy_id'])){                
                         $wpdb->update($wpdb->prefix.'icl_translations', 
                             array('language_code'=>$lang_code, 'trid'=>$cat_trid, 'source_language_code'=>$original_post_details->language_code), 
@@ -380,6 +390,13 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
         $cat_tr_tts = $wpdb->get_col("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE element_type='category' AND language_code='{$lang_code}' AND trid IN (".join(',',$cat_trids).")");
         $translated_cats_ids = $wpdb->get_col("SELECT t.term_id FROM {$wpdb->terms} t JOIN {$wpdb->term_taxonomy} tx ON tx.term_id = t.term_id WHERE tx.taxonomy='category' AND tx.term_taxonomy_id IN (".join(',',$cat_tr_tts).")");
         
+    }elseif($original_post_details->post_type=='page'){
+        if($original_post_details->post_parent){
+            $post_parent_trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_type='post' AND element_id='{$original_post_details->post_parent}'");
+            if($post_parent_trid){
+                $parent_id = $wpdb->get_var("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE element_type='post' AND trid='{$post_parent_trid}' AND language_code='{$lang_code}'");
+            }            
+        }        
     }
     
     // is update?
@@ -399,15 +416,26 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     }
     $postarr['post_author'] = $original_post_details->post_author;  
     $postarr['post_type'] = $original_post_details->post_type;  
-    $postarr['post_status'] = $sitepress_settings['translated_document_status'] ? 'draft' : $original_post_details->post_status;  
+    $postarr['post_status'] = !$sitepress_settings['translated_document_status'] ? 'draft' : $original_post_details->post_status;  
+    
+    if(isset($parent_id)){
+        $_POST['post_parent'] = $postarr['post_parent'] = $parent_id;  
+        $_POST['parent_id'] = $postarr['parent_id'] = $parent_id;  
+    }
+    
     $_POST['trid'] = $trid;
     $_POST['lang'] = $lang_code;
     $_POST['skip_sitepress_actions'] = true;
+        
+    global $wp_rewrite;
+    if(!isset($wp_rewrite)) $wp_rewrite = new WP_Rewrite();
+    
     $new_post_id = wp_insert_post($postarr);
+
     if(!$new_post_id){
         return false;
     }
-    
+        
     // record trids
     if(!$is_update){
         $wpdb->insert($wpdb->prefix.'icl_translations', array('element_type'=>'post', 'element_id'=>$new_post_id, 'trid'=> $trid, 'language_code'=>$lang_code, 'source_language_code'=>$original_post_details->language_code));

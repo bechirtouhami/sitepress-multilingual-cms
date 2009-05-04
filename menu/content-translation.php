@@ -36,24 +36,13 @@
         <h3><?php echo __('Translation options','sitepress') ?></h3>    
         <form name="icl_more_options" action="">
         <table class="form-table icl-account-setup">
-        <tr>
-            <td>
-                <label><input name="icl_notify_before_translations" type="checkbox" 
-                <?php if($sitepress_settings['notify_before_translations']): ?>checked="checked"<?php endif; ?> /> 
-                <?php echo __('Notify before sending translation jobs', 'sitepress') ?></label>
-            </td>
-            <td>
-                <label><input name="icl_translate_new_content" type="checkbox" 
-                <?php if($sitepress_settings['translate_new_content']): ?>checked="checked"<?php endif; ?> /> 
-                <?php echo __('Translate new contents when published', 'sitepress') ?></label>
-            </td>
-        </tr>       
         <tr>        
             <td colspan="2">
                 <label><input name="icl_interview_translators" type="radio" value="0" <?php if(!$sitepress_settings['interview_translators']): ?>checked="checked"<?php endif;?> /> <?php echo __('ICanLocalize will assign translators for this work', 'sitepress'); ?></label><br />
                 <label><input name="icl_interview_translators" type="radio" value="1" <?php if($sitepress_settings['interview_translators']): ?>checked="checked"<?php endif;?> /> <?php echo __('I want to interview my translators', 'sitepress'); ?></label>
             </td>
         </tr>      
+        <?php /*
         <tr>
             <td colspan="2">
                 <?php echo __('Translation pickup method', 'sitepress') ?><br />                
@@ -62,6 +51,7 @@
                 <label><input type="radio" name="icl_translation_pickup_method" value="0" <?php if($sitepress_settings['translation_pickup_method']): ?>checked="checked"<?php endif;?> /> <?php echo __('Poll for translations periodically', 'sitepress') ?></label>
             </td>
         </tr>
+        */ ?>
         <tr>
             <td colspan="2">
                 <?php echo __('Translated document status', 'sitepress') ?><br />                

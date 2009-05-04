@@ -1,5 +1,10 @@
 <?php
 
+// loads language array into  $__icl_lang_names
+require_once ICL_PLUGIN_PATH . '/res/languages.csv.php';
+$langs_names = unserialize($__icl_lang_names); 
+
+/* - disabled this in favor of reading from a php file 
 $fh = fopen(ICL_PLUGIN_PATH . '/res/languages.csv', 'r');
 $idx = 0;
 while($data = fgetcsv($fh)){
@@ -20,6 +25,7 @@ while($data = fgetcsv($fh)){
     }
     $idx++;
 }
+*/
 
 $lang_codes = array(
     'Afar'    => 'aa',

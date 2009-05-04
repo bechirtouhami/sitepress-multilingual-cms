@@ -128,8 +128,6 @@ switch($_REQUEST['icl_ajx_action']){
         echo "1|";
         break;
     case 'icl_more_options':
-        $iclsettings['notify_before_translations']=$_POST['icl_notify_before_translations']?1:0; 
-        $iclsettings['translate_new_content']=$_POST['icl_translate_new_content']?1:0; 
         $iclsettings['interview_translators'] = $_POST['icl_interview_translators'];
         $iclsettings['translation_pickup_method'] = $_POST['icl_translation_pickup_method'];        
         $iclsettings['translated_document_status'] = $_POST['icl_translation_document_status'];        
