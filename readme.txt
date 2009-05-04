@@ -94,3 +94,11 @@ These constants can be used to create language dependent design for your site.
 	* Defined a language contants that can be used in templates - `ICL_LANGUAGE_CODE`, `ICL_LANGUAGE_NAME`, `ICL_LANGUAGE_NAME_EN`.
 	* Split the stylesheet for the CMS Navigation into structure and design - users will be able to copy the design stylesheet and use it to override the plugin default style from their theme stylesheet.
 	* Fixed incorrect query when selecting categories in the admin panel, causing extra records to be added to the translation table when editing categories inline.
+* Version 0.9.8 - bug fix release
+	* Fixed compatibility issues with Windows servers.
+	* Fixed bug with sticky post - mysql query error when no sticky post existed.
+	* Fixed search function.
+	* Prev/Next links for category archive pages are now working again.
+	* Add warning about disabled JavaScript (which is required for the plugin to work).
+	* Added debug information for hunting down stubborn bugs.
+	* Localized the admin section of the plugin to Spanish.
