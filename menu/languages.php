@@ -80,6 +80,7 @@
                     $client = new WP_Http();
                     if(false === strpos($_POST['url'],'?')){$url_glue='?';}else{$url_glue='&';}
                     $response = $client->request(get_option('home') . '/' . $sample_lang['code'] . $url_glue . '____icl_validate_domain=1', 'timeout=15');
+                    echo get_option('home');
                     if(!is_wp_error($response) && ($response['response']['code']=='200') && ($response['body'] == '<!--'.get_option('home').'-->')){
                         $icl_folder_url_disabled = false;
                     }else{
@@ -158,7 +159,7 @@
                 <p class="icl_form_errors" style="display:none"></p>
                 <ul>
                     <li>
-                        <?php echo __('To add a language switcher to your theme, insert this code to header.php:') ?>
+                        <?php echo __('To add a language switcher to your theme, insert this code to header.php:','sitepress') ?>
                         <code class="php">
                             &lt;?php do_action('icl_language_selector'); ?&gt;
                         </code>

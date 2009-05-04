@@ -73,7 +73,7 @@
             <td scope="col" nowrap="nowrap"><?php echo __('Breadcrumbs trails', 'sitepress') ?></td>          
             <td scope="col"><?php echo __('Lists the path back to the home page', 'sitepress') ?></td>          
             <td scope="col" nowrap="nowrap"><code>&lt;?php  do_action('icl_navigation_breadcrumb'); ?&gt;</code></td>          
-            <td scope="col"><?php printf(__('%s or %s, %s, %s, %s and %s'), 'header.php', 'single.php', 'page.php', 'archive.php', 'tag.php', 'search.php');?></td>          
+            <td scope="col"><?php printf(__('%s or %s, %s, %s, %s and %s', 'sitepress'), 'header.php', 'single.php', 'page.php', 'archive.php', 'tag.php', 'search.php');?></td>          
         </tr>
         <tr>
             <td scope="col" nowrap="nowrap"><?php echo __('Sidebar navigation', 'sitepress'); ?> <sup>*</sup></td>          

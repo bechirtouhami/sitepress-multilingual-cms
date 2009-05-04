@@ -2,6 +2,8 @@
 
 
 if(defined('ICL_DEBUG_MODE') && ICL_DEBUG_MODE && !function_exists('icl_error_handler')){           
+    ini_set('error_reporting',E_ALL^E_NOTICE);
+    ini_set('show_errors', 'off');
     function icl_error_handler($errno, $errstr, $errfile, $errline){        
         global $icl_errors_stack;
         $err = '<strong>'.$errstr.'</strong> ('. $errno . ')<br />';
@@ -11,7 +13,12 @@ if(defined('ICL_DEBUG_MODE') && ICL_DEBUG_MODE && !function_exists('icl_error_ha
         $icl_errors_stack[] = $err;
         return true;
     }
-    add_action('admin_footer', 'icl_display_errors_stack');
+    if(defined('WP_ADMIN')){
+        add_action('admin_footer', 'icl_display_errors_stack');
+    }else{
+        add_action('wp_footer', 'icl_display_errors_stack');
+    }
+    
     function icl_display_errors_stack($onactivate = false){        
         global $icl_errors_stack, $EZSQL_ERROR;
         if(isset($icl_errors_stack) || $EZSQL_ERROR){
@@ -21,7 +28,7 @@ if(defined('ICL_DEBUG_MODE') && ICL_DEBUG_MODE && !function_exists('icl_error_ha
             }
             echo '">';
             if(!$onactivate){
-                echo '<a style="float:right" href="#" onclick="jQuery(\'#icl_display_errors_stack\').slideUp()">[close]</a><br clear="all" />';
+                echo '<a style="float:right" href="#" onclick="try{jQuery(\'#icl_display_errors_stack\').slideUp()}catch(err){document.getElementById(\'icl_display_errors_stack\').style.display=\'none\'}">[close]</a><br clear="all" />';
             }
             foreach($icl_errors_stack as $ies){
                 echo $ies;
