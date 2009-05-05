@@ -100,11 +100,11 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
         'contents'=>array(
             'title' => array(
                 'translate'=>1,
-                'data'=>$post->post_title
+                'data'=>htmlentities($post->post_title)
             ),
             'body' => array(
                 'translate'=>1,
-                'data'=>$post->post_content
+                'data'=>htmlentities($post->post_content)
             ),
             'original_id' => array(
                 'translate'=>0,

@@ -103,8 +103,11 @@ function icl_sitepress_activate(){
     
     // plugin settings
     if($settings = get_option('icl_sitepress_settings')){
-        $settings['default_language'] = $blog_default_lang;
-        update_option('icl_sitepress_settings', $settings);        
+        // case of plugin already installed
+        if(!$settings['default_language']){
+            $settings['default_language'] = $blog_default_lang;
+            update_option('icl_sitepress_settings', $settings);        
+        }
     }else{
         $blog_default_cat = get_option('default_category');
         $blog_default_cat_tax_id = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id='{$blog_default_cat}' AND taxonomy='category'");

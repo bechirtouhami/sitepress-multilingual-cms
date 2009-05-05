@@ -108,7 +108,8 @@ class ICanLocalizeQuery{
             $xml .= $tab.$tab.'<target_language lang="'.utf8_encode($lang).'" />'.$nl;    
         }                
         $xml .= $tab.'</cms_target_languages>'.$nl;
-        $xml .= '</cms_request_details>';        
+        $xml .= '</cms_request_details>';                
+        
         return $xml;
     }
       
