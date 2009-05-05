@@ -4,17 +4,25 @@ jQuery(document).ready(function(){
             if(jQuery(this).attr('checked')){
                 jQuery('#icl-translation-dashboard :checkbox').attr('checked','checked');    
                 iclUpdateTranslationEstimate(parseInt(jQuery('#icl-cw-total').html()), true);
+                jQuery('#icl-tr-sel-doc').removeAttr('disabled');    
             }else{
                 jQuery('#icl-translation-dashboard :checkbox').removeAttr('checked');  
                 iclUpdateTranslationEstimate(0, true);  
-            }            
+                jQuery('#icl-tr-sel-doc').attr('disabled','disabled');    
+            }   
         }
     );    
     jQuery('#icl-translation-dashboard td :checkbox').click(
         function(){
-            if(!jQuery(this).attr('checked')){
+            if(!jQuery(this).attr('checked')){            
                 jQuery('#icl-translation-dashboard th :checkbox').removeAttr('checked');    
+                if (jQuery('table.fixed td :checkbox:checked').length==0){
+                    jQuery('#icl-tr-sel-doc').attr('disabled','disabled');    
+                }
+            }else{
+                jQuery('#icl-tr-sel-doc').removeAttr('disabled');    
             }
+            
         }
     );    
     
@@ -30,13 +38,8 @@ jQuery(document).ready(function(){
     });
     
     jQuery('#icl-tr-sel-doc').click(function(){        
-        none_selected = true;
-        jQuery('table.fixed td :checkbox').each(function(){            
-            if(jQuery(this).attr('checked')) none_selected = false; 
-        });
-        if(none_selected){
-            return false;
-        }
+        
+        if(jQuery('table.fixed td :checkbox:checked').length==0) return false;
     
         target_languages = new Array();
         jQuery('#icl-tr-opt :checkbox').each(function(){

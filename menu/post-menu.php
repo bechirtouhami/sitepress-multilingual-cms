@@ -11,6 +11,8 @@
 <input type="hidden" name="icl_trid" value="<?php echo $trid ?>" />
 </p>
 
+<?php do_action('icl_post_languages_options_before', $post->ID) ?>
+
 <?php if($trid): ?>
     <p><?php echo __('Translations', 'sitepress') ?> (<a href="javascript:;" 
         onclick="jQuery('#icl_translations_table').toggle();if(jQuery(this).html()=='<?php echo __('hide','sitepress')?>') jQuery(this).html('<?php echo __('show','sitepress')?>'); else jQuery(this).html('<?php echo __('hide','sitepress')?>')"><?php echo __('show','sitepress')?></a>)</p>
@@ -33,3 +35,5 @@
     <?php endforeach; ?>
     </table>
 <?php endif; ?>
+
+<?php do_action('icl_post_languages_options_after') ?>

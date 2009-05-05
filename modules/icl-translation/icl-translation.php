@@ -14,6 +14,8 @@ add_action('admin_menu', 'icl_translation_admin_menu');
 add_action('admin_print_scripts', 'icl_translation_js');
 add_filter('xmlrpc_methods','icl_add_custom_xmlrpc_methods');
 
+add_action('icl_post_languages_options_before', 'icl_display_post_translation_status');
+
 //wp_enqueue_style('icl-translation-style', ICL_PLUGIN_URL . '/modules/icl-translation/css/style.css', array(), '0.1');
 
 function icl_translation_admin_menu(){
@@ -488,7 +490,6 @@ function icl_add_custom_xmlrpc_methods($methods){
     return $methods;
 }
 
-
 function setTranslationStatus($args){
         global $sitepress_settings;        
         $signature   = $args[0];
@@ -512,9 +513,77 @@ function setTranslationStatus($args){
 
 } 
 
+function icl_get_post_translation_status($post_id){
+    global $wpdb;
+    
+    $sql = "
+        SELECT  c.rid, r.target, r.status, n.md5<>c.md5 AS updated
+        FROM 
+            {$wpdb->prefix}icl_content_status c
+            JOIN {$wpdb->prefix}icl_core_status r ON c.rid = r.rid
+            JOIN {$wpdb->prefix}icl_node n ON c.nid = n.nid
+        WHERE c.nid = {$post_id}
+    ";
+    $status = $wpdb->get_results($sql);
+    return $status;
+}
+function icl_display_post_translation_status($post_id){
+    global $wpdb;
+    
+    if($post_id==0 || !$wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_type='post' AND element_id={$post_id}")){
+        return;
+    }
+    
+    $post_updated = $wpdb->get_var("SELECT c.md5<>n.md5 FROM {$wpdb->prefix}icl_content_status c JOIN {$wpdb->prefix}icl_node n ON c.nid=n.nid WHERE c.nid=".$post_id);
+     
+    echo '<p><strong>'.__('Translation status:','sitepress').'</strong></p>';
+    $status = icl_get_post_translation_status($post_id);
+    echo '<table class="widefat">';
+    if(empty($status)){
+        echo '<tr><td align="center">';
+        echo __('Not translated');
+        echo '</td></tr>';
+    }else{    
+        $oddcolumn = true;    
+        foreach($status as $s){            
+            $oddcolumn = !$oddcolumn;
+            echo '<tr'; if($oddcolumn) echo ' class="alternate"'; echo '>';
+            echo '<td scope="col">'.$s->target.'</td>';
+            echo '<td scope="col">';
+            if(CMS_REQUEST_DONE && $post_updated){
+                echo __('translation needs update','sitepress');
+            }else{
+                echo '&nbsp;';
+            }            
+            if(CMS_REQUEST_DONE && $s->update){
+                echo __('translation was modified','sitepress');
+            }else{
+                echo '&nbsp;';
+            }                        
+            echo '<td align="right" scope="col">';
+            switch($s->status){
+                //case CMS_REQUEST_WAITING_FOR_PROJECT_CREATION: echo __('Waiting for project creation','sitepress');break;
+                //case CMS_REQUEST_PROJECT_CREATION_REQUESTED: echo __('Project creation requested','sitepress');break;
+                //case CMS_REQUEST_CREATING_PROJECT: echo __('Creating project','sitepress');break;
+                //case CMS_REQUEST_RELEASED_TO_TRANSLATORS: echo __('Released to translators','sitepress');break;
+                //case CMS_REQUEST_TRANSLATED: echo __('Translated on server','sitepress');break;
+                case CMS_REQUEST_WAITING_FOR_PROJECT_CREATION: echo __('Translation in progress','sitepress');break;
+                case CMS_REQUEST_DONE: echo __('Translation complete','sitepress');break;
+                case CMS_REQUEST_FAILED: echo __('Request failed','sitepress');break;
+            }
+            echo '</td>';
+            echo '</td>';
+            echo '</tr>';
+        }        
+    }
+    echo '</table>';
+    //echo $post_id;
+}
+
 if(isset($_GET['debug']) && $_GET['debug']==1){
     icl_poll_for_translations();
 }
+
 
 
 ?>

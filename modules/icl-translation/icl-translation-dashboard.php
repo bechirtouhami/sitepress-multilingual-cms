@@ -190,7 +190,7 @@
     <h3><?php echo __('Translation Options', 'sitepress') ?></h3>
     <ul id="icl-tr-opt">
         <?php foreach($active_languages as $lang): if($selected_language==$lang['code']) continue; ?>
-        <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name']); ?></li></label>
+        <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" checked="checked" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name']); ?></li></label>
         <?php endforeach; ?>    
         <li>
             <input disabled="disabled" type="submit" class="button-primary" id="icl-tr-sel-doc" value="<?php echo __('Translate selected documents', 'sitepress') ?>"/>
