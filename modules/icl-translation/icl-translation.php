@@ -528,9 +528,18 @@ function icl_get_post_translation_status($post_id){
     return $status;
 }
 function icl_display_post_translation_status($post_id){
-    global $wpdb;
+    global $wpdb, $sitepress;                                                                                                           
+    $tr_info = $wpdb->get_row("
+        SELECT t.trid, lt.name, source_language_code 
+        FROM {$wpdb->prefix}icl_translations t JOIN {$wpdb->prefix}icl_languages_translations lt ON t.source_language_code=lt.language_code
+        WHERE t.element_type='post' AND t.element_id={$post_id} AND lt.display_language_code = '".$sitepress->get_default_language()."'"
+        );
+    if($post_id==0 || !$tr_info->trid){
+        return;
+    }
     
-    if($post_id==0 || !$wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_type='post' AND element_id={$post_id}")){
+    if($tr_info->name && $tr_info->source_language_code){
+        echo '<div style="text-align:center">'. sprintf(__('Translated from %s'),$tr_info->name).'</div>';
         return;
     }
     
