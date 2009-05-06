@@ -531,54 +531,63 @@ function icl_get_post_translation_status($post_id){
     $status = $wpdb->get_results($sql);
     return $status;
 }
+
 function icl_display_post_translation_status($post_id){
     global $wpdb, $sitepress;                                                                                                           
     $tr_info = $wpdb->get_row("
         SELECT t.trid, lt.name, source_language_code 
-        FROM {$wpdb->prefix}icl_translations t JOIN {$wpdb->prefix}icl_languages_translations lt ON t.source_language_code=lt.language_code
+        FROM {$wpdb->prefix}icl_translations t LEFT JOIN {$wpdb->prefix}icl_languages_translations lt ON t.source_language_code=lt.language_code
         WHERE t.element_type='post' AND t.element_id={$post_id} AND lt.display_language_code = '".$sitepress->get_default_language()."'"
         );
-    if($post_id==0 || !$tr_info->trid){
+    if($post_id==0){
         return;
     }
     
     if($tr_info->name && $tr_info->source_language_code){
-        echo '<div style="text-align:center">'. sprintf(__('Translated from %s'),$tr_info->name).'</div>';
+        echo '<div style="text-align:center;clear:both;">'. sprintf(__('Translated from %s'),$tr_info->name).'</div>';
         return;
     }
     
     $post_updated = $wpdb->get_var("SELECT c.md5<>n.md5 FROM {$wpdb->prefix}icl_content_status c JOIN {$wpdb->prefix}icl_node n ON c.nid=n.nid WHERE c.nid=".$post_id);
     
     $status = icl_get_post_translation_status($post_id);    
+    foreach($status as $k=>$v){
+        $status[$v->target] = $v;
+        unset($status[$k]);
+    }
+    
     if(empty($status)){
         echo '<table class="widefat">';
         echo '<tr><td align="center">';
         echo __('Not translated');
         echo '</td></tr>';
+        echo '</table>';
     }else{          
 
         echo '<p style="float:left">';
         echo __('Minor edit - don\'t update translation','sitepress');        
-        echo '&nbsp;<input type="checkbox" name="icl_minor_edit" value="1" checked="checked" />';
+        echo '&nbsp;<input type="checkbox" name="icl_minor_edit" value="1" />';
         echo '</p>';
         echo '<br clear="all" />';
         
         echo '<p><strong>'.__('Translation status:','sitepress').'</strong></p>';
         echo '<table class="widefat">';        
-        $oddcolumn = true;    
-        foreach($status as $s){            
-            $oddcolumn = !$oddcolumn;
+        $oddcolumn = true;
+        $active_languages = $sitepress->get_active_languages();    
+        foreach($active_languages as $al){            
+            if($al['code']==$sitepress->get_default_language()) continue;
+            $oddcolumn = !$oddcolumn;            
             echo '<tr'; if($oddcolumn) echo ' class="alternate"'; echo '>';
-            echo '<td scope="col">'.$s->target.'</td>';
+            echo '<td scope="col">'.$al['display_name'].'</td>';
             echo '<td scope="col">';
-            if(CMS_REQUEST_DONE && $post_updated){
+            if($status[$al['english_name']]->status==CMS_REQUEST_DONE && $post_updated){
                 echo __('translation needs update','sitepress');
             }else{
                 echo '&nbsp;';
             }            
             echo '</td>';
             echo '<td align="right" scope="col">';
-            switch($s->status){
+            switch($status[$al['english_name']]->status){
                 //case CMS_REQUEST_WAITING_FOR_PROJECT_CREATION: echo __('Waiting for project creation','sitepress');break;
                 //case CMS_REQUEST_PROJECT_CREATION_REQUESTED: echo __('Project creation requested','sitepress');break;
                 //case CMS_REQUEST_CREATING_PROJECT: echo __('Creating project','sitepress');break;
@@ -587,6 +596,7 @@ function icl_display_post_translation_status($post_id){
                 case CMS_REQUEST_WAITING_FOR_PROJECT_CREATION: echo __('Translation in progress','sitepress');break;
                 case CMS_REQUEST_DONE: echo __('Translation complete','sitepress');break;
                 case CMS_REQUEST_FAILED: echo __('Request failed','sitepress');break;
+                default: echo __('Not translated','sitepress');
             }
             echo '</td>';
             echo '</td>';
