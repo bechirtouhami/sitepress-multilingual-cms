@@ -1,5 +1,5 @@
 <?php $this->noscript_notice() ?>
-<p>
+<p style="float:left;">
 <label for="icl_post_language"><?php echo __('Language', 'sitepress') ?></label>
 <select name="icl_post_language">
 <?php foreach($active_languages as $lang):?>
@@ -14,9 +14,9 @@
 <?php do_action('icl_post_languages_options_before', $post->ID) ?>
 
 <?php if($trid): ?>
-    <p><?php echo __('Translations', 'sitepress') ?> (<a href="javascript:;" 
+    <p style="clear:both;"><?php echo __('Translations', 'sitepress') ?> (<a href="javascript:;" 
         onclick="jQuery('#icl_translations_table').toggle();if(jQuery(this).html()=='<?php echo __('hide','sitepress')?>') jQuery(this).html('<?php echo __('show','sitepress')?>'); else jQuery(this).html('<?php echo __('hide','sitepress')?>')"><?php echo __('show','sitepress')?></a>)</p>
-    <table width="100%" id="icl_translations_table" style="display:none">
+    <table width="100%" id="icl_translations_table" style="display:none;">
     <th align="left"><?php echo __('Language', 'sitepress') ?></th>
     <th align="left"><?php echo __('Title', 'sitepress') ?></th>
     <th align="right"><?php echo __('Operations', 'sitepress') ?></th>

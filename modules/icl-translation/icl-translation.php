@@ -175,6 +175,10 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
 
 function icl_translation_save_md5($p){
     global $wpdb;
+    // minor edit - don't update MD5's
+    if($_POST['icl_minor_edit']){
+        return;
+    } 
     if($_POST['autosave']) return;
     if($_POST['action']=='post-quickpress-publish'){
         $post_id = $p;            
@@ -544,15 +548,23 @@ function icl_display_post_translation_status($post_id){
     }
     
     $post_updated = $wpdb->get_var("SELECT c.md5<>n.md5 FROM {$wpdb->prefix}icl_content_status c JOIN {$wpdb->prefix}icl_node n ON c.nid=n.nid WHERE c.nid=".$post_id);
-     
-    echo '<p><strong>'.__('Translation status:','sitepress').'</strong></p>';
-    $status = icl_get_post_translation_status($post_id);
-    echo '<table class="widefat">';
+    
+    $status = icl_get_post_translation_status($post_id);    
     if(empty($status)){
+        echo '<table class="widefat">';
         echo '<tr><td align="center">';
         echo __('Not translated');
         echo '</td></tr>';
-    }else{    
+    }else{          
+
+        echo '<p style="float:left">';
+        echo __('Minor edit - don\'t update translation','sitepress');        
+        echo '&nbsp;<input type="checkbox" name="icl_minor_edit" value="1" checked="checked" />';
+        echo '</p>';
+        echo '<br clear="all" />';
+        
+        echo '<p><strong>'.__('Translation status:','sitepress').'</strong></p>';
+        echo '<table class="widefat">';        
         $oddcolumn = true;    
         foreach($status as $s){            
             $oddcolumn = !$oddcolumn;
@@ -564,11 +576,7 @@ function icl_display_post_translation_status($post_id){
             }else{
                 echo '&nbsp;';
             }            
-            if(CMS_REQUEST_DONE && $s->update){
-                echo __('translation was modified','sitepress');
-            }else{
-                echo '&nbsp;';
-            }                        
+            echo '</td>';
             echo '<td align="right" scope="col">';
             switch($s->status){
                 //case CMS_REQUEST_WAITING_FOR_PROJECT_CREATION: echo __('Waiting for project creation','sitepress');break;
@@ -582,11 +590,10 @@ function icl_display_post_translation_status($post_id){
             }
             echo '</td>';
             echo '</td>';
-            echo '</tr>';
+            echo '</tr>';            
         }        
-    }
-    echo '</table>';
-    //echo $post_id;
+        echo '</table>';
+    }    
 }
 
 if(isset($_GET['debug']) && $_GET['debug']==1){
