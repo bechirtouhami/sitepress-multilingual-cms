@@ -34,6 +34,7 @@
     </tr>
     <?php endforeach; ?>
     </table>
+    <br clear="all" style="line-height:1px;" />
 <?php endif; ?>
 
 <?php do_action('icl_post_languages_options_after') ?>

@@ -251,7 +251,7 @@ function icl_translation_get_documents($lang, $tstatus, $status=false, $type=fal
         LIMIT {$offset}, {$limit}
     ";
     $results = $wpdb->get_results($sql);
-    $pids = array();
+    $pids = array(0);
     foreach($results as $r){
         $pids[] = $r->post_id;
     }
@@ -578,25 +578,22 @@ function icl_display_post_translation_status($post_id){
             if($al['code']==$sitepress->get_default_language()) continue;
             $oddcolumn = !$oddcolumn;            
             echo '<tr'; if($oddcolumn) echo ' class="alternate"'; echo '>';
-            echo '<td scope="col">'.$al['display_name'].'</td>';
-            echo '<td scope="col">';
+            echo '<td scope="col">'.sprintf(__('Translation to %s'), $al['display_name']).'</td>';            
+            echo '<td align="right" scope="col">';            
             if($status[$al['english_name']]->status==CMS_REQUEST_DONE && $post_updated){
                 echo __('translation needs update','sitepress');
             }else{
-                echo '&nbsp;';
-            }            
-            echo '</td>';
-            echo '<td align="right" scope="col">';
-            switch($status[$al['english_name']]->status){
-                //case CMS_REQUEST_WAITING_FOR_PROJECT_CREATION: echo __('Waiting for project creation','sitepress');break;
-                //case CMS_REQUEST_PROJECT_CREATION_REQUESTED: echo __('Project creation requested','sitepress');break;
-                //case CMS_REQUEST_CREATING_PROJECT: echo __('Creating project','sitepress');break;
-                //case CMS_REQUEST_RELEASED_TO_TRANSLATORS: echo __('Released to translators','sitepress');break;
-                //case CMS_REQUEST_TRANSLATED: echo __('Translated on server','sitepress');break;
-                case CMS_REQUEST_WAITING_FOR_PROJECT_CREATION: echo __('Translation in progress','sitepress');break;
-                case CMS_REQUEST_DONE: echo __('Translation complete','sitepress');break;
-                case CMS_REQUEST_FAILED: echo __('Request failed','sitepress');break;
-                default: echo __('Not translated','sitepress');
+                switch($status[$al['english_name']]->status){
+                    //case CMS_REQUEST_WAITING_FOR_PROJECT_CREATION: echo __('Waiting for project creation','sitepress');break;
+                    //case CMS_REQUEST_PROJECT_CREATION_REQUESTED: echo __('Project creation requested','sitepress');break;
+                    //case CMS_REQUEST_CREATING_PROJECT: echo __('Creating project','sitepress');break;
+                    //case CMS_REQUEST_RELEASED_TO_TRANSLATORS: echo __('Released to translators','sitepress');break;
+                    //case CMS_REQUEST_TRANSLATED: echo __('Translated on server','sitepress');break;
+                    case CMS_REQUEST_WAITING_FOR_PROJECT_CREATION: echo __('Translation in progress','sitepress');break;
+                    case CMS_REQUEST_DONE: echo __('Translation complete','sitepress');break;
+                    case CMS_REQUEST_FAILED: echo __('Request failed','sitepress');break;
+                    default: echo __('Not translated','sitepress');
+                }
             }
             echo '</td>';
             echo '</td>';
