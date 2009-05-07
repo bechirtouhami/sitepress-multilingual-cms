@@ -89,7 +89,8 @@ jQuery(document).ready(function(){
             }
         }
     })
-        
+      
+    jQuery('a.translation_details_but').click(toogleTranslationDetails);
 });
 
 function iclUpdateTranslationEstimate(n, set){
@@ -115,4 +116,19 @@ function getSelectedLanguagesCount(){
         }
     });
     return selected_languages_count;    
+}
+
+function toogleTranslationDetails(){    
+    jQuery('.icl-tr-details').slideUp();
+    var tr = jQuery(this).parent().parent();
+    var last_col = tr.find('td:eq(4)');
+    last_col.append(icl_ajxloaderimg);
+    var rid = jQuery(this).attr('href').replace(/#translation-details-/,'');        
+    tr.find('td span.icl-tr-details').load(location.href.replace(/#(.*)$/,''), {
+        icl_ajx_req:'get_translation_details',
+        rid:rid
+    }, function(){        
+        last_col.find('img').fadeOut('fast',function(){jQuery(this).remove()});
+        jQuery(this).slideDown();
+    });    
 }

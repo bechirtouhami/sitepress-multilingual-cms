@@ -110,11 +110,11 @@
         </tr>        
         </thead>            
         <tbody>
-            <?php if(!$documents):?>
+            <?php if(!$documents): ?>
             <tr>
                 <td scope="col" colspan="5" align="center"><?php echo __('No documents found', 'sitepress') ?></td>
             </tr>                
-            <?php else: $oddcolumn = false;?>
+            <?php else: $oddcolumn = false; ?>
             <?php foreach($documents as $doc): $oddcolumn=!$oddcolumn; ?>
             <?php 
             $not_translatable = false;
@@ -144,10 +144,17 @@
                     <?php if(!$not_translatable): ?>
                     <span id="icl-cw-<?php echo $doc->post_id ?>" style="display:none"><?php echo $wc = count(explode(' ',$doc->post_title)) + count(explode(' ', strip_tags($doc->post_content))); $wctotal+=$wc; ?></span>
                     <?php endif; ?>
+                    <span class="icl-tr-details"></span>
                     </td>
                 <td scope="col"><?php echo $icl_post_types[$doc->post_type]; ?></td>
                 <td scope="col"><?php echo $icl_post_statuses[$doc->post_status]; ?></td>
-                <td scope="col" id="icl-tr-status-<?php echo $doc->post_id ?>"><?php echo $tr_status ?></td>
+                <td scope="col" id="icl-tr-status-<?php echo $doc->post_id ?>">
+                    <?php if($doc->rid): ?>
+                    <a href="#translation-details-<?php echo $doc->rid ; ?>" class="translation_details_but">
+                    <?php endif; ?>
+                    <?php echo $tr_status ?>
+                    <?php if($doc->rid): ?></a><?php endif; ?>
+                </td>
             </tr>                            
             <?php endforeach;?>
             <?php endif;?>

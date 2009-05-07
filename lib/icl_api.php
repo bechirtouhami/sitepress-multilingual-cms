@@ -149,7 +149,6 @@ class ICanLocalizeQuery{
         
     }   
     
-    
     function cms_requests(){
         $request_url = ICL_API_ENDPOINT . '/websites/' . $this->site_id . '/cms_requests.xml?filter=pickup&accesskey=' . $this->access_key;        
         $res = $this->_request($request_url);
@@ -212,6 +211,15 @@ class ICanLocalizeQuery{
         return ($res['result']['attr']['error_code']==0);
     }
     
+    function cms_request_translations($request_id){
+        $request_url = ICL_API_ENDPOINT . '/websites/' . $this->site_id . '/cms_requests/'.$request_id.'.xml?accesskey=' . $this->access_key;               
+        $res = $this->_request($request_url);
+        if(isset($res['info']['cms_request'])){
+            return $res['info']['cms_request'];
+        }else{
+            return array();
+        }        
+    }
     
 }
 
