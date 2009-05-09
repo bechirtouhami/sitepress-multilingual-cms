@@ -246,7 +246,7 @@ function icl_translation_get_documents($lang, $tstatus, $status=false, $type=fal
             JOIN {$wpdb->prefix}icl_translations t ON p.ID = t.element_id AND element_type='post'
             LEFT JOIN {$wpdb->prefix}icl_content_status c ON c.nid=p.ID
             LEFT JOIN {$wpdb->prefix}icl_core_status r ON c.rid = r.rid
-            {$where} AND p.ID IN (".join(',', $pids).")
+            WHERE p.ID IN (".join(',', $pids).")
             AND status <> ".CMS_REQUEST_DONE."
             GROUP BY (r.rid) HAVING inprogress_count > 0 
         ORDER BY p.post_date DESC 

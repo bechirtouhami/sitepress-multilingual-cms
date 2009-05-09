@@ -3,7 +3,7 @@
 
 if(defined('ICL_DEBUG_MODE') && ICL_DEBUG_MODE && !function_exists('icl_error_handler')){           
     ini_set('error_reporting',E_ALL^E_NOTICE);
-    ini_set('show_errors', 'off');
+    ini_set('show_errors', 'on');
     function icl_error_handler($errno, $errstr, $errfile, $errline){        
         global $icl_errors_stack;
         $err = '<strong>'.$errstr.'</strong> ('. $errno . ')<br />';
