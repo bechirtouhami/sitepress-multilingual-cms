@@ -526,6 +526,7 @@ function icl_display_post_translation_status($post_id){
     
     if($tr_info->name && $tr_info->source_language_code && ($tr_info->source_language_code!=$tr_info->language_code) ){
         echo '<div style="text-align:center;clear:both;">'. sprintf(__('Translated from %s'),$tr_info->name).'</div>';
+        echo '<div style="text-align:center;clear:both;color:#888;">'. __('This translation is maintained by ICanLocalize. Edits that you do will be overwritten when the translator does an update.').'</div>';        
         return;
     }
     
