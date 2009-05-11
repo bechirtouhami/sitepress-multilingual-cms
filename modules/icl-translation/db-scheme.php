@@ -3,8 +3,8 @@
          CREATE TABLE IF NOT EXISTS {$wpdb->prefix}icl_core_status (
         `rid` BIGINT NOT NULL,
         `module` VARCHAR( 16 ) NOT NULL ,
-        `origin` VARCHAR( 10 ) NOT NULL ,
-        `target` VARCHAR( 10 ) NOT NULL ,
+        `origin` VARCHAR( 64 ) NOT NULL ,
+        `target` VARCHAR( 64 ) NOT NULL ,
         `status` SMALLINT NOT NULL,
         INDEX ( `rid` )
         ) 
