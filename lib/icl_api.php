@@ -190,9 +190,12 @@ class ICanLocalizeQuery{
                 $c['translations']['translation']['attr']['data'] = $arr;
             }
             if(isset($c['translations'])){
-                $translation[$c['attr']['type']] = base64_decode($c['translations']['translation']['attr']['data']);
+                $translation[$c['attr']['type']] = $c['translations']['translation']['attr']['data'];
             }else{
-                $translation[$c['attr']['type']] = base64_decode($c['attr']['data']);
+                $translation[$c['attr']['type']] = $c['attr']['data'];
+            }
+            if($c['attr']['format'] == 'base64'){
+                $translation[$c['attr']['type']] = base64_decode($translation[$c['attr']['type']]);
             }
         }
         return $translation;
