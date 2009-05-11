@@ -10,6 +10,7 @@
 
 <input type="hidden" name="icl_trid" value="<?php echo $trid ?>" />
 </p>
+<div style="clear:both;font-size:1px">&nbsp;</div>
 
 <?php do_action('icl_post_languages_options_before', $post->ID) ?>
 
