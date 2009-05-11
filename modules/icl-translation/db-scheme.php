@@ -1,11 +1,12 @@
 <?php
   $icl_translation_sql = "
          CREATE TABLE IF NOT EXISTS {$wpdb->prefix}icl_core_status (
-        `rid` BIGINT NOT NULL PRIMARY KEY ,
+        `rid` BIGINT NOT NULL,
         `module` VARCHAR( 16 ) NOT NULL ,
         `origin` VARCHAR( 10 ) NOT NULL ,
         `target` VARCHAR( 10 ) NOT NULL ,
-        `status` SMALLINT NOT NULL
+        `status` SMALLINT NOT NULL,
+        INDEX ( `rid` )
         ) 
   ";
   $wpdb->query($icl_translation_sql);
