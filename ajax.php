@@ -143,10 +143,21 @@ switch($_REQUEST['icl_ajx_action']){
         echo 1;
         break;
     case 'icl_save_language_switcher_options':
-        $iclsettings['icl_lso_header'] = intval($_POST['icl_lso_header']);
+
+        //$iclsettings['icl_lso_header'] = intval($_POST['icl_lso_header']);
         $iclsettings['icl_lso_link_empty'] = intval($_POST['icl_lso_link_empty']);
-        $sitepress->save_settings($iclsettings);    
-        echo 1;
+        $iclsettings['icl_lso_link_empty'] = intval($_POST['icl_lso_link_empty']);
+        
+        $iclsettings['icl_lso_flags'] = intval($_POST['icl_lso_flags']);
+        $iclsettings['icl_lso_native_lang'] = intval($_POST['icl_lso_native_lang']);
+        $iclsettings['icl_lso_display_lang'] = intval($_POST['icl_lso_display_lang']);
+        if(!$iclsettings['icl_lso_flags'] && !$iclsettings['icl_lso_native_lang'] && !$iclsettings['icl_lso_display_lang']){
+            echo '0|';
+            echo __('At least one of the language switcher style options needs to be checked', 'sitepress');    
+        }else{
+            $sitepress->save_settings($iclsettings);    
+            echo 1;
+        }                
         break;
     case 'icl_lang_more_options':
         $iclsettings['language_home'] = $_POST['icl_language_home'];

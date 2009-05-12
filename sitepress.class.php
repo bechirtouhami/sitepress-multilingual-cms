@@ -1131,7 +1131,7 @@ class SitePress{
                 }else{
                     unset($w_active_languages[$k]); 
                 }                        
-            }                          
+            } 
             include ICL_PLUGIN_PATH . '/menu/language-selector.php';
     }
     

@@ -78,8 +78,10 @@
                 <ul>
                     <?php
                     $client = new WP_Http();
-                    if(false === strpos($_POST['url'],'?')){$url_glue='?';}else{$url_glue='&';}
-                    $response = $client->request(get_option('home') . '/' . $sample_lang['code'] . $url_glue . '____icl_validate_domain=1', 'timeout=15');
+                    if(false === strpos($_POST['url'],'?')){$url_glue='?';}else{$url_glue='&';}                    
+                    set_error_handler('strlen');
+                    $response = $client->request(get_option('home') . '/' . $sample_lang['code'] .'/' . $url_glue . '____icl_validate_domain=1', 'timeout=15');
+                    restore_error_handler();
                     if(!is_wp_error($response) && ($response['response']['code']=='200') && ($response['body'] == '<!--'.get_option('home').'-->')){
                         $icl_folder_url_disabled = false;
                     }else{
@@ -185,7 +187,30 @@
                             </label>                    
                             </li>
                         </ul>
-                    </li>
+                    </li>                    
+                    <li>
+                        <p><?php echo __('Language switcher style <i>(can be overriden with the template function)</i>', 'sitepress')?></p>
+                        <ul>
+                            <li>
+                                <label>
+                                    <input type="checkbox" name="icl_lso_flags" value="1" <?php if($sitepress_settings['icl_lso_flags']):?>checked="checked"<?php endif?> />
+                                    <?php echo __('Flag', 'sitepress') ?>
+                                </label>
+                            </li>
+                            <li>
+                            <label>
+                                <input type="checkbox" name="icl_lso_native_lang" value="1" <?php if($sitepress_settings['icl_lso_native_lang']):?>checked="checked"<?php endif?> />
+                                <?php echo __('Native language name (the language name as it\'s written in that language)', 'sitepress') ?>
+                            </label>                    
+                            </li>
+                            <li>
+                            <label>
+                                <input type="checkbox" name="icl_lso_display_lang" value="1" <?php if($sitepress_settings['icl_lso_display_lang']):?>checked="checked"<?php endif?> />
+                                <?php echo __('Language name in display language (the language name as it\'s written in the currently displayed language', 'sitepress') ?>
+                            </label>                    
+                            </li>                            
+                        </ul>
+                    </li>                    
                 </ul>
                 <p>
                     <input class="button" name="save" value="<?php echo __('Save') ?>" type="submit" />
