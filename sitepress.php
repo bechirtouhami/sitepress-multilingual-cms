@@ -47,24 +47,33 @@ require ICL_PLUGIN_PATH . '/inc/icl-recent-comments-widget.php';
 require ICL_PLUGIN_PATH . '/sitepress.class.php';
 require ICL_PLUGIN_PATH . '/inc/functions.php';
 
-$sitepress = new SitePress();
-$sitepress_settings = $sitepress->get_settings();
+if( !isset($_REQUEST['action']) 
+    || ($_REQUEST['action']!='activate' && $_REQUEST['action']!='activate-selected') 
+    || (($_REQUEST['plugin'] != basename(ICL_PLUGIN_PATH).'/'.basename(__FILE__)) 
+        && !in_array(basename(ICL_PLUGIN_PATH).'/'.basename(__FILE__), $_REQUEST['checked']))){
+        
+    $sitepress = new SitePress();
+    $sitepress_settings = $sitepress->get_settings();
+    
+    // modules load
+    // CMS Navigation
+    require ICL_PLUGIN_PATH . '/modules/cms-navigation/cms-navigation.php';
+    $iclCMSNavigation = new CMSNavigation();
 
-// modules load
-require ICL_PLUGIN_PATH . '/modules/cms-navigation/cms-navigation.php';
-$iclCMSNavigation = new CMSNavigation();
+    // Sticky Links
+    if(isset($_POST['icl_enable_alp'])){
+        $sitepress_settings['modules']['absolute-links']['enabled'] = intval($_POST['icl_enable_alp']);
+        $sitepress->save_settings($sitepress_settings);
+    }
+    if($sitepress_settings['modules']['absolute-links']['enabled']){
+        require ICL_PLUGIN_PATH . '/modules/absolute-links/absolute-links-plugin.php';
+        $iclAbsoluteLinks = new AbsoluteLinksPlugin();
+    }
 
-if(isset($_POST['icl_enable_alp'])){
-    $sitepress_settings['modules']['absolute-links']['enabled'] = intval($_POST['icl_enable_alp']);
-    $sitepress->save_settings($sitepress_settings);
-}
-if($sitepress_settings['modules']['absolute-links']['enabled']){
-    require ICL_PLUGIN_PATH . '/modules/absolute-links/absolute-links-plugin.php';
-    $iclAbsoluteLinks = new AbsoluteLinksPlugin();
-}
-
-if(!empty($sitepress_settings['language_pairs'])){
-    require ICL_PLUGIN_PATH . '/modules/icl-translation/icl-translation.php';
+    // Content Translation
+    if(!empty($sitepress_settings['language_pairs'])){
+        require ICL_PLUGIN_PATH . '/modules/icl-translation/icl-translation.php';
+    }
 }
 
 // activation hook
