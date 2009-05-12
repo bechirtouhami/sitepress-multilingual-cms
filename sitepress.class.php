@@ -1023,8 +1023,8 @@ class SitePress{
         }    
         
     }
-    
-    function language_selector(){
+        
+    function language_selector($ret_array=false){
             global $wpdb, $post, $cat, $tag_id, $wp_query;
             $w_active_languages = $this->get_active_languages();
             $this_lang = $this->this_lang;
@@ -1126,13 +1126,18 @@ class SitePress{
                         unset($w_active_languages[$k]);                       
                     }                    
                 }
-                if(!$skip_lang){
+                if(!$skip_lang || $ret_array){
                     $w_active_languages[$k] = $lang;                    
                 }else{
                     unset($w_active_languages[$k]); 
                 }                        
             } 
-            include ICL_PLUGIN_PATH . '/menu/language-selector.php';
+            if($ret_array){
+                return $w_active_languages;
+            }else{
+                include ICL_PLUGIN_PATH . '/menu/language-selector.php';
+            }
+            
     }
     
     function get_default_categories(){
