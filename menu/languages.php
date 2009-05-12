@@ -29,7 +29,7 @@
             <?php endforeach; ?>
             </select>            
             &nbsp;
-            <input class="button" name="save" value="<?php echo __('Save') ?>" type="submit" />
+            <input class="button" name="save" value="<?php echo __('Save', 'sitepress') ?>" type="submit" />
         </p>
         </form>        
     <?php else: ?>
@@ -41,7 +41,7 @@
                     <?php echo __('This list shows the languages that are enabled for this site. Select the default language for contents.','sitepress'); ?><br />
                     <ul id="icl_enabled_languages">
                             <?php foreach($active_languages as $lang): $is_default = ($sitepress->get_default_language()==$lang['code']); ?>
-                        <li <?php if($is_default):?>class="default_language"<?php endif;?>><label><input name="default_language" type="radio" value="<?php echo $lang['code'] ?>" <?php if($is_default):?>checked="checked"<?php endif;?> /> <?php echo $lang['display_name'] ?> <?php if($is_default):?>(<?php echo __('default') ?>)<?php endif?></label></li>
+                        <li <?php if($is_default):?>class="default_language"<?php endif;?>><label><input name="default_language" type="radio" value="<?php echo $lang['code'] ?>" <?php if($is_default):?>checked="checked"<?php endif;?> /> <?php echo $lang['display_name'] ?> <?php if($is_default):?>(<?php echo __('default', 'sitepress') ?>)<?php endif?></label></li>
                         <?php endforeach ?>
                     </ul>
                     <br clear="all" />
@@ -79,9 +79,9 @@
                     <?php
                     $client = new WP_Http();
                     if(false === strpos($_POST['url'],'?')){$url_glue='?';}else{$url_glue='&';}                    
-                    set_error_handler('strlen');
+                    //set_error_handler('trigger_error');
                     $response = $client->request(get_option('home') . '/' . $sample_lang['code'] .'/' . $url_glue . '____icl_validate_domain=1', 'timeout=15');
-                    restore_error_handler();
+                    //restore_error_handler();
                     if(!is_wp_error($response) && ($response['response']['code']=='200') && ($response['body'] == '<!--'.get_option('home').'-->')){
                         $icl_folder_url_disabled = false;
                     }else{
@@ -146,7 +146,7 @@
                     </li>
                 </ul>
                 <p>
-                    <input class="button" name="save" value="<?php echo __('Save') ?>" type="submit" />
+                    <input class="button" name="save" value="<?php echo __('Save','sitepress') ?>" type="submit" />
                     <span class="icl_ajx_response" id="icl_ajx_response2"></span>
                 </p>
                 </form>            
@@ -160,10 +160,13 @@
                 <p class="icl_form_errors" style="display:none"></p>
                 <ul>
                     <li>
-                        <?php echo __('To add a language switcher to your theme, insert this code to header.php:','sitepress') ?>
-                        <code class="php">
-                            &lt;?php do_action('icl_language_selector'); ?&gt;
-                        </code>
+                        <p><?php printf(__('The drop-down language switcher can be added to your theme by inserting this PHP code: %s or as a widget','sitepress'),
+                        '<code class="php">&lt;?php do_action(\'icl_language_selector\'); ?&gt;</code>'); ?>.</p>
+                        <p><?php echo __('You can also create custom language switchers, such as a list of languages or country flags.','sitepress'); ?>
+                        <a href="#"><?php echo __('Custom language switcher creation guide','sitepress')?></a>.
+                        </p>
+                            
+                        
                         <?php /*
                         <label>
                             <input type="checkbox" name="icl_lso_header" value="1" <?php if($sitepress_settings['icl_lso_header']==1):?>checked="checked"<?php endif?> />
@@ -172,7 +175,8 @@
                         */ ?>
                     </li>
                     <li>
-                        <p><?php echo __('When translation is missing', 'sitepress')?></p>
+                        <h4><?php echo __('How to handle languages without translation', 'sitepress')?></h4>
+                        <p><?php echo __('Some pages or posts may not be translated to all languages. Select how the language selector should behave in case translation is missing.', 'sitepress') ?></p>
                         <ul>
                             <li>
                                 <label>
@@ -189,7 +193,7 @@
                         </ul>
                     </li>                    
                     <li>
-                        <p><?php echo __('Language switcher style <i>(can be overriden with the template function)</i>', 'sitepress')?></p>
+                        <h4><?php echo __('Language switcher style', 'sitepress')?></h4>
                         <ul>
                             <li>
                                 <label>
@@ -213,7 +217,7 @@
                     </li>                    
                 </ul>
                 <p>
-                    <input class="button" name="save" value="<?php echo __('Save') ?>" type="submit" />
+                    <input class="button" name="save" value="<?php echo __('Save','sitepress') ?>" type="submit" />
                     <span class="icl_ajx_response" id="icl_ajx_response3"></span>
                 </p>
                 </form>            
@@ -233,7 +237,7 @@
                 <?php echo __('Synchronize page order for translations', 'sitepress') ?></label>                        
             </p>
             <p>
-                <input class="button" name="save" value="<?php echo __('Save') ?>" type="submit" />
+                <input class="button" name="save" value="<?php echo __('Save','sitepress') ?>" type="submit" />
                 <span class="icl_ajx_response" id="icl_ajx_response_mo"></span>
             </p>
             </form>
@@ -301,7 +305,7 @@
             </table>
             </div>
             <p>
-                <input class="button" name="save" value="<?php echo __('Save') ?>" type="submit" />
+                <input class="button" name="save" value="<?php echo __('Save','sitepress') ?>" type="submit" />
                 <span class="icl_ajx_response" id="icl_ajx_response_fn"></span>
             </p>
             
