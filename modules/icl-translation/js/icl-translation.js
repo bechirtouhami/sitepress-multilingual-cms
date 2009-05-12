@@ -118,12 +118,18 @@ function getSelectedLanguagesCount(){
     return selected_languages_count;    
 }
 
+var icl_tr_details_selected_rid = 0;
 function toogleTranslationDetails(){    
-    jQuery('.icl-tr-details').slideUp();
+    jQuery('.icl-tr-details:visible').slideUp();
+    var rid = jQuery(this).attr('href').replace(/#translation-details-/,'');        
+    if(rid == icl_tr_details_selected_rid){
+        icl_tr_details_selected_rid = 0;
+        return;
+    } 
+    icl_tr_details_selected_rid = rid;
     var tr = jQuery(this).parent().parent();
     var last_col = tr.find('td:eq(4)');
-    last_col.append(icl_ajxloaderimg);
-    var rid = jQuery(this).attr('href').replace(/#translation-details-/,'');        
+    last_col.append(icl_ajxloaderimg);    
     tr.find('td span.icl-tr-details').load(location.href.replace(/#(.*)$/,''), {
         icl_ajx_req:'get_translation_details',
         rid:rid
