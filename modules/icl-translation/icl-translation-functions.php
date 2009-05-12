@@ -431,7 +431,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     }
     
     // update translation status
-    $wpdb->update($wpdb->prefix.'icl_core_status', array('status'=>CMS_REQUEST_DONE), array('rid'=>$rid, 'target'=>$lang));
+    $wpdb->update($wpdb->prefix.'icl_core_status', array('status'=>CMS_TARGET_LANGUAGE_DONE), array('rid'=>$rid, 'target'=>$lang));
     // 
     
     return true;
@@ -447,13 +447,13 @@ function icl_process_translated_document($request_id, $language){
     if($translation){            
         $ret = icl_add_post_translation($trid, $translation, $language, $request_id);
         if($ret){
-            $iclq->cms_update_request_status($request_id, CMS_REQUEST_DONE, $language);
+            $iclq->cms_update_request_status($request_id, CMS_TARGET_LANGUAGE_DONE, $language);
         } 
         
     }        
 
     // if there aren't any other unfullfilled requests send a global 'done'               
-    if(0 == $wpdb->get_var("SELECT COUNT(rid) FROM {$wpdb->prefix}icl_core_status WHERE rid='{$request_id}' AND status < ".CMS_REQUEST_DONE)){
+    if(0 == $wpdb->get_var("SELECT COUNT(rid) FROM {$wpdb->prefix}icl_core_status WHERE rid='{$request_id}' AND status < ".CMS_TARGET_LANGUAGE_DONE)){
         $iclq->cms_update_request_status($request_id, CMS_REQUEST_DONE, false);
     }
     return true;
@@ -464,7 +464,7 @@ function icl_poll_for_translations(){
     $iclq = new ICanLocalizeQuery($sitepress_settings['site_id'], $sitepress_settings['access_key']);
     $pending_requests = $iclq->cms_requests();
     foreach($pending_requests as $pr){
-        $tr_details = $wpdb->get_col("SELECT target FROM {$wpdb->prefix}icl_core_status WHERE rid=".$pr['id']);
+        $tr_details = $wpdb->get_col("SELECT target FROM {$wpdb->prefix}icl_core_status WHERE rid=".$pr['id']." AND status < ".CMS_TARGET_LANGUAGE_DONE);
         foreach($tr_details as $language){        
             icl_process_translated_document($pr['id'],$language);
         }
