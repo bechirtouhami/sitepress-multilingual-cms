@@ -296,6 +296,8 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
         WHERE t.element_type='post' AND trid='{$trid}' AND p.ID = '{$translation['original_id']}'
     ");
     
+    _icl_content_fix_image_paths_in_body($translation);
+    
     if($original_post_details->post_type=='post'){
         
         // deal with tags
@@ -607,5 +609,134 @@ function icl_decode_translation_status_id($status){
     }
     
     return $st;
-}     
+}
+
+function _icl_content_fix_image_paths_in_body(&$translation) {
+    $body = $translation['body'];
+    $image_paths = _icl_content_get_image_paths($body);
+    
+    $source_path = post_permalink($translation['original_id']);
+  
+    foreach($image_paths as $path) {
+  
+        $src_path = resolve_url($source_path, $path[2]);
+        if ($src_path != $path[2]) {
+            $search = $path[1] . $path[2] . $path[1];
+            $replace = $path[1] . $src_path . $path[1];
+            $new_link = str_replace($search, $replace, $path[0]);
+      
+            $body = str_replace($path[0], $new_link, $body);
+      
+          
+        }
+    
+    }
+    $translation['body'] = $body;
+}
+
+/**
+ * get the paths to images in the body of the content
+ */
+
+function _icl_content_get_image_paths($body) {
+
+  $regexp_links = array(
+                      "/<img\ssrc\s*=\s*([\"\']??)([^\"]*)\".*>/siU",
+                      "/&lt;script\ssrc\s*=\s*([\"\']??)([^\"]*)\".*>/siU",
+                      "/<embed\ssrc\s*=\s*([\"\']??)([^\"]*)\".*>/siU",
+                      );
+
+  $links = array();
+
+  foreach($regexp_links as $regexp) {
+    if (preg_match_all($regexp, $body, $matches, PREG_SET_ORDER)) {
+      foreach ($matches as $match) {
+        $links[] = $match;
+      }
+    }
+  }
+
+  return $links;
+}
+
+
+/**
+ * Resolve a URL relative to a base path. This happens to work with POSIX
+ * filenames as well. This is based on RFC 2396 section 5.2.
+ */
+function resolve_url($base, $url) {
+        if (!strlen($base)) return $url;
+        // Step 2
+        if (!strlen($url)) return $base;
+        // Step 3
+        if (preg_match('!^[a-z]+:!i', $url)) return $url;
+        $base = parse_url($base);
+        if ($url{0} == "#") {
+                // Step 2 (fragment)
+                $base['fragment'] = substr($url, 1);
+                return unparse_url($base);
+        }
+        unset($base['fragment']);
+        unset($base['query']);
+        if (substr($url, 0, 2) == "//") {
+                // Step 4
+                return unparse_url(array(
+                        'scheme'=>$base['scheme'],
+                        'path'=>$url,
+                ));
+        } else if ($url{0} == "/") {
+                // Step 5
+                $base['path'] = $url;
+        } else {
+                // Step 6
+                $path = explode('/', $base['path']);
+                $url_path = explode('/', $url);
+                // Step 6a: drop file from base
+                array_pop($path);
+                // Step 6b, 6c, 6e: append url while removing "." and ".." from
+                // the directory portion
+                $end = array_pop($url_path);
+                foreach ($url_path as $segment) {
+                        if ($segment == '.') {
+                                // skip
+                        } else if ($segment == '..' && $path && $path[sizeof($path)-1] != '..') {
+                                array_pop($path);
+                        } else {
+                                $path[] = $segment;
+                        }
+                }
+                // Step 6d, 6f: remove "." and ".." from file portion
+                if ($end == '.') {
+                        $path[] = '';
+                } else if ($end == '..' && $path && $path[sizeof($path)-1] != '..') {
+                        $path[sizeof($path)-1] = '';
+                } else {
+                        $path[] = $end;
+                }
+                // Step 6h
+                $base['path'] = join('/', $path);
+
+        }
+        // Step 7
+        return unparse_url($base);
+}
+
+function unparse_url($parsed)
+    {
+    if (! is_array($parsed)) return false;
+    $uri = isset($parsed['scheme']) ? $parsed['scheme'].':'.((strtolower($parsed['scheme']) == 'mailto') ? '':'//'): '';
+    $uri .= isset($parsed['user']) ? $parsed['user'].($parsed['pass']? ':'.$parsed['pass']:'').'@':'';
+    $uri .= isset($parsed['host']) ? $parsed['host'] : '';
+    $uri .= isset($parsed['port']) ? ':'.$parsed['port'] : '';
+    if(isset($parsed['path']))
+        {
+        $uri .= (substr($parsed['path'],0,1) == '/')?$parsed['path']:'/'.$parsed['path'];
+        }
+    $uri .= isset($parsed['query']) ? '?'.$parsed['query'] : '';
+    $uri .= isset($parsed['fragment']) ? '#'.$parsed['fragment'] : '';
+    return $uri;
+    }
+
+
+
 ?>
