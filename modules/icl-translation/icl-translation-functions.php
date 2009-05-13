@@ -297,6 +297,8 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     ");
     
     _icl_content_fix_image_paths_in_body($translation);
+    _icl_content_fix_relative_link_paths_in_body($translation);
+    //_icl_content_make_links_sticky($translation);
     
     if($original_post_details->post_type=='post'){
         
@@ -737,6 +739,64 @@ function unparse_url($parsed)
     return $uri;
     }
 
+function _icl_content_fix_relative_link_paths_in_body(&$translation) {
+    $body = $translation['body'];
+    $link_paths = _icl_content_get_link_paths($body);
+
+    $source_path = post_permalink($translation['original_id']);
+
+    foreach($link_paths as $path) {
+      
+        $src_path = resolve_url($source_path, $path[2]);
+        if ($src_path != $path[2]) {
+            $search = $path[1] . $path[2] . $path[1];
+            $replace = $path[1] . $src_path . $path[1];
+            $new_link = str_replace($search, $replace, $path[0]);
+            
+            $body = str_replace($path[0], $new_link, $body);
+        }
+      
+    }
+    $translation['body'] = $body;
+}
+
+function _icl_content_get_link_paths($body) {
+  
+    $regexp_links = array(
+                        "/<a\shref\s*=\s*([\"\']??)([^\"]*)\">(.*)<\/a>/siU",
+                        );
+    
+    $links = array();
+    
+    foreach($regexp_links as $regexp) {
+        if (preg_match_all($regexp, $body, $matches, PREG_SET_ORDER)) {
+            foreach ($matches as $match) {
+              $links[] = $match;
+            }
+        }
+    }
+    
+    return $links;
+}
+
+function _icl_content_make_links_sticky(&$translation) {
+    global $iclAbsoluteLinks;
+    
+    $body = $translation['body'];
+
+    if(!$sitepress_settings['modules']['absolute-links']['enabled']){
+        // create the object
+        require ICL_PLUGIN_PATH . '/modules/absolute-links/absolute-links-plugin.php';
+        $icl_abs_links = new AbsoluteLinksPlugin();
+    } else {
+        // use the global object
+        $icl_abs_links = $iclAbsoluteLinks;
+    }
+    
+    $icl_abs_links->process_post($translation['original_id']);
+
+    $translation['body'] = $body;
+}
 
 
 ?>
