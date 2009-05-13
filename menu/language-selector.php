@@ -4,7 +4,7 @@
             <?php if($this->settings['icl_lso_flags']):?>                
             <img class="iclflag" src="<?php echo ICL_PLUGIN_URL .'/res/flags/' . $w_this_lang['code'] . '.png' ?>" alt="<?php echo $w_this_lang['code'] ?>" width="18" height="12" />                                
             &nbsp;<?php endif; ?>
-            <?php if($this->settings['icl_lso_native_lang']):?>
+            <?php if($this->settings['icl_lso_native_lang'] || (!$this->settings['icl_lso_flags'] && !$this->settings['icl_lso_native_lang'])):?>
             <?php echo $wpdb->get_var("SELECT name FROM {$wpdb->prefix}icl_languages_translations WHERE language_code='{$w_this_lang['code']}' AND display_language_code='{$w_this_lang['code']}'"); ?>
             <?php endif ?>
             <?php if(!isset($ie_ver) || $ie_ver > 6): ?></a><?php endif; ?>
