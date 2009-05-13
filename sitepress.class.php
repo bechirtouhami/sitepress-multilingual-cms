@@ -87,7 +87,7 @@ class SitePress{
                 add_action('admin_head', array($this,'terms_language_filter'));                
             }
             
-            // the language selector widget
+            // the language selector widget      
             add_action('plugins_loaded', array($this, 'language_selector_widget_init'));
             
             // custom hook for adding the language selector to the template
@@ -1002,7 +1002,7 @@ class SitePress{
         return $p;
     }            
     
-    function language_selector_widget_init(){
+    function language_selector_widget_init(){ 
         
         function language_selector_widget($args){            
             global $sitepress;
@@ -1012,7 +1012,7 @@ class SitePress{
             echo $after_widget;
         }        
         register_sidebar_widget(__('Language Selector', 'sitepress'), 'language_selector_widget', 'icl_languages_selector');
-                
+        
         function icl_lang_sel_nav_css($show = true){            
             $link_tag = '<link rel="stylesheet" href="'. ICL_PLUGIN_URL . '/res/css/language-selector.css?v=0.1" type="text/css" media="all" />';
             if(!$show){
@@ -1021,10 +1021,13 @@ class SitePress{
                 echo $link_tag;
             }
         }
-        add_action('init','icl_lang_sel_nav_ob_start');
+        add_action('template_redirect','icl_lang_sel_nav_ob_start');
         add_action('wp_head','icl_lang_sel_nav_ob_end');
         
-        function icl_lang_sel_nav_ob_start(){ ob_start('icl_lang_sel_nav_prepend_css'); }
+        function icl_lang_sel_nav_ob_start(){ 
+            if(is_feed()) return;
+            ob_start('icl_lang_sel_nav_prepend_css'); 
+        }
         
         function icl_lang_sel_nav_ob_end(){ ob_end_flush();}
         

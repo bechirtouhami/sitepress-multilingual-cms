@@ -163,7 +163,7 @@
                         <p><?php printf(__('The drop-down language switcher can be added to your theme by inserting this PHP code: %s or as a widget','sitepress'),
                         '<code class="php">&lt;?php do_action(\'icl_language_selector\'); ?&gt;</code>'); ?>.</p>
                         <p><?php echo __('You can also create custom language switchers, such as a list of languages or country flags.','sitepress'); ?>
-                        <a href="#"><?php echo __('Custom language switcher creation guide','sitepress')?></a>.
+                        <a href="http://wpml.org/home/getting-started-guide/language-setup/custom-language-switcher/"><?php echo __('Custom language switcher creation guide','sitepress')?></a>.
                         </p>
                             
                         
