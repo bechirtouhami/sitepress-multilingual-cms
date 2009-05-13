@@ -291,6 +291,16 @@ class SitePress{
         return $language;
     }
 
+    function get_language_code($english_name){
+        global $wpdb;
+        $code = $wpdb->get_row("
+            SELECT 
+                code
+            FROM {$wpdb->prefix}icl_languages
+            WHERE english_name = '{$english_name}'", ARRAY_A);
+        return $code['code'];
+    }
+
     function get_default_language(){        
         return $this->settings['default_language'];
     }
