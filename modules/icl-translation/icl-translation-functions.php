@@ -8,7 +8,7 @@ function icl_translation_js(){
 }
 
 function icl_translation_send_post($post_id, $target_languages, $post_type='post'){
-    global $sitepress_settings, $wpdb;
+    global $sitepress_settings, $wpdb, $sitepress;
     
     $post = get_post($post_id);
     if(!$post){
@@ -134,7 +134,10 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
             $languages_requests = $wpdb->get_col("SELECT target FROM {$wpdb->prefix}icl_core_status WHERE rid='{$previous_rid}'");
             $new_languages = array_diff($target_languages, $languages_requests);
             foreach($new_languages as $new_lang){
-                $wpdb->insert($wpdb->prefix.'icl_core_status', array('rid'=>$res, 'origin'=>$orig_lang, 'target'=>$new_lang, 'status'=>CMS_REQUEST_WAITING_FOR_PROJECT_CREATION));
+                $wpdb->insert($wpdb->prefix.'icl_core_status', array('rid'=>$res,
+                                                                     'origin'=>$sitepress->get_language_code($orig_lang),
+                                                                     'target'=>$sitepress->get_language_code($new_lang),
+                                                                     'status'=>CMS_REQUEST_WAITING_FOR_PROJECT_CREATION));
             }
             $wpdb->update($wpdb->prefix.'icl_content_status', array('rid'=>$res, 'md5'=>$md5, 'timestamp'=>$timestamp), array('rid'=>$previous_rid)); //update rid            
             $wpdb->update($wpdb->prefix.'icl_core_status', array('rid'=>$res), array('rid'=>$previous_rid)); //update rid
@@ -142,7 +145,10 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
         }else{            
             $wpdb->insert($wpdb->prefix.'icl_content_status', array('rid'=>$res, 'nid'=>$post_id, 'timestamp'=>$timestamp, 'md5'=>$md5)); //insert rid   
             foreach($target_languages as $targ_lang){
-                $wpdb->insert($wpdb->prefix.'icl_core_status', array('rid'=>$res, 'origin'=>$orig_lang, 'target'=>$targ_lang, 'status'=>CMS_REQUEST_WAITING_FOR_PROJECT_CREATION));
+                $wpdb->insert($wpdb->prefix.'icl_core_status', array('rid'=>$res,
+                                                                     'origin'=>$sitepress->get_language_code($orig_lang),
+                                                                     'target'=>$sitepress->get_language_code($targ_lang),
+                                                                     'status'=>CMS_REQUEST_WAITING_FOR_PROJECT_CREATION));
             }
         }        
         $ret = $res;  
@@ -249,7 +255,7 @@ function icl_translation_get_documents($lang, $tstatus, $status=false, $type=fal
             LEFT JOIN {$wpdb->prefix}icl_content_status c ON c.nid=p.ID
             LEFT JOIN {$wpdb->prefix}icl_core_status r ON c.rid = r.rid
             WHERE p.ID IN (".join(',', $pids).")
-            AND status <> ".CMS_REQUEST_DONE."
+            AND status <> ".CMS_TARGET_LANGUAGE_DONE."
             GROUP BY (r.rid) HAVING inprogress_count > 0 
         ORDER BY p.post_date DESC 
     ";
@@ -277,7 +283,7 @@ function icl_translation_delete_post($post_id){
 }
 
 function icl_add_post_translation($trid, $translation, $lang, $rid){
-    global $wpdb, $sitepress_settings;
+    global $wpdb, $sitepress_settings, $sitepress;
     $lang_code = $wpdb->get_var("SELECT code FROM {$wpdb->prefix}icl_languages WHERE english_name='".$wpdb->escape($lang)."'");
     if(!$lang_code){        
         return false;
@@ -431,7 +437,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     }
     
     // update translation status
-    $wpdb->update($wpdb->prefix.'icl_core_status', array('status'=>CMS_TARGET_LANGUAGE_DONE), array('rid'=>$rid, 'target'=>$lang));
+    $wpdb->update($wpdb->prefix.'icl_core_status', array('status'=>CMS_TARGET_LANGUAGE_DONE), array('rid'=>$rid, 'target'=>$sitepress->get_language_code($lang)));
     // 
     
     return true;
@@ -441,7 +447,6 @@ function icl_process_translated_document($request_id, $language){
     global $sitepress_settings, $wpdb;
     
     $iclq = new ICanLocalizeQuery($sitepress_settings['site_id'], $sitepress_settings['access_key']);       
-    $tr_details = $wpdb->get_col("SELECT target FROM {$wpdb->prefix}icl_core_status WHERE rid=".$request_id);
     $trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations t JOIN {$wpdb->prefix}icl_content_status c ON t.element_id = c.nid AND t.element_type='post' AND c.rid=".$request_id);
     $translation = $iclq->cms_do_download($request_id, $language);                           
     if($translation){            
@@ -460,13 +465,14 @@ function icl_process_translated_document($request_id, $language){
 }
 
 function icl_poll_for_translations(){
-    global $wpdb, $sitepress_settings;
+    global $wpdb, $sitepress_settings, $sitepress;
     $iclq = new ICanLocalizeQuery($sitepress_settings['site_id'], $sitepress_settings['access_key']);
     $pending_requests = $iclq->cms_requests();
     foreach($pending_requests as $pr){
         $tr_details = $wpdb->get_col("SELECT target FROM {$wpdb->prefix}icl_core_status WHERE rid=".$pr['id']." AND status < ".CMS_TARGET_LANGUAGE_DONE);
-        foreach($tr_details as $language){        
-            icl_process_translated_document($pr['id'],$language);
+        foreach($tr_details as $language){
+            $language = $sitepress->get_language_details($language);
+            icl_process_translated_document($pr['id'],$language['english_name']);
         }
     }    
 }
@@ -564,17 +570,17 @@ function icl_display_post_translation_status($post_id){
             echo '<tr'; if($oddcolumn) echo ' class="alternate"'; echo '>';
             echo '<td scope="col">'.sprintf(__('Translation to %s'), $al['display_name']).'</td>';            
             echo '<td align="right" scope="col">';            
-            if($status[$al['english_name']]->status==CMS_REQUEST_DONE && $post_updated){
+            if($status[$al['code']]->status==CMS_TARGET_LANGUAGE_DONE && $post_updated){
                 echo __('translation needs update','sitepress');
             }else{
-                switch($status[$al['english_name']]->status){
+                switch($status[$al['code']]->status){
                     //case CMS_REQUEST_WAITING_FOR_PROJECT_CREATION: echo __('Waiting for project creation','sitepress');break;
                     //case CMS_REQUEST_PROJECT_CREATION_REQUESTED: echo __('Project creation requested','sitepress');break;
                     //case CMS_REQUEST_CREATING_PROJECT: echo __('Creating project','sitepress');break;
                     //case CMS_REQUEST_RELEASED_TO_TRANSLATORS: echo __('Released to translators','sitepress');break;
                     //case CMS_REQUEST_TRANSLATED: echo __('Translated on server','sitepress');break;
                     case CMS_REQUEST_WAITING_FOR_PROJECT_CREATION: echo __('Translation in progress','sitepress');break;
-                    case CMS_REQUEST_DONE: echo __('Translation complete','sitepress');break;
+                    case CMS_TARGET_LANGUAGE_DONE: echo __('Translation complete','sitepress');break;
                     case CMS_REQUEST_FAILED: echo __('Request failed','sitepress');break;
                     default: echo __('Not translated','sitepress');
                 }
