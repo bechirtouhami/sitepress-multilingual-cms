@@ -445,6 +445,23 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     $wpdb->update($wpdb->prefix.'icl_core_status', array('status'=>CMS_TARGET_LANGUAGE_DONE), array('rid'=>$rid, 'target'=>$sitepress->get_language_code($lang)));
     // 
     
+    // Now try to fix links in other translated content that may link to this post.
+    $sql = "SELECT
+                nid
+            FROM
+                {$wpdb->prefix}icl_node n
+            JOIN
+                {$wpdb->prefix}icl_translations t
+            ON
+                n.nid = t.element_id
+            WHERE
+                n.links_fixed = 0 AND t.language_code = '{$lang_code}'";
+                
+    $needs_fixing = $wpdb->get_results($sql);
+    foreach($needs_fixing as $id){
+        _icl_content_fix_links_to_translated_content($id->nid, $lang_code);
+    }
+    
     return true;
 }
 
@@ -471,10 +488,30 @@ function icl_process_translated_document($request_id, $language){
 
 function icl_poll_for_translations(){
     global $wpdb, $sitepress_settings, $sitepress;
+    
+    include dirname(__FILE__).'/icl-language-ids.inc';
+    
     $iclq = new ICanLocalizeQuery($sitepress_settings['site_id'], $sitepress_settings['access_key']);
     $pending_requests = $iclq->cms_requests();
     foreach($pending_requests as $pr){
-        $tr_details = $wpdb->get_col("SELECT target FROM {$wpdb->prefix}icl_core_status WHERE rid=".$pr['id']." AND status < ".CMS_TARGET_LANGUAGE_DONE);
+        
+        $cms_request_xml = $iclq->cms_request_translations($pr['id']);
+        if(isset($cms_request_xml['cms_target_languages']['cms_target_language'])){
+            foreach($cms_request_xml['cms_target_languages']['cms_target_language'] as $target){
+                if(isset($target['attr'])){
+                    $status = $target['attr']['status'];
+                    $lang_id = (int)$target['attr']['language_id'];
+                    $language = $icl_language_id2name[$lang_id];
+                    $lang_code = $sitepress->get_language_code($language);
+                    $wpdb->query("UPDATE {$wpdb->prefix}icl_core_status SET status='{$status}' WHERE rid='{$pr['id']}' AND target='{$lang_code}'");
+                    
+                }
+                
+            }
+        }
+        
+        // process translated languages
+        $tr_details = $wpdb->get_col("SELECT target FROM {$wpdb->prefix}icl_core_status WHERE rid=".$pr['id']." AND status = ".CMS_TARGET_LANGUAGE_TRANSLATED);
         foreach($tr_details as $language){
             $language = $sitepress->get_language_details($language);
             icl_process_translated_document($pr['id'],$language['english_name']);
