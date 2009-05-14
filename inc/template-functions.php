@@ -13,7 +13,13 @@ function icl_get_languages($a=''){
     $lang = $sitepress->language_selector(true, $args);
     $langs = array();
     foreach($lang as $l){
-        $flag_url = ICL_PLUGIN_URL . '/res/flags/'.$l['code'].'.png';
+        $flag = $wpdb->get_row("SELECT flag, from_template FROM {$wpdb->prefix}icl_flags WHERE lang_code='{$l['code']}'");
+        if($flag->from_template){
+            $flag_url = get_bloginfo('template_directory') . '/images/flags/'.$flag->flag;
+        }else{
+            $flag_url = ICL_PLUGIN_URL . '/res/flags/'.$flag->flag;
+        }
+        
         
         $native_name = $wpdb->get_var("SELECT name FROM {$wpdb->prefix}icl_languages_translations WHERE language_code='{$l['code']}' AND display_language_code='{$l['code']}'");        
         if(!$native_name) $native_name = $lang['english_name'];    

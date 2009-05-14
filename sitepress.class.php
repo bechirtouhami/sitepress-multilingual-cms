@@ -1024,7 +1024,7 @@ class SitePress{
         register_sidebar_widget(__('Language Selector', 'sitepress'), 'language_selector_widget', 'icl_languages_selector');
         
         function icl_lang_sel_nav_css($show = true){            
-            $link_tag = '<link rel="stylesheet" href="'. ICL_PLUGIN_URL . '/res/css/language-selector.css?v=0.1" type="text/css" media="all" />';
+            $link_tag = '<link rel="stylesheet" href="'. ICL_PLUGIN_URL . '/res/css/language-selector.css?v=0.2" type="text/css" media="all" />';
             if(!$show){
                 return $link_tag;
             }else{

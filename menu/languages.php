@@ -77,6 +77,9 @@
                 <form id="icl_save_language_negotiation_type" name="icl_save_language_negotiation_type" action="">
                 <ul>
                     <?php
+                    if(!class_exists('WP_Http')){
+                       include_once ICL_PLUGIN_PATH . '/lib/http.php';
+                    }
                     $client = new WP_Http();
                     if(false === strpos($_POST['url'],'?')){$url_glue='?';}else{$url_glue='&';}                    
                     //set_error_handler('trigger_error');

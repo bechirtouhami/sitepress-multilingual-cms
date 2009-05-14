@@ -76,7 +76,36 @@ function icl_sitepress_activate(){
             )";
         $wpdb->query($sql);
     } 
-       
+    
+    // flags table
+   $table_name = $wpdb->prefix.'icl_flags';
+    if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
+        $sql = "
+            CREATE TABLE `{$table_name}` (
+            `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+            `lang_code` VARCHAR( 10 ) NOT NULL ,
+            `flag` VARCHAR( 32 ) NOT NULL ,
+            `from_template` TINYINT NOT NULL DEFAULT '0',
+            UNIQUE (`lang_code`)
+            )      
+        ";
+        $wpdb->query($sql);
+    } 
+    
+    $codes = $wpdb->get_col("SELECT code FROM {$wpdb->prefix}icl_languages");
+    foreach($codes as $code){
+        if(!$code) continue;
+        if(!file_exists(ICL_PLUGIN_PATH.'/res/flags/'.$code.'.png')){
+            $file = 'nil.png';
+        }else{
+            $file = $code.'.png';
+        }
+        $wpdb->insert($wpdb->prefix.'icl_flags', array(
+            'lang_code'=>$code,
+            'flag'=> $file
+            ));
+    }
+
        
     delete_option('icl_sitepress_version');
     add_option('icl_sitepress_version', ICL_SITEPRESS_VERSION, '', true);

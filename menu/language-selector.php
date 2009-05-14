@@ -20,7 +20,15 @@
                 <li class="icl-<?php echo $lang['code'] ?>">          
                     <a href="<?php echo $lang['translated_url']?>">
                     <?php if($this->settings['icl_lso_flags']):?>                
-                    <img class="iclflag" src="<?php echo ICL_PLUGIN_URL .'/res/flags/' . $lang['code'] . '.png' ?>" alt="<?php echo $lang['code'] ?>" width="18" height="12" />&nbsp;                    
+                    <?php 
+                        $flag = $wpdb->get_row("SELECT flag, from_template FROM {$wpdb->prefix}icl_flags WHERE lang_code='{$lang['code']}'");
+                        if($flag->from_template){
+                            $flag_url = get_bloginfo('template_directory') . '/images/flags/'.$flag->flag;
+                        }else{
+                            $flag_url = ICL_PLUGIN_URL . '/res/flags/'.$flag->flag;
+                        }
+                    ?>
+                    <img class="iclflag" src="<?php echo $flag_url ?>" alt="<?php echo $lang['code'] ?>" width="18" height="12" />&nbsp;                    
                     <?php endif; ?>
                     <?php if($this->settings['icl_lso_native_lang']):?>                
                     <?php echo $translated_language;?>                                
