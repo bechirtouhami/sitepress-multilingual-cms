@@ -3,7 +3,7 @@
         <li><a href="#" class="lang_sel_sel icl-<?php echo $w_this_lang['code'] ?>">
             <?php if($this->settings['icl_lso_flags']):?>                
             <?php 
-                $flag = $wpdb->get_row("SELECT flag, from_template FROM {$wpdb->prefix}icl_flags WHERE lang_code='{$lang['code']}'");
+                $flag = $wpdb->get_row("SELECT flag, from_template FROM {$wpdb->prefix}icl_flags WHERE lang_code='{$w_this_lang['code']}'");
                 if($flag->from_template){
                     $flag_url = get_bloginfo('template_directory') . '/images/flags/'.$flag->flag;
                 }else{
