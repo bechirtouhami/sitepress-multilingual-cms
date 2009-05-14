@@ -2,7 +2,15 @@
     <ul>
         <li><a href="#" class="lang_sel_sel icl-<?php echo $w_this_lang['code'] ?>">
             <?php if($this->settings['icl_lso_flags']):?>                
-            <img class="iclflag" src="<?php echo ICL_PLUGIN_URL .'/res/flags/' . $w_this_lang['code'] . '.png' ?>" alt="<?php echo $w_this_lang['code'] ?>" width="18" height="12" />                                
+            <?php 
+                $flag = $wpdb->get_row("SELECT flag, from_template FROM {$wpdb->prefix}icl_flags WHERE lang_code='{$lang['code']}'");
+                if($flag->from_template){
+                    $flag_url = get_bloginfo('template_directory') . '/images/flags/'.$flag->flag;
+                }else{
+                    $flag_url = ICL_PLUGIN_URL . '/res/flags/'.$flag->flag;
+                }
+            ?>
+            <img class="iclflag" src="<?php echo $flag_url ?>" alt="<?php echo $w_this_lang['code'] ?>" width="18" height="12" />                                
             &nbsp;<?php endif; ?>
             <?php if($this->settings['icl_lso_native_lang'] || (!$this->settings['icl_lso_flags'] && !$this->settings['icl_lso_native_lang'])):?>
             <?php echo $wpdb->get_var("SELECT name FROM {$wpdb->prefix}icl_languages_translations WHERE language_code='{$w_this_lang['code']}' AND display_language_code='{$w_this_lang['code']}'"); ?>

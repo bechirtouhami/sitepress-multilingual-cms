@@ -310,15 +310,23 @@ class AbsoluteLinksPlugin{
                 if(0===strpos($m,'wp-content')) continue;
                 
                 if($sitepress_settings['language_negotiation_type']==1){
+                        $m_orig = $m;
                         $exp = explode('/', $m, 2);                
                         $lang = $exp[0];
-                        $m = $exp[1];
+                        if($wpdb->get_var("SELECT code FROM {$wpdb->prefix}icl_languages WHERE code='{$lang}'")){
+                            $m = $exp[1];    
+                        }else{
+                            $m = $m_orig;
+                            unset($m_orig);
+                            $lang = false;
+                        }                        
                 }elseif($sitepress_settings['language_negotiation_type']==2){
                     //
                 }
+
                 
                 $pathinfo = '';
-                $req_uri = '/' . $m;                
+                $req_uri = '/' . $m;                                
                 $req_uri_array = explode('?', $req_uri);
                 $req_uri = $req_uri_array[0];
                 $self = '/index.php';
@@ -388,7 +396,6 @@ class AbsoluteLinksPlugin{
                 }elseif(isset($perma_query_vars['category_name'])){
                     $category_name = $perma_query_vars['category_name']; 
                 }
-                
                 if($post_name){                    
                     $name = $wpdb->escape($post_name);
                     $p = $wpdb->get_row("SELECT ID, post_type FROM {$wpdb->posts} WHERE post_name='{$name}' AND post_type IN('post','page')");
@@ -399,7 +406,7 @@ class AbsoluteLinksPlugin{
                             $qvid = 'page_id';
                         }
                         
-                        if($sitepress_settings['language_negotiation_type']==1){
+                        if($sitepress_settings['language_negotiation_type']==1 && $lang){
                             $langprefix = '/' . $lang;
                         }else{
                             $langprefix = '';
