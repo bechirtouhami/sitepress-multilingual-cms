@@ -298,7 +298,6 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     
     _icl_content_fix_image_paths_in_body($translation);
     _icl_content_fix_relative_link_paths_in_body($translation);
-    //_icl_content_make_links_sticky($translation);
     
     if($original_post_details->post_type=='post'){
         
@@ -439,6 +438,8 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     if(!$is_update){
         $wpdb->insert($wpdb->prefix.'icl_translations', array('element_type'=>'post', 'element_id'=>$new_post_id, 'trid'=> $trid, 'language_code'=>$lang_code, 'source_language_code'=>$original_post_details->language_code));
     }
+    
+    _icl_content_fix_links_to_translated_content($new_post_id, $lang_code);
     
     // update translation status
     $wpdb->update($wpdb->prefix.'icl_core_status', array('status'=>CMS_TARGET_LANGUAGE_DONE), array('rid'=>$rid, 'target'=>$sitepress->get_language_code($lang)));
@@ -779,7 +780,7 @@ function _icl_content_get_link_paths($body) {
     return $links;
 }
 
-function _icl_content_make_links_sticky(&$translation) {
+function _icl_content_make_links_sticky($post_id) {
     global $iclAbsoluteLinks;
     
     $body = $translation['body'];
@@ -793,10 +794,98 @@ function _icl_content_make_links_sticky(&$translation) {
         $icl_abs_links = $iclAbsoluteLinks;
     }
     
-    $icl_abs_links->process_post($translation['original_id']);
+    $icl_abs_links->process_post($post_id);
 
-    $translation['body'] = $body;
 }
 
+function _icl_content_fix_links_to_translated_content($new_post_id, $target_lang_code){
+    global $wpdb, $sitepress;
+    //_icl_content_make_links_sticky($new_post_id);
+    
+    $post = $wpdb->get_row("SELECT * FROM {$wpdb->posts} WHERE ID={$new_post_id}");
+
+    $base_url_parts = parse_url(get_option('home'));
+    
+    $body = $post->post_content;
+    $new_body = $body;
+    
+    $links = _icl_content_get_link_paths($body);
+    
+    $all_links_fixed = 1;
+    
+    foreach($links as $link) {
+        $path = $link[2];
+        $url_parts = parse_url($path);
+        
+        if($base_url_parts['host'] == $url_parts['host'] and
+                $base_url_parts['scheme'] == $url_parts['scheme'] and
+                isset($url_parts['query'])) {
+            $query_parts = split('&', $url_parts['query']);
+            foreach($query_parts as $query){
+                
+                // find p=id or cat=id or tag=id queries
+                
+                list($key, $value) = split('=', $query);
+                $translations = NULL;
+                if($key == 'p'){
+                    $kind = 'post';
+                } else if($key == 'cat'){
+                    $link_id = (int)$value;
+                    $trid = $sitepress->get_element_trid($link_id, 'category');
+                    if($trid !== NULL){
+                        $translations = $sitepress->get_element_translations($trid, 'category');
+                    }
+                } else if($key == 'tag'){
+                    $link_id = (int)$value;
+                    $trid = $sitepress->get_element_trid($link_id, 'tag');
+                    if($trid !== NULL){
+                        $translations = $sitepress->get_element_translations($trid, 'tag');
+                    }
+                } else {
+                    continue;
+                }
+
+                if ($sitepress->get_language_for_element($link_id, $kind) == $target_lang_code) {
+                    // link already points to the target language.
+                    continue;
+                }
+
+                $link_id = (int)$value;
+                $trid = $sitepress->get_element_trid($link_id, $kind);
+                if($trid !== NULL){
+                    $translations = $sitepress->get_element_translations($trid, $kind);
+                }
+                
+                if(isset($translations[$target_lang_code])){
+                    
+                    // use the new translated id in the link path.
+                    
+                    $translated_id = $translations[$target_lang_code]->element_id;
+                    
+                    $replace = $key . '=' . $translated_id;
+                    
+                    $new_link = str_replace($query, $replace, $link[0]);
+                    
+                    // replace the link in the body.
+                    
+                    $new_body = str_replace($link[0], $new_link, $body);
+                } else {
+                    // translation not found for this.
+                    $all_links_fixed = 0;
+                }
+            }
+        }
+        
+        
+    }
+    
+    if ($new_body != $body){
+        // save changes to the database.
+        $post = $wpdb->query("UPDATE {$wpdb->posts} SET post_content='{$new_body}' WHERE ID={$new_post_id}");
+    }
+    
+    // save the all links fixed status to the database.
+    $wpdb->query("UPDATE {$wpdb->prefix}icl_node SET links_fixed='{$all_links_fixed}' WHERE nid={$new_post_id}");
+}
 
 ?>
