@@ -632,6 +632,16 @@ class SitePress{
         return $translations;
     }
     
+    function get_element_trid($element_id, $el_type='post'){
+        global $wpdb;   
+        return $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id='{$element_id}' AND element_type='{$el_type}'");
+    }
+    
+    function get_language_for_element($element_id, $el_type='post'){
+        global $wpdb;   
+        return $wpdb->get_var("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE element_id='{$element_id}' AND element_type='{$el_type}'");
+    }
+    
     function meta_box($post){
         global $wpdb;   
         $active_languages = $this->get_active_languages();
