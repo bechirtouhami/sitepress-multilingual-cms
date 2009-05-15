@@ -39,7 +39,9 @@
         }
     }   
     
-    $active_languages = $sitepress->get_active_languages();                
+    $active_languages = $sitepress->get_active_languages();
+    $sitepress_settings = $sitepress->get_settings();
+    $language_pairs = $sitepress_settings['language_pairs'];
     $documents = icl_translation_get_documents($selected_language, $tstatus, $status, $type);
     $icl_post_statuses = array(
         'publish'   =>__('Published', 'sitepress'),
@@ -197,7 +199,11 @@
     <h3><?php echo __('Translation Options', 'sitepress') ?></h3>
     <ul id="icl-tr-opt">
         <?php foreach($active_languages as $lang): if($selected_language==$lang['code']) continue; ?>
-        <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" checked="checked" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name']); ?></li></label>
+            <?php if($language_pairs and isset($language_pairs[$selected_language][$lang['code']])): ?>
+                <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" checked="checked" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name']); ?></li></label>
+            <?php else:  ?>
+                <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" disabled="disabled" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name'] . __(' - This language has not been selected for translation by ICanLocalize', 'sitepress')); ?></li></label>
+            <?php endif; ?>
         <?php endforeach; ?>    
         <li>
             <input disabled="disabled" type="submit" class="button-primary" id="icl-tr-sel-doc" value="<?php echo __('Translate selected documents', 'sitepress') ?>"/>
