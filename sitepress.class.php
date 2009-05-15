@@ -461,14 +461,17 @@ class SitePress{
 
                 // prepare language pairs
                 $language_pairs = $this->settings['language_pairs'];
-                foreach($language_pairs as $k=>$v){
-                    $english_fr = $wpdb->get_var("SELECT english_name FROM {$wpdb->prefix}icl_languages WHERE code='{$k}' ");
-                    foreach($v as $k=>$v){
-                        $incr++;
-                        $english_to = $wpdb->get_var("SELECT english_name FROM {$wpdb->prefix}icl_languages WHERE code='{$k}' ");
-                        $lang_pairs['from_language'.$incr] = $english_fr; 
-                        $lang_pairs['to_language'.$incr] = $english_to;
-                    }                    
+                $lang_pairs = array();
+                if(isset($language_pairs)){
+                    foreach($language_pairs as $k=>$v){
+                        $english_fr = $wpdb->get_var("SELECT english_name FROM {$wpdb->prefix}icl_languages WHERE code='{$k}' ");
+                        foreach($v as $k=>$v){
+                            $incr++;
+                            $english_to = $wpdb->get_var("SELECT english_name FROM {$wpdb->prefix}icl_languages WHERE code='{$k}' ");
+                            $lang_pairs['from_language'.$incr] = $english_fr; 
+                            $lang_pairs['to_language'.$incr] = $english_to;
+                        }                    
+                    }
                 }
                 $icl_query = new ICanLocalizeQuery();
                 list($site_id, $access_key) = $icl_query->createAccount(array_merge($user,$lang_pairs));                
