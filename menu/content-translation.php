@@ -220,13 +220,38 @@
             </form>    
             
          <?php else: // if account configured ?>   
-            <form action="<?php echo $_SERVER['REQUEST_URI'] ?>#icl_create_account_form" method="post">
-            <p>
-                <?php echo __('Your ICanLocalize account is configured', 'sitepress'); ?>                
-                <?php wp_nonce_field('icl_logout') ?>    
-                <input class="button" name="logout" value="<?php echo __('Reset ICanLocalize account configuration') ?>" type="submit" />                
+
+            <form id="icl_create_account" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>#icl_create_account_form" <?php if($_POST['icl_acct_option2']):?>style="display:none"<?php endif?>>
+            <?php wp_nonce_field('icl_view_website_access_data') ?>    
+            <p class="submit">
+                <?php echo __('Your ICanLocalize account is configured.', 'sitepress')?>
+                <a href="javascript:;" onclick="jQuery('#icl_create_account').hide();jQuery('#icl_configure_account').fadeIn();"><?php echo __('Show access settings', 'sitepress') ?></a>
             </p>
-            </form>
+            </form> 
+
+            <form id="icl_configure_account" action="<?php echo $_SERVER['REQUEST_URI'] ?>#icl_create_account_form" method="post" <?php if(!$_POST['icl_acct_option2']):?>style="display:none"<?php endif?>>
+            <?php wp_nonce_field('icl_change_website_access_data') ?>
+            <?php echo __('Your ICanLocalize account access settings:', 'sitepress')?>
+            <table class="form-table icl-account-setup">
+                <tbody>
+                <tr class="form-field">
+                    <th scope="row">Website ID</th>
+                    <td><input name="access[website_id]" type="text" value="<?php echo  $_POST['access']['website_id']?$_POST['access']['website_id']:$sitepress_settings['site_id'] ?>" /></td>
+                </tr>
+                <tr class="form-field">
+                    <th scope="row">Access key</th>
+                    <td><input name="access[access_key]" type="text" value="<?php echo  $_POST['access']['access_key']?$_POST['access']['access_key']:$sitepress_settings['access_key'] ?>"/></td>
+                </tr>        
+                </tbody>
+            </table>
+            <p class="submit">
+                <input type="hidden" name="create_account" value="0" />
+                <input class="button" name="configure account" value="<?php echo __('Save') ?>" type="submit" 
+                    <?php if($icl_account_ready_errors):  ?>disabled="disabled"<?php endif; ?> />
+                <a href="javascript:;" onclick="jQuery('#icl_configure_account').hide();jQuery('#icl_create_account').fadeIn();"><?php echo __('These access settings are OK.', 'sitepress') ?></a>
+            </p>
+            </form>    
+
          <?php endif; ?>
      
     <?php else:?>

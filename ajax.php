@@ -34,6 +34,7 @@ function update_icl_account(){
         $data['description'] = get_option('blogdescription');
         $data['project_kind'] = $iclsettings['website_kind'];
         $data['pickup_type'] = $iclsettings['translation_pickup_method'];
+        $data['interview_translators'] = $iclsettings['interview_translators'];
 
         $notifications = 0;
         if ($iclsettings['icl_notify_complete']){

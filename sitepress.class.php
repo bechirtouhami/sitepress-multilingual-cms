@@ -435,6 +435,7 @@ class SitePress{
         $nonce_icl_configure_account = wp_create_nonce('icl_configure_account');
         $nonce_icl_logout = wp_create_nonce('icl_logout');
         $nonce_icl_initial_language = wp_create_nonce('icl_initial_language');
+        $nonce_icl_change_website_access = wp_create_nonce('icl_change_website_access_data');
         switch($_POST['_wpnonce']){
             case $nonce_icl_create_account:
             case $nonce_icl_configure_account:
@@ -445,7 +446,19 @@ class SitePress{
                 $user['title'] = get_option('blogname');
                 $user['description'] = get_option('blogdescription');
                 $user['interview_translators'] = $this->settings['interview_translators'];
-                            
+                 
+                $user['project_kind'] = $this->settings['website_kind'];
+                $user['pickup_type'] = $this->settings['translation_pickup_method'];
+        
+                $notifications = 0;
+                if ( $this->settings['icl_notify_complete']){
+                    $notifications += 1;
+                }
+                if ( $this->settings['icl_alert_delay']){
+                    $notifications += 2;
+                }
+                $user['notifications'] = $notifications;
+
                 // prepare language pairs
                 $language_pairs = $this->settings['language_pairs'];
                 foreach($language_pairs as $k=>$v){
@@ -484,6 +497,24 @@ class SitePress{
                 $wpdb->update($wpdb->prefix . 'icl_languages', array('active'=>'1'), array('code'=>$_POST['icl_initial_language_code']));
                 $iclsettings['existing_content_language_verified'] = 1;
                 $this->save_settings($iclsettings);                                
+                break;
+            case $nonce_icl_change_website_access:
+                $iclsettings['access_key'] = $_POST['access']['access_key'];
+                $iclsettings['site_id'] = $_POST['access']['website_id'];
+                $this->save_settings($iclsettings);
+
+                // Now try to access ICL server                
+                $icl_query = new ICanLocalizeQuery($iclsettings['site_id'], $iclsettings['access_key']);
+                $res = $icl_query->get_website_details();
+                
+                if(isset($res['attr']['id']) and $res['attr']['id'] == $iclsettings['site_id']){
+                    $_POST['icl_form_success'] = __('Your ICanLocalize account details have been confirmed and saved','sitepress');
+                } else {
+                    $message = __('The ICanLocalize access details are not correct.','sitepress') . '<br />';
+                    $message .= __('Log on to the ICanLocalize server to get your access details. ','sitepress');
+                    $message .= '<a href="'. ICL_API_ENDPOINT . '">' . ICL_API_ENDPOINT . '</a>';
+                    $_POST['icl_form_errors'] = $message;
+                }
                 break;
             
         }

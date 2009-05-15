@@ -41,6 +41,17 @@ class ICanLocalizeQuery{
             return 0;            
         }
     }
+
+    function get_website_details(){
+        $request_url = ICL_API_ENDPOINT . '/websites/' . $this->site_id . '.xml?accesskey=' . $this->access_key;
+        $res = $this->_request($request_url);
+        if(isset($res['info']['website'])){
+            return $res['info']['website'];
+        }else{
+            return array();
+        }
+    }
+    
     
     function _request($request, $method='GET', $formvars=null, $formfiles=null, $gzipped = false){
         $c = new IcanSnoopy();
