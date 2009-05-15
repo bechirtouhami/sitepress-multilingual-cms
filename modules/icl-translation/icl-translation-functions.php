@@ -822,26 +822,19 @@ function _icl_content_get_link_paths($body) {
 }
 
 function _icl_content_make_links_sticky($post_id) {
-    global $iclAbsoluteLinks;
-    
-    $body = $translation['body'];
-
+    // only need to do it if sticky links is not enabled.
     if(!$sitepress_settings['modules']['absolute-links']['enabled']){
         // create the object
-        require ICL_PLUGIN_PATH . '/modules/absolute-links/absolute-links-plugin.php';
+        include_once ICL_PLUGIN_PATH . '/modules/absolute-links/absolute-links-plugin.php';
         $icl_abs_links = new AbsoluteLinksPlugin();
-    } else {
-        // use the global object
-        $icl_abs_links = $iclAbsoluteLinks;
+        $icl_abs_links->process_post($post_id);
     }
-    
-    $icl_abs_links->process_post($post_id);
 
 }
 
 function _icl_content_fix_links_to_translated_content($new_post_id, $target_lang_code){
     global $wpdb, $sitepress;
-    //_icl_content_make_links_sticky($new_post_id);
+    _icl_content_make_links_sticky($new_post_id);
     
     $post = $wpdb->get_row("SELECT * FROM {$wpdb->posts} WHERE ID={$new_post_id}");
 
