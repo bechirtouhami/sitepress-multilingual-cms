@@ -10,6 +10,56 @@ header("Expires: Sat, 16 Aug 1980 05:00:00 GMT");
 
 if(!isset($sitepress) && class_exists('SitePress')) $sitepress = new SitePress();
 
+function update_icl_account(){
+    global $sitepress, $wpdb;
+
+    //if the account is configured - update language pairs
+    if($sitepress->icl_account_configured()){
+        $iclsettings = $sitepress->get_settings();
+        // prepare language pairs
+        $language_pairs = $iclsettings['language_pairs'];
+        foreach($language_pairs as $k=>$v){
+            $english_fr = $wpdb->get_var("SELECT english_name FROM {$wpdb->prefix}icl_languages WHERE code='{$k}' ");
+            foreach($v as $k=>$v){
+                $incr++;
+                $english_to = $wpdb->get_var("SELECT english_name FROM {$wpdb->prefix}icl_languages WHERE code='{$k}' ");
+                $lpairs['from_language'.$incr] = $english_fr; 
+                $lpairs['to_language'.$incr] = $english_to;
+            }                    
+        }
+        $data['site_id'] = $iclsettings['site_id'];                    
+        $data['accesskey'] = $iclsettings['access_key'];                    
+        $data['url'] = get_option('home');
+        $data['title'] = get_option('blogname');
+        $data['description'] = get_option('blogdescription');
+        $data['project_kind'] = $iclsettings['website_kind'];
+        $data['pickup_type'] = $iclsettings['translation_pickup_method'];
+
+        $notifications = 0;
+        if ($iclsettings['icl_notify_complete']){
+            $notifications += 1;
+        }
+        if ($iclsettings['icl_alert_delay']){
+            $notifications += 2;
+        }
+        $data['notifications'] = $notifications;
+        
+        $data = array_merge($data, $lpairs);
+        
+        require_once ICL_PLUGIN_PATH . '/lib/Snoopy.class.php';
+        require_once ICL_PLUGIN_PATH . '/lib/xml2array.php';
+        require_once ICL_PLUGIN_PATH . '/lib/icl_api.php';
+        
+        $icl_query = new ICanLocalizeQuery();
+        
+        return $icl_query->updateAccount($data);
+    } else {
+        return 0;
+    }
+
+        
+}
+
 switch($_REQUEST['icl_ajx_action']){
     case 'set_active_languages':
         $resp = array();
@@ -92,46 +142,27 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings['language_pairs'] = $lang_pairs; 
         $sitepress->save_settings($iclsettings);
         
-        //if the account is configured - update language pairs
-        if($sitepress->icl_account_configured()){
-            // prepare language pairs
-            $language_pairs = $lang_pairs;
-            foreach($language_pairs as $k=>$v){
-                $english_fr = $wpdb->get_var("SELECT english_name FROM {$wpdb->prefix}icl_languages WHERE code='{$k}' ");
-                foreach($v as $k=>$v){
-                    $incr++;
-                    $english_to = $wpdb->get_var("SELECT english_name FROM {$wpdb->prefix}icl_languages WHERE code='{$k}' ");
-                    $lpairs['from_language'.$incr] = $english_fr; 
-                    $lpairs['to_language'.$incr] = $english_to;
-                }                    
-            }
-            $iclsettings = $sitepress->get_settings();
-            $data['site_id'] = $iclsettings['site_id'];                    
-            $data['accesskey'] = $iclsettings['access_key'];                    
-            $data['url'] = get_option('home');
-            $data['title'] = get_option('blogname');
-            $data['description'] = get_option('blogdescription');
-            $data = array_merge($data, $lpairs);
-            
-            require_once ICL_PLUGIN_PATH . '/lib/Snoopy.class.php';
-            require_once ICL_PLUGIN_PATH . '/lib/xml2array.php';
-            require_once ICL_PLUGIN_PATH . '/lib/icl_api.php';
-            
-            $icl_query = new ICanLocalizeQuery();
-            
-            $ret = $icl_query->updateAccount($data);
-            if($ret){
-                echo '1| ('. __('Not updated on ICanLocalize: ') . $ret . ')';
-                break;
-            }
+        $ret = update_icl_account();
+        if($ret){
+            echo '1| ('. __('Not updated on ICanLocalize: ') . $ret . ')';
+            break;
         }
         echo "1|";
         break;
     case 'icl_more_options':
+        $iclsettings['website_kind'] = $_POST['icl_website_kind'];
         $iclsettings['interview_translators'] = $_POST['icl_interview_translators'];
         $iclsettings['translation_pickup_method'] = $_POST['icl_translation_pickup_method'];        
         $iclsettings['translated_document_status'] = $_POST['icl_translation_document_status'];        
+        $iclsettings['icl_alert_delay'] = intval($_POST['icl_alert_delay']);
+        $iclsettings['icl_notify_complete'] = intval($_POST['icl_notify_complete']);
         $sitepress->save_settings($iclsettings);
+
+        $ret = update_icl_account();
+        if($ret){
+            echo '1| ('. __('Not updated on ICanLocalize: ') . $ret . ')';
+            break;
+        }
         echo 1; 
        break;
     case 'icl_save_language_negotiation_type':

@@ -8,9 +8,9 @@
 <div class="wrap">
     <div id="icon-options-general" class="icon32"><br /></div>
     <h2><?php echo __('Setup WPML', 'sitepress') ?></h2>    
-       
+
     <?php if(count($active_languages) > 1): ?>
-        <h3><?php echo __('Translations pairs','sitepress') ?></h3>    
+        <h3><?php echo __('Translation pairs','sitepress') ?></h3>    
         <form id="icl_language_pairs_form" name="icl_language_pairs_form" action="">
         <ul id="icl_language_pairs" >    
             <?php foreach($active_languages as $lang): ?>            
@@ -33,34 +33,115 @@
         </form>
         <br clear="all" />    
         
-        <h3><?php echo __('Translation options','sitepress') ?></h3>    
         <form name="icl_more_options" action="">
-        <table class="form-table icl-account-setup">
-        <tr>        
-            <td colspan="2">
-                <label><input name="icl_interview_translators" type="radio" value="0" <?php if(!$sitepress_settings['interview_translators']): ?>checked="checked"<?php endif;?> /> <?php echo __('ICanLocalize will assign translators for this work', 'sitepress'); ?></label><br />
-                <label><input name="icl_interview_translators" type="radio" value="1" <?php if($sitepress_settings['interview_translators']): ?>checked="checked"<?php endif;?> /> <?php echo __('I want to interview my translators', 'sitepress'); ?></label>
-            </td>
-        </tr>      
-        <?php /*
-        <tr>
-            <td colspan="2">
-                <?php echo __('Translation pickup method', 'sitepress') ?><br />                
-                <label><input type="radio" name="icl_translation_pickup_method" value="1" <?php if(!$sitepress_settings['translation_pickup_method']): ?>checked="checked"<?php endif;?> /> <?php echo __('Translations will be posted back to this website via XML-RPC', 'sitepress') ?></label>
-                &nbsp;&nbsp;&nbsp;
-                <label><input type="radio" name="icl_translation_pickup_method" value="0" <?php if($sitepress_settings['translation_pickup_method']): ?>checked="checked"<?php endif;?> /> <?php echo __('Poll for translations periodically', 'sitepress') ?></label>
-            </td>
-        </tr>
-        */ ?>
-        <tr>
-            <td colspan="2">
-                <?php echo __('Translated document status', 'sitepress') ?><br />                
-                <label><input type="radio" name="icl_translation_document_status" value="0" <?php if(!$sitepress_settings['translated_document_status']): ?>checked="checked"<?php endif;?> /> <?php echo __('Draft', 'sitepress') ?></label>
-                &nbsp;&nbsp;&nbsp;
-                <label><input type="radio" name="icl_translation_document_status" value="1" <?php if($sitepress_settings['translated_document_status']): ?>checked="checked"<?php endif;?> /> <?php echo __('Same as the original document', 'sitepress') ?></label>
-            </td>
-        </tr>        
-        </table>
+
+        <h3><?php echo __('What kind of website is this?','sitepress') ?></h3>
+        <ul>
+            <li>
+                <?php echo __("ICanLocalize needs to assign professional translators to each website that we translate. Please help us by indicating what kind of website you're setting up.", 'sitepress') ?><br />
+            </li>
+            <li>
+                <ul>
+                    <li>
+                        <label><input name="icl_website_kind" type="radio" value="0" <?php if($sitepress_settings['website_kind'] == 0): ?>checked="checked"<?php endif;?> /> <?php echo __("Test site - I'm only testing out the system and don't need to have translators assigned yet.", 'sitepress'); ?></label><br />
+                    </li>
+                    <li>
+                        <label><input name="icl_website_kind" type="radio" value="1" <?php if($sitepress_settings['website_kind'] == 1): ?>checked="checked"<?php endif;?> /> <?php echo __("Development site with real contents - This site includes real contents that need to be translated, but still running on a development server.", 'sitepress'); ?></label><br />
+                    </li>
+                    <li>
+                        <label><input name="icl_website_kind" type="radio" value="2" <?php if($sitepress_settings['website_kind'] == 2): ?>checked="checked"<?php endif;?> /> <?php echo __("Production site (running on the live server) - This is the actual production site with contents that need to be translated.", 'sitepress'); ?></label><br />
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    
+        <h3><?php echo __('Translator selection','sitepress') ?></h3>
+        <?php
+            $interview_translators = $sitepress_settings['interview_translators'];
+            if(!in_array($interview_translators, array(0, 1, 2))){
+                $interview_translators = 0;
+            }
+        ?>
+        <ul>
+            <li>
+                <?php echo __("Select how you want to select translators:", 'sitepress') ?><br />
+            </li>
+            <li>
+                <ul>
+                    <li>
+                        <label><input name="icl_interview_translators" type="radio" value="0" <?php if($interview_translators == 0): ?>checked="checked"<?php endif;?> /> <?php echo __('ICanLocalize will assign translators for this work.', 'sitepress'); ?></label><br />
+                    </li>
+                    <li>
+                        <label><input name="icl_interview_translators" type="radio" value="1" <?php if($interview_translators == 1): ?>checked="checked"<?php endif;?> /> <?php echo __('I want to interview my translators.', 'sitepress'); ?></label>
+                    </li>
+                    <li>
+                        <label><input name="icl_interview_translators" type="radio" value="2" <?php if($interview_translators == 2): ?>checked="checked"<?php endif;?> /> <?php echo __('Use my own translators.', 'sitepress'); ?></label>
+                    </li>
+                </ul>
+
+            </li>
+            <li>
+                <i><?php echo __("If you want to choose translators, you will be notified by email whenever a translator applies to work on your project.", 'sitepress') ?></i><br />
+            </li>
+        </ul>
+
+        <h3><?php echo __('Translation delivery','sitepress') ?></h3>    
+        <ul>
+            <li>
+                <?php echo __("Select the desired translation delivery mehtod:", 'sitepress') ?><br />
+            </li>
+            <li>
+                <ul>
+                    <li>
+                        <label><input name="icl_delivery_method" type="radio" value="0" <?php if($sitepress_settings['interview_translators'] == 0): ?>checked="checked"<?php endif;?> /> <?php echo __('Translations will be posted back to this website via XML-RPC.', 'sitepress'); ?></label><br />
+                    </li>
+                    <li>
+                        <label><input name="icl_delivery_method" type="radio" value="1" <?php if($sitepress_settings['interview_translators'] == 1): ?>checked="checked"<?php endif;?> /> <?php echo __('This WordPressl installation will poll for translations.', 'sitepress'); ?></label><br />
+                    </li>
+                </ul>
+
+            </li>
+            <li>
+                <i><?php echo __("Choose polling if your site is inaccessible from the Internet.", 'sitepress') ?></i><br />
+            </li>
+        </ul>
+
+        <h3><?php echo __("Notification preferences:", 'sitepress') ?></h3>
+        <ul>
+            <li>
+                <ul>
+                    <li>
+                        <label><input name="icl_notify_complete" type="checkbox" value="1" <?php if($sitepress_settings['icl_notify_complete']): ?>checked="checked"<?php endif;?> /> <?php echo __('Send an email notification when translations complete.', 'sitepress'); ?></label><br />
+                    </li>
+                    <li>
+                        <label><input name="icl_alert_delay" type="checkbox" value="1" <?php if($sitepress_settings['icl_alert_delay']): ?>checked="checked"<?php endif;?> /> <?php echo __('Send an alert when translations delay for more than 4 days.', 'sitepress'); ?></label><br />
+                    </li>
+                </ul>
+
+            </li>
+            <li>
+                <i><?php echo __("ICanLocalize will send notifications messages via email of these events.", 'sitepress') ?></i><br />
+            </li>
+        </ul>
+            
+        <h3><?php echo __("Translated document status:", 'sitepress') ?></h3>
+        <ul>
+            <li>
+                <ul>
+                    <li>
+                        <label><input type="radio" name="icl_translation_document_status" value="0" <?php if(!$sitepress_settings['translated_document_status']): ?>checked="checked"<?php endif;?> /> <?php echo __('Draft', 'sitepress') ?></label>
+                    </li>
+                    <li>
+                        <label><input type="radio" name="icl_translation_document_status" value="1" <?php if($sitepress_settings['translated_document_status']): ?>checked="checked"<?php endif;?> /> <?php echo __('Same as the original document', 'sitepress') ?></label>
+                    </li>
+                </ul>
+
+            </li>
+            <li>
+                <i><?php echo __("Choose if translations should be published when received. Note: If Publish is selected, the translation will only be published if the original node is published when the translation is received.", 'sitepress') ?></i><br />
+            </li>
+        </ul>
+            
         <p class="submit">
             <input class="button" name="create account" value="<?php echo __('Save', 'sitepress') ?>" type="submit" />
             <span class="icl_ajx_response" id="icl_ajx_response2"></span>    
