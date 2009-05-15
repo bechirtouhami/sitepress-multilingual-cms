@@ -858,8 +858,8 @@ function _icl_content_fix_links_to_translated_content($new_post_id, $target_lang
         $path = $link[2];
         $url_parts = parse_url($path);
         
-        if($base_url_parts['host'] == $url_parts['host'] and
-                $base_url_parts['scheme'] == $url_parts['scheme'] and
+        if((!isset($url_parts['host']) or $base_url_parts['host'] == $url_parts['host']) and
+                (!isset($url_parts['scheme']) or $base_url_parts['scheme'] == $url_parts['scheme']) and
                 isset($url_parts['query'])) {
             $query_parts = split('&', $url_parts['query']);
             foreach($query_parts as $query){
@@ -870,18 +870,12 @@ function _icl_content_fix_links_to_translated_content($new_post_id, $target_lang
                 $translations = NULL;
                 if($key == 'p'){
                     $kind = 'post';
+                } else if($key == "page_id"){
+                    $kind = 'post';
                 } else if($key == 'cat'){
-                    $link_id = (int)$value;
-                    $trid = $sitepress->get_element_trid($link_id, 'category');
-                    if($trid !== NULL){
-                        $translations = $sitepress->get_element_translations($trid, 'category');
-                    }
+                    $kind = 'category';
                 } else if($key == 'tag'){
-                    $link_id = (int)$value;
-                    $trid = $sitepress->get_element_trid($link_id, 'tag');
-                    if($trid !== NULL){
-                        $translations = $sitepress->get_element_translations($trid, 'tag');
-                    }
+                    $kink = 'tag';
                 } else {
                     continue;
                 }
