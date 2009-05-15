@@ -98,7 +98,7 @@ function icl_sitepress_activate(){
                 $file = 'nil.png';
             }else{
                 $file = $code.'.png';
-            }
+            }            
             $wpdb->insert($wpdb->prefix.'icl_flags', array(
                 'lang_code'=>$code,
                 'flag'=> $file
@@ -106,14 +106,11 @@ function icl_sitepress_activate(){
         }
         
     } 
-    
 
        
     delete_option('icl_sitepress_version');
     add_option('icl_sitepress_version', ICL_SITEPRESS_VERSION, '', true);
     
-    
-
         
     // try to determine the blog language
     $blog_default_lang = 0;
