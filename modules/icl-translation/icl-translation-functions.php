@@ -439,6 +439,8 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
         $wpdb->insert($wpdb->prefix.'icl_translations', array('element_type'=>'post', 'element_id'=>$new_post_id, 'trid'=> $trid, 'language_code'=>$lang_code, 'source_language_code'=>$original_post_details->language_code));
     }
     
+    update_post_meta($new_post_id, '_icl_translation', 1);
+    
     _icl_content_fix_links_to_translated_content($new_post_id, $lang_code);
     
     // update translation status
