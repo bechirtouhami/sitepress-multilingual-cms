@@ -254,12 +254,9 @@ class CMSNavigation{
         if(!is_page()) return;
         global $post, $wpdb;
         
-        echo "Bruce test 1<br />";
         if($post == null) {
             return;
         }
-        global $sitepress;
-        echo $sitepress->get_current_language();
         
         $order = $this->settings['page_order']?$this->settings['page_order']:'menu_order';
         $heading_start = $this->settings['heading_start']?$this->settings['heading_start']:'<h4>';
@@ -297,6 +294,7 @@ class CMSNavigation{
         ?>
         
         <?php
+        echo $pid;
         $sub = $wpdb->get_results("
                 SELECT p1.ID, meta_value AS section FROM {$wpdb->posts} p1 
                 LEFT JOIN {$wpdb->postmeta} p2 ON p1.ID=p2.post_id AND (meta_key='_cms_nav_section' OR meta_key IS NULL)
