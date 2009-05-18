@@ -15,4 +15,23 @@ function icl_get_languages($a=''){
     $langs = $sitepress->get_ls_languages($args);
     return $langs;
 } 
+
+function icl_disp_language($native_name, $translated_name){
+    if(!$native_name && !$translated_name){
+        $ret = '';
+    }elseif($native_name && $translated_name){
+        if($native_name != $translated_name){
+            $ret = $native_name . ' (' . $translated_name . ')';
+        }else{
+            $ret = $native_name;
+        }
+    }elseif($native_name){
+        $ret = $native_name;
+    }elseif($translated_name){
+        $ret = $translated_name;
+    }
+    
+    return $ret;    
+    
+}
 ?>
