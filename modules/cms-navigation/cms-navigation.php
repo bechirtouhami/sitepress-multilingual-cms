@@ -254,9 +254,11 @@ class CMSNavigation{
         if(!is_page()) return;
         global $post, $wpdb;
         
+        echo "Bruce test 1<br />";
         if($post == null) {
             return;
         }
+        echo "Bruce test 2";
         $order = $this->settings['page_order']?$this->settings['page_order']:'menu_order';
         $heading_start = $this->settings['heading_start']?$this->settings['heading_start']:'<h4>';
         $heading_end = $this->settings['heading_end']?$this->settings['heading_end']:'</h4>';
