@@ -218,7 +218,7 @@
                             <li>
                             <label>
                                 <input type="checkbox" name="icl_lso_display_lang" value="1" <?php if($sitepress_settings['icl_lso_display_lang']):?>checked="checked"<?php endif?> />
-                                <?php echo __('Language name in display language (the language name as it\'s written in the currently displayed language', 'sitepress') ?>
+                                <?php echo __('Language name in display language (the language name as it\'s written in the currently displayed language)', 'sitepress') ?>
                             </label>                    
                             </li>                            
                         </ul>
