@@ -26,6 +26,6 @@ while($data = fgetcsv($fh)){
     $idx++;
 }
 
-$fh = fopen(ICL_PLUGIN_PATH . '/res/languages.csv.php','w') or die('Ca');
+$fh = fopen(ICL_PLUGIN_PATH . '/res/languages.csv.php','w') or die('Can\'t open file');
 fwrite($fh,'<?php $__icl_lang_names = \''.serialize($langs_names).'\'; ?>');  
 ?>
