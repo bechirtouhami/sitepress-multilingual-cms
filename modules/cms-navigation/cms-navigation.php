@@ -258,7 +258,9 @@ class CMSNavigation{
         if($post == null) {
             return;
         }
-        echo "Bruce test 2";
+        global $sitepress;
+        echo $sitepress->get_current_language();
+        
         $order = $this->settings['page_order']?$this->settings['page_order']:'menu_order';
         $heading_start = $this->settings['heading_start']?$this->settings['heading_start']:'<h4>';
         $heading_end = $this->settings['heading_end']?$this->settings['heading_end']:'</h4>';
