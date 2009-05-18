@@ -18,7 +18,7 @@ function icl_sitepress_activate(){
             UNIQUE KEY `code` (`code`),
             UNIQUE KEY `english_name` (`english_name`)
         )"; 
-        $wpdb->query($sql);
+        mysql_query($sql);
         
         //$langs_names is defined in ICL_PLUGIN_PATH . '/inc/lang-data.inc'
         foreach($langs_names as $key=>$val){
@@ -37,7 +37,7 @@ function icl_sitepress_activate(){
             `name` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
             UNIQUE(`language_code`, `display_language_code`)            
         )";
-        $wpdb->query($sql);
+        mysql_query($sql);
     }else{
         mysql_query("TRUNCATE TABLE `{$table_name}`");
     }
@@ -64,7 +64,7 @@ function icl_sitepress_activate(){
             `source_language_code` VARCHAR( 7 ),
             UNIQUE KEY `translation` (`element_type`,`element_id`,`language_code`)
         )";
-        $wpdb->query($sql);
+        mysql_query($sql);
     } 
 
     // languages locale file names
@@ -76,10 +76,11 @@ function icl_sitepress_activate(){
                 `locale` VARCHAR( 8 ) NOT NULL ,
                 UNIQUE (`code` ,`locale`)
             )";
-        $wpdb->query($sql);
+        mysql_query($sql);
     } 
     
     // flags table
+    
    $table_name = $wpdb->prefix.'icl_flags';
    if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
         $sql = "
@@ -91,8 +92,7 @@ function icl_sitepress_activate(){
             UNIQUE (`lang_code`)
             )      
         ";
-        $wpdb->query($sql);
-        
+        mysql_query($sql);
         $codes = $wpdb->get_col("SELECT code FROM {$wpdb->prefix}icl_languages");
         foreach($codes as $code){
             if(!$code || $wpdb->get_var("SELECT lang_code FROM {$wpdb->prefix}icl_flags WHERE lang_code='{$code}'")) continue;
@@ -100,15 +100,11 @@ function icl_sitepress_activate(){
                 $file = 'nil.png';
             }else{
                 $file = $code.'.png';
-            }            
-            $wpdb->insert($wpdb->prefix.'icl_flags', array(
-                'lang_code'=>$code,
-                'flag'=> $file
-                ));
+            }    
+            $wpdb->insert($wpdb->prefix.'icl_flags', array('lang_code'=>$code, 'flag'=>$file));
         }
-        
     } 
-
+    
        
     delete_option('icl_sitepress_version');
     add_option('icl_sitepress_version', ICL_SITEPRESS_VERSION, '', true);

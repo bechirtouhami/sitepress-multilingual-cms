@@ -55,7 +55,7 @@ if(0 && get_option('icl_sitepress_version') && version_compare(get_option('icl_s
             UNIQUE (`lang_code`)
             )      
         ";
-        $wpdb->query($sql);
+        mysql_query($sql);
     } 
     
     $codes = $wpdb->get_col("SELECT code FROM {$wpdb->prefix}icl_languages");
