@@ -1087,8 +1087,8 @@ class SitePress{
         }    
         
     }
-        
-    function language_selector($ret_array=false, $template_args=array()){
+    
+    function get_ls_languages($template_args=array()){
             global $wpdb, $post, $cat, $tag_id, $wp_query;
             $w_active_languages = $this->get_active_languages();
             $this_lang = $this->this_lang;
@@ -1202,14 +1202,55 @@ class SitePress{
                 }else{
                     unset($w_active_languages[$k]); 
                 }                        
+            } 
+                   
+            foreach($w_active_languages as $k=>$v){
+                $lang_code = $w_active_languages[$k]['language_code'] = $w_active_languages[$k]['code'];
+                unset($w_active_languages[$k]['code']);
+
+                if($this->settings['icl_lso_display_lang']){
+                    $native_name = $wpdb->get_var("SELECT name FROM {$wpdb->prefix}icl_languages_translations WHERE language_code='{$lang_code}' AND display_language_code='{$lang_code}'");        
+                    if(!$native_name) $native_name = $w_active_languages[$k]['english_name'];    
+                    $w_active_languages[$k]['native_name'] = $native_name;
+                }
+                unset($w_active_languages[$k]['english_name']);
+                
+                if($this->settings['icl_lso_native_lang']){
+                    $translated_name = $wpdb->get_var("SELECT name FROM {$wpdb->prefix}icl_languages_translations WHERE language_code='{$lang_code}' AND display_language_code='{$this->get_current_language()}'");        
+                    if(!$translated_name) $translated_name = $w_active_languages[$k]['english_name'];    
+                    $w_active_languages[$k]['translated_name'] = $translated_name;
+                }
+                unset($w_active_languages[$k]['display_name']);
+               
+                $w_active_languages[$k]['url'] = $w_active_languages[$k]['translated_url']; 
+                unset($w_active_languages[$k]['translated_url']);
+                                
+                if($this->settings['icl_lso_flags']){
+                    $flag = $wpdb->get_row("SELECT flag, from_template FROM {$wpdb->prefix}icl_flags WHERE lang_code='{$lang_code}'");
+                    if($flag->from_template){
+                        $flag_url = get_bloginfo('template_directory') . '/images/flags/'.$flag->flag;
+                    }else{
+                        $flag_url = ICL_PLUGIN_URL . '/res/flags/'.$flag->flag;
+                    }                    
+                    $w_active_languages[$k]['country_flag_url'] = $flag_url;
+                }
+                
+                $w_active_languages[$k]['active'] = $this->get_current_language()==$lang_code?'1':0;;
             }
-                        
-            if($ret_array){  
-                return $w_active_languages;
-            }else{
-                include ICL_PLUGIN_PATH . '/menu/language-selector.php';
-            }
+            return $w_active_languages;
             
+    }
+        
+    function language_selector(){
+        $active_languages = $this->get_ls_languages();
+        foreach($active_languages as $k=>$al){
+            if($al['active']==1){
+                $main_language = $al;
+                unset($active_languages[$k]);
+                break;
+            }
+        }
+        include ICL_PLUGIN_PATH . '/menu/language-selector.php';            
     }
     
     function get_default_categories(){
