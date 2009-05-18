@@ -85,7 +85,7 @@
                     //set_error_handler('trigger_error');
                     $response = $client->request(get_option('home') . '/' . $sample_lang['code'] .'/' . $url_glue . '____icl_validate_domain=1', 'timeout=15');
                     //restore_error_handler();
-                    if(!is_wp_error($response) && ($response['response']['code']=='200') && ($response['body'] == '<!--'.get_option('home').'-->') && false){
+                    if(!is_wp_error($response) && ($response['response']['code']=='200') && ($response['body'] == '<!--'.get_option('home').'-->')){
                         $icl_folder_url_disabled = false;
                     }else{
                         $icl_folder_url_disabled = true;
