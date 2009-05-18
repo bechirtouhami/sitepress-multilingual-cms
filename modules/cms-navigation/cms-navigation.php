@@ -294,7 +294,9 @@ class CMSNavigation{
         ?>
         
         <?php
-        echo $pid;
+
+        if (empty($pid)) return;
+
         $sub = $wpdb->get_results("
                 SELECT p1.ID, meta_value AS section FROM {$wpdb->posts} p1 
                 LEFT JOIN {$wpdb->postmeta} p2 ON p1.ID=p2.post_id AND (meta_key='_cms_nav_section' OR meta_key IS NULL)
