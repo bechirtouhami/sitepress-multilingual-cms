@@ -1490,7 +1490,7 @@ class SitePress{
     function verify_home_and_blog_pages_translations(){
         global $wpdb;
         $warn_home = $warn_posts = '';
-        if( 'page' == get_option('show_on_front')){
+        if( 'page' == get_option('show_on_front') && get_option('page_on_front')){
             $page_on_front = get_option('page_on_front');
             $page_home_trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id={$page_on_front} AND element_type='post'");
             $page_home_translations = $this->get_element_translations($page_home_trid, 'post');                 
@@ -1507,7 +1507,8 @@ class SitePress{
              $warn_home .= '<a href="page.php?action=edit&post='.$page_on_front.'">' . __('Edit this page to add translations', 'sitepress') . '</a>';
              $warn_home .= '</div>';
             }
-
+        }
+        if(get_option('page_for_posts')){
             $page_for_posts = get_option('page_for_posts');
             $page_posts_trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id={$page_for_posts} AND element_type='post'");
             $page_posts_translations = $this->get_element_translations($page_posts_trid, 'post');                 
