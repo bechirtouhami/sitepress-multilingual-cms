@@ -179,6 +179,11 @@ class SitePress{
                     if(in_array($exp[0], $active_languages)){
                         $this->this_lang = $exp[0];
                         $_SERVER['REQUEST_URI'] = preg_replace('@^'. $blog_path . '/' . $this->this_lang.'@i', $blog_path ,$_SERVER['REQUEST_URI']);
+                        // Check for special case of www.example.com/fr where the / is missing on the end
+                        $parts = parse_url($_SERVER['REQUEST_URI']);
+                        if(strlen($parts['path']) == 0){
+                            $_SERVER['REQUEST_URI'] = '/' . $_SERVER['REQUEST_URI'];
+                        }
                     }else{
                         $this->this_lang = $this->get_default_language();
                     }
