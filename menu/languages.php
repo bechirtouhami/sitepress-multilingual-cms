@@ -94,20 +94,20 @@
                     <li>
                         <label>
                             <input <?php if($icl_folder_url_disabled):?>disabled="disabled"<?php endif?> type="radio" name="icl_language_negotiation_type" value="1" <?php if($sitepress_settings['language_negotiation_type']==1):?>checked="checked"<?php endif?> />                            
-                            <?php echo sprintf(__('Different languages in directories (%s - %s, %s/%s/ - %s, etc.)', 'sitepress'), get_option('home'), $default_language['display_name'] , get_option('home'), $sample_lang['code'], $sample_lang['display_name'] ) ?>
-                            <?php if($icl_folder_url_disabled):?>
-                            <br />
-                            <span class="icl_error_text" style="display:block;margin:10px;"><?php echo __('
-                                <p>Languages per directories are disabled. This can be a result of either:</p>
-                                <ul style="list-style: circle;margin-left:18px">
-                                <li>WordPress is installed in a directory (not root) and you\'re using default links.</li>
-                                <li>URL rewriting is not enabled in your web server.</li>
-                                <li>The web server cannot write to the .htaccess file</li>
-                                </ul>
-                                <a href="http://wpml.org/support/cannot-activate-language-directories/">How to fix</a>
-                                ', 'sitepress')?></span>
-                            <?php endif; ?>
                         </label>
+                        <?php echo sprintf(__('Different languages in directories (%s - %s, %s/%s/ - %s, etc.)', 'sitepress'), get_option('home'), $default_language['display_name'] , get_option('home'), $sample_lang['code'], $sample_lang['display_name'] ) ?>
+                        <?php if($icl_folder_url_disabled):?>
+                        <br />
+                        <span class="icl_error_text" style="display:block;margin:10px;"><?php echo __('
+                            <p>Languages per directories are disabled. This can be a result of either:</p>
+                            <ul style="list-style: circle;margin-left:18px">
+                            <li>WordPress is installed in a directory (not root) and you\'re using default links.</li>
+                            <li>URL rewriting is not enabled in your web server.</li>
+                            <li>The web server cannot write to the .htaccess file</li>
+                            </ul>
+                            <a href="http://wpml.org/support/cannot-activate-language-directories/">How to fix</a>
+                            ', 'sitepress')?></span>
+                        <?php endif; ?>
                     </li>
                     <?php 
                     global $wpmu_version;
