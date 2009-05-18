@@ -1540,11 +1540,13 @@ class SitePress{
     }
     
     function get_edit_post_link($link, $id){
-        global $wpdb;
-        $lang = $wpdb->get_var("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE element_id={$id} AND element_type='post'");
-        if($lang != $this->get_default_language()){
-            $link .= '&lang=' . $lang;
-        }        
+        if($id){
+            global $wpdb;        
+            $lang = $wpdb->get_var("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE element_id={$id} AND element_type='post'");
+            if($lang != $this->get_default_language()){
+                $link .= '&lang=' . $lang;
+            }        
+        }
         return $link;
     }
     

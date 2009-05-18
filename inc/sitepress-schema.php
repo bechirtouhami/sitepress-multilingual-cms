@@ -38,16 +38,18 @@ function icl_sitepress_activate(){
             UNIQUE(`language_code`, `display_language_code`)            
         )";
         $wpdb->query($sql);
-        
-        foreach($langs_names as $lang=>$val){        
-            foreach($val['tr'] as $k=>$display){        
-                if(!trim($display)){
-                    $display = $lang;
-                }
-                $wpdb->insert($wpdb->prefix . 'icl_languages_translations', array('language_code'=>$lang_codes[$lang], 'display_language_code'=>$lang_codes[$k], 'name'=>$display));
-            }    
-        }        
+    }else{
+        mysql_query("TRUNCATE TABLE `{$table_name}`");
     }
+    foreach($langs_names as $lang=>$val){        
+        foreach($val['tr'] as $k=>$display){        
+            if(!trim($display)){
+                $display = $lang;
+            }
+            $wpdb->insert($wpdb->prefix . 'icl_languages_translations', array('language_code'=>$lang_codes[$lang], 'display_language_code'=>$lang_codes[$k], 'name'=>$display));
+        }    
+    }        
+    
 
     // translations
     $table_name = $wpdb->prefix.'icl_translations';
