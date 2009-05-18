@@ -2,7 +2,7 @@
 // creates a serialized array from the languages.csv file and stores it into the 'res' folder
 // diabled
 
-//return;
+return;
 
 //
 $fh = fopen(ICL_PLUGIN_PATH . '/res/languages.csv', 'r');
