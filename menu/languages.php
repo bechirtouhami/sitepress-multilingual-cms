@@ -85,7 +85,7 @@
                     //set_error_handler('trigger_error');
                     $response = $client->request(get_option('home') . '/' . $sample_lang['code'] .'/' . $url_glue . '____icl_validate_domain=1', 'timeout=15');
                     //restore_error_handler();
-                    if(!is_wp_error($response) && ($response['response']['code']=='200') && ($response['body'] == '<!--'.get_option('home').'-->')){
+                    if(!is_wp_error($response) && ($response['response']['code']=='200') && ($response['body'] == '<!--'.get_option('home').'-->') && false){
                         $icl_folder_url_disabled = false;
                     }else{
                         $icl_folder_url_disabled = true;
@@ -98,9 +98,14 @@
                             <?php if($icl_folder_url_disabled):?>
                             <br />
                             <span class="icl_error_text" style="display:block;margin:10px;"><?php echo __('
-                            Languages per directories are disabled. This can be a result of either:<ol>
+                                <p>Languages per directories are disabled. This can be a result of either:</p>
+                                <ul style="list-style: circle;margin-left:18px">
                                 <li>WordPress is installed in a directory (not root) and you\'re using default links.</li>
-                                <li>URL rewriting is not enabled in your web server.</li></ol>', 'sitepress')?></span>
+                                <li>URL rewriting is not enabled in your web server.</li>
+                                <li>The web server cannot write to the .htaccess file</li>
+                                </ul>
+                                <a href="http://wpml.org/support/cannot-activate-language-directories/">How to fix</a>
+                                ', 'sitepress')?></span>
                             <?php endif; ?>
                         </label>
                     </li>
