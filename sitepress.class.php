@@ -172,7 +172,9 @@ class SitePress{
             $blog_path = $url_parts['path']?$url_parts['path']:'';            
             switch($this->settings['language_negotiation_type']){
                 case 1:
-                    $path  = str_replace($home,'',$request);                
+                    $path  = str_replace($home,'',$request);
+                    $parts = explode('?', $path);
+                    $path = $parts[0];
                     $exp = explode('/',trim($path,'/'));                                        
                     if(in_array($exp[0], $active_languages)){
                         $this->this_lang = $exp[0];
