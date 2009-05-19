@@ -523,7 +523,7 @@ function icl_poll_for_translations(){
 //icl_poll_for_translations();
 
 function icl_add_custom_xmlrpc_methods($methods){
-    $methods['icl.setTranslationStatus'] = 'setTranslationStatus';
+    $methods['icanlocalize.set_translation_status'] = 'setTranslationStatus';
     return $methods;
 }
 
@@ -532,9 +532,10 @@ function setTranslationStatus($args){
         $signature   = $args[0];
         $site_id     = $args[1];
         $request_id  = $args[2];
-        $language    = $args[3];
-        $status      = $args[4];
-        $message     = $args[5];  
+        $original_language    = $args[3];
+        $language    = $args[4];
+        $status      = $args[5];
+        $message     = $args[6];  
         
         //check signature
         $signature_chk = sha1($sitepress_settings['access_key'].$sitepress_settings['site_id'].$request_id.$language.$status.$message);
