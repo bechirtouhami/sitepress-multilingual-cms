@@ -47,6 +47,8 @@ The sidebar element is widget ready. You can include it in the theme or drop as 
 
 For integration instruction in the theme, visit the [navigation usage](http://wpml.org/home/getting-started-guide/site-navigation/) page.
 
+To style the drop down menu, you can use the [Drop down menu customization tool](http://wpml.org/support/drop-down-menu-customization/).
+
 = Sticky links =
 
 WPML can turn ordinary internal links into unbreakable sticky links. Sticky links track the URL of the page and update when the target page updates.
@@ -102,3 +104,14 @@ These constants can be used to create language dependent design for your site.
 	* Add warning about disabled JavaScript (which is required for the plugin to work).
 	* Added debug information for hunting down stubborn bugs.
 	* Localized the admin section of the plugin to Spanish.
+* Version 0.9.9 - bug fixes and custom language switcher
+	* Fixed problems with WordPress Gallery.
+	* Fixed error when using a static home page that's not translated (now, returns the 404 page).
+	* Fixed bug that prevented sticky links to work for pages.
+	* Fixed a CSS error in language-selector.css.
+	* Fixed a bug which created the RSS feed to have invalid XML (be an invalid feed).
+	* Fixed a bug which caused the default language to reset after plugin upgrade.
+	* Added WP-Http class for compatibility with WP 2.6.
+	* Added country flags as an option for the language switcher.
+	* Added a function that returns the languages information for [building custom language switchers](http://wpml.org/home/getting-started-guide/language-setup/custom-language-switcher/).
+	* Added the language name as the class for each entry in the languages selector, so that they can be styled individually.
