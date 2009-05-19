@@ -75,7 +75,7 @@ if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQ
         require ICL_PLUGIN_PATH . '/modules/icl-translation/icl-translation.php';
     }
 }
-
+       
 // activation hook
 register_activation_hook( __FILE__, 'icl_sitepress_activate' );
 register_deactivation_hook(__FILE__, 'icl_sitepress_deactivate');

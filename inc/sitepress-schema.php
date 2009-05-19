@@ -22,6 +22,7 @@ function icl_sitepress_activate(){
         
         //$langs_names is defined in ICL_PLUGIN_PATH . '/inc/lang-data.inc'
         foreach($langs_names as $key=>$val){
+            if(strpos($key,'Norwegian Bokm')===0){ $key = 'Norwegian Bokmål'; $lang_codes[$key] = 'nb';} // exception for norwegian
             $wpdb->insert($wpdb->prefix . 'icl_languages', array('english_name'=>$key, 'code'=>$lang_codes[$key], 'major'=>$val['major']));
         }        
     }
@@ -42,6 +43,7 @@ function icl_sitepress_activate(){
         mysql_query("TRUNCATE TABLE `{$table_name}`");
     }
     foreach($langs_names as $lang=>$val){        
+        if(strpos($lang,'Norwegian Bokm')===0){ $lang = 'Norwegian Bokmål'; $lang_codes[$lang] = 'nb';}
         foreach($val['tr'] as $k=>$display){        
             if(!trim($display)){
                 $display = $lang;

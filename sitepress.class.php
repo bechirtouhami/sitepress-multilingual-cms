@@ -665,8 +665,9 @@ class SitePress{
     
     function posts_join_filter($join){
         global $wpdb, $pagenow;
+        
         //exceptions
-        if($pagenow=='upload.php' || $pagenow=='media-upload.php'){
+        if($pagenow=='upload.php' || $pagenow=='media-upload.php' || is_attachment()){
             return $join;    
         }
         
