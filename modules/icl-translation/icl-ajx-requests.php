@@ -7,7 +7,7 @@ switch($_REQUEST['icl_ajx_req']){
         $rid = $_REQUEST['rid'];
         $details = $iclq->cms_request_translations($rid);
         $upload = $details['cms_uploads']['cms_upload'];
-        $target_languages = $details['cms_target_languages'];
+        $target_languages = $details['cms_target_languages']['cms_target_language'];
         ?>
         <table class="widefat fixed">
         <thead>

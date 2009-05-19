@@ -671,13 +671,10 @@ function icl_display_post_translation_status($post_id){
 
 function icl_decode_translation_status_id($status){
     switch($status){
-        case CMS_REQUEST_WAITING_FOR_PROJECT_CREATION: $st = __('Waiting for project creation','sitepress');break;
-        case CMS_REQUEST_PROJECT_CREATION_REQUESTED: $st = __('Project creation requested','sitepress');break;
-        case CMS_REQUEST_CREATING_PROJECT: $st = __('Creating project','sitepress');break;
-        case CMS_REQUEST_RELEASED_TO_TRANSLATORS: $st = __('Released to translators','sitepress');break;
-        case CMS_REQUEST_TRANSLATED: $st = __('Translated on server','sitepress');break;
-        case CMS_REQUEST_WAITING_FOR_PROJECT_CREATION: $st = __('Translation in progress','sitepress');break;
-        case CMS_REQUEST_DONE: $st = __('Translation complete','sitepress');break;
+        case CMS_TARGET_LANGUAGE_CREATED: $st = __('Waiting for translator','sitepress');break;
+        case CMS_TARGET_LANGUAGE_ASSIGNED: $st = __('In progress','sitepress');break; 
+        case CMS_TARGET_LANGUAGE_TRANSLATED: $st = __('Translation received','sitepress');break;
+        case CMS_TARGET_LANGUAGE_DONE: $st = __('Translation complete','sitepress');break;
         case CMS_REQUEST_FAILED: $st = __('Request failed','sitepress');break;
         default: $st = __('Not translated','sitepress');
     }
