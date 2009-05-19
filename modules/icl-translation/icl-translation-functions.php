@@ -535,7 +535,7 @@ function icl_add_custom_xmlrpc_methods($methods){
  */
 
 function setTranslationStatus($args){
-        global $sitepress_settings, $sitepress;        
+        global $sitepress_settings, $sitepress, $wpdb;        
         $signature   = $args[0];
         $site_id     = $args[1];
         $request_id  = $args[2];
