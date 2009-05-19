@@ -162,7 +162,7 @@ class CMSNavigation{
         }                     
         $pages = $wpdb->get_col("
             SELECT p.ID FROM {$wpdb->posts} p
-                LEFT JOIN {$wpdb->prefix}icl_translations tr ON p.ID = tr.element_id AND element_type='post' 
+                JOIN {$wpdb->prefix}icl_translations tr ON p.ID = tr.element_id AND element_type='post' 
             WHERE post_type='page' AND post_status='publish' AND post_parent=0 AND p.ID NOT IN ({$excluded_pages})  AND (tr.language_code = '{$sitepress->get_current_language()}' OR tr.language_code IS NULL)
             ORDER BY {$order}");   
         if($pages){   
