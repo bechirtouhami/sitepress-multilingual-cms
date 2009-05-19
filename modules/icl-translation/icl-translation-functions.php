@@ -526,9 +526,16 @@ function icl_add_custom_xmlrpc_methods($methods){
     $methods['icanlocalize.set_translation_status'] = 'setTranslationStatus';
     return $methods;
 }
+/*
+ * 0 – Unknown error
+ * 1 – success
+ * 2 – Signature failed
+ * 3 – website_id incorrect
+ * 4 – cms_request_id not found
+ */
 
 function setTranslationStatus($args){
-        global $sitepress_settings;        
+        global $sitepress_settings, $sitepress;        
         $signature   = $args[0];
         $site_id     = $args[1];
         $request_id  = $args[2];
@@ -540,14 +547,30 @@ function setTranslationStatus($args){
         //check signature
         $signature_chk = sha1($sitepress_settings['access_key'].$sitepress_settings['site_id'].$request_id.$language.$status.$message);
         if($signature_chk != $signature){
-            return array('err_code'=>1, 'err_str'=>'Signature mismatch');
+            return 2;
         }
-                                                                         
+        
+        if ($site_id != $sitepress_settings['site_id']) {
+            return 3;                                                             
+        }
+
+        $lang_code = $sitepress->get_language_code($language);
+        $cms_request_info = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}icl_core_status WHERE rid={$request_id} AND target='{$lang_code}'");
+        
+        if (empty($cms_request_info)){
+            return 4;
+        }
+        
         if ( !get_option( 'enable_xmlrpc' ) ) {
-            return array('err_code'=>2, 'err_str'=>'XML-RPC services disabled');
+            return 0;
         }
                
-        return icl_process_translated_document($request_id, $language);
+        if (icl_process_translated_document($request_id, $language) === true){
+            return 1;
+        } else {
+            return 0;
+        }
+        
 
 } 
 
