@@ -76,7 +76,7 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
     }
     
     $timestamp = date('Y-m-d H:i:s');
-    $md5 = md5($post->post_title.';'.$post->post_content.';'.join(',',(array)$post_tags).';'.join(',',(array)$post_categories));    
+    $md5 = icl_translation_calculate_md5($post_id);    
     
     $data = array(
         'url'=>$post_url, 
@@ -178,6 +178,17 @@ function icl_translation_save_md5($p){
         $post_id = $p;
     }
     
+    $md5 = icl_translation_calculate_md5($post_id);    
+    
+    if($wpdb->get_var("SELECT nid FROM {$wpdb->prefix}icl_node WHERE nid='{$post_id}'")){
+        $wpdb->update($wpdb->prefix . 'icl_node', array('md5'=>$md5), array('nid'=>$post_id));
+    }else{
+        $wpdb->insert($wpdb->prefix . 'icl_node', array('nid'=>$post_id, 'md5'=>$md5));
+    }
+    
+}
+
+function icl_translation_calculate_md5($post_id){
     $post = get_post($post_id);
     $post_type = $_POST['post_type'];
     
@@ -197,13 +208,8 @@ function icl_translation_save_md5($p){
     }
     
     $md5 = md5($post->post_title.';'.$post->post_content.';'.join(',',(array)$post_tags).';'.join(',',(array)$post_categories));    
-    
-    if($wpdb->get_var("SELECT nid FROM {$wpdb->prefix}icl_node WHERE nid='{$post_id}'")){
-        $wpdb->update($wpdb->prefix . 'icl_node', array('md5'=>$md5), array('nid'=>$post_id));
-    }else{
-        $wpdb->insert($wpdb->prefix . 'icl_node', array('nid'=>$post_id, 'md5'=>$md5));
-    }
-    
+
+    return $md5;
 }
 
 function icl_translation_get_documents($lang, $tstatus, $status=false, $type=false){
