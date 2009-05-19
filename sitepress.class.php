@@ -903,7 +903,7 @@ class SitePress{
     }    
     
     function exclude_other_terms($exclusions, $args){                
-        global $wpdb, $pagenow;
+        global $wpdb, $pagenow;        
         if($args['type']=='category' || in_array($pagenow, array('post-new.php','post.php'))){
             $element_type = $taxonomy = 'category';
         }else{
@@ -913,8 +913,11 @@ class SitePress{
         if($_GET['lang']=='all'){
             return $exclusions;
         }
-        if($this->this_lang != $this->get_default_language()){
-            $this_lang = $wpdb->escape($this->this_lang);
+        if(isset($_GET['cat_ID']) && $_GET['cat_ID']){
+            $element_lang_details = $this->get_element_language_details($wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id='{$_GET['cat_ID']}' AND taxonomy='category'"),'category');            
+            $this_lang = $element_lang_details->language_code;
+        }elseif($this->this_lang != $this->get_default_language()){
+            $this_lang = $this->get_current_language();
         }elseif(isset($_GET['post'])){
             $element_lang_details = $this->get_element_language_details($_GET['post'],'post');
             $this_lang = $element_lang_details->language_code;

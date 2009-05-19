@@ -134,7 +134,7 @@ class CMSNavigation{
     }    
     
     function cms_navigation_menu_nav(){
-        global $sitepress, $wpdb, $post, $cms_nav_ie_ver, $wp_query;
+        global $sitepress, $sitepress_settings, $wpdb, $post, $cms_nav_ie_ver, $wp_query;
         
         $order = $this->settings['page_order']?$this->settings['page_order']:'menu_order';
         $show_cat_menu = $this->settings['show_cat_menu']?$this->settings['show_cat_menu']:false;
@@ -159,12 +159,19 @@ class CMSNavigation{
         
         if(!$post->ancestors){
             $post->ancestors = array();
-        }                     
-        $pages = $wpdb->get_col("
-            SELECT p.ID FROM {$wpdb->posts} p
-                JOIN {$wpdb->prefix}icl_translations tr ON p.ID = tr.element_id AND element_type='post' 
-            WHERE post_type='page' AND post_status='publish' AND post_parent=0 AND p.ID NOT IN ({$excluded_pages})  AND (tr.language_code = '{$sitepress->get_current_language()}' OR tr.language_code IS NULL)
-            ORDER BY {$order}");   
+        }   
+        if($sitepress_settings['existing_content_language_verified']){   // user has initialized 
+            $pages = $wpdb->get_col("
+                SELECT p.ID FROM {$wpdb->posts} p
+                    JOIN {$wpdb->prefix}icl_translations tr ON p.ID = tr.element_id AND element_type='post' 
+                WHERE post_type='page' AND post_status='publish' AND post_parent=0 AND p.ID NOT IN ({$excluded_pages})  AND tr.language_code = '{$sitepress->get_current_language()}'
+                ORDER BY {$order}");   
+        }else{
+            $pages = $wpdb->get_col("
+                SELECT p.ID FROM {$wpdb->posts} p                    
+                WHERE post_type='page' AND post_status='publish' AND post_parent=0 AND p.ID NOT IN ({$excluded_pages})  
+                ORDER BY {$order}");   
+        }
         if($pages){   
             ?><div id="menu-wrap"><?php
             ?><ul id="cms-nav-top-menu"><?php
