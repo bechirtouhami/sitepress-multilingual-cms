@@ -36,7 +36,7 @@ if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepr
     
 }
 
-if(0 && get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '0.9.9', '<')){
+if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '0.9.9', '<')){
     $iclsettings = get_option('icl_sitepress_settings');
     $iclsettings['icl_lso_flags'] = 0;
     $iclsettings['icl_lso_native_lang'] = 1;

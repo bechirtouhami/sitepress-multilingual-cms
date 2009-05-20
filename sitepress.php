@@ -5,7 +5,7 @@ Plugin URI: http://wpml.org/
 Description: WPML Multilingual CMS
 Author: ICanLocalize
 Author URI: http://wpml.org/
-Version: 0.9.8
+Version: 0.9.9
 */
 
 /*
@@ -27,7 +27,7 @@ Version: 0.9.8
                           
                           
 if(defined('ICL_SITEPRESS_VERSION')) return;
-define('ICL_SITEPRESS_VERSION', '0.9.8');
+define('ICL_SITEPRESS_VERSION', '0.9.9');
 define('ICL_PLUGIN_PATH', dirname(__FILE__));
 define('ICL_PLUGIN_URL', rtrim(get_option('siteurl'),'/') . '/wp-content/' . basename(dirname(dirname(__FILE__))) . '/' . basename(dirname(__FILE__)) );
 
@@ -71,9 +71,9 @@ if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQ
     }
 
     // Content Translation
-    if(!empty($sitepress_settings['language_pairs'])){
-        require ICL_PLUGIN_PATH . '/modules/icl-translation/icl-translation.php';
-    }
+    //if(!empty($sitepress_settings['language_pairs'])){
+    //    require ICL_PLUGIN_PATH . '/modules/icl-translation/icl-translation.php';
+    //}
 }
        
 // activation hook
