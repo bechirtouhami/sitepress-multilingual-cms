@@ -39,7 +39,7 @@ switch($_REQUEST['icl_ajx_req']){
         <?php endforeach; ?>
         <tr>                   
         <td scope="col" colspan="3">
-            <a href="<?php echo ICL_API_ENDPOINT ?>/websites/<?php echo $iclq->setting('site_id')?>/cms_requests/<?php echo $rid ?>/"><?php printf(__('Project page on %s'), 'ICanLocalize.com') ?></a><br />
+            <a href="<?php echo ICL_API_ENDPOINT ?>/websites/<?php echo $iclq->setting('site_id')?>/cms_requests/<?php echo $rid ?>"><?php printf(__('Project page on %s'), 'ICanLocalize.com') ?></a><br />
             <?php printf(__('Sent for translation: %s'), date('m/d/Y H:i', $details['attr']['created_at'])) ?><br />
             <?php printf(__('Approximate word count: %s'), number_format($app_wc)) ?><br />
         </td>
