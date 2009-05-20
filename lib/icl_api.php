@@ -196,7 +196,11 @@ class ICanLocalizeQuery{
                 $exp = explode(',',$c['translations']['translation']['attr']['data']);
                 $arr = array();
                 foreach($exp as $e){
-                    $arr[] = base64_decode(html_entity_decode($e));
+                    if($c['attr']['format'] == 'csv_base64'){
+                        $arr[] = base64_decode(html_entity_decode($e));
+                    } else {
+                        $arr[] = html_entity_decode($e);
+                    }
                 }
                 $c['translations']['translation']['attr']['data'] = $arr;
             }
