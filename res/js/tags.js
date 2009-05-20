@@ -7,5 +7,30 @@ jQuery(document).ready(function(){
         jQuery('#edittag table[class="form-table"] tr:last td:last').html(jQuery('#icl_tag_menu').html());        
     }    
     jQuery('#icl_tag_menu').remove();
+       
+   jQuery('select[name="icl_tag_language"]').change(function(){
+        var icl_subsubsub_save = jQuery('#icl_subsubsub').html();
+        var lang = jQuery(this).val();
+        var ajx = location.href.replace(/#(.*)$/,'');
+        ajx = ajx.replace(/pagenum=([0-9]+)/,'');
+        if(-1 == location.href.indexOf('?')){
+            url_glue='?';
+        }else{
+            url_glue='&';
+        }   
+        jQuery('#posts-filter').parent().load(ajx+url_glue+'lang='+lang + ' #posts-filter', {}, function(resp){
+            strt = resp.indexOf('<span id="icl_subsubsub">');
+            endd = resp.indexOf('</span>\'', strt);
+            lsubsub = resp.substr(strt,endd-strt+7);
+            jQuery('table.widefat').before(lsubsub);            
+                                                                         
+            tag_start = resp.indexOf('<div class="tagcloud">');
+            tag_end  = resp.indexOf('</div>', tag_start);            
+            tag_cloud = resp.substr(tag_start+22,tag_end-tag_start-22);
+            jQuery('.tagcloud').html(tag_cloud);
+        });        
+        
+   })     
+    
         
 });

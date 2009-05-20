@@ -215,7 +215,7 @@ class SitePress{
         
         // filter some queries but only on the categories and tags pages for now
         global $pagenow;
-        if($pagenow=='categories.php' || $pagenow=='tags.php'){
+        if($pagenow=='categories.php' || $pagenow=='edit-tags.php'){
             add_filter('query', array($this, 'filter_queries'));
         }
         
@@ -1547,11 +1547,16 @@ class SitePress{
     
     function filter_queries($sql){                                                                               
         global $wpdb;
-        if(preg_match('#^SELECT COUNT\(\*\) FROM '.$wpdb->term_taxonomy.' WHERE taxonomy = \'(category|tag)\' $#',$sql,$matches)){
+        if(preg_match('#^SELECT COUNT\(\*\) FROM '.$wpdb->term_taxonomy.' WHERE taxonomy = \'(category|post_tag)\' $#',$sql,$matches)){
+            if($matches[1]=='post_tag'){
+                $element_type='tag';
+            }else{
+                $element_type=$matches[1];
+            }
             $sql = "
                 SELECT COUNT(*) FROM {$wpdb->term_taxonomy} tx 
                     JOIN {$wpdb->prefix}icl_translations tr ON tx.term_taxonomy_id=tr.element_id  
-                WHERE tx.taxonomy='{$matches[1]}' AND tr.element_type='{$matches[1]}' AND tr.language_code='".$this->get_current_language()."'";
+                WHERE tx.taxonomy='{$matches[1]}' AND tr.element_type='{$element_type}' AND tr.language_code='".$this->get_current_language()."'";
         }
         return $sql;
     }

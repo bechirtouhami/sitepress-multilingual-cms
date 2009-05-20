@@ -11,11 +11,23 @@ jQuery(document).ready(function(){
    jQuery('select[name="icl_category_language"]').change(function(){
         var lang = jQuery(this).val();
         var ajx = location.href.replace(/#(.*)$/,'');
+        ajx = ajx.replace(/pagenum=([0-9]+)/,'');
         if(-1 == location.href.indexOf('?')){
             url_glue='?';
         }else{
             url_glue='&';
         }   
-        jQuery('#posts-filter').parent().load(ajx+url_glue+'lang='+lang + ' #posts-filter');        
+        jQuery('#posts-filter').parent().load(ajx+url_glue+'lang='+lang + ' #posts-filter', {}, function(resp){
+            strt = resp.indexOf('<span id="icl_subsubsub">');
+            endd = resp.indexOf('</span>\'', strt);
+            lsubsub = resp.substr(strt,endd-strt+7);
+            jQuery('table.widefat').before(lsubsub);            
+                         
+            start_sel = resp.indexOf('<select name=\'category_parent\' id=\'category_parent\' class=\'postform\' >');
+            end_sel = resp.indexOf('</select>', start_sel);
+            sel_sel = resp.substr(start_sel+70, end_sel-start_sel-70);            
+            jQuery('#category_parent').html(sel_sel)
+            
+        });        
    })     
 });
