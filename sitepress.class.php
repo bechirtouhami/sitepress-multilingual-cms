@@ -203,6 +203,14 @@ class SitePress{
             }
         }
         
+        //reorder active language to put 'this_lang' in front
+        foreach($this->active_languages as $k=>$al){
+            if($al['code']==$this->this_lang){                
+                unset($this->active_languages[$k]);
+                $this->active_languages = array_merge(array($al), $this->active_languages);
+            }
+        }
+        
         add_filter('get_pagenum_link', array($this,'get_pagenum_link_filter'));
         
         require ICL_PLUGIN_PATH . '/inc/template-constants.php';        
