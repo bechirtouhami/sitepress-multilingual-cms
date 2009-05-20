@@ -411,6 +411,10 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     if($post_id){
         $is_update = true;
         $postarr['ID'] = $_POST['post_ID'] = $post_id;
+        $postarr['post_status'] = $wpdb->get_var("
+                    SELECT post_status
+                    FROM {$wpdb->posts} 
+                    WHERE ID = '{$post_id}'");
     }else{
         $is_update = false;
     } 
