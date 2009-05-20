@@ -213,6 +213,13 @@ class SitePress{
         
         add_filter('get_pagenum_link', array($this,'get_pagenum_link_filter'));
         
+        // filter some queries but only on the categories and tags pages for now
+        global $pagenow;
+        if($pagenow=='categories.php' || $pagenow=='tags.php'){
+            add_filter('query', array($this, 'filter_queries'));
+        }
+        
+        
         require ICL_PLUGIN_PATH . '/inc/template-constants.php';        
     }
                 
@@ -1536,6 +1543,17 @@ class SitePress{
         
     function noscript_notice(){
         ?><noscript><div class="error"><?php echo __('WPML admin screens require JavaScript in order to display. JavaScript is currently off in your browser.', 'sitepress') ?></div></noscript><?php
+    }
+    
+    function filter_queries($sql){                                                                               
+        global $wpdb;
+        if(preg_match('#^SELECT COUNT\(\*\) FROM '.$wpdb->term_taxonomy.' WHERE taxonomy = \'(category|tag)\' $#',$sql,$matches)){
+            $sql = "
+                SELECT COUNT(*) FROM {$wpdb->term_taxonomy} tx 
+                    JOIN {$wpdb->prefix}icl_translations tr ON tx.term_taxonomy_id=tr.element_id  
+                WHERE tx.taxonomy='{$matches[1]}' AND tr.element_type='{$matches[1]}' AND tr.language_code='".$this->get_current_language()."'";
+        }
+        return $sql;
     }
     
 }  
