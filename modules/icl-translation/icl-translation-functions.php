@@ -16,8 +16,19 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
     }
     
     $previous_rid = $wpdb->get_var("SELECT rid FROM {$wpdb->prefix}icl_content_status WHERE nid={$post_id}");    
-    if(is_null($previous_rid)) $previous_rid = false;  
+    if(is_null($previous_rid)){
+        $previous_rid = false;
+    } else {
+        // Make sure the previous request is complete.
+        $status = $wpdb->get_col("SELECT status FROM {$wpdb->prefix}icl_core_status WHERE rid={$previous_rid}");
+        foreach($status as $state){
+            if($state != CMS_TARGET_LANGUAGE_DONE){
+                return false;
+            }
+        }
+        
       
+    }
     $iclq = new ICanLocalizeQuery($sitepress_settings['site_id'], $sitepress_settings['access_key']);
     
     $post_url       = get_permalink($post_id);
