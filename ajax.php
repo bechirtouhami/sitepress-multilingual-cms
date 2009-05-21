@@ -31,7 +31,8 @@ function update_icl_account(){
             }                    
         }
         $data['site_id'] = $iclsettings['site_id'];                    
-        $data['accesskey'] = $iclsettings['access_key'];                    
+        $data['accesskey'] = $iclsettings['access_key'];
+        $data['create_account'] = 0;
         $data['url'] = get_option('home');
         $data['title'] = get_option('blogname');
         $data['description'] = get_option('blogdescription');
@@ -156,7 +157,7 @@ switch($_REQUEST['icl_ajx_action']){
     case 'icl_more_options':
         $iclsettings['website_kind'] = $_POST['icl_website_kind'];
         $iclsettings['interview_translators'] = $_POST['icl_interview_translators'];
-        $iclsettings['translation_pickup_method'] = $_POST['icl_translation_pickup_method'];        
+        $iclsettings['translation_pickup_method'] = $_POST['icl_delivery_method'];        
         $iclsettings['translated_document_status'] = $_POST['icl_translation_document_status'];        
         $iclsettings['icl_alert_delay'] = intval($_POST['icl_alert_delay']);
         $iclsettings['icl_notify_complete'] = intval($_POST['icl_notify_complete']);
