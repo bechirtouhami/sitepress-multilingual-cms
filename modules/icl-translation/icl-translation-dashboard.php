@@ -61,7 +61,7 @@
     <form method="post" name="translation-dashboard-filter" action="tools.php?page=sitepress-multilingual-cms/modules/icl-translation/icl-translation-dashboard.php">
     <table class="form-table">
         <tr valign="top">
-            <th scope="row"><strong><?php echo __('Show documents in:') ?></strong></th>
+            <th scope="row"><strong><?php echo __('Show documents in:', 'sitepress') ?></strong></th>
             <td>
                 <?php foreach($active_languages as $lang): ?>
                     <label><input type="radio" name="filter[lang]" value="<?php echo $lang['code'] ?>" <?php if($selected_language==$lang['code']): ?>checked="checked"<?php endif;?>/><?php echo $lang['display_name'] ?></label>&nbsp;&nbsp;
@@ -69,14 +69,14 @@
             </td>
         </tr>
         <tr valign="top">
-            <th scope="row"><strong><?php echo __('Translation status:') ?></strong>    </th>
+            <th scope="row"><strong><?php echo __('Translation status:', 'sitepress') ?></strong>    </th>
             <td coslpan="2">
                 <label><input type="radio" name="filter[tstatus]" value="all" <?php if($tstatus=='all'):?>checked="checked"<?php endif;?>/><?php echo __('All documents', 'sitepress') ?></label>&nbsp;&nbsp;    
                 <label><input type="radio" name="filter[tstatus]" value="not" <?php if($tstatus=='not'):?>checked="checked"<?php endif;?>/><?php echo __('Not translated or needs updating', 'sitepress') ?></label>
             </td>
         </tr>
         <tr valign="top">
-            <th scope="row"><strong><?php echo __('Filter furter by:') ?></strong>    </th>
+            <th scope="row"><strong><?php echo __('Filter furter by:', 'sitepress') ?></strong>    </th>
             <td coslpan="2">
                 <label><input type="checkbox" name="filter[status_on]" <?php if(isset($icl_translation_filter['status_on'])):?>checked="checked"<?php endif?>>&nbsp;
                     Status:</label> 
@@ -174,7 +174,7 @@
     </table>
     
     <div class="tablenav">
-    <div style="float:left;margin-top:4px";><strong><?php echo __('Translation Cost Estimate:', 'sitepress') ?></strong> <?php printf(__('%s words, %s USD (at 0.07 USD/word)'), '<span id="icl-estimated-words-count">0</span>', '<strong><span id="icl-estimated-quote">0.00</span></strong>')?></div>
+    <div style="float:left;margin-top:4px";><strong><?php echo __('Translation Cost Estimate:', 'sitepress') ?></strong> <?php printf(__('%s words, %s USD (at 0.07 USD/word)', 'sitepress'), '<span id="icl-estimated-words-count">0</span>', '<strong><span id="icl-estimated-quote">0.00</span></strong>')?></div>
     <?php                 
         $page_links = paginate_links( array(
             'base' => add_query_arg('paged', '%#%' ),
@@ -207,7 +207,7 @@
         <?php endforeach; ?>    
         <li>
             <input disabled="disabled" type="submit" class="button-primary" id="icl-tr-sel-doc" value="<?php echo __('Translate selected documents', 'sitepress') ?>"/>
-            <span class="icl_ajx_response" id="icl_ajx_response"><?php echo __('Sending translation requests. Please wait!') ?>&nbsp;<img src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" /></span>
+            <span class="icl_ajx_response" id="icl_ajx_response"><?php echo __('Sending translation requests. Please wait!', 'sitepress') ?>&nbsp;<img src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" /></span>
         </li>
     </ul>
     <span id="icl_message_1" style="display:none"><?php echo __('All documents sent to translation', 'sitepress')?></span>
