@@ -16,8 +16,11 @@ function update_icl_account(){
     //if the account is configured - update language pairs
     if($sitepress->icl_account_configured()){
         $iclsettings = $sitepress->get_settings();
+
         // prepare language pairs
+        
         $language_pairs = $iclsettings['language_pairs'];
+        $lang_pairs = array();
         foreach($language_pairs as $k=>$v){
             $english_fr = $wpdb->get_var("SELECT english_name FROM {$wpdb->prefix}icl_languages WHERE code='{$k}' ");
             foreach($v as $k=>$v){

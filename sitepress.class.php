@@ -457,6 +457,7 @@ class SitePress{
         $nonce_icl_configure_account = wp_create_nonce('icl_configure_account');
         $nonce_icl_logout = wp_create_nonce('icl_logout');
         $nonce_icl_initial_language = wp_create_nonce('icl_initial_language');
+        $nonce_icl_change_website_access = wp_create_nonce('icl_change_website_access_data');
         switch($_POST['_wpnonce']){
             case $nonce_icl_create_account:
             case $nonce_icl_configure_account:
@@ -468,16 +469,31 @@ class SitePress{
                 $user['description'] = get_option('blogdescription');
                 $user['interview_translators'] = $this->settings['interview_translators'];
                             
+                $user['project_kind'] = $this->settings['website_kind'];
+                $user['pickup_type'] = $this->settings['translation_pickup_method'];
+        
+                $notifications = 0;
+                if ( $this->settings['icl_notify_complete']){
+                    $notifications += 1;
+                }
+                if ( $this->settings['icl_alert_delay']){
+                    $notifications += 2;
+                }
+                $user['notifications'] = $notifications;
+
                 // prepare language pairs
                 $language_pairs = $this->settings['language_pairs'];
-                foreach($language_pairs as $k=>$v){
-                    $english_fr = $wpdb->get_var("SELECT english_name FROM {$wpdb->prefix}icl_languages WHERE code='{$k}' ");
-                    foreach($v as $k=>$v){
-                        $incr++;
-                        $english_to = $wpdb->get_var("SELECT english_name FROM {$wpdb->prefix}icl_languages WHERE code='{$k}' ");
-                        $lang_pairs['from_language'.$incr] = $english_fr; 
-                        $lang_pairs['to_language'.$incr] = $english_to;
-                    }                    
+                $lang_pairs = array();
+                if(isset($language_pairs)){
+                    foreach($language_pairs as $k=>$v){
+                        $english_fr = $wpdb->get_var("SELECT english_name FROM {$wpdb->prefix}icl_languages WHERE code='{$k}' ");
+                        foreach($v as $k=>$v){
+                            $incr++;
+                            $english_to = $wpdb->get_var("SELECT english_name FROM {$wpdb->prefix}icl_languages WHERE code='{$k}' ");
+                            $lang_pairs['from_language'.$incr] = $english_fr; 
+                            $lang_pairs['to_language'.$incr] = $english_to;
+                        }                    
+                    }
                 }
                 $icl_query = new ICanLocalizeQuery();
                 list($site_id, $access_key) = $icl_query->createAccount(array_merge($user,$lang_pairs));                
@@ -506,6 +522,24 @@ class SitePress{
                 $wpdb->update($wpdb->prefix . 'icl_languages', array('active'=>'1'), array('code'=>$_POST['icl_initial_language_code']));
                 $iclsettings['existing_content_language_verified'] = 1;
                 $this->save_settings($iclsettings);                                
+                break;
+            case $nonce_icl_change_website_access:
+                $iclsettings['access_key'] = $_POST['access']['access_key'];
+                $iclsettings['site_id'] = $_POST['access']['website_id'];
+                $this->save_settings($iclsettings);
+
+                // Now try to access ICL server                
+                $icl_query = new ICanLocalizeQuery($iclsettings['site_id'], $iclsettings['access_key']);
+                $res = $icl_query->get_website_details();
+                
+                if(isset($res['attr']['id']) and $res['attr']['id'] == $iclsettings['site_id']){
+                    $_POST['icl_form_success'] = __('Your ICanLocalize account details have been confirmed and saved','sitepress');
+                } else {
+                    $message = __('The ICanLocalize access details are not correct.','sitepress') . '<br />';
+                    $message .= __('Log on to the ICanLocalize server to get your access details. ','sitepress');
+                    $message .= '<a href="'. ICL_API_ENDPOINT . '">' . ICL_API_ENDPOINT . '</a>';
+                    $_POST['icl_form_errors'] = $message;
+                }
                 break;
             
         }
@@ -580,7 +614,6 @@ class SitePress{
             WHERE element_id='{$el_id}' AND element_type='{$el_type}'");
         return $details;
     }
-        
     function save_post_actions($pidd){
         global $wpdb;
         if($_POST['autosave'] || $_POST['skip_sitepress_actions']) return;
@@ -654,6 +687,16 @@ class SitePress{
         return $translations;
     }
     
+    function get_element_trid($element_id, $el_type='post'){
+        global $wpdb;   
+        return $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id='{$element_id}' AND element_type='{$el_type}'");
+    }
+    
+    function get_language_for_element($element_id, $el_type='post'){
+        global $wpdb;   
+        return $wpdb->get_var("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE element_id='{$element_id}' AND element_type='{$el_type}'");
+    }
+
     function meta_box($post){
         global $wpdb;   
         $active_languages = $this->get_active_languages();
