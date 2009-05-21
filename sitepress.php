@@ -71,9 +71,9 @@ if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQ
     }
 
     // Content Translation
-    //if(!empty($sitepress_settings['language_pairs'])){
-    //    require ICL_PLUGIN_PATH . '/modules/icl-translation/icl-translation.php';
-    //}
+    if(!empty($sitepress_settings['language_pairs'])){
+        require ICL_PLUGIN_PATH . '/modules/icl-translation/icl-translation.php';
+    }
 }
        
 // activation hook
