@@ -50,7 +50,7 @@ require ICL_PLUGIN_PATH . '/inc/functions.php';
 
 if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQUEST['action']!='activate-selected') 
     || (($_REQUEST['plugin'] != basename(ICL_PLUGIN_PATH).'/'.basename(__FILE__)) 
-        && !in_array(basename(ICL_PLUGIN_PATH).'/'.basename(__FILE__), $_REQUEST['checked']))){
+        && !in_array(basename(ICL_PLUGIN_PATH).'/'.basename(__FILE__), (array)$_REQUEST['checked']))){
         
     $sitepress = new SitePress();
     $sitepress_settings = $sitepress->get_settings();
