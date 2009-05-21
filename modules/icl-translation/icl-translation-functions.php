@@ -299,7 +299,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     }
         
     $original_post_details = $wpdb->get_row("
-        SELECT p.post_author, p.post_type, p.post_status, p.post_parent, p.menu_order, t.language_code
+        SELECT p.post_author, p.post_type, p.post_status, p.comment_status ,p.post_parent, p.menu_order, t.language_code
         FROM {$wpdb->prefix}icl_translations t 
         JOIN {$wpdb->posts} p ON t.element_id = p.ID
         WHERE t.element_type='post' AND trid='{$trid}' AND p.ID = '{$translation['original_id']}'
@@ -427,6 +427,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     }
     $postarr['post_author'] = $original_post_details->post_author;  
     $postarr['post_type'] = $original_post_details->post_type;
+    $postarr['comment_status'] = $original_post_details->comment_status;
     if(!$is_update){
         $postarr['post_status'] = !$sitepress_settings['translated_document_status'] ? 'draft' : $original_post_details->post_status;
     }
