@@ -98,10 +98,10 @@
             <li>
                 <ul>
                     <li>
-                        <label><input name="icl_delivery_method" type="radio" value="0" <?php if($sitepress_settings['interview_translators'] == 0): ?>checked="checked"<?php endif;?> /> <?php echo __('Translations will be posted back to this website via XML-RPC.', 'sitepress'); ?></label><br />
+                        <label><input name="icl_delivery_method" type="radio" value="0" <?php if($sitepress_settings['translation_pickup_method'] == 0): ?>checked="checked"<?php endif;?> /> <?php echo __('Translations will be posted back to this website via XML-RPC.', 'sitepress'); ?></label><br />
                     </li>
                     <li>
-                        <label><input name="icl_delivery_method" type="radio" value="1" <?php if($sitepress_settings['interview_translators'] == 1): ?>checked="checked"<?php endif;?> /> <?php echo __('This WordPressl installation will poll for translations.', 'sitepress'); ?></label><br />
+                        <label><input name="icl_delivery_method" type="radio" value="1" <?php if($sitepress_settings['translation_pickup_method'] == 1): ?>checked="checked"<?php endif;?> /> <?php echo __('This WordPress installation will poll for translations.', 'sitepress'); ?></label><br />
                     </li>
                 </ul>
 
