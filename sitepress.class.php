@@ -1647,5 +1647,35 @@ class SitePress{
         return $sql;
     }
     
+    function get_inactive_content(){
+        global $wpdb;
+        $inactive = array();
+        $res_p = $wpdb->get_results("
+           SELECT COUNT(p.ID) AS c, p.post_type, lt.name AS language FROM {$wpdb->prefix}icl_translations t 
+            JOIN {$wpdb->posts} p ON t.element_id=p.ID AND t.element_type='post'
+            JOIN {$wpdb->prefix}icl_languages l ON t.language_code = l.code AND l.active = 0
+            JOIN {$wpdb->prefix}icl_languages_translations lt ON lt.language_code = l.code  AND lt.display_language_code='".$this->get_current_language()."'
+            GROUP BY p.post_type, t.language_code
+        ");
+        foreach($res_p as $r){
+            $inactive[$r->language][$r->post_type] = $r->c;
+        }
+        $res_t = $wpdb->get_results("
+           SELECT COUNT(p.term_taxonomy_id) AS c, p.taxonomy, lt.name AS language FROM {$wpdb->prefix}icl_translations t 
+            JOIN {$wpdb->term_taxonomy} p ON t.element_id=p.term_taxonomy_id
+            JOIN {$wpdb->prefix}icl_languages l ON t.language_code = l.code AND l.active = 0
+            JOIN {$wpdb->prefix}icl_languages_translations lt ON lt.language_code = l.code  AND lt.display_language_code='".$this->get_current_language()."'
+            WHERE t.element_type IN ('category','tag')
+            GROUP BY p.taxonomy, t.language_code 
+        ");        
+        foreach($res_t as $r){
+            if($r->taxonomy=='category' && $r->c == 1){
+                continue; //ignore the case of just the default category that gets automatically created for a new language
+            }
+            $inactive[$r->language][$r->taxonomy] = $r->c;
+        }        
+        return $inactive;
+    }
+    
 }  
 ?>

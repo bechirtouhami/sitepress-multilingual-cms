@@ -53,3 +53,10 @@ a#toggle-theme-localization{
     background: transparent url(../img/icon.png) no-repeat !important;    
 }
 
+#icl_inactive_content_table{
+    width:auto;
+}
+#icl_inactive_content_table td{
+    text-align: right;
+}
+#icl_inactive_content_table tfoot td{font-weight:bold;}

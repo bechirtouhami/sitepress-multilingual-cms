@@ -11,6 +11,7 @@
     }
     $default_language = $sitepress->get_language_details($sitepress->get_default_language());
     $locales = $sitepress->get_locale_file_names();
+    $inactive_content = $sitepress->get_inactive_content();
 ?>
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap">
@@ -69,6 +70,43 @@
                 </td>
             </tr>
         </table>
+        
+        <?php if(!empty($inactive_content)): ?>
+        <h3><?php echo __('Inactive content', 'sitepress') ?></h3>    
+        <small><?php echo __('In order to edit or delete these you need to activate the corresponding language first', 'sitepress') ?></small>
+        <table id="icl_inactive_content_table" class="widefat" cellspacing="0">
+        <thead>
+        <tr>
+        <th scope="col"><?php echo __('Language', 'sitepress') ?></th>
+        <th scope="col"><?php echo __('Posts', 'sitepress') ?></th>
+        <th scope="col"><?php echo __('Pages', 'sitepress') ?></th>        
+        <th scope="col"><?php echo __('Categories', 'sitepress') ?></th>
+        <th scope="col"><?php echo __('Tags', 'sitepress') ?></th>                
+        </tr>        
+        </thead>        
+        <tbody>        
+        <?php foreach($inactive_content as $language=>$ic): ?>
+        <tr>
+        <th scope="col"><?php echo $language ?></th>
+        <td scope="col num"><?php echo intval($ic['post']); $t_posts += $ic['post']; ?></td>
+        <td scope="col num"><?php echo intval($ic['page']); $t_pages += $ic['page']; ?></td>
+        <td scope="col num"><?php echo intval($ic['category']); $t_cats += $ic['category'];  ?></td>
+        <td scope="col num"><?php echo intval($ic['post_tag']); $t_tags += $ic['post_tag'];  ?></td>
+        </tr>
+        <?php endforeach; ?>                                                                  
+        </tbody>        
+        <tfoot>
+        <tr>
+        <th scope="col"><?php echo __('Total', 'sitepress') ?></th>
+        <td scope="col num"><?php echo intval($t_posts) ?></td>
+        <td scope="col num"><?php echo intval($t_pages) ?></td>
+        <td scope="col num"><?php echo intval($t_cats) ?></td>
+        <td scope="col num"><?php echo intval($t_tags) ?></td>
+        </tr>        
+        </tfoot>                
+        </table>        
+        <?php endif; ?> 
+        
         
         <div id="icl_more_languages_wrap">
             <div id="icl_lnt">
