@@ -146,6 +146,22 @@
                 <i><?php echo __("Choose if translations should be published when received. Note: If Publish is selected, the translation will only be published if the original node is published when the translation is received.", 'sitepress') ?></i><br />
             </li>
         </ul>
+
+        <h3><?php echo __("Remote control translation management:", 'sitepress') ?></h3>
+        <ul>
+            <li>
+                <ul>
+                    <li>
+                        <label><input name="icl_remote_management" type="checkbox" value="1" <?php if($sitepress_settings['icl_remote_management']): ?>checked="checked"<?php endif;?> /> <?php echo __('Enable remote control over the translation management.', 'sitepress'); ?></label><br />
+                    </li>
+                </ul>
+
+            </li>
+            <li>
+                <i><?php echo __("Content translation can be managed remotely via xmlrpc calls.", 'sitepress') ?></i><br />
+            </li>
+        </ul>
+            
             
         <p class="submit">
             <input class="button" name="create account" value="<?php echo __('Save', 'sitepress') ?>" type="submit" />

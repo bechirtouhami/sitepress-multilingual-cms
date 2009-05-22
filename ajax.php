@@ -161,6 +161,7 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings['translated_document_status'] = $_POST['icl_translation_document_status'];        
         $iclsettings['icl_alert_delay'] = intval($_POST['icl_alert_delay']);
         $iclsettings['icl_notify_complete'] = intval($_POST['icl_notify_complete']);
+        $iclsettings['icl_remote_management'] = intval($_POST['icl_remote_management']);
         $sitepress->save_settings($iclsettings);
 
         $ret = update_icl_account();

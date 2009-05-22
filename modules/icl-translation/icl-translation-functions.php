@@ -215,9 +215,14 @@ function icl_translation_calculate_md5($post_id){
     return $md5;
 }
 
-function icl_translation_get_documents($lang, $tstatus, $status=false, $type=false){
+function icl_translation_get_documents($lang,
+                                       $tstatus,
+                                       $status=false,
+                                       $type=false,
+                                       $limit = 20,
+                                       $from_date = false,
+                                       $to_date = false){
     global $wpdb, $wp_query;
-    $limit = 20;
     
     $where = "WHERE 1";
     if($tstatus=='not'){
@@ -232,6 +237,10 @@ function icl_translation_get_documents($lang, $tstatus, $status=false, $type=fal
         $where .= " AND p.post_status = '{$status}'";
     }        
     $where .= " AND t.language_code='{$lang}'";
+    
+    if($from_date and $to_date){
+        $where .= " AND p.post_date > '{$from_date}' AND p.post_date < '{$to_date}'";
+    }
     
     if(!isset($_GET['paged'])) $_GET['paged'] = 1;
     $offset = ($_GET['paged']-1)*$limit;
@@ -541,6 +550,7 @@ function icl_poll_for_translations(){
 
 function icl_add_custom_xmlrpc_methods($methods){
     $methods['icanlocalize.set_translation_status'] = 'setTranslationStatus';
+    $methods['icanlocalize.list_posts'] = '_icl_list_posts';
     return $methods;
 }
 /*
@@ -952,6 +962,51 @@ function _icl_content_fix_links_to_translated_content($new_post_id, $target_lang
     
     // save the all links fixed status to the database.
     $wpdb->query("UPDATE {$wpdb->prefix}icl_node SET links_fixed='{$all_links_fixed}' WHERE nid={$new_post_id}");
+}
+
+function _icl_list_posts($args){
+    global $wpdb, $sitepress, $sitepress_settings;
+    $signature   = $args[0];
+    $site_id     = $args[1];
+        
+    $from_date   = date('Y-m-d H:i:s',$args[2]);
+    $to_date     = date('Y-m-d H:i:s',$args[3]);
+    $lang        = $args[4];
+    $tstatus     = $args[5];
+    $status      = $args[6];
+    $type        = $args[7];
+    
+    if ( !$sitepress_settings['icl_remote_management']) {
+        return array('err_code'=>1, 'err_str'=>__('remote translation management not enabled'));
+    }    
+    if ( !get_option( 'enable_xmlrpc' ) ) {
+        return array('err_code'=>3, 'err_str'=>sprintf( __( 'XML-RPC services are disabled on this site.  An admin user can enable them at %s'),  admin_url('options-writing.php')));
+    }
+
+    //check signature
+    $signature_chk = sha1($sitepress_settings['access_key'].$sitepress_settings['site_id'].$lang.$tstatus);
+    if($signature_chk != $signature){
+        return array('err_code'=>2, 'err_str'=>__('signature incorrect'));
+    }
+    
+    if ($site_id != $sitepress_settings['site_id']) {
+        return array('err_code'=>4, 'err_str'=>__('website id is not correct'));
+    }
+
+    $documents = icl_translation_get_documents($sitepress->get_language_code($lang), $tstatus, $status, $type, 100000, $from_date, $to_date);
+    foreach($documents as $id=>$data){
+        $_cats = (array)get_the_terms($id,'category');
+        $cats = array();
+        foreach($_cats as $cv){
+            $cats[] = $cv->name;
+        }
+        $documents[$id]->categories = $cats;
+        $documents[$id]->words = count(explode(' ',strip_tags($data->post_content)));
+        unset($documents[$id]->post_content);
+        unset($documents[$id]->post_title);
+    }
+    return array('err_code'=>0, 'posts'=>$documents);
+
 }
 
 ?>
