@@ -211,15 +211,10 @@ class SitePress{
             }
         }
         
-        add_filter('get_pagenum_link', array($this,'get_pagenum_link_filter'));
-        
-        // filter some queries but only on the categories and tags pages for now
-        global $pagenow;
-        if($pagenow=='categories.php' || $pagenow=='edit-tags.php'){
-            add_filter('query', array($this, 'filter_queries'));
-        }
-        
-        
+        add_filter('get_pagenum_link', array($this,'get_pagenum_link_filter'));        
+        // filter some queries
+        add_filter('query', array($this, 'filter_queries'));
+                
         require ICL_PLUGIN_PATH . '/inc/template-constants.php';        
     }
                 
@@ -409,6 +404,23 @@ class SitePress{
                 </script>
                 <?php } 
         }
+        
+        // display correct links on the posts by status break down
+        if( ('edit.php' == $pagenow || 'edit-pages.php' == $pagenow) && $this->get_current_language() != $this->get_default_language()){
+                ?>
+                <script type="text/javascript">        
+                addLoadEvent(function(){
+                jQuery('.subsubsub li a').each(function(){
+                    h = jQuery(this).attr('href');
+                    if(-1 == h.indexOf('?')) urlg = '?'; else urlg = '&';
+                    jQuery(this).attr('href', h + urlg + 'lang=<?php echo $this->get_current_language()?>');
+                });
+                });
+                </script>
+                <?php
+        }
+        
+        
     }
        
     function front_end_js(){
@@ -738,7 +750,7 @@ class SitePress{
             $ljoin = "LEFT";
         }
         $join .= "{$ljoin} JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->posts}.ID = t.element_id 
-                    AND t.element_type='post' {$cond} ";        
+                    AND t.element_type='post' {$cond} JOIN {$wpdb->prefix}icl_languages l ON t.language_code=l.code AND l.active=1";        
         return $join;
     }
 
@@ -762,13 +774,15 @@ class SitePress{
         $res = $wpdb->get_results("
             SELECT language_code, COUNT(p.ID) AS c FROM {$wpdb->prefix}icl_translations t 
             JOIN {$wpdb->posts} p ON t.element_id=p.ID
+            JOIN {$wpdb->prefix}icl_languages l ON t.language_code=l.code AND l.active = 1
             WHERE t.element_type='post' AND p.post_type='{$type}'
             GROUP BY language_code            
             ");         
         foreach($res as $r){
             $langs[$r->language_code] = $r->c;
+            $langs['all'] += $r->c;
         } 
-        $langs['all'] = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->posts} WHERE post_type='{$type}'");               
+        
         $active_languages[] = array('code'=>'all','display_name'=>__('All languages','sitepress'));
         foreach($active_languages as $lang){
             if($lang['code']== $this->this_lang){
@@ -930,13 +944,14 @@ class SitePress{
             SELECT language_code, COUNT(tm.term_id) AS c FROM {$wpdb->prefix}icl_translations t 
             JOIN {$wpdb->term_taxonomy} tt ON t.element_id = tt.term_taxonomy_id
             JOIN {$wpdb->terms} tm ON tt.term_id = tm.term_id
-            WHERE t.element_type='{$element_type}' AND tt.taxonomy='{$taxonomy}' 
+            JOIN {$wpdb->prefix}icl_languages l ON t.language_code = l.code
+            WHERE t.element_type='{$element_type}' AND tt.taxonomy='{$taxonomy}' AND l.active=1
             GROUP BY language_code            
             ");                 
         foreach($res as $r){
             $langs[$r->language_code] = $r->c;
+            $langs['all'] += $r->c;
         } 
-        $langs['all'] = $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->term_taxonomy} WHERE taxonomy='{$taxonomy}'");               
         $active_languages[] = array('code'=>'all','display_name'=>__('All languages','sitepress'));
         foreach($active_languages as $lang){
             if($lang['code']== $this->this_lang){
@@ -1590,18 +1605,45 @@ class SitePress{
     }
     
     function filter_queries($sql){                                                                               
-        global $wpdb;
-        if(preg_match('#^SELECT COUNT\(\*\) FROM '.$wpdb->term_taxonomy.' WHERE taxonomy = \'(category|post_tag)\' $#',$sql,$matches)){
-            if($matches[1]=='post_tag'){
-                $element_type='tag';
-            }else{
-                $element_type=$matches[1];
+        global $wpdb, $pagenow;
+
+        if($pagenow=='categories.php' || $pagenow=='edit-tags.php'){
+            if(preg_match('#^SELECT COUNT\(\*\) FROM '.$wpdb->term_taxonomy.' WHERE taxonomy = \'(category|post_tag)\' $#',$sql,$matches)){
+                if($matches[1]=='post_tag'){
+                    $element_type='tag';
+                }else{
+                    $element_type=$matches[1];
+                }
+                $sql = "
+                    SELECT COUNT(*) FROM {$wpdb->term_taxonomy} tx 
+                        JOIN {$wpdb->prefix}icl_translations tr ON tx.term_taxonomy_id=tr.element_id  
+                    WHERE tx.taxonomy='{$matches[1]}' AND tr.element_type='{$element_type}' AND tr.language_code='".$this->get_current_language()."'";
             }
-            $sql = "
-                SELECT COUNT(*) FROM {$wpdb->term_taxonomy} tx 
-                    JOIN {$wpdb->prefix}icl_translations tr ON tx.term_taxonomy_id=tr.element_id  
-                WHERE tx.taxonomy='{$matches[1]}' AND tr.element_type='{$element_type}' AND tr.language_code='".$this->get_current_language()."'";
         }
+        
+        if($pagenow=='edit.php' || $pagenow=='edit-pages.php'){            
+            if(preg_match('#SELECT post_status, COUNT\( \* \) AS num_posts FROM '.$wpdb->posts.' WHERE post_type = \'(.+)\' GROUP BY post_status#i',$sql,$matches)){
+                if('all'!=$this->get_current_language()){
+                    $sql = '
+                    SELECT post_status, COUNT( * ) AS num_posts 
+                    FROM '.$wpdb->posts.' p 
+                        JOIN '.$wpdb->prefix.'icl_translations t ON p.ID = t.element_id 
+                    WHERE p.post_type = \''.$matches[1].'\' 
+                        AND t.element_type=\'post\' 
+                        AND t.language_code=\''.$this->get_current_language().'\' 
+                    GROUP BY post_status';
+                }else{
+                    $sql = '
+                    SELECT post_status, COUNT( * ) AS num_posts 
+                    FROM '.$wpdb->posts.' p 
+                        JOIN '.$wpdb->prefix.'icl_translations t ON p.ID = t.element_id 
+                        JOIN '.$wpdb->prefix.'icl_languages l ON t.language_code = l.code AND l.active = 1
+                    WHERE p.post_type = \''.$matches[1].'\' 
+                        AND t.element_type=\'post\' 
+                    GROUP BY post_status';                    
+                }
+            }
+        }        
         return $sql;
     }
     
