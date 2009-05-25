@@ -464,6 +464,10 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
 
     if($is_original_sticky){
         stick_post($new_post_id);
+    }else{
+        if($original_post_details->post_type=='post' && $is_update){
+            unstick_post($new_post_id); //just in case - if this is an update and the original post stckiness has changed since the post was sent to translation
+        }
     }
     
     if(!$new_post_id){
