@@ -454,6 +454,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     global $wp_rewrite;
     if(!isset($wp_rewrite)) $wp_rewrite = new WP_Rewrite();
     
+    kses_remove_filters();
     $new_post_id = wp_insert_post($postarr);
 
     if(!$new_post_id){
