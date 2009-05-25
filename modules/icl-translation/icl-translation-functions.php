@@ -1042,7 +1042,7 @@ function _icl_remote_control_translate_post($args){
         return array('err_code'=>5, 'err_str'=>__('post id not found'));
     }
 
-    $element = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}icl_translations WHERE element_id={$post_id}");
+    $element = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}icl_translations WHERE element_id={$post_id} and element_type='post'");
     if(!$element){
         return array('err_code'=>6, 'err_str'=>__('post id not managed in icl_translations'));
     }
