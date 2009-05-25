@@ -525,7 +525,14 @@ function icl_poll_for_translations(){
         
         $cms_request_xml = $iclq->cms_request_translations($pr['id']);
         if(isset($cms_request_xml['cms_target_languages']['cms_target_language'])){
-            foreach($cms_request_xml['cms_target_languages']['cms_target_language'] as $target){
+            $target_languages = $cms_request_xml['cms_target_languages']['cms_target_language'];
+            // HACK: If we only have one target language then the $target_languages
+            // array no longer has an array of languages but returns just the target language
+            if(!isset($target_languages[0])){
+                $target = $target_languages;
+                $target_languages = array(0 => $target);
+            }
+            foreach($target_languages as $target){
                 if(isset($target['attr'])){
                     $status = $target['attr']['status'];
                     $lang_id = (int)$target['attr']['language_id'];
