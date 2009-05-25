@@ -1049,7 +1049,7 @@ function _icl_remote_control_translate_post($args){
 
     $from_code = $sitepress->get_language_code($from_lang);
     if($element->language_code != $from_code){
-        return array('err_code'=>7, 'err_str'=>__('from language is not correct'));
+        return array('err_code'=>7, 'err_str'=>__('from language is not correct. '.$from_lang.' != '.$element->language_code));
     }
     
     $language_pairs = $sitepress_settings['language_pairs'];
