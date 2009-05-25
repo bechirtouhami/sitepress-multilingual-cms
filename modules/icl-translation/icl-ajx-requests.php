@@ -8,6 +8,12 @@ switch($_REQUEST['icl_ajx_req']){
         $details = $iclq->cms_request_translations($rid);
         $upload = $details['cms_uploads']['cms_upload'];
         $target_languages = $details['cms_target_languages']['cms_target_language'];
+        // HACK: If we only have one target language then the $target_languages
+        // array no longer has an array of languages but returns just the target language
+        if(!isset($target_languages[0])){
+            $target = $target_languages;
+            $target_languages = array(0 => $target);
+        }
         ?>
         <table class="widefat fixed">
         <thead>
