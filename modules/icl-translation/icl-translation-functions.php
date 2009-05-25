@@ -316,7 +316,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     //is the original post a sticky post?
     remove_filter('option_sticky_posts', array($this,'option_sticky_posts')); // remove filter used to get language relevant stickies. get them all
     $sticky_posts = get_option('sticky_posts');
-    $is_original_sticky = in_array($translation['original_id'], $sticky_posts);
+    $is_original_sticky = $original_post_details->post_type=='post' && in_array($translation['original_id'], $sticky_posts);
     
     
     _icl_content_fix_image_paths_in_body($translation);
