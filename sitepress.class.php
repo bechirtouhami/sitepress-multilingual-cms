@@ -43,7 +43,8 @@ class SitePress{
             add_action('admin_head', array($this,'post_edit_language_options'));        
             
             // Post/page save actions
-            add_action('save_post', array($this,'save_post_actions'));        
+            add_action('save_post', array($this,'save_post_actions')); 
+                   
             // Post/page delete actions
             add_action('delete_post', array($this,'delete_post_actions'));        
             
@@ -627,9 +628,10 @@ class SitePress{
             WHERE element_id='{$el_id}' AND element_type='{$el_type}'");
         return $details;
     }
+    
     function save_post_actions($pidd){
         global $wpdb;
-        if($_POST['autosave'] || $_POST['skip_sitepress_actions']) return;
+        if($_POST['autosave'] || $_POST['skip_sitepress_actions'] || $_POST['post_ID']!=$pidd) return;
         if($_POST['action']=='post-quickpress-publish'){
             $post_id = $pidd;            
             $language_code = $this->get_default_language();
@@ -651,6 +653,26 @@ class SitePress{
                 $wpdb->query("UPDATE {$wpdb->posts} SET menu_order={$menu_order} WHERE ID IN (".join(',', $translated_pages).")");
             }            
         }
+                
+        //sync posts stcikiness
+        if($_POST['post_type']=='post' && $_POST['action']!='post-quickpress-publish' ){ //not for quick press            
+            remove_filter('option_sticky_posts', array($this,'option_sticky_posts')); // remove filter used to get language relevant stickies. get them all
+            $sticky_posts = get_option('sticky_posts');
+            // get ids of othe translations
+            if($trid){
+                $translations = $wpdb->get_col("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid='{$trid}'");
+            }else{
+                $translations = array();
+            }     
+            if(isset($_POST['sticky']) && $_POST['sticky'] == 'sticky'){
+                $sticky_posts = array_unique(array_merge($sticky_posts, $translations));                
+            }else{
+                //makes sure translations are not set to sticky if this posts switched from sticky to not-sticky                
+                $sticky_posts = array_diff($sticky_posts, $translations);                
+            }
+            update_option('sticky_posts',$sticky_posts);
+      }
+        
         
         // new categories created inline go to the correct language
         if(isset($_POST['post_category']))
@@ -662,7 +684,7 @@ class SitePress{
         }
         $this->set_element_language_details($post_id, 'post', $trid, $language_code);
     }
-    
+        
     function delete_post_actions($post_id){
         global $wpdb;
         $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE element_type='post' AND element_id='{$post_id}' LIMIT 1");

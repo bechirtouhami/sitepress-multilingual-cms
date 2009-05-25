@@ -313,6 +313,11 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
         JOIN {$wpdb->posts} p ON t.element_id = p.ID
         WHERE t.element_type='post' AND trid='{$trid}' AND p.ID = '{$translation['original_id']}'
     ");
+    //is the original post a sticky post?
+    remove_filter('option_sticky_posts', array($this,'option_sticky_posts')); // remove filter used to get language relevant stickies. get them all
+    $sticky_posts = get_option('sticky_posts');
+    $is_original_sticky = in_array($translation['original_id'], $sticky_posts);
+    
     
     _icl_content_fix_image_paths_in_body($translation);
     _icl_content_fix_relative_link_paths_in_body($translation);
@@ -457,6 +462,10 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     kses_remove_filters();
     $new_post_id = wp_insert_post($postarr);
 
+    if($is_original_sticky){
+        stick_post($new_post_id);
+    }
+    
     if(!$new_post_id){
         return false;
     }
