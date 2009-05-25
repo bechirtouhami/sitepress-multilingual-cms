@@ -210,7 +210,12 @@ function icl_translation_calculate_md5($post_id){
         }
     }
     
-    $md5 = md5($post->post_title.';'.$post->post_content.';'.join(',',(array)$post_tags).';'.join(',',(array)$post_categories));    
+    $custom_fields = array('_cms_nav_section');
+    foreach($custom_fields as $cf){
+        $custom_fields_values[] = get_post_meta($post_id, $cf, true);    
+    }
+    
+    $md5 = md5($post->post_title . ';' . $post->post_content . ';' . join(',',(array)$post_tags).';' . join(',',(array)$post_categories) . ';' . join(',', $custom_fields_values));    
 
     return $md5;
 }
