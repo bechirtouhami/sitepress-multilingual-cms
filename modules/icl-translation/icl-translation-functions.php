@@ -551,6 +551,7 @@ function icl_poll_for_translations(){
 function icl_add_custom_xmlrpc_methods($methods){
     $methods['icanlocalize.set_translation_status'] = 'setTranslationStatus';
     $methods['icanlocalize.list_posts'] = '_icl_list_posts';
+    $methods['icanlocalize.translate_post'] = '_icl_remote_control_translate_post';
     return $methods;
 }
 /*
@@ -1007,6 +1008,70 @@ function _icl_list_posts($args){
     }
     return array('err_code'=>0, 'posts'=>$documents);
 
+}
+
+function _icl_remote_control_translate_post($args){
+    global $wpdb, $sitepress, $sitepress_settings;
+    $signature   = $args[0];
+    $site_id     = $args[1];
+    
+    $post_id     = $args[2];
+    $from_lang   = $args[3];
+    $langs       = $args[4];
+
+    if ( !$sitepress_settings['icl_remote_management']) {
+        return array('err_code'=>1, 'err_str'=>__('remote translation management not enabled'));
+    }    
+    if ( !get_option( 'enable_xmlrpc' ) ) {
+        return array('err_code'=>3, 'err_str'=>sprintf( __( 'XML-RPC services are disabled on this site.  An admin user can enable them at %s'),  admin_url('options-writing.php')));
+    }
+
+    //check signature
+    $signature_chk = sha1($sitepress_settings['access_key'].$sitepress_settings['site_id'].$post_id.$from_lang.implode(',', $langs));
+    if($signature_chk != $signature){
+        return array('err_code'=>2, 'err_str'=>__('signature incorrect'));
+    }
+    
+    if ($site_id != $sitepress_settings['site_id']) {
+        return array('err_code'=>4, 'err_str'=>__('website id is not correct'));
+    }
+
+    // check post_id
+    $post = $wpdb->get_var("SELECT ID FROM {$wpdb->posts} WHERE ID={$post_id}");
+    if(!$post){
+        return array('err_code'=>5, 'err_str'=>__('post id not found'));
+    }
+
+    $element = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}icl_translations WHERE element_id={$post_id}");
+    if(!$element){
+        return array('err_code'=>6, 'err_str'=>__('post id not managed in icl_translations'));
+    }
+
+    $from_code = $sitepress->get_language_code($from_lang);
+    if($element->language_code != $from_code){
+        return array('err_code'=>7, 'err_str'=>__('from language is not correct'));
+    }
+    
+    $language_pairs = $sitepress_settings['language_pairs'];
+    
+    foreach($langs as $to_lang){
+        if(!isset($language_pairs[$from_code][$sitepress->get_language_code($to_lang)])){
+            return array('err_code'=>8, 'err_str'=>'to language "'.$to_lang.'" is not correct');
+        }
+    }
+    
+    // everything is ok.
+    
+    $post_type = $wpdb->get_var("SELECT post_type FROM {$wpdb->posts} WHERE ID={$post_id}");
+    $result = icl_translation_send_post($post_id, $langs, $post_type);
+    
+    if ($result != false){
+        return array('err_code'=>0, 'rid'=>$result);
+    } else {
+        return array('err_code'=>9, 'err_str'=>'failed to send for translation');
+    }
+    
+    
 }
 
 ?>
