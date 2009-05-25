@@ -128,7 +128,18 @@
                     $tr_status = __('Needs update', 'sitepress');
                 }else{
                     $tr_status = __('Complete', 'sitepress');
+                    
+                    // check if we have translated all languages.
+                    
                     $not_translatable = true;
+                    foreach($language_pairs[$selected_language] as $lang_code => $value){
+                        if ($wpdb->get_var("SELECT target FROM {$wpdb->prefix}icl_core_status WHERE rid={$doc->rid} and target='{$lang_code}'") != $lang_code){
+                            $not_translatable = false;
+                            break;
+                        }
+                        
+                        
+                    }
                 }
             }else{
                 $tr_status = __('Not Translated', 'sitepress');
