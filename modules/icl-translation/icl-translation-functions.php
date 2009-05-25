@@ -462,6 +462,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     kses_remove_filters();
     $new_post_id = wp_insert_post($postarr);
 
+    // set stickiness
     if($is_original_sticky){
         stick_post($new_post_id);
     }else{
@@ -469,6 +470,13 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
             unstick_post($new_post_id); //just in case - if this is an update and the original post stckiness has changed since the post was sent to translation
         }
     }
+    
+    // set specific custom fields
+    $copied_custom_fields = array('_top_nav_excluded', '_cms_nav_minihome');    
+    foreach($copied_custom_fields as $ccf){
+        $val = get_post_meta($translation['original_id'], $ccf, true);
+        update_post_meta($new_post_id, $ccf, $val);
+    }    
     
     if(!$new_post_id){
         return false;

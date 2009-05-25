@@ -671,8 +671,7 @@ class SitePress{
                 $sticky_posts = array_diff($sticky_posts, $translations);                
             }
             update_option('sticky_posts',$sticky_posts);
-      }
-        
+        }
         
         // new categories created inline go to the correct language
         if(isset($_POST['post_category']))
@@ -684,6 +683,26 @@ class SitePress{
         }
         $this->set_element_language_details($post_id, 'post', $trid, $language_code);
     }
+    
+    function sync_custom_fields($post_id, $field_names, $single = true){
+        global $wpdb;
+        $field_names = (array)$field_names;
+        $trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_type='post' AND element_id={$post_id}");
+        if(!$trid){
+            return;
+        }        
+        $translations = $wpdb->get_col("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid='{$trid}' AND element_id <> {$post_id}");        
+        foreach($field_names as $field_name){
+            $field_value = get_post_meta($post_id, $field_name, $single);
+            foreach($translations as $t){
+                if(!$field_value){
+                    delete_post_meta($t, $field_name);
+                }else{
+                    update_post_meta($t, $field_name, $field_value);
+                }                
+            }
+        }
+    } 
         
     function delete_post_actions($post_id){
         global $wpdb;

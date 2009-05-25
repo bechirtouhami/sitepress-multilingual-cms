@@ -375,6 +375,14 @@ class CMSNavigation{
                 delete_post_meta($post_id, '_cms_nav_section');
             }        
         }
+        
+        //
+        global $sitepress;
+        $sitepress->sync_custom_fields($post_id, array(
+            '_top_nav_excluded',
+            '_cms_nav_minihome'
+            
+        ));
     }    
     
     function cms_navigation_page_edit_options(){
@@ -382,13 +390,31 @@ class CMSNavigation{
     }
 
     function cms_navigation_meta_box($post){
-        global $wpdb;
-        // get sections
-        $sections = $wpdb->get_col("SELECT DISTINCT meta_value FROM {$wpdb->postmeta} WHERE meta_key='_cms_nav_section'");
-        $post_custom = get_post_custom($post->ID);    
+        global $wpdb, $sitepress;
+        
+        //if it's a new post copy some custom fields from the original post
+        if($post->ID == 0 && isset($_GET['trid']) && $_GET['trid']){
+            $copied_custom_fields = array('_top_nav_excluded', '_cms_nav_minihome');
+            foreach($copied_custom_fields as $k=>$v){
+                $copied_custom_fields[$k] = "'".$v."'";                    
+            }
+            $res = $wpdb->get_results("
+                SELECT meta_key, meta_value FROM {$wpdb->prefix}icl_translations tr 
+                JOIN {$wpdb->postmeta} pm ON tr.element_id = pm.post_id
+                WHERE tr.trid={$_GET['trid']} AND (source_language_code IS NULL OR source_language_code='')
+                    AND meta_key IN (".join(',',$copied_custom_fields).")
+            ");
+            foreach($res as $r){
+                $post_custom[$r->meta_key][0] = $r->meta_value;    
+            }
+        }else{
+            // get sections
+            $sections = $wpdb->get_col("SELECT DISTINCT meta_value FROM {$wpdb->postmeta} WHERE meta_key='_cms_nav_section'");
+            $post_custom = get_post_custom($post->ID);    
+            $cms_nav_section = $post_custom['_cms_nav_section'][0];        
+        }        
         $top_nav_excluded = $post_custom['_top_nav_excluded'][0];
         $cms_nav_minihome = $post_custom['_cms_nav_minihome'][0];
-        $cms_nav_section = $post_custom['_cms_nav_section'][0];
         if($top_nav_excluded){ $top_nav_excluded = 'checked="checked"'; }
         if($cms_nav_minihome){ $cms_nav_minihome = 'checked="checked"'; }
         ?>
