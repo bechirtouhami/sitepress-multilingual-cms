@@ -412,8 +412,13 @@ class AbsoluteLinksPlugin{
                             $langprefix = '';
                         }
                         $perm_url = rtrim($home_url,'/'). $langprefix .'/'.$m;
-                        $regk = '@href="('.$perm_url.')"@i';                        
-                        $regv = 'href="' . '/' . ltrim($url_parts['path'],'/') . '?' . $qvid . '=' . $p->ID.'"';
+                        $regk = '@href="('.$perm_url.')"@i'; 
+                        // check if this is an offsite url
+                        if($p->post_type=='page' && $offsite_url = get_post_meta($p->ID, '_cms_nav_offsite_url', true)){
+                            $regv = 'href="'.$offsite_url.'"';
+                        }else{
+                            $regv = 'href="' . '/' . ltrim($url_parts['path'],'/') . '?' . $qvid . '=' . $p->ID.'"';
+                        }                       
                         $def_url[$regk] = $regv;
                     }else{ 
                         $alp_broken_links[$alp_matches[2][$k]] = array();                            

@@ -62,6 +62,8 @@ class CMSNavigation{
         
         add_action('plugins_loaded', array($this, 'sidebar_navigation_widget_init'));
         
+        add_filter('page_link', array($this, 'rewrite_page_link'), 15, 2);
+        add_action('parse_query', array($this, 'redirect_offsite_urls'));        
     } 
     
     function cms_navigation_breadcrumb(){
@@ -375,6 +377,11 @@ class CMSNavigation{
                 delete_post_meta($post_id, '_cms_nav_section');
             }        
         }
+        if($_POST['_cms_nav_offsite_url']){
+            update_post_meta($post_id, '_cms_nav_offsite_url', $_POST['_cms_nav_offsite_url']);
+        }else{
+            delete_post_meta($post_id, '_cms_nav_offsite_url');
+        }    
         
         //
         global $sitepress;
@@ -415,6 +422,7 @@ class CMSNavigation{
         }        
         $top_nav_excluded = $post_custom['_top_nav_excluded'][0];
         $cms_nav_minihome = $post_custom['_cms_nav_minihome'][0];
+        $cms_nav_offsite_url = $post_custom['_cms_nav_offsite_url'][0];
         if($top_nav_excluded){ $top_nav_excluded = 'checked="checked"'; }
         if($cms_nav_minihome){ $cms_nav_minihome = 'checked="checked"'; }
         ?>
@@ -436,6 +444,9 @@ class CMSNavigation{
         <?php if(!empty($sections)): ?>
         <a href="javascript:;" id="cms_nav_add_section"><?php echo __('enter new', 'sitepress') ?></a>
         <?php endif; ?>    
+        </p>
+        <p>
+        <label><?php echo __('Offsite page address', 'sitepress') ?> <input type="text" style="width:100%" name="_cms_nav_offsite_url" value="<?php echo $cms_nav_offsite_url ?>" /></label>
         </p>
         <?php
     }    
@@ -480,5 +491,19 @@ class CMSNavigation{
             echo $after_widget;
         }
         register_sidebar_widget(__('Sidebar Navigation', 'sitepress'), 'sidebar_navigation_widget', 'icl_sidebar_navigation');
+    }
+    
+    function rewrite_page_link($url, $page_id){
+        $offsite_url = get_post_meta($page_id, '_cms_nav_offsite_url', true);
+        if($offsite_url){
+            $url = $offsite_url;
+        }
+        return $url;
+    }
+    
+    function redirect_offsite_urls($q){
+        if($q->is_page && $offsite_url = get_post_meta($q->queried_object_id, '_cms_nav_offsite_url', true)){
+            wp_redirect($offsite_url, 301);
+        }
     }
 }
