@@ -209,9 +209,21 @@
     
     <h3><?php echo __('Translation Options', 'sitepress') ?></h3>
     <ul id="icl-tr-opt">
+        <?php
+            $icl_lang_status = $sitepress_settings['icl_lang_status'];
+            foreach($icl_lang_status as $lang){
+                if($lang['from'] == $selected_language) {
+                    $target_status[$lang['to']] = $lang['have_translators'];
+                }
+            }
+        ?>
         <?php foreach($active_languages as $lang): if($selected_language==$lang['code']) continue; ?>
             <?php if($language_pairs and isset($language_pairs[$selected_language][$lang['code']])): ?>
-                <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" checked="checked" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name']); ?></li></label>
+                <?php if(isset($target_status[$lang['code']]) and $target_status[$lang['code']] == 1): ?>
+                    <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" checked="checked" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name']); ?></li></label>
+                <?php else:  ?>
+                    <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" disabled="disabled" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name'] . __(' - No translators assigned yet in ICanLocalize', 'sitepress')); ?></li></label>
+                <?php endif; ?>
             <?php else:  ?>
                 <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" disabled="disabled" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name'] . __(' - This language has not been selected for translation by ICanLocalize', 'sitepress')); ?></li></label>
             <?php endif; ?>

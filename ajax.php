@@ -270,6 +270,32 @@ switch($_REQUEST['icl_ajx_action']){
         $post_type = $_POST['type'];
         echo icl_translation_send_post($post_id, $target_languages, $post_type);
         break;
+    case 'get_translator_status':
+        // check what languages we have translators for.
+        require_once ICL_PLUGIN_PATH . '/lib/Snoopy.class.php';
+        require_once ICL_PLUGIN_PATH . '/lib/xml2array.php';
+        require_once ICL_PLUGIN_PATH . '/lib/icl_api.php';
+        
+        $iclsettings = $sitepress->get_settings();
+        $icl_query = new ICanLocalizeQuery($iclsettings['site_id'], $iclsettings['access_key']);
+        $res = $icl_query->get_website_details();
+        
+        if(isset($res['translation_languages']['translation_language'])){
+            $translation_languages = $res['translation_languages']['translation_language'];
+            if(!isset($translation_languages[0])){
+                $target = $translation_languages;
+                $translation_languages = array(0 => $target);
+            }
+            foreach($translation_languages as $lang){
+                $target[] = array('from' => $sitepress->get_language_code($lang['attr']['from_language_name']),
+                                  'to' => $sitepress->get_language_code($lang['attr']['to_language_name']),
+                                  'have_translators' => $lang['attr']['have_translators']);
+            }
+            $iclsettings['icl_lang_status'] = $target;
+            $sitepress->save_settings($iclsettings);
+        }
+        break;
+        
     default:
         echo __('Invalid action','sitepress');                
 }    
