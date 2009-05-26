@@ -167,10 +167,6 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
 
 function icl_translation_save_md5($p){
     global $wpdb;
-    // minor edit - don't update MD5's
-    if($_POST['icl_minor_edit']){
-        return;
-    } 
     if($_POST['autosave']) return;
     if($_POST['action']=='post-quickpress-publish'){
         $post_id = $p;            
@@ -188,6 +184,13 @@ function icl_translation_save_md5($p){
     }else{
         $wpdb->insert($wpdb->prefix . 'icl_node', array('nid'=>$post_id, 'md5'=>$md5));
     }
+
+    // minor edit - update the current cms_request md5
+    if($_POST['icl_minor_edit']){
+        if($wpdb->get_var("SELECT nid FROM {$wpdb->prefix}icl_content_status WHERE nid='{$p}'")){
+            $wpdb->update($wpdb->prefix . 'icl_content_status', array('md5'=>$md5), array('nid'=>$p));
+        }
+    } 
     
 }
 
