@@ -268,16 +268,12 @@ function icl_translation_get_documents($lang,
             LEFT JOIN {$wpdb->prefix}icl_content_status c ON c.nid=p.ID
         {$where}                
         {$order} 
-        LIMIT {$offset}, {$limit}
     ";
     $results = $wpdb->get_results($sql);
     $pids = array(0);
     foreach($results as $r){
         $pids[] = $r->post_id;
     }
-    $wp_query->found_posts = $wpdb->get_var("SELECT FOUND_ROWS()");
-    $wp_query->query_vars['posts_per_page'] = $limit;
-    $wp_query->max_num_pages = ceil($wp_query->found_posts/$limit);
     
     $sql = "
         SELECT p.ID as post_id, COUNT(r.rid) AS inprogress_count 
@@ -292,12 +288,14 @@ function icl_translation_get_documents($lang,
     ";
     
     $in_progress = $wpdb->get_results($sql);
-    
+
+    $count = 0;
     foreach($results as $r){
+        $post_ok = false;
         if ($tstatus == 'in_progress'){
             foreach ($in_progress as $item){
                 if($item->post_id == $r->post_id){
-                    $documents[$r->post_id] = $r;
+                    $post_ok = true;
                     break;
                 }
             }
@@ -310,11 +308,17 @@ function icl_translation_get_documents($lang,
                 }
             }
             if (!$found) {
-                $documents[$r->post_id] = $r;
+                $post_ok = true;
             }
             
         } else {
-            $documents[$r->post_id] = $r;
+            $post_ok = true;
+        }
+        if($post_ok){
+            if ($count >= $offset and $count < $offset + $limit){
+                $documents[$r->post_id] = $r;
+            }
+            $count++;
         }
     }
     
@@ -323,6 +327,10 @@ function icl_translation_get_documents($lang,
             $documents[$v->post_id]->in_progress = $v->inprogress_count;
         }
     }
+
+    $wp_query->found_posts = $count;
+    $wp_query->query_vars['posts_per_page'] = $limit;
+    $wp_query->max_num_pages = ceil($wp_query->found_posts/$limit);
       
     return $documents;
     
