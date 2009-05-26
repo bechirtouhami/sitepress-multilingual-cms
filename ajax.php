@@ -292,8 +292,12 @@ switch($_REQUEST['icl_ajx_action']){
                                   'have_translators' => $lang['attr']['have_translators']);
             }
             $iclsettings['icl_lang_status'] = $target;
-            $sitepress->save_settings($iclsettings);
         }
+        
+        if(isset($res['client']['attr'])){
+            $iclsettings['icl_balance'] = $res['client']['attr']['balance'];
+        }
+        $sitepress->save_settings($iclsettings);
         break;
         
     default:
