@@ -71,8 +71,18 @@
         <tr valign="top">
             <th scope="row"><strong><?php echo __('Translation status:', 'sitepress') ?></strong>    </th>
             <td coslpan="2">
-                <label><input type="radio" name="filter[tstatus]" value="all" <?php if($tstatus=='all'):?>checked="checked"<?php endif;?>/><?php echo __('All documents', 'sitepress') ?></label>&nbsp;&nbsp;    
-                <label><input type="radio" name="filter[tstatus]" value="not" <?php if($tstatus=='not'):?>checked="checked"<?php endif;?>/><?php echo __('Not translated or needs updating', 'sitepress') ?></label>
+                <select name="filter[tstatus]">
+                    <?php
+                        $option_status = array(
+                                               'all' => __('All documents', 'sitepress'),
+                                               'not' => __('Not translated or needs updating', 'sitepress'),
+                                               'in_progress' => __('Translation in progress', 'sitepress'),
+                                               'complete' => __('Translation complete', 'sitepress'));
+                    ?>
+                    <?php foreach($option_status as $k=>$v):?>
+                    <option value="<?php echo $k ?>" <?php if($tstatus==$k):?>selected="selected"<?php endif?>><?php echo $v ?></option>
+                    <?php endforeach; ?>
+                </select>
             </td>
         </tr>
         <tr valign="top">

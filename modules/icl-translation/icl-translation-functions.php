@@ -233,8 +233,13 @@ function icl_translation_get_documents($lang,
     global $wpdb, $wp_query;
     
     $where = "WHERE 1";
+    $order = "ORDER BY p.post_date DESC";
+    
     if($tstatus=='not'){
         $where .= " AND (c.rid IS NULL OR n.md5<>c.md5)";
+    } else if ($tstatus == 'in_progress' or $tstatus == 'complete') {
+        $where .= " AND (c.rid IS NOT NULL)";
+        $order = "ORDER BY c.rid DESC";
     }
     if($type){
         $where .= " AND p.post_type = '{$type}'";
@@ -262,7 +267,7 @@ function icl_translation_get_documents($lang,
             LEFT JOIN {$wpdb->prefix}icl_node n ON p.ID = n.nid
             LEFT JOIN {$wpdb->prefix}icl_content_status c ON c.nid=p.ID
         {$where}                
-        ORDER BY p.post_date DESC 
+        {$order} 
         LIMIT {$offset}, {$limit}
     ";
     $results = $wpdb->get_results($sql);
@@ -289,11 +294,34 @@ function icl_translation_get_documents($lang,
     $in_progress = $wpdb->get_results($sql);
     
     foreach($results as $r){
-        $documents[$r->post_id] = $r;
+        if ($tstatus == 'in_progress'){
+            foreach ($in_progress as $item){
+                if($item->post_id == $r->post_id){
+                    $documents[$r->post_id] = $r;
+                    break;
+                }
+            }
+        } else if ($tstatus == 'complete'){
+            $found = false;
+            foreach ($in_progress as $item){
+                if($item->post_id == $r->post_id){
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                $documents[$r->post_id] = $r;
+            }
+            
+        } else {
+            $documents[$r->post_id] = $r;
+        }
     }
     
     foreach($in_progress as $v){
-        $documents[$v->post_id]->in_progress = $v->inprogress_count;
+        if(isset($documents[$v->post_id])){
+            $documents[$v->post_id]->in_progress = $v->inprogress_count;
+        }
     }
       
     return $documents;
