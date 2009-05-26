@@ -235,6 +235,15 @@
     </ul>
     <span id="icl_message_1" style="display:none"><?php echo __('All documents sent to translation', 'sitepress')?></span>
     <span id="icl_message_2" style="display:none"><?php echo __('Translation in progress', 'sitepress')?></span>
+    <?php if(isset($sitepress_settings['icl_balance'])): ?>
+        <p>
+            <?php echo sprintf(__('Your balance with ICanLocalize is %s. Visit your %sICanLocalize finance%s page to deposit additional funds.'),
+                                  '$'.$sitepress_settings['icl_balance'],
+                                  '<a href="'.ICL_API_ENDPOINT.ICL_FINANCE_LINK.'">',
+                                  '</a>',
+                                  'sitepress')?>
+        </p>
+    <?php endif; ?>
     
     <br /><br /><br /><br /><br /><br /><a href="<?php echo $_SERVER['REQUEST_URI'] ?>&debug=1">DEBUG: FETCH TRANSLATIONS</a>    
 </div>

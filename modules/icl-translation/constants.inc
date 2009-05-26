@@ -12,4 +12,6 @@ define ( 'CMS_TARGET_LANGUAGE_ASSIGNED', 1);
 define ( 'CMS_TARGET_LANGUAGE_TRANSLATED', 2);
 define ( 'CMS_TARGET_LANGUAGE_DONE', 3);
 
+define ( 'ICL_FINANCE_LINK', '/finance');
+
 ?>
