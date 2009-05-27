@@ -199,6 +199,7 @@ switch($_REQUEST['icl_ajx_action']){
     case 'icl_lang_more_options':
         $iclsettings['language_home'] = $_POST['icl_language_home'];
         $iclsettings['sync_page_ordering'] = $_POST['icl_sync_page_ordering'];        
+        $iclsettings['sync_page_parent'] = $_POST['icl_sync_page_parent'];        
         $sitepress->save_settings($iclsettings);
         echo 1; 
        break;        

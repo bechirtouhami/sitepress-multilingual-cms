@@ -573,10 +573,27 @@ function icl_fix_translated_children($original_id, $translated_id, $lang_code){
         if($trid){
             $translations = $sitepress->get_element_translations($trid);
             if (isset($translations[$lang_code])){
-                $translated_child = get_post($translations[$lang_code]->element_id);
-                if ($translated_child->post_parent != $translated_id){
-                    $translated_child->post_parent = $translated_id;
-                    wp_update_post($translated_child);
+                $current_parent = $wpdb->get_var("SELECT post_parent FROM {$wpdb->posts} WHERE ID = ".$translations[$lang_code]->element_id);
+                if ($current_parent != $translated_id){
+                    $wpdb->query("UPDATE {$wpdb->posts} SET post_parent={$translated_id} WHERE ID = ".$translations[$lang_code]->element_id);
+                }
+            }
+        }
+    }
+}
+
+function icl_fix_translated_parent($original_id, $translated_id, $lang_code){
+    global $wpdb, $sitepress;
+
+    $original_parent = $wpdb->get_var("SELECT post_parent FROM {$wpdb->posts} WHERE ID = {$original_id} AND post_type = 'page'");
+    if ($original_parent){
+        $trid = $sitepress->get_element_trid($original_parent);
+        if($trid){
+            $translations = $sitepress->get_element_translations($trid);
+            if (isset($translations[$lang_code])){
+                $current_parent = $wpdb->get_var("SELECT post_parent FROM {$wpdb->posts} WHERE ID = ".$translated_id);
+                if ($current_parent != $translations[$lang_code]->element_id){
+                    $wpdb->query("UPDATE {$wpdb->posts} SET post_parent={$translations[$lang_code]->element_id} WHERE ID = ".$translated_id);
                 }
             }
         }

@@ -645,13 +645,25 @@ class SitePress{
             $language_code = $res->language_code;
         }else{
             $trid = $_POST['icl_trid'];
-        }       
+        }
+        
+        // synchronize the page order for translations
         if($trid && $_POST['post_type']=='page' && $this->settings['sync_page_ordering']){
             $menu_order = $wpdb->escape($_POST['menu_order']);
             $translated_pages = $wpdb->get_col("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid='{$trid}' AND element_id<>{$post_id}");
             if(!empty($translated_pages)){
                 $wpdb->query("UPDATE {$wpdb->posts} SET menu_order={$menu_order} WHERE ID IN (".join(',', $translated_pages).")");
             }            
+        }
+                
+        // synchronize the page parent for translations
+        if($trid && $_POST['post_type']=='page' && $this->settings['sync_page_parent']){
+            $translations = $this->get_element_translations($trid);
+            foreach($translations as $target_lang => $target_details){
+                if($target_lang != $language_code){
+                    icl_fix_translated_parent($post_id, $target_details->element_id, $target_lang);
+                }
+            }
         }
                 
         //sync posts stcikiness
