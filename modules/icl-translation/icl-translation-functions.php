@@ -350,7 +350,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     if(!$lang_code){        
         return false;
     }
-        
+
     $original_post_details = $wpdb->get_row("
         SELECT p.post_author, p.post_type, p.post_status, p.comment_status ,p.post_parent, p.menu_order, t.language_code
         FROM {$wpdb->prefix}icl_translations t 
@@ -361,7 +361,6 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     remove_filter('option_sticky_posts', array($this,'option_sticky_posts')); // remove filter used to get language relevant stickies. get them all
     $sticky_posts = get_option('sticky_posts');
     $is_original_sticky = $original_post_details->post_type=='post' && in_array($translation['original_id'], $sticky_posts);
-    
     
     _icl_content_fix_image_paths_in_body($translation);
     _icl_content_fix_relative_link_paths_in_body($translation);
@@ -456,6 +455,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
         $translated_cats_ids = $wpdb->get_col("SELECT t.term_id FROM {$wpdb->terms} t JOIN {$wpdb->term_taxonomy} tx ON tx.term_id = t.term_id WHERE tx.taxonomy='category' AND tx.term_taxonomy_id IN (".join(',',$cat_tr_tts).")");
         
     }elseif($original_post_details->post_type=='page'){
+        // handle the page parent and set it to the translated parent if we have one.
         if($original_post_details->post_parent){
             $post_parent_trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_type='post' AND element_id='{$original_post_details->post_parent}'");
             if($post_parent_trid){
@@ -556,7 +556,31 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
         _icl_content_fix_links_to_translated_content($id->nid, $lang_code);
     }
     
+    // if this is a parent page then make sure it's children point to this.
+    icl_fix_translated_children($translation['original_id'], $new_post_id, $lang_code);
+    
     return true;
+}
+
+function icl_fix_translated_children($original_id, $translated_id, $lang_code){
+    global $wpdb, $sitepress;
+
+    // get the children of of original page.
+    $original_children = $wpdb->get_col("SELECT ID FROM {$wpdb->posts} WHERE post_parent = {$original_id} AND post_type = 'page'");
+    foreach($original_children as $original_child){
+        // See if the child has a translation.
+        $trid = $sitepress->get_element_trid($original_child);
+        if($trid){
+            $translations = $sitepress->get_element_translations($trid);
+            if (isset($translations[$lang_code])){
+                $translated_child = get_post($translations[$lang_code]->element_id);
+                if ($translated_child->post_parent != $translated_id){
+                    $translated_child->post_parent = $translated_id;
+                    wp_update_post($translated_child);
+                }
+            }
+        }
+    }
 }
 
 function icl_process_translated_document($request_id, $language){
