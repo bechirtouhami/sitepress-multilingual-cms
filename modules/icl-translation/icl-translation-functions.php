@@ -618,7 +618,7 @@ function icl_process_translated_document($request_id, $language){
     if(0 == $wpdb->get_var("SELECT COUNT(rid) FROM {$wpdb->prefix}icl_core_status WHERE rid='{$request_id}' AND status < ".CMS_TARGET_LANGUAGE_DONE)){
         $iclq->cms_update_request_status($request_id, CMS_REQUEST_DONE, false);
     }
-    return true;
+    return $ret;
 }
 
 function icl_poll_for_translations(){
