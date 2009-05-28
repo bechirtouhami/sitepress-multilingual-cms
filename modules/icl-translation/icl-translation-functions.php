@@ -1067,7 +1067,7 @@ function _icl_content_fix_links_to_translated_content($new_post_id, $target_lang
                     
                     // replace the link in the body.
                     
-                    $new_body = str_replace($link[0], $new_link, $new_body);
+                    $new_body = str_replace($link[0], $new_link, $body);
                 } else {
                     // translation not found for this.
                     $all_links_fixed = 0;
