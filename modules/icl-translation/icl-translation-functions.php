@@ -1086,6 +1086,7 @@ function _icl_content_fix_links_to_translated_content($new_post_id, $target_lang
         // save changes to the database.
         $wpdb->query("UPDATE {$wpdb->posts} SET post_content='{$new_body}' WHERE ID={$new_post_id}");
         $post = $wpdb->get_row("SELECT * FROM {$wpdb->posts} WHERE ID={$new_post_id}");
+        echo mysql_error();
         echo "Updated body<br>-----------------------".$post->post_content."<br>-----------------------------------<br>";
         
     }
