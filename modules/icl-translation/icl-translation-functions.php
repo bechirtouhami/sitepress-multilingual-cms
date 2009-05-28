@@ -1080,7 +1080,11 @@ function _icl_content_fix_links_to_translated_content($new_post_id, $target_lang
         
         // save changes to the database.
         
+        echo $new_body;
         $wpdb->update($wpdb->post, array('post_content'=>$new_body), array('ID'=>$new_post_id));
+        $post = $wpdb->get_row("SELECT * FROM {$wpdb->posts} WHERE ID={$new_post_id}");
+        echo $post->post_content;
+        
         
     }
     
