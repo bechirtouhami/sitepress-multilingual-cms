@@ -1010,7 +1010,7 @@ function _icl_content_fix_links_to_translated_content($new_post_id, $target_lang
     $body = $post->post_content;
     $new_body = $body;
     
-    echo $new_post_id."\n";
+    echo $new_post_id."<br>\n";
     
     $links = _icl_content_get_link_paths($body);
     
@@ -1018,7 +1018,7 @@ function _icl_content_fix_links_to_translated_content($new_post_id, $target_lang
     
     foreach($links as $link) {
         $path = $link[2];
-        echo $path."\n";
+        echo $path."<br>\n";
         $url_parts = parse_url($path);
         
         if((!isset($url_parts['host']) or $base_url_parts['host'] == $url_parts['host']) and
@@ -1049,6 +1049,7 @@ function _icl_content_fix_links_to_translated_content($new_post_id, $target_lang
                 }
 
                 $link_id = (int)$value;
+                echo $link_id."<br>\n";
                 $trid = $sitepress->get_element_trid($link_id, $kind);
                 if($trid !== NULL){
                     $translations = $sitepress->get_element_translations($trid, $kind);
