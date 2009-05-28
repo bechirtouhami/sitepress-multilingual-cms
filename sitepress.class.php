@@ -220,7 +220,7 @@ class SitePress{
     }
                 
     function ajax_responses(){
-        global $wpdb;
+        //global $wpdb;
         // moved
     }
     
@@ -323,8 +323,8 @@ class SitePress{
         return $this->settings['default_language'];
     }
     
-    function get_current_language(){
-        return $this->this_lang;
+    function get_current_language(){                                  
+        return apply_filters('icl_current_language' , $this->this_lang);
     }
     
     function set_default_language($code){        
@@ -796,7 +796,7 @@ class SitePress{
         }
         
         if('all' != $this->this_lang){ 
-            $cond = "AND language_code='{$wpdb->escape($this->this_lang)}'";
+            $cond = "AND language_code='{$wpdb->escape($this->get_current_language())}'";
             $ljoin = "";
         }else{
             $cond = '';
