@@ -353,7 +353,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     }
     echo 'testing2';
     
-    echo $translation[$lang_code];
+    echo $translation;
 
     $original_post_details = $wpdb->get_row("
         SELECT p.post_author, p.post_type, p.post_status, p.comment_status ,p.post_parent, p.menu_order, t.language_code
