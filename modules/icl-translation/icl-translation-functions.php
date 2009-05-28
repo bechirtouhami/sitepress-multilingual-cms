@@ -347,13 +347,10 @@ function icl_translation_delete_post($post_id){
 function icl_add_post_translation($trid, $translation, $lang, $rid){
     global $wpdb, $sitepress_settings, $sitepress;
     $lang_code = $wpdb->get_var("SELECT code FROM {$wpdb->prefix}icl_languages WHERE english_name='".$wpdb->escape($lang)."'");
-    echo 'testing';
     if(!$lang_code){        
         return false;
     }
-    echo 'testing2';
-    
-    echo $translation;
+    echo $translation['body'];
 
     $original_post_details = $wpdb->get_row("
         SELECT p.post_author, p.post_type, p.post_status, p.comment_status ,p.post_parent, p.menu_order, t.language_code
