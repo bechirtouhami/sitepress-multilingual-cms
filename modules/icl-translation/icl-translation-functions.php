@@ -1013,6 +1013,7 @@ function _icl_content_fix_links_to_translated_content($new_post_id, $target_lang
     $new_body = $body;
     
     echo $new_post_id."<br>\n";
+    echo $new_body;
     
     $links = _icl_content_get_link_paths($body);
     
