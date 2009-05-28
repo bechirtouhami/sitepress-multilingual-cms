@@ -1067,7 +1067,7 @@ function _icl_content_fix_links_to_translated_content($new_post_id, $target_lang
                     
                     // replace the link in the body.
                     
-                    $new_body = str_replace($link[0], $new_link, $body);
+                    $new_body = str_replace($link[0], $new_link, $new_body);
                 } else {
                     // translation not found for this.
                     $all_links_fixed = 0;
@@ -1079,6 +1079,7 @@ function _icl_content_fix_links_to_translated_content($new_post_id, $target_lang
     }
     
     if ($new_body != $body){
+        echo "New body<br>".$new_body;
         // save changes to the database.
         $post = $wpdb->query("UPDATE {$wpdb->posts} SET post_content='{$new_body}' WHERE ID={$new_post_id}");
     }
