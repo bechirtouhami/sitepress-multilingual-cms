@@ -553,7 +553,9 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
                 
     $needs_fixing = $wpdb->get_results($sql);
     foreach($needs_fixing as $id){
-        _icl_content_fix_links_to_translated_content($id->nid, $lang_code);
+        if($id->nid != $new_post_id){
+            _icl_content_fix_links_to_translated_content($id->nid, $lang_code);
+        }
     }
     
     // if this is a parent page then make sure it's children point to this.
