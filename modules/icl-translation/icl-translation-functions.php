@@ -503,11 +503,12 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     global $wp_rewrite;
     if(!isset($wp_rewrite)) $wp_rewrite = new WP_Rewrite();
     
-    echo $postarr['post_content'];
-
     kses_remove_filters();
     $new_post_id = wp_insert_post($postarr);
 
+    $temp_post = get_post($new_post_id);
+    echo $temp_post->post_content;
+    
     // set stickiness
     if($is_original_sticky){
         stick_post($new_post_id);
