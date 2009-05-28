@@ -362,8 +362,8 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     $sticky_posts = get_option('sticky_posts');
     $is_original_sticky = $original_post_details->post_type=='post' && in_array($translation['original_id'], $sticky_posts);
     
-    //_icl_content_fix_image_paths_in_body($translation);
-    //_icl_content_fix_relative_link_paths_in_body($translation);
+    _icl_content_fix_image_paths_in_body($translation);
+    _icl_content_fix_relative_link_paths_in_body($translation);
     
     if($original_post_details->post_type=='post'){
         
@@ -707,12 +707,15 @@ function setTranslationStatus($args){
             return 0;
         }
                
-        if (icl_process_translated_document($request_id, $language) === true){
-            return 1;
-        } else {
-            return 0;
+        try{
+            if (icl_process_translated_document($request_id, $language) === true){
+                return 1;
+            } else {
+                return 0;
+            }
+        } catch(Exception $e) {
+            return $e->getMessage();
         }
-        
 
 } 
 
