@@ -350,7 +350,6 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     if(!$lang_code){        
         return false;
     }
-    echo $translation['body'];
 
     $original_post_details = $wpdb->get_row("
         SELECT p.post_author, p.post_type, p.post_status, p.comment_status ,p.post_parent, p.menu_order, t.language_code
@@ -366,6 +365,8 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     _icl_content_fix_image_paths_in_body($translation);
     _icl_content_fix_relative_link_paths_in_body($translation);
     
+    echo $translation['body'];
+
     if($original_post_details->post_type=='post'){
         
         // deal with tags
