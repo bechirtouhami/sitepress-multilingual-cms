@@ -365,8 +365,6 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     _icl_content_fix_image_paths_in_body($translation);
     _icl_content_fix_relative_link_paths_in_body($translation);
     
-    echo $translation['body'];
-
     if($original_post_details->post_type=='post'){
         
         // deal with tags
@@ -505,6 +503,8 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     global $wp_rewrite;
     if(!isset($wp_rewrite)) $wp_rewrite = new WP_Rewrite();
     
+    echo $postarr['post_content'];
+
     kses_remove_filters();
     $new_post_id = wp_insert_post($postarr);
 
