@@ -1081,7 +1081,9 @@ function _icl_content_fix_links_to_translated_content($new_post_id, $target_lang
     }
     
     if ($new_body != $body){
+        $new_body = "this is a test";
         echo "New body<br>".$new_body;
+        
         // save changes to the database.
         $post = $wpdb->query("UPDATE {$wpdb->posts} SET post_content='{$new_body}' WHERE ID={$new_post_id}");
     }
