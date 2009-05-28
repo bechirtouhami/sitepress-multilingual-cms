@@ -1010,8 +1010,7 @@ function _icl_content_fix_links_to_translated_content($new_post_id, $target_lang
     $body = $post->post_content;
     $new_body = $body;
     
-    echo $new_post_id;
-    echo $new_body;
+    echo $new_post_id."\n";
     
     $links = _icl_content_get_link_paths($body);
     
@@ -1019,6 +1018,7 @@ function _icl_content_fix_links_to_translated_content($new_post_id, $target_lang
     
     foreach($links as $link) {
         $path = $link[2];
+        echo $path."\n";
         $url_parts = parse_url($path);
         
         if((!isset($url_parts['host']) or $base_url_parts['host'] == $url_parts['host']) and
