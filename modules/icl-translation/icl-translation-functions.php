@@ -553,7 +553,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
                 
     $needs_fixing = $wpdb->get_results($sql);
     foreach($needs_fixing as $id){
-        if($id->nid != $new_post_id){
+        if($id->nid != $new_post_id){ // fix all except the new_post_id. We have already done this.
             _icl_content_fix_links_to_translated_content($id->nid, $lang_code);
         }
     }
