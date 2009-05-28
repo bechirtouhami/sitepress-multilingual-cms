@@ -605,13 +605,12 @@ function icl_fix_translated_parent($original_id, $translated_id, $lang_code){
 function icl_process_translated_document($request_id, $language){
     global $sitepress_settings, $wpdb;
     
-    echo 'testing';
-    
     $ret = false;
     $iclq = new ICanLocalizeQuery($sitepress_settings['site_id'], $sitepress_settings['access_key']);       
     $trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations t JOIN {$wpdb->prefix}icl_content_status c ON t.element_id = c.nid AND t.element_type='post' AND c.rid=".$request_id);
     $translation = $iclq->cms_do_download($request_id, $language);                           
-    if($translation){            
+    if($translation){
+        echo 'testing';
         $ret = icl_add_post_translation($trid, $translation, $language, $request_id);
         if($ret){
             $iclq->cms_update_request_status($request_id, CMS_TARGET_LANGUAGE_DONE, $language);
