@@ -1,8 +1,11 @@
 <?php     
     require_once ICL_PLUGIN_PATH . '/sitepress.php';     
+    require_once ICL_PLUGIN_PATH . '/inc/plugins-texts-functions.php';     
     $active_languages = $sitepress->get_active_languages();            
     $sitepress_settings = $sitepress->get_settings();
     $icl_account_ready_errors = $sitepress->icl_account_reqs();
+    $icl_plugins_texts = icl_pt_get_texts();
+    icl_get_posts_translateable_fields();
 ?>
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap">
@@ -161,13 +164,47 @@
                 <i><?php echo __("Content translation can be managed remotely via xmlrpc calls.", 'sitepress') ?></i><br />
             </li>
         </ul>
-            
-            
+        
         <p class="submit">
             <input class="button" name="create account" value="<?php echo __('Save', 'sitepress') ?>" type="submit" />
             <span class="icl_ajx_response" id="icl_ajx_response2"></span>    
         </p>        
         </form>
+        
+        
+        <h3><?php echo __('Plugins texts translation', 'sitepress') ?></h3>                
+        <form name="icl_plugins_texts" action="">
+        <table id="icl_plugins_texts" class="widefat" cellspacing="0">
+        <thead>
+        <tr>
+        <th scope="col"><?php echo __('Enable translation', 'sitepress') ?></th>
+        <th scope="col"><?php echo __('Plugin', 'sitepress') ?></th>
+        <th scope="col"><?php echo __('List of fields we translate', 'sitepress') ?></th>        
+        </tr>        
+        </thead>        
+        <tfoot>
+        <tr>
+        <th scope="col"><?php echo __('Enable translation', 'sitepress') ?></th>
+        <th scope="col"><?php echo __('Plugin', 'sitepress') ?></th>
+        <th scope="col"><?php echo __('List of fields we translate', 'sitepress') ?></th>        
+        </tr>        
+        </tfoot>                
+        <tbody>        
+        <?php foreach($icl_plugins_texts as $ipt): ?>
+        <tr>
+        <td scope="col"><input type="checkbox" name="icl_plugins_texts_enabled[]" value="<?php echo $ipt['plugin_name'] ?>" <?php if(!$ipt['active']): ?>disabled="disabled"<?php endif;?> <?php if($ipt['enabled']): ?>checked="checked"<?php endif;?>/></td>
+        <td scope="col"><?php echo $ipt['plugin_name_short'] ?></td>
+        <td scope="col"><?php echo $ipt['fields_list'] ?></td>
+        </tr>
+        <?php endforeach; ?>                                                                  
+        </tbody>        
+        </table>   
+        <p class="submit">
+            <input class="button" name="create account" value="<?php echo __('Save', 'sitepress') ?>" type="submit" />
+            <span class="icl_ajx_response" id="icl_ajx_response3"></span>    
+        </p>        
+        </form>
+                     
         
         <h3 id="icl_create_account_form"><?php echo __('Configure your ICanLocalize account', 'sitepress') ?></h3>             
         <?php if(isset($_POST['icl_form_errors']) || $icl_account_ready_errors):  ?>

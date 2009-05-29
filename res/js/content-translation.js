@@ -3,6 +3,7 @@ addLoadEvent(function(){
     jQuery('#icl_save_language_pairs').click(saveLanguagePairs);
     jQuery('form[name="icl_more_options"]').submit(iclSaveForm);
     jQuery('form[name="icl_editor_account"]').submit(iclSaveForm);
+    jQuery('form[name="icl_plugins_texts"]').submit(iclSaveForm);
 });
 
 function toggleTranslationPairsSub(){

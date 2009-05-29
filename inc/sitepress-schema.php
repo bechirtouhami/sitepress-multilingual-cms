@@ -81,8 +81,7 @@ function icl_sitepress_activate(){
         mysql_query($sql);
     } 
     
-    // flags table
-    
+    // flags table    
    $table_name = $wpdb->prefix.'icl_flags';
    if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
         $sql = "
@@ -107,9 +106,73 @@ function icl_sitepress_activate(){
         }
     } 
     
+    // plugins texts table
+    $table_name = $wpdb->prefix.'icl_plugins_texts';
+    if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
+        $sql = "
+            CREATE TABLE `{$table_name}` (
+            `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+            `plugin_name` VARCHAR( 255 ) NOT NULL ,
+            `attribute_type` VARCHAR( 64 ) NOT NULL ,
+            `attribute_name` VARCHAR( 128 ) NOT NULL ,
+            `description` TEXT NOT NULL ,
+            `translate` TINYINT NOT NULL ,
+            UNIQUE KEY `plugin_name` (`plugin_name`,`attribute_type`,`attribute_name`)
+            )";
+       mysql_query($sql);
+       $prepop  = array(
+            0 => array(
+                'plugin_name' => 'sitepress-multilingual-cms/sitepress.php',
+                'attribute_type' => 'custom_field',
+                'attribute_name' => '_top_nav_excluded',
+                'description' => 'Exclude page from top navigation',
+                'translate' => 0
+                ),
+            1 => array(
+                'plugin_name' => 'sitepress-multilingual-cms/sitepress.php',
+                'attribute_type' => 'custom_field',
+                'attribute_name' => '_cms_nav_minihome',
+                'description' => 'Sets page as a mini home in CMS Navigation',
+                'translate' => 0
+                ),
+            2 => array(
+                'plugin_name' => 'sitepress-multilingual-cms/sitepress.php',
+                'attribute_type' => 'custom_field',
+                'attribute_name' => '_cms_nav_section',
+                'description' => 'Defines the section the page belong to',
+                'translate' => 1
+                ),
+            3 => array(
+                'plugin_name' => 'all-in-one-seo-pack/all_in_one_seo_pack.php',
+                'attribute_type' => 'custom_field',
+                'attribute_name' => 'title',
+                'description' => 'Custom title for post/page',
+                'translate' => 1
+                ),
+            4 => array(
+                'plugin_name' => 'all-in-one-seo-pack/all_in_one_seo_pack.php',
+                'attribute_type' => 'custom_field',
+                'attribute_name' => 'description',
+                'description' => 'Custom description for post/page',
+                'translate' => 1
+                ),
+            5 => array(
+                'plugin_name' => 'all-in-one-seo-pack/all_in_one_seo_pack.php',
+                'attribute_type' => 'custom_field',
+                'attribute_name' => 'keywords',
+                'description' => 'Custom keywords for post/page',
+                'translate' => 1
+                )
+       );   
        
-    delete_option('icl_sitepress_version');
-    add_option('icl_sitepress_version', ICL_SITEPRESS_VERSION, '', true);
+       foreach($prepop as $pre){
+           $wpdb->insert($table_name, $pre);
+       }         
+   }   
+   
+               
+   delete_option('icl_sitepress_version');
+   add_option('icl_sitepress_version', ICL_SITEPRESS_VERSION, '', true);
     
         
     // try to determine the blog language

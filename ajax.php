@@ -171,6 +171,10 @@ switch($_REQUEST['icl_ajx_action']){
         }
         echo 1; 
        break;
+    case 'icl_plugins_texts':
+        update_option('icl_plugins_texts_enabled', $_POST['icl_plugins_texts_enabled']);
+        echo '1|';
+        break;
     case 'icl_save_language_negotiation_type':
         $iclsettings['language_negotiation_type'] = $_POST['icl_language_negotiation_type'];
         if($_POST['language_domains']){
