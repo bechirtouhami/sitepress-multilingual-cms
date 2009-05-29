@@ -7,7 +7,7 @@ class SitePress{
     
     function __construct(){
         global $wpdb;       
-        $this->settings = get_option('icl_sitepress_settings');        
+        $this->settings = get_option('icl_sitepress_settings');                
         $res = $wpdb->get_results("
             SELECT code, english_name, active, lt.name AS display_name 
             FROM {$wpdb->prefix}icl_languages l
@@ -657,11 +657,11 @@ class SitePress{
         }
                 
         // synchronize the page parent for translations
-        if($trid && $_POST['post_type']=='page' && $this->settings['sync_page_parent']){
+        if($trid && $_POST['post_type']=='page'){
             $translations = $this->get_element_translations($trid);
             foreach($translations as $target_lang => $target_details){
                 if($target_lang != $language_code){
-                    icl_fix_translated_parent($post_id, $target_details->element_id, $target_lang);
+                    $this->fix_translated_parent($post_id, $target_details->element_id, $target_lang);
                 }
             }
         }
@@ -695,6 +695,24 @@ class SitePress{
         }
         $this->set_element_language_details($post_id, 'post', $trid, $language_code);
     }
+    
+    function fix_translated_parent($original_id, $translated_id, $lang_code){
+        global $wpdb;
+
+        $original_parent = $wpdb->get_var("SELECT post_parent FROM {$wpdb->posts} WHERE ID = {$original_id} AND post_type = 'page'");
+        if ($original_parent){
+            $trid = $this->get_element_trid($original_parent);
+            if($trid){
+                $translations = $this->get_element_translations($trid);
+                if (isset($translations[$lang_code])){
+                    $current_parent = $wpdb->get_var("SELECT post_parent FROM {$wpdb->posts} WHERE ID = ".$translated_id);
+                    if ($current_parent != $translations[$lang_code]->element_id){
+                        $wpdb->query("UPDATE {$wpdb->posts} SET post_parent={$translations[$lang_code]->element_id} WHERE ID = ".$translated_id);
+                    }
+                }
+            }
+        }
+    }    
     
     function sync_custom_fields($post_id, $field_names, $single = true){
         global $wpdb;
