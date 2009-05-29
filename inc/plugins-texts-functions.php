@@ -14,7 +14,7 @@ function icl_pt_get_texts(){
     }
     
     foreach($active_plugins as $ap){    
-        $plugin_name_short = str_replace('_', ' ', dirname($ap));    
+        $plugin_name_short = str_replace('_', ' ', false!==strpos($ap,'/')?dirname($ap):preg_replace('#\.php$#','',$ap));    
         if(isset($rs[$ap])){
             $fields_list = join(', ', $rs[$ap]);
             $active = 1;
@@ -22,6 +22,8 @@ function icl_pt_get_texts(){
             $fields_list = sprintf(__('WPML doesn\'t know how to translate this plugin. If it has texts that require translation, contact us by opening an issue in our forum: %s', 'sitepress'), '<a href="http://forum.wpml.org">http://forum.wpml.org</a>');
             $active = 0;
         }                
+        //exception for WPML
+        if($plugin_name_short=='sitepress-multilingual-cms') $plugin_name_short = 'WPML';
         $texts[] = array(
             'active' => $active,
             'enabled' => intval(in_array($ap, $enabled_plugins)),
@@ -40,7 +42,7 @@ function icl_get_posts_translatable_fields(){
     foreach($enabled_plugins as $ap){
         $aps[] = "'" . $ap . "'";
     }    
-    $res = $wpdb->get_results("SELECT attribute_name, attribute_type, translate FROM {$wpdb->prefix}icl_plugins_texts WHERE plugin_name IN (". join(',', $aps).") ");
+    $res = $wpdb->get_results("SELECT plugin_name, attribute_name, attribute_type, translate FROM {$wpdb->prefix}icl_plugins_texts WHERE plugin_name IN (". join(',', $aps).") ");
     return $res;
 } 
 ?>
