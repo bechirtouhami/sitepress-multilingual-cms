@@ -34,7 +34,7 @@ function icl_pt_get_texts(){
     return $texts;
 } 
 
-function icl_get_posts_translateable_fields(){
+function icl_get_posts_translatable_fields(){
     global $wpdb;
     $enabled_plugins = (array)get_option('icl_plugins_texts_enabled');
     foreach($enabled_plugins as $ap){

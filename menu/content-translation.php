@@ -5,7 +5,7 @@
     $sitepress_settings = $sitepress->get_settings();
     $icl_account_ready_errors = $sitepress->icl_account_reqs();
     $icl_plugins_texts = icl_pt_get_texts();
-    icl_get_posts_translateable_fields();
+    icl_get_posts_translatable_fields();
 ?>
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap">
