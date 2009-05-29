@@ -974,7 +974,7 @@ function _icl_content_fix_relative_link_paths_in_body(&$translation) {
 function _icl_content_get_link_paths($body) {
   
     $regexp_links = array(
-                        "/<a\shref\s*=\s*([\"\']??)([^\"]*)\">(.*)<\/a>/siU",
+                        "/<a.*?href\s*=\s*([\"\']??)([^\"]*)\">(.*?)<\/a>/i",
                         );
     
     $links = array();
@@ -1042,12 +1042,12 @@ function _icl_content_fix_links_to_translated_content($new_post_id, $target_lang
                     continue;
                 }
 
+                $link_id = (int)$value;
                 if ($sitepress->get_language_for_element($link_id, $kind) == $target_lang_code) {
                     // link already points to the target language.
                     continue;
                 }
 
-                $link_id = (int)$value;
                 $trid = $sitepress->get_element_trid($link_id, $kind);
                 if($trid !== NULL){
                     $translations = $sitepress->get_element_translations($trid, $kind);
