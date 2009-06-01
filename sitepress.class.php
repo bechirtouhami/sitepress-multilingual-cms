@@ -665,6 +665,12 @@ class SitePress{
                 }
             }
         }
+        
+        require_once ICL_PLUGIN_PATH . '/inc/plugins-texts-functions.php';
+        if(function_exists('icl_pt_sync_pugins_texts')){
+            icl_pt_sync_pugins_texts($post_id, $trid);
+        }
+        
                 
         //sync posts stcikiness
         if($_POST['post_type']=='post' && $_POST['action']!='post-quickpress-publish' ){ //not for quick press            
@@ -725,6 +731,7 @@ class SitePress{
         foreach($field_names as $field_name){
             $field_value = get_post_meta($post_id, $field_name, $single);
             foreach($translations as $t){
+                if($post_id == $t->element_id) continue;
                 if(!$field_value){
                     delete_post_meta($t, $field_name);
                 }else{

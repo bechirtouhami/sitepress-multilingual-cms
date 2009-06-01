@@ -36,13 +36,34 @@ function icl_pt_get_texts(){
     return $texts;
 } 
 
-function icl_get_posts_translatable_fields(){
+function icl_get_posts_translatable_fields($only_sync = false){
     global $wpdb;
     $enabled_plugins = (array)get_option('icl_plugins_texts_enabled');
     foreach($enabled_plugins as $ap){
         $aps[] = "'" . $ap . "'";
     }    
-    $res = $wpdb->get_results("SELECT plugin_name, attribute_name, attribute_type, translate FROM {$wpdb->prefix}icl_plugins_texts WHERE plugin_name IN (". join(',', $aps).") ");
+    if($only_sync == true){
+        $extra_cond = ' AND translate = 0';
+    }else{
+        $extra_cond = '';
+    }
+    $res = $wpdb->get_results("SELECT plugin_name, attribute_name, attribute_type, translate FROM {$wpdb->prefix}icl_plugins_texts WHERE plugin_name IN (". join(',', $aps).") {$extra_cond}");
     return $res;
 } 
+
+function icl_pt_sync_pugins_texts($post_id, $trid){
+    global $sitepress;
+    if(!$trid) return;
+    $translations = $sitepress->get_element_translations($trid);
+    $fields_2_sync = icl_get_posts_translatable_fields(true);
+    $custom_fields = array();
+    foreach($fields_2_sync as $f2s){
+        if($f2s->attribute_type == 'custom_field'){
+            $custom_fields[] = $f2s->attribute_name;
+        }
+    } 
+    if(!empty($custom_fields)){
+        $sitepress->sync_custom_fields($post_id, $custom_fields, true);
+    }    
+}
 ?>

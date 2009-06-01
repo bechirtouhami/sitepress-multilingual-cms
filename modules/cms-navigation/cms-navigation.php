@@ -383,13 +383,6 @@ class CMSNavigation{
             delete_post_meta($post_id, '_cms_nav_offsite_url');
         }    
         
-        //
-        global $sitepress;
-        $sitepress->sync_custom_fields($post_id, array(
-            '_top_nav_excluded',
-            '_cms_nav_minihome'
-            
-        ));
     }    
     
     function cms_navigation_page_edit_options(){
@@ -398,7 +391,6 @@ class CMSNavigation{
 
     function cms_navigation_meta_box($post){
         global $wpdb, $sitepress;
-        
         //if it's a new post copy some custom fields from the original post
         if($post->ID == 0 && isset($_GET['trid']) && $_GET['trid']){
             $copied_custom_fields = array('_top_nav_excluded', '_cms_nav_minihome');
