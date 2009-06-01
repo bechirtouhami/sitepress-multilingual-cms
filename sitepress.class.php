@@ -750,7 +750,7 @@ class SitePress{
         global $wpdb;  
         if($trid){            
             if($el_type=='post'){
-                $sel_add = ', p.post_title';
+                $sel_add = ', p.post_title, p.post_status';
                 $join_add = " LEFT JOIN {$wpdb->posts} p ON t.element_id=p.ID";
                 $groupby_add = "";
             }elseif($el_type=='category' || $el_type='tag'){
@@ -1606,11 +1606,13 @@ class SitePress{
             foreach($this->active_languages as $lang){
              if(!isset($page_home_translations[$lang['code']])){
                  $missing_home[] = '<a href="page-new.php?trid='.$page_home_trid.'&lang='.$lang['code'].'" title="'.__('add translation', 'sitepress').'">' . $lang['display_name'] . '</a>';
+             }elseif($page_home_translations[$lang['code']]->post_status != 'publish'){
+                 $missing_home[] = '<a href="page.php?action=edit&post='.$page_home_translations[$lang['code']]->element_id.'&lang='.$lang['code'].'" title="'.__('Not published - edit page', 'sitepress').'">' . $lang['display_name'] . '</a>';                 
              }
             }
             if(!empty($missing_home)){
              $warn_home  = '<div class="icl_form_errors" style="font-weight:bold">';
-             $warn_home .= sprintf(__('Your home page does not exist in %s', 'sitepress'), join(', ', $missing_home));
+             $warn_home .= sprintf(__('Your home page does not exist or its translation is not published in %s', 'sitepress'), join(', ', $missing_home));
              $warn_home .= '<br />';
              $warn_home .= '<a href="page.php?action=edit&post='.$page_on_front.'">' . __('Edit this page to add translations', 'sitepress') . '</a>';
              $warn_home .= '</div>';
@@ -1624,11 +1626,13 @@ class SitePress{
             foreach($this->active_languages as $lang){
              if(!isset($page_posts_translations[$lang['code']])){
                  $missing_posts[] = '<a href="page-new.php?trid='.$page_posts_trid.'&lang='.$lang['code'].'" title="'.__('add translation', 'sitepress').'">' . $lang['display_name'] . '</a>';
+             }elseif($page_posts_translations[$lang['code']]->post_status != 'publish'){
+                 $missing_posts[] = '<a href="page.php?action=edit&post='.$page_posts_translations[$lang['code']]->element_id.'&lang='.$lang['code'].'" title="'.__('Not published - edit page', 'sitepress').'">' . $lang['display_name'] . '</a>';                 
              }
             }
             if(!empty($missing_posts)){
              $warn_posts  = '<div class="icl_form_errors" style="font-weight:bold">';
-             $warn_posts .= sprintf(__('Your blog page does not exist in %s', 'sitepress'), join(', ', $missing_posts));
+             $warn_posts .= sprintf(__('Your blog page does not exist or its translation is not published in %s', 'sitepress'), join(', ', $missing_posts));
              $warn_posts .= '<br />';
              $warn_posts .= '<a href="page.php?action=edit&post='.$page_for_posts.'">' . __('Edit this page to add translations', 'sitepress') . '</a>';
              $warn_posts .= '</div>';
