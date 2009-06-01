@@ -515,6 +515,13 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
         }
     }
     
+    //sync plugins texts
+    require_once ICL_PLUGIN_PATH . '/inc/plugins-texts-functions.php';
+    $fields_2_sync = icl_get_posts_translatable_fields(true);
+    foreach($fields_2_sync as $f2s){
+        update_post_meta($new_post_id, $f2s->attribute_name, get_post_meta($translation['original_id'],$f2s->attribute_name,true));
+    }
+    
     // set specific custom fields
     $copied_custom_fields = array('_top_nav_excluded', '_cms_nav_minihome');    
     foreach($copied_custom_fields as $ccf){
