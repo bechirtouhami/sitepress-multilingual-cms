@@ -280,7 +280,7 @@ class CMSNavigation{
             $parent = $post->ancestors[0];            
             do{
                 $uppost = $wpdb->get_row("
-                    SELECT p1.ID, p1.post_parent, p2.meta_value IS NOT NULL AS minihome 
+                    SELECT p1.ID, p1.post_parent, p2.meta_value, (p2.meta_value IS NOT NULL && p2.meta_value <> '') AS minihome 
                     FROM {$wpdb->posts} p1
                         LEFT JOIN {$wpdb->postmeta} p2 ON p1.ID=p2.post_id AND (meta_key='_cms_nav_minihome' OR meta_key IS NULL)
                         WHERE post_type='page' AND p1.ID={$parent}
