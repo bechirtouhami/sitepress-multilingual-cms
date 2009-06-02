@@ -129,27 +129,13 @@
             <?php else: $oddcolumn = false; ?>
             <?php foreach($documents as $doc): $oddcolumn=!$oddcolumn; ?>
             <?php 
-            $not_translatable = false;
             if($doc->rid[0] != null){
                 if(isset($doc->in_progress) && $doc->in_progress > 0){                        
                     $tr_status = __('In progress', 'sitepress');
-                    $not_translatable = true;
                 }elseif($doc->updated){                            
                     $tr_status = __('Needs update', 'sitepress');
                 }else{
                     $tr_status = __('Complete', 'sitepress');
-                    
-                    // check if we have translated all languages.
-                    
-                    $not_translatable = true;
-                    foreach($language_pairs[$selected_language] as $lang_code => $value){
-                        if ($wpdb->get_var("SELECT target FROM {$wpdb->prefix}icl_core_status WHERE rid={$doc->rid} and target='{$lang_code}'") != $lang_code){
-                            $not_translatable = false;
-                            break;
-                        }
-                        
-                        
-                    }
                 }
             }else{
                 $tr_status = __('Not Translated', 'sitepress');
@@ -162,15 +148,13 @@
                 </td>
                 <td scope="col" class="post-title column-title">
                     <a href="<?php echo get_edit_post_link($doc->post_id) ?>"><?php echo $doc->post_title ?></a>
-                    <?php if(!$not_translatable): ?>
                     <span id="icl-cw-<?php echo $doc->post_id ?>" style="display:none"><?php echo $wc = count(explode(' ',$doc->post_title)) + count(explode(' ', strip_tags($doc->post_content))); $wctotal+=$wc; ?></span>
-                    <?php endif; ?>
                     <span class="icl-tr-details"></span>
                     </td>
                 <td scope="col"><?php echo $icl_post_types[$doc->post_type]; ?></td>
                 <td scope="col"><?php echo $icl_post_statuses[$doc->post_status]; ?></td>
                 <td scope="col" id="icl-tr-status-<?php echo $doc->post_id ?>">
-                    <?php if($doc->rid): ?>
+                    <?php if($doc->rid[0]): ?>
                     <a href="#translation-details-<?php echo implode('-', $doc->rid) ; ?>" class="translation_details_but">
                     <?php endif; ?>
                     <?php echo $tr_status ?>
