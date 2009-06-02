@@ -808,7 +808,7 @@ function icl_poll_for_translations(){
         }
     }    
 }
-//icl_poll_for_translations();
+
 
 function icl_add_custom_xmlrpc_methods($methods){
     $methods['icanlocalize.set_translation_status'] = 'setTranslationStatus';
@@ -875,7 +875,7 @@ function icl_get_post_translation_status($post_id){
         FROM 
             {$wpdb->prefix}icl_content_status c
             JOIN {$wpdb->prefix}icl_core_status r ON c.rid = r.rid
-            JOIN {$wpdb->prefix}icl_node n ON c.nid = n.nid
+            LEFT JOIN {$wpdb->prefix}icl_node n ON c.nid = n.nid
         WHERE c.nid = {$post_id}
     ";
     $status = $wpdb->get_results($sql);
@@ -916,13 +916,6 @@ function icl_display_post_translation_status($post_id){
         echo '</td></tr>';
         echo '</table>';
     }else{          
-
-        echo '<p style="float:left">';
-        echo __('Minor edit - don\'t update translation','sitepress');        
-        echo '&nbsp;<input type="checkbox" name="icl_minor_edit" value="1" />';
-        echo '</p>';
-        echo '<br clear="all" />';
-        
         echo '<p><strong>'.__('Translation status:','sitepress').'</strong></p>';
         echo '<table class="widefat">';        
         $oddcolumn = true;
@@ -1339,6 +1332,25 @@ function _icl_remote_control_translate_post($args){
     }
     
     
+}
+
+function sh_post_submitbox_start(){
+    global $post;
+    if(!$post->ID){
+        return;
+    }
+    $status = icl_get_post_translation_status($post->ID);    
+    if(empty($status)){
+        return;
+    }
+    
+    if($status->status && !$status->updated){
+        echo '<p style="float:left;padding:0;margin:3px;">';
+        echo '<label><input type="checkbox" name="icl_minor_edit" value="1" style="min-width:15px;" />&nbsp;';
+        echo __('Minor edit - don\'t update translation','sitepress');        
+        echo '</label></p>';
+        echo '<br clear="all" />';
+    }
 }
 
 ?>

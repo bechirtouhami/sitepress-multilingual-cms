@@ -21,6 +21,9 @@ add_filter('xmlrpc_methods','icl_add_custom_xmlrpc_methods');
 
 add_action('icl_post_languages_options_before', 'icl_display_post_translation_status');
 
+add_action('post_submitbox_start', 'sh_post_submitbox_start');
+
+
 wp_enqueue_style('icl-translation-style', ICL_PLUGIN_URL . '/modules/icl-translation/css/style.css');
 
  
