@@ -6,7 +6,8 @@
             &nbsp;<?php endif; ?>
             <?php echo icl_disp_language($this->settings['icl_lso_native_lang']?$main_language['native_name']:null, $this->settings['icl_lso_display_lang']?$main_language['translated_name']:null) ?>
             <?php if(!isset($ie_ver) || $ie_ver > 6): ?></a><?php endif; ?>
-            <?php if(isset($ie_ver) && $ie_ver <= 6): ?><table><tr><td><?php endif ?>
+            <?php if(!empty($active_languages)): ?>
+            <?php if(isset($ie_ver) && $ie_ver <= 6): ?><table><tr><td><?php endif ?>            
             <ul>
                 <?php foreach($active_languages as $lang): ?>
                 <li class="icl-<?php echo $lang['language_code'] ?>">          
@@ -18,8 +19,9 @@
                     </a>
                 </li>
                 <?php endforeach; ?>
-            </ul>
+            </ul>            
             <?php if(isset($ie_ver) && $ie_ver <= 6): ?></td></tr></table></a><?php endif ?> 
+            <?php endif; ?>
         </li>
     </ul>    
 </div>

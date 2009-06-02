@@ -1211,7 +1211,7 @@ class SitePress{
                 $icl_lso_link_empty = !$template_args['skip_missing'];
             }else{
                 $icl_lso_link_empty = $this->settings['icl_lso_link_empty'];
-            }                                
+            }                      
                        
             $user_agent = $_SERVER['HTTP_USER_AGENT'];
             if(preg_match('#MSIE ([0-9]+)\.[0-9]#',$user_agent,$matches)){
@@ -1237,7 +1237,7 @@ class SitePress{
                 $translations = $this->get_element_translations($trid,'post');                
             }
                                        
-            foreach($w_active_languages as $k=>$lang){
+            foreach($w_active_languages as $k=>$lang){                
                 $skip_lang = false;
                 if(is_singular() || ($wp_query->queried_object_id && $wp_query->queried_object_id == get_option('page_for_posts'))){                    
                     $this_lang_tmp = $this->this_lang; 
@@ -1247,13 +1247,13 @@ class SitePress{
                     $this->this_lang = $this_lang_tmp; 
                     if ( 'page' == get_option('show_on_front') && $translations[$lang['code']]->element_id == $lang_page_on_front ){
                         $lang['translated_url'] = $this->language_url($lang['code']); 
-                    }elseif('page' == get_option('show_on_front') && $translations[$lang['code']]->element_id == $lang_page_for_posts){
+                    }elseif('page' == get_option('show_on_front') && $translations[$lang['code']]->element_id && $translations[$lang['code']]->element_id == $lang_page_for_posts){
                         if($lang_page_for_posts){
                             $lang['translated_url'] = get_permalink($lang_page_for_posts);
                         }else{
                             $lang['translated_url'] = $this->language_url($lang['code']);
-                        }                        
-                    }else{
+                        } 
+                    }else{                        
                         if(isset($translations[$lang['code']]->post_title)){
                             $lang['translated_url'] = get_permalink($translations[$lang['code']]->element_id);
                         }else{
