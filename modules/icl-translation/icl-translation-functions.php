@@ -1344,7 +1344,16 @@ function sh_post_submitbox_start(){
         return;
     }
     
-    if($status->status && !$status->updated){
+    $show_box = false;
+    
+    foreach($status as $k=>$v){
+        if($v->status && !$v->updated){
+            $show_box = true;
+            break;
+        }
+    }
+    
+    if($show_box){
         echo '<p style="float:left;padding:0;margin:3px;">';
         echo '<label><input type="checkbox" name="icl_minor_edit" value="1" style="min-width:15px;" />&nbsp;';
         echo __('Minor edit - don\'t update translation','sitepress');        
