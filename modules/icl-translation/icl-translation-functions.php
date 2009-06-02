@@ -7,6 +7,80 @@ function icl_translation_js(){
     wp_enqueue_script('icl-translation-scripts', ICL_PLUGIN_URL . '/modules/icl-translation/js/icl-translation.js', array(), '0.1');
 }
 
+function icl_get_request_ids_for_post($post_id, $source_language, $target_languages){
+    global $sitepress;
+    
+    foreach($target_languages as $target){
+        $target_code = $sitepress->get_language_code($target);
+        
+        $rid[$target] = icl_get_latest_request_id($post_id, $source_language, $target_code);
+        
+    }
+    
+    return $rid;
+    
+}
+
+function icl_get_latest_request_id($post_id, $source_language, $target_code){
+    global $wpdb;
+    
+    $sql = "SELECT content.rid FROM
+                {$wpdb->prefix}icl_content_status content
+            JOIN 
+               {$wpdb->prefix}icl_core_status core
+            ON
+               content.rid = core.rid
+            WHERE
+               content.nid = {$post_id} AND
+               core.origin = '{$source_language}' AND
+               core.target = '{$target_code}'
+            ORDER BY rid DESC
+            LIMIT 1
+            ";
+            
+    return $wpdb->get_var($sql);
+}
+
+function icl_get_all_languages_associated($post_id, $source_language, $rid) {
+    global $wpdb;
+    
+    $languages = $wpdb->get_col("SELECT target FROM {$wpdb->prefix}icl_core_status WHERE rid={$rid}");
+    
+    // check other request_ids that include these languages.
+
+    $other_rids = array();    
+    foreach($languages as $target_code) {
+        $sql = "SELECT content.rid FROM
+                    {$wpdb->prefix}icl_content_status content
+                JOIN 
+                   {$wpdb->prefix}icl_core_status core
+                ON
+                   content.rid = core.rid
+                WHERE
+                   content.nid = {$post_id} AND
+                   core.origin = '{$source_language}' AND
+                   core.target = '{$target_code}'
+                ";
+                
+        foreach($wpdb->get_col($sql) as $id){
+            if (!in_array($id, $other_rids)){
+                $other_rids[] = $id;
+            }
+        }
+    }
+    foreach($other_rids as $id){
+        foreach($wpdb->get_col("SELECT target FROM {$wpdb->prefix}icl_core_status WHERE rid={$id}") as $other_lang){
+            if (!in_array($other_lang, $languages)){
+                $languages[] = $other_lang;
+            }
+        }
+        
+    }
+    
+    return $languages;
+    
+}
+
 function icl_translation_send_post($post_id, $target_languages, $post_type='post'){
     global $sitepress_settings, $wpdb, $sitepress;
     
@@ -15,20 +89,62 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
         return false;
     }
     
-    $previous_rid = $wpdb->get_var("SELECT rid FROM {$wpdb->prefix}icl_content_status WHERE nid={$post_id}");    
-    if(is_null($previous_rid)){
-        $previous_rid = false;
-    } else {
+    $post_md5 = $wpdb->get_var("SELECT md5 FROM {$wpdb->prefix}icl_node WHERE nid=" . $post_id);
+    
+    $source_lang = $sitepress->get_language_for_element($post_id);
+    
+    // get the previous request ids for this node and these langauges.
+    $previous_rid = icl_get_request_ids_for_post($post_id,
+                                                    $source_lang,
+                                                    $target_languages);
+    
+    $targets_available = array();
+    
+    foreach($target_languages as $target){
         // Make sure the previous request is complete.
-        $status = $wpdb->get_col("SELECT status FROM {$wpdb->prefix}icl_core_status WHERE rid={$previous_rid}");
-        foreach($status as $state){
-            if($state != CMS_TARGET_LANGUAGE_DONE){
-                return false;
+        $available = true;
+        
+        $rid = $previous_rid[$target];
+        if (isset($previous_rid[$target])){
+            // check to make sure this is the latest $rid
+            // get all languages for this rid
+            $langs = icl_get_all_languages_associated($post_id, $source_lang, $rid);
+            // see if we have any later rids for any language.
+            foreach($langs as $lang){
+                $test_rid = icl_get_latest_request_id($post_id,
+                                                     $source_lang,
+                                                     $lang);
+                $status = $wpdb->get_col("SELECT status FROM {$wpdb->prefix}icl_core_status WHERE rid={$test_rid}");
+                foreach($status as $state){
+                    if($state != CMS_TARGET_LANGUAGE_DONE){
+                        // translation is still in progress for one or more languages.
+                        $available = false;
+                    }
+                }
+            }
+            if ($available){
+                // check md5 is different.
+                $request_md5 = $wpdb->get_var("SELECT md5 FROM {$wpdb->prefix}icl_content_status WHERE rid={$rid}");
+                if($request_md5 == $post_md5){
+                    $available = false;
+                }
+            }
+        }
+        if ($available){
+            if (isset($previous_rid[$target])){
+                $targets_available[$rid][] = $target;
+            } else {
+                $targets_available[] = array($target);
             }
         }
         
-      
     }
+    if (sizeof($targets_available) == 0){
+        return false;
+    }
+    
+    $target_languages = $targets_available;
+  
     $iclq = new ICanLocalizeQuery($sitepress_settings['site_id'], $sitepress_settings['access_key']);
     
     $post_url       = get_permalink($post_id);
@@ -89,78 +205,90 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
     $timestamp = date('Y-m-d H:i:s');
     $md5 = icl_translation_calculate_md5($post_id);    
     
-    $data = array(
-        'url'=>$post_url, 
-        'contents'=>array(
-            'title' => array(
-                'translate'=>1,
-                'data'=>base64_encode($post->post_title),
-                'format'=>'base64'
-            ),
-            'body' => array(
-                'translate'=>1,
-                'data'=>base64_encode($post->post_content),
-                'format'=>'base64'
-            ),
-            'original_id' => array(
-                'translate'=>0,
-                'data'=>$post_id
-            ),
-                        
-        ),
-        'target_languages' => $target_languages
-    );
+    // send off to each language/s as a separate cms_request
+    // $target_languages is an array of groups of languages to be sent together
+    // if there is no previous cms_request it will be something like:
+    // array(array("Spanish), array("German"), array("French"))
+    // if there was a previous cms_request then some languages may be grouped.
+    // array(array("Spanish", "German"), array("French"))
     
-    if($post_type=='post'){
-        if(is_array($categories_to_translate)){
-            $data['contents']['categories'] = array(
+    foreach($target_languages as $target){
+    
+        $data = array(
+            'url'=>$post_url, 
+            'contents'=>array(
+                'title' => array(
                     'translate'=>1,
-                    'data'=> implode(',', array_map(create_function('$e', 'return \'"\'.base64_encode($e).\'"\';'), $categories_to_translate)),
-                    'format'=>'csv_base64'
-                );    
-            $data['contents']['category_ids'] = array(
+                    'data'=>base64_encode($post->post_title),
+                    'format'=>'base64'
+                ),
+                'body' => array(
+                    'translate'=>1,
+                    'data'=>base64_encode($post->post_content),
+                    'format'=>'base64'
+                ),
+                'original_id' => array(
                     'translate'=>0,
-                    'data'=> implode(',', array_keys($categories_to_translate)),
-                    'format'=>''
-                );                
+                    'data'=>$post_id
+                ),
+                            
+            ),
+            'target_languages' => $target
+        );
+        
+        if($post_type=='post'){
+            if(is_array($categories_to_translate)){
+                $data['contents']['categories'] = array(
+                        'translate'=>1,
+                        'data'=> implode(',', array_map(create_function('$e', 'return \'"\'.base64_encode($e).\'"\';'), $categories_to_translate)),
+                        'format'=>'csv_base64'
+                    );    
+                $data['contents']['category_ids'] = array(
+                        'translate'=>0,
+                        'data'=> implode(',', array_keys($categories_to_translate)),
+                        'format'=>''
+                    );                
+            }
+            if(is_array($tags_to_translate)){
+                $data['contents']['tags'] = array(
+                        'translate'=>1,
+                        'data'=> implode(',', array_map(create_function('$e', 'return \'"\'.base64_encode($e).\'"\';'), $tags_to_translate)),
+                        'format'=>'csv_base64'
+                    );                
+                $data['contents']['tag_ids'] = array(
+                        'translate'=>0,
+                        'data'=> implode(',', array_keys($tags_to_translate)),
+                        'format'=>''
+                    );                            
+            }
         }
-        if(is_array($tags_to_translate)){
-            $data['contents']['tags'] = array(
-                    'translate'=>1,
-                    'data'=> implode(',', array_map(create_function('$e', 'return \'"\'.base64_encode($e).\'"\';'), $tags_to_translate)),
-                    'format'=>'csv_base64'
-                );                
-            $data['contents']['tag_ids'] = array(
-                    'translate'=>0,
-                    'data'=> implode(',', array_keys($tags_to_translate)),
-                    'format'=>''
-                );                            
+        
+        $previous_rid_for_target = $previous_rid[$target[0]];
+        if ($previous_rid_for_target == null){
+            $previous_rid_for_target = false;
+        }
+        
+        $xml = $iclq->build_cms_request_xml($data, $orig_lang, $target, $previous_rid_for_target);
+        $res = $iclq->send_request($xml, $post->post_title, $target, $orig_lang);
+        
+        if($res > 0){
+            $wpdb->insert($wpdb->prefix.'icl_content_status', array('rid'=>$res, 'nid'=>$post_id, 'timestamp'=>$timestamp, 'md5'=>$md5)); //insert rid   
+    
+            foreach($target as $targ_lang){
+                $wpdb->insert($wpdb->prefix.'icl_core_status', array('rid'=>$res,
+                                                                     'origin'=>$sitepress->get_language_code($orig_lang),
+                                                                     'target'=>$sitepress->get_language_code($targ_lang),
+                                                                     'status'=>CMS_REQUEST_WAITING_FOR_PROJECT_CREATION));
+            }
+            
+            $ret = $res;  
+                  
+        }else{
+            // sending to translation failed
+            $ret = 0;
+            
         }
     }
-    $xml = $iclq->build_cms_request_xml($data, $orig_lang, $target_languages, $previous_rid);
-    $res = $iclq->send_request($xml, $post->post_title, $target_languages, $orig_lang);
-    
-    if($res > 0){
-        if($previous_rid){
-            $wpdb->update($wpdb->prefix.'icl_content_status', array('rid'=>$res, 'md5'=>$md5, 'timestamp'=>$timestamp), array('rid'=>$previous_rid)); //update rid            
-        }else{            
-            $wpdb->insert($wpdb->prefix.'icl_content_status', array('rid'=>$res, 'nid'=>$post_id, 'timestamp'=>$timestamp, 'md5'=>$md5)); //insert rid   
-        }        
-
-        foreach($target_languages as $targ_lang){
-            $wpdb->insert($wpdb->prefix.'icl_core_status', array('rid'=>$res,
-                                                                 'origin'=>$sitepress->get_language_code($orig_lang),
-                                                                 'target'=>$sitepress->get_language_code($targ_lang),
-                                                                 'status'=>CMS_REQUEST_WAITING_FOR_PROJECT_CREATION));
-        }
-        
-        $ret = $res;  
-              
-    }else{
-        // sending to translation failed
-        $ret = 0;
-        
-    } 
     return $ret;
     
 }
@@ -290,6 +418,7 @@ function icl_translation_get_documents($lang,
     $in_progress = $wpdb->get_results($sql);
 
     $count = 0;
+    $nodes_processed = array();
     foreach($results as $r){
         $post_ok = false;
         if ($tstatus == 'in_progress'){
@@ -316,9 +445,18 @@ function icl_translation_get_documents($lang,
         }
         if($post_ok){
             if ($count >= $offset and $count < $offset + $limit){
-                $documents[$r->post_id] = $r;
+                if (isset($documents[$r->post_id])){
+                    $documents[$r->post_id]->rid[] = $r->rid;
+                    $documents[$r->post_id]->updated = $r->updated;
+                } else {
+                    $documents[$r->post_id] = $r;
+                    $documents[$r->post_id]->rid = array($r->rid);
+                }
             }
-            $count++;
+            if (!in_array($r->post_id, $nodes_processed)){
+                $count++;
+                $nodes_processed[] = $r->post_id;
+            }
         }
     }
     

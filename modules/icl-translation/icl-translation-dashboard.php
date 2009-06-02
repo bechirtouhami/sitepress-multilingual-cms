@@ -130,7 +130,7 @@
             <?php foreach($documents as $doc): $oddcolumn=!$oddcolumn; ?>
             <?php 
             $not_translatable = false;
-            if($doc->rid){
+            if($doc->rid[0] != null){
                 if(isset($doc->in_progress) && $doc->in_progress > 0){                        
                     $tr_status = __('In progress', 'sitepress');
                     $not_translatable = true;
@@ -158,9 +158,7 @@
             ?>            
             <tr<?php if($oddcolumn): ?> class="alternate"<?php endif;?>>
                 <td scope="col">
-                    <?php if(!$not_translatable): ?>
                     <input type="checkbox" value="<?php echo $doc->post_id ?>" name="post[]" />
-                    <?php endif; ?>
                 </td>
                 <td scope="col" class="post-title column-title">
                     <a href="<?php echo get_edit_post_link($doc->post_id) ?>"><?php echo $doc->post_title ?></a>
@@ -173,7 +171,7 @@
                 <td scope="col"><?php echo $icl_post_statuses[$doc->post_status]; ?></td>
                 <td scope="col" id="icl-tr-status-<?php echo $doc->post_id ?>">
                     <?php if($doc->rid): ?>
-                    <a href="#translation-details-<?php echo $doc->rid ; ?>" class="translation_details_but">
+                    <a href="#translation-details-<?php echo implode('-', $doc->rid) ; ?>" class="translation_details_but">
                     <?php endif; ?>
                     <?php echo $tr_status ?>
                     <?php if($doc->rid): ?></a><?php endif; ?>
