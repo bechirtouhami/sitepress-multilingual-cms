@@ -942,7 +942,6 @@ function icl_display_post_translation_status($post_id){
                 }
             }
             echo '</td>';
-            echo '</td>';
             echo '</tr>';            
         }        
         echo '</table>';
