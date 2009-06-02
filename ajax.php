@@ -173,42 +173,8 @@ switch($_REQUEST['icl_ajx_action']){
        break;
     case 'icl_plugins_texts':
         if(isset($_POST['icl_pt_file_upload'])){
-            $file = $_FILES['plugins_texts_csv'];
-            if($file['error']==0 && $file['size'] && $file['type']=='text/csv'){
-                $fh = fopen($file['tmp_name'], 'rb');
-                while($data = fgetcsv($fh)){
-                    $is_update = $wpdb->get_var("SELECT id FROM {$wpdb->prefix}icl_plugins_texts WHERE plugin_name='{$data[0]}' AND attribute_type='{$data[1]}' AND attribute_name='{$data[2]}'");
-                    if($is_update){
-                        $wpdb->update($wpdb->prefix.'icl_plugins_texts', array(
-                            'description' => $data[3],
-                            'translate'   => $data[4]  
-                            ),
-                            array('id'=>$is_update)
-                        );
-                    }else{
-                        $wpdb->insert($wpdb->prefix.'icl_plugins_texts', array(   
-                                'plugin_name'=>$data[0],
-                                'attribute_type' => $data[1],
-                                'attribute_name' => $data[2],
-                                'description'    => $data[3],
-                                'translate'      => $data[4]
-                            )
-                        );
-                    }
-                }
-            }else{
-                echo __('File upload failed.','sitepress');
-                echo '<br>';
-                if($file['type']!='text/csv'){
-                    echo __('File type must be csv', 'sitepress');
-                }elseif(!$file['size']){
-                    echo __('Please select a CSV file to upload', 'sitepress');
-                }else{
-                    echo $file['error'];
-                }
-                echo '<br /><a href="javascript:history.back()">'.__('Back', 'sitepress').'</a>';
-                exit;
-            }            
+            require_once ICL_PLUGIN_PATH . '/inc/plugins-texts-functions.php';
+            icl_pt_handle_upload();    
             header("Location:" . $_POST['icl_pt_file_upload'].'&csv_upload=1#icl_plugins_texts');
             exit;
             

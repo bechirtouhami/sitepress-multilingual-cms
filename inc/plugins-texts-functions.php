@@ -66,4 +66,50 @@ function icl_pt_sync_pugins_texts($post_id, $trid){
         $sitepress->sync_custom_fields($post_id, $custom_fields, true);
     }    
 }
+
+function icl_pt_handle_upload(){
+    global $wpdb;
+    $file = $_FILES['plugins_texts_csv'];
+    $fh = fopen($file['tmp_name'], 'rb');
+    while($data = fgetcsv($fh)){
+        if(!isset($plugin)){
+            $plugin = $data[0];
+        }else{
+            if($data[0] != $plugin){
+                $uplerr = __('Inconsistent plugin name','sitepress');
+                break;
+            }
+        }                
+    }
+    fclose($fh);            
+    if($file['error']==0 && $file['size'] && $file['type']=='text/csv' && !$uplerr){
+        $wpdb->query("DELETE FROM {$wpdb->prefix}icl_plugins_texts WHERE plugin_name='{$pluigin}'");
+        $fh = fopen($file['tmp_name'], 'rb');
+        while($data = fgetcsv($fh)){
+            $wpdb->insert($wpdb->prefix.'icl_plugins_texts', array(   
+                    'plugin_name'=>$data[0],
+                    'attribute_type' => $data[1],
+                    'attribute_name' => $data[2],
+                    'description'    => $data[3],
+                    'translate'      => $data[4]
+                )
+            );
+        }
+        fclose($fh);
+    }else{
+        echo __('File upload failed.','sitepress');
+        echo '<br>';
+        if($file['type']!='text/csv'){
+            echo __('File type must be csv', 'sitepress');
+        }elseif(!$file['size']){
+            echo __('Please select a CSV file to upload', 'sitepress');
+        }elseif(isset($uplerr)){
+            echo $uplerr;
+        }else{
+            echo $file['error'];
+        }
+        echo '<br /><a href="javascript:history.back()">'.__('Back', 'sitepress').'</a>';
+        exit;
+    }            
+}
 ?>
