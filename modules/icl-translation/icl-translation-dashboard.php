@@ -66,7 +66,7 @@
     </div>
     <?php endif; ?>    
     
-    <form method="post" name="translation-dashboard-filter" action="tools.php?page=sitepress-multilingual-cms/modules/icl-translation/icl-translation-dashboard.php">
+    <form method="post" name="translation-dashboard-filter" action="tools.php?page=<?php echo basename(ICL_PLUGIN_PATH); ?>/modules/icl-translation/icl-translation-dashboard.php">
     <table class="form-table">
         <tr valign="top">
             <th scope="row"><strong><?php echo __('Show documents in:', 'sitepress') ?></strong></th>
@@ -253,7 +253,7 @@
         </p>
         <br /><br />
         <form name="get_translations" action="<?php echo $_SERVER['REQUEST_URI'] ?>" method="post">
-        <input type="text" name="page" value="sitepress-multilingual-cms/modules/icl-translation/icl-translation-dashboard" style="display:none" />
+        <input type="text" name="page" value="<?php echo basename(ICL_PLUGIN_PATH); ?>/modules/icl-translation/icl-translation-dashboard" style="display:none" />
         <input type="text" name="poll" value="1" style="display:none" />
         <input type="submit" class="button-primary" id="icl-get_translations" value="<?php echo __('Get translations from ICanLocalize', 'sitepress')?>" />
         </form>
