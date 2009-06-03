@@ -18,9 +18,12 @@
     <p style="clear:both;"><?php echo __('Translations', 'sitepress') ?> (<a href="javascript:;" 
         onclick="jQuery('#icl_translations_table').toggle();if(jQuery(this).html()=='<?php echo __('hide','sitepress')?>') jQuery(this).html('<?php echo __('show','sitepress')?>'); else jQuery(this).html('<?php echo __('hide','sitepress')?>')"><?php echo __('show','sitepress')?></a>)</p>
     <table width="100%" id="icl_translations_table" style="display:none;">
-    <th align="left"><?php echo __('Language', 'sitepress') ?></th>
-    <th align="left"><?php echo __('Title', 'sitepress') ?></th>
-    <th align="right"><?php echo __('Operations', 'sitepress') ?></th>
+    <tr>
+        <th align="left"><?php echo __('Language', 'sitepress') ?></th>
+        <th align="left"><?php echo __('Title', 'sitepress') ?></th>
+        <th align="right"><?php echo __('Operations', 'sitepress') ?></th>
+    </tr>
+    
     <?php foreach($active_languages as $lang): if($selected_language==$lang['code']) continue; ?>
     <tr>
         <td><?php echo $lang['display_name'] ?></td>
