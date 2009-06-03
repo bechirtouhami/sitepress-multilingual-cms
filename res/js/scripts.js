@@ -3,6 +3,8 @@ jQuery(document).ready(function(){
         jQuery('#category-adder').prepend('<p>'+icl_cat_adder_msg+'</p>');
     }
     jQuery('select[name="icl_post_language"]').change(iclPostLanguageSwitch);
+    
+    jQuery('#noupdate_but input[type="button"]').click(iclSetDocumentToDate);
 });
 
 function fadeInAjxResp(spot, msg, err){
@@ -21,6 +23,7 @@ function fadeInAjxResp(spot, msg, err){
 function fadeOutAjxResp(spot){
     jQuery(spot).fadeOut();
 }
+var icl_ajxloaderimg_src = icl_ajxloaderimg;
 icl_ajxloaderimg = '<img src="'+icl_ajxloaderimg+'" alt="loading" width="16" height="16" />';
 
 function iclSaveForm(){
@@ -77,3 +80,25 @@ function iclPostLanguageSwitch(){
     }
 }
 
+function iclSetDocumentToDate(){
+    var thisbut = jQuery(this);
+    if(!confirm(jQuery('#noupdate_but_wm').html())) return;
+    thisbut.attr('disabled','disabled');
+    thisbut.css({'background-image':"url('"+icl_ajxloaderimg_src+"')", 'background-position':'center right', 'background-repeat':'no-repeat'});
+    jQuery.ajax({
+            type: "POST",
+            url: icl_ajx_url,
+            data: "icl_ajx_action=set_post_to_date&post_id="+jQuery('#post_ID').val(),
+            success: function(msg){
+                spl = msg.split('|');
+                thisbut.removeAttr('disabled');
+                thisbut.css({'background-image':'none'});
+                thisbut.parent().fadeOut();
+                var st = jQuery('#icl_translations_statuses td.icl_translation_status_msg');
+                st.each(function(){
+                    jQuery(this).html(jQuery(this).html().replace(spl[0],spl[1]))                     
+                })
+                jQuery('#icl_minor_change_box').fadeIn();
+            }
+        });        
+}

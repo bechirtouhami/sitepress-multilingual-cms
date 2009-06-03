@@ -776,7 +776,6 @@ function icl_poll_for_translations(){
         $wp_rewrite = new WP_Rewrite();
     }
     
-    
     include dirname(__FILE__).'/icl-language-ids.inc';
     
     $iclq = new ICanLocalizeQuery($sitepress_settings['site_id'], $sitepress_settings['access_key']);
@@ -920,9 +919,16 @@ function icl_display_post_translation_status($post_id){
         echo __('Not translated');
         echo '</td></tr>';
         echo '</table>';
-    }else{          
+    }else{  
+        if($post_updated){
+            echo '
+                <div id="noupdate_but">
+                <input type="button" class="button" value="'.__('This document\'s translation doesn\'t need to update', 'sitepress').'" />
+                <span id="noupdate_but_wm" style="display:none">'.__('Translations for this document appear to be out-of-date. Are you sure they don\'t need to be updated?','sitepress').'</span>                
+                </div>';
+        }
         echo '<p><strong>'.__('Translation status:','sitepress').'</strong></p>';
-        echo '<table class="widefat">';        
+        echo '<table id="icl_translations_statuses" class="widefat">';        
         $oddcolumn = true;
         $active_languages = $sitepress->get_active_languages();    
         foreach($active_languages as $al){            
@@ -930,7 +936,7 @@ function icl_display_post_translation_status($post_id){
             $oddcolumn = !$oddcolumn;            
             echo '<tr'; if($oddcolumn) echo ' class="alternate"'; echo '>';
             echo '<td scope="col">'.sprintf(__('Translation to %s'), $al['display_name']).'</td>';            
-            echo '<td align="right" scope="col">';            
+            echo '<td align="right" scope="col" class="icl_translation_status_msg">';            
             if($status[$al['code']]->status==CMS_TARGET_LANGUAGE_DONE && $post_updated){
                 echo __('translation needs update','sitepress');
             }else{
@@ -1349,22 +1355,22 @@ function sh_post_submitbox_start(){
         return;
     }
     
-    $show_box = false;
+    $show_box = 'display:none';
     
     foreach($status as $k=>$v){
         if($v->status && !$v->updated){
-            $show_box = true;
+            $show_box = '';
             break;
         }
     }
     
-    if($show_box){
-        echo '<p style="float:left;padding:0;margin:3px;">';
-        echo '<label><input type="checkbox" name="icl_minor_edit" value="1" style="min-width:15px;" />&nbsp;';
-        echo __('Minor edit - don\'t update translation','sitepress');        
-        echo '</label></p>';
-        echo '<br clear="all" />';
-    }
+    
+    echo '<p id="icl_minor_change_box" style="float:left;padding:0;margin:3px;'.$show_box.'">';
+    echo '<label><input type="checkbox" name="icl_minor_edit" value="1" style="min-width:15px;" />&nbsp;';
+    echo __('Minor edit - don\'t update translation','sitepress');        
+    echo '</label>';
+    echo '<br clear="all" />';
+    echo '</p>';
 }
 
 ?>

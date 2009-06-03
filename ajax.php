@@ -318,7 +318,15 @@ switch($_REQUEST['icl_ajx_action']){
         }
         $sitepress->save_settings($iclsettings);
         break;
-        
+    
+    case 'set_post_to_date':
+        $nid = (int) $_POST['post_id'];
+        $md5 = $wpdb->get_var("SELECT md5 FROM {$wpdb->prefix}icl_node WHERE nid={$nid}");
+        $wpdb->query("UPDATE {$wpdb->prefix}icl_content_status SET md5 = '{$md5}' WHERE nid='{$nid}'");
+        echo __('translation needs update','sitepress');
+        echo '|';
+        echo __('Translation complete','sitepress');
+        break;    
     default:
         echo __('Invalid action','sitepress');                
 }    

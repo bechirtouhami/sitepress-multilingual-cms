@@ -65,7 +65,7 @@ jQuery(document).ready(function(){
                             jQuery('#icl-tr-status-'+post_id).html(tmpback);
                         }
                         jQuery('#icl-tr-status-'+post_id).fadeIn();
-                        location.reload();
+                        location.href = location.href;
                     }
                 });
             }            
