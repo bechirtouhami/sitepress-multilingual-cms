@@ -329,6 +329,10 @@ class AbsoluteLinksPlugin{
                 $req_uri = '/' . $m;                                
                 $req_uri_array = explode('?', $req_uri);
                 $req_uri = $req_uri_array[0];
+                // separate anchor
+                $req_uri_array = explode('#', $req_uri);
+                $req_uri = $req_uri_array[0];
+                $anchor = $req_uri_array[1];
                 $self = '/index.php';
                 $home_path = parse_url(get_option('home'));
                 if ( isset($home_path['path']) )
@@ -413,12 +417,17 @@ class AbsoluteLinksPlugin{
                         }
                         $perm_url = rtrim($home_url,'/'). $langprefix .'/'.$m;
                         $regk = '@href="('.$perm_url.')"@i'; 
+                        if ($anchor){
+                            $anchor = "#".$anchor;
+                        } else {
+                            $anchor = "";
+                        }
                         // check if this is an offsite url
                         if($p->post_type=='page' && $offsite_url = get_post_meta($p->ID, '_cms_nav_offsite_url', true)){
-                            $regv = 'href="'.$offsite_url.'"';
+                            $regv = 'href="'.$offsite_url.$anchor.'"';
                         }else{
-                            $regv = 'href="' . '/' . ltrim($url_parts['path'],'/') . '?' . $qvid . '=' . $p->ID.'"';
-                        }                       
+                            $regv = 'href="' . '/' . ltrim($url_parts['path'],'/') . '?' . $qvid . '=' . $p->ID.$anchor.'"';
+                        }
                         $def_url[$regk] = $regv;
                     }else{ 
                         $alp_broken_links[$alp_matches[2][$k]] = array();                            
