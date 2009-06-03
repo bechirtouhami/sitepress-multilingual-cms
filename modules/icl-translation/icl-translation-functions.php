@@ -770,7 +770,12 @@ function icl_process_translated_document($request_id, $language){
 }
 
 function icl_poll_for_translations(){
-    global $wpdb, $sitepress_settings, $sitepress;
+    global $wpdb, $sitepress_settings, $sitepress, $wp_rewrite;
+    if(!isset($wp_rewrite)){
+        require_once ABSPATH . WPINC . '/rewrite.php'; 
+        $wp_rewrite = new WP_Rewrite();
+    }
+    
     
     include dirname(__FILE__).'/icl-language-ids.inc';
     
