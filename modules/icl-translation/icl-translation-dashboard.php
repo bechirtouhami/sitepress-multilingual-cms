@@ -52,12 +52,20 @@
     $icl_post_types = array(
         'page'  =>__('Page', 'sitepress'),
         'post'  =>__('Post', 'sitepress')
-    )    
+    );
+    
 ?>
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap">
     <div id="icon-options-general" class="icon32"><br /></div>
     <h2><?php echo __('Translation Dashboard', 'sitepress') ?></h2>        
+    
+    <?php if(!$sitepress->icl_account_configured() ): ?>
+    <div class="error">
+    <p><?php printf(__('To send documents to translation, you first need to <a href="%s">set up content translation</a>' , 'sitepress'), 'admin.php?page=sitepress-multilingual-cms/menu/content-translation.php#icl_create_account_form'); ?></p>
+    </div>
+    <?php endif; ?>    
+    
     <form method="post" name="translation-dashboard-filter" action="tools.php?page=sitepress-multilingual-cms/modules/icl-translation/icl-translation-dashboard.php">
     <table class="form-table">
         <tr valign="top">

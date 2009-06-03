@@ -12,6 +12,12 @@
     <div id="icon-options-general" class="icon32"><br /></div>
     <h2><?php echo __('Setup WPML', 'sitepress') ?></h2>    
 
+    <?php if($sitepress->icl_account_configured() ): ?>
+    <div class="updated fade">
+    <p><?php printf(__('To send documents to translation, use the <a href="%s">Translation dashboard</a>' , 'sitepress'), 'tools.php?page=sitepress-multilingual-cms/modules/icl-translation/icl-translation-dashboard.php'); ?></p>
+    </div>
+    <?php endif; ?>
+    
     <?php if(count($active_languages) > 1): ?>
         <h3><?php echo __('Translation pairs','sitepress') ?></h3>    
         <form id="icl_language_pairs_form" name="icl_language_pairs_form" action="">
