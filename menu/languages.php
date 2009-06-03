@@ -21,7 +21,7 @@
     <?php if(!$sitepress_settings['existing_content_language_verified']): ?>
         <h3><?php echo __('Current content language', 'sitepress') ?></h3>    
         <form id="icl_initial_language" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
-        <?php wp_nonce_field('icl_initial_language') ?>            
+        <?php wp_nonce_field('icl_initial_language','icl_initial_languagenonce') ?>            
         <p>
             <?php echo __('Before adding other languages, please select the language existing contents are written in:') ?><br /><br />
             <select name="icl_initial_language_code">
