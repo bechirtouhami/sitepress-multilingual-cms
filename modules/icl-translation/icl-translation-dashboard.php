@@ -70,7 +70,7 @@
         </tr>
         <tr valign="top">
             <th scope="row"><strong><?php echo __('Translation status:', 'sitepress') ?></strong>    </th>
-            <td coslpan="2">
+            <td colspan="2">
                 <select name="filter[tstatus]">
                     <?php
                         $option_status = array(
@@ -87,8 +87,8 @@
         </tr>
         <tr valign="top">
             <th scope="row"><strong><?php echo __('Filter furter by:', 'sitepress') ?></strong>    </th>
-            <td coslpan="2">
-                <label><input type="checkbox" name="filter[status_on]" <?php if(isset($icl_translation_filter['status_on'])):?>checked="checked"<?php endif?>>&nbsp;
+            <td colspan="2">
+                <label><input type="checkbox" name="filter[status_on]" <?php if(isset($icl_translation_filter['status_on'])):?>checked="checked"<?php endif?> />&nbsp;
                     Status:</label> 
                     <select name="filter[status]">
                         <?php foreach($icl_post_statuses as $k=>$v):?>
@@ -96,7 +96,7 @@
                         <?php endforeach; ?>
                     </select>
                 &nbsp;&nbsp;    
-                <label><input type="checkbox" name="filter[type_on]" <?php if(isset($icl_translation_filter['type_on'])):?>checked="checked"<?php endif?>>&nbsp;
+                <label><input type="checkbox" name="filter[type_on]" <?php if(isset($icl_translation_filter['type_on'])):?>checked="checked"<?php endif?> />&nbsp;
                     Type:</label> 
                     <select name="filter[type]">
                         <?php foreach($icl_post_types as $k=>$v):?>
@@ -105,7 +105,7 @@
                     </select>
                                         
             </td>
-            <td align="right"><input name="translation_dashboard_filter" class="button" type="submit" value="<?php echo __('Display','sitepress')?>"></td>
+            <td align="right"><input name="translation_dashboard_filter" class="button" type="submit" value="<?php echo __('Display','sitepress')?>" /></td>
         </tr>
     </table>
     </form>
@@ -158,7 +158,7 @@
                     <a href="#translation-details-<?php echo implode('-', $doc->rid) ; ?>" class="translation_details_but">
                     <?php endif; ?>
                     <?php echo $tr_status ?>
-                    <?php if($doc->rid): ?></a><?php endif; ?>
+                    <?php if($doc->rid[0]): ?></a><?php endif; ?>
                 </td>
             </tr>                            
             <?php endforeach;?>
@@ -177,7 +177,7 @@
     </table>
     
     <div class="tablenav">
-    <div style="float:left;margin-top:4px";><strong><?php echo __('Translation Cost Estimate:', 'sitepress') ?></strong> <?php printf(__('%s words, %s USD (at 0.07 USD/word)', 'sitepress'), '<span id="icl-estimated-words-count">0</span>', '<strong><span id="icl-estimated-quote">0.00</span></strong>')?></div>
+    <div style="float:left;margin-top:4px;"><strong><?php echo __('Translation Cost Estimate:', 'sitepress') ?></strong> <?php printf(__('%s words, %s USD (at 0.07 USD/word)', 'sitepress'), '<span id="icl-estimated-words-count">0</span>', '<strong><span id="icl-estimated-quote">0.00</span></strong>')?></div>
     <?php                 
         $page_links = paginate_links( array(
             'base' => add_query_arg('paged', '%#%' ),
@@ -214,17 +214,17 @@
         <?php foreach($active_languages as $lang): if($selected_language==$lang['code']) continue; ?>
             <?php if($language_pairs and isset($language_pairs[$selected_language][$lang['code']])): ?>
                 <?php if(isset($target_status[$lang['code']]) and $target_status[$lang['code']] == 1): ?>
-                    <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" checked="checked" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name']); ?></li></label>
+                    <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" checked="checked" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name']); ?></label></li>
                 <?php else:  ?>
-                    <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" disabled="disabled" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name'] . __(' - No translators assigned yet in ICanLocalize', 'sitepress')); ?></li></label>
+                    <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" disabled="disabled" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name'] . __(' - No translators assigned yet in ICanLocalize', 'sitepress')); ?></label></li>
                 <?php endif; ?>
             <?php else:  ?>
-                <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" disabled="disabled" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name'] . __(' - This language has not been selected for translation by ICanLocalize', 'sitepress')); ?></li></label>
+                <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" disabled="disabled" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name'] . __(' - This language has not been selected for translation by ICanLocalize', 'sitepress')); ?></label></li>
             <?php endif; ?>
         <?php endforeach; ?>    
         <li>
-            <input disabled="disabled" type="submit" class="button-primary" id="icl-tr-sel-doc" value="<?php echo __('Translate selected documents', 'sitepress') ?>"/>
-            <span class="icl_ajx_response" id="icl_ajx_response"><?php echo __('Sending translation requests. Please wait!', 'sitepress') ?>&nbsp;<img src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" /></span>
+            <input disabled="disabled" type="submit" class="button-primary" id="icl-tr-sel-doc" value="<?php echo __('Translate selected documents', 'sitepress') ?>" />
+            <span class="icl_ajx_response" id="icl_ajx_response"><?php echo __('Sending translation requests. Please wait!', 'sitepress') ?>&nbsp;<img src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" alt="" /></span>
         </li>
     </ul>
     <span id="icl_message_1" style="display:none"><?php echo __('All documents sent to translation', 'sitepress')?></span>
@@ -243,13 +243,13 @@
         <h3><?php echo __('Get translations from ICanLocalize', 'sitepress') ?></h3>
         <p>
             <?php echo __('This site needs to fetch translations from the ICanLocalize server. This will be done automatically by scheduled translation updates. To check for translation updates now, click on the button below.', 'sitepress');?>
-            <br /><br />
-            <form name="get_translations" action="<?php echo $_SERVER['REQUEST_URI'] ?>" method="post">
-            <input type="text" name="page" value="sitepress-multilingual-cms/modules/icl-translation/icl-translation-dashboard" style="display:none" />
-            <input type="text" name="poll" value="1" style="display:none" />
-            <input type="submit" class="button-primary" id="icl-get_translations" value="<?php echo __('Get translations from ICanLocalize', 'sitepress')?>" />
-            </form>
         </p>
+        <br /><br />
+        <form name="get_translations" action="<?php echo $_SERVER['REQUEST_URI'] ?>" method="post">
+        <input type="text" name="page" value="sitepress-multilingual-cms/modules/icl-translation/icl-translation-dashboard" style="display:none" />
+        <input type="text" name="poll" value="1" style="display:none" />
+        <input type="submit" class="button-primary" id="icl-get_translations" value="<?php echo __('Get translations from ICanLocalize', 'sitepress')?>" />
+        </form>
     <?php endif; ?>
     
     
