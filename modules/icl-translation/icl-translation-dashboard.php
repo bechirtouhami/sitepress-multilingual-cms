@@ -238,6 +238,19 @@
                                   'sitepress')?>
         </p>
     <?php endif; ?>
+
+    <?php if ($sitepress_settings['translation_pickup_method'] == 1): ?>
+        <h3><?php echo __('Get translations from ICanLocalize', 'sitepress') ?></h3>
+        <p>
+            <?php echo __('This site needs to fetch translations from the ICanLocalize server. This will be done automatically by scheduled translation updates. To check for translation updates now, click on the button below.', 'sitepress');?>
+            <br /><br />
+            <form name="get_translations" action="<?php echo $_SERVER['REQUEST_URI'] ?>" method="post">
+            <input type="text" name="page" value="sitepress-multilingual-cms/modules/icl-translation/icl-translation-dashboard" style="display:none" />
+            <input type="text" name="poll" value="1" style="display:none" />
+            <input type="submit" class="button-primary" id="icl-get_translations" value="<?php echo __('Get translations from ICanLocalize', 'sitepress')?>" />
+            </form>
+        </p>
+    <?php endif; ?>
     
-    <br /><br /><br /><br /><br /><br /><a href="<?php echo $_SERVER['REQUEST_URI'] ?>&debug=1">DEBUG: FETCH TRANSLATIONS</a>    
+    
 </div>

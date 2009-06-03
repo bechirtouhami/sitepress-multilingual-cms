@@ -28,7 +28,7 @@ wp_enqueue_style('icl-translation-style', ICL_PLUGIN_URL . '/modules/icl-transla
 
  
 
-if(isset($_GET['debug']) && $_GET['debug']==1){
+if(isset($_POST['poll']) && $_POST['poll']==1){
     icl_poll_for_translations();
 }
 
