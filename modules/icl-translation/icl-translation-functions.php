@@ -1100,15 +1100,16 @@ function _icl_content_fix_relative_link_paths_in_body(&$translation) {
 
     foreach($link_paths as $path) {
       
-        $src_path = resolve_url($source_path, $path[2]);
-        if ($src_path != $path[2]) {
-            $search = $path[1] . $path[2] . $path[1];
-            $replace = $path[1] . $src_path . $path[1];
-            $new_link = str_replace($search, $replace, $path[0]);
-            
-            $body = str_replace($path[0], $new_link, $body);
-        }
-      
+        if ($path[2][0] != "#"){
+            $src_path = resolve_url($source_path, $path[2]);
+            if ($src_path != $path[2]) {
+                $search = $path[1] . $path[2] . $path[1];
+                $replace = $path[1] . $src_path . $path[1];
+                $new_link = str_replace($search, $replace, $path[0]);
+                
+                $body = str_replace($path[0], $new_link, $body);
+            }
+        }      
     }
     $translation['body'] = $body;
 }
