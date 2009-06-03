@@ -62,7 +62,7 @@
     
     <?php if(!$sitepress->icl_account_configured() ): ?>
     <div class="error">
-    <p><?php printf(__('To send documents to translation, you first need to <a href="%s">set up content translation</a>.' , 'sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php#icl_create_account_form'); ?></p>
+    <p><?php printf(__('To send documents to translation, you first need to <a href="%s">set up content translation</a>.' , 'sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php'); ?></p>
     </div>
     <?php endif; ?>    
     
