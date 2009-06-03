@@ -62,7 +62,7 @@
     
     <?php if(!$sitepress->icl_account_configured() ): ?>
     <div class="error">
-    <p><?php printf(__('To send documents to translation, you first need to <a href="%s">set up content translation</a>' , 'sitepress'), 'admin.php?page=sitepress-multilingual-cms/menu/content-translation.php#icl_create_account_form'); ?></p>
+    <p><?php printf(__('To send documents to translation, you first need to <a href="%s">set up content translation</a>.' , 'sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php#icl_create_account_form'); ?></p>
     </div>
     <?php endif; ?>    
     
@@ -128,7 +128,16 @@
             <th scope="col" class="manage-column column-date"><?php echo __('Status', 'sitepress') ?></th>        
             <th scope="col" class="manage-column column-date"><?php echo __('Translation', 'sitepress') ?></th>        
         </tr>        
-        </thead>            
+        </thead>
+        <tfoot>
+        <tr>
+            <th scope="col" class="manage-column column-cb check-column"><input type="checkbox" /></th>
+            <th scope="col"><?php echo __('Title', 'sitepress') ?></th>
+            <th scope="col" class="manage-column column-date"><?php echo __('Type', 'sitepress') ?></th>
+            <th scope="col" class="manage-column column-date"><?php echo __('Status', 'sitepress') ?></th>        
+            <th scope="col" class="manage-column column-date"><?php echo __('Translation', 'sitepress') ?></th>        
+        </tr>        
+        </tfoot>                    
         <tbody>
             <?php if(!$documents): ?>
             <tr>
@@ -172,18 +181,8 @@
             <?php endforeach;?>
             <?php endif;?>
         </tbody> 
-        <tfoot>
-        <tr>
-            <th scope="col" class="manage-column column-cb check-column"><input type="checkbox" /></th>
-            <th scope="col"><?php echo __('Title', 'sitepress') ?><span id="icl-cw-total" style="display:none"><?php echo $wctotal; ?></span></th>
-            <th scope="col" class="manage-column column-date"><?php echo __('Type', 'sitepress') ?></th>
-            <th scope="col" class="manage-column column-date"><?php echo __('Status', 'sitepress') ?></th>        
-            <th scope="col" class="manage-column column-date"><?php echo __('Translation', 'sitepress') ?></th>        
-        </tr>        
-        </tfoot>
-                           
     </table>
-    
+    <span id="icl-cw-total" style="display:none"><?php echo $wctotal; ?></span>    
     <div class="tablenav">
     <div style="float:left;margin-top:4px;"><strong><?php echo __('Translation Cost Estimate:', 'sitepress') ?></strong> <?php printf(__('%s words, %s USD (at 0.07 USD/word)', 'sitepress'), '<span id="icl-estimated-words-count">0</span>', '<strong><span id="icl-estimated-quote">0.00</span></strong>')?></div>
     <?php                 
