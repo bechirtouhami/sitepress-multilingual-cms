@@ -128,7 +128,7 @@ function iclUpdateTranslationEstimate(n, set){
     if(quote=='') quote = '0';
     jQuery('#icl-estimated-quote-all').html(quote);
     
-    if (selected_languages_count > 0) {
+    if (selected_languages_count > 1) {
         jQuery('#icl-estimated-all').fadeIn();
     } else {
         jQuery('#icl-estimated-all').fadeOut();
