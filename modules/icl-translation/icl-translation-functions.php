@@ -818,8 +818,14 @@ function icl_add_custom_xmlrpc_methods($methods){
     $methods['icanlocalize.set_translation_status'] = 'setTranslationStatus';
     $methods['icanlocalize.list_posts'] = '_icl_list_posts';
     $methods['icanlocalize.translate_post'] = '_icl_remote_control_translate_post';
+    $methods['icanlocalize.test_xmlrpc'] = '_icl_test_xmlrpc';
     return $methods;
 }
+
+function _icl_test_xmlrpc($args){
+    return true;
+}
+
 /*
  * 0 – Unknown error
  * 1 – success
