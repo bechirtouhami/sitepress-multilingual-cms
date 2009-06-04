@@ -39,6 +39,10 @@ function saveLanguagePairs(){
 
 function iclToggleContentTranslation(){
     var val = jQuery(this).attr('checked')?1:0;
+    if(!val && !confirm(jQuery('#icl_toggle_ct_confirm_message').html())){
+        jQuery(this).attr('checked','checked');
+        return false;
+    }
     jQuery.ajax({
         type: "POST",
         url: icl_ajx_url,

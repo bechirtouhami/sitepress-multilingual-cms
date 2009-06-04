@@ -18,9 +18,16 @@
     <?php echo __('Enable content translation', 'sitepress') ?>
     </label>
     </p>
+    <span id="icl_toggle_ct_confirm_message" style="display:none"><?php echo __('Are you sure you want to disable content translation?','sitepress'); ?></span>
     
-    <?php if($sitepress->get_icl_translation_enabled() ): ?>
-    
+    <?php if(!$sitepress->get_icl_translation_enabled() ): ?>
+        <div class="updated fade">
+        <p style="line-height:1.5"><?php echo __('Content Translation allows you to have all the site\'s contents professionally translated.', 'sitepress'); ?></p>
+        <p style="line-height:1.5"><?php printf(__('When enabled, you can use the <a href="%s">Translation Dashboard</a> to send posts and pages for translation. The entire process is completely effortless. The plugin will send the documents that need translation and then create the translated contents, ready to be published.', 'sitepress'), 'tools.php?page='.basename(ICL_PLUGIN_PATH).'/modules/icl-translation/icl-translation-dashboard.php');?></p>
+        <p style="line-height:1.5"><?php echo __('All translations are done by professional translators, writing in their native languages. You\'ll be able to chat with your translator and instruct what kind of writing style you prefer and which keywords should be emphasized for search engine optimization.', 'sitepress'); ?></p>
+        <p style="line-height:1.5"><?php echo __('Content translation is currently disabled. To enable it, click on the checkbox at the top of this page.', 'sitepress'); ?></p>
+        </div>
+    <?php else: ?>    
         <?php if($sitepress->icl_account_configured() ): ?>
         <div class="updated fade">
         <p><?php printf(__('To send documents to translation, use the <a href="%s">Translation dashboard</a>.' , 'sitepress'), 'tools.php?page='.basename(ICL_PLUGIN_PATH).'/modules/icl-translation/icl-translation-dashboard.php'); ?></p>

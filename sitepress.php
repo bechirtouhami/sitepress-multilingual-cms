@@ -71,10 +71,9 @@ if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQ
         $iclAbsoluteLinks = new AbsoluteLinksPlugin();
     }
 
-    // Content Translation
-    if(!empty($sitepress_settings['language_pairs']) && $sitepress->get_icl_translation_enabled()){
-        require ICL_PLUGIN_PATH . '/modules/icl-translation/icl-translation.php';
-    }
+    // Content Translation    
+    require ICL_PLUGIN_PATH . '/modules/icl-translation/icl-translation.php';
+    
 }
 
 
