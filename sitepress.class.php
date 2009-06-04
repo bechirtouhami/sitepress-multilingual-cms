@@ -475,7 +475,8 @@ class SitePress{
         if( (isset($_POST['icl_create_account_nonce']) && $_POST['icl_create_account_nonce']==wp_create_nonce('icl_create_account')) || (isset($_POST['icl_configure_account_nonce']) && $_POST['icl_configure_account_nonce']==wp_create_nonce('icl_configure_account'))){
             $user = $_POST['user'];
             $user['create_account'] = isset($_POST['icl_create_account_nonce']) ? 1 : 0;
-            $user['platform_kind'] = 2; // TO BE CHANGED LATER
+            $user['platform_kind'] = 2;
+            $user['cms_kind'] = 1;
             $user['blogid'] = $wpdb->blogid?$wpdb->blogid:1;
             $user['url'] = get_option('home');
             $user['title'] = get_option('blogname');
