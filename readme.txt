@@ -9,15 +9,17 @@ Turns any WordPress site into a fully featured multilingual content management s
 
 == Description ==
 
-WordPress is a great blogging platform with a potential of being an easy to use content management system. WPML helps it go the extra mile.
+WPML makes it easy to build full multilingual websites with WordPress.
+It integrates multilingual content management with robust navigation.
 
 *Features*
 
- * **Multilingual content** support based on Drupal i18n architecture.
- * **CMS navigation** allows adding drop down menus, breadcrumbs trail and sidebar navigation (all wigetized).
- * Creates internal **Sticky Links** so that they never break.
+ * **Multilingual content** support that allows selecting post/page languages and creating translations..
+ * **CMS navigation** elements including drop down menus, breadcrumbs trail and sidebar navigation.
+ * **Integrated content translation** makes it possible to run multilingual sites on tiny budgets and with no effort.
+ * Robust links to posts and pages that never break.
 
-*Highlights (in no particular order)*
+*Highlights*
 
 * When running a multilingual site, each page, post, tag or category has its own language. Translations for the same contents are grouped together, but not mixed in the database.
 * CMS navigation elements work together to provide accurate and easy to use site-wide navigation.
@@ -34,6 +36,19 @@ The plugin will set the WP_LANG variable, so that the correct .mo files are load
 Each page, post, tag or category will have a new section for translations. This section allows switching from one language to the other and adding translations to existing contents.
 
 See more info in the [language setup howto](http://wpml.org/home/getting-started-guide/language-setup/) page.
+
+= Content Translation =
+
+This service is intended for people who don't want to translate the contents of their WordPress sites themselves.
+
+**WPML's tranlsation interface can send all contents that need to be translated to professional (human) translators**. It's a paid service.
+
+Because this translation service is highly integrated with the multilingual content management functions, it's completely effortless to use. Just one click and everything is sent to translation.
+Translated contents are returned directly to WordPress and can be published immediately or stay held for review.
+
+You can learn more about WPML's content translation in the [content translation guide](http://wpml.org/wordpress-translation/content-translation/).
+
+**The translation service is an optional feature of the plugin**. People who need it can use it, others can translate themselves with ease.
 
 = CMS navigation =
 
@@ -71,6 +86,10 @@ These constants can be used to create language dependent design for your site.
 
 1. Place the folder containing this file into the plugins folder
 2. Activate the plugin from the admin interface
+
+WPML needs to create tables in your database. These tables are used to hold the new language information. In order to use WPML, your MySQL user needs to have sufficient privileges to create new tables in the database.
+
+For help, visit the [support forum](http://forum.wpml.org).
 
 == Version History ==
 
@@ -115,3 +134,9 @@ These constants can be used to create language dependent design for your site.
 	* Added country flags as an option for the language switcher.
 	* Added a function that returns the languages information for [building custom language switchers](http://wpml.org/home/getting-started-guide/language-setup/custom-language-switcher/).
 	* Added the language name as the class for each entry in the languages selector, so that they can be styled individually.
+* Version 1.0.0 - First release with [content translation](http://wpml.org/wordpress-translation/content-translation/) ability
+	* Added the capability to translate contents, including posts, pages, tags and categories.
+	* Fixed HTML for the built in language selector.
+	* Fixed 'preview' functionality when using different domains per language.
+	* Fixed PHP error that popped when activating the plugin after upgrade.
+	* Fixed drafts count problem (the plugin didn't count correctly the number of drafts per language).
