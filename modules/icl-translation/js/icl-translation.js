@@ -107,6 +107,15 @@ jQuery(document).ready(function(){
         url: icl_ajx_url,
         data: "icl_ajx_action=get_translator_status"
     });
+
+    // initialize the word count
+    jQuery('#icl-translation-dashboard :checkbox').each(function(){
+        var words = parseInt(jQuery('#icl-cw-'+jQuery(this).val()).html());
+        if(jQuery(this).attr('checked')){
+            iclUpdateTranslationEstimate(words);
+        }
+    });
+    
     
 });
 
