@@ -26,7 +26,6 @@ add_action('post_submitbox_start', 'sh_post_submitbox_start');
 
 wp_enqueue_style('icl-translation-style', ICL_PLUGIN_URL . '/modules/icl-translation/css/style.css');
 
- 
 
 if(isset($_POST['poll']) && $_POST['poll']==1){
     icl_poll_for_translations();

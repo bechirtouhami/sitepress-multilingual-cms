@@ -217,6 +217,12 @@ class SitePress{
         add_filter('query', array($this, 'filter_queries'));
                 
         require ICL_PLUGIN_PATH . '/inc/template-constants.php';        
+        
+        // if xmlrpc is disabled switch to polling
+        if(!get_option('enable_xmlrpc') && $this->settings['translation_pickup_method'] == 0){
+            $this->settings['translation_pickup_method'] = 1;
+            $this->save_settings();
+        }
     }
                 
     function ajax_responses(){

@@ -2,11 +2,19 @@
     width:70%;
 }
 .icl_form_errors{
-    border:1px solid #fff;
-    background-color: #f99;
-    color:#fff;
+    border:1px solid #f00;
+    background-color: #ffb7b7;
+    color:#000;
     width:65%;
-    padding: 5px;
+    padding: 5px;    
+    -moz-border-radius-bottomleft:3px;
+    -moz-border-radius-bottomright:3px;
+    -moz-border-radius-topleft:3px;
+    -moz-border-radius-topright:3px;
+}
+.icl_form_errors p{
+    line-height:1.5;
+    margin:0;
 }
 .icl_form_errors ul{
     list-style: circle;

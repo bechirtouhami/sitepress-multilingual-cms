@@ -100,6 +100,9 @@
         </ul>
 
         <h3><?php echo __('Translation delivery','sitepress') ?></h3>    
+        <?php if(!get_option('enable_xmlrpc')): ?>
+        <div class="icl_form_errors" style="width:auto"><p><?php printf(__('To return translations to your site we recommend using XML-RPC. This feature is currently disabled in your site. To enable it, go to <a href="%s">Setting->Writing</a> and enable the option labeled <b>XML-RPC</b>.','sitepress'),'options-writing.php')?></p></div>
+        <?php endif; ?>        
         <ul>
             <li>
                 <?php echo __("Select the desired translation delivery mehtod:", 'sitepress') ?><br />
@@ -107,7 +110,7 @@
             <li>
                 <ul>
                     <li>
-                        <label><input name="icl_delivery_method" type="radio" value="0" <?php if($sitepress_settings['translation_pickup_method'] == 0): ?>checked="checked"<?php endif;?> /> <?php echo __('Translations will be posted back to this website via XML-RPC.', 'sitepress'); ?></label><br />
+                        <label><input name="icl_delivery_method" type="radio" value="0" <?php if($sitepress_settings['translation_pickup_method'] == 0): ?>checked="checked"<?php endif;?> <?php if(!get_option('enable_xmlrpc')): ?>disabled="disabled"<?php endif;?> /> <?php echo __('Translations will be posted back to this website via XML-RPC.', 'sitepress'); ?></label><br />
                     </li>
                     <li>
                         <label><input name="icl_delivery_method" type="radio" value="1" <?php if($sitepress_settings['translation_pickup_method'] == 1): ?>checked="checked"<?php endif;?> /> <?php echo __('This WordPress installation will poll for translations.', 'sitepress'); ?></label><br />
@@ -222,7 +225,7 @@
         
         
         <h3 id="icl_create_account_form"><?php echo __('Configure your ICanLocalize account', 'sitepress') ?></h3>             
-        <?php if(isset($_POST['icl_form_errors']) || $icl_account_ready_errors):  ?>
+        <?php if(isset($_POST['icl_form_errors']) || ($icl_account_ready_errors && !$sitepress->icl_account_configured() )):  ?>
         <div class="icl_form_errors">
             <?php echo $_POST['icl_form_errors'] ?>
             <?php if($icl_account_ready_errors):  ?>

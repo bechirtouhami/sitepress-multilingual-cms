@@ -157,12 +157,18 @@ switch($_REQUEST['icl_ajx_action']){
     case 'icl_more_options':
         $iclsettings['website_kind'] = $_POST['icl_website_kind'];
         $iclsettings['interview_translators'] = $_POST['icl_interview_translators'];
-        $iclsettings['translation_pickup_method'] = $_POST['icl_delivery_method'];
+        if(get_option('enable_xmlrpc')){
+            $iclsettings['translation_pickup_method'] = $_POST['icl_delivery_method'];
+        }
         if ($iclsettings['translation_pickup_method'] == 1){
             add_action('poll_for_translations', 'icl_poll_for_translations');
             wp_schedule_event(time(), 'hourly', 'poll_for_translations');
         } else {
-            wp_clear_scheduled_hook('poll_for_translations');
+            if(get_option('enable_xmlrpc')){
+                wp_clear_scheduled_hook('poll_for_translations');            
+            }else{
+                $is_error = sprintf(__('To return translations to your site we recommend using XML-RPC. This feature is currently disabled in your site. To enable it, go to <a href="%s">Setting->Writing</a> and enable the option labeled <b>XML-RPC</b>.','sitepress'),'options-writing.php');
+            }
         }
         $iclsettings['translated_document_status'] = $_POST['icl_translation_document_status'];        
         $iclsettings['icl_alert_delay'] = intval($_POST['icl_alert_delay']);
@@ -175,7 +181,12 @@ switch($_REQUEST['icl_ajx_action']){
             echo '1| ('. __('Not updated on ICanLocalize: ') . $ret . ')';
             break;
         }
-        echo 1; 
+        if(isset($is_error)){
+            echo '0|'.$is_error;
+        }else{
+            echo 1; 
+        }
+        
        break;
     case 'icl_plugins_texts':
         if(isset($_POST['icl_pt_file_upload'])){
