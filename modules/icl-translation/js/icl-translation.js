@@ -120,9 +120,19 @@ function iclUpdateTranslationEstimate(n, set){
     }    
     if(words=='') words = '0';
     jQuery('#icl-estimated-words-count').html(words);
-    quote = Math.round(100 * words * 0.07 * selected_languages_count, 2)/100;
+    quote = Math.round(100 * words * 0.07, 2)/100;
     if(quote=='') quote = '0';
     jQuery('#icl-estimated-quote').html(quote);
+
+    quote = Math.round(100 * words * 0.07 * selected_languages_count, 2)/100;
+    if(quote=='') quote = '0';
+    jQuery('#icl-estimated-quote-all').html(quote);
+    
+    if (selected_languages_count > 0) {
+        jQuery('#icl-estimated-all').fadeIn();
+    } else {
+        jQuery('#icl-estimated-all').fadeOut();
+    }
 }
 
 function getSelectedLanguagesCount(){
