@@ -20,7 +20,15 @@ jQuery(document).ready(function(){
                     jQuery('#icl-tr-sel-doc').attr('disabled','disabled');    
                 }
             }else{
-                jQuery('#icl-tr-sel-doc').removeAttr('disabled');    
+                no_language_selected = true;
+                jQuery('#icl-tr-opt :checkbox').each(function(){
+                    if(jQuery(this).attr('checked')) no_language_selected = false; 
+                });
+                if(no_language_selected){
+                    jQuery('#icl-tr-sel-doc').attr('disabled','disabled');    
+                } else {
+                    jQuery('#icl-tr-sel-doc').removeAttr('disabled');
+                }
             }
             
         }
