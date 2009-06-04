@@ -2,9 +2,9 @@
 /*
 Plugin Name: WPML Multilingual CMS
 Plugin URI: http://wpml.org/
-Description: WPML Multilingual CMS
-Author: ICanLocalize
-Author URI: http://wpml.org/
+Description: WPML Multilingual CMS. <a href="http://wpml.org">Documentation</a> | <a href="admin.php?page=sitepress-multilingual-cms/menu/languages.php">Configure</a>.
+Author: OnTheGoSystems
+Author URI: http://www.onthegosystems.com
 Version: 0.9.9
 */
 

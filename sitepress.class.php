@@ -222,7 +222,7 @@ class SitePress{
         if(!get_option('enable_xmlrpc') && $this->settings['translation_pickup_method'] == 0){
             $this->settings['translation_pickup_method'] = 1;
             $this->save_settings();
-        }
+        }        
     }
                 
     function ajax_responses(){

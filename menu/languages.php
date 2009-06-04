@@ -83,27 +83,27 @@
         <th scope="col"><?php echo __('Categories', 'sitepress') ?></th>
         <th scope="col"><?php echo __('Tags', 'sitepress') ?></th>                
         </tr>        
-        </thead>        
+        </thead>
+        <tfoot>
+        <tr>
+        <th scope="col"><?php echo __('Total', 'sitepress') ?></th>
+        <td scope="col"><?php echo intval($t_posts) ?></td>
+        <td scope="col"><?php echo intval($t_pages) ?></td>
+        <td scope="col"><?php echo intval($t_cats) ?></td>
+        <td scope="col"><?php echo intval($t_tags) ?></td>
+        </tr>        
+        </tfoot>                                
         <tbody>        
         <?php foreach($inactive_content as $language=>$ic): ?>
         <tr>
         <th scope="col"><?php echo $language ?></th>
-        <td scope="col num"><?php echo intval($ic['post']); $t_posts += $ic['post']; ?></td>
-        <td scope="col num"><?php echo intval($ic['page']); $t_pages += $ic['page']; ?></td>
-        <td scope="col num"><?php echo intval($ic['category']); $t_cats += $ic['category'];  ?></td>
-        <td scope="col num"><?php echo intval($ic['post_tag']); $t_tags += $ic['post_tag'];  ?></td>
+        <td scope="col"><?php echo intval($ic['post']); $t_posts += $ic['post']; ?></td>
+        <td scope="col"><?php echo intval($ic['page']); $t_pages += $ic['page']; ?></td>
+        <td scope="col"><?php echo intval($ic['category']); $t_cats += $ic['category'];  ?></td>
+        <td scope="col"><?php echo intval($ic['post_tag']); $t_tags += $ic['post_tag'];  ?></td>
         </tr>
         <?php endforeach; ?>                                                                  
         </tbody>        
-        <tfoot>
-        <tr>
-        <th scope="col"><?php echo __('Total', 'sitepress') ?></th>
-        <td scope="col num"><?php echo intval($t_posts) ?></td>
-        <td scope="col num"><?php echo intval($t_pages) ?></td>
-        <td scope="col num"><?php echo intval($t_cats) ?></td>
-        <td scope="col num"><?php echo intval($t_tags) ?></td>
-        </tr>        
-        </tfoot>                
         </table>        
         <?php endif; ?> 
         

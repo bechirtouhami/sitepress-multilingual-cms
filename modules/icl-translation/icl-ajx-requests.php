@@ -30,7 +30,7 @@ switch($_REQUEST['icl_ajx_req']){
                 }
                 foreach($target_languages as $l){
                     $lang = $icl_language_id2name[$l['attr']['language_id']];
-                    $lang_loc = $wpdb->get_var("SELECT name FROM {$wpdb->icl_languages_translations} lt JOIN {$wpdb->icl_languages} l ON lt.language_code=l.code WHERE lt.display_language_code=".$sitepress->get_default_language());
+                    $lang_loc = $wpdb->get_var("SELECT name FROM {$wpdb->prefix}icl_languages_translations lt JOIN {$wpdb->prefix}icl_languages l ON lt.language_code=l.code WHERE lt.display_language_code=".$sitepress->get_default_language());
                     if(!$lang_loc){
                         $lang_loc = $lang;
                     }
