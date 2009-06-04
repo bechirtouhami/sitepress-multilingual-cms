@@ -4,6 +4,7 @@ addLoadEvent(function(){
     jQuery('form[name="icl_more_options"]').submit(iclSaveForm);
     jQuery('form[name="icl_editor_account"]').submit(iclSaveForm);
     jQuery('form[name="icl_plugins_texts"]').submit(iclSaveForm);
+    jQuery('#icl_enable_content_translation').change(iclToggleContentTranslation);
 });
 
 function toggleTranslationPairsSub(){
@@ -34,4 +35,16 @@ function saveLanguagePairs(){
         }
     }); 
     
+}
+
+function iclToggleContentTranslation(){
+    var val = jQuery(this).attr('checked')?1:0;
+    jQuery.ajax({
+        type: "POST",
+        url: icl_ajx_url,
+        data: "icl_ajx_action=toggle_content_translation&new_val="+val,
+        success: function(msg){
+            location.href=location.href;
+        }
+    });         
 }

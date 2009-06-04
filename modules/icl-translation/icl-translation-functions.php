@@ -861,7 +861,7 @@ function setTranslationStatus($args){
             return 4;
         }
         
-        if ( !get_option( 'enable_xmlrpc' ) ) {
+        if ( !$sitepress->get_icl_translation_enabled() ) {
             return 0;
         }
                
@@ -1257,8 +1257,8 @@ function _icl_list_posts($args){
     if ( !$sitepress_settings['icl_remote_management']) {
         return array('err_code'=>1, 'err_str'=>__('remote translation management not enabled'));
     }    
-    if ( !get_option( 'enable_xmlrpc' ) ) {
-        return array('err_code'=>3, 'err_str'=>sprintf( __( 'XML-RPC services are disabled on this site.  An admin user can enable them at %s'),  admin_url('options-writing.php')));
+    if ( !$sitepress->get_icl_translation_enabled() ) {
+        return array('err_code'=>3, 'err_str'=> __( 'Content translation not enabled.'));
     }
 
     //check signature
@@ -1299,8 +1299,8 @@ function _icl_remote_control_translate_post($args){
     if ( !$sitepress_settings['icl_remote_management']) {
         return array('err_code'=>1, 'err_str'=>__('remote translation management not enabled'));
     }    
-    if ( !get_option( 'enable_xmlrpc' ) ) {
-        return array('err_code'=>3, 'err_str'=>sprintf( __( 'XML-RPC services are disabled on this site.  An admin user can enable them at %s'),  admin_url('options-writing.php')));
+    if ( !$sitepress->get_icl_translation_enabled() ){
+        return array('err_code'=>3, 'err_str'=> __( 'Content translation not enabled.'));
     }
 
     //check signature

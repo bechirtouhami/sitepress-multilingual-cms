@@ -7,7 +7,7 @@ class SitePress{
     
     function __construct(){
         global $wpdb;       
-        $this->settings = get_option('icl_sitepress_settings');                
+        $this->settings = get_option('icl_sitepress_settings');                        
         $res = $wpdb->get_results("
             SELECT code, english_name, active, lt.name AS display_name 
             FROM {$wpdb->prefix}icl_languages l
@@ -218,11 +218,6 @@ class SitePress{
                 
         require ICL_PLUGIN_PATH . '/inc/template-constants.php';        
         
-        // if xmlrpc is disabled switch to polling
-        if(!get_option('enable_xmlrpc') && $this->settings['translation_pickup_method'] == 0){
-            $this->settings['translation_pickup_method'] = 1;
-            $this->save_settings();
-        }        
     }
                 
     function ajax_responses(){
@@ -369,9 +364,8 @@ class SitePress{
     
     function icl_account_reqs(){
         $errors = array();
-        if(!get_option('enable_xmlrpc')){
-            $errors[] = __('XML-RPC publishing protocol not enabled', 'sitepress') . 
-                ' <a href="'.get_option('siteurl').'/wp-admin/options-writing.php">'.__('Fix','sitepress').'</a>';
+        if(!$this->get_icl_translation_enabled()){
+            $errors[] = __('Content translation not enabled', 'sitepress');  
         }
         return $errors;        
     }
@@ -484,7 +478,7 @@ class SitePress{
             $user['interview_translators'] = $this->settings['interview_translators'];
                         
             $user['project_kind'] = $this->settings['website_kind'];
-            $user['pickup_type'] = $this->settings['translation_pickup_method'];
+            $user['pickup_type'] = intval($this->settings['translation_pickup_method']);
     
             $notifications = 0;
             if ( $this->settings['icl_notify_complete']){

@@ -72,7 +72,7 @@ if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQ
     }
 
     // Content Translation
-    if(!empty($sitepress_settings['language_pairs'])){
+    if(!empty($sitepress_settings['language_pairs']) && $sitepress->get_icl_translation_enabled()){
         require ICL_PLUGIN_PATH . '/modules/icl-translation/icl-translation.php';
     }
 }

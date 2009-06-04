@@ -154,21 +154,20 @@ switch($_REQUEST['icl_ajx_action']){
         }
         echo "1|";
         break;
+    case 'toggle_content_translation':
+        $iclsettings['enable_icl_translations'] = $_POST['new_val'];
+        $sitepress->save_settings($iclsettings);
+        echo '1';
+        break;
     case 'icl_more_options':
         $iclsettings['website_kind'] = $_POST['icl_website_kind'];
-        $iclsettings['interview_translators'] = $_POST['icl_interview_translators'];
-        if(get_option('enable_xmlrpc')){
-            $iclsettings['translation_pickup_method'] = $_POST['icl_delivery_method'];
-        }
+        $iclsettings['interview_translators'] = $_POST['icl_interview_translators'];        
+        $iclsettings['translation_pickup_method'] = $_POST['icl_delivery_method'];        
         if ($iclsettings['translation_pickup_method'] == 1){
             add_action('poll_for_translations', 'icl_poll_for_translations');
             wp_schedule_event(time(), 'hourly', 'poll_for_translations');
         } else {
-            if(get_option('enable_xmlrpc')){
-                wp_clear_scheduled_hook('poll_for_translations');            
-            }else{
-                $is_error = sprintf(__('To return translations to your site we recommend using XML-RPC. This feature is currently disabled in your site. To enable it, go to <a href="%s">Setting->Writing</a> and enable the option labeled <b>XML-RPC</b>.','sitepress'),'options-writing.php');
-            }
+            wp_clear_scheduled_hook('poll_for_translations');            
         }
         $iclsettings['translated_document_status'] = $_POST['icl_translation_document_status'];        
         $iclsettings['icl_alert_delay'] = intval($_POST['icl_alert_delay']);
@@ -209,11 +208,7 @@ switch($_REQUEST['icl_ajx_action']){
         echo 1;
         break;
     case 'icl_save_language_switcher_options':
-
-        //$iclsettings['icl_lso_header'] = intval($_POST['icl_lso_header']);
         $iclsettings['icl_lso_link_empty'] = intval($_POST['icl_lso_link_empty']);
-        $iclsettings['icl_lso_link_empty'] = intval($_POST['icl_lso_link_empty']);
-        
         $iclsettings['icl_lso_flags'] = intval($_POST['icl_lso_flags']);
         $iclsettings['icl_lso_native_lang'] = intval($_POST['icl_lso_native_lang']);
         $iclsettings['icl_lso_display_lang'] = intval($_POST['icl_lso_display_lang']);
