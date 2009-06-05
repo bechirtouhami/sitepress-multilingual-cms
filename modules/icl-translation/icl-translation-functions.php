@@ -324,7 +324,7 @@ function icl_translation_save_md5($p){
 
 function icl_translation_calculate_md5($post_id){
     $post = get_post($post_id);
-    $post_type = $_POST['post_type'];
+    $post_type = $post->post_type;
     
     if($post_type=='post'){
         foreach(wp_get_object_terms($post_id, 'post_tag') as $tag){
