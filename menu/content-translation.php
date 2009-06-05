@@ -263,22 +263,22 @@
                 <table class="form-table icl-account-setup">
                     <tbody>
                     <tr class="form-field">
-                        <th scope="row">First name</th>
+                        <th scope="row"><?php echo __('First name', 'sitepress')?></th>
                         <td><input name="user[fname]" type="text" value="<?php echo $_POST['user']['fname']?$_POST['user']['fname']:$current_user->first_name ?>" /></td>
                     </tr>
                     <tr class="form-field">
-                        <th scope="row">Last name</th>
+                        <th scope="row"><?php echo __('Last name', 'sitepress')?></th>
                         <td><input name="user[lname]" type="text" value="<?php echo  $_POST['user']['lname']?$_POST['user']['lname']:$current_user->last_name ?>" /></td>
                     </tr>        
                     <tr class="form-field">
-                        <th scope="row">Email</th>
+                        <th scope="row"><?php echo __('Email', 'sitepress')?></th>
                         <td><input name="user[email]" type="text" value="<?php echo  $_POST['user']['email']?$_POST['user']['email']:$current_user->data->user_email ?>" /></td>
                     </tr>
                     </tbody>
                 </table>
                 <p class="submit">
                     <input type="hidden" name="create_account" value="1" />
-                    <input class="button" name="create account" value="<?php echo __('Create account') ?>" type="submit" 
+                    <input class="button" name="create account" value="<?php echo __('Create account', 'sitepress') ?>" type="submit" 
                         <?php if($icl_account_ready_errors):  ?>disabled="disabled"<?php endif; ?> />
                     <a href="javascript:;" onclick="jQuery('#icl_create_account').hide();jQuery('#icl_configure_account').fadeIn();"><?php echo __('I already have an account at ICanLocalize', 'sitepress') ?></a>
                 </p>
@@ -290,18 +290,18 @@
                 <table class="form-table icl-account-setup">
                     <tbody>
                     <tr class="form-field">
-                        <th scope="row">Email</th>
+                        <th scope="row"><?php echo __('Email', 'sitepress')?></th>
                         <td><input name="user[email]" type="text" value="<?php echo  $_POST['user']['email']?$_POST['user']['email']:$current_user->data->user_email ?>" /></td>
                     </tr>
                     <tr class="form-field">
-                        <th scope="row">Password</th>
+                        <th scope="row"><?php echo __('Password', 'sitepress')?></th>
                         <td><input name="user[password]" type="password" /></td>
                     </tr>        
                     </tbody>
                 </table>
                 <p class="submit">
                     <input type="hidden" name="create_account" value="0" />
-                    <input class="button" name="configure account" value="<?php echo __('Add this project to my account') ?>" type="submit" 
+                    <input class="button" name="configure account" value="<?php echo __('Add this project to my account', 'sitepress') ?>" type="submit" 
                         <?php if($icl_account_ready_errors):  ?>disabled="disabled"<?php endif; ?> />
                     <a href="javascript:;" onclick="jQuery('#icl_configure_account').hide();jQuery('#icl_create_account').fadeIn();"><?php echo __('Create a new ICanLocalize account', 'sitepress') ?></a>
                 </p>
@@ -323,18 +323,18 @@
                 <table class="form-table icl-account-setup">
                     <tbody>
                     <tr class="form-field">
-                        <th scope="row">Website ID</th>
+                        <th scope="row"><?php echo __('Website ID', 'sitepress') ?></th>
                         <td><input name="access[website_id]" type="text" value="<?php echo  $_POST['access']['website_id']?$_POST['access']['website_id']:$sitepress_settings['site_id'] ?>" /></td>
                     </tr>
                     <tr class="form-field">
-                        <th scope="row">Access key</th>
+                        <th scope="row"><?php echo __('Access key', 'sitepress') ?></th>
                         <td><input name="access[access_key]" type="text" value="<?php echo  $_POST['access']['access_key']?$_POST['access']['access_key']:$sitepress_settings['access_key'] ?>"/></td>
                     </tr>        
                     </tbody>
                 </table>
                 <p class="submit">
                     <input type="hidden" name="create_account" value="0" />
-                    <input class="button" name="configure account" value="<?php echo __('Save') ?>" type="submit" 
+                    <input class="button" name="configure account" value="<?php echo __('Save', 'sitepress') ?>" type="submit" 
                         <?php if($icl_account_ready_errors):  ?>disabled="disabled"<?php endif; ?> />
                     <a href="javascript:;" onclick="jQuery('#icl_configure_account').hide();jQuery('#icl_create_account').fadeIn();"><?php echo __('These access settings are OK.', 'sitepress') ?></a>
                 </p>
