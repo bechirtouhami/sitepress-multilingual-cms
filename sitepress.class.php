@@ -7,7 +7,7 @@ class SitePress{
     
     function __construct(){
         global $wpdb;       
-        $this->settings = get_option('icl_sitepress_settings');                        
+        $this->settings = get_option('icl_sitepress_settings');                                
         $res = $wpdb->get_results("
             SELECT code, english_name, active, lt.name AS display_name 
             FROM {$wpdb->prefix}icl_languages l
@@ -519,7 +519,7 @@ class SitePress{
                 include_once ICL_PLUGIN_PATH . '/modules/icl-translation/db-scheme.php';
             }            
         }
-        elseif(isset($_POST['icl_initial_languagenonce']) && $_POST['icl_create_account_nonce']==wp_create_nonce('icl_initial_language')){
+        elseif(isset($_POST['icl_initial_languagenonce']) && $_POST['icl_initial_languagenonce']==wp_create_nonce('icl_initial_language')){
             $this->prepopulate_translations($_POST['icl_initial_language_code']);
             $wpdb->update($wpdb->prefix . 'icl_languages', array('active'=>'1'), array('code'=>$_POST['icl_initial_language_code']));
             $iclsettings['existing_content_language_verified'] = 1;

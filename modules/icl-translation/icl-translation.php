@@ -15,7 +15,9 @@ if(isset($_REQUEST['icl_ajx_req'])){
 
 add_action('save_post', 'icl_translation_save_md5', 12); //takes a lower priority - allow other actions to happen
 add_action('delete_post', 'icl_translation_delete_post');
-add_action('admin_menu', 'icl_translation_admin_menu');
+if($sitepress_settings['existing_content_language_verified']){
+    add_action('admin_menu', 'icl_translation_admin_menu');
+}
 add_action('admin_print_scripts', 'icl_translation_js');
 add_filter('xmlrpc_methods','icl_add_custom_xmlrpc_methods');
 

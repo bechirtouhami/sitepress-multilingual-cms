@@ -79,6 +79,15 @@ if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepr
     
 }
 
+if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.0.0', '<')){
+    $iclsettings = get_option('icl_sitepress_settings');
+    $iclsettings['icl_website_kind'] = 2;    
+    $iclsettings['icl_delivery_method'] = 0;        
+    $iclsettings['icl_notify_complete'] = 1;
+    $iclsettings['icl_translation_document_status'] = 1;
+    $iclsettings['icl_remote_management'] = 0;    
+    update_option('icl_sitepress_settings',$iclsettings);
+}
 
 if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '<')){
     update_option('icl_sitepress_version', ICL_SITEPRESS_VERSION);

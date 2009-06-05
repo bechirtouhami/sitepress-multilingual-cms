@@ -9,6 +9,9 @@ msgstr ""
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 
+msgid " - No translators assigned yet in ICanLocalize"
+msgstr "- Aún no se han nombrado traductores en ICanLocalize"
+
 msgid " - This language has not been selected for translation by ICanLocalize"
 msgstr " - ICanLocalize no ha seleccionado este idioma para la traducción."
 
@@ -18,8 +21,8 @@ msgstr "%1$s en %2$s"
 msgid "%s or %s, %s, %s, %s and %s"
 msgstr "%s o %s, %s, %s, %s y %s"
 
-msgid "%s words, %s USD (at 0.07 USD/word)"
-msgstr "%s palabras, %s USD (a 0.07 USD/palabra)"
+msgid "%s words, %s USD to each language at 0.07 USD/word. <span id=\"icl-estimated-all\" style=\"display:none;\"> (%s USD to all selected languages)</span>"
+msgstr "%s palabras, %s USD para cada idioma a 0.07 USD/palabra. <span id=\"icl-estimated-all\" style=\"display:none;\"> (%s USD to all selected languages)</span>"
 
 msgid "&laquo;"
 msgstr "&laquo;"
@@ -66,17 +69,23 @@ msgstr "Todos los documentos enviados para traducir"
 msgid "All languages"
 msgstr "Todos los idiomas"
 
+msgid "All translations are done by professional translators, writing in their native languages. You'll be able to chat with your translator and instruct what kind of writing style you prefer and which keywords should be emphasized for search engine optimization."
+msgstr "Todas las traducciones son realizadas por traductores profesionales que escriben en su idioma nativo. Usted podrá chatear con su traductor y darle las instrucciones sobre qué estilo de texto prefiere y qué palabras claves deben ser enfatizadas para la optimización de los motores de búsqueda."
+
 msgid "Alphabetically"
 msgstr "Alfabéticamente"
 
-msgid "Approximate word count: %s"
-msgstr "Cantidad de palabras aproximada: %s"
+msgid "Are you sure you want to disable content translation?"
+msgstr "¿Está seguro de que desea deshabilitar la traducción de contenido?"
 
 msgid "Articles tagged "
 msgstr "Artículos con etiquetas"
 
 msgid "At least one of the language switcher style options needs to be checked"
 msgstr "Se debe seleccionar al menos una de las opciones de estilo de selector de idioma"
+
+msgid "Back"
+msgstr "Atrás"
 
 msgid "Before adding other languages, please select the language existing contents are written in:"
 msgstr "Antes de agregar otros idiomas, por favor seleccione el idioma en el que están escritos los contenidos existentes:"
@@ -98,6 +107,9 @@ msgstr "Exploración CMS"
 
 msgid "Cancel"
 msgstr "Cancelar"
+
+msgid "Categories"
+msgstr "Categorías"
 
 msgid "Categories menu"
 msgstr "Menú de categorías"
@@ -138,6 +150,21 @@ msgstr "Configure su cuenta de ICanLocalize"
 msgid "Content Translation"
 msgstr "Traducción de contenido"
 
+msgid "Content Translation allows you to have all the site's contents professionally translated."
+msgstr "La traducción de contenido le permite hacer traducir profesionalmente todos los contenidos del sitio."
+
+msgid "Content translation can be managed remotely via xmlrpc calls."
+msgstr "La traducción de contenido puede ser administrada de manera remota por medio de llamadas xmlrpc."
+
+msgid "Content translation is currently disabled. To enable it, click on the checkbox at the top of this page."
+msgstr "La traducción de contenido está deshabilitada en este momento. Para habilitarla, pulse en la casilla de selección que se encuentra en la parte superior de esta página."
+
+msgid "Content translation not enabled"
+msgstr "La traducción de contenido no está habilitada."
+
+msgid "Content translation not enabled."
+msgstr "La traducción de contenido no está habilitada."
+
 msgid "Could not open handle for fopen() to %s"
 msgstr "No se pudo abrir el indicador de fopen() para %s"
 
@@ -146,9 +173,6 @@ msgstr "Crear una cuenta de ICanLocalize nueva"
 
 msgid "Create account"
 msgstr "Crear cuenta"
-
-msgid "Creating project"
-msgstr "Se está creando el proyecto"
 
 msgid "Creation time"
 msgstr "Hora de creación"
@@ -186,6 +210,12 @@ msgstr "Editar"
 msgid "Edit this page to add translations"
 msgstr "Editar esta página para agregar traducciones"
 
+msgid "Enable content translation"
+msgstr "Habilitar la traducción de contenido"
+
+msgid "Enable remote control over the translation management."
+msgstr "Habilitar el control remoto de la administración de traducciones."
+
 msgid "Enable sticky links"
 msgstr "Permitir enlaces adhesivos"
 
@@ -204,14 +234,20 @@ msgstr "El archivo existe."
 msgid "File not found!"
 msgstr "¡No se encontró el archivo!"
 
+msgid "File type must be csv"
+msgstr "El tipo de archivo debe ser csv"
+
+msgid "File upload failed."
+msgstr "La carga del archivo falló."
+
 msgid "Filter furter by:"
 msgstr "Seguir filtrando por:"
 
-msgid "Fix"
-msgstr "Reparar"
-
 msgid "Flag"
-msgstr "Marca"
+msgstr "Bandera"
+
+msgid "Get translations from ICanLocalize"
+msgstr "Obtener las traducciones de ICanLocalize"
 
 msgid "HTML to add"
 msgstr "HTML para agregar"
@@ -234,9 +270,6 @@ msgstr "Ya tengo una cuenta en ICanLocalize"
 msgid "I want to interview my translators."
 msgstr "Deseo entrevistar a mis traductores."
 
-msgid "ICanLocalize account details reset"
-msgstr "Reestablecer los detalles de la cuenta de ICanLocalize"
-
 msgid "ICanLocalize needs to assign professional translators to each website that we translate. Please help us by indicating what kind of website you're setting up."
 msgstr "ICanLocalize necesita asignar traductores profesionales para cada sitio web que traducimos. Por favor, ayúdenos seleccionando qué clase de sitio web usted está configurando."
 
@@ -252,14 +285,26 @@ msgstr "Si escoge habilitar los enlaces adhesivos los enlaces internos a las pá
 msgid "If you want to choose translators, you will be notified by email whenever a translator applies to work on your project."
 msgstr "Si desea escoger los traductores, será notificado por correo electrónico cuando un traductor se postule para trabajar en su proyecto."
 
+msgid "In order to edit or delete these you need to activate the corresponding language first"
+msgstr "Para editar o eliminar éstas primero debe activar el idioma correspondiente."
+
 msgid "In progress"
 msgstr "En curso"
+
+msgid "Inactive content"
+msgstr "Contenido inactivo"
+
+msgid "Inconsistent plugin name"
+msgstr "Nombre de complemento inconsistente"
 
 msgid "Instructions for adding the navigation to your theme"
 msgstr "Instrucciones para agregar la barra de exploración en su diseño"
 
 msgid "Invalid action"
 msgstr "Acción no válida"
+
+msgid "Job size: %s words"
+msgstr "Tamaño del trabajo: %s palabras"
 
 msgid "Language"
 msgstr "Idioma"
@@ -296,6 +341,9 @@ msgstr "Árbol de exploración local con páginas primarias, secundarias y del m
 
 msgid "Locale file name"
 msgstr "Nombre del archivo local"
+
+msgid "Log on to the ICanLocalize server to get your access details. "
+msgstr "Regístrese en el servidor de ICanLocalize para obtener sus datos de acceso."
 
 msgid "MO file in %s"
 msgstr "Archivo MO en %s"
@@ -348,6 +396,9 @@ msgstr "No se ha asignado a ninguno"
 msgid "Not Translated"
 msgstr "Sin traducir"
 
+msgid "Not published - edit page"
+msgstr "Sin publicar – editar  la página"
+
 msgid "Not translated"
 msgstr "Sin traducir"
 
@@ -363,6 +414,9 @@ msgstr "Preferencias de notificación:"
 msgid "Number of comments to show:"
 msgstr "Cantidad de comentarios para mostrar:"
 
+msgid "Offsite page address"
+msgstr "Dirección de página fuera de este sitio"
+
 msgid "Operations"
 msgstr "Operaciones"
 
@@ -375,11 +429,17 @@ msgstr "Página"
 msgid "Page order"
 msgstr "Orden de la página"
 
+msgid "Pages"
+msgstr "Páginas"
+
 msgid "Pending Review"
 msgstr "Pendiente de revisión"
 
 msgid "Permlink structure changes."
 msgstr "Cambios de la estructura del enlace permanente."
+
+msgid "Please select a CSV file to upload"
+msgstr "Por favor seleccione un archivo CSV para cargar"
 
 msgid "Post"
 msgstr "Entrada"
@@ -387,17 +447,17 @@ msgstr "Entrada"
 msgid "Post/page"
 msgstr "Entrada/página"
 
+msgid "Posts"
+msgstr "Entradas"
+
 msgid "Production site (running on the live server) - This is the actual production site with contents that need to be translated."
 msgstr "Sitio de producción (activo en el servidor directo)- Este es el sitio de produccion real con contenido que tiene que ser traducido."
 
 msgid "Project added"
 msgstr "Proyecto agregado"
 
-msgid "Project creation requested"
-msgstr "Creación de proyecto solicitada"
-
-msgid "Project page on %s"
-msgstr "Página del proyecto en %s"
+msgid "Project page on ICanLocalize.com"
+msgstr "Página de proyecto en ICanLocalize.com"
 
 msgid "Published"
 msgstr "Publicado"
@@ -405,8 +465,8 @@ msgstr "Publicado"
 msgid "Recent Comments"
 msgstr "Comentarios recientes"
 
-msgid "Released to translators"
-msgstr "Enviado a los traductores"
+msgid "Remote control translation management:"
+msgstr "Administración de las traducciones con control remoto:"
 
 msgid "Replace permalinks with sticky links in all blog posts"
 msgstr "Cambiar los enlaces permanentes por los enlaces adhesivos en todas las entradas del blog."
@@ -471,6 +531,9 @@ msgstr "Se están enviando los pedidos de traducción. Espere por favor."
 msgid "Sent for translation: %s"
 msgstr "Enviado para ser traducido: %s"
 
+msgid "Set page parent for translation according to page parent of the original language."
+msgstr "Configurar la página principal para la traducción según la página principal del idioma original."
+
 msgid "Settings"
 msgstr "Configuración"
 
@@ -519,11 +582,17 @@ msgstr "Enlaces adhesivos"
 msgid "Suggestions"
 msgstr "Sugerencias"
 
-msgid "Synchronize page order for translations"
-msgstr "Sincronizar el orden de las páginas para las traducciones"
+msgid "Synchronize page order for translations."
+msgstr "Sincronizar el orden de páginas para las traducciones."
+
+msgid "Tags"
+msgstr "Etiquetas"
 
 msgid "Test site - I'm only testing out the system and don't need to have translators assigned yet."
 msgstr "Sitio de prueba- Solo estoy probando el sistema y todavía no necesito que se asignen traductores."
+
+msgid "The ICanLocalize access details are not correct."
+msgstr "Los datos de acceso de ICanLocalize no son correctos."
 
 msgid "The drop-down language switcher can be added to your theme by inserting this PHP code: %s or as a widget"
 msgstr "El selector de idioma desplegable se puede agregar a su tema insertando el siguiente código PHP: %s o como un widget"
@@ -543,14 +612,20 @@ msgstr "Localización del diseño"
 msgid "These access settings are OK."
 msgstr "Esta configuración de acceso es correcta."
 
-msgid "This WordPressl installation will poll for translations."
-msgstr "Esta instalación de WordPress realizará un sondeo de traducciones."
+msgid "This WordPress installation will poll for translations."
+msgstr "Esta instalación de WordPress sondeará las traducciones."
+
+msgid "This document's translation doesn't need to update"
+msgstr "La traducción de este documento no requiere de actualización."
 
 msgid "This list shows the languages that are enabled for this site. Select the default language for contents."
 msgstr "Esta lista muestra los idiomas habilitados para este sitio. Seleccione el idioma predeterminado para los contenidos."
 
 msgid "This option is not yet available for WPMU"
 msgstr "Esta opción aún no está disponible para WPMU"
+
+msgid "This site needs to fetch translations from the ICanLocalize server. This will be done automatically by scheduled translation updates. To check for translation updates now, click on the button below."
+msgstr "Este sitio necesita recoger las traducciones del servidor de ICanLocalize. Esto se realizará automáticamente por medio de actualizaciones de traducciones programadas. Para revisar las actualizaciones de las traducciones ahora, pulse el siguiente botón."
 
 msgid "This translation is maintained by ICanLocalize. Edits that you do will be overwritten when the translator does an update."
 msgstr "ICanLocalize mantiene esta traducción. Las ediciones que haga serán sobreescritas cuando el traductor realice una actualización."
@@ -567,11 +642,20 @@ msgstr "Para agregar categorías ya existentes en otros idiomas, diríjase a <a 
 msgid "To customize the appearance of the navigation elements, you will need to override the styling provided in the plugin's CSS file."
 msgstr "Para personalizar el estilo de los elementos de exploración, tendrá que invalidar el diseño que trae el archivo CSS del complemento."
 
+msgid "To send documents to translation, use the <a href=\"%s\">Translation dashboard</a>."
+msgstr "Para enviar documentos a traducir, utilice el <a href=\"%s\">Translation dashboard</a>."
+
+msgid "To send documents to translation, you first need to <a href=\"%s\">set up content translation</a>."
+msgstr "Para enviar documentos a traducir, primero debe <a href=\"%s\">set up content translation</a>."
+
 msgid "Too many redirects."
 msgstr "Demasiadas redirecciones."
 
 msgid "Top navigation"
 msgstr "Barra de exploración superior"
+
+msgid "Total"
+msgstr "Total"
 
 msgid "Translate from %s to these languages"
 msgstr "Traducir de %s a estos idiomas"
@@ -587,9 +671,6 @@ msgstr "Estado del documento traducido:"
 
 msgid "Translated from %s"
 msgstr "Traducido del %s"
-
-msgid "Translated on server"
-msgstr "Traducido en el servidor"
 
 msgid "Translation"
 msgstr "Traducción"
@@ -615,6 +696,9 @@ msgstr "Traducción en curso"
 msgid "Translation pairs"
 msgstr "Idiomas de traducción"
 
+msgid "Translation received"
+msgstr "Traducción recibida"
+
 msgid "Translation status:"
 msgstr "Estado de la traducción:"
 
@@ -630,6 +714,9 @@ msgstr "La traducción estará disponible una vez que se cree su cuenta de Icanl
 msgid "Translations"
 msgstr "Traducciones"
 
+msgid "Translations for this document appear to be out-of-date. Are you sure they don't need to be updated?"
+msgstr "Las traducciones para este documento parecen estar desactualizadas. ¿Está seguro de que no necesitan ser actualizadas?"
+
 msgid "Translations will be posted back to this website via XML-RPC."
 msgstr "Las traducciones serán enviadas nuevamente a este sitio web a través de XML-RPC."
 
@@ -642,7 +729,7 @@ msgstr "Selección del traductor"
 msgid "Type"
 msgstr "Tipo"
 
-msgid "Use language specific home pages"
+msgid "Use language specific home pages."
 msgstr "Utilice páginas principales específicas para cada idioma."
 
 msgid "Use my own translators."
@@ -672,14 +759,20 @@ msgstr "No se puede activar WPML junto con estos complementos más antiguos:"
 msgid "WPML cannot create the database tables! Make sure that your mysql user has the CREATE privilege"
 msgstr "¡WPML no puede crear las tablas de bases de datos! Asegúrese de que su usuario de mysql tenga el privilegio de CREAR."
 
+msgid "WPML doesn't know how to translate this plugin. If it has texts that require translation, contact us by opening an issue in our forum: %s"
+msgstr "WPML no sabe cómo traducir este complemento. Si posee textos que requieren ser traducidos, póngase en contacto con nosotros abriendo un tema en nuestro foro: %s"
+
 msgid "WPML will be deactivated"
 msgstr "WPML será desactivado"
 
-msgid "Waiting for project creation"
-msgstr "En espera de la creación de un proyecto"
+msgid "Waiting for translator"
+msgstr "En espera del traductor"
 
 msgid "What kind of website is this?"
 msgstr "¿Qué clase de sitio web es este?"
+
+msgid "When enabled, you can use the <a href=\"%s\">Translation Dashboard</a> to send posts and pages for translation. The entire process is completely effortless. The plugin will send the documents that need translation and then create the translated contents, ready to be published."
+msgstr "Cuando la opción está habilitada, puede utilizar el <a href=\"%s\">Translation Dashboard</a> para enviar artículos y páginas para ser traducidas. Todo el proceso es súmamente fácil. El complemento enviará los documentos que deban ser traducidos y luego creará los contenidos traducidos, listos para ser publicados."
 
 msgid "When you edit a page (while sticky links are enabled) you will notice that links in that page change to the default WordPress links. This is a normal thing. Visitors will not see these &#8220;strange&#8221; links. Instead they will get links to the full URL."
 msgstr "Cuando edite una página (mientras los enlaces adhesivos estén habilitados) notará que los enlaces de la página cambian a los enlaces de WordPress predeterminados. Eso es normal. Los visitantes no verán estos enlaces &#8220;extraños&#8221;. En vez de ello tendrán enlaces a la URL completa."
@@ -690,9 +783,6 @@ msgstr "Dónde agregar"
 msgid "Wordpress language file (.mo) is missing. Keeping existing display language."
 msgstr "No se encontró el archivo de idioma de Wordpress (.mo). Se mantendrá el idioma para mostrar existente."
 
-msgid "XML-RPC publishing protocol not enabled"
-msgstr "El protocolo de publicación XML-RPC no está habilitado."
-
 msgid "You can also add the sidebar navigation as a <a href=\"widgets.php\">widget</a>."
 msgstr "También puede agregar la barra de exploración como un <a href=\"widgets.php\">widget</a>."
 
@@ -702,14 +792,20 @@ msgstr "También puede crear selectores de idioma personalizados, como una lista
 msgid "Your ICanLocalize account access settings:"
 msgstr "Configuración de acceso a su cuenta de ICanLocalize:"
 
+msgid "Your ICanLocalize account details have been confirmed and saved"
+msgstr "Los datos de su cuenta de ICanLocalize han sido confirmados y guardados."
+
 msgid "Your ICanLocalize account is configured."
 msgstr "Su cuenta de ICanLocalize está configurada."
 
-msgid "Your blog page does not exist in %s"
-msgstr "La página de su blog no existe en %s"
+msgid "Your balance with ICanLocalize is %s. Visit your %sICanLocalize finance%s page to deposit additional funds."
+msgstr "Su saldo con ICanLocalize es %s. Visite su página de fondos%s de %sICanLocalize para realizar el depósito de fondos."
 
-msgid "Your home page does not exist in %s"
-msgstr "Su página principal no existe en %s"
+msgid "Your blog page does not exist or its translation is not published in %s"
+msgstr "Su página de bitácora no existe o la traducción de esta no está publicada en %s "
+
+msgid "Your home page does not exist or its translation is not published in %s"
+msgstr "Su página principal no existe o la traducción de esta no está publicada en %s"
 
 msgid ""
 "\\r\\n"
@@ -753,6 +849,9 @@ msgstr "aceptar el nuevo"
 msgid "fixed"
 msgstr "reparado"
 
+msgid "from language is not correct. "
+msgstr "El idioma fuente no es correcto."
+
 msgid "hide"
 msgstr "ocultar"
 
@@ -765,15 +864,36 @@ msgstr "elementos que faltan"
 msgid "n/a"
 msgstr "no está disponible"
 
+msgid "post id not found"
+msgstr "No se encontró la identidad de entrada "
+
+msgid "post id not managed in icl_translations"
+msgstr "identidad de entrada no administrada en icl_translations"
+
 msgid "posts and pages not processed"
 msgstr "mensajes y páginas sin procesar"
 
+msgid "remote translation management not enabled"
+msgstr "La administración de traducciones remota no está habilitada."
+
 msgid "show"
 msgstr "Mostrar"
+
+msgid "signature incorrect"
+msgstr "firma incorrecta"
+
+msgid "synchronize"
+msgstr "sincronizar"
+
+msgid "translate"
+msgstr "traducir"
 
 msgid "translation needs update"
 msgstr "la traducción necesita ser actualizada"
 
 msgid "use"
 msgstr "utilizar"
+
+msgid "website id is not correct"
+msgstr "La identidad del sitio web no es correcta."
 
