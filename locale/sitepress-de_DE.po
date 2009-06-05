@@ -48,6 +48,9 @@ msgstr "Über Sticky-Links"
 msgid "Absolute Links"
 msgstr "Absolute Links"
 
+msgid "Access key"
+msgstr "Zugangsschlüssel"
+
 msgid "Account created"
 msgstr "Account erstellt"
 
@@ -210,6 +213,9 @@ msgstr "Editieren"
 msgid "Edit this page to add translations"
 msgstr "Diese Seite editieren, um Übersetzungen hinzuzufügen"
 
+msgid "Email"
+msgstr "E-Mail"
+
 msgid "Enable content translation"
 msgstr "Übersetzung von Inhalten aktivieren"
 
@@ -242,6 +248,9 @@ msgstr "Upload der Datei fehlgeschlagen."
 
 msgid "Filter furter by:"
 msgstr "Weiter filtern nach:"
+
+msgid "First name"
+msgstr "Vorname"
 
 msgid "Flag"
 msgstr "Flagge"
@@ -329,6 +338,9 @@ msgstr "Stil der Sprachumschaltung"
 
 msgid "Languages"
 msgstr "Sprachen"
+
+msgid "Last name"
+msgstr "Nachname"
 
 msgid "Link to home of language for missing translations"
 msgstr "Bei fehlenden Übersetzungen zur Startseite der Sprache verlinken"
@@ -431,6 +443,9 @@ msgstr "Seitenreihenfolge"
 
 msgid "Pages"
 msgstr "Seiten"
+
+msgid "Password"
+msgstr "Passwort"
 
 msgid "Pending Review"
 msgstr "Überprüfung steht noch aus"
@@ -767,6 +782,9 @@ msgstr "WPML wird deaktiviert"
 
 msgid "Waiting for translator"
 msgstr "Warten auf Übersetzer"
+
+msgid "Website ID"
+msgstr "Webseiten-ID"
 
 msgid "What kind of website is this?"
 msgstr "Was für eine Art Webseite ist das?"
