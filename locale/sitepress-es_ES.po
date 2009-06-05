@@ -48,6 +48,9 @@ msgstr "Acerca de los enlaces adhesivos"
 msgid "Absolute Links"
 msgstr "Enlaces absolutos"
 
+msgid "Access key"
+msgstr "Clave de acceso"
+
 msgid "Account created"
 msgstr "Cuenta creada"
 
@@ -210,6 +213,9 @@ msgstr "Editar"
 msgid "Edit this page to add translations"
 msgstr "Editar esta página para agregar traducciones"
 
+msgid "Email"
+msgstr "Correo electrónico"
+
 msgid "Enable content translation"
 msgstr "Habilitar la traducción de contenido"
 
@@ -242,6 +248,9 @@ msgstr "La carga del archivo falló."
 
 msgid "Filter furter by:"
 msgstr "Seguir filtrando por:"
+
+msgid "First name"
+msgstr "Nombre"
 
 msgid "Flag"
 msgstr "Bandera"
@@ -329,6 +338,9 @@ msgstr "Estilo del selector de idioma"
 
 msgid "Languages"
 msgstr "Idiomas"
+
+msgid "Last name"
+msgstr "Apellido"
 
 msgid "Link to home of language for missing translations"
 msgstr "Enlace hacia la página de inicio de idiomas para las traducciones faltantes"
@@ -431,6 +443,9 @@ msgstr "Orden de la página"
 
 msgid "Pages"
 msgstr "Páginas"
+
+msgid "Password"
+msgstr "Contraseña"
 
 msgid "Pending Review"
 msgstr "Pendiente de revisión"
@@ -767,6 +782,9 @@ msgstr "WPML será desactivado"
 
 msgid "Waiting for translator"
 msgstr "En espera del traductor"
+
+msgid "Website ID"
+msgstr "Identidad del Sitio Web"
 
 msgid "What kind of website is this?"
 msgstr "¿Qué clase de sitio web es este?"
