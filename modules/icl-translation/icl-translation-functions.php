@@ -165,6 +165,7 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
             foreach($post_tags as $term_taxonomy_id=>$pc){
                 $trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id='{$term_taxonomy_id}' AND element_type='tag'");
                 foreach($target_languages as $lang){
+                    $lang = $lang[0]; // get the languag name (string)
                     $not_translated = false;
                     if($trid != $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations t JOIN {$wpdb->prefix}icl_languages l ON l.code = t.language_code WHERE l.english_name='{$lang}' AND trid='{$trid}'")){
                         $not_translated = true;
@@ -174,8 +175,7 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
                 if($not_translated){
                     $tags_to_translate[$term_taxonomy_id] = $pc; 
                 }            
-            }  
-            
+            }              
             sort($post_tags, SORT_STRING);
         } 
                
@@ -187,6 +187,7 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
             foreach($post_categories as $term_taxonomy_id=>$pc){
                 $trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id='{$term_taxonomy_id}' AND element_type='category'");
                 foreach($target_languages as $lang){
+                    $lang = $lang[0]; // get the languag name (string)
                     $not_translated = false;
                     if($trid != $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations t JOIN {$wpdb->prefix}icl_languages l ON l.code = t.language_code WHERE l.english_name='{$lang}' AND trid='{$trid}'")){
                         $not_translated = true;
@@ -197,11 +198,9 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
                     $categories_to_translate[$term_taxonomy_id] = $pc; 
                 }            
             }  
-            
             sort($post_categories, SORT_STRING);
         }
     }
-    
     $timestamp = date('Y-m-d H:i:s');
     $md5 = icl_translation_calculate_md5($post_id);    
     
