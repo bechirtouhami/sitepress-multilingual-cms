@@ -97,6 +97,7 @@ class SitePress{
         add_filter('the_category', array($this,'the_category_name_filter'));
         add_filter('get_terms', array($this,'get_terms_filter'));
         add_filter('single_cat_title', array($this,'the_category_name_filter'));
+        add_filter('term_links-category', array($this,'the_category_name_filter'));
         
         add_filter('term_links-post_tag', array($this,'the_category_name_filter'));
         add_filter('tags_to_edit', array($this,'the_category_name_filter'));
