@@ -496,6 +496,8 @@ class SitePress{
             $user['project_kind'] = $this->settings['website_kind'];
             $user['pickup_type'] = intval($this->settings['translation_pickup_method']);
     
+            $data['pickup_type'] = $this->settings['translation_pickup_method'];
+    
             $notifications = 0;
             if ( $this->settings['icl_notify_complete']){
                 $notifications += 1;
@@ -528,7 +530,10 @@ class SitePress{
                 $iclsettings['access_key'] = $access_key;
                 $this->save_settings($iclsettings);
                 if($user['create_account']==1){
-                    $_POST['icl_form_success'] = __('Account created','sitepress');                        
+                    $_POST['icl_form_success'] = __('An account has been created for you in ICanLocalize - Next steps:<br />', 'sitepress');
+                    $_POST['icl_form_success'] .= __('<ol><li>Confirm your email address – an confirmation email was just sent to you from <b>notify@icanlocalize.com</b>. Go to your inbox and click on the confirmation link in that email.</li>', 'sitepress');
+                    $_POST['icl_form_success'] .= __('<li>Use the <a href="'.'tools.php?page='.basename(ICL_PLUGIN_PATH).'/modules/icl-translation/icl-translation-dashboard.php">Translation Dashboard</a> to send documents to translation.</li></ol>', 'sitepress');
+                    
                 }else{
                     $_POST['icl_form_success'] = __('Project added','sitepress');
                 }
