@@ -61,11 +61,6 @@
             <form name="icl_more_options" action="">
 
             <h3><?php echo __('What kind of website is this?','sitepress') ?></h3>
-            <?php
-                if(!isset($sitepress_settings['website_kind'])) {
-                    $sitepress_settings['website_kind'] = 2;
-                }
-            ?>
             <ul>
                 <li>
                     <?php echo __("ICanLocalize needs to assign professional translators to each website that we translate. Please help us by indicating what kind of website you're setting up.", 'sitepress') ?><br />
@@ -154,11 +149,6 @@
             </ul>
                 
             <h3><?php echo __("Translated document status:", 'sitepress') ?></h3>
-            <?php
-                if(!isset($sitepress_settings['translated_document_status'])) {
-                    $sitepress_settings['translated_document_status'] = true;
-                }
-            ?>
             <ul>
                 <li>
                     <ul>
