@@ -51,9 +51,6 @@ msgstr "Absolute Links"
 msgid "Access key"
 msgstr "Zugangsschlüssel"
 
-msgid "Account created"
-msgstr "Account erstellt"
-
 msgid "Add / Remove languages"
 msgstr "Sprachen hinzufügen / entfernen"
 
@@ -77,6 +74,9 @@ msgstr "Alle Übersetzungen werden von professionellen Übersetzern ausgeführt,
 
 msgid "Alphabetically"
 msgstr "Alphabetisch"
+
+msgid "An account has been created for you in ICanLocalize - Next steps:"
+msgstr "Ein Account wurde für Sie bei ICanLocalize erstellt - Nächste Schritte:"
 
 msgid "Are you sure you want to disable content translation?"
 msgstr "Sind Sie sicher, dass Sie die Übersetzung von Inhalten deaktivieren möchten?"
@@ -149,6 +149,9 @@ msgstr "Fertig"
 
 msgid "Configure your ICanLocalize account"
 msgstr "Ihren ICanLocalize-Account konfigurieren"
+
+msgid "Confirm your email address – a confirmation email was just sent to you from <b>notify@icanlocalize.com</b>. Go to your inbox and click on the confirmation link in that email."
+msgstr "Bestätigen Sie Ihre E-Mail-Adresse - eine Bestätigungsmail wurde Ihnen gerade von <b>notify@icanlocalize.com</b> aus zugeschickt. Gehen Sie in Ihren Posteingang und klicken Sie auf den Bestätigungslink in dieser E-Mail."
 
 msgid "Content Translation"
 msgstr "Übersetzung von Inhalten"
@@ -453,6 +456,9 @@ msgstr "Überprüfung steht noch aus"
 msgid "Permlink structure changes."
 msgstr "Permalink-Struktur verändert sich."
 
+msgid "Please go to the <a href=\"%s\">Plugins</a> page and enable the WPML Multilingual CMS plugin before trying to configure the plugin."
+msgstr "Bitte rufen Sie die <a href=\"%s\">Plugins</a> -Seite auf und aktivieren Sie das mehrsprachige CMS-Plugin in WPML bevor Sie versuchen, das Plugin zu konfigurieren."
+
 msgid "Please select a CSV file to upload"
 msgstr "Bitte wählen Sie eine CSV-Datei zum Hochladen aus"
 
@@ -609,6 +615,9 @@ msgstr "Testseite - Ich teste nur das Systeme und es müssen noch keine Überset
 msgid "The ICanLocalize access details are not correct."
 msgstr "Die Zugangsdaten zu ICanLocalize sind nicht korrekt."
 
+msgid "The WPML Multilingual CMS plugin is not currently enabled."
+msgstr "Das mehrsprachige CMS-Plugin in WPML ist derzeit nicht aktiviert."
+
 msgid "The drop-down language switcher can be added to your theme by inserting this PHP code: %s or as a widget"
 msgstr "Diese Drop-Down-Sprachumschaltung kann zu Ihrem Theme hinzugefügt werden, indem Sie diesen PHP-Code einfügen: %s oder als Widget"
 
@@ -749,6 +758,9 @@ msgstr "Verwenden Sie sprachspezifische Startseiten."
 
 msgid "Use my own translators."
 msgstr "Meine eigenen Übersetzer verwenden."
+
+msgid "Use the <a href=\"%s\">Translation Dashboard</a> to send documents to translation."
+msgstr "Verwenden Sie das <a href=\"%s\">Übersetzungs-Dashboard</a> um Dokumente zur Übersetzung einzusenden."
 
 msgid "Validate on save"
 msgstr "Beim Speichern bestätigen"

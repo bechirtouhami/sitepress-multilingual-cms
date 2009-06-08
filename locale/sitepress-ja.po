@@ -22,7 +22,7 @@ msgid "%s or %s, %s, %s, %s and %s"
 msgstr "%s または%s, %s, %s, %s と %s"
 
 msgid "%s words, %s USD to each language at 0.07 USD/word. <span id=\"icl-estimated-all\" style=\"display:none;\"> (%s USD to all selected languages)</span>"
-msgstr "%s 語、 %s USD は各言語0.07 USD/語です。 <span id=\"icl-estimated-all\" style=\"display:none;\"> (%s 選択された全ての言語にUSD が適用されます)</span>"
+msgstr "%s 語、 %s USD -　各言語0.07 USD/語です。 <span id=\"icl-estimated-all\" style=\"display:none;\"> (%s 選択された全ての言語にUSD が適用されます)</span>"
 
 msgid "&laquo;"
 msgstr "&laquo;"
@@ -48,8 +48,8 @@ msgstr "ステッキー･リンクについて"
 msgid "Absolute Links"
 msgstr "絶対リンク"
 
-msgid "Account created"
-msgstr "アカウントが作成されました"
+msgid "Access key"
+msgstr "アクセスキー"
 
 msgid "Add / Remove languages"
 msgstr "言語追加/削除"
@@ -74,6 +74,9 @@ msgstr "全ての翻訳は言語を母国語とするプロのトランスレー
 
 msgid "Alphabetically"
 msgstr "アルファベットで"
+
+msgid "An account has been created for you in ICanLocalize - Next steps:"
+msgstr "ICanLocalizeにあなたのアカウントが作成されました。 - 次のステップ："
 
 msgid "Are you sure you want to disable content translation?"
 msgstr "本当にコンテンツ翻訳を無効にしますか？"
@@ -147,11 +150,14 @@ msgstr "完了"
 msgid "Configure your ICanLocalize account"
 msgstr "ICanLocalizeのアカウントのコンフィギュレーションを行う"
 
+msgid "Confirm your email address – a confirmation email was just sent to you from <b>notify@icanlocalize.com</b>. Go to your inbox and click on the confirmation link in that email."
+msgstr "Eメールアドレスを確認してください- <b>notify@icanlocalize.com</b>から確認Eメールが送信されました。インボックスへ行き、Eメールの確認リンクをクリックしてください。"
+
 msgid "Content Translation"
 msgstr "内容翻訳"
 
 msgid "Content Translation allows you to have all the site's contents professionally translated."
-msgstr "コンテンツ翻訳は全サイトのコンテンツをプロフェッショナルに翻訳させます。"
+msgstr "コンテンツ翻訳を使うと全サイトのコンテンツがプロのトランスレーターにより翻訳されます。"
 
 msgid "Content translation can be managed remotely via xmlrpc calls."
 msgstr "コンテンツ翻訳はxmlrpc callsを通してリモート管理できます。"
@@ -210,6 +216,9 @@ msgstr "編集"
 msgid "Edit this page to add translations"
 msgstr "このページを翻訳に追加するために編集する"
 
+msgid "Email"
+msgstr "Eメール"
+
 msgid "Enable content translation"
 msgstr "コンテンツ翻訳を有効にする"
 
@@ -242,6 +251,9 @@ msgstr "ファイルのアップロードに失敗しました。"
 
 msgid "Filter furter by:"
 msgstr "さらに以下でフィルターする:"
+
+msgid "First name"
+msgstr "名前"
 
 msgid "Flag"
 msgstr "フラッグ"
@@ -330,6 +342,9 @@ msgstr "言語スイッチャースタイル"
 msgid "Languages"
 msgstr "言語"
 
+msgid "Last name"
+msgstr "姓"
+
 msgid "Link to home of language for missing translations"
 msgstr "翻訳欠如のため、言語ホームへリンクする"
 
@@ -361,7 +376,7 @@ msgid "Mini home (don't list child pages for this page)"
 msgstr "ミニホーム（このページの子供ページをリストしない）"
 
 msgid "Minor edit - don't update translation"
-msgstr "Minor edit - don't update translatio"
+msgstr "マイナーな編集－翻訳を更新しない"
 
 msgid "More options"
 msgstr "その他のオプション"
@@ -432,11 +447,17 @@ msgstr "ページ順序"
 msgid "Pages"
 msgstr "ページ"
 
+msgid "Password"
+msgstr "パスワード"
+
 msgid "Pending Review"
 msgstr "見直しの対象"
 
 msgid "Permlink structure changes."
 msgstr "パーム･リンクの構造が変更されます。"
+
+msgid "Please go to the <a href=\"%s\">Plugins</a> page and enable the WPML Multilingual CMS plugin before trying to configure the plugin."
+msgstr "プラグインを設定する前に<a href=\"%s\">プラグインの</a> ページへ行き、 WPMLマルチ言語CMS プラグインを有効にしてください。"
 
 msgid "Please select a CSV file to upload"
 msgstr "アップロードにCSVファイルを選択してください。"
@@ -594,6 +615,9 @@ msgstr "テストサイト-システムをテストしているだけなので�
 msgid "The ICanLocalize access details are not correct."
 msgstr "ICanLocalize アクセス詳細が正しくありません。"
 
+msgid "The WPML Multilingual CMS plugin is not currently enabled."
+msgstr "WPML マルチ言語 CMS プラグインは現在有効になっていません。"
+
 msgid "The drop-down language switcher can be added to your theme by inserting this PHP code: %s or as a widget"
 msgstr "以下のPHPコード を挿入すると、ドロップダウン式の言語スイッチャーがあなたのテーマに追加されます：%sまたはウィジェットとして"
 
@@ -613,7 +637,7 @@ msgid "These access settings are OK."
 msgstr "アクセス設定はOKです。"
 
 msgid "This WordPress installation will poll for translations."
-msgstr "このワードプレスのインストレーションは時折完了した翻訳を確認します。"
+msgstr "このWordPressのインストレーションは時折完了した翻訳を確認します。"
 
 msgid "This document's translation doesn't need to update"
 msgstr "この翻訳書類はアップデートの必要はありません。"
@@ -646,7 +670,7 @@ msgid "To send documents to translation, use the <a href=\"%s\">Translation dash
 msgstr "翻訳する書類を送るためには  <a href=\"%s\">翻訳ダッシュボード</a>をご使用ください。"
 
 msgid "To send documents to translation, you first need to <a href=\"%s\">set up content translation</a>."
-msgstr "翻訳書類を送るためにはまず<a href=\"%s\">内容の翻訳を設定しなくてはなりません</a>."
+msgstr "翻訳書類を送るためにはまず<a href=\"%s\">コンテンツ翻訳を設定しなくてはなりません</a>."
 
 msgid "Too many redirects."
 msgstr "リダイレクトが多すぎます。"
@@ -709,7 +733,7 @@ msgid "Translation will only be available once this project has been added to yo
 msgstr "翻訳はこのプロジェクトがあなたの ICanLocalize アカウントに追加されると初めて利用できます。あなたのログイン情報を以下に入力し、「このプロジェクトをマイアカウントに追加する」をクリックしてください。"
 
 msgid "Translation will only be available once your ICanLocalize account has been created. Complete this form and click on 'Create account'."
-msgstr "翻訳はあなたのICanLocalizeアカウントを作成しないと利用できません。この用紙を完了し、「アカウント作成」をクリックしてください。"
+msgstr "翻訳はあなたのICanLocalizeアカウントを作成しないと利用できません。この用紙に記入し、「アカウント作成」をクリックしてください。"
 
 msgid "Translations"
 msgstr "翻訳"
@@ -734,6 +758,9 @@ msgstr "特定言語のホームページを使う"
 
 msgid "Use my own translators."
 msgstr "自分のトランスレーターを使用する。"
+
+msgid "Use the <a href=\"%s\">Translation Dashboard</a> to send documents to translation."
+msgstr " <a href=\"%s\">翻訳ダッシュボードを使い </a> 書類を翻訳用に送ってください。"
 
 msgid "Validate on save"
 msgstr "保存により確認する"
@@ -767,6 +794,9 @@ msgstr "WPMLは無効になります "
 
 msgid "Waiting for translator"
 msgstr "トランスレーターを待っています。"
+
+msgid "Website ID"
+msgstr "ウェブサイトID"
 
 msgid "What kind of website is this?"
 msgstr "このウェブサイトはどういうサイトですか。"
