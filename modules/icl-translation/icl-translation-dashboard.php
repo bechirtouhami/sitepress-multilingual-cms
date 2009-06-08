@@ -122,7 +122,7 @@
     <table class="widefat fixed" id="icl-translation-dashboard" cellspacing="0">
         <thead>
         <tr>
-            <th scope="col" class="manage-column column-cb check-column"><input type="checkbox" <?php if(isset($__icl_translation_disabled)&&$__icl_translation_disabled):?>disabled="disabled"<?php endif;?> /></th>
+            <th scope="col" class="manage-column column-cb check-column"><input type="checkbox" /></th>
             <th scope="col"><?php echo __('Title', 'sitepress') ?></th>
             <th scope="col" class="manage-column column-date"><?php echo __('Type', 'sitepress') ?></th>
             <th scope="col" class="manage-column column-date"><?php echo __('Status', 'sitepress') ?></th>        
@@ -131,7 +131,7 @@
         </thead>
         <tfoot>
         <tr>
-            <th scope="col" class="manage-column column-cb check-column"><input type="checkbox" <?php if(isset($__icl_translation_disabled)&&$__icl_translation_disabled):?>disabled="disabled"<?php endif;?> /></th>
+            <th scope="col" class="manage-column column-cb check-column"><input type="checkbox" /></th>
             <th scope="col"><?php echo __('Title', 'sitepress') ?></th>
             <th scope="col" class="manage-column column-date"><?php echo __('Type', 'sitepress') ?></th>
             <th scope="col" class="manage-column column-date"><?php echo __('Status', 'sitepress') ?></th>        
@@ -161,7 +161,7 @@
             ?>            
             <tr<?php if($oddcolumn): ?> class="alternate"<?php endif;?>>
                 <td scope="col">
-                    <input type="checkbox" value="<?php echo $doc->post_id ?>" name="post[]" <?php if(isset($__icl_translation_disabled)&&$__icl_translation_disabled):?>disabled="disabled"<?php endif;?> />
+                    <input type="checkbox" value="<?php echo $doc->post_id ?>" name="post[]" />
                 </td>
                 <td scope="col" class="post-title column-title">
                     <a href="<?php echo get_edit_post_link($doc->post_id) ?>"><?php echo $doc->post_title ?></a>
@@ -258,6 +258,5 @@
         <input type="submit" class="button-primary" id="icl-get_translations" value="<?php echo __('Get translations from ICanLocalize', 'sitepress')?>" />
         </form>
     <?php endif; ?>
-    
     
 </div>
