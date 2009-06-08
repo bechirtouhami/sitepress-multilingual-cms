@@ -11,7 +11,7 @@
         INDEX ( `rid` )
         ) 
   ";
-  $wpdb->query($icl_translation_sql);
+  mysql_query($icl_translation_sql);
   $icl_translation_sql = "
         CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}icl_content_status` (
         `rid` BIGINT NOT NULL ,
@@ -22,7 +22,7 @@
         INDEX ( `nid` )
         )  
   ";  
-   $wpdb->query($icl_translation_sql);
+   mysql_query($icl_translation_sql);
    
   $icl_translation_sql = "
         CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}icl_node` (
@@ -32,5 +32,5 @@
         PRIMARY KEY ( `nid` )
         )   
   ";  
-   $wpdb->query($icl_translation_sql);
+   mysql_query($icl_translation_sql);
 ?>

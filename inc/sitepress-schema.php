@@ -204,7 +204,10 @@ function icl_sitepress_activate(){
         $blog_default_cat_tax_id = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id='{$blog_default_cat}' AND taxonomy='category'");
         // default settings are set in the sidepress class      
         // saving the option now to make it 'autoload' type
-        $settings = array();  
+        $settings = array(
+            'default_language'   => $blog_default_lang,
+            'default_categories' => array($blog_default_lang => $blog_default_cat_tax_id)
+        );        
         add_option('icl_sitepress_settings', $settings, '', true);        
     }    
        

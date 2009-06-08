@@ -266,8 +266,6 @@ class SitePress{
             'icl_lso_display_lang' => 1,
             'language_home' => 1,
             'sync_page_ordering' => 1,
-            'default_language'  => $blog_default_lang,
-            'default_categories' => array($blog_default_lang => $blog_default_cat_tax_id),
             'translated_document_status' => 0,
             'website_kind' => 2,
             'translation_pickup_method' => 0,
