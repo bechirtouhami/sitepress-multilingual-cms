@@ -135,10 +135,10 @@
                 <li>
                     <ul>
                         <li>
-                            <label><input name="icl_notify_complete" type="checkbox" value="1" <?php if($sitepress_settings['icl_notify_complete']): ?>checked="checked"<?php endif;?> /> <?php echo __('Send an email notification when translations complete.', 'sitepress'); ?></label><br />
+                            <label><input name="icl_notify_complete" type="checkbox" value="1" <?php if($sitepress_settings['notify_complete']): ?>checked="checked"<?php endif;?> /> <?php echo __('Send an email notification when translations complete.', 'sitepress'); ?></label><br />
                         </li>
                         <li>
-                            <label><input name="icl_alert_delay" type="checkbox" value="1" <?php if($sitepress_settings['icl_alert_delay']): ?>checked="checked"<?php endif;?> /> <?php echo __('Send an alert when translations delay for more than 4 days.', 'sitepress'); ?></label><br />
+                            <label><input name="icl_alert_delay" type="checkbox" value="1" <?php if($sitepress_settings['alert_delay']): ?>checked="checked"<?php endif;?> /> <?php echo __('Send an alert when translations delay for more than 4 days.', 'sitepress'); ?></label><br />
                         </li>
                     </ul>
 
@@ -153,10 +153,10 @@
                 <li>
                     <ul>
                         <li>
-                            <label><input type="radio" name="icl_translation_document_status" value="0" <?php if(!$sitepress_settings['translated_document_status']): ?>checked="checked"<?php endif;?> /> <?php echo __('Draft', 'sitepress') ?></label>
+                            <label><input type="radio" name="icl_translated_document_status" value="0" <?php if(!$sitepress_settings['translated_document_status']): ?>checked="checked"<?php endif;?> /> <?php echo __('Draft', 'sitepress') ?></label>
                         </li>
                         <li>
-                            <label><input type="radio" name="icl_translation_document_status" value="1" <?php if($sitepress_settings['translated_document_status']): ?>checked="checked"<?php endif;?> /> <?php echo __('Same as the original document', 'sitepress') ?></label>
+                            <label><input type="radio" name="icl_translated_document_status" value="1" <?php if($sitepress_settings['translated_document_status']): ?>checked="checked"<?php endif;?> /> <?php echo __('Same as the original document', 'sitepress') ?></label>
                         </li>
                     </ul>
 
@@ -171,7 +171,7 @@
                 <li>
                     <ul>
                         <li>
-                            <label><input name="icl_remote_management" type="checkbox" value="1" <?php if($sitepress_settings['icl_remote_management']): ?>checked="checked"<?php endif;?> /> <?php echo __('Enable remote control over the translation management.', 'sitepress'); ?></label><br />
+                            <label><input name="icl_remote_management" type="checkbox" value="1" <?php if($sitepress_settings['remote_management']): ?>checked="checked"<?php endif;?> /> <?php echo __('Enable remote control over the translation management.', 'sitepress'); ?></label><br />
                         </li>
                     </ul>
 

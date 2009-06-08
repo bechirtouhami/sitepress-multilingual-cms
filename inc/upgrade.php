@@ -81,11 +81,12 @@ if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepr
 
 if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.0.0', '<')){
     $iclsettings = get_option('icl_sitepress_settings');
-    $iclsettings['website_kind'] = 2;    
-    $iclsettings['icl_delivery_method'] = 0;        
-    $iclsettings['icl_notify_complete'] = 1;
-    $iclsettings['icl_translation_document_status'] = 1;
-    $iclsettings['icl_remote_management'] = 0;    
+    if(!isset($iclsettings['website_kind'])) $iclsettings['website_kind'] = 2;    
+    if(!isset($iclsettings['translation_pickup_method'])) $iclsettings['translation_pickup_method'] = 0;        
+    if(!isset($iclsettings['notify_complete'])) $iclsettings['notify_complete'] = 1;
+    if(!isset($iclsettings['translated_document_status'])) $iclsettings['translated_document_status'] = 1;
+    if(!isset($iclsettings['remote_management'])) $iclsettings['remote_management'] = 0;    
+    if(!isset($iclsettings['alert_delay'])) $iclsettings['alert_delay'] = 0;        
     update_option('icl_sitepress_settings',$iclsettings);
 }
 

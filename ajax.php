@@ -41,10 +41,10 @@ function update_icl_account(){
         $data['interview_translators'] = $iclsettings['interview_translators'];
 
         $notifications = 0;
-        if ($iclsettings['icl_notify_complete']){
+        if ($iclsettings['notify_complete']){
             $notifications += 1;
         }
-        if ($iclsettings['icl_alert_delay']){
+        if ($iclsettings['alert_delay']){
             $notifications += 2;
         }
         $data['notifications'] = $notifications;
@@ -169,10 +169,10 @@ switch($_REQUEST['icl_ajx_action']){
         } else {
             wp_clear_scheduled_hook('poll_for_translations');            
         }
-        $iclsettings['translated_document_status'] = $_POST['icl_translation_document_status'];        
-        $iclsettings['icl_alert_delay'] = intval($_POST['icl_alert_delay']);
-        $iclsettings['icl_notify_complete'] = intval($_POST['icl_notify_complete']);
-        $iclsettings['icl_remote_management'] = intval($_POST['icl_remote_management']);
+        $iclsettings['translated_document_status'] = $_POST['icl_translated_document_status'];        
+        $iclsettings['alert_delay'] = intval($_POST['icl_alert_delay']);
+        $iclsettings['notify_complete'] = intval($_POST['icl_notify_complete']);
+        $iclsettings['remote_management'] = intval($_POST['icl_remote_management']);
         $sitepress->save_settings($iclsettings);
 
         $ret = update_icl_account();

@@ -606,10 +606,6 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     if($post_id){
         $is_update = true;
         $postarr['ID'] = $_POST['post_ID'] = $post_id;
-        $postarr['post_status'] = $wpdb->get_var("
-                    SELECT post_status
-                    FROM {$wpdb->posts} 
-                    WHERE ID = '{$post_id}'");
     }else{
         $is_update = false;
     } 
@@ -1253,7 +1249,7 @@ function _icl_list_posts($args){
     $status      = $args[6];
     $type        = $args[7];
     
-    if ( !$sitepress_settings['icl_remote_management']) {
+    if ( !$sitepress_settings['remote_management']) {
         return array('err_code'=>1, 'err_str'=>__('remote translation management not enabled'));
     }    
     if ( !$sitepress->get_icl_translation_enabled() ) {
@@ -1295,7 +1291,7 @@ function _icl_remote_control_translate_post($args){
     $from_lang   = $args[3];
     $langs       = $args[4];
 
-    if ( !$sitepress_settings['icl_remote_management']) {
+    if ( !$sitepress_settings['remote_management']) {
         return array('err_code'=>1, 'err_str'=>__('remote translation management not enabled'));
     }    
     if ( !$sitepress->get_icl_translation_enabled() ){

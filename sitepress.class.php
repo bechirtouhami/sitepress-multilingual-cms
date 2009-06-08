@@ -502,7 +502,7 @@ class SitePress{
             if ( $this->settings['icl_notify_complete']){
                 $notifications += 1;
             }
-            if ( $this->settings['icl_alert_delay']){
+            if ( $this->settings['alert_delay']){
                 $notifications += 2;
             }
             $user['notifications'] = $notifications;

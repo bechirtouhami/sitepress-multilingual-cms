@@ -217,10 +217,11 @@ function icl_sitepress_activate(){
             'default_categories' => array($blog_default_lang => $blog_default_cat_tax_id),
             'translated_document_status' => 0,
             'website_kind' => 2,
-            'icl_delivery_method' => 0,
-            'icl_notify_complete' => 1,
-            'icl_translation_document_status' => 1,
-            'icl_remote_management' => 0,
+            'translation_pickup_method' => 0,
+            'notify_complete' => 1,
+            'translated_document_status' => 1,
+            'remote_management' => 0,
+            'alert_delay' => 0,
             'modules' => array(
                 'absolute-links' => array('enabled'=>0),
                 'cms-navigation'=>array()
