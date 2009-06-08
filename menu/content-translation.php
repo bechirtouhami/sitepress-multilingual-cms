@@ -154,6 +154,11 @@
             </ul>
                 
             <h3><?php echo __("Translated document status:", 'sitepress') ?></h3>
+            <?php
+                if(!isset($sitepress_settings['translated_document_status'])) {
+                    $sitepress_settings['translated_document_status'] = true;
+                }
+            ?>
             <ul>
                 <li>
                     <ul>
