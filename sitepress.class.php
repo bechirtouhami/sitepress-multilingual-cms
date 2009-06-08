@@ -8,6 +8,9 @@ class SitePress{
     function __construct(){
         global $wpdb;       
         $this->settings = get_option('icl_sitepress_settings');                                
+        
+        $this->verify_settings();
+        
         $res = $wpdb->get_results("
             SELECT code, english_name, active, lt.name AS display_name 
             FROM {$wpdb->prefix}icl_languages l
@@ -266,6 +269,65 @@ class SitePress{
 
         return $this->settings;
     }    
+    
+    function verify_settings(){
+        $default_settings = array(
+            'interview_translators' => 0,
+            'existing_content_language_verified' => 0,
+            'language_negotiation_type' => 3,
+            'icl_lso_header' => 0, 
+            'icl_lso_link_empty' => 0,
+            'icl_lso_flags' => 0,
+            'icl_lso_native_lang' => 1,
+            'icl_lso_display_lang' => 1,
+            'language_home' => 1,
+            'sync_page_ordering' => 1,
+            'default_language'  => $blog_default_lang,
+            'default_categories' => array($blog_default_lang => $blog_default_cat_tax_id),
+            'translated_document_status' => 0,
+            'website_kind' => 2,
+            'translation_pickup_method' => 0,
+            'notify_complete' => 1,
+            'translated_document_status' => 1,
+            'remote_management' => 0,
+            'alert_delay' => 0,
+            'modules' => array(
+                'absolute-links' => array('enabled'=>0),
+                'cms-navigation'=>array()
+                )
+        ); 
+        
+        //congigured for three levels
+        $update_settings = false;
+        foreach($default_settings as $key => $value){
+            if(is_array($value)){
+                foreach($value as $k2 => $v2){
+                    if(is_array($v2)){
+                        foreach($v2 as $k3 => $v3){
+                            if(!isset($this->settings[$key][$k2][$k3])){
+                                $this->settings[$key][$k2][$k3] = $v3;
+                                $update_settings = true;
+                            }                                
+                        }
+                    }else{
+                        if(!isset($this->settings[$key][$k2])){
+                            $this->settings[$key][$k2] = $v2;
+                            $update_settings = true;
+                        }
+                    }
+                }
+            }else{
+                if(!isset($this->settings[$key])){
+                    $this->settings[$key] = $value;
+                    $update_settings = true;
+                }                
+            }
+        }
+        
+        if($update_settings){
+            $this->save_settings();
+        }          
+    }
     
     function get_active_languages(){
         return $this->active_languages;
@@ -530,9 +592,9 @@ class SitePress{
                 $iclsettings['access_key'] = $access_key;
                 $this->save_settings($iclsettings);
                 if($user['create_account']==1){
-                    $_POST['icl_form_success'] = __('An account has been created for you in ICanLocalize - Next steps:<br />', 'sitepress');
-                    $_POST['icl_form_success'] .= __('<ol><li>Confirm your email address – an confirmation email was just sent to you from <b>notify@icanlocalize.com</b>. Go to your inbox and click on the confirmation link in that email.</li>', 'sitepress');
-                    $_POST['icl_form_success'] .= __('<li>Use the <a href="'.'tools.php?page='.basename(ICL_PLUGIN_PATH).'/modules/icl-translation/icl-translation-dashboard.php">Translation Dashboard</a> to send documents to translation.</li></ol>', 'sitepress');
+                    $_POST['icl_form_success'] = __('An account has been created for you in ICanLocalize - Next steps:', 'sitepress') . '<br />';
+                    $_POST['icl_form_success'] .= '<ol><li>' . __('Confirm your email address – a confirmation email was just sent to you from <b>notify@icanlocalize.com</b>. Go to your inbox and click on the confirmation link in that email.', 'sitepress') . '</li>';
+                    $_POST['icl_form_success'] .= '<li>' . sprintf(__('Use the <a href="%s">Translation Dashboard</a> to send documents to translation.', 'sitepress'), 'tools.php?page='.basename(ICL_PLUGIN_PATH).'/modules/icl-translation/icl-translation-dashboard.php') . '</li></ol>';
                     
                 }else{
                     $_POST['icl_form_success'] = __('Project added','sitepress');
