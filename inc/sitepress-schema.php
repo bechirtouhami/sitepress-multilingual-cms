@@ -216,7 +216,7 @@ function icl_sitepress_activate(){
             'default_language'  => $blog_default_lang,
             'default_categories' => array($blog_default_lang => $blog_default_cat_tax_id),
             'translated_document_status' => 0,
-            'icl_website_kind' => 2,
+            'website_kind' => 2,
             'icl_delivery_method' => 0,
             'icl_notify_complete' => 1,
             'icl_translation_document_status' => 1,

@@ -1,9 +1,9 @@
 <?php
-    if(!is_plugin_active("sitepress-multilingual-cms/sitepress.php")){
+    if(!is_plugin_active(basename(dirname(dirname(__FILE__))) . "/sitepress.php")){
         ?>
         <h2><?php echo __('Setup WPML', 'sitepress') ?></h2>
         <div class="updated fade">
-        <p style="line-height:1.5"><?php printf(__('The WPML Multilingual CMS plugin is not currently enabled.', 'sitepress'), 'plugins.php');?></p>
+        <p style="line-height:1.5"><?php echo __('The WPML Multilingual CMS plugin is not currently enabled.', 'sitepress');?></p>
         <p style="line-height:1.5"><?php printf(__('Please go to the <a href="%s">Plugins</a> page and enable the WPML Multilingual CMS plugin before trying to configure the plugin.', 'sitepress'), 'plugins.php');?></p>
         </div>
         <?php
