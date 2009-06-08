@@ -251,22 +251,6 @@ class SitePress{
     }
 
     function get_settings(){
-        $save_initialized = false;
-
-        if(!isset($this->settings['website_kind'])) {
-            $this->settings['website_kind'] = 2;
-            $save_initialized = true;
-        }
-        if(!isset($this->settings['translated_document_status'])) {
-            $this->settings['translated_document_status'] = true;
-            $save_initialized = true;
-        }
-        
-
-        if ($save_initialized) {
-            update_option('icl_sitepress_settings', $this->settings);
-        }
-
         return $this->settings;
     }    
     
