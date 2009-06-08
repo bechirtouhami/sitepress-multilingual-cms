@@ -33,6 +33,4 @@ if(isset($_POST['poll']) && $_POST['poll']==1){
     icl_poll_for_translations();
 }
 
-
-
 ?>

@@ -112,6 +112,10 @@ class SitePress{
         add_filter('get_terms', array($this,'get_terms_filter'));
         add_filter('single_cat_title', array($this,'the_category_name_filter'));
         
+        add_filter('term_links-post_tag', array($this,'the_category_name_filter'));
+        add_filter('tags_to_edit', array($this,'the_category_name_filter'));
+        add_filter('single_tag_title', array($this,'the_category_name_filter'));
+        
         // adiacent posts links
         add_filter('get_previous_post_join', array($this,'get_adiacent_post_join'));
         add_filter('get_next_post_join', array($this,'get_adiacent_post_join'));
@@ -1445,11 +1449,16 @@ class SitePress{
     }
     
     function the_category_name_filter($name){            
+        if(is_array($name)){
+            foreach($name as $k=>$v){
+                $name[$k] = $this->the_category_name_filter($v);
+            }
+        }
         if(false === strpos($name, '@')) return $name;
         if(false !== strpos($name, '<a')){
             $name_sh = strip_tags($name);
             $exp = explode('@', $name_sh);
-            $name = str_replace($name_sh, trim($exp[0]),$name);
+            $name = str_replace($name_sh, trim($exp[0]),$name);            
         }else{
             $name = preg_replace('#(.*) @(.*)#i','$1',$name);
         }

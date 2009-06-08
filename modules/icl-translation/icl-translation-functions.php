@@ -482,6 +482,7 @@ function icl_translation_delete_post($post_id){
 }
 
 function icl_add_post_translation($trid, $translation, $lang, $rid){
+    
     global $wpdb, $sitepress_settings, $sitepress;
     $lang_code = $wpdb->get_var("SELECT code FROM {$wpdb->prefix}icl_languages WHERE english_name='".$wpdb->escape($lang)."'");
     if(!$lang_code){        
@@ -510,9 +511,28 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
             $translated_tag_ids = explode(',', $translation['tag_ids']);
             foreach($translated_tags as $k=>$v){
                 $tag_trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id='{$translated_tag_ids[$k]}' AND element_type='tag'");
-                //tag exists?
-                $term_taxonomy_id = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} tx JOIN {$wpdb->terms} tm ON tx.term_id = tm.term_id WHERE tm.name='".$wpdb->escape($v)."' AND taxonomy='post_tag'");
-                if(!$term_taxonomy_id){  
+                
+                // before adding the new term make sure that another tag with the same name doesn't exist. If it does append @lang                                        
+                // same term name exists in a different language?
+                $term_different_language = $wpdb->get_var("
+                    SELECT tm.term_id 
+                    FROM {$wpdb->term_taxonomy} tx
+                        JOIN {$wpdb->terms} tm ON tx.term_id = tm.term_id 
+                        JOIN {$wpdb->prefix}icl_translations tr ON tx.term_taxonomy_id = tr.element_id
+                    WHERE tm.name='".$wpdb->escape($v)."' AND tr.element_type IN ('tag', 'category') AND tr.language_code <> '{$lang_code}'
+                ");
+                if($term_different_language){
+                    $v .= ' @'.$lang_code;    
+                }
+                
+                //tag exists? (in the current language)
+                $term_taxonomy_id = $wpdb->get_var("
+                    SELECT term_taxonomy_id 
+                    FROM {$wpdb->term_taxonomy} tx 
+                        JOIN {$wpdb->terms} tm ON tx.term_id = tm.term_id 
+                        JOIN {$wpdb->prefix}icl_translations tr ON tx.term_taxonomy_id = tr.element_id AND tr.element_type = 'tag' AND tr.language_code = '{$lang_code}'
+                    WHERE tm.name='".$wpdb->escape($v)."' OR tm.name='".$wpdb->escape($v)." @{$lang_code}' AND taxonomy='post_tag'");
+                if(!$term_taxonomy_id){                                          
                     $tmp = wp_insert_term($v, 'post_tag');
                     if(isset($tmp['term_taxonomy_id'])){                
                         $wpdb->update($wpdb->prefix.'icl_translations', 
@@ -548,8 +568,27 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
             $translated_cats_ids = explode(',', $translation['category_ids']);    
             foreach($translated_cats as $k=>$v){
                 $cat_trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id='{$translated_cats_ids[$k]}' AND element_type='category'");
+                
+                // before adding the new term make sure that another tag with the same name doesn't exist. If it does append @lang                                        
+                // same term name exists in a different language?
+                $term_different_language = $wpdb->get_var("
+                    SELECT tm.term_id 
+                    FROM {$wpdb->term_taxonomy} tx
+                        JOIN {$wpdb->terms} tm ON tx.term_id = tm.term_id 
+                        JOIN {$wpdb->prefix}icl_translations tr ON tx.term_taxonomy_id = tr.element_id
+                    WHERE tm.name='".$wpdb->escape($v)."' AND tr.element_type IN ('tag', 'category') AND tr.language_code <> '{$lang_code}'
+                ");
+                if($term_different_language){
+                    $v .= ' @'.$lang_code;    
+                }
+                
                 //cat exists?
-                $term_taxonomy_id = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} tx JOIN {$wpdb->terms} tm ON tx.term_id = tm.term_id WHERE tm.name='".$wpdb->escape($v)."' AND taxonomy='category'");
+                $term_taxonomy_id = $wpdb->get_var("
+                    SELECT term_taxonomy_id 
+                    FROM {$wpdb->term_taxonomy} tx 
+                        JOIN {$wpdb->terms} tm ON tx.term_id = tm.term_id 
+                        JOIN {$wpdb->prefix}icl_translations tr ON tx.term_taxonomy_id = tr.element_id AND tr.element_type = 'category' AND tr.language_code = '{$lang_code}'
+                        WHERE tm.name='".$wpdb->escape($v)."' OR tm.name='".$wpdb->escape($v)." @{$lang_code}' AND taxonomy='category'");
                 if(!$term_taxonomy_id){  
                     // get original category parent id
                     $original_category_parent_id = $wpdb->get_var("SELECT parent FROM {$wpdb->term_taxonomy} WHERE term_taxonomy_id=".$translated_cats_ids[$k]);
