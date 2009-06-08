@@ -23,7 +23,7 @@ function icl_sitepress_activate(){
         //$langs_names is defined in ICL_PLUGIN_PATH . '/inc/lang-data.inc'
         foreach($langs_names as $key=>$val){
             if(strpos($key,'Norwegian Bokm')===0){ $key = 'Norwegian Bokmål'; $lang_codes[$key] = 'nb';} // exception for norwegian
-            $wpdb->insert($wpdb->prefix . 'icl_languages', array('english_name'=>$key, 'code'=>$lang_codes[$key], 'major'=>$val['major']));
+            @$wpdb->insert($wpdb->prefix . 'icl_languages', array('english_name'=>$key, 'code'=>$lang_codes[$key], 'major'=>$val['major']));
         }        
     }
 
@@ -202,31 +202,9 @@ function icl_sitepress_activate(){
     }else{
         $blog_default_cat = get_option('default_category');
         $blog_default_cat_tax_id = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id='{$blog_default_cat}' AND taxonomy='category'");
-        $settings = array(
-            'interview_translators' => 0,
-            'existing_content_language_verified' => 0,
-            'language_negotiation_type' => 3,
-            'icl_lso_header' => 0, 
-            'icl_lso_link_empty' => 0,
-            'icl_lso_flags' => 0,
-            'icl_lso_native_lang' => 1,
-            'icl_lso_display_lang' => 1,
-            'language_home' => 1,
-            'sync_page_ordering' => 1,
-            'default_language'  => $blog_default_lang,
-            'default_categories' => array($blog_default_lang => $blog_default_cat_tax_id),
-            'translated_document_status' => 0,
-            'website_kind' => 2,
-            'translation_pickup_method' => 0,
-            'notify_complete' => 1,
-            'translated_document_status' => 1,
-            'remote_management' => 0,
-            'alert_delay' => 0,
-            'modules' => array(
-                'absolute-links' => array('enabled'=>0),
-                'cms-navigation'=>array()
-                )
-        );        
+        // default settings are set in the sidepress class      
+        // saving the option now to make it 'autoload' type
+        $settings = array();  
         add_option('icl_sitepress_settings', $settings, '', true);        
     }    
        
