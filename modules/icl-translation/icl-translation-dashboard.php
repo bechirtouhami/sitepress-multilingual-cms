@@ -52,15 +52,14 @@
     $icl_post_types = array(
         'page'  =>__('Page', 'sitepress'),
         'post'  =>__('Post', 'sitepress')
-    );
-    
+    );       
 ?>
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap">
     <div id="icon-options-general" class="icon32"><br /></div>
     <h2><?php echo __('Translation Dashboard', 'sitepress') ?></h2>        
     
-    <?php if(!$sitepress->icl_account_configured() || !$sitepress->get_icl_translation_enabled()): $__icl_translation_disabled = true; ?>
+    <?php if(!$sitepress->icl_account_configured() || !$sitepress->get_icl_translation_enabled()): ?>
     <div class="error">
     <p><?php printf(__('To send documents to translation, you first need to <a href="%s">set up content translation</a>.' , 'sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php'); ?></p>
     </div>
