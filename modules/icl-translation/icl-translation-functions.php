@@ -21,6 +21,10 @@ function icl_get_request_ids_for_post($post_id, $source_language, $target_langua
     
 }
 
+function icl_initialize_db(){
+    include_once ICL_PLUGIN_PATH . '/modules/icl-translation/db-scheme.php';
+}
+
 function icl_get_latest_request_id($post_id, $source_language, $target_code){
     global $wpdb;
     

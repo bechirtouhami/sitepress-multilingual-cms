@@ -2,30 +2,16 @@
 class SitePress{
    
     private $settings;
-    private $active_languages;
+    private $active_languages = array();
     private $this_lang;
     
     function __construct(){
         global $wpdb;       
         $this->settings = get_option('icl_sitepress_settings');                                
-        
-        $this->verify_settings();
-        
-        $res = $wpdb->get_results("
-            SELECT code, english_name, active, lt.name AS display_name 
-            FROM {$wpdb->prefix}icl_languages l
-                JOIN {$wpdb->prefix}icl_languages_translations lt ON l.code=lt.language_code           
-            WHERE 
-                active=1 AND lt.display_language_code = '{$this->get_default_language()}' 
-            ORDER BY major DESC, english_name ASC", ARRAY_A);        
-        $languages = array();
-        if($res){
-            foreach($res as $r){
-                $languages[] = $r;
-            }        
-        }
-        $this->active_languages = $languages; 
-        
+        if(false != $this->settings){
+            $this->verify_settings();
+        } 
+
         add_action('plugins_loaded', array($this,'init'));
                 
         // Ajax feedback
@@ -315,7 +301,24 @@ class SitePress{
         }          
     }
     
-    function get_active_languages(){
+    function get_active_languages($refresh = false){
+        global $wpdb;
+        if($refresh || !$this->active_languages){
+            $res = $wpdb->get_results("
+                SELECT code, english_name, active, lt.name AS display_name 
+                FROM {$wpdb->prefix}icl_languages l
+                    JOIN {$wpdb->prefix}icl_languages_translations lt ON l.code=lt.language_code           
+                WHERE 
+                    active=1 AND lt.display_language_code = '{$this->get_default_language()}' 
+                ORDER BY major DESC, english_name ASC", ARRAY_A);        
+            $languages = array();
+            if($res){
+                foreach($res as $r){
+                    $languages[] = $r;
+                }        
+            } 
+            $this->active_languages = $languages;           
+        }
         return $this->active_languages;
     }
     
@@ -584,15 +587,20 @@ class SitePress{
                     
                 }else{
                     $_POST['icl_form_success'] = __('Project added','sitepress');
-                }
-                include_once ICL_PLUGIN_PATH . '/modules/icl-translation/db-scheme.php';
+                }                
             }            
         }
         elseif(isset($_POST['icl_initial_languagenonce']) && $_POST['icl_initial_languagenonce']==wp_create_nonce('icl_initial_language')){
             $this->prepopulate_translations($_POST['icl_initial_language_code']);
             $wpdb->update($wpdb->prefix . 'icl_languages', array('active'=>'1'), array('code'=>$_POST['icl_initial_language_code']));
-            $iclsettings['existing_content_language_verified'] = 1;
-            $this->save_settings($iclsettings);                                
+            $blog_default_cat = get_option('default_category');
+            $blog_default_cat_tax_id = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id='{$blog_default_cat}' AND taxonomy='category'");
+            $this->settings['existing_content_language_verified'] = 1;
+            $this->settings['default_language'] = $_POST['icl_initial_language_code'];
+            $this->settings['default_categories'] = array($$_POST['icl_initial_language_code'] => $blog_default_cat_tax_id);
+            $this->save_settings();                                
+            $this->get_active_languages(true); //refresh active languages list
+            do_action('icl_initial_language_set');
         }elseif(isset($_POST['icl_change_website_access_data_nonce']) && $_POST['icl_change_website_access_data_nonce']==wp_create_nonce('icl_change_website_access_data')){
             $iclsettings['access_key'] = $_POST['access']['access_key'];
             $iclsettings['site_id'] = $_POST['access']['website_id'];

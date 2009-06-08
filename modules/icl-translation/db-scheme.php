@@ -1,4 +1,5 @@
 <?php
+  global $wpdb;
   $icl_translation_sql = "
          CREATE TABLE IF NOT EXISTS {$wpdb->prefix}icl_core_status (
         `id` BIGINT NOT NULL auto_increment,
