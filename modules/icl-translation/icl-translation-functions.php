@@ -621,7 +621,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
                             array('element_type'=>'category','translation_id'=>$cat_translation_id));                
                     }else{
                         $wpdb->insert($wpdb->prefix.'icl_translations', 
-                            array('language_code'=>$lang_code, 'trid'=>$tag_trid, 'element_type'=>'category', 'element_id'=>$term_taxonomy_id, 'source_language_code'=>$original_post_details->language_code));                                
+                            array('language_code'=>$lang_code, 'trid'=>$cat_trid, 'element_type'=>'category', 'element_id'=>$term_taxonomy_id, 'source_language_code'=>$original_post_details->language_code));                                
                     }            
                 }        
             }
@@ -665,6 +665,9 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     $postarr['menu_order'] = $original_post_details->menu_order;
     if(!$is_update){
         $postarr['post_status'] = !$sitepress_settings['translated_document_status'] ? 'draft' : $original_post_details->post_status;
+    } else {
+        // set post_status to the current post status.
+        $postarr['post_status'] = $wpdb->get_var("SELECT post_status FROM {$wpdb->prefix}posts WHERE ID = ".$post_id);
     }
     
     if(isset($parent_id)){
