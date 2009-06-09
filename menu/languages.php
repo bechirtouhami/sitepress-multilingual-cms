@@ -33,7 +33,7 @@
         <form id="icl_initial_language" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
         <?php wp_nonce_field('icl_initial_language','icl_initial_languagenonce') ?>            
         <p>
-            <?php echo __('Before adding other languages, please select the language existing contents are written in:') ?><br /><br />
+            <?php echo __('Before adding other languages, please select the language existing contents are written in:', 'sitepress') ?><br /><br />
             <select name="icl_initial_language_code">
             <?php foreach($languages as $lang): $is_default = ($sitepress->get_default_language()==$lang['code']);?>
             <option <?php if($is_default):?>selected="selected"<?php endif;?> value="<?php echo $lang['code']?>"><?php echo $lang['display_name']?></option>
