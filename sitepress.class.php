@@ -608,6 +608,8 @@ class SitePress{
             $this->settings['existing_content_language_verified'] = 1;
             $this->settings['default_language'] = $_POST['icl_initial_language_code'];            
             $this->save_settings();                                
+            global $sitepress_settings;
+            $sitepress_settings = $this->settings;
             $this->get_active_languages(true); //refresh active languages list
             do_action('icl_initial_language_set');
         }elseif(isset($_POST['icl_change_website_access_data_nonce']) && $_POST['icl_change_website_access_data_nonce']==wp_create_nonce('icl_change_website_access_data')){
