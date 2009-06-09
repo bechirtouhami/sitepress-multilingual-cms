@@ -77,7 +77,7 @@ class ICanLocalizeQuery{
             return false;
         }
         if($gzipped){
-            $c->results = gzdecode($c->results);
+            $c->results = $this->_gzdecode($c->results);
         }        
         $results = xml2array($c->results,1);                
         if($results['info']['status']['attr']['err_code']=='-1'){
@@ -239,16 +239,15 @@ class ICanLocalizeQuery{
         }        
     }
     
-}
-
-if(!function_exists('gzdecode')):  
-    function gzdecode($data){
+    function _gzdecode($data){
       $g=tempnam('/tmp','ff');
       @file_put_contents($g,$data);
       ob_start();
       readgzfile($g);
       $d=ob_get_clean();
       return $d;
-    }  
-endif;    
+    }
+    
+}
+    
 ?>
