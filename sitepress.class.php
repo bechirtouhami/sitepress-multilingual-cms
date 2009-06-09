@@ -476,7 +476,8 @@ class SitePress{
         
         // display correct links on the posts by status break down
         // also fix links to category and tag pages
-        if( ('edit.php' == $pagenow || 'edit-pages.php' == $pagenow) && $this->get_current_language() != $this->get_default_language()){
+        if( ('edit.php' == $pagenow || 'edit-pages.php' == $pagenow || 'categories.php' == $pagenow || 'edit-tags.php' == $pagenow) 
+                && $this->get_current_language() != $this->get_default_language()){
                 ?>
                 <script type="text/javascript">        
                 addLoadEvent(function(){
@@ -485,7 +486,7 @@ class SitePress{
                         if(-1 == h.indexOf('?')) urlg = '?'; else urlg = '&';
                         jQuery(this).attr('href', h + urlg + 'lang=<?php echo $this->get_current_language()?>');
                     });
-                    jQuery('.column-categories a, .column-tags a').each(function(){
+                    jQuery('.column-categories a, .column-tags a, .column-posts a').each(function(){
                         jQuery(this).attr('href', jQuery(this).attr('href') + '&lang=<?php echo $this->get_current_language()?>');
                     })                
                 });
