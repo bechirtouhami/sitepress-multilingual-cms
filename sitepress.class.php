@@ -350,14 +350,17 @@ class SitePress{
         return true;
     }
     
-    function get_languages(){
+    function get_languages($lang=false){
         global $wpdb;
+        if(!$lang){
+            $lang = $this->get_default_language();
+        }                                           
         $res = $wpdb->get_results("
             SELECT 
                 code, english_name, major, active, lt.name AS display_name   
             FROM {$wpdb->prefix}icl_languages l
                 JOIN {$wpdb->prefix}icl_languages_translations lt ON l.code=lt.language_code           
-            WHERE lt.display_language_code = '{$this->get_default_language()}' 
+            WHERE lt.display_language_code = '{$lang}' 
             ORDER BY major DESC, english_name ASC", ARRAY_A);
         $languages = array();
         foreach((array)$res as $r){
@@ -601,9 +604,9 @@ class SitePress{
             $wpdb->update($wpdb->prefix . 'icl_languages', array('active'=>'1'), array('code'=>$_POST['icl_initial_language_code']));
             $blog_default_cat = get_option('default_category');
             $blog_default_cat_tax_id = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id='{$blog_default_cat}' AND taxonomy='category'");
+            $this->settings['default_categories'] = array($_POST['icl_initial_language_code'] => $blog_default_cat_tax_id);
             $this->settings['existing_content_language_verified'] = 1;
-            $this->settings['default_language'] = $_POST['icl_initial_language_code'];
-            $this->settings['default_categories'] = array($$_POST['icl_initial_language_code'] => $blog_default_cat_tax_id);
+            $this->settings['default_language'] = $_POST['icl_initial_language_code'];            
             $this->save_settings();                                
             $this->get_active_languages(true); //refresh active languages list
             do_action('icl_initial_language_set');

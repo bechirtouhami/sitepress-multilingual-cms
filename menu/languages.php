@@ -10,18 +10,36 @@
         return;
     }
     require_once ICL_PLUGIN_PATH . '/sitepress.php'; 
-    $active_languages = $sitepress->get_active_languages();            
-    $languages = $sitepress->get_languages();            
-    $sitepress_settings = $sitepress->get_settings();
-    foreach($active_languages as $lang){
-        if($lang['code']!=$sitepress->get_default_language()){
-            $sample_lang = $lang;
-            break;
+    if(!$sitepress_settings['existing_content_language_verified']){
+        // try to determine the blog language
+        $blog_current_lang = 0;            
+        if($blog_lang = get_option('WPLANG')){
+            $exp = explode('_',$blog_lang);
+            $blog_current_lang = $wpdb->get_var("SELECT code FROM {$wpdb->prefix}icl_languages WHERE code='{$exp[0]}'");
         }
-    }
-    $default_language = $sitepress->get_language_details($sitepress->get_default_language());
-    $locales = $sitepress->get_locale_file_names();
-    $inactive_content = $sitepress->get_inactive_content();
+        if(!$blog_current_lang && defined('WPLANG') && WPLANG != ''){
+            $blog_lang = WPLANG;
+            $exp = explode('_',$blog_lang);
+            $blog_current_lang = $wpdb->get_var("SELECT code FROM {$wpdb->prefix}icl_languages WHERE code='{$exp[0]}'");        
+        }
+        if(!$blog_current_lang){
+            $blog_current_lang = 'en';
+        }        
+        $languages = $sitepress->get_languages($blog_current_lang);            
+    }else{
+        $active_languages = $sitepress->get_active_languages();            
+        $languages = $sitepress->get_languages();            
+        $sitepress_settings = $sitepress->get_settings();
+        foreach($active_languages as $lang){
+            if($lang['code']!=$sitepress->get_default_language()){
+                $sample_lang = $lang;
+                break;
+            }
+        }
+        $default_language = $sitepress->get_language_details($sitepress->get_default_language());
+        $locales = $sitepress->get_locale_file_names();
+        $inactive_content = $sitepress->get_inactive_content();        
+    }    
 ?>
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap">
@@ -35,8 +53,8 @@
         <p>
             <?php echo __('Before adding other languages, please select the language existing contents are written in:', 'sitepress') ?><br /><br />
             <select name="icl_initial_language_code">
-            <?php foreach($languages as $lang): $is_default = ($sitepress->get_default_language()==$lang['code']);?>
-            <option <?php if($is_default):?>selected="selected"<?php endif;?> value="<?php echo $lang['code']?>"><?php echo $lang['display_name']?></option>
+            <?php foreach($languages as $lang):?>
+            <option <?php if($blog_current_lang==$lang['code']):?>selected="selected"<?php endif;?> value="<?php echo $lang['code']?>"><?php echo $lang['display_name']?></option>
             <?php endforeach; ?>
             </select>            
             &nbsp;
