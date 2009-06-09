@@ -1457,17 +1457,27 @@ class SitePress{
         return false;
     }
     
-    function the_category_name_filter($name){            
+    function the_category_name_filter($name){                    
         if(is_array($name)){
             foreach($name as $k=>$v){
                 $name[$k] = $this->the_category_name_filter($v);
             }
-        }
-        if(false === strpos($name, '@')) return $name;
+        }        
+        if(false === strpos($name, '@')) return $name;        
         if(false !== strpos($name, '<a')){
-            $name_sh = strip_tags($name);
-            $exp = explode('@', $name_sh);
-            $name = str_replace($name_sh, trim($exp[0]),$name);            
+            $int = preg_match_all('|<a([^>]+)>([^<]+)</a>|i',$name,$matches);
+            if($int && count($matches[0]) > 1){
+                $originals = $filtered = array();
+                foreach($matches[0] as $m){
+                    $originals[] = $m;
+                    $filtered[] = $this->the_category_name_filter($m);
+                }
+                $name = str_replace($originals, $filtered, $name);
+            }else{            
+                $name_sh = strip_tags($name);
+                $exp = explode('@', $name_sh);
+                $name = str_replace($name_sh, trim($exp[0]),$name);            
+            }
         }else{
             $name = preg_replace('#(.*) @(.*)#i','$1',$name);
         }
