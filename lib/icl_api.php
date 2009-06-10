@@ -54,6 +54,7 @@ class ICanLocalizeQuery{
     
     
     function _request($request, $method='GET', $formvars=null, $formfiles=null, $gzipped = false){
+        $request = str_replace(" ", "%20", $request);
         $c = new IcanSnoopy();
         $c->_fp_timeout = 3;
         $url_parts = parse_url($request);
