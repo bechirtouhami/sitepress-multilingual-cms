@@ -57,8 +57,8 @@ $icl_language_id2name = array (
     57=>'Uzbek',
     58=>'Vietnamese',
     59=>'Yiddish',
-    60=>'Chinese, Simplified',
-    62=>'Chinese, Traditional',
+    60=>'Chinese (Simplified)',
+    62=>'Chinese (Traditional)',
     61=>'Zulu'
 );
 ?>
