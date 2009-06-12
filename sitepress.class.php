@@ -6,7 +6,7 @@ class SitePress{
     private $this_lang;
     
     function __construct(){
-        global $wpdb;       
+        global $wpdb;   
         $this->settings = get_option('icl_sitepress_settings');                                
         if(false != $this->settings){
             $this->verify_settings();
@@ -576,8 +576,8 @@ class SitePress{
                     foreach($v as $k=>$v){
                         $incr++;
                         $english_to = $wpdb->get_var("SELECT english_name FROM {$wpdb->prefix}icl_languages WHERE code='{$k}' ");
-                        $lang_pairs['from_language'.$incr] = $english_fr; 
-                        $lang_pairs['to_language'.$incr] = $english_to;
+                        $lang_pairs['from_language'.$incr] = apply_filters('icl_server_languages_map', $english_fr); 
+                        $lang_pairs['to_language'.$incr] = apply_filters('icl_server_languages_map', $english_to);
                     }                    
                 }
             }
