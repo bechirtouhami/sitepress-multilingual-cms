@@ -26,9 +26,9 @@ function update_icl_account(){
             foreach($v as $k=>$v){
                 $incr++;
                 $english_to = $wpdb->get_var("SELECT english_name FROM {$wpdb->prefix}icl_languages WHERE code='{$k}' ");
-                $lpairs['from_language'.$incr] = $english_fr; 
-                $lpairs['to_language'.$incr] = $english_to;
-            }                    
+                $lpairs['from_language'.$incr] = apply_filters('icl_server_languages_map', $english_fr); 
+                $lpairs['to_language'.$incr] = apply_filters('icl_server_languages_map', $english_to); 
+            }    
         }
         $data['site_id'] = $iclsettings['site_id'];                    
         $data['accesskey'] = $iclsettings['access_key'];
@@ -290,8 +290,8 @@ switch($_REQUEST['icl_ajx_action']){
         break;
         
     case 'send_translation_request':
-        $post_id = $_POST['post_id'];
-        $target_languages = explode(',', $_POST['target_languages']);
+        $post_id = $_POST['post_id'];        
+        $target_languages = explode('#', $_POST['target_languages']);
         $post_type = $_POST['type'];
         echo icl_translation_send_post($post_id, $target_languages, $post_type);
         break;
@@ -312,8 +312,8 @@ switch($_REQUEST['icl_ajx_action']){
                 $translation_languages = array(0 => $target);
             }
             foreach($translation_languages as $lang){
-                $target[] = array('from' => $sitepress->get_language_code($lang['attr']['from_language_name']),
-                                  'to' => $sitepress->get_language_code($lang['attr']['to_language_name']),
+                $target[] = array('from' => $sitepress->get_language_code(apply_filters('icl_server_languages_map', $lang['attr']['from_language_name'], true)),
+                                  'to' => $sitepress->get_language_code(apply_filters('icl_server_languages_map', $lang['attr']['to_language_name'], true)),
                                   'have_translators' => $lang['attr']['have_translators']);
             }
             $iclsettings['icl_lang_status'] = $target;

@@ -27,6 +27,8 @@ add_action('post_submitbox_start', 'sh_post_submitbox_start');
 
 add_action('icl_initial_language_set', 'icl_initialize_db');
 
+add_filter('icl_server_languages_map', 'icl_server_languages_map', 10, 2);
+
 wp_enqueue_style('icl-translation-style', ICL_PLUGIN_URL . '/modules/icl-translation/css/style.css');
 
 

@@ -65,7 +65,7 @@ jQuery(document).ready(function(){
                     type: "POST",
                     async: false,
                     url: icl_ajx_url,
-                    data: "icl_ajx_action=send_translation_request&post_id="+post_id+'&type=post&target_languages='+target_languages.join(','),
+                    data: "icl_ajx_action=send_translation_request&post_id="+post_id+'&type=post&target_languages='+target_languages.join('#'),
                     success: function(msg){
                         if(msg > 0){
                             jQuery('#icl-tr-status-'+post_id).html(jQuery('#icl_message_2').html());

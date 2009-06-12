@@ -159,6 +159,8 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
         JOIN {$wpdb->prefix}icl_languages l ON t.language_code=l.code 
         WHERE t.element_id={$post_id} AND t.element_type='post'"
         );
+    
+    $orig_lang_for_server = apply_filters('icl_server_languages_map', $orig_lang);
             
     if($post_type=='post'){
         foreach(wp_get_object_terms($post_id, 'post_tag') as $tag){
@@ -216,7 +218,7 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
     // array(array("Spanish", "German"), array("French"))
     
     foreach($target_languages as $target){
-    
+        $target_for_server = apply_filters('icl_server_languages_map', $target); //filter some language names to match the names on the server
         $data = array(
             'url'=>$post_url, 
             'contents'=>array(
@@ -236,7 +238,7 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
                 ),
                             
             ),
-            'target_languages' => $target
+            'target_languages' => $target_for_server
         );
         
         if($post_type=='post'){
@@ -271,8 +273,8 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
             $previous_rid_for_target = false;
         }
         
-        $xml = $iclq->build_cms_request_xml($data, $orig_lang, $target, $previous_rid_for_target);
-        $res = $iclq->send_request($xml, $post->post_title, $target, $orig_lang);
+        $xml = $iclq->build_cms_request_xml($data, $orig_lang_for_server, $target_for_server, $previous_rid_for_target);
+        $res = $iclq->send_request($xml, $post->post_title, $target_for_server, $orig_lang_for_server);
         
         if($res > 0){
             $wpdb->insert($wpdb->prefix.'icl_content_status', array('rid'=>$res, 'nid'=>$post_id, 'timestamp'=>$timestamp, 'md5'=>$md5)); //insert rid   
@@ -796,13 +798,12 @@ function icl_process_translated_document($request_id, $language){
     $trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations t JOIN {$wpdb->prefix}icl_content_status c ON t.element_id = c.nid AND t.element_type='post' AND c.rid=".$request_id);
     $translation = $iclq->cms_do_download($request_id, $language);                           
     if($translation){
-        $ret = icl_add_post_translation($trid, $translation, $language, $request_id);
+        $ret = icl_add_post_translation($trid, $translation, apply_filters('icl_server_languages_map', $language, true), $request_id); //the 'reverse' language filter    
         if($ret){
             $iclq->cms_update_request_status($request_id, CMS_TARGET_LANGUAGE_DONE, $language);
         } 
         
     }        
-
     // if there aren't any other unfullfilled requests send a global 'done'               
     if(0 == $wpdb->get_var("SELECT COUNT(rid) FROM {$wpdb->prefix}icl_core_status WHERE rid='{$request_id}' AND status < ".CMS_TARGET_LANGUAGE_DONE)){
         $iclq->cms_update_request_status($request_id, CMS_REQUEST_DONE, false);
@@ -895,7 +896,7 @@ function setTranslationStatus($args){
             return 3;                                                             
         }
 
-        $lang_code = $sitepress->get_language_code($language);
+        $lang_code = $sitepress->get_language_code(apply_filters('icl_server_languages_map', $language, true));//the 'reverse' language filter 
         $cms_request_info = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}icl_core_status WHERE rid={$request_id} AND target='{$lang_code}'");
         
         if (empty($cms_request_info)){
@@ -1420,4 +1421,22 @@ function sh_post_submitbox_start(){
     echo '</p>';
 }
 
+function icl_server_languages_map($language_name, $server2plugin = false){    
+    if(is_array($language_name)){
+        return array_map('icl_server_languages_map', $language_name);
+    }
+    $map = array(
+        'Norwegian Bokmål' => 'Norwegian',
+        'Portuguese, Brazil' => 'Portuguese',
+        'Portuguese, Portugal' => 'Portugal Portuguese'
+    );
+    if($server2plugin){
+        $map = array_flip($map);
+    }    
+    if(isset($map[$language_name])){
+        return $map[$language_name];
+    }else{
+        return $language_name;    
+    }
+}
 ?>
