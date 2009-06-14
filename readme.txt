@@ -14,7 +14,7 @@ It integrates multilingual content management with robust navigation.
 
 *Features*
 
- * **Multilingual content** support that allows selecting post/page languages and creating translations..
+ * **Multilingual content** support that allows selecting post/page languages and creating translations.
  * **CMS navigation** elements including drop down menus, breadcrumbs trail and sidebar navigation.
  * **Integrated content translation** makes it possible to run multilingual sites on tiny budgets and with no effort.
  * Robust links to posts and pages that never break.
@@ -25,6 +25,8 @@ It integrates multilingual content management with robust navigation.
 * CMS navigation elements work together to provide accurate and easy to use site-wide navigation.
 * All drop down menus are implemented with pure CSS, are 100% HTML valid and support IE6, IE7, Firefox, Safari, Chrome, Opera and any other browser we tested on.
 * Extra simple CSS for easy customization.
+
+**Got a 140 character question? Ask [WPML on Twitter](http://twitter.com/wpml).**
 
 = Multilingual content support =
 
