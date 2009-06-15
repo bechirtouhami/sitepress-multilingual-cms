@@ -818,8 +818,6 @@ function icl_poll_for_translations(){
         $wp_rewrite = new WP_Rewrite();
     }
     
-    include dirname(__FILE__).'/icl-language-ids.inc';
-    
     $iclq = new ICanLocalizeQuery($sitepress_settings['site_id'], $sitepress_settings['access_key']);
     $pending_requests = $iclq->cms_requests();
     foreach($pending_requests as $pr){
@@ -836,8 +834,7 @@ function icl_poll_for_translations(){
             foreach($target_languages as $target){
                 if(isset($target['attr'])){
                     $status = $target['attr']['status'];
-                    $lang_id = (int)$target['attr']['language_id'];
-                    $language = apply_filters('icl_server_languages_map', $icl_language_id2name[$lang_id], true); //reverse filter
+                    $language = apply_filters('icl_server_languages_map', $target['attr']['language'], true); //reverse filter
                     $lang_code = $sitepress->get_language_code($language);
                     $wpdb->query("UPDATE {$wpdb->prefix}icl_core_status SET status='{$status}' WHERE rid='{$pr['id']}' AND target='{$lang_code}'");
                     

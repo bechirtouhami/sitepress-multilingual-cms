@@ -3,7 +3,6 @@ $iclq = new ICanLocalizeQuery($sitepress_settings['site_id'], $sitepress_setting
 
 switch($_REQUEST['icl_ajx_req']){
     case 'get_translation_details':
-        include dirname(__FILE__).'/icl-language-ids.inc';
         $rids = explode("-", $_REQUEST['rid']);
         sort($rids);
         ?>
@@ -27,9 +26,9 @@ switch($_REQUEST['icl_ajx_req']){
                 if(!isset($target_languages[0])){
                     $target = $target_languages;
                     $target_languages = array(0 => $target);
-                }
+                }                                
                 foreach($target_languages as $l){
-                    $lang_server = $icl_language_id2name[$l['attr']['language_id']];
+                    $lang_server = $l['attr']['language'];
                     $lang = apply_filters('icl_server_languages_map', $lang_server, true);
                     $lang_loc = $wpdb->get_var("
                         SELECT name FROM {$wpdb->prefix}icl_languages_translations lt 

@@ -36,7 +36,8 @@ function icl_sitepress_activate(){
             `language_code`  VARCHAR( 7 ) NOT NULL ,
             `display_language_code` VARCHAR( 7 ) NOT NULL ,            
             `name` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-            UNIQUE(`language_code`, `display_language_code`)            
+            UNIQUE(`language_code`, `display_language_code`)
+            DEFAULT CHARSET=utf8            
         )";
         mysql_query($sql);
     }else{
