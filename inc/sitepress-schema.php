@@ -119,6 +119,7 @@ function icl_sitepress_activate(){
             `description` TEXT NOT NULL ,
             `translate` TINYINT NOT NULL ,
             UNIQUE KEY `plugin_name` (`plugin_name`,`attribute_type`,`attribute_name`)
+            DEFAULT CHARSET=utf8
             )";
        mysql_query($sql);
        $prepop  = array(
