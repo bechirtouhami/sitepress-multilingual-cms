@@ -29,7 +29,8 @@ switch($_REQUEST['icl_ajx_req']){
                     $target_languages = array(0 => $target);
                 }
                 foreach($target_languages as $l){
-                    $lang = $icl_language_id2name[$l['attr']['language_id']];                    
+                    $lang_server = $icl_language_id2name[$l['attr']['language_id']];
+                    $lang = apply_filters('icl_server_languages_map', $lang_server, true);
                     $lang_loc = $wpdb->get_var("
                         SELECT name FROM {$wpdb->prefix}icl_languages_translations lt 
                         JOIN {$wpdb->prefix}icl_languages l ON lt.language_code=l.code 
@@ -41,7 +42,7 @@ switch($_REQUEST['icl_ajx_req']){
                     $language_status[$lang]['words'] = sprintf(__('Job size: %s words', 'sitepress'), number_format($l['attr']['word_count']));
                     $language_status[$lang]['status'] = icl_decode_translation_status_id($l['attr']['status']);
                     if($l['translator']['attr']['id']){
-                        $language_status[$lang]['translator'] = '<a href="'.ICL_API_ENDPOINT .'/websites/'.$iclq->setting('site_id').'/cms_requests/'.$rid.'/chat?lang='.$lang.'">'.$l['translator']['attr']['nickname'].'</a>';
+                        $language_status[$lang]['translator'] = '<a href="'.ICL_API_ENDPOINT .'/websites/'.$iclq->setting('site_id').'/cms_requests/'.$rid.'/chat?lang='.str_replace(' ','%20',$lang_server).'">'.$l['translator']['attr']['nickname'].'</a>';
                     } else {
                         $language_status[$lang]['translator'] = __('None assigned', 'sitepress');
                     }

@@ -39,8 +39,8 @@ $icl_language_id2name = array (
     38=>'Nepali',
     39=>'Dutch',
     42=>'Polish',
-    63=>'Portuguese (Portugal)',
-    43=>'Portuguese (Brazil)',
+    63=>'Portugal Portuguese',
+    43=>'Portuguese',
     44=>'Quechua',
     45=>'Romanian',
     46=>'Russian',
@@ -60,6 +60,6 @@ $icl_language_id2name = array (
     60=>'Chinese (Simplified)',
     62=>'Chinese (Traditional)',
     61=>'Zulu',
-    40=>'Norwegian Bokmål'
+    40=>'Norwegian'
 );
 ?>

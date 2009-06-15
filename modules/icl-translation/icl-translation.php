@@ -9,6 +9,8 @@ if(isset($_POST['translation_dashboard_filter'])){
     $icl_translation_filter = $_POST['filter'];
 }
 
+add_filter('icl_server_languages_map', 'icl_server_languages_map', 10, 2);
+
 if(isset($_REQUEST['icl_ajx_req'])){
     include dirname(__FILE__) . '/icl-ajx-requests.php';
 }
@@ -26,8 +28,6 @@ add_action('icl_post_languages_options_before', 'icl_display_post_translation_st
 add_action('post_submitbox_start', 'sh_post_submitbox_start');
 
 add_action('icl_initial_language_set', 'icl_initialize_db');
-
-add_filter('icl_server_languages_map', 'icl_server_languages_map', 10, 2);
 
 wp_enqueue_style('icl-translation-style', ICL_PLUGIN_URL . '/modules/icl-translation/css/style.css');
 

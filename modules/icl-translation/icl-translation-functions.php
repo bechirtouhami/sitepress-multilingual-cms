@@ -837,7 +837,7 @@ function icl_poll_for_translations(){
                 if(isset($target['attr'])){
                     $status = $target['attr']['status'];
                     $lang_id = (int)$target['attr']['language_id'];
-                    $language = $icl_language_id2name[$lang_id];
+                    $language = apply_filters('icl_server_languages_map', $icl_language_id2name[$lang_id], true); //reverse filter
                     $lang_code = $sitepress->get_language_code($language);
                     $wpdb->query("UPDATE {$wpdb->prefix}icl_core_status SET status='{$status}' WHERE rid='{$pr['id']}' AND target='{$lang_code}'");
                     

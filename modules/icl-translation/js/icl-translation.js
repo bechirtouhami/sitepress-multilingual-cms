@@ -101,14 +101,12 @@ jQuery(document).ready(function(){
       
     jQuery('a.translation_details_but').click(toogleTranslationDetails);
     
-    if(jQuery('input[name="access[website_id]"]').val()){
-        jQuery.ajax({
-            type: "POST",
-            async: false,
-            url: icl_ajx_url,
-            data: "icl_ajx_action=get_translator_status"
-        });
-    }
+    jQuery.ajax({
+        type: "POST",
+        async: false,
+        url: icl_ajx_url,
+        data: "icl_ajx_action=get_translator_status"
+    });
 
     // initialize the word count
     jQuery('#icl-translation-dashboard :checkbox').each(function(){

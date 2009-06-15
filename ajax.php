@@ -296,6 +296,7 @@ switch($_REQUEST['icl_ajx_action']){
         echo icl_translation_send_post($post_id, $target_languages, $post_type);
         break;
     case 'get_translator_status':
+        if(!$sitepress->icl_account_configured()) break;
         // check what languages we have translators for.
         require_once ICL_PLUGIN_PATH . '/lib/Snoopy.class.php';
         require_once ICL_PLUGIN_PATH . '/lib/xml2array.php';
