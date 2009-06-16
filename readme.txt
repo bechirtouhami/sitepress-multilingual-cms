@@ -142,3 +142,8 @@ For help, visit the [support forum](http://forum.wpml.org).
 	* Fixed 'preview' functionality when using different domains per language.
 	* Fixed PHP error that popped when activating the plugin after upgrade.
 	* Fixed drafts count problem (the plugin didn't count correctly the number of drafts per language).
+* Version 1.0.1 - Bug fixes for translation interface
+	* Fixed problems with all Asian languages and Norwegian.
+	* Fixed missing tables problem for people who upgraded from 0.9.9.
+	* Fixed CMS navigation drop down bug for IE6.
+	* Improved the display for the translation dashboard.
