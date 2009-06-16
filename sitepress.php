@@ -39,7 +39,6 @@ require ICL_PLUGIN_PATH . '/inc/not-compatible-plugins.php';
 if(!empty($icl_ncp_plugins)){
     return;
 }   
-require ICL_PLUGIN_PATH . '/inc/upgrade.php';
 require ICL_PLUGIN_PATH . '/inc/constants.inc';
 require ICL_PLUGIN_PATH . '/inc/sitepress-schema.php';
 require ICL_PLUGIN_PATH . '/inc/template-functions.php';
@@ -76,7 +75,8 @@ if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQ
     
 }
 
-
+ require ICL_PLUGIN_PATH . '/inc/upgrade.php';
+ 
 // activation hook
 register_activation_hook( __FILE__, 'icl_sitepress_activate' );
 register_deactivation_hook(__FILE__, 'icl_sitepress_deactivate');
