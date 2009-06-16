@@ -1,4 +1,7 @@
 <?php
+
+if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '=')) return;
+
 if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '0.9.3', '<')){
     require_once(ICL_PLUGIN_PATH . '/inc/lang-data.inc');      
     $wpdb->query("UPDATE {$wpdb->prefix}icl_languages SET english_name='Norwegian Bokmål', code='nb' WHERE english_name='Norwegian'");      
@@ -77,6 +80,13 @@ if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepr
     mysql_query("UPDATE {$wpdb->prefix}icl_languages_translations SET language_code='nb' WHERE language_code=''");
 
     
+}
+
+// version 1.0.1
+if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.0.1', '<')){
+    if($sitepress_settings['existing_content_language_verified']){
+        icl_initialize_db();
+    }
 }
 
 if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '<')){

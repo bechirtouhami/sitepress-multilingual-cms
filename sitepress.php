@@ -76,6 +76,7 @@ if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQ
     
 }
 
+print_r($sitepress_settings);
 
 // activation hook
 register_activation_hook( __FILE__, 'icl_sitepress_activate' );
