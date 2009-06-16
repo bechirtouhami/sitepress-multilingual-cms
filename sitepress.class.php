@@ -1028,7 +1028,7 @@ class SitePress{
     function edit_term_form($term){                
         global $wpdb, $pagenow;
         $element_id = $term->term_taxonomy_id;    
-        $element_type = $pagenow=='categories.php'?'category':'tag';
+        $element_type = $pagenow=='categories.php'?'category':isset($_GET['taxonomy'])?$_GET['taxonomy']:'tag';
         
         if($element_id){
             $res = $wpdb->get_row("SELECT trid, language_code, source_language_code FROM {$wpdb->prefix}icl_translations WHERE element_id='{$element_id}' AND element_type='{$element_type}'");
@@ -1048,6 +1048,9 @@ class SitePress{
         }                                   
         $active_languages = $this->get_active_languages();
         $this_lang = $element_lang_code?$element_lang_code:$this->get_default_language();
+        if(isset($_GET['taxonomy'])){
+            $element_type = $_GET['taxonomy']=='post_tag' ? 'tag' : $_GET['taxonomy'];
+        }
         include ICL_PLUGIN_PATH . '/menu/'.$element_type.'-menu.php';        
     }
     
@@ -1096,7 +1099,7 @@ class SitePress{
             $element_type = $taxonomy = 'category';
         }else{
             $element_type = 'tag';
-            $taxonomy = 'post_tag';
+            $taxonomy = isset($_GET['taxonomy'])?$_GET['taxonomy']:'post_tag';
         }
         $active_languages = $this->get_active_languages();
         
@@ -1142,7 +1145,7 @@ class SitePress{
             $element_type = $taxonomy = 'category';
         }else{
             $element_type = 'tag';
-            $taxonomy = 'post_tag';
+            $taxonomy = isset($_GET['taxonomy'])?$_GET['taxonomy']:'post_tag';
         }
         if($_GET['lang']=='all'){
             return $exclusions;
