@@ -501,7 +501,24 @@ class SitePress{
                 <?php
         }
         
-        
+        if('post-new.php' == $pagenow){
+            if(isset($_GET['trid'])){
+                $translations = $wpdb->get_col("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid='{$_GET['trid']}'");    
+                remove_filter('option_sticky_posts', array($this,'option_sticky_posts')); // remove filter used to get language relevant stickies. get them all
+                $sticky_posts = get_option('sticky_posts');
+                add_filter('option_sticky_posts', array($this,'option_sticky_posts')); // add filter back
+                $is_sticky = false;
+                foreach($translations as $t){
+                    if(in_array($t, $sticky_posts)){
+                        $is_sticky = true;
+                        break;
+                    }
+                }
+            }
+            ?>
+            <?php if($is_sticky): ?><script type="text/javascript">addLoadEvent(function(){jQuery('#sticky').attr('checked','checked');});</script><?php endif; ?>               
+            <?php
+        } 
     }
        
     function front_end_js(){
@@ -1465,7 +1482,7 @@ class SitePress{
         global $wpdb;
         if(isset($_POST['icl_post_language']) && $_POST['icl_post_language'] || (isset($_GET['lang']) && $_GET['lang']!='all')){
             $lang = isset($_POST['icl_post_language'])  && $_POST['icl_post_language']?$_POST['icl_post_language']:$_GET['lang'];
-            $ttid = $this->settings['default_categories'][$lang];
+            $ttid = intval($this->settings['default_categories'][$lang]);
             return $tid = $wpdb->get_var("SELECT term_id FROM {$wpdb->term_taxonomy} WHERE term_taxonomy_id={$ttid} AND taxonomy='category'");
         }
         return false;
