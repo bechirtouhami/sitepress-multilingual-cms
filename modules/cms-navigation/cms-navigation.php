@@ -208,8 +208,9 @@ class CMSNavigation{
                                 <?php endforeach; ?>
                             <?php endforeach; ?>
                         </ul>
-                        <?php if(isset($cms_nav_ie_ver) && $cms_nav_ie_ver <= 6): ?></td></tr></table></a><?php endif; ?>
+                        <?php if(isset($cms_nav_ie_ver) && $cms_nav_ie_ver <= 6): ?></td></tr></table><?php endif; ?>
                     <?php endif; ?>                    
+                    <?php if(isset($cms_nav_ie_ver) && $cms_nav_ie_ver <= 6): ?></a><?php endif; ?>
                 </li>
                 <?php   
             }
