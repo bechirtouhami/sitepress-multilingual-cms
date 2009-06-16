@@ -91,6 +91,8 @@ if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepr
     //fix norwegian records
     mysql_query("UPDATE {$wpdb->prefix}icl_languages SET code='nb', english_name='Norwegian Bokmål' WHERE english_name LIKE 'Norwegian Bokm%'");
     mysql_query("UPDATE {$wpdb->prefix}icl_languages_translations SET language_code='nb' WHERE language_code=''");    
+    mysql_query("UPDATE {$wpdb->prefix}icl_languages_translations SET display_language_code='nb' WHERE language_code='' LIMIT 1");    
+    
 }
 
 if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '<')){
