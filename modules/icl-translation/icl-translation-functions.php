@@ -368,12 +368,11 @@ function icl_translation_get_documents($lang,
     $where = "WHERE 1";
     $order = "ORDER BY p.post_date DESC";
     
-    if($tstatus=='not'){
-        $where .= " AND (c.rid IS NULL OR n.md5<>c.md5)";
-    } else if ($tstatus == 'in_progress' or $tstatus == 'complete') {
+    if ($tstatus == 'in_progress' or $tstatus == 'complete') {
         $where .= " AND (c.rid IS NOT NULL)";
         $order = "ORDER BY c.rid DESC";
     }
+    
     if($type){
         $where .= " AND p.post_type = '{$type}'";
     }else{
@@ -394,15 +393,35 @@ function icl_translation_get_documents($lang,
     $sql = "
         SELECT SQL_CALC_FOUND_ROWS p.ID as post_id, p.post_title, p.post_type, p.post_status, post_content, 
             c.rid,
+            cs.target,
             n.md5<>c.md5 AS updated
         FROM {$wpdb->posts} p
             JOIN {$wpdb->prefix}icl_translations t ON p.ID = t.element_id AND element_type='post'
             LEFT JOIN {$wpdb->prefix}icl_node n ON p.ID = n.nid
             LEFT JOIN {$wpdb->prefix}icl_content_status c ON c.nid=p.ID
+            LEFT JOIN {$wpdb->prefix}icl_core_status cs ON cs.rid = c.rid
         {$where}                
         {$order} 
     ";
     $results = $wpdb->get_results($sql);
+    
+    // only use the latest rids for each language.
+    
+    $latested_per_language = array();
+    foreach($results as $r){
+        $key = $r->post_id.$r->target;
+        if(isset($latested_per_language[$key])) {
+            // keep the latest rid for a language
+            if ($r->rid > $latested_per_language[$key]->rid) {
+                $latested_per_language[$key] = $r;
+            }
+        } else {
+            $latested_per_language[$key] = $r;
+        }
+    }
+    
+    $results = $latested_per_language;
+    
     $pids = array(0);
     foreach($results as $r){
         $pids[] = $r->post_id;
@@ -444,7 +463,12 @@ function icl_translation_get_documents($lang,
             if (!$found) {
                 $post_ok = true;
             }
-            
+    
+        } else if ($tstatus == 'not'){
+            // check for posts that haven't been translated before or are updated.
+            if($r->rid == null or $r->updated){
+                $post_ok = true;
+            }
         } else {
             $post_ok = true;
         }
@@ -452,7 +476,13 @@ function icl_translation_get_documents($lang,
             if ($count >= $offset and $count < $offset + $limit){
                 if (isset($documents[$r->post_id])){
                     $documents[$r->post_id]->rid[] = $r->rid;
-                    $documents[$r->post_id]->updated = $r->updated;
+                    if (!isset($documents[$r->post_id]->updated)) {
+                        $documents[$r->post_id]->updated = $r->updated;
+                    } else {
+                        if(!$documents[$r->post_id]->updated) { // make sure we don't reset the updated status
+                            $documents[$r->post_id]->updated = $r->updated;
+                        }
+                    }
                 } else {
                     $documents[$r->post_id] = $r;
                     $documents[$r->post_id]->rid = array($r->rid);
