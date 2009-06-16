@@ -207,6 +207,9 @@ msgstr "Anzeige"
 msgid "Displaying %s&#8211;%s of %s"
 msgstr "%s&#8211;%s von %s werden angezeigt"
 
+msgid "Documentation - <a href=\"%s\">wpml.org</a>"
+msgstr "Dokumentation - <a href=\"%s\">wpml.org</a>"
+
 msgid "Draft"
 msgstr "Entwurf"
 
@@ -393,6 +396,9 @@ msgstr "Navigation"
 msgid "Navigation element"
 msgstr "Navigationselement"
 
+msgid "Need help?"
+msgstr "Hilfe nötig?"
+
 msgid "Needs update"
 msgstr "Bedarf eines Updates"
 
@@ -482,6 +488,9 @@ msgstr "Projektseite auf ICanLocalize.com"
 
 msgid "Published"
 msgstr "Veröffentlicht"
+
+msgid "Quick question - ask <a href=\"%s\">WPML on Twitter</a>"
+msgstr "Schnelle Frage - Fragen Sie <a href=\"%s\">WPML auf Twitter</a>"
 
 msgid "Recent Comments"
 msgstr "Kürzlich verfasste Kommentare"
@@ -608,6 +617,9 @@ msgstr "Seitenreihenfolge für Übersetzungen aktivieren."
 
 msgid "Tags"
 msgstr "Tags"
+
+msgid "Technical questions - use the <a href=\"%s\">support forum</a>"
+msgstr "Technische Fragen - benutzen Sie das <a href=\"%s\">Support-Forum</a>"
 
 msgid "Test site - I'm only testing out the system and don't need to have translators assigned yet."
 msgstr "Testseite - Ich teste nur das Systeme und es müssen noch keine Übersetzer zugeteilt werden."
