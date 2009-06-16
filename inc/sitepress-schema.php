@@ -112,7 +112,7 @@ function icl_sitepress_activate(){
         $sql = "
             CREATE TABLE `{$table_name}` (
             `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
-            `plugin_name` VARCHAR( 255 ) NOT NULL ,
+            `plugin_name` VARCHAR( 128 ) NOT NULL ,
             `attribute_type` VARCHAR( 64 ) NOT NULL ,
             `attribute_name` VARCHAR( 128 ) NOT NULL ,
             `description` TEXT NOT NULL ,

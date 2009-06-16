@@ -87,9 +87,9 @@ function icl_pt_handle_upload(){
         $fh = fopen($file['tmp_name'], 'rb');
         while($data = fgetcsv($fh)){
             $wpdb->insert($wpdb->prefix.'icl_plugins_texts', array(   
-                    'plugin_name'=>$data[0],
-                    'attribute_type' => $data[1],
-                    'attribute_name' => $data[2],
+                    'plugin_name'=>substr($data[0],0,128),
+                    'attribute_type' => substr($data[1], 0, 64),
+                    'attribute_name' => substr($data[2], 0, 128),
                     'description'    => $data[3],
                     'translate'      => $data[4]
                 )
