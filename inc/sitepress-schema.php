@@ -36,9 +36,8 @@ function icl_sitepress_activate(){
             `language_code`  VARCHAR( 7 ) NOT NULL ,
             `display_language_code` VARCHAR( 7 ) NOT NULL ,            
             `name` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
-            UNIQUE(`language_code`, `display_language_code`)
-            DEFAULT CHARSET=utf8            
-        )";
+            UNIQUE(`language_code`, `display_language_code`)            
+        ) DEFAULT CHARSET=utf8";
         mysql_query($sql);
     }else{
         mysql_query("TRUNCATE TABLE `{$table_name}`");
@@ -118,9 +117,8 @@ function icl_sitepress_activate(){
             `attribute_name` VARCHAR( 128 ) NOT NULL ,
             `description` TEXT NOT NULL ,
             `translate` TINYINT NOT NULL ,
-            UNIQUE KEY `plugin_name` (`plugin_name`,`attribute_type`,`attribute_name`)
-            DEFAULT CHARSET=utf8
-            )";
+            UNIQUE KEY `plugin_name` (`plugin_name`,`attribute_type`,`attribute_name`)            
+            ) DEFAULT CHARSET=utf8";
        mysql_query($sql);
        $prepop  = array(
             0 => array(
