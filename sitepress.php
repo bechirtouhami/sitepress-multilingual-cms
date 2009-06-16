@@ -46,6 +46,7 @@ require ICL_PLUGIN_PATH . '/inc/icl-recent-comments-widget.php';
 require ICL_PLUGIN_PATH . '/sitepress.class.php';
 require ICL_PLUGIN_PATH . '/inc/functions.php';
 require ICL_PLUGIN_PATH . '/inc/hacks.php';
+require ICL_PLUGIN_PATH . '/inc/upgrade.php';
 
 
 if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQUEST['action']!='activate-selected') 
@@ -74,8 +75,6 @@ if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQ
     require ICL_PLUGIN_PATH . '/modules/icl-translation/icl-translation.php';
     
 }
-
- require ICL_PLUGIN_PATH . '/inc/upgrade.php';
  
 // activation hook
 register_activation_hook( __FILE__, 'icl_sitepress_activate' );

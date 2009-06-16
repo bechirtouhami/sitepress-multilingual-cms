@@ -84,8 +84,9 @@ if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepr
 
 // version 1.0.1
 if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.0.1', '<')){
+    $sitepress_settings = get_option('icl_sitepress_settings');
     if($sitepress_settings['existing_content_language_verified']){
-        icl_initialize_db();
+        include ICL_PLUGIN_PATH . '/modules/icl-translation/db-scheme.php';
     }
     
     //fix norwegian records
