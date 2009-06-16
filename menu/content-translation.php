@@ -343,5 +343,6 @@
         
     <?php endif; // in content translation enabled ?>
      
+    <?php do_action('icl_menu_footer'); ?>
     
 </div>

@@ -89,6 +89,6 @@
     
     <p><?php printf(__('Visit %s for full CSS customization information.', 'sitepress'), '<a href="http://wpml.org">wpml.org</a>')?></p>
     
-    
+    <?php do_action('icl_menu_footer'); ?>
     
 </div>

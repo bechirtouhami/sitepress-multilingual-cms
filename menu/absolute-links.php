@@ -42,4 +42,7 @@
     ?>
     <?php endif; ?>
     </div>
+    
+    <?php do_action('icl_menu_footer'); ?>
+    
 </div>

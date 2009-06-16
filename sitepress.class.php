@@ -155,6 +155,10 @@ class SitePress{
             }else{
                 $this->this_lang = $this->get_default_language();
             }
+            //configure callbacks for plugin menu pages
+            if(isset($_GET['page']) && 0 === strpos($_GET['page'],'sitepress-multilingual-cms/')){
+                add_action('icl_menu_footer', array($this, 'menu_footer'));
+            }            
         }else{
             $al = $this->get_active_languages();
             foreach($al as $l){
@@ -1850,6 +1854,10 @@ class SitePress{
             $inactive[$r->language][$r->taxonomy] = $r->c;
         }        
         return $inactive;
+    }
+    
+    function menu_footer(){
+        include ICL_PLUGIN_PATH . '/menu/menu-footer.php';
     }
     
 }  

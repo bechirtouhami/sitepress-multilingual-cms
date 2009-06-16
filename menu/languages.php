@@ -394,7 +394,6 @@
         </div>
     <?php endif; ?>
     
-    
-
+    <?php do_action('icl_menu_footer'); ?>
     
 </div>
