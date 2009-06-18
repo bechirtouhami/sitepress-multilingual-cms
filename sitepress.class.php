@@ -4,6 +4,7 @@ class SitePress{
     private $settings;
     private $active_languages = array();
     private $this_lang;
+    private $wp_query;
     
     function __construct(){
         global $wpdb;   
@@ -143,6 +144,8 @@ class SitePress{
         add_filter('option_sticky_posts', array($this,'option_sticky_posts'));
                          
         add_filter('request', array($this,'request_filter'));
+        
+        add_action('wp_head', array($this,'set_wp_query'));
         
         add_action('init', array($this,'plugin_localization'));
         
@@ -1185,6 +1188,11 @@ class SitePress{
         $exclusions .= ' AND term_taxonomy_id NOT IN ('.join(',',$exclude).')';
         return $exclusions;
     }
+  
+    function set_wp_query(){
+        global $wp_query;
+        $this->wp_query = $wp_query;
+    }
     
     // converts WP generated url to language specific based on plugin settings
     function convert_url($url, $code=null){
@@ -1300,7 +1308,7 @@ class SitePress{
     }
     
     function get_ls_languages($template_args=array()){
-            global $wpdb, $post, $cat, $tag_id, $wp_query;
+            global $wpdb, $post, $cat, $tag_id;
             $w_active_languages = $this->get_active_languages();
             $this_lang = $this->this_lang;
             $w_this_lang = $this->get_language_details($this_lang);
@@ -1315,9 +1323,9 @@ class SitePress{
             $user_agent = $_SERVER['HTTP_USER_AGENT'];
             if(preg_match('#MSIE ([0-9]+)\.[0-9]#',$user_agent,$matches)){
                 $ie_ver = $matches[1];
-            }   
+            }             
             if(is_singular()){
-                $trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id='{$wp_query->queried_object_id}' AND element_type='post'");                
+                $trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id='{$this->wp_query->post->ID}' AND element_type='post'");                
                 $translations = $this->get_element_translations($trid,'post');
             }elseif(is_category()){
                 $cat_id = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id={$cat} AND taxonomy='category'");
@@ -1331,14 +1339,14 @@ class SitePress{
                 $translations = $this->get_element_translations($trid,'tag', $skip_empty);                
             }elseif(is_archive()){      
                 $translations = array();
-            }elseif( 'page' == get_option('show_on_front') && ($wp_query->queried_object_id == get_option('page_on_front') || $wp_query->queried_object_id == get_option('page_for_posts')) ){
-                $trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id='{$wp_query->queried_object_id}' AND element_type='post'");                
+            }elseif( 'page' == get_option('show_on_front') && ($this->wp_query->queried_object_id == get_option('page_on_front') || $this->wp_query->queried_object_id == get_option('page_for_posts')) ){
+                $trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id='{$this->wp_query->queried_object_id}' AND element_type='post'");                
                 $translations = $this->get_element_translations($trid,'post');                
             }
                                        
             foreach($w_active_languages as $k=>$lang){                
                 $skip_lang = false;
-                if(is_singular() || ($wp_query->queried_object_id && $wp_query->queried_object_id == get_option('page_for_posts'))){                    
+                if(is_singular() || ($this->wp_query->queried_object_id && $this->wp_query->queried_object_id == get_option('page_for_posts'))){                    
                     $this_lang_tmp = $this->this_lang; 
                     $this->this_lang = $lang['code']; 
                     $lang_page_on_front = get_option('page_on_front');                     
@@ -1384,14 +1392,14 @@ class SitePress{
                         }                        
                     }                    
                 }elseif(is_archive() && !is_tag()){
-                    global $wp_query, $icl_archive_url_filter_off;
+                    global $icl_archive_url_filter_off;
                     $icl_archive_url_filter_off = true;
-                    if($wp_query->is_year){
-                        $lang['translated_url'] = $this->archive_url(get_year_link( $wp_query->query_vars['year'] ), $lang['code']);
-                    }elseif($wp_query->is_month){
-                        $lang['translated_url'] = $this->archive_url(get_month_link( $wp_query->query_vars['year'], $wp_query->query_vars['monthnum'] ), $lang['code']);
-                    }elseif($wp_query->is_day){
-                        $lang['translated_url'] = $this->archive_url(get_day_link( $wp_query->query_vars['year'], $wp_query->query_vars['monthnum'], $wp_query->query_vars['day'] ), $lang['code']);
+                    if($this->wp_query->is_year){
+                        $lang['translated_url'] = $this->archive_url(get_year_link( $this->wp_query->query_vars['year'] ), $lang['code']);
+                    }elseif($this->wp_query->is_month){
+                        $lang['translated_url'] = $this->archive_url(get_month_link( $this->wp_query->query_vars['year'], $this->wp_query->query_vars['monthnum'] ), $lang['code']);
+                    }elseif($this->wp_query->is_day){
+                        $lang['translated_url'] = $this->archive_url(get_day_link( $this->wp_query->query_vars['year'], $this->wp_query->query_vars['monthnum'], $this->wp_query->query_vars['day'] ), $lang['code']);
                     }
                     $icl_archive_url_filter_off = false;
                 }elseif(is_search()){
@@ -1399,7 +1407,7 @@ class SitePress{
                     $lang['translated_url'] = $this->language_url($lang['code']) . $url_glue . 's=' . $_GET['s'];                                        
                 }else{                    
                     if($icl_lso_link_empty || is_home() || is_404() 
-                        || ('page' == get_option('show_on_front') && ($wp_query->queried_object_id == get_option('page_on_front') || $wp_query->queried_object_id == get_option('page_for_posts')))
+                        || ('page' == get_option('show_on_front') && ($this->wp_query->queried_object_id == get_option('page_on_front') || $this->wp_query->queried_object_id == get_option('page_for_posts')))
                         ){
                         $lang['translated_url'] = $this->language_url($lang['code']);
                         $skip_lang = false;
