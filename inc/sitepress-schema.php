@@ -45,6 +45,7 @@ function icl_sitepress_activate(){
     foreach($langs_names as $lang=>$val){        
         if(strpos($lang,'Norwegian Bokm')===0){ $lang = 'Norwegian Bokmål'; $lang_codes[$lang] = 'nb';}
         foreach($val['tr'] as $k=>$display){        
+            if(strpos($k,'Norwegian Bokm')===0){ $k = 'Norwegian Bokmål';}
             if(!trim($display)){
                 $display = $lang;
             }
@@ -66,7 +67,8 @@ function icl_sitepress_activate(){
             `trid` BIGINT NOT NULL ,
             `language_code` VARCHAR( 7 ) ,
             `source_language_code` VARCHAR( 7 ),
-            UNIQUE KEY `translation` (`element_type`,`element_id`,`language_code`)
+            UNIQUE KEY `el_type_id` (`element_type`,`element_id`),
+            UNIQUE KEY `trid_lang` (`trid`,`language_code`)
         )";
         mysql_query($sql);
     } 

@@ -89,13 +89,59 @@ if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepr
         include ICL_PLUGIN_PATH . '/modules/icl-translation/db-scheme.php';
     }
     
-    //fix norwegian records    
-    mysql_query("UPDATE {$wpdb->prefix}icl_languages SET code='nb', english_name='Norwegian Bokmål' WHERE english_name LIKE 'Norwegian Bokm%'");    
-    mysql_query("UPDATE {$wpdb->prefix}icl_languages_translations SET language_code='nb' WHERE language_code=''");        
-    mysql_query("UPDATE {$wpdb->prefix}icl_languages_translations SET display_language_code='nb' WHERE display_language_code=''");        
 }
+
+// version 1.0.2
+if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.0.2', '<')){
+    //fix norwegian records    
+    $wpdb->query("UPDATE {$wpdb->prefix}icl_languages SET code='nb', english_name='Norwegian Bokmål' WHERE english_name LIKE 'Norwegian Bokm%'");    
+    $wpdb->query("UPDATE {$wpdb->prefix}icl_languages_translations SET language_code='nb' WHERE language_code=''");        
+    $wpdb->query("UPDATE {$wpdb->prefix}icl_languages_translations SET display_language_code='nb' WHERE display_language_code=''");        
+    
+    $wpdb->query("ALTER TABLE {$wpdb->prefix}icl_translations DROP KEY translation");
+    
+    // get elements with duplicates
+    $res = $wpdb->get_results("SELECT element_id, element_type, COUNT(translation_id) AS c FROM {$wpdb->prefix}icl_translations GROUP BY element_id, element_type HAVING c > 1");
+    foreach($res as $r){
+        $row_count = $r->c - 1;
+        $wpdb->query("
+            DELETE FROM {$wpdb->prefix}icl_translations 
+            WHERE 
+                element_id={$r->element_id} AND 
+                element_type='{$r->element_type}'
+            ORDER BY translation_id DESC
+            LIMIT {$row_count}
+        ");
+    }           
+    $wpdb->query("ALTER TABLE {$wpdb->prefix}icl_translations ADD UNIQUE KEY `el_type_id` (`element_type`, `element_id`)");
+   
+    // fix multiple languages per trid 
+    $res = $wpdb->get_results("SELECT trid, language_code, COUNT(translation_id) AS c FROM {$wpdb->prefix}icl_translations GROUP BY trid, language_code HAVING c > 1");
+    foreach($res as $r){
+        $row_count = $r->c - 1;
+        $wpdb->query("
+            DELETE FROM {$wpdb->prefix}icl_translations 
+            WHERE 
+                trid={$r->trid} AND 
+                language_code='{$r->language_code}'
+            ORDER BY translation_id DESC
+            LIMIT {$row_count}
+        ");
+    }           
+    $wpdb->query("ALTER TABLE {$wpdb->prefix}icl_translations ADD UNIQUE KEY `trid_lang` (`trid`, `language_code`)");
+    
+    
+}
+
+
+
+
+
+
 
 if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '<')){
     update_option('icl_sitepress_version', ICL_SITEPRESS_VERSION);
 }
+
+
 ?>
