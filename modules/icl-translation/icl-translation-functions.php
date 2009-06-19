@@ -1311,6 +1311,30 @@ function _icl_content_fix_links_to_translated_content($new_post_id, $target_lang
     $wpdb->query("UPDATE {$wpdb->prefix}icl_node SET links_fixed='{$all_links_fixed}' WHERE nid={$new_post_id}");
 }
 
+$asian_languages = array('ja', 'ko', 'zh-hans', 'zh-hant', 'mn', 'ne', 'hi', 'pa', 'ta', 'th');
+
+function icl_estimate_word_count($data, $lang_code) {
+    global $asian_languages;
+    
+    $words = 0;
+    if(isset($data->post_title)){
+        if(in_array($lang_code, $asian_languages)){
+            $words += strlen(strip_tags($data->post_title)) / 8;
+        } else {
+            $words += count(explode(' ',$data->post_title));
+        }
+    }
+    if(isset($data->post_content)){
+        if(in_array($lang_code, $asian_languages)){
+            $words += strlen(strip_tags($data->post_content)) / 8;
+        } else {
+            $words = count(explode(' ',strip_tags($data->post_content)));
+        }
+    }
+    
+    return (int)$words;
+}
+
 function _icl_list_posts($args){
     global $wpdb, $sitepress, $sitepress_settings;
     $signature   = $args[0];
@@ -1348,7 +1372,7 @@ function _icl_list_posts($args){
             $cats[] = $cv->name;
         }
         $documents[$id]->categories = $cats;
-        $documents[$id]->words = count(explode(' ',strip_tags($data->post_content)));
+        $documents[$id]->words = icl_estimate_word_count($data, $sitepress->get_language_code($lang));
         unset($documents[$id]->post_content);
         unset($documents[$id]->post_title);
     }
