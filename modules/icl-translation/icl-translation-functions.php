@@ -1319,14 +1319,14 @@ function icl_estimate_word_count($data, $lang_code) {
     $words = 0;
     if(isset($data->post_title)){
         if(in_array($lang_code, $asian_languages)){
-            $words += strlen(strip_tags($data->post_title)) / 8;
+            $words += strlen(strip_tags($data->post_title)) / 6;
         } else {
             $words += count(explode(' ',$data->post_title));
         }
     }
     if(isset($data->post_content)){
         if(in_array($lang_code, $asian_languages)){
-            $words += strlen(strip_tags($data->post_content)) / 8;
+            $words += strlen(strip_tags($data->post_content)) / 6;
         } else {
             $words = count(explode(' ',strip_tags($data->post_content)));
         }
