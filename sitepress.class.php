@@ -337,7 +337,7 @@ class SitePress{
                 $tmp[] = "'" . mysql_real_escape_string(trim($code)) . "'";
             }
             $codes = '(' . join(',',$tmp) . ')';
-            $wpdb->update($wpdb->prefix.'icl_languages', array('active'=>0), array('1'=>'1'));
+            $wpdb->update($wpdb->prefix.'icl_languages', array('active'=>0), array('active'=>'1'));
             $wpdb->query("UPDATE {$wpdb->prefix}icl_languages SET active=1 WHERE code IN {$codes}");            
         }
         
@@ -684,15 +684,14 @@ class SitePress{
     function set_element_language_details($el_id, $el_type='post', $trid, $language_code){
         global $wpdb;
         if($trid){
-            //get source
-            $src_language_code = $wpdb->get_var("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE trid={$trid} AND source_language_code IS NULL");                
-            
             if($wpdb->get_var("SELECT translation_id FROM {$wpdb->prefix}icl_translations WHERE element_type='{$el_type}' AND element_id='{$el_id}' AND trid='{$trid}'")){
                 //case of language change
                 $wpdb->update($wpdb->prefix.'icl_translations', 
-                    array('language_code'=>$language_code, 'source_language_code'=>$src_language_code), 
+                    array('language_code'=>$language_code), 
                     array('trid'=>$trid, 'element_type'=>$el_type, 'element_id'=>$el_id));                
             }else{
+                //get source
+                $src_language_code = $wpdb->get_var("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE trid={$trid} AND source_language_code IS NULL"); 
                 // case of adding a new language
                 $wpdb->insert($wpdb->prefix.'icl_translations', 
                     array(
