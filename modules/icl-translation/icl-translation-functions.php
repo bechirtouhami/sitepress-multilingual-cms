@@ -273,8 +273,14 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
             $previous_rid_for_target = false;
         }
         
+        if($post->post_status=='publish'){
+            $permlink = $post_url;
+        }else{
+            $permlink = false;
+        }
+        
         $xml = $iclq->build_cms_request_xml($data, $orig_lang_for_server, $target_for_server, $previous_rid_for_target);
-        $res = $iclq->send_request($xml, $post->post_title, $target_for_server, $orig_lang_for_server);
+        $res = $iclq->send_request($xml, $post->post_title, $target_for_server, $orig_lang_for_server, $permlink);
         
         if($res > 0){
             $wpdb->insert($wpdb->prefix.'icl_content_status', array('rid'=>$res, 'nid'=>$post_id, 'timestamp'=>$timestamp, 'md5'=>$md5)); //insert rid   
