@@ -100,6 +100,14 @@
         </table>
         
         <?php if(!empty($inactive_content)): ?>
+        <?php 
+            foreach($inactive_content as $language=>$ic){
+                $t_posts += $ic['post'];
+                $t_pages += $ic['page'];
+                $t_cats += $ic['category'];
+                $t_tags += $ic['post_tag'];
+            } 
+        ?>        
         <h3><?php echo __('Inactive content', 'sitepress') ?></h3>    
         <small><?php echo __('In order to edit or delete these you need to activate the corresponding language first', 'sitepress') ?></small>
         <table id="icl_inactive_content_table" class="widefat" cellspacing="0">
@@ -125,10 +133,10 @@
         <?php foreach($inactive_content as $language=>$ic): ?>
         <tr>
         <th scope="col"><?php echo $language ?></th>
-        <td scope="col"><?php echo intval($ic['post']); $t_posts += $ic['post']; ?></td>
-        <td scope="col"><?php echo intval($ic['page']); $t_pages += $ic['page']; ?></td>
-        <td scope="col"><?php echo intval($ic['category']); $t_cats += $ic['category'];  ?></td>
-        <td scope="col"><?php echo intval($ic['post_tag']); $t_tags += $ic['post_tag'];  ?></td>
+        <td scope="col"><?php echo intval($ic['post']); ?></td>
+        <td scope="col"><?php echo intval($ic['page']); ?></td>
+        <td scope="col"><?php echo intval($ic['category']); ?></td>
+        <td scope="col"><?php echo intval($ic['post_tag']); ?></td>
         </tr>
         <?php endforeach; ?>                                                                  
         </tbody>        
