@@ -900,7 +900,7 @@ class SitePress{
             if($trid){                
                 $element_lang_code = $res->language_code;
             }else{
-                $trid = $this->set_element_language_details($post->ID,'post',null,$this->get_default_language);
+                $trid = $this->set_element_language_details($post->ID,'post',null,$this->get_default_language());
                 $element_lang_code = $this->get_default_language();
             }            
         }else{
@@ -1057,7 +1057,7 @@ class SitePress{
             if($trid){                
                 $element_lang_code = $res->language_code;
             }else{
-                $trid = $this->set_element_language_details($post->ID, $element_type, null, $this->get_default_language);
+                $trid = $this->set_element_language_details($post->ID, $element_type, null, $this->get_default_language());
                 $element_lang_code = $this->get_default_language();
             }                            
         }else{
