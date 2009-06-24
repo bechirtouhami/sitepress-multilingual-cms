@@ -147,3 +147,8 @@ For help, visit the [support forum](http://forum.wpml.org).
 	* Fixed missing tables problem for people who upgraded from 0.9.9.
 	* Fixed CMS navigation drop down bug for IE6.
 	* Improved the display for the translation dashboard.
+* Version 1.0.2 - Bug fixes for multilingual system
+	* Fixed language selector bug for some themes.
+	* Major improvements for translation database integrity.
+	* Fixed word count estimate for documents in Asian languages.
+	* Added a new Troubleshoot module, which allows getting translation table status and to reset the plugin.
