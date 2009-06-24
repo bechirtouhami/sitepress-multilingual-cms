@@ -1201,7 +1201,7 @@ class SitePress{
             $code = $this->this_lang;
         }
         
-        if($code != $this->get_default_language()){
+        if($code && $code != $this->get_default_language()){
             $abshome = preg_replace('@\?lang=' . $code . '@i','',get_option('home'));
             switch($this->settings['language_negotiation_type']){
                 case '1':                 
