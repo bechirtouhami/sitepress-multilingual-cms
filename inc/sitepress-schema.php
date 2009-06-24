@@ -65,7 +65,7 @@ function icl_sitepress_activate(){
             `element_type` ENUM( 'post', 'page', 'category', 'tag' ) NOT NULL DEFAULT 'post',
             `element_id` BIGINT NOT NULL ,
             `trid` BIGINT NOT NULL ,
-            `language_code` VARCHAR( 7 ) ,
+            `language_code` VARCHAR( 7 ) NOT NULL,
             `source_language_code` VARCHAR( 7 ),
             UNIQUE KEY `el_type_id` (`element_type`,`element_id`),
             UNIQUE KEY `trid_lang` (`trid`,`language_code`)
