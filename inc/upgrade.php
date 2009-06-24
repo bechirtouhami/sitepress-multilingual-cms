@@ -130,7 +130,7 @@ if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepr
     }           
     $wpdb->query("ALTER TABLE {$wpdb->prefix}icl_translations ADD UNIQUE KEY `trid_lang` (`trid`, `language_code`)");
     
-    $res = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}icl_translations WHERE language_code=''");
+    $res = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}icl_translations WHERE language_code='' OR language_code IS NULL");
     $sp_default_lcode = $sitepress_settings['default_language'];
     foreach($res as $r){        
         if(!$sp_default_lcode || $wpdb->get_var("SELECT translation_id FROM {$wpdb->prefix}icl_translations WHERE trid={$r->trid} AND language_code='{$sp_default_lcode}'")){
