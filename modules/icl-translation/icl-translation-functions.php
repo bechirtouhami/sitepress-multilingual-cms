@@ -582,12 +582,24 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
                             array('element_type'=>'tag','element_id'=>$tmp['term_taxonomy_id']));
                     }
                 }else{
-                    $tag_translation_id = $wpdb->get_var("SELECT translation_id FROM {$wpdb->prefix}icl_translations WHERE element_id={$term_taxonomy_id} AND element_type='tag'");    
+                    
+                    // check whether we have an orphan translation - the same trid and language but a different element id                                                     
+                    $__translation_id = $wpdb->get_var("
+                        SELECT translation_id FROM {$wpdb->prefix}icl_translations 
+                        WHERE   trid = '{$tag_trid}' 
+                            AND language_code = '{$lang_code}' 
+                            AND element_id <> '{$term_taxonomy_id}'
+                    ");
+                    if($__translation_id){
+                        $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id={$__translation_id}");    
+                    }
+                    
+                    $tag_translation_id = $wpdb->get_var("SELECT translation_id FROM {$wpdb->prefix}icl_translations WHERE element_id={$term_taxonomy_id} AND element_type='tag'");                        
                     if($tag_translation_id){
                         $wpdb->update($wpdb->prefix.'icl_translations', 
                             array('language_code'=>$lang_code, 'trid'=>$tag_trid, 'source_language_code'=>$original_post_details->language_code), 
                             array('element_type'=>'tag','translation_id'=>$tag_translation_id));                
-                    }else{
+                    }else{                                                
                         $wpdb->insert($wpdb->prefix.'icl_translations', 
                             array('language_code'=>$lang_code, 'trid'=>$tag_trid, 'element_type'=>'tag', 'element_id'=>$term_taxonomy_id, 'source_language_code'=>$original_post_details->language_code));                                
                     }
@@ -652,6 +664,18 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
                             array('element_type'=>'category','element_id'=>$tmp['term_taxonomy_id']));
                     }
                 }else{
+                    
+                    // check whether we have an orphan translation - the same trid and language but a different element id                                                     
+                    $__translation_id = $wpdb->get_var("
+                        SELECT translation_id FROM {$wpdb->prefix}icl_translations 
+                        WHERE   trid = '{$cat_trid}' 
+                            AND language_code = '{$lang_code}' 
+                            AND element_id <> '{$term_taxonomy_id}'
+                    ");
+                    if($__translation_id){
+                        $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id={$__translation_id}");    
+                    }
+                    
                     $cat_translation_id = $wpdb->get_var("SELECT translation_id FROM {$wpdb->prefix}icl_translations WHERE element_id={$term_taxonomy_id} AND element_type='category'");    
                     if($cat_translation_id){
                         $wpdb->update($wpdb->prefix.'icl_translations', 
@@ -682,11 +706,17 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
         }        
     }
     
-    // is update?
+    // determine post id based on trid
     $post_id = $wpdb->get_var("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE element_type='post' AND trid='{$trid}' AND language_code='{$lang_code}'");
     if($post_id){
-        $is_update = true;
-        $postarr['ID'] = $_POST['post_ID'] = $post_id;
+        // see if the post really exists - make sure it wasn't deleted while the plugin was 
+        if(!$wpdb->get_var("SELECT ID FROM {$wpdb->posts} WHERE ID={$post_id}")){
+            $is_update = false;
+            $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE element_type='post' AND element_id={$post_id}");
+        }else{
+            $is_update = true;
+            $postarr['ID'] = $_POST['post_ID'] = $post_id;
+        }
     }else{
         $is_update = false;
     } 

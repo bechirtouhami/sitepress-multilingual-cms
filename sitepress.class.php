@@ -685,12 +685,25 @@ class SitePress{
     
     function set_element_language_details($el_id, $el_type='post', $trid, $language_code){
         global $wpdb;
-        if($trid){
-            if($wpdb->get_var("SELECT translation_id FROM {$wpdb->prefix}icl_translations WHERE element_type='{$el_type}' AND element_id='{$el_id}' AND trid='{$trid}'")){
+        
+        if($trid){  // it's a translation of an existing element  
+                                                         
+            // check whether we have an orphan translation - the same trid and language but a different element id                                                     
+            $translation_id = $wpdb->get_var("
+                SELECT translation_id FROM {$wpdb->prefix}icl_translations 
+                WHERE   trid = '{$trid}' 
+                    AND language_code = '{$language_code}' 
+                    AND element_id <> '{$el_id}'
+            ");
+            if($translation_id){
+                $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id={$translation_id}");    
+            }
+            
+            if($translation_id = $wpdb->get_var("SELECT translation_id FROM {$wpdb->prefix}icl_translations WHERE element_type='{$el_type}' AND element_id='{$el_id}' AND trid='{$trid}'")){
                 //case of language change
                 $wpdb->update($wpdb->prefix.'icl_translations', 
                     array('language_code'=>$language_code), 
-                    array('trid'=>$trid, 'element_type'=>$el_type, 'element_id'=>$el_id));                
+                    array('translation_id'=>$translation_id));                
             }else{
                 //get source
                 $src_language_code = $wpdb->get_var("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE trid={$trid} AND source_language_code IS NULL"); 
@@ -705,7 +718,7 @@ class SitePress{
                         )
                 );
             }
-        }else{
+        }else{ // it's a new element         
             $trid = 1 + $wpdb->get_var("SELECT MAX(trid) FROM {$wpdb->prefix}icl_translations");
             $wpdb->insert($wpdb->prefix.'icl_translations', 
                 array(
