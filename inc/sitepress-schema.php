@@ -177,51 +177,25 @@ function icl_sitepress_activate(){
                
    delete_option('icl_sitepress_version');
    add_option('icl_sitepress_version', ICL_SITEPRESS_VERSION, '', true);
-    
-        
-    // try to determine the blog language
-    /*
-    $blog_default_lang = 0;
-    if($blog_lang = get_option('WPLANG')){
-        $exp = explode('_',$blog_lang);
-        $blog_default_lang = $wpdb->get_var("SELECT code FROM {$wpdb->prefix}icl_languages WHERE code='{$exp[0]}'");
-    }
-    if(!$blog_default_lang && defined('WPLANG') && WPLANG != '')
-    {
-        $blog_lang = WPLANG;
-        $exp = explode('_',$blog_lang);
-        $blog_default_lang = $wpdb->get_var("SELECT code FROM {$wpdb->prefix}icl_languages WHERE code='{$exp[0]}'");        
-    }
-    if(!$blog_default_lang){
-        $blog_default_lang = 'en';
-    }
-    $wpdb->update($wpdb->prefix . 'icl_languages', array('active'=>1), array('code'=>$blog_default_lang));
-    
-    
-    // plugin settings
-    if($settings = get_option('icl_sitepress_settings')){
-        // case of plugin already installed        
-        if(!$settings['default_language']){
-            $settings['default_language'] = $blog_default_lang;
-            update_option('icl_sitepress_settings', $settings);        
-        }        
-    }else{
-        $blog_default_cat = get_option('default_category');
-        $blog_default_cat_tax_id = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id='{$blog_default_cat}' AND taxonomy='category'");
-        // default settings are set in the sidepress class      
-        // saving the option now to make it 'autoload' type
-        $settings = array(
-            'default_language'   => $blog_default_lang,
-            'default_categories' => array($blog_default_lang => $blog_default_cat_tax_id)
-        );        
-        add_option('icl_sitepress_settings', $settings, '', true);        
-    }  
-    */
+
     
     if(!get_option('icl_sitepress_settings')){
         $settings = array();
         add_option('icl_sitepress_settings', $settings, '', true);        
     }  
+       
+    // clean the icl_translations table 
+    $orphans = $wpdb->get_col("SELECT t.translation_id FROM {$wpdb->prefix}icl_translations t 
+        LEFT JOIN {$wpdb->posts} p ON t.element_id = p.ID WHERE t.element_type='post' AND p.ID IS NULL");   
+    if(!empty($orphans)){
+        $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id IN (".join(',',$orphans).")");
+    }
+    $orphans = $wpdb->get_col("SELECT t.translation_id FROM {$wpdb->prefix}icl_translations t 
+        LEFT JOIN {$wpdb->term_taxonomy} p ON t.element_id = p.term_taxonomy_id WHERE t.element_type IN ('tag','category') AND p.term_taxonomy_id IS NULL");   
+    if(!empty($orphans)){
+        $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id IN (".join(',',$orphans).")");
+    }
+    
        
     if(defined('ICL_DEBUG_MODE') && ICL_DEBUG_MODE){
         require_once ICL_PLUGIN_PATH . '/inc/functions.php';
