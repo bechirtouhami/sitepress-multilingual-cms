@@ -63,7 +63,8 @@ class CMSNavigation{
         add_action('plugins_loaded', array($this, 'sidebar_navigation_widget_init'));
         
         add_filter('page_link', array($this, 'rewrite_page_link'), 15, 2);
-        add_action('parse_query', array($this, 'redirect_offsite_urls'));        
+        add_action('parse_query', array($this, 'redirect_offsite_urls'));                
+        
     } 
     
     function cms_navigation_breadcrumb(){
@@ -193,17 +194,38 @@ class CMSNavigation{
                 }else{
                     $sel = false;
                 }                        
-                ?><li<?php if($sel):?> class="selected_page"<?php endif?>><a href="<?php echo $p==$post->ID?'#':get_permalink($p); ?>" class="<?php if($subpages):?>trigger<?php endif?>"><?php echo get_the_title($p) ?><?php if(!isset($cms_nav_ie_ver) || $cms_nav_ie_ver > 6): ?></a><?php endif; ?>
+                $page_name_html = apply_filters('icl_nav_page_html', $p, 0);
+                if($page_name_html==$p){
+                    $page_name_html = get_the_title($p);
+                }
+                
+                
+                $main_li_classes = array();
+                if($sel){
+                    $main_li_classes[] = 'selected_page';
+                }
+                $incr++;
+                if($incr==1){
+                    $main_li_classes[] = 'icl_first';
+                }elseif($incr==count($pages)){
+                    $main_li_classes[] = 'icl_last';
+                }
+                
+                ?><li<?php if(!empty($main_li_classes)):?> class="<?php echo join(' ' , $main_li_classes)?>"<?php endif?>><a href="<?php echo $p==$post->ID?'#':get_permalink($p); ?>" class="<?php if($subpages):?>trigger<?php endif?>"><?php echo $page_name_html ?><?php if(!isset($cms_nav_ie_ver) || $cms_nav_ie_ver > 6): ?></a><?php endif; ?>
                     <?php if($subpages):?>
                         <?php if(isset($cms_nav_ie_ver) && $cms_nav_ie_ver <= 6): ?><table><tr><td><?php endif; ?>
                         <ul>
                             <?php foreach($sections as $sec_name=>$sec): ?>
                                 <?php if($sec_name): ?>
-                                <li class="section"><?php echo $sec_name ?></li>
+                                <li class="section icl-top-nav-section-<?php echo sanitize_title_with_dashes($sec_name) ?>"><?php echo $sec_name ?></li>
                                 <?php endif; ?>
                                 <?php foreach($sec as $sp):?>                            
                                 <li<?php if($sp==$post->ID):?> class="selected_subpage"<?php endif?>><?php                            
-                                    if($sp!=$post->ID):?><a href="<?php echo get_permalink($sp); ?>" <?php if(in_array($sp,$post->ancestors)): ?>class="selected"<?php endif;?>><?php endif?><?php echo get_the_title($sp) ?><?php if($sp!=$post->ID):?></a><?php endif                             
+                                    $subpage_name_html = apply_filters('icl_nav_page_html', $sp, 1);
+                                    if($subpage_name_html==$sp){
+                                        $subpage_name_html = get_the_title($sp);
+                                    }
+                                    if($sp!=$post->ID):?><a href="<?php echo get_permalink($sp); ?>" <?php if(in_array($sp,$post->ancestors)): ?>class="selected"<?php endif;?>><?php endif?><?php echo $subpage_name_html ?><?php if($sp!=$post->ID):?></a><?php endif                             
                                 ?></li>
                                 <?php endforeach; ?>
                             <?php endforeach; ?>
