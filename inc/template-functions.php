@@ -90,7 +90,7 @@ function icl_link_to_element($element_id, $element_type='post', $link_text='', $
     }else{
         $link .= $title;
     }
-    $link .'</a>';
+    $link .= '</a>';
         
     echo $link;            
 }
