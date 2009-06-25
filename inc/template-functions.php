@@ -66,10 +66,15 @@ function icl_link_to_element($element_id, $element_type='post', $link_text='', $
     }else{
         if($element_type=='post' || $element_type=='page'){
             $url = get_permalink($element_id);
+            $title = get_the_title($element_id);
         }elseif($element_type=='tag' || $element_type=='post_tag'){
-            $url = get_tag_link($element_id);        
+            $url = get_tag_link($element_id);     
+            $my_tag = &get_term($element_id, 'post_tag', OBJECT, 'display');
+            $title = apply_filters('single_tag_title', $my_tag->name);               
         }elseif($element_type=='category'){
             $url = get_category_link($element_id);        
+            $my_cat = &get_term($element_id, 'category', OBJECT, 'display');
+            $title = apply_filters('single_cat_title', $my_cat->name);                           
         }
     }
     
