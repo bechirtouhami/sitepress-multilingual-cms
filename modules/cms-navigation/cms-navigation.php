@@ -240,8 +240,11 @@ class CMSNavigation{
             
             if($show_cat_menu){
                 if($page_for_posts){
-                    $blog_url = get_permalink($page_for_posts);
-                    $blog_name = get_the_title($page_for_posts);
+                    $blog_url = get_permalink($page_for_posts);                    
+                    $blog_name = apply_filters('icl_nav_page_html', $page_for_posts, 0);
+                    if($blog_name==$p){
+                        $blog_name = get_the_title($page_for_posts);
+                    }                    
                 }else{
                     $blog_url = get_option('home');
                     $blog_name = $cat_menu_title;                
