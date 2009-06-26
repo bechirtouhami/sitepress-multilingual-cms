@@ -152,3 +152,8 @@ For help, visit the [support forum](http://forum.wpml.org).
 	* Major improvements for translation database integrity.
 	* Fixed word count estimate for documents in Asian languages.
 	* Added a new Troubleshoot module, which allows getting translation table status and to reset the plugin.
+* Version 1.0.3 - Added theme functions for multilingual theme support + some bug fixing
+	* Added a hook for adding [custom HTML in menu items](http://wpml.org/wordpress-cms-plugins/cms-navigation-plugin/custom-html-for-menu-items/).
+	* Added a function for creating [multilingual links in themes](http://wpml.org/home/getting-started-guide/hard-coded-theme-links/).
+	* Cleaned up translation table, in case posts were deleted while WPML is inactive.
+	* Reverting to HTTP communication instead of HTTPs if a firewall is blocking us.
