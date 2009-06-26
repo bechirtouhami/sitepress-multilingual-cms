@@ -70,10 +70,12 @@ class ICanLocalizeQuery{
             
             $_force_mp_post_http = get_option('_force_mp_post_http');
             if($_force_mp_post_http){
+                $request = str_replace('https://','http://',$request);
                 $https = false;
             }else{
                 $_mp_post_https_tries = (int)get_option('_mp_post_https_tries');
-                if($_mp_post_https_tries == 3){
+                if($_mp_post_https_tries == 2){ //it's the third try
+                    $request = str_replace('https://','http://',$request);
                     $https = false;
                     update_option('_force_mp_post_http', 1);
                 }else{
