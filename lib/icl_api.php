@@ -67,11 +67,28 @@ class ICanLocalizeQuery{
             if($c->timed_out){die(__('Error:').$c->error);}
         }else{
             $c->set_submit_multipart();          
+            
+            $_force_mp_post_http = get_option('_force_mp_post_http');
+            if($_force_mp_post_http){
+                $https = false;
+            }else{
+                $_mp_post_https_tries = (int)get_option('_mp_post_https_tries');
+                if($_mp_post_https_tries == 3){
+                    $https = false;
+                    update_option('_force_mp_post_http', 1);
+                }else{
+                    $_mp_post_https_tries++;
+                    update_option('_mp_post_https_tries', $_mp_post_https_tries);
+                }
+            }
+            
             $c->submit($request, $formvars, $formfiles);            
             if((!$c->results || $c->timed_out) && $https){
                 $c->submit(str_replace('https://','http://',$request), $formvars, $formfiles);  
             }                      
             if($c->timed_out){die(__('Error:').$c->error);}
+            update_option('_mp_post_https_tries', 0);
+            
         }
         if($c->error){
             $this->error = $c->error;
