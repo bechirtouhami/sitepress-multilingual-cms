@@ -183,7 +183,7 @@ class CMSNavigation{
                 $subpages = $wpdb->get_results("
                     SELECT p.ID, meta_value AS section
                     FROM {$wpdb->posts} p LEFT JOIN {$wpdb->postmeta} m ON p.ID=m.post_id AND (meta_key='_cms_nav_section' OR meta_key IS NULL)
-                    WHERE p.post_parent={$p} AND p.post_status='publish' ORDER BY {$order}");                
+                    WHERE p.post_parent={$p} AND p.post_status='publish' AND p.ID NOT IN ({$excluded_pages}) ORDER BY {$order}");                
                 foreach((array)$subpages as $s){
                     $sections[$s->section][] = $s->ID;    
                 }
@@ -242,7 +242,7 @@ class CMSNavigation{
                 if($page_for_posts){
                     $blog_url = get_permalink($page_for_posts);                    
                     $blog_name = apply_filters('icl_nav_page_html', $page_for_posts, 0);
-                    if($blog_name==$p){
+                    if($blog_name==$page_for_posts){
                         $blog_name = get_the_title($page_for_posts);
                     }                    
                 }else{

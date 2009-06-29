@@ -1258,6 +1258,12 @@ class SitePress{
         $element_lang_details = $this->get_element_language_details($pid,'post');        
         if($element_lang_details->language_code && $this->get_default_language() != $element_lang_details->language_code){
             $p = $this->convert_url($p, $element_lang_details->language_code);
+        }elseif(isset($_POST['action']) && $_POST['action']=='sample-permalink'){ // check whether this is an autosaved draft 
+            $exp = explode('?', $_SERVER["HTTP_REFERER"]);
+            if(isset($exp[1])) parse_str($exp[1], $args);        
+            if(isset($args['lang']) && $this->get_default_language() != $args['lang']){
+                $p = $this->convert_url($p, $args['lang']);
+            }
         }
         return $p;
     }    
