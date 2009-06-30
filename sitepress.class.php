@@ -43,8 +43,10 @@ class SitePress{
             
             
             global $pagenow;
-            if(in_array($pagenow, array('edit-pages.php','edit.php'))){
-                add_action('admin_head', array($this,'language_filter'));
+            if($pagenow == 'edit.php'){
+                add_action('restrict_manage_posts', array($this,'language_filter'));                
+            }elseif($pagenow == 'edit-pages.php'){
+                add_action('admin_footer', array($this,'language_filter'));
             }
             
             add_filter('wp_list_pages_excludes', array($this, 'exclude_other_language_pages'));
@@ -812,6 +814,9 @@ class SitePress{
                 array('element_id'=>$ttid, 'element_type'=>'category'));
         }
         $this->set_element_language_details($post_id, 'post', $trid, $language_code);
+        
+        require_once ICL_PLUGIN_PATH . '/inc/cache.php';        
+        icl_cache_clear($_POST['post_type'].'s_per_language');
     }
     
     function fix_translated_parent($original_id, $translated_id, $lang_code){
@@ -860,6 +865,10 @@ class SitePress{
     function delete_post_actions($post_id){
         global $wpdb;
         $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE element_type='post' AND element_id='{$post_id}' LIMIT 1");
+                
+        require_once ICL_PLUGIN_PATH . '/inc/cache.php';        
+        $post_type = $wpdb->get_var("SELECT post_type FROM {$wpdb->posts} WHERE ID={$post_id}");
+        icl_cache_clear($post_type.'s_per_language');        
     }
     
     function get_element_translations($trid, $el_type='post', $skip_empty = false){        
@@ -957,6 +966,7 @@ class SitePress{
     }
     
     function language_filter(){
+        require_once ICL_PLUGIN_PATH . '/inc/cache.php';        
         global $wpdb, $pagenow;
         if($pagenow=='edit.php'){
             $type = 'post';
@@ -965,17 +975,21 @@ class SitePress{
         }
         $active_languages = $this->get_active_languages();
         
-        $res = $wpdb->get_results("
-            SELECT language_code, COUNT(p.ID) AS c FROM {$wpdb->prefix}icl_translations t 
-            JOIN {$wpdb->posts} p ON t.element_id=p.ID
-            JOIN {$wpdb->prefix}icl_languages l ON t.language_code=l.code AND l.active = 1
-            WHERE t.element_type='post' AND p.post_type='{$type}'
-            GROUP BY language_code            
-            ");         
-        foreach($res as $r){
-            $langs[$r->language_code] = $r->c;
-            $langs['all'] += $r->c;
-        } 
+        $langs = icl_cache_get($type.'s_per_language');
+        if(!$langs){
+            $res = $wpdb->get_results("
+                SELECT language_code, COUNT(p.ID) AS c FROM {$wpdb->prefix}icl_translations t 
+                JOIN {$wpdb->posts} p ON t.element_id=p.ID
+                JOIN {$wpdb->prefix}icl_languages l ON t.language_code=l.code AND l.active = 1
+                WHERE p.post_type='{$type}'
+                GROUP BY language_code            
+                ");         
+            foreach($res as $r){
+                $langs[$r->language_code] = $r->c;
+                $langs['all'] += $r->c;
+            } 
+            icl_cache_set($type.'s_per_language', $langs);
+        }
         
         $active_languages[] = array('code'=>'all','display_name'=>__('All languages','sitepress'));
         foreach($active_languages as $lang){
@@ -993,10 +1007,8 @@ class SitePress{
         }
         $allas = join(' | ', $as);
         ?>
-        <script type="text/javascript">
-        addLoadEvent(function(){        
+        <script type="text/javascript">        
             jQuery(".subsubsub").append('<br /><span id="icl_subsubsub"><?php echo $allas ?></span>');
-        });
         </script>
         <?php
     }
