@@ -805,8 +805,8 @@ class SitePress{
             update_option('sticky_posts',$sticky_posts);
         }
         
-        // new categories created inline go to the correct language
-        if(isset($_POST['post_category']))
+        // new categories created inline go to the correct language        
+        if(isset($_POST['post_category']) && $_POST['action']!='inline-save' && $_POST['icl_post_language'])
         foreach($_POST['post_category'] as $cat){
             $ttid = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id={$cat} AND taxonomy='category'");
             $wpdb->update($wpdb->prefix.'icl_translations', 
