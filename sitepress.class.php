@@ -744,8 +744,8 @@ class SitePress{
     }
     
     function save_post_actions($pidd){
-        global $wpdb;
-        if($_POST['autosave'] || $_POST['skip_sitepress_actions'] || $_POST['post_ID']!=$pidd) return;
+        global $wpdb;        
+        if($_POST['autosave'] || $_POST['skip_sitepress_actions'] || (isset($_POST['post_ID']) && $_POST['post_ID']!=$pidd)) return;
         if($_POST['action']=='post-quickpress-publish'){
             $post_id = $pidd;            
             $language_code = $this->get_default_language();
@@ -760,7 +760,6 @@ class SitePress{
         }else{
             $trid = $_POST['icl_trid'];
         }
-        
         // synchronize the page order for translations
         if($trid && $_POST['post_type']=='page' && $this->settings['sync_page_ordering']){
             $menu_order = $wpdb->escape($_POST['menu_order']);
