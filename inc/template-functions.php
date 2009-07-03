@@ -100,4 +100,41 @@ function icl_link_to_element($element_id, $element_type='post', $link_text='', $
     echo $link;            
 }
 
+function icl_object_id($element_id, $element_type='post', $return_original_if_missing=false){
+    global $sitepress, $wpdb;
+    
+    $element_types = array('post', 'post_tag', 'category');
+    if(!in_array($element_type, $element_types)){
+        trigger_error(__('Invalid object kind','sitepress'));
+        return null;
+    }elseif(!$element_id){
+        trigger_error(__('Invalid object id','sitepress'));
+        return null;
+    }
+    
+    if($element_type=='category' || $element_type=='post_tag'){
+        $element_id = $wpdb->get_var($wpdb->prepare("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id= %d AND taxonomy='{$element_type}'",$element_id));
+    }
+    
+    if($element_type=='post_tag'){
+        $icl_element_type = 'tag';
+    }else{
+        $icl_element_type = $element_type;
+    }
+    
+    $trid = $sitepress->get_element_trid($element_id, $icl_element_type);
+    $translations = $sitepress->get_element_translations($trid, $icl_element_type);
+    
+    if(isset($translations[ICL_LANGUAGE_CODE]->element_id)){
+        $ret_element_id = $translations[ICL_LANGUAGE_CODE]->element_id;
+        if($element_type=='category' || $element_type=='post_tag'){
+            $ret_element_id = $wpdb->get_var($wpdb->prepare("SELECT t.term_id FROM {$wpdb->term_taxonomy} tx JOIN {$wpdb->terms} t ON t.term_id = tx.term_id WHERE tx.term_taxonomy_id = %d AND tx.taxonomy='{$element_type}'", $ret_element_id));            
+        }
+    }else{
+        $ret_element_id = $return_original_if_missing ? $element_id : null;
+    }
+    
+    return $ret_element_id;
+    
+}
 ?>
