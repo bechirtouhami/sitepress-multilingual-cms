@@ -70,14 +70,14 @@ class SitePress{
             if($pagenow == 'categories.php'){
                 add_action('admin_print_scripts-categories.php', array($this,'js_scripts_categories'));
                 add_action('edit_category_form', array($this, 'edit_term_form'));
-                add_action('admin_head', array($this,'terms_language_filter'));
+                add_action('admin_footer', array($this,'terms_language_filter'));
             }        
             // tags language selection
             if($pagenow == 'edit-tags.php'){
                 add_action('admin_print_scripts-edit-tags.php', array($this,'js_scripts_tags'));
                 add_action('add_tag_form', array($this, 'edit_term_form'));
                 add_action('edit_tag_form', array($this, 'edit_term_form'));
-                add_action('admin_head', array($this,'terms_language_filter'));                
+                add_action('admin_footer', array($this,'terms_language_filter'));                
             }
             
             // the language selector widget      
@@ -1175,9 +1175,7 @@ class SitePress{
         $allas = join(' | ', $as);
         ?>
         <script type="text/javascript">
-        addLoadEvent(function(){        
             jQuery('table.widefat').before('<span id="icl_subsubsub"><?php echo $allas ?></span>');
-        });
         </script>
         <?php
     }    
