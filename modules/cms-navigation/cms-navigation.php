@@ -412,7 +412,9 @@ class CMSNavigation{
     }    
     
     function cms_navigation_page_edit_options(){
-        add_meta_box('cmsnavdiv', __('CMS Navigation', 'sitepress'), array($this, 'cms_navigation_meta_box'), 'page', 'normal', 'high');
+        if(function_exists('add_meta_box')){
+            add_meta_box('cmsnavdiv', __('CMS Navigation', 'sitepress'), array($this, 'cms_navigation_meta_box'), 'page', 'normal', 'high');
+        }
     }
 
     function cms_navigation_meta_box($post){

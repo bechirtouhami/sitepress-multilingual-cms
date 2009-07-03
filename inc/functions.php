@@ -1,5 +1,16 @@
 <?php 
 
+/**
+ * Add settings link to plugin page.
+*/
+function icl_plugin_action_links($links, $file) {
+    $this_plugin = basename(ICL_PLUGIN_PATH) . '/sitepress.php';
+    if($file == $this_plugin) {
+        $links[] = '<a href="admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/languages.php">' . __('Configure', 'sitepress') . '</a>';
+    }
+    return $links;
+}
+ 
 
 if(defined('ICL_DEBUG_MODE') && ICL_DEBUG_MODE && !function_exists('icl_error_handler')){           
     ini_set('error_reporting',E_ALL^E_NOTICE);

@@ -681,8 +681,10 @@ class SitePress{
     }
     
     function post_edit_language_options(){
-        add_meta_box('icl_div', __('Language options', 'sitepress'), array($this,'meta_box'), 'post', 'normal', 'high');
-        add_meta_box('icl_div', __('Language options', 'sitepress'), array($this,'meta_box'), 'page', 'normal', 'high');
+        if(function_exists('add_meta_box')){
+            add_meta_box('icl_div', __('Language options', 'sitepress'), array($this,'meta_box'), 'post', 'normal', 'high');
+            add_meta_box('icl_div', __('Language options', 'sitepress'), array($this,'meta_box'), 'page', 'normal', 'high');
+        }
     }
     
     function set_element_language_details($el_id, $el_type='post', $trid, $language_code){

@@ -2,7 +2,7 @@
 /*
 Plugin Name: WPML Multilingual CMS
 Plugin URI: http://wpml.org/
-Description: WPML Multilingual CMS. <a href="http://wpml.org">Documentation</a> | <a href="admin.php?page=sitepress-multilingual-cms/menu/languages.php">Configure</a>.
+Description: WPML Multilingual CMS. <a href="http://wpml.org">Documentation</a>.
 Author: OnTheGoSystems
 Author URI: http://www.onthegosystems.com
 Version: 1.0.3
@@ -80,4 +80,5 @@ if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQ
 register_activation_hook( __FILE__, 'icl_sitepress_activate' );
 register_deactivation_hook(__FILE__, 'icl_sitepress_deactivate');
 
+add_filter('plugin_action_links', 'icl_plugin_action_links', 10, 2); 
 ?>
