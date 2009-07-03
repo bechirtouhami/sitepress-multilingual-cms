@@ -44,3 +44,7 @@
 #noupdate_but{
     text-align: center;
 }
+
+#icl-content-translation-advanced-options{
+    display:none;
+}

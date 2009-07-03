@@ -187,6 +187,11 @@ switch($_REQUEST['icl_ajx_action']){
         }
         
        break;
+    case 'icl_save_website_kind':
+        $iclsettings['website_kind'] = $_POST['icl_website_kind'];
+        $sitepress->save_settings($iclsettings);
+        echo '1';
+        break;               
     case 'icl_plugins_texts':
         if(isset($_POST['icl_pt_file_upload'])){
             require_once ICL_PLUGIN_PATH . '/inc/plugins-texts-functions.php';

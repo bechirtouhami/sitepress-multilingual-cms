@@ -26,7 +26,11 @@ function fadeOutAjxResp(spot){
 var icl_ajxloaderimg_src = icl_ajxloaderimg;
 icl_ajxloaderimg = '<img src="'+icl_ajxloaderimg+'" alt="loading" width="16" height="16" />';
 
+var iclHaltSave = false; // use this for multiple 'submit events'
 function iclSaveForm(){
+    if(iclHaltSave){
+        return false;
+    }
     var formname = jQuery(this).attr('name');
     jQuery('form[name="'+formname+'"] .icl_form_errors').html('').hide();
     ajx_resp = jQuery('form[name="'+formname+'"] .icl_ajx_response').attr('id');

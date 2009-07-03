@@ -63,13 +63,14 @@
 
             <h3><?php echo __('What kind of website is this?','sitepress') ?></h3>
             <ul>
+                <span class="icl_error_text" style="display:none"><?php echo __('Please select the kind of website','sitepress')?></span>
                 <li>
                     <?php echo __("ICanLocalize needs to assign professional translators to each website that we translate. Please help us by indicating what kind of website you're setting up.", 'sitepress') ?><br />
                 </li>
-                <li>
+                <li>                    
                     <ul>
                         <li>
-                            <label><input name="icl_website_kind" type="radio" value="0" <?php if($sitepress_settings['website_kind'] == 0): ?>checked="checked"<?php endif;?> /> <?php echo __("Test site - I'm only testing out the system and don't need to have translators assigned yet.", 'sitepress'); ?></label><br />
+                            <label><input name="icl_website_kind" type="radio" value="0" <?php if($sitepress_settings['website_kind'] === 0): ?>checked="checked"<?php endif;?> /> <?php echo __("Test site - I'm only testing out the system and don't need to have translators assigned yet.", 'sitepress'); ?></label><br />
                         </li>
                         <li>
                             <label><input name="icl_website_kind" type="radio" value="1" <?php if($sitepress_settings['website_kind'] == 1): ?>checked="checked"<?php endif;?> /> <?php echo __("Development site with real contents - This site includes real contents that need to be translated, but still running on a development server.", 'sitepress'); ?></label><br />
@@ -80,7 +81,9 @@
                     </ul>
                 </li>
             </ul>
-        
+            
+            <p><a href="#icl-ct-advanced-options"><span><?php echo __('Show advanced options','sitepress') ?></span><span style="display:none;"><?php echo __('Hide advanced options','sitepress') ?></span></a></p>
+            <div id="icl-content-translation-advanced-options">
             <h3><?php echo __('Translator selection','sitepress') ?></h3>
             <?php
                 $interview_translators = $sitepress_settings['interview_translators'];
@@ -181,12 +184,14 @@
                     <i><?php echo __("Content translation can be managed remotely via xmlrpc calls.", 'sitepress') ?></i><br />
                 </li>
             </ul>
-            
+            </div> <? // div id="icl-content-translation-advanced-options ?>
+                        
             <p class="submit">
                 <input class="button" name="create account" value="<?php echo __('Save', 'sitepress') ?>" type="submit" />
                 <span class="icl_ajx_response" id="icl_ajx_response2"></span>    
             </p>        
             </form>
+            
             
             <?php /************
             <h3><?php echo __('Plugins texts translation', 'sitepress') ?></h3>                

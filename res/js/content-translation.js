@@ -1,10 +1,15 @@
 addLoadEvent(function(){         
     jQuery('#icl_language_pairs .icl_tr_from').change(toggleTranslationPairsSub);
-    jQuery('#icl_save_language_pairs').click(saveLanguagePairs);
-    jQuery('form[name="icl_more_options"]').submit(iclSaveForm);
+    jQuery('#icl_save_language_pairs').click(saveLanguagePairs);    
+    jQuery('form[name="icl_more_options"]').submit(iclValidateWebsiteKind).submit(iclSaveForm);
+    jQuery('#icl_create_account').submit(iclValidateWebsiteKind);
     jQuery('form[name="icl_editor_account"]').submit(iclSaveForm);
     jQuery('form[name="icl_plugins_texts"]').submit(iclSaveForm);
     jQuery('#icl_enable_content_translation').change(iclToggleContentTranslation);
+    jQuery('a[href="#icl-ct-advanced-options"]').click(iclToggleAdvancedOptions);    
+    
+    jQuery('input[name="icl_website_kind"]').click(iclQuickSaveWebsiteKind);
+    
 });
 
 function toggleTranslationPairsSub(){
@@ -52,3 +57,43 @@ function iclToggleContentTranslation(){
         }
     });         
 }
+
+function iclToggleAdvancedOptions(){    
+    jqthis = jQuery(this);
+    if(jQuery('#icl-content-translation-advanced-options').css('display')=='none'){
+        jQuery('#icl-content-translation-advanced-options').fadeIn('fast',function(){
+            jqthis.children().toggle();
+        });        
+    }else{
+        jQuery('#icl-content-translation-advanced-options').fadeOut('fast',function(){
+            jqthis.children().toggle();
+        });
+    }    
+}
+
+function iclValidateWebsiteKind(){
+    jQuery('form[name="icl_more_options"] ul:first').css('border','none').css('padding','0');
+    jQuery('form[name="icl_more_options"] ul:first .icl_error_text').hide();    
+    iclHaltSave = false;
+    if(jQuery('input[name="icl_website_kind"]:checked').length==0){
+        jQuery('form[name="icl_more_options"] ul:first').css('border','1px solid red').css('padding','2px');
+        jQuery('form[name="icl_more_options"] ul:first .icl_error_text').show();
+        iclHaltSave = true;
+        return false;
+    }   
+}
+
+function iclQuickSaveWebsiteKind(){
+    if(jQuery('input[name="icl_website_kind"]:checked').length==1){
+        jQuery.ajax({
+            type: "POST",
+            url: icl_ajx_url,
+            data: "icl_ajx_action=icl_save_website_kind&icl_website_kind="+jQuery('input[name="icl_website_kind"]').val(),
+        });
+        return false;     
+    
+    }    
+}
+
+
+
