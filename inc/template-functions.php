@@ -118,6 +118,8 @@ function icl_object_id($element_id, $element_type='post', $return_original_if_mi
     
     if($element_type=='post_tag'){
         $icl_element_type = 'tag';
+    if($element_type=='page'){
+        $icl_element_type = 'post';
     }else{
         $icl_element_type = $element_type;
     }
