@@ -40,10 +40,11 @@ function icl_link_to_element($element_id, $element_type='post', $link_text='', $
     
     if($element_type=='tag' || $element_type=='post_tag'){
         $element_id = $wpdb->get_var($wpdb->prepare("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id= %d AND taxonomy='post_tag'",$element_id));
-    }
-    
-    if($element_type=='category'){
-        $element_id = $wpdb->get_var($wpdb->prepare("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id= %d AND taxonomy='category'",$element_id));
+        $element_type=='tag'; 
+    }elseif($element_type=='category'){
+        $element_id = $wpdb->get_var($wpdb->prepare("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id= %d AND taxonomy='category'",$element_id));        
+    }elseif($element_type=='page'){
+        $element_type=='post'; 
     }    
     
     if(!$element_id) return '';
@@ -53,10 +54,10 @@ function icl_link_to_element($element_id, $element_type='post', $link_text='', $
         
     // current language is ICL_LANGUAGE_CODE    
     if(isset($translations[ICL_LANGUAGE_CODE])){
-        if($element_type=='post' || $element_type=='page'){
+        if($element_type=='post'){
             $url = get_permalink($translations[ICL_LANGUAGE_CODE]->element_id);                    
             $title = $translations[ICL_LANGUAGE_CODE]->post_title;
-        }elseif($element_type=='tag' || $element_type=='post_tag'){
+        }elseif($element_type=='tag'){
             list($term_id, $title) = $wpdb->get_row($wpdb->prepare("SELECT t.term_id, t.name FROM {$wpdb->term_taxonomy} tx JOIN {$wpdb->terms} t ON t.term_id = tx.term_id WHERE tx.term_taxonomy_id = %d AND tx.taxonomy='post_tag'",$translations[ICL_LANGUAGE_CODE]->element_id), ARRAY_N);            
             $url = get_tag_link($term_id);        
         }elseif($element_type=='category'){
@@ -64,10 +65,10 @@ function icl_link_to_element($element_id, $element_type='post', $link_text='', $
             $url = get_category_link($term_id);        
         }        
     }else{
-        if($element_type=='post' || $element_type=='page'){
+        if($element_type=='post'){
             $url = get_permalink($element_id);
             $title = get_the_title($element_id);
-        }elseif($element_type=='tag' || $element_type=='post_tag'){
+        }elseif($element_type=='tag'){
             $url = get_tag_link($element_id);     
             $my_tag = &get_term($element_id, 'post_tag', OBJECT, 'display');
             $title = apply_filters('single_tag_title', $my_tag->name);               
