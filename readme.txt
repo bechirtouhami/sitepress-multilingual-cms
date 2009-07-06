@@ -157,3 +157,14 @@ For help, visit the [support forum](http://forum.wpml.org).
 	* Added a function for creating [multilingual links in themes](http://wpml.org/home/getting-started-guide/hard-coded-theme-links/).
 	* Cleaned up translation table, in case posts were deleted while WPML is inactive.
 	* Reverting to HTTP communication instead of HTTPs if a firewall is blocking us.
+* Version 1.0.4 - Bugfix release
+	* Fixed the bug which caused errors when upgrading the plugin from previous versions.
+	* Fixed category and tag mess when using Quick-edit.
+	* Admin pages run much faster due to statistics caching and faster DB queries.
+	* Fixed name of blog page in cms-navigation section.
+	* Fixed compatibility with openID plugin.
+	* Fixed a bug that was caused when pages/posts had no title.
+	* Added icl_object_id which returns the ID of translated objects.
+	* Fixed permlinks for newly created posts (autosave by WordPress).
+	* Fixed bug which prevented sub-pages from being excluded from the navigation.
+	* Simplified the content translation setup page.
