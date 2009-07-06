@@ -176,9 +176,12 @@ function icl_sitepress_activate(){
            $wpdb->insert($table_name, $pre);
        }         
    }   
-   
-               
-   delete_option('icl_sitepress_version');
+                  
+   if(get_option('icl_sitepress_version')){
+       icl_plugin_upgrade();               
+   }
+                  
+   delete_option('icl_sitepress_version');   
    add_option('icl_sitepress_version', ICL_SITEPRESS_VERSION, '', true);
 
     
