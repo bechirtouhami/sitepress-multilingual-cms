@@ -589,6 +589,10 @@ class SitePress{
             $user['interview_translators'] = $this->settings['interview_translators'];
                         
             $user['project_kind'] = $this->settings['website_kind'];
+            if(is_null($user['project_kind']) || $user['project_kind']==''){
+                $_POST['icl_form_errors'] = __('Please select the kind of website','sitepress');               
+                return;
+            }
             $user['pickup_type'] = intval($this->settings['translation_pickup_method']);
     
             $data['pickup_type'] = $this->settings['translation_pickup_method'];
