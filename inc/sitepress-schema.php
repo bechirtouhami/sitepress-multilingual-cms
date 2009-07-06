@@ -1,5 +1,8 @@
 <?php
 function icl_sitepress_activate(){
+    if(isset($_REQUEST['action']) && $_REQUEST['action'] == 'error_scrape'){
+        return;
+    }
     global $wpdb;
     global $EZSQL_ERROR;
     require_once(ICL_PLUGIN_PATH . '/inc/lang-data.inc');

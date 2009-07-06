@@ -1,6 +1,7 @@
 <?php
 
-if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '=')) return;
+if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '=') 
+    || (isset($_REQUEST['action']) && $_REQUEST['action'] == 'error_scrape') || !isset($wpdb) ) return;
 
 if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '0.9.3', '<')){
     require_once(ICL_PLUGIN_PATH . '/inc/lang-data.inc');      
