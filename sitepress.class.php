@@ -268,7 +268,6 @@ class SitePress{
             'language_home' => 1,
             'sync_page_ordering' => 1,
             'translated_document_status' => 0,
-            'website_kind' => 2,
             'translation_pickup_method' => 0,
             'notify_complete' => 1,
             'translated_document_status' => 1,
@@ -501,7 +500,16 @@ class SitePress{
                     });
                     jQuery('.column-categories a, .column-tags a, .column-posts a').each(function(){
                         jQuery(this).attr('href', jQuery(this).attr('href') + '&lang=<?php echo $this->get_current_language()?>');
-                    })                
+                    });
+                    <?php /*  needs jQuery 1.3
+                    jQuery('.column-categories a, .column-tags a, .column-posts a').live('mouseover', function(){
+                        if(-1 == jQuery(this).attr('href').search('lang='+icl_this_lang)){
+                            h = jQuery(this).attr('href');
+                            if(-1 == h.indexOf('?')) urlg = '?'; else urlg = '&';                            
+                            jQuery(this).attr('href', h + urlg + 'lang='+icl_this_lang);
+                        }
+                    });     
+                    */ ?>           
                 });
                 </script>
                 <?php
