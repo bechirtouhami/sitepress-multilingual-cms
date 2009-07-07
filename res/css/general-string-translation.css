@@ -1,0 +1,20 @@
+.icl-st-original{
+    padding:3px 3px 3px 0;
+}
+.icl-st-inline{
+    background: #DFDFDF url(../../../../wp-admin/images/gray-grad.png) repeat-x scroll left top;
+    border:1px solid #ddd;
+    padding:1px;
+    clear:both;
+    display: none;
+    
+}
+.icl-st-table{
+    width:100%;
+}
+.icl-st-table textarea{
+    font-size: 10px;
+    padding:1px;
+    margin:0;
+    line-height:normal;
+}

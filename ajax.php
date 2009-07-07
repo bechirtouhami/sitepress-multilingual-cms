@@ -339,6 +339,11 @@ switch($_REQUEST['icl_ajx_action']){
         echo '|';
         echo __('Translation complete','sitepress');
         break;    
+    
+    case 'icl_st_save_translation':
+        $icl_st_complete = isset($_POST['icl_st_translation_complete'])?$_POST['icl_st_translation_complete']:null;
+        echo icl_add_string_translation($_POST['icl_st_string_id'], $_POST['icl_st_language'], $_POST['icl_st_translation'], $icl_st_complete);
+        break;
     default:
         echo __('Invalid action','sitepress');                
 }    

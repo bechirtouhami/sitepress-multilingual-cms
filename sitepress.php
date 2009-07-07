@@ -47,6 +47,7 @@ require ICL_PLUGIN_PATH . '/sitepress.class.php';
 require ICL_PLUGIN_PATH . '/inc/functions.php';
 require ICL_PLUGIN_PATH . '/inc/hacks.php';
 require ICL_PLUGIN_PATH . '/inc/upgrade.php';
+require ICL_PLUGIN_PATH . '/inc/functions-general-string-translation.php';
 
 
 if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQUEST['action']!='activate-selected') 
@@ -81,4 +82,5 @@ register_activation_hook( __FILE__, 'icl_sitepress_activate' );
 register_deactivation_hook(__FILE__, 'icl_sitepress_deactivate');
 
 add_filter('plugin_action_links', 'icl_plugin_action_links', 10, 2); 
+
 ?>

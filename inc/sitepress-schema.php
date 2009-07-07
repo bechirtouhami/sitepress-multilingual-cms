@@ -176,6 +176,40 @@ function icl_sitepress_activate(){
            $wpdb->insert($table_name, $pre);
        }         
    }   
+   
+   /* general string translation */
+    $table_name = $wpdb->prefix.'icl_strings';
+    if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
+        $sql = "
+            CREATE TABLE `{$table_name}` (
+              `id` bigint(20) unsigned NOT NULL auto_increment,
+              `language` varchar(10) NOT NULL,
+              `context` varchar(160) NOT NULL,
+              `name` varchar(160) NOT NULL,
+              `value` text NOT NULL,
+              PRIMARY KEY  (`id`),
+              UNIQUE KEY `context_name` (`context`,`name`)
+            ) DEFAULT CHARSET=utf8";
+        mysql_query($sql);
+    }
+    $table_name = $wpdb->prefix.'icl_string_translations';
+    if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
+        $sql = "
+            CREATE TABLE `{$table_name}` (
+              `id` bigint(20) unsigned NOT NULL auto_increment,
+              `string_id` bigint(20) unsigned NOT NULL,
+              `language` varchar(10) NOT NULL,
+              `status` tinyint(4) NOT NULL,
+              `value` text NOT NULL,
+              PRIMARY KEY  (`id`),
+              UNIQUE KEY `string_language` (`string_id`,`language`)
+            ) DEFAULT CHARSET=utf8";
+        mysql_query($sql);
+    }
+    
+    
+    
+            
                   
    if(get_option('icl_sitepress_version')){
        icl_plugin_upgrade();               
