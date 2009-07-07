@@ -7,7 +7,9 @@ addLoadEvent(function(){
     jQuery('form[name="icl_plugins_texts"]').submit(iclSaveForm);
     jQuery('#icl_enable_content_translation').change(iclToggleContentTranslation);
     jQuery('a[href="#icl-ct-advanced-options"]').click(iclToggleAdvancedOptions);        
-    jQuery('input[name="icl_website_kind"]').click(iclQuickSaveWebsiteKind);
+    if(jQuery('input[name="icl_website_kind"]:checked').length==0){
+        jQuery('input[name="icl_website_kind"]').click(iclQuickSaveWebsiteKind);
+    }
     
 });
 
@@ -83,15 +85,12 @@ function iclValidateWebsiteKind(){
 }
 
 function iclQuickSaveWebsiteKind(){
-    if(jQuery('input[name="icl_website_kind"]:checked').length==1){
-        jQuery.ajax({
-            type: "POST",
-            url: icl_ajx_url,
-            data: "icl_ajx_action=icl_save_website_kind&icl_website_kind="+jQuery('input[name="icl_website_kind"]').val(),
-        });
-        return false;     
-    
-    }    
+    jQuery.ajax({
+        type: "POST",
+        url: icl_ajx_url,
+        data: "icl_ajx_action=icl_save_website_kind&icl_website_kind="+jQuery(this).val(),
+    });
+    return false;     
 }
 
 

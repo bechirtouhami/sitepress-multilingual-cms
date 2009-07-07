@@ -2,7 +2,7 @@
     require_once ICL_PLUGIN_PATH . '/sitepress.php';     
     require_once ICL_PLUGIN_PATH . '/inc/plugins-texts-functions.php';     
     $active_languages = $sitepress->get_active_languages();            
-    $sitepress_settings = $sitepress->get_settings();
+    $sitepress_settings = $sitepress->get_settings();    
     $icl_account_ready_errors = $sitepress->icl_account_reqs();
     $icl_plugins_texts = icl_pt_get_texts();
     icl_get_posts_translatable_fields();
