@@ -1,9 +1,9 @@
-=== WPML Multilingual CMS ===
+﻿=== WPML Multilingual CMS ===
 Contributors: ICanLocalize
 Tags: CMS, navigation, menus, menu, dropdown, css, sidebar, pages, i18n, translation, localization, language, multilingual, WPML
 Requires at least: 2.6
 Tested up to: 2.8.0
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 
 Turns any WordPress site into a fully featured multilingual content management system (CMS).
 
