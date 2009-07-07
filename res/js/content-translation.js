@@ -72,11 +72,11 @@ function iclToggleAdvancedOptions(){
 
 function iclValidateWebsiteKind(){
     jQuery('form[name="icl_more_options"] ul:first').css('border','none').css('padding','0');
-    jQuery('form[name="icl_more_options"] ul:first .icl_error_text').hide();    
+    jQuery('form[name="icl_more_options"] .icl_form_errors').fadeOut();
     iclHaltSave = false;
     if(jQuery('input[name="icl_website_kind"]:checked').length==0){
         jQuery('form[name="icl_more_options"] ul:first').css('border','1px solid red').css('padding','2px');
-        jQuery('form[name="icl_more_options"] ul:first .icl_error_text').show();
+        jQuery('form[name="icl_more_options"] .icl_form_errors').fadeIn();
         iclHaltSave = true;
         return false;
     }   

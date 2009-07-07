@@ -62,15 +62,15 @@
             <form name="icl_more_options" action="">
 
             <h3><?php echo __('What kind of website is this?','sitepress') ?></h3>
-            <ul>
-                <span class="icl_error_text" style="display:none"><?php echo __('Please select the kind of website','sitepress')?></span>
+            <div class="icl_form_errors" style="display:none;margin-bottom:1px;"><?php echo __('Please select the kind of website','sitepress')?></div>
+            <ul>                
                 <li>
                     <?php echo __("ICanLocalize needs to assign professional translators to each website that we translate. Please help us by indicating what kind of website you're setting up.", 'sitepress') ?><br />
                 </li>
-                <li>                    
+                <li> 
                     <ul>
                         <li>
-                            <label><input name="icl_website_kind" type="radio" value="0" <?php if($sitepress_settings['website_kind'] === 0): ?>checked="checked"<?php endif;?> /> <?php echo __("Test site - I'm only testing out the system and don't need to have translators assigned yet.", 'sitepress'); ?></label><br />
+                            <label><input name="icl_website_kind" type="radio" value="0" <?php if($sitepress_settings['website_kind'] === "0"): ?>checked="checked"<?php endif;?> /> <?php echo __("Test site - I'm only testing out the system and don't need to have translators assigned yet.", 'sitepress'); ?></label><br />
                         </li>
                         <li>
                             <label><input name="icl_website_kind" type="radio" value="1" <?php if($sitepress_settings['website_kind'] == 1): ?>checked="checked"<?php endif;?> /> <?php echo __("Development site with real contents - This site includes real contents that need to be translated, but still running on a development server.", 'sitepress'); ?></label><br />
