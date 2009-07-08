@@ -142,13 +142,18 @@ function icl_get_string_translations($offset=0){
         if(!isset($string_translations[$row['string_id']]['value'])){
             $string_translations[$row['string_id']]['value'] = $row['string_value'];
         }  
-        $string_translations[$row['string_id']]['translations'][$row['string_translation_language']] = array(
-            'id' => $row['string_translation_id'],
-            'status' => $row['string_translation_status'],
-            'value' => $row['string_translation_value'],
-        );      
+        if(!isset($string_translations[$row['string_id']]['language'])){
+            $string_translations[$row['string_id']]['language'] = $row['string_language'];
+        }                      
+        if(isset($row['string_translation_language'])){
+            $string_translations[$row['string_id']]['translations'][$row['string_translation_language']] = array(
+                'id' => $row['string_translation_id'],
+                'status' => $row['string_translation_status'],
+                'value' => $row['string_translation_value'],
+            );      
+        }
     }
-    
+        
     return $string_translations;
 }
 ?>
