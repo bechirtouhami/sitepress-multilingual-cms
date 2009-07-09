@@ -15,27 +15,73 @@ add_action('admin_menu', 'icl_st_administration_menu');
 add_action('plugins_loaded', 'icl_st_init');
 
 function icl_st_init(){
-    global $sitepress_settings, $sitepress;
-    if(isset($_POST['iclt_st_sw_save'])){
-            if(isset($_POST['icl_st_sw']['blog_title'])){
-                icl_register_string('WP','Blog Title',get_option('blog_title'));
+    global $sitepress_settings, $sitepress, $wpdb;
+    
+    if(!isset($sitepress_settings['st']['sw'])){
+        $sitepress_settings['st']['sw'] = array(
+            'blog_title' => 1,
+            'tagline' => 1,
+            'widget_titles' => 1,
+            'text_widgets' => 1
+        );
+        $sitepress->save_settings($sitepress_settings); 
+        $init_all = true;
+    }
+    
+    if(isset($_POST['iclt_st_sw_save']) || isset($init_all)){
+            if(isset($_POST['icl_st_sw']['blog_title']) || isset($init_all)){
+                icl_register_string('WP',__('Blog Title','sitepress'),get_option('blogname'));
             }
-            if(isset($_POST['icl_st_sw']['tagline'])){
-                icl_register_string('WP','Tagline',get_option('blogdescription'));
-            }  
-            if(isset($_POST['icl_st_sw']['widget_titles'])){
-                icl_register_string('WP','Tagline',get_option('blogdescription'));
-            }  
-            if(isset($_POST['icl_st_sw']['text_widgets'])){
-                icl_register_string('WP','Tagline',get_option('blogdescription'));
+            if(isset($_POST['icl_st_sw']['tagline']) || isset($init_all)){
+                icl_register_string('WP',__('Tagline', 'sitepress'),get_option('blogdescription'));
+            }              
+            if(isset($_POST['icl_st_sw']['widget_titles']) || isset($init_all)){
+                $widget_groups = $wpdb->get_results("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE 'widget\\_%'");
+                foreach($widget_groups as $wg){
+                    $name = str_replace('widget_','',$wg->option_name);
+                    $value = unserialize($wg->option_value);
+                    if(is_array($value)){                        
+                        foreach($value as $w){
+                            if(!empty($w) && isset($w['title'])){
+                                //icl_register_string('Widgets',$name . ' ' . $w['title'], $w['title']);    
+                                icl_register_string('Widgets', 'widget_title_' . $w['title'], $w['title']);    
+                            }
+                        }
+                    }
+                }
             }  
             
-            
+            if(isset($_POST['icl_st_sw']['text_widgets']) || isset($init_all)){
+                $widget_text = get_option('widget_text');
+                if(is_array($widget_text)){
+                    foreach($widget_text as $w){
+                        if(!empty($w) && isset($w['title'])){
+                            //icl_register_string('Widgets','text_widget_' . $w['title'], $w['text']);
+                            icl_register_string('Widgets','text_widget_' . $w['text'], $w['text']);
+                        }
+                    }
+                }
+            }  
                       
             $sitepress_settings['st']['sw'] = $_POST['icl_st_sw'];
             $sitepress->save_settings($sitepress_settings); 
             wp_redirect($_SERVER['REQUEST_URI'].'&updated=true');
     }
+    
+    // hook into blog title and tag line
+    if($sitepress_settings['st']['sw']['blog_title']){
+        add_filter('option_blogname', 'icl_sw_filters_blogname');
+    }
+    if($sitepress_settings['st']['sw']['tagline']){
+        add_filter('option_blogdescription', 'icl_sw_filters_blogdescription');
+    }
+    if($sitepress_settings['st']['sw']['widget_titles']){
+        add_filter('widget_title', 'icl_sw_filters_widget_title');
+    }
+    if($sitepress_settings['st']['sw']['widget_text']){
+        add_filter('widget_text', 'icl_sw_filters_widget_text');
+    }
+    
 }
 
 function icl_st_administration_menu(){
@@ -286,4 +332,25 @@ function icl_get_string_translations($offset=0){
     }  
     return $string_translations;
 }
+
+
+function icl_sw_filters_blogname($val){
+    return icl_t('WP', 'Blog Title', $val);
+}
+
+function icl_sw_filters_blogdescription($val){
+    return icl_t('WP', 'Tagline', $val);
+}
+
+function icl_sw_filters_widget_title($val){
+    //return icl_t('Widgets', 'categories ' . $val , $val);
+    return icl_t('Widgets', 'widget_title_' . $val , $val);
+    
+}
+
+function icl_sw_filters_widget_text($val){
+    return icl_t('Widgets', 'widget_text_' . $val , $val);
+}
+
+
 ?>
