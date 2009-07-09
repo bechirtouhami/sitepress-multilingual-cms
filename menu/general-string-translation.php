@@ -44,10 +44,13 @@ $active_languages = $sitepress->get_active_languages();
                 <td><?php echo htmlentities($icl_string['context']); ?></td>
                 <td><?php echo htmlentities($icl_string['name']); ?></td>
                 <td width="70%">                                        
-                    <div class="icl-st-original">                    
+                    <div class="icl-st-original" style="float:left;">                    
                     <?php echo htmlentities($icl_string['value']); ?>                    
                     </div>                    
-                    <a href="#icl-st-toggle-translations" style="float:right"><?php echo __('translations','sitepress') ?></a>
+                    <div style="float:right;">
+                        <a href="#icl-st-toggle-translations"><?php echo __('translations','sitepress') ?></a>
+                    </div>
+                    <br clear="all" />
                     <div class="icl-st-inline">                        
                         <?php foreach($active_languages as $lang): if($lang['code'] == $sitepress->get_current_language()) continue;  ?>
                         <form class="icl_st_form" name="icl_st_form_<?php echo $string_id ?>">
@@ -90,5 +93,28 @@ $active_languages = $sitepress->get_active_languages();
         </tbody>
     </table>      
     
+    
+    <div class="tablenav">
+    <?php                 
+        $page_links = paginate_links( array(
+            'base' => add_query_arg('paged', '%#%' ),
+            'format' => '',
+            'prev_text' => __('&laquo;'),
+            'next_text' => __('&raquo;'),
+            'total' => $wp_query->max_num_pages,
+            'current' => $_GET['paged'],
+            'add_args' => isset($icl_translation_filter)?$icl_translation_filter:array() 
+        ));         
+    ?>
+    <?php if ( $page_links ) { ?>
+    <div class="tablenav-pages"><?php $page_links_text = sprintf( '<span class="displaying-num">' . __( 'Displaying %s&#8211;%s of %s', 'sitepress' ) . '</span>%s',
+        number_format_i18n( ( $_GET['paged'] - 1 ) * $wp_query->query_vars['posts_per_page'] + 1 ),
+        number_format_i18n( min( $_GET['paged'] * $wp_query->query_vars['posts_per_page'], $wp_query->found_posts ) ),
+        number_format_i18n( $wp_query->found_posts ),
+        $page_links
+    ); echo $page_links_text; ?></div>
+    <?php } ?>            
+    </div>
+    </div>
     
 </div>

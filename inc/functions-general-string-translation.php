@@ -179,16 +179,20 @@ function icl_add_string_translation($string_id, $language, $value, $status = fal
 }
 
 function icl_get_string_translations($offset=0){
-    global $wpdb, $sitepress, $sitepress_settings;
+    global $wpdb, $sitepress, $sitepress_settings, $wp_query;
+    $limit = 10;
     
     $extra_cond = "";
     if($sitepress_settings['st']['filter'] != -1){
         $extra_cond .= " AND s.status = " . $sitepress_settings['st']['filter'];
     }
     
+    if(!isset($_GET['paged'])) $_GET['paged'] = 1;
+    $offset = ($_GET['paged']-1)*$limit;
+    
     $string_translations = array();
     $res = mysql_query("
-        SELECT s.id AS string_id, s.language AS string_language, s.context AS string_context, s.name AS string_name, s.value AS string_value, s.status AS string_status,
+        SELECT SQL_CALC_FOUND_ROWS s.id AS string_id, s.language AS string_language, s.context AS string_context, s.name AS string_name, s.value AS string_value, s.status AS string_status,
                 st.id AS string_translation_id, st.language AS string_translation_language, st.status AS string_translation_status, st.value AS string_translation_value  
         FROM  {$wpdb->prefix}icl_strings s 
         LEFT JOIN  {$wpdb->prefix}icl_string_translations st ON s.id = st.string_id
@@ -196,8 +200,14 @@ function icl_get_string_translations($offset=0){
             s.language = '".$sitepress->get_default_language()."'
             AND (st.language <> '".$sitepress->get_default_language()."' OR st.language IS NULL) 
             {$extra_cond}
-        ORDER BY string_context ASC, string_translation_language ASC     
+        ORDER BY string_id DESC, string_translation_language ASC     
+        LIMIT {$offset},{$limit}
     ");
+    
+    
+    $wp_query->found_posts = $wpdb->get_var("SELECT FOUND_ROWS()");
+    $wp_query->query_vars['posts_per_page'] = $limit;
+    $wp_query->max_num_pages = ceil($wp_query->found_posts/$limit);
     
     if($res){    
         

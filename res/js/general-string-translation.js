@@ -8,10 +8,11 @@ jQuery(document).ready(function(){
 
 function icl_st_toggler(){
     jQuery(".icl-st-inline").slideUp();
-    if(jQuery(this).next().css('display') == 'none'){
-        jQuery(this).next().slideDown();            
+    var inl = jQuery(this).parent().next().next();
+    if(inl.css('display') == 'none'){
+        inl.slideDown();            
     }else{
-        jQuery(this).next().slideUp();            
+        inl.slideUp();            
     }
 }
 
@@ -52,7 +53,7 @@ function icl_st_submit_translation(){
 function icl_st_filter(){
     postvars = 'icl_ajx_action=icl_st_filter&value='+jQuery(this).val();
     jQuery.post(icl_ajx_url, postvars, function(msg){
-        location.href=location.href.replace(/#(.*)$/,'');
+        location.href=location.href.replace(/#(.*)$/,'').replace(/&paged=([0-9]+)/,'');
     });
 }
 
