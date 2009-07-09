@@ -111,13 +111,15 @@ function icl_unregister_string($context, $name){
     }
 }  
 
-function icl_t($context, $name, $original_value){
+function icl_t($context, $name, $original_value=""){
     global $wpdb, $sitepress;
+    
+    if(!$original_value) $original_value = $name;
     
     if($sitepress->get_current_language() == $sitepress->get_default_language()){
         $value = $wpdb->get_var("SELECT value FROM {$wpdb->prefix}icl_strings  WHERE context='".$wpdb->escape($context)."' AND name='".$wpdb->escape($name)."'");
         if(!$value){
-            trigger_error(sprintf('String not found','sitepress'), E_USER_WARNING);
+            trigger_error(__('String not found','sitepress'), E_USER_WARNING);
             $value = $original_value;
         }
     }else{
@@ -129,9 +131,8 @@ function icl_t($context, $name, $original_value){
                 AND s.name='".$wpdb->escape($name)."'
                 AND st.language = '{$sitepress->get_current_language()}'             
         ");
-        
         if(!$res){
-            trigger_error(sprintf('String not found','sitepress'), E_USER_WARNING);
+            trigger_error(__('String not found','sitepress'), E_USER_WARNING);
             $value = $original_value;
         }else{
             if($res->string_translation_value && $res->status == ICL_STRING_TRANSLATION_COMPLETE){

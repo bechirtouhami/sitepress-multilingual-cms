@@ -141,7 +141,7 @@ class CMSNavigation{
         
         $order = $this->settings['page_order']?$this->settings['page_order']:'menu_order';
         $show_cat_menu = $this->settings['show_cat_menu']?$this->settings['show_cat_menu']:false;
-        $cat_menu_title = $this->settings['cat_menu_title']?$this->settings['cat_menu_title']:__('News', 'sitepress');
+        $cat_menu_title = $this->settings['cat_menu_title']?icl_t('WPML', 'Categories Menu', $this->settings['cat_menu_title']):__('News', 'sitepress');
         
         if(0 === strpos('page', get_option('show_on_front'))){
             $page_on_front = (int)get_option('page_on_front'); 
@@ -237,8 +237,7 @@ class CMSNavigation{
                 <?php   
             }
             //add categories
-            
-            if($show_cat_menu){
+            if($show_cat_menu){                
                 if($page_for_posts){
                     $blog_url = get_permalink($page_for_posts);                    
                     $blog_name = apply_filters('icl_nav_page_html', $page_for_posts, 0);
