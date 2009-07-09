@@ -12,6 +12,31 @@ define('ICL_STRING_TRANSLATION_NEEDS_UPDATE', 2);
 define('ICL_STRING_TRANSLATION_PARTIAL', 3);
 
 add_action('admin_menu', 'icl_st_administration_menu');
+add_action('plugins_loaded', 'icl_st_init');
+
+function icl_st_init(){
+    global $sitepress_settings, $sitepress;
+    if(isset($_POST['iclt_st_sw_save'])){
+            if(isset($_POST['icl_st_sw']['blog_title'])){
+                icl_register_string('WP','Blog Title',get_option('blog_title'));
+            }
+            if(isset($_POST['icl_st_sw']['tagline'])){
+                icl_register_string('WP','Tagline',get_option('blogdescription'));
+            }  
+            if(isset($_POST['icl_st_sw']['widget_titles'])){
+                icl_register_string('WP','Tagline',get_option('blogdescription'));
+            }  
+            if(isset($_POST['icl_st_sw']['text_widgets'])){
+                icl_register_string('WP','Tagline',get_option('blogdescription'));
+            }  
+            
+            
+                      
+            $sitepress_settings['st']['sw'] = $_POST['icl_st_sw'];
+            $sitepress->save_settings($sitepress_settings); 
+            wp_redirect($_SERVER['REQUEST_URI'].'&updated=true');
+    }
+}
 
 function icl_st_administration_menu(){
     global $sitepress_settings, $sitepress;
@@ -188,7 +213,7 @@ function icl_get_string_translations($offset=0){
     $limit = 10;
     
     $extra_cond = "";
-    if($sitepress_settings['st']['filter'] != -1){
+    if(isset($sitepress_settings['st']['filter']) && $sitepress_settings['st']['filter'] != -1){
         $extra_cond .= " AND s.status = " . $sitepress_settings['st']['filter'];
     }
     

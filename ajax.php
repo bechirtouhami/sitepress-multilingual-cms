@@ -351,7 +351,6 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings['st']['filter'] = (int)$_POST['value'];
         $sitepress->save_settings($iclsettings);
         break;
-    
     default:
         echo __('Invalid action','sitepress');                
 }    

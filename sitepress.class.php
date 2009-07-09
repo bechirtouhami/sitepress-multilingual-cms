@@ -245,7 +245,13 @@ class SitePress{
     function save_settings($settings=null){
         if(!is_null($settings)){
             foreach($settings as $k=>$v){
-                $this->settings[$k] = $v;
+                if(is_array($v)){
+                    foreach($v as $k2=>$v2){
+                        $this->settings[$k][$k2] = $v2;
+                    }
+                }else{
+                    $this->settings[$k] = $v;
+                }
             }        
         }
         update_option('icl_sitepress_settings', $this->settings);

@@ -10,6 +10,25 @@ $active_languages = $sitepress->get_active_languages();
     <h2><?php echo __('General String Translation', 'sitepress') ?></h2>    
     
     <p>
+    <h4 style="margin-bottom:0"><?php echo __('Site wide texts', 'sitepress')?></h4>
+    <form id="icl_st_sw_form" name="icl_st_sw_form" method="post" action="">
+    <p class="icl_form_errors" style="display:none"></p>
+    <ul>
+        <li><label><input type="checkbox" name="icl_st_sw[blog_title]" value="1" <?php if($sitepress_settings['st']['sw']['blog_title']): ?>checked="checked"<?php endif ?> /> 
+            <?php echo __('Blog Title', 'sitepress'); ?></label></li>
+        <li><label><input type="checkbox" name="icl_st_sw[tagline]" value="1" <?php if($sitepress_settings['st']['sw']['tagline']): ?>checked="checked"<?php endif ?> /> 
+            <?php echo __('Tagline', 'sitepress'); ?></label></li>
+        <li><label><input type="checkbox" name="icl_st_sw[widget_titles]" value="1" <?php if($sitepress_settings['st']['sw']['widget_titles']): ?>checked="checked"<?php endif ?> /> 
+            <?php echo __('Widget titles', 'sitepress'); ?></label></li>
+        <li><label><input type="checkbox" name="icl_st_sw[text_widgets]" value="1" <?php if($sitepress_settings['st']['sw']['text_widgets']): ?>checked="checked"<?php endif ?> /> 
+            <?php echo __('Content for text-widgets', 'sitepress'); ?></label></li>
+    </ul>
+    <input class="button-secondary" type="submit" name="iclt_st_sw_save" value="<?php echo __('Save', 'sitepress')?>" />
+    <span class="icl_ajx_response" style="display:inline"><?php if(isset($_GET['updated']) && $_GET['updated']=='true') echo __('Settings saved', 'sitepress') ?></span>
+    </form>
+    </p>
+    
+    <p>
     <select name="icl_st_filter">
         <option value="-1" <?php if($sitepress_settings['st']['filter']==-1):?>selected="selected"<?php endif;?>><?php echo __('All strings', 'sitepress') ?></option>
         <option value="<?php echo ICL_STRING_TRANSLATION_NOT_TRANSLATED ?>" <?php if($sitepress_settings['st']['filter']===ICL_STRING_TRANSLATION_NOT_TRANSLATED):?>selected="selected"<?php endif;?>><?php echo ICL_STRING_TRANSLATION_NOT_TRANSLATED_STR ?></option>
