@@ -1,4 +1,7 @@
 <?php 
+if((!isset($sitepress_settings['existing_content_language_verified']) || !$sitepress_settings['existing_content_language_verified']) || 2 > count($sitepress->get_active_languages())){
+    return;
+}
 $icl_string_translations = icl_get_string_translations();
 $active_languages = $sitepress->get_active_languages();            
 ?>

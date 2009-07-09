@@ -14,6 +14,10 @@ define('ICL_STRING_TRANSLATION_PARTIAL', 3);
 add_action('admin_menu', 'icl_st_administration_menu');
 
 function icl_st_administration_menu(){
+    global $sitepress_settings, $sitepress;
+    if((!isset($sitepress_settings['existing_content_language_verified']) || !$sitepress_settings['existing_content_language_verified']) || 2 > count($sitepress->get_active_languages())){
+        return;
+    }
     add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('General String Translation','sitepress'), __('General String Translation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/general-string-translation.php');  
 }
    
@@ -107,14 +111,14 @@ function icl_unregister_string($context, $name){
     }
 }  
 
-function icl_t($context, $name){
+function icl_t($context, $name, $original_value){
     global $wpdb, $sitepress;
     
     if($sitepress->get_current_language() == $sitepress->get_default_language()){
         $value = $wpdb->get_var("SELECT value FROM {$wpdb->prefix}icl_strings  WHERE context='".$wpdb->escape($context)."' AND name='".$wpdb->escape($name)."'");
         if(!$value){
-            trigger_error(sprintf('String not found','sitepress'), E_USER_ERROR);
-            $value = $name;
+            trigger_error(sprintf('String not found','sitepress'), E_USER_WARNING);
+            $value = $original_value;
         }
     }else{
         $res = $wpdb->get_row("
@@ -127,13 +131,13 @@ function icl_t($context, $name){
         ");
         
         if(!$res){
-            trigger_error(sprintf('String not found','sitepress'), E_USER_ERROR);
-            $value = $name;
+            trigger_error(sprintf('String not found','sitepress'), E_USER_WARNING);
+            $value = $original_value;
         }else{
             if($res->string_translation_value && $res->status == ICL_STRING_TRANSLATION_COMPLETE){
                 $value = $res->string_translation_value;
             }else{
-                $value = $res->string_value;
+                $value = $original_value;
             }
         }        
     }
