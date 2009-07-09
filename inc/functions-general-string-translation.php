@@ -1,8 +1,15 @@
 <?php
 
+define('ICL_STRING_TRANSLATION_COMPLETE_STR', __('Translation complete','sitepress'));
+define('ICL_STRING_TRANSLATION_PARTIAL_STR', __('Partial translation','sitepress'));
+define('ICL_STRING_TRANSLATION_NEEDS_UPDATE_STR', __('Translation needs update','sitepress'));
+define('ICL_STRING_TRANSLATION_NOT_TRANSLATED_STR', __('Not translated','sitepress'));
+
+
 define('ICL_STRING_TRANSLATION_NOT_TRANSLATED', 0);
 define('ICL_STRING_TRANSLATION_COMPLETE', 1);
 define('ICL_STRING_TRANSLATION_NEEDS_UPDATE', 2);
+define('ICL_STRING_TRANSLATION_PARTIAL', 3);
 
 add_action('admin_menu', 'icl_st_administration_menu');
 
@@ -13,7 +20,7 @@ function icl_st_administration_menu(){
 function icl_register_string($context, $name, $value){
     global $wpdb, $sitepress;
     $language = $sitepress->get_default_language();
-    $res = $wpdb->get_row("SELECT id, value FROM {$wpdb->prefix}icl_strings WHERE context='".$wpdb->escape($context)."' AND name='".$wpdb->escape($name)."'");
+    $res = $wpdb->get_row("SELECT id, value, status FROM {$wpdb->prefix}icl_strings WHERE context='".$wpdb->escape($context)."' AND name='".$wpdb->escape($name)."'");
     if($res){
         $string_id = $res->id;
         $update_string = array();
@@ -26,6 +33,7 @@ function icl_register_string($context, $name, $value){
         if(!empty($update_string)){
             $wpdb->update($wpdb->prefix.'icl_strings', $update_string, array('id'=>$string_id));
             $wpdb->update($wpdb->prefix.'icl_string_translations', array('status'=>ICL_STRING_TRANSLATION_NEEDS_UPDATE), array('string_id'=>$string_id));
+            icl_update_string_status($string_id);
         }        
     }else{
         $string = array(
@@ -33,6 +41,7 @@ function icl_register_string($context, $name, $value){
             'context' => $context,
             'name' => $name,
             'value' => $value,
+            'status' => ICL_STRING_TRANSLATION_NOT_TRANSLATED,
         );
         $wpdb->insert($wpdb->prefix.'icl_strings', $string);
         $string_id = $wpdb->insert_id;
@@ -40,6 +49,54 @@ function icl_register_string($context, $name, $value){
     
     
 }  
+
+function icl_update_string_status($string_id){
+    global $wpdb, $sitepress;    
+    $st = $wpdb->get_results("SELECT language, status FROM {$wpdb->prefix}icl_string_translations WHERE string_id={$string_id}");    
+    if($st){        
+        foreach($st as $t){
+            $translations[$t->language] = $t->status;
+        }
+        $active_languages = $sitepress->get_active_languages();
+        
+        $_not_translated = true;
+        $_complete = true;
+        $_partial = false;
+        $_needs_update = false;                
+        foreach($active_languages as $lang){
+            if($lang['code'] == $sitepress->get_current_language()) continue; 
+            switch($translations[$lang['code']]){
+                case ICL_STRING_TRANSLATION_NOT_TRANSLATED:
+                    $_complete = false;                            
+                    break;
+                case ICL_STRING_TRANSLATION_COMPLETE:
+                    $_partial = true;
+                    break;
+                case ICL_STRING_TRANSLATION_NEEDS_UPDATE:
+                    $_needs_update = true;
+                    $_complete = false;
+                    $_partial = false;
+                    break;
+                default:
+                    $_complete = false;                            
+            }                    
+        }
+        
+        if($_complete){
+            $status = ICL_STRING_TRANSLATION_COMPLETE;
+        }elseif($_partial){
+            $status = ICL_STRING_TRANSLATION_PARTIAL;
+        }elseif($_needs_update){
+            $status = ICL_STRING_TRANSLATION_NEEDS_UPDATE;
+        }        
+        
+    }else{
+        $status = ICL_STRING_TRANSLATION_NOT_TRANSLATED;        
+    }
+    
+    $wpdb->update($wpdb->prefix.'icl_strings', array('status'=>$status), array('id'=>$string_id));
+    
+}
 
 function icl_unregister_string($context, $name){
     global $wpdb; 
@@ -115,45 +172,78 @@ function icl_add_string_translation($string_id, $language, $value, $status = fal
         $wpdb->insert($wpdb->prefix.'icl_string_translations', $st);
         $st_id = $wpdb->insert_id;
     }    
+    
+    icl_update_string_status($string_id);
+    
     return $st_id;
 }
 
 function icl_get_string_translations($offset=0){
-    global $wpdb, $sitepress;
+    global $wpdb, $sitepress, $sitepress_settings;
+    
+    $extra_cond = "";
+    if($sitepress_settings['st']['filter'] != -1){
+        $extra_cond .= " AND s.status = " . $sitepress_settings['st']['filter'];
+    }
+    
     $string_translations = array();
     $res = mysql_query("
-        SELECT s.id AS string_id, s.language AS string_language, s.context AS string_context, s.name AS string_name, s.value AS string_value,
+        SELECT s.id AS string_id, s.language AS string_language, s.context AS string_context, s.name AS string_name, s.value AS string_value, s.status AS string_status,
                 st.id AS string_translation_id, st.language AS string_translation_language, st.status AS string_translation_status, st.value AS string_translation_value  
         FROM  {$wpdb->prefix}icl_strings s 
         LEFT JOIN  {$wpdb->prefix}icl_string_translations st ON s.id = st.string_id
         WHERE 
             s.language = '".$sitepress->get_default_language()."'
             AND (st.language <> '".$sitepress->get_default_language()."' OR st.language IS NULL) 
+            {$extra_cond}
         ORDER BY string_context ASC, string_translation_language ASC     
     ");
-    if($res)
-    while($row = mysql_fetch_array($res, MYSQL_ASSOC)){
-        if(!isset($string_translations[$row['string_id']]['context'])){
-            $string_translations[$row['string_id']]['context'] = $row['string_context'];
-        }
-        if(!isset($string_translations[$row['string_id']]['name'])){
-            $string_translations[$row['string_id']]['name'] = $row['string_name'];
-        }        
-        if(!isset($string_translations[$row['string_id']]['value'])){
-            $string_translations[$row['string_id']]['value'] = $row['string_value'];
-        }  
-        if(!isset($string_translations[$row['string_id']]['language'])){
-            $string_translations[$row['string_id']]['language'] = $row['string_language'];
-        }                      
-        if(isset($row['string_translation_language'])){
-            $string_translations[$row['string_id']]['translations'][$row['string_translation_language']] = array(
-                'id' => $row['string_translation_id'],
-                'status' => $row['string_translation_status'],
-                'value' => $row['string_translation_value'],
-            );      
-        }
-    }
+    
+    if($res){    
         
+        while($row = mysql_fetch_array($res, MYSQL_ASSOC)){
+            if(!isset($string_translations[$row['string_id']]['context'])){
+                $string_translations[$row['string_id']]['context'] = $row['string_context'];
+            }
+            if(!isset($string_translations[$row['string_id']]['name'])){
+                $string_translations[$row['string_id']]['name'] = $row['string_name'];
+            }        
+            if(!isset($string_translations[$row['string_id']]['value'])){
+                $string_translations[$row['string_id']]['value'] = $row['string_value'];
+            }  
+            if(!isset($string_translations[$row['string_id']]['language'])){
+                $string_translations[$row['string_id']]['language'] = $row['string_language'];
+            }                      
+            if(!isset($string_translations[$row['string_id']]['status'])){
+                switch($row['string_status']){
+                    case ICL_STRING_TRANSLATION_COMPLETE: 
+                        $string_translations[$row['string_id']]['status'] = ICL_STRING_TRANSLATION_COMPLETE_STR; 
+                        break;
+                    case ICL_STRING_TRANSLATION_NEEDS_UPDATE: 
+                        $string_translations[$row['string_id']]['status'] = ICL_STRING_TRANSLATION_NEEDS_UPDATE_STR; 
+                        break;
+                    case ICL_STRING_TRANSLATION_PARTIAL: 
+                        $string_translations[$row['string_id']]['status'] = ICL_STRING_TRANSLATION_PARTIAL_STR; 
+                        break;
+                    case ICL_STRING_TRANSLATION_NOT_TRANSLATED: 
+                        $string_translations[$row['string_id']]['status'] = ICL_STRING_TRANSLATION_NOT_TRANSLATED_STR; 
+                        break;                                                                                         
+                    default:                        
+                        $string_translations[$row['string_id']]['status'] = ICL_STRING_TRANSLATION_NOT_TRANSLATED_STR; 
+                };
+            }                      
+            if(isset($row['string_translation_language'])){
+                $string_translations[$row['string_id']]['translations'][$row['string_translation_language']] = array(
+                    'id' => $row['string_translation_id'],
+                    'status' => $row['string_translation_status'],
+                    'value' => $row['string_translation_value'],
+                );      
+            }
+        }
+        
+        $active_languages = $sitepress->get_active_languages();
+            
+    }  
     return $string_translations;
 }
 ?>

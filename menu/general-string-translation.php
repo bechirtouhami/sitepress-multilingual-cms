@@ -6,39 +6,51 @@ $active_languages = $sitepress->get_active_languages();
     <div id="icon-options-general" class="icon32"><br /></div>
     <h2><?php echo __('General String Translation', 'sitepress') ?></h2>    
     
+    <p>
+    <select name="icl_st_filter">
+        <option value="-1" <?php if($sitepress_settings['st']['filter']==-1):?>selected="selected"<?php endif;?>><?php echo __('All strings', 'sitepress') ?></option>
+        <option value="<?php echo ICL_STRING_TRANSLATION_NOT_TRANSLATED ?>" <?php if($sitepress_settings['st']['filter']===ICL_STRING_TRANSLATION_NOT_TRANSLATED):?>selected="selected"<?php endif;?>><?php echo ICL_STRING_TRANSLATION_NOT_TRANSLATED_STR ?></option>
+        <option value="<?php echo ICL_STRING_TRANSLATION_COMPLETE ?>" <?php if($sitepress_settings['st']['filter']===ICL_STRING_TRANSLATION_COMPLETE):?>selected="selected"<?php endif;?>><?php echo ICL_STRING_TRANSLATION_COMPLETE_STR ?></option>
+        <option value="<?php echo ICL_STRING_TRANSLATION_NEEDS_UPDATE ?>" <?php if($sitepress_settings['st']['filter']===ICL_STRING_TRANSLATION_NEEDS_UPDATE):?>selected="selected"<?php endif;?>><?php echo ICL_STRING_TRANSLATION_NEEDS_UPDATE_STR ?></option>
+        <option value="<?php echo ICL_STRING_TRANSLATION_PARTIAL ?>" <?php if($sitepress_settings['st']['filter']===ICL_STRING_TRANSLATION_PARTIAL):?>selected="selected"<?php endif;?>><?php echo ICL_STRING_TRANSLATION_PARTIAL_STR ?></option>
+    </select>
+    </p>
+    
     <table id="icl_string_translations" class="widefat" cellspacing="0">
         <thead>
             <tr>
                 <th scope="col"><?php echo __('Context', 'sitepress') ?></th>
                 <th scope="col"><?php echo __('Name', 'sitepress') ?></th>
                 <th scope="col"><?php echo __('String', 'sitepress') ?></th>        
+                <th scope="col"><?php echo __('Status', 'sitepress') ?></th>
             </tr>        
         </thead>        
         <tfoot>
             <tr>
                 <th scope="col"><?php echo __('Context', 'sitepress') ?></th>
                 <th scope="col"><?php echo __('Name', 'sitepress') ?></th>
-                <th scope="col"><?php echo __('String', 'sitepress') ?></th>        
+                <th scope="col"><?php echo __('String', 'sitepress') ?></th>
+                <th scope="col"><?php echo __('Status', 'sitepress') ?></th>        
             </tr>        
         </tfoot>                
         <tbody>
             <?php if(empty($icl_string_translations)):?> 
             <tr>
-                <td colspan="3"><?php echo __('No string registered', 'sitepress')?></td>
+                <td colspan="4" align="center"><?php echo __('No strings found', 'sitepress')?></td>
             </tr>
             <?php else: ?>
             <?php foreach($icl_string_translations as $string_id=>$icl_string): ?> 
-            <tr>
+            <tr valign="top">
                 <td><?php echo htmlentities($icl_string['context']); ?></td>
                 <td><?php echo htmlentities($icl_string['name']); ?></td>
-                <td width="70%">                    
-                    <div class="icl-st-original">
+                <td width="70%">                                        
+                    <div class="icl-st-original">                    
                     <?php echo htmlentities($icl_string['value']); ?>                    
-                    </div>
+                    </div>                    
                     <a href="#icl-st-toggle-translations" style="float:right"><?php echo __('translations','sitepress') ?></a>
                     <div class="icl-st-inline">                        
                         <?php foreach($active_languages as $lang): if($lang['code'] == $sitepress->get_current_language()) continue;  ?>
-                        <form class="icl_st_form">
+                        <form class="icl_st_form" name="icl_st_form_<?php echo $string_id ?>">
                         <input type="hidden" name="icl_st_language" value="<?php echo $lang['code'] ?>" />                        
                         <input type="hidden" name="icl_st_string_id" value="<?php echo $string_id ?>" />                        
                         <table class="icl-st-table">
@@ -68,6 +80,9 @@ $active_languages = $sitepress->get_active_languages();
                             </form>
                             <?php endforeach;?>
                     </div>
+                </td>
+                <td nowrap="nowrap">
+                <?php echo $icl_string['status'] ?>    
                 </td>
             </tr>            
             <?php endforeach;?>

@@ -187,6 +187,7 @@ function icl_sitepress_activate(){
               `context` varchar(160) NOT NULL,
               `name` varchar(160) NOT NULL,
               `value` text NOT NULL,
+              `status` TINYINT NOT NULL,
               PRIMARY KEY  (`id`),
               UNIQUE KEY `context_name` (`context`,`name`)
             ) DEFAULT CHARSET=utf8";

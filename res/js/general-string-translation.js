@@ -3,6 +3,7 @@ jQuery(document).ready(function(){
     jQuery('.icl-st-inline textarea').focus(icl_st_monitor_ta);
     jQuery('.icl-st-inline textarea').keyup(icl_st_monitor_ta_check_modifications);
     jQuery(".icl_st_form").submit(icl_st_submit_translation);
+    jQuery('select[name="icl_st_filter"]').change(icl_st_filter);
 });
 
 function icl_st_toggler(){
@@ -47,5 +48,11 @@ function icl_st_submit_translation(){
         thisf.contents().find('.icl_ajx_loader').fadeOut();
     })
     return false;
+}
+function icl_st_filter(){
+    postvars = 'icl_ajx_action=icl_st_filter&value='+jQuery(this).val();
+    jQuery.post(icl_ajx_url, postvars, function(msg){
+        location.href=location.href.replace(/#(.*)$/,'');
+    });
 }
 
