@@ -1,18 +1,24 @@
 <?php
 
-define('ICL_STRING_TRANSLATION_COMPLETE_STR', __('Translation complete','sitepress'));
-define('ICL_STRING_TRANSLATION_PARTIAL_STR', __('Partial translation','sitepress'));
-define('ICL_STRING_TRANSLATION_NEEDS_UPDATE_STR', __('Translation needs update','sitepress'));
-define('ICL_STRING_TRANSLATION_NOT_TRANSLATED_STR', __('Not translated','sitepress'));
-
-
 define('ICL_STRING_TRANSLATION_NOT_TRANSLATED', 0);
 define('ICL_STRING_TRANSLATION_COMPLETE', 1);
 define('ICL_STRING_TRANSLATION_NEEDS_UPDATE', 2);
 define('ICL_STRING_TRANSLATION_PARTIAL', 3);
+$icl_st_string_translation_statuses = array(
+    ICL_STRING_TRANSLATION_COMPLETE => __('Translation complete','sitepress'),
+    ICL_STRING_TRANSLATION_PARTIAL => __('Partial translation','sitepress'),
+    ICL_STRING_TRANSLATION_NEEDS_UPDATE => __('Translation needs update','sitepress'),
+    ICL_STRING_TRANSLATION_NOT_TRANSLATED => __('Not translated','sitepress')
+);
 
-add_action('admin_menu', 'icl_st_administration_menu');
+
+//add_action('admin_menu', 'icl_st_administration_menu');
 add_action('plugins_loaded', 'icl_st_init');
+add_action('icl_update_active_languages', 'icl_update_string_status_all');
+
+add_action('update_option_blogname', 'icl_st_update_blogname_actions',5,2);
+add_action('update_option_blogdescription', 'icl_st_update_blogdescription_actions',5,2);
+
 
 function icl_st_init(){
     global $sitepress_settings, $sitepress, $wpdb;
@@ -30,10 +36,10 @@ function icl_st_init(){
     
     if(isset($_POST['iclt_st_sw_save']) || isset($init_all)){
             if(isset($_POST['icl_st_sw']['blog_title']) || isset($init_all)){
-                icl_register_string('WP',__('Blog Title','sitepress'),get_option('blogname'));
+                icl_register_string('WP',__('Blog Title','sitepress'), get_option('blogname'));
             }
             if(isset($_POST['icl_st_sw']['tagline']) || isset($init_all)){
-                icl_register_string('WP',__('Tagline', 'sitepress'),get_option('blogdescription'));
+                icl_register_string('WP',__('Tagline', 'sitepress'), get_option('blogdescription'));
             }              
             if(isset($_POST['icl_st_sw']['widget_titles']) || isset($init_all)){
                 $widget_groups = $wpdb->get_results("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE 'widget\\_%'");
@@ -95,7 +101,7 @@ function icl_st_administration_menu(){
 function icl_register_string($context, $name, $value){
     global $wpdb, $sitepress;
     $language = $sitepress->get_default_language();
-    $res = $wpdb->get_row("SELECT id, value, status FROM {$wpdb->prefix}icl_strings WHERE context='".$wpdb->escape($context)."' AND name='".$wpdb->escape($name)."'");
+    $res = $wpdb->get_row("SELECT id, value, status, language FROM {$wpdb->prefix}icl_strings WHERE context='".$wpdb->escape($context)."' AND name='".$wpdb->escape($name)."'");
     if($res){
         $string_id = $res->id;
         $update_string = array();
@@ -170,7 +176,16 @@ function icl_update_string_status($string_id){
     }
     
     $wpdb->update($wpdb->prefix.'icl_strings', array('status'=>$status), array('id'=>$string_id));
+    return $status;
     
+}
+
+function icl_update_string_status_all(){
+    global $wpdb;
+    $res = $wpdb->get_col("SELECT id FROM {$wpdb->prefix}icl_strings");
+    foreach($res as $id){
+        icl_update_string_status($id);
+    }
 }
 
 function icl_unregister_string($context, $name){
@@ -183,37 +198,50 @@ function icl_unregister_string($context, $name){
 }  
 
 function icl_t($context, $name, $original_value=""){
-    global $wpdb, $sitepress;
-    
+    global $wpdb, $sitepress, $sitepress_settings;
+        
     if(!$original_value) $original_value = $name;
     
-    if($sitepress->get_current_language() == $sitepress->get_default_language()){
-        $value = $wpdb->get_var("SELECT value FROM {$wpdb->prefix}icl_strings  WHERE context='".$wpdb->escape($context)."' AND name='".$wpdb->escape($name)."'");
-        if(!$value){
-            trigger_error(__('String not found','sitepress'), E_USER_WARNING);
+    // special case of WP strings
+    if($context=='WP'){
+        if(!$sitepress_settings['st']['sw']['blog_title'] || !$sitepress_settings['st']['sw']['tagline']){
             $value = $original_value;
         }
-    }else{
-        $res = $wpdb->get_row("
-            SELECT s.value AS string_value, st.value AS string_translation_value, st.status
-            FROM {$wpdb->prefix}icl_string_translations st            
-                JOIN {$wpdb->prefix}icl_strings s ON st.string_id = s.id
-            WHERE s.context='".$wpdb->escape($context)."' 
-                AND s.name='".$wpdb->escape($name)."'
-                AND st.language = '{$sitepress->get_current_language()}'             
-        ");
-        if(!$res){
-            trigger_error(__('String not found','sitepress'), E_USER_WARNING);
+    }elseif($context=='Widgets'){
+        if(!$sitepress_settings['st']['sw']['widget_titles'] || !$sitepress_settings['st']['sw']['text_widgets']){
             $value = $original_value;
-        }else{
-            if($res->string_translation_value && $res->status == ICL_STRING_TRANSLATION_COMPLETE){
-                $value = $res->string_translation_value;
-            }else{
+        }        
+    }else{
+    
+        if($sitepress->get_current_language() == $sitepress->get_default_language()){
+            $value = $wpdb->get_var("SELECT value FROM {$wpdb->prefix}icl_strings  WHERE context='".$wpdb->escape($context)."' AND name='".$wpdb->escape($name)."'");
+            if(!$value){
+                trigger_error(__('String not found','sitepress'), E_USER_WARNING);
                 $value = $original_value;
             }
-        }        
+        }else{
+            $res = $wpdb->get_row("
+                SELECT s.value AS string_value, st.value AS string_translation_value, st.status
+                FROM {$wpdb->prefix}icl_string_translations st            
+                    JOIN {$wpdb->prefix}icl_strings s ON st.string_id = s.id
+                WHERE s.context='".$wpdb->escape($context)."' 
+                    AND s.name='".$wpdb->escape($name)."'
+                    AND st.language = '{$sitepress->get_current_language()}'             
+            ");
+            if(!$res){
+                trigger_error(__('String not found','sitepress'), E_USER_WARNING);
+                $value = $original_value;
+            }else{
+                if($res->string_translation_value && $res->status == ICL_STRING_TRANSLATION_COMPLETE){
+                    $value = $res->string_translation_value;
+                }else{
+                    $value = $original_value;
+                }
+            }        
+        }
+       
     }
-        
+         
     return $value;            
 }
 
@@ -255,7 +283,7 @@ function icl_add_string_translation($string_id, $language, $value, $status = fal
 }
 
 function icl_get_string_translations($offset=0){
-    global $wpdb, $sitepress, $sitepress_settings, $wp_query;
+    global $wpdb, $sitepress, $sitepress_settings, $wp_query, $icl_st_string_translation_statuses;
     $limit = 10;
     
     $extra_cond = "";
@@ -280,7 +308,6 @@ function icl_get_string_translations($offset=0){
         LIMIT {$offset},{$limit}
     ");
     
-    
     $wp_query->found_posts = $wpdb->get_var("SELECT FOUND_ROWS()");
     $wp_query->query_vars['posts_per_page'] = $limit;
     $wp_query->max_num_pages = ceil($wp_query->found_posts/$limit);
@@ -301,22 +328,11 @@ function icl_get_string_translations($offset=0){
                 $string_translations[$row['string_id']]['language'] = $row['string_language'];
             }                      
             if(!isset($string_translations[$row['string_id']]['status'])){
-                switch($row['string_status']){
-                    case ICL_STRING_TRANSLATION_COMPLETE: 
-                        $string_translations[$row['string_id']]['status'] = ICL_STRING_TRANSLATION_COMPLETE_STR; 
-                        break;
-                    case ICL_STRING_TRANSLATION_NEEDS_UPDATE: 
-                        $string_translations[$row['string_id']]['status'] = ICL_STRING_TRANSLATION_NEEDS_UPDATE_STR; 
-                        break;
-                    case ICL_STRING_TRANSLATION_PARTIAL: 
-                        $string_translations[$row['string_id']]['status'] = ICL_STRING_TRANSLATION_PARTIAL_STR; 
-                        break;
-                    case ICL_STRING_TRANSLATION_NOT_TRANSLATED: 
-                        $string_translations[$row['string_id']]['status'] = ICL_STRING_TRANSLATION_NOT_TRANSLATED_STR; 
-                        break;                                                                                         
-                    default:                        
-                        $string_translations[$row['string_id']]['status'] = ICL_STRING_TRANSLATION_NOT_TRANSLATED_STR; 
-                };
+                if(isset($icl_st_string_translation_statuses[$row['string_status']])){
+                    $string_translations[$row['string_id']]['status'] = $icl_st_string_translation_statuses[$row['string_status']];
+                }else{
+                    $string_translations[$row['string_id']]['status'] = $icl_st_string_translation_statuses[ICL_STRING_TRANSLATION_NOT_TRANSLATED];
+                }
             }                      
             if(isset($row['string_translation_language'])){
                 $string_translations[$row['string_id']]['translations'][$row['string_translation_language']] = array(
@@ -332,7 +348,6 @@ function icl_get_string_translations($offset=0){
     }  
     return $string_translations;
 }
-
 
 function icl_sw_filters_blogname($val){
     return icl_t('WP', 'Blog Title', $val);
@@ -352,5 +367,23 @@ function icl_sw_filters_widget_text($val){
     return icl_t('Widgets', 'widget_text_' . $val , $val);
 }
 
+function icl_st_update_string_actions($context, $name, $old_value, $new_value){
+    global $wpdb;
+    if($new_value != $old_value){        
+        $string = $wpdb->get_row("SELECT id, value, status FROM {$wpdb->prefix}icl_strings WHERE context='{$context}' AND name='{$name}'");    
+        $wpdb->update($wpdb->prefix . 'icl_strings', array('value'=>$new_value), array('id'=>$string->id));
+        if($string->status == ICL_STRING_TRANSLATION_COMPLETE || $string->status == ICL_STRING_TRANSLATION_PARTIAL){
+            $wpdb->update($wpdb->prefix . 'icl_string_translations', array('status'=>ICL_STRING_TRANSLATION_NEEDS_UPDATE), array('string_id'=>$string->id));
+            $wpdb->update($wpdb->prefix . 'icl_strings', array('status'=>ICL_STRING_TRANSLATION_NEEDS_UPDATE), array('id'=>$string->id));
+        }
+    }        
+}
+
+function icl_st_update_blogname_actions($old, $new){
+    icl_st_update_string_actions('WP', 'Blog Title', $old, $new);
+}
+function icl_st_update_blogdescription_actions($old, $new){
+    icl_st_update_string_actions('WP', 'Tagline', $old, $new);
+}
 
 ?>

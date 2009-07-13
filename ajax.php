@@ -123,6 +123,7 @@ switch($_REQUEST['icl_ajx_action']){
             $resp[0] = 0;
         }
         echo join('|',$resp);
+        do_action('icl_update_active_languages');
         break;
     case 'set_default_language':
         $previous_default = $sitepress->get_default_language();
@@ -346,6 +347,8 @@ switch($_REQUEST['icl_ajx_action']){
     case 'icl_st_save_translation':
         $icl_st_complete = isset($_POST['icl_st_translation_complete'])?$_POST['icl_st_translation_complete']:null;
         echo icl_add_string_translation($_POST['icl_st_string_id'], $_POST['icl_st_language'], $_POST['icl_st_translation'], $icl_st_complete);
+        echo '|';
+        echo $icl_st_string_translation_statuses[icl_update_string_status($_POST['icl_st_string_id'])];
         break;
     case 'icl_st_filter':
         $iclsettings['st']['filter'] = (int)$_POST['value'];

@@ -44,16 +44,19 @@ function icl_st_submit_translation(){
     postvars += '&icl_ajx_action=icl_st_save_translation';
     thisf.contents().find('textarea, input').attr('disabled','disabled');
     thisf.contents().find('.icl_ajx_loader').fadeIn();
-    jQuery.post(icl_ajx_url, postvars, function(){
+    var string_id = thisf.find('input[name="icl_st_string_id"]').val();
+    jQuery.post(icl_ajx_url, postvars, function(msg){
         thisf.contents().find('textarea, input').removeAttr('disabled');
         thisf.contents().find('.icl_ajx_loader').fadeOut();
+        spl = msg.split('|');
+        jQuery('#icl_st_string_status_'+string_id).html(spl[1]);
     })
     return false;
 }
 function icl_st_filter(){
     postvars = 'icl_ajx_action=icl_st_filter&value='+jQuery(this).val();
     jQuery.post(icl_ajx_url, postvars, function(msg){
-        location.href=location.href.replace(/#(.*)$/,'').replace(/&paged=([0-9]+)/,'');
+        location.href=location.href.replace(/#(.*)$/,'').replace(/&paged=([0-9]+)/,'').replace(/&updated=true/,'');
     });
 }
 

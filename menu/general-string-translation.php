@@ -31,10 +31,10 @@ $active_languages = $sitepress->get_active_languages();
     <p>
     <select name="icl_st_filter">
         <option value="-1" <?php if($sitepress_settings['st']['filter']==-1):?>selected="selected"<?php endif;?>><?php echo __('All strings', 'sitepress') ?></option>
-        <option value="<?php echo ICL_STRING_TRANSLATION_NOT_TRANSLATED ?>" <?php if($sitepress_settings['st']['filter']===ICL_STRING_TRANSLATION_NOT_TRANSLATED):?>selected="selected"<?php endif;?>><?php echo ICL_STRING_TRANSLATION_NOT_TRANSLATED_STR ?></option>
-        <option value="<?php echo ICL_STRING_TRANSLATION_COMPLETE ?>" <?php if($sitepress_settings['st']['filter']===ICL_STRING_TRANSLATION_COMPLETE):?>selected="selected"<?php endif;?>><?php echo ICL_STRING_TRANSLATION_COMPLETE_STR ?></option>
-        <option value="<?php echo ICL_STRING_TRANSLATION_NEEDS_UPDATE ?>" <?php if($sitepress_settings['st']['filter']===ICL_STRING_TRANSLATION_NEEDS_UPDATE):?>selected="selected"<?php endif;?>><?php echo ICL_STRING_TRANSLATION_NEEDS_UPDATE_STR ?></option>
-        <option value="<?php echo ICL_STRING_TRANSLATION_PARTIAL ?>" <?php if($sitepress_settings['st']['filter']===ICL_STRING_TRANSLATION_PARTIAL):?>selected="selected"<?php endif;?>><?php echo ICL_STRING_TRANSLATION_PARTIAL_STR ?></option>
+        <option value="<?php echo ICL_STRING_TRANSLATION_NOT_TRANSLATED ?>" <?php if($sitepress_settings['st']['filter']===ICL_STRING_TRANSLATION_NOT_TRANSLATED):?>selected="selected"<?php endif;?>><?php echo $icl_st_string_translation_statuses[ICL_STRING_TRANSLATION_NOT_TRANSLATED] ?></option>
+        <option value="<?php echo ICL_STRING_TRANSLATION_COMPLETE ?>" <?php if($sitepress_settings['st']['filter']===ICL_STRING_TRANSLATION_COMPLETE):?>selected="selected"<?php endif;?>><?php echo $icl_st_string_translation_statuses[ICL_STRING_TRANSLATION_COMPLETE] ?></option>
+        <option value="<?php echo ICL_STRING_TRANSLATION_NEEDS_UPDATE ?>" <?php if($sitepress_settings['st']['filter']===ICL_STRING_TRANSLATION_NEEDS_UPDATE):?>selected="selected"<?php endif;?>><?php echo $icl_st_string_translation_statuses[ICL_STRING_TRANSLATION_NEEDS_UPDATE] ?></option>
+        <option value="<?php echo ICL_STRING_TRANSLATION_PARTIAL ?>" <?php if($sitepress_settings['st']['filter']===ICL_STRING_TRANSLATION_PARTIAL):?>selected="selected"<?php endif;?>><?php echo $icl_st_string_translation_statuses[ICL_STRING_TRANSLATION_PARTIAL] ?></option>
     </select>
     </p>
     
@@ -91,7 +91,7 @@ $active_languages = $sitepress->get_active_languages();
                                     <?php echo $lang['display_name'] ?><br />
                                     <img class="icl_ajx_loader" src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" style="float:left;display:none;position:absolute;margin:5px" />
                                     <textarea name="icl_st_translation" style="width:100%" <?php if(isset($icl_string['translations'][$lang['code']])): ?>id="icl_st_ta_<?php echo $icl_string['translations'][$lang['code']]['id'] ?>"<?php endif;?>><?php 
-                                        if(isset($icl_string['translations'][$lang['code']])) echo $icl_string['translations'][$lang['code']]['value']; 
+                                        if(isset($icl_string['translations'][$lang['code']])) echo $icl_string['translations'][$lang['code']]['value']; else echo $icl_string['value']; 
                                         ?></textarea>                                        
                                 </td>
                             </tr>
@@ -106,7 +106,7 @@ $active_languages = $sitepress->get_active_languages();
                             <?php endforeach;?>
                     </div>
                 </td>
-                <td nowrap="nowrap">
+                <td nowrap="nowrap" id="icl_st_string_status_<?php echo $string_id ?>">
                 <?php echo $icl_string['status'] ?>    
                 </td>
             </tr>            
