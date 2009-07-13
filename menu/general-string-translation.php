@@ -107,7 +107,7 @@ $active_languages = $sitepress->get_active_languages();
                     </div>
                 </td>
                 <td nowrap="nowrap" id="icl_st_string_status_<?php echo $string_id ?>">
-                <?php echo $icl_string['status'] ?>    
+                <?php echo $icl_st_string_translation_statuses[$icl_string['status']] ?>    
                 </td>
             </tr>            
             <?php endforeach;?>

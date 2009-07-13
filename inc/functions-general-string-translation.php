@@ -12,6 +12,7 @@ $icl_st_string_translation_statuses = array(
 );
 
 
+
 //add_action('admin_menu', 'icl_st_administration_menu');
 add_action('plugins_loaded', 'icl_st_init');
 add_action('icl_update_active_languages', 'icl_update_string_status_all');
@@ -22,8 +23,8 @@ add_action('update_option_blogdescription', 'icl_st_update_blogdescription_actio
 
 function icl_st_init(){
     global $sitepress_settings, $sitepress, $wpdb;
-    
-    if(!isset($sitepress_settings['st']['sw'])){
+                         
+    if(!isset($sitepress_settings['st']['sw']) && isset($sitepress_settings['existing_content_language_verified'])){
         $sitepress_settings['st']['sw'] = array(
             'blog_title' => 1,
             'tagline' => 1,
@@ -42,18 +43,7 @@ function icl_st_init(){
                 icl_register_string('WP',__('Tagline', 'sitepress'), get_option('blogdescription'));
             }              
             if(isset($_POST['icl_st_sw']['widget_titles']) || isset($init_all)){
-                $widget_groups = $wpdb->get_results("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE 'widget\\_%'");
-                foreach($widget_groups as $wg){
-                    $name = str_replace('widget_','',$wg->option_name);
-                    $value = unserialize($wg->option_value);
-                    if(is_array($value)){                        
-                        foreach($value as $w){
-                            if(!empty($w) && isset($w['title'])){
-                                icl_register_string('Widgets', $w['title'], $w['title']);                                    
-                            }
-                        }
-                    }
-                }
+                __icl_st_init_register_widget_titles();
             }  
             
             if(isset($_POST['icl_st_sw']['text_widgets']) || isset($init_all)){
@@ -61,15 +51,15 @@ function icl_st_init(){
                 if(is_array($widget_text)){
                     foreach($widget_text as $w){
                         if(!empty($w) && isset($w['title'])){
-                            icl_register_string('Widgets', $w['text'], $w['text']);
+                            icl_register_string('Widgets', 'widget body - ' . md5($w['text']), $w['text']);
                         }
                     }
                 }
             }  
-                      
-            $sitepress_settings['st']['sw'] = $_POST['icl_st_sw'];
-            $sitepress->save_settings($sitepress_settings); 
+                    
             if(isset($_POST['iclt_st_sw_save'])){
+                $sitepress_settings['st']['sw'] = $_POST['icl_st_sw'];
+                $sitepress->save_settings($sitepress_settings); 
                 wp_redirect($_SERVER['REQUEST_URI'].'&updated=true');
             }            
     }
@@ -84,10 +74,34 @@ function icl_st_init(){
     if($sitepress_settings['st']['sw']['widget_titles']){
         add_filter('widget_title', 'icl_sw_filters_widget_title');
     }
-    if($sitepress_settings['st']['sw']['widget_text']){
+    if($sitepress_settings['st']['sw']['text_widgets']){
         add_filter('widget_text', 'icl_sw_filters_widget_text');
     }
     
+    $widget_groups = $wpdb->get_results("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE 'widget\\_%'");
+    foreach($widget_groups as $w){
+        add_action('update_option_' . $w->option_name, 'icl_st_update_widget_title_actions', 5, 2);
+    }
+    
+    add_action('update_option_widget_text', 'icl_st_update_text_widgets_actions', 5, 2);
+    //add_action('update_option_sidebars_widgets', '__icl_st_init_register_widget_titles');
+    
+}
+
+function __icl_st_init_register_widget_titles(){
+    global $wpdb;
+    $widget_groups = $wpdb->get_results("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE 'widget\\_%'");
+    foreach($widget_groups as $wg){
+        $name = str_replace('widget_','',$wg->option_name);
+        $value = unserialize($wg->option_value);
+        if(is_array($value)){                        
+            foreach($value as $w){
+                if(!empty($w) && isset($w['title'])){
+                    icl_register_string('Widgets', 'widget title - ' . md5($w['title']), $w['title']);                                    
+                }
+            }
+        }
+    }
 }
 
 function icl_st_administration_menu(){
@@ -131,6 +145,11 @@ function icl_register_string($context, $name, $value){
     
 }  
 
+function icl_rename_string($context, $old_name, $new_name){
+    global $wpdb;
+    $wpdb->update($wpdb->prefix.'icl_strings', array('name'=>$new_name), array('context'=>$context, 'name'=>$old_name));
+}
+
 function icl_update_string_status($string_id){
     global $wpdb, $sitepress;    
     $st = $wpdb->get_results("SELECT language, status FROM {$wpdb->prefix}icl_string_translations WHERE string_id={$string_id}");    
@@ -169,8 +188,9 @@ function icl_update_string_status($string_id){
             $status = ICL_STRING_TRANSLATION_PARTIAL;
         }elseif($_needs_update){
             $status = ICL_STRING_TRANSLATION_NEEDS_UPDATE;
+        }else{
+            $status = ICL_STRING_TRANSLATION_NOT_TRANSLATED;
         }        
-        
     }else{
         $status = ICL_STRING_TRANSLATION_NOT_TRANSLATED;        
     }
@@ -296,61 +316,33 @@ function icl_get_string_translations($offset=0){
     
     if(!isset($_GET['paged'])) $_GET['paged'] = 1;
     $offset = ($_GET['paged']-1)*$limit;
-    
-    $string_translations = array();
-    $res = mysql_query("
-        SELECT SQL_CALC_FOUND_ROWS s.id AS string_id, s.language AS string_language, s.context AS string_context, s.name AS string_name, s.value AS string_value, s.status AS string_status,
-                st.id AS string_translation_id, st.language AS string_translation_language, st.status AS string_translation_status, st.value AS string_translation_value  
-        FROM  {$wpdb->prefix}icl_strings s 
-        LEFT JOIN  {$wpdb->prefix}icl_string_translations st ON s.id = st.string_id
+
+    $res = $wpdb->get_results("
+        SELECT SQL_CALC_FOUND_ROWS id AS string_id, language AS string_language, context, name, value, status                
+        FROM  {$wpdb->prefix}icl_strings
         WHERE 
-            s.language = '".$sitepress->get_default_language()."'
-            AND (st.language <> '".$sitepress->get_default_language()."' OR st.language IS NULL) 
+            language = '".$sitepress->get_default_language()."'
             {$extra_cond}
-        ORDER BY string_id DESC, string_translation_language ASC     
+        ORDER BY string_id DESC
         LIMIT {$offset},{$limit}
-    ");
-    
+    ", ARRAY_A);
+        
     $wp_query->found_posts = $wpdb->get_var("SELECT FOUND_ROWS()");
     $wp_query->query_vars['posts_per_page'] = $limit;
     $wp_query->max_num_pages = ceil($wp_query->found_posts/$limit);
     
-    if($res){    
-        
-        while($row = mysql_fetch_array($res, MYSQL_ASSOC)){
-            if(!isset($string_translations[$row['string_id']]['context'])){
-                $string_translations[$row['string_id']]['context'] = $row['string_context'];
-            }
-            if(!isset($string_translations[$row['string_id']]['name'])){
-                $string_translations[$row['string_id']]['name'] = $row['string_name'];
-            }        
-            if(!isset($string_translations[$row['string_id']]['value'])){
-                $string_translations[$row['string_id']]['value'] = $row['string_value'];
-            }  
-            if(!isset($string_translations[$row['string_id']]['language'])){
-                $string_translations[$row['string_id']]['language'] = $row['string_language'];
-            }                      
-            if(!isset($string_translations[$row['string_id']]['status'])){
-                if(isset($icl_st_string_translation_statuses[$row['string_status']])){
-                    $string_translations[$row['string_id']]['status'] = $icl_st_string_translation_statuses[$row['string_status']];
-                }else{
-                    $string_translations[$row['string_id']]['status'] = $icl_st_string_translation_statuses[ICL_STRING_TRANSLATION_NOT_TRANSLATED];
-                }
-            }                      
-            if(isset($row['string_translation_language'])){
-                $string_translations[$row['string_id']]['translations'][$row['string_translation_language']] = array(
-                    'id' => $row['string_translation_id'],
-                    'status' => $row['string_translation_status'],
-                    'value' => $row['string_translation_value'],
-                );      
-            }
+    if($res){
+        foreach($res as $row){
+            $string_translations[$row['string_id']] = $row;
+            $string_translations[$row['string_id']]['traslations'] = $wpdb->get_row("
+                SELECT id AS string_translation_id, language AS string_translation_language, status AS string_translation_status, value AS string_translation_value  
+                FROM {$wpdb->prefix}icl_string_translations WHERE string_id={$row['string_id']}
+            ", ARRAY_A);
         }
-        
-        $active_languages = $sitepress->get_active_languages();
-            
-    }  
+    }
     return $string_translations;
 }
+
 
 function icl_sw_filters_blogname($val){
     return icl_t('WP', 'Blog Title', $val);
@@ -361,21 +353,33 @@ function icl_sw_filters_blogdescription($val){
 }
 
 function icl_sw_filters_widget_title($val){
-    return icl_t('Widgets', $val , $val);    
+    return icl_t('Widgets', 'widget title - ' . md5($val) , $val);    
 }
 
-function icl_sw_filters_widget_text($val){
-    return icl_t('Widgets', $val , $val);
+function icl_sw_filters_widget_text($val){    
+    return icl_t('Widgets', 'widget body - ' . md5($val) , $val);
 }
 
 function icl_st_update_string_actions($context, $name, $old_value, $new_value){
     global $wpdb;
     if($new_value != $old_value){        
         $string = $wpdb->get_row("SELECT id, value, status FROM {$wpdb->prefix}icl_strings WHERE context='{$context}' AND name='{$name}'");    
+        if(!$string){
+            icl_register_string($context, $name, $new_value);
+            return;
+        }
         $wpdb->update($wpdb->prefix . 'icl_strings', array('value'=>$new_value), array('id'=>$string->id));
         if($string->status == ICL_STRING_TRANSLATION_COMPLETE || $string->status == ICL_STRING_TRANSLATION_PARTIAL){
             $wpdb->update($wpdb->prefix . 'icl_string_translations', array('status'=>ICL_STRING_TRANSLATION_NEEDS_UPDATE), array('string_id'=>$string->id));
             $wpdb->update($wpdb->prefix . 'icl_strings', array('status'=>ICL_STRING_TRANSLATION_NEEDS_UPDATE), array('id'=>$string->id));
+        }
+    }
+    
+    if($context == 'Widgets'){
+        if(0 === strpos($name, 'widget title - ')){
+            icl_rename_string('Widgets', 'widget title - ' . md5($old_value), 'widget title - ' . md5($new_value));
+        }elseif(0 === strpos($name, 'widget body - ')){
+            icl_rename_string('Widgets', 'widget body - ' . md5($old_value), 'widget body - ' . md5($new_value));
         }
     }        
 }
@@ -386,6 +390,26 @@ function icl_st_update_blogname_actions($old, $new){
 
 function icl_st_update_blogdescription_actions($old, $new){
     icl_st_update_string_actions('WP', 'Tagline', $old, $new);
+}
+
+function icl_st_update_widget_title_actions($old_options, $new_options){
+    foreach($new_options as $k=>$o){
+        if(isset($o['title'])){
+            icl_st_update_string_actions('Widgets', 'widget title - ' . md5($old_options[$k]['title']), $old_options[$k]['title'], $o['title']);        
+        }
+    }    
+}
+
+function icl_st_update_text_widgets_actions($old_options, $new_options){
+    $widget_text = get_option('widget_text');
+    if(is_array($widget_text)){
+        foreach($widget_text as $k=>$w){
+            if(!empty($w) && isset($w['title']) && $old_options[$k]['text'] != $w['text']){
+                icl_st_update_string_actions('Widgets', 'widget body - ' . md5($old_options[$k]['text']), $old_options[$k]['text'], $w['text']);
+            }
+        }
+    }
+    
 }
 
 ?>
