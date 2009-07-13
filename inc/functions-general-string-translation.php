@@ -202,19 +202,22 @@ function icl_t($context, $name, $original_value=""){
         
     if(!$original_value) $original_value = $name;
     
-    // special case of WP strings
-
-    if($context == 'WP'){
-        if($name=='blog_title' && is_null($sitepress_settings['st']['sw']['blog_title']) || $name='tagine' && is_null($sitepress_settings['st']['sw']['tagline'])){
+    // special case of WP strings    
+    if($context == 'WP' && 
+        ($name=='blog_title' && is_null($sitepress_settings['st']['sw']['blog_title']) 
+            || $name=='tagine' && is_null($sitepress_settings['st']['sw']['tagline'])))
+        {
             $value = $original_value;
         }
-    }elseif($context == 'Widgets'){
-        if($name=='widget_titles' && is_null($sitepress_settings['st']['sw']['widget_titles']) || $name='text_widgets' && is_null($sitepress_settings['st']['sw']['text_widgets'])){
+    elseif($context == 'Widgets' &&
+        ($name=='widget_titles' && is_null($sitepress_settings['st']['sw']['widget_titles']) 
+            || $name=='text_widgets' && is_null($sitepress_settings['st']['sw']['text_widgets'])))
+        {
             $value = $original_value;
         }        
-    }else{
+    else{        
         if($sitepress->get_current_language() == $sitepress->get_default_language()){
-            $value = $wpdb->get_var("SELECT value FROM {$wpdb->prefix}icl_strings  WHERE context='".$wpdb->escape($context)."' AND name='".$wpdb->escape($name)."'");
+            $value = $wpdb->get_var("SELECT value FROM {$wpdb->prefix}icl_strings  WHERE context='".$wpdb->escape($context)."' AND name='".$wpdb->escape($name)."'");            
             if(!$value){
                 trigger_error(__('String not found','sitepress'), E_USER_WARNING);
                 $value = $original_value;
@@ -358,13 +361,11 @@ function icl_sw_filters_blogdescription($val){
 }
 
 function icl_sw_filters_widget_title($val){
-    //return icl_t('Widgets', 'categories ' . $val , $val);
-    return icl_t('Widgets', 'widget_title_' . $val , $val);
-    
+    return icl_t('Widgets', $val , $val);    
 }
 
 function icl_sw_filters_widget_text($val){
-    return icl_t('Widgets', 'widget_text_' . $val , $val);
+    return icl_t('Widgets', $val , $val);
 }
 
 function icl_st_update_string_actions($context, $name, $old_value, $new_value){
