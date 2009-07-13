@@ -49,8 +49,7 @@ function icl_st_init(){
                     if(is_array($value)){                        
                         foreach($value as $w){
                             if(!empty($w) && isset($w['title'])){
-                                //icl_register_string('Widgets',$name . ' ' . $w['title'], $w['title']);    
-                                icl_register_string('Widgets', 'widget_title_' . $w['title'], $w['title']);    
+                                icl_register_string('Widgets', $w['title'], $w['title']);                                    
                             }
                         }
                     }
@@ -62,8 +61,7 @@ function icl_st_init(){
                 if(is_array($widget_text)){
                     foreach($widget_text as $w){
                         if(!empty($w) && isset($w['title'])){
-                            //icl_register_string('Widgets','text_widget_' . $w['title'], $w['text']);
-                            icl_register_string('Widgets','text_widget_' . $w['text'], $w['text']);
+                            icl_register_string('Widgets', $w['text'], $w['text']);
                         }
                     }
                 }
@@ -71,7 +69,9 @@ function icl_st_init(){
                       
             $sitepress_settings['st']['sw'] = $_POST['icl_st_sw'];
             $sitepress->save_settings($sitepress_settings); 
-            wp_redirect($_SERVER['REQUEST_URI'].'&updated=true');
+            if(isset($_POST['iclt_st_sw_save'])){
+                wp_redirect($_SERVER['REQUEST_URI'].'&updated=true');
+            }            
     }
     
     // hook into blog title and tag line
@@ -95,7 +95,7 @@ function icl_st_administration_menu(){
     if((!isset($sitepress_settings['existing_content_language_verified']) || !$sitepress_settings['existing_content_language_verified']) || 2 > count($sitepress->get_active_languages())){
         return;
     }
-    add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('General String Translation','sitepress'), __('General String Translation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/general-string-translation.php');  
+    add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('String translation','sitepress'), __('String translation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/general-string-translation.php');  
 }
    
 function icl_register_string($context, $name, $value){
@@ -203,16 +203,16 @@ function icl_t($context, $name, $original_value=""){
     if(!$original_value) $original_value = $name;
     
     // special case of WP strings
-    if($context=='WP'){
-        if(!$sitepress_settings['st']['sw']['blog_title'] || !$sitepress_settings['st']['sw']['tagline']){
+
+    if($context == 'WP'){
+        if($name=='blog_title' && is_null($sitepress_settings['st']['sw']['blog_title']) || $name='tagine' && is_null($sitepress_settings['st']['sw']['tagline'])){
             $value = $original_value;
         }
-    }elseif($context=='Widgets'){
-        if(!$sitepress_settings['st']['sw']['widget_titles'] || !$sitepress_settings['st']['sw']['text_widgets']){
+    }elseif($context == 'Widgets'){
+        if($name=='widget_titles' && is_null($sitepress_settings['st']['sw']['widget_titles']) || $name='text_widgets' && is_null($sitepress_settings['st']['sw']['text_widgets'])){
             $value = $original_value;
         }        
     }else{
-    
         if($sitepress->get_current_language() == $sitepress->get_default_language()){
             $value = $wpdb->get_var("SELECT value FROM {$wpdb->prefix}icl_strings  WHERE context='".$wpdb->escape($context)."' AND name='".$wpdb->escape($name)."'");
             if(!$value){
@@ -382,6 +382,7 @@ function icl_st_update_string_actions($context, $name, $old_value, $new_value){
 function icl_st_update_blogname_actions($old, $new){
     icl_st_update_string_actions('WP', 'Blog Title', $old, $new);
 }
+
 function icl_st_update_blogdescription_actions($old, $new){
     icl_st_update_string_actions('WP', 'Tagline', $old, $new);
 }

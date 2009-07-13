@@ -7,7 +7,7 @@ $active_languages = $sitepress->get_active_languages();
 ?>
 <div class="wrap">
     <div id="icon-options-general" class="icon32"><br /></div>
-    <h2><?php echo __('General String Translation', 'sitepress') ?></h2>    
+    <h2><?php echo __('String translation', 'sitepress') ?></h2>    
     
     <p>
     <h4 style="margin-bottom:0"><?php echo __('Site wide texts', 'sitepress')?></h4>
