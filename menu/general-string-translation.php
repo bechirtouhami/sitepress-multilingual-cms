@@ -103,7 +103,7 @@ $active_languages = $sitepress->get_active_languages();
         </tbody>
     </table>      
     
-    <span class="subsubsub"><a href="#" id="icl_st_delete_selected"><?php echo __('Delete selected strings', 'sitepress') ?></a><span style="display:none"><?php echo __("Are you sure you want to delete these strings?\nTheir translations will be deleted too.",'sitepress') ?></span></span>
+    <span class="subsubsub"><input type="button" class="button primary" id="icl_st_delete_selected" value="<?php echo __('Delete selected strings', 'sitepress') ?>" /><span style="display:none"><?php echo __("Are you sure you want to delete these strings?\nTheir translations will be deleted too.",'sitepress') ?></span></span>
     
     <div class="tablenav">
     <?php                 
