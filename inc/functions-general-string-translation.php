@@ -47,11 +47,24 @@ function icl_st_init(){
             }  
             
             if(isset($_POST['icl_st_sw']['text_widgets']) || isset($init_all)){
+                // create a list of active widgets
+                $active_text_widgets = array();
+                $widgets = get_option('sidebars_widgets');
+                foreach($widgets as $k=>$w){             
+                    if(preg_match('#sidebar-[0-9]+#i',$k)){
+                        foreach($widgets[$k] as $v){
+                            if(preg_match('#text-([0-9]+)#i',$v, $matches)){
+                                $active_text_widgets[] = $matches[1];
+                            }                            
+                        }
+                    }
+                }
+                                
                 $widget_text = get_option('widget_text');
                 if(is_array($widget_text)){
-                    foreach($widget_text as $w){
-                        if(!empty($w) && isset($w['title'])){
-                            icl_register_string('Widgets', 'widget body - ' . md5($w['text']), $w['text']);
+                    foreach($widget_text as $k=>$w){
+                        if(!empty($w) && isset($w['title']) && in_array($k, $active_text_widgets)){
+                            icl_register_string('Widgets', 'widget body - ' . md5($w['text']), $w['text']);                            
                         }
                     }
                 }
@@ -90,13 +103,25 @@ function icl_st_init(){
 
 function __icl_st_init_register_widget_titles(){
     global $wpdb;
+    
+    // create a list of active widgets
+    $active_widgets = array();
+    $widgets = get_option('sidebars_widgets');
+    foreach($widgets as $k=>$w){             
+        if(preg_match('#sidebar-[0-9]+#i',$k)){
+            foreach($widgets[$k] as $v){                
+                $active_widgets[] = $v;
+            }
+        }
+    }
+    
     $widget_groups = $wpdb->get_results("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE 'widget\\_%'");
-    foreach($widget_groups as $wg){
+    foreach($widget_groups as $wg){        
         $name = str_replace('widget_','',$wg->option_name);
         $value = unserialize($wg->option_value);
         if(is_array($value)){                        
-            foreach($value as $w){
-                if(!empty($w) && isset($w['title'])){
+            foreach($value as $k=>$w){
+                if(!empty($w) && isset($w['title']) && in_array($name . '-' . $k, $active_widgets)){
                     icl_register_string('Widgets', 'widget title - ' . md5($w['title']), $w['title']);                                    
                 }
             }
