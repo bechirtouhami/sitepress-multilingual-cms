@@ -67,7 +67,7 @@ $active_languages = $sitepress->get_active_languages();
                 <td><?php echo htmlentities($icl_string['name']); ?></td>
                 <td width="70%">                                        
                     <div class="icl-st-original" style="float:left;">                    
-                    <?php echo htmlentities($icl_string['value']); ?>                    
+                    <?php echo $icl_string['value']; ?>                    
                     </div>                    
                     <div style="float:right;">
                         <a href="#icl-st-toggle-translations"><?php echo __('translations','sitepress') ?></a>

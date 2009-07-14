@@ -398,9 +398,9 @@ function icl_st_update_widget_title_actions($old_options, $new_options){
     foreach($new_options as $k=>$o){
         if(isset($o['title'])){
             if(isset($old_options[$k]['title'])){
-                icl_st_update_string_actions('Widgets', 'widget title - ' . md5($old_options[$k]['title']), $old_options[$k]['title'], $o['title']);        
+                icl_st_update_string_actions('Widgets', 'widget title - ' . md5(apply_filters('widget_title', $old_options[$k]['title'])), apply_filters('widget_title', $old_options[$k]['title']), apply_filters('widget_title', $o['title']));        
             }else{
-                icl_register_string('Widgets', 'widget title - ' . md5($new_options[$k]['title']), $new_options[$k]['title']);
+                icl_register_string('Widgets', 'widget title - ' . md5(apply_filters('widget_title', $new_options[$k]['title'])), apply_filters('widget_title', $new_options[$k]['title']));
             }            
         }
     }    
@@ -411,9 +411,9 @@ function icl_st_update_text_widgets_actions($old_options, $new_options){
     if(is_array($widget_text)){
         foreach($widget_text as $k=>$w){
             if(isset($old_options[$k]['text']) && trim($old_options[$k]['text']) && $old_options[$k]['text'] != $w['text']){
-                icl_st_update_string_actions('Widgets', 'widget body - ' . md5($old_options[$k]['text']), $old_options[$k]['text'], $w['text']);
+                icl_st_update_string_actions('Widgets', 'widget body - ' . md5(apply_filters('widget_text', $old_options[$k]['text'])), apply_filters('widget_text', $old_options[$k]['text']), apply_filters('widget_text', $w['text']));
             }elseif($new_options[$k]['text'] && $old_options[$k]['text']!=$new_options[$k]['text']){
-                icl_register_string('Widgets', 'widget body - ' . md5($new_options[$k]['text']), $new_options[$k]['text']);
+                icl_register_string('Widgets', 'widget body - ' . md5(apply_filters('widget_text', $new_options[$k]['text'])), apply_filters('widget_text', $new_options[$k]['text']));
             }
         }
     }
