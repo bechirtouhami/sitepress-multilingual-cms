@@ -248,7 +248,7 @@ function icl_t($context, $name, $original_value=""){
                     AND st.language = '{$sitepress->get_current_language()}'             
             ");
             if(!$res){
-                trigger_error(__('String not found','sitepress'), E_USER_WARNING);
+                icl_st_debug(__('String not found','sitepress') . "<br />Context: {$context}<br />Name: {$name}" , E_USER_WARNING);
                 $value = $original_value;
             }else{
                 if($res->string_translation_value && $res->status == ICL_STRING_TRANSLATION_COMPLETE){
@@ -404,14 +404,13 @@ function icl_st_update_text_widgets_actions($old_options, $new_options){
     $widget_text = get_option('widget_text');
     if(is_array($widget_text)){
         foreach($widget_text as $k=>$w){
-            if(!empty($w) && isset($w['title']) && $old_options[$k]['text'] != $w['text']){
+            if(isset($old_options[$k]['text']) && trim($old_options[$k]['text']) && $old_options[$k]['text'] != $w['text']){
                 icl_st_update_string_actions('Widgets', 'widget body - ' . md5($old_options[$k]['text']), $old_options[$k]['text'], $w['text']);
-            }elseif($new_options[$k]['text'] && !isset($old_options[$k]['text'])){
+            }elseif($new_options[$k]['text'] && $old_options[$k]['text']!=$new_options[$k]['text']){
                 icl_register_string('Widgets', 'widget body - ' . md5($new_options[$k]['text']), $new_options[$k]['text']);
             }
         }
     }
-    
 }
 
 function icl_st_debug($str){
