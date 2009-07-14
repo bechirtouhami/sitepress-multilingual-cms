@@ -330,10 +330,16 @@ function icl_get_string_translations($offset=0){
     if($res){
         foreach($res as $row){
             $string_translations[$row['string_id']] = $row;
-            $string_translations[$row['string_id']]['traslations'] = $wpdb->get_row("
-                SELECT id AS string_translation_id, language AS string_translation_language, status AS string_translation_status, value AS string_translation_value  
+            $tr = $wpdb->get_results("
+                SELECT id, language, status, value  
                 FROM {$wpdb->prefix}icl_string_translations WHERE string_id={$row['string_id']}
             ", ARRAY_A);
+            if($tr){
+                foreach($tr as $t){
+                    $string_translations[$row['string_id']]['translations'][$t['language']] = $t;
+                }                
+            }
+            
         }
     }
     return $string_translations;
