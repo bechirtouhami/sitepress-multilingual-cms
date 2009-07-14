@@ -41,6 +41,7 @@ $active_languages = $sitepress->get_active_languages();
     <table id="icl_string_translations" class="widefat" cellspacing="0">
         <thead>
             <tr>
+                <th scope="col" class="manage-column column-cb check-column"><input type="checkbox" /></th>
                 <th scope="col"><?php echo __('Context', 'sitepress') ?></th>
                 <th scope="col"><?php echo __('Name', 'sitepress') ?></th>
                 <th scope="col"><?php echo __('String', 'sitepress') ?></th>        
@@ -49,6 +50,7 @@ $active_languages = $sitepress->get_active_languages();
         </thead>        
         <tfoot>
             <tr>
+                <th scope="col" class="manage-column column-cb check-column"><input type="checkbox" /></th>
                 <th scope="col"><?php echo __('Context', 'sitepress') ?></th>
                 <th scope="col"><?php echo __('Name', 'sitepress') ?></th>
                 <th scope="col"><?php echo __('String', 'sitepress') ?></th>
@@ -58,11 +60,12 @@ $active_languages = $sitepress->get_active_languages();
         <tbody>
             <?php if(empty($icl_string_translations)):?> 
             <tr>
-                <td colspan="4" align="center"><?php echo __('No strings found', 'sitepress')?></td>
+                <td colspan="5" align="center"><?php echo __('No strings found', 'sitepress')?></td>
             </tr>
             <?php else: ?>
             <?php foreach($icl_string_translations as $string_id=>$icl_string): ?> 
             <tr valign="top">
+                <td><input class="icl_st_row_cb" type="checkbox" value="<?php echo $string_id ?>" /></td>
                 <td><?php echo htmlentities($icl_string['context']); ?></td>
                 <td><?php echo htmlentities($icl_string['name']); ?></td>
                 <td width="70%">                                        
@@ -115,6 +118,7 @@ $active_languages = $sitepress->get_active_languages();
         </tbody>
     </table>      
     
+    <span class="subsubsub"><a href="#" id="icl_st_delete_selected"><?php echo __('Delete selected strings', 'sitepress') ?></a><span style="display:none"><?php echo __("Are you sure you want to delete these strings?\nTheir translations will be deleted too.",'sitepress') ?></span></span>
     
     <div class="tablenav">
     <?php                 

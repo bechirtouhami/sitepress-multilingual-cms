@@ -354,6 +354,10 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings['st']['filter'] = (int)$_POST['value'];
         $sitepress->save_settings($iclsettings);
         break;
+    case 'icl_st_delete_strings':
+        $arr = explode(',',$_POST['value']);
+        __icl_unregister_string_multi($arr);
+        break;
     default:
         echo __('Invalid action','sitepress');                
 }    

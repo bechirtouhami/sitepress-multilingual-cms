@@ -217,6 +217,14 @@ function icl_unregister_string($context, $name){
     }
 }  
 
+function __icl_unregister_string_multi($arr){
+    global $wpdb; 
+    $str = join(',', array_map('intval', $arr));
+    $wpdb->query("
+        DELETE s.*, t.* FROM {$wpdb->prefix}icl_strings s LEFT JOIN {$wpdb->prefix}icl_string_translations t ON s.id = t.string_id
+        WHERE s.id IN ({$str})");
+}  
+
 function icl_t($context, $name, $original_value=""){
     global $wpdb, $sitepress, $sitepress_settings;
         

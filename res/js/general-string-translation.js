@@ -4,6 +4,8 @@ jQuery(document).ready(function(){
     jQuery('.icl-st-inline textarea').keyup(icl_st_monitor_ta_check_modifications);
     jQuery(".icl_st_form").submit(icl_st_submit_translation);
     jQuery('select[name="icl_st_filter"]').change(icl_st_filter);
+    jQuery('.check-column input').click(icl_st_select_all);
+    jQuery('#icl_st_delete_selected').click(icl_st_delete_selected);
 });
 
 function icl_st_toggler(){
@@ -58,5 +60,32 @@ function icl_st_filter(){
     jQuery.post(icl_ajx_url, postvars, function(msg){
         location.href=location.href.replace(/#(.*)$/,'').replace(/&paged=([0-9]+)/,'').replace(/&updated=true/,'');
     });
+}
+
+function icl_st_select_all(){
+    if(jQuery(this).attr('checked')){
+        jQuery('.icl_st_row_cb, .check-column input').attr('checked','checked');
+    }else{
+        jQuery('.icl_st_row_cb, .check-column input').removeAttr('checked');
+    }
+}
+
+function icl_st_delete_selected(){
+    if(!jQuery('.icl_st_row_cb:checked').length || !confirm(jQuery(this).next().html())){
+        return false;
+    }
+    var delids = [];
+    jQuery('.icl_st_row_cb:checked').each(function(){
+        delids.push(jQuery(this).val());        
+    });
+    if(delids){
+        postvars = 'icl_ajx_action=icl_st_delete_strings&value='+delids.join(',');
+        jQuery.post(icl_ajx_url, postvars, function(){
+            for(i=0; i < delids.length; i++){
+                jQuery('.icl_st_row_cb[value="'+delids[i]+'"]').parent().parent().fadeOut('fast', function(){jQuery(this).remove()});
+            }
+        })
+    }
+    return false;
 }
 
