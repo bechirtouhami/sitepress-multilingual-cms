@@ -315,7 +315,7 @@ function icl_get_string_translations($offset=0){
     
     $extra_cond = "";
     if(isset($sitepress_settings['st']['filter']) && $sitepress_settings['st']['filter'] != -1){
-        $extra_cond .= " AND s.status = " . $sitepress_settings['st']['filter'];
+        $extra_cond .= " AND status = " . $sitepress_settings['st']['filter'];
     }
     
     if(!isset($_GET['paged'])) $_GET['paged'] = 1;
