@@ -220,7 +220,7 @@ function icl_unregister_string($context, $name){
 function icl_t($context, $name, $original_value=""){
     global $wpdb, $sitepress, $sitepress_settings;
         
-    if(!$original_value) $original_value = $name;
+    //if(!$original_value) $original_value = $name;
     
     // special case of WP strings    
     if($context == 'WP' && 
@@ -237,11 +237,7 @@ function icl_t($context, $name, $original_value=""){
         }        
     else{        
         if($sitepress->get_current_language() == $sitepress->get_default_language()){
-            $value = $wpdb->get_var("SELECT value FROM {$wpdb->prefix}icl_strings  WHERE context='".$wpdb->escape($context)."' AND name='".$wpdb->escape($name)."'");            
-            if(!$value){
-                trigger_error(__('String not found','sitepress'), E_USER_WARNING);
-                $value = $original_value;
-            }
+            $value = $original_value;
         }else{
             $res = $wpdb->get_row("
                 SELECT s.value AS string_value, st.value AS string_translation_value, st.status
@@ -395,7 +391,11 @@ function icl_st_update_blogdescription_actions($old, $new){
 function icl_st_update_widget_title_actions($old_options, $new_options){
     foreach($new_options as $k=>$o){
         if(isset($o['title'])){
-            icl_st_update_string_actions('Widgets', 'widget title - ' . md5($old_options[$k]['title']), $old_options[$k]['title'], $o['title']);        
+            if(isset($old_options[$k]['title'])){
+                icl_st_update_string_actions('Widgets', 'widget title - ' . md5($old_options[$k]['title']), $old_options[$k]['title'], $o['title']);        
+            }else{
+                icl_register_string('Widgets', 'widget title - ' . md5($new_options[$k]['title']), $new_options[$k]['title']);
+            }            
         }
     }    
 }
@@ -406,10 +406,16 @@ function icl_st_update_text_widgets_actions($old_options, $new_options){
         foreach($widget_text as $k=>$w){
             if(!empty($w) && isset($w['title']) && $old_options[$k]['text'] != $w['text']){
                 icl_st_update_string_actions('Widgets', 'widget body - ' . md5($old_options[$k]['text']), $old_options[$k]['text'], $w['text']);
+            }elseif($new_options[$k]['text'] && !isset($old_options[$k]['text'])){
+                icl_register_string('Widgets', 'widget body - ' . md5($new_options[$k]['text']), $new_options[$k]['text']);
             }
         }
     }
     
+}
+
+function icl_st_debug($str){
+    trigger_error($str, E_USER_WARNING);
 }
 
 ?>
