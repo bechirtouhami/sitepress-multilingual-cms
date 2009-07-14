@@ -64,7 +64,7 @@ function icl_st_init(){
                 if(is_array($widget_text)){
                     foreach($widget_text as $k=>$w){
                         if(!empty($w) && isset($w['title']) && in_array($k, $active_text_widgets)){
-                            icl_register_string('Widgets', 'widget body - ' . md5($w['text']), $w['text']);                            
+                            icl_register_string('Widgets', 'widget body - ' . md5(apply_filters('widget_text',$w['text'])), apply_filters('widget_text',$w['text']));                            
                         }
                     }
                 }
@@ -122,7 +122,7 @@ function __icl_st_init_register_widget_titles(){
         if(is_array($value)){                        
             foreach($value as $k=>$w){
                 if(!empty($w) && isset($w['title']) && in_array($name . '-' . $k, $active_widgets)){
-                    icl_register_string('Widgets', 'widget title - ' . md5($w['title']), $w['title']);                                    
+                    icl_register_string('Widgets', 'widget title - ' . md5(apply_filters('widget_title',$w['title'])), apply_filters('widget_title',$w['title']));                                    
                 }
             }
         }
@@ -252,49 +252,25 @@ function __icl_unregister_string_multi($arr){
 
 function icl_t($context, $name, $original_value=""){
     global $wpdb, $sitepress, $sitepress_settings;
-        
-    //if(!$original_value) $original_value = $name;
-    
-    // special case of WP strings    
-    if($context == 'WP' && 
-        ($name=='blog_title' && is_null($sitepress_settings['st']['sw']['blog_title']) 
-            || $name=='tagine' && is_null($sitepress_settings['st']['sw']['tagline'])))
-        {
-            $value = $original_value;
-        }
-    elseif($context == 'Widgets' &&
-        ($name=='widget_titles' && is_null($sitepress_settings['st']['sw']['widget_titles']) 
-            || $name=='text_widgets' && is_null($sitepress_settings['st']['sw']['text_widgets'])))
-        {
-            $value = $original_value;
-        }        
-    else{        
-        if($sitepress->get_current_language() == $sitepress->get_default_language()){
-            $value = $original_value;
-        }else{
-            $res = $wpdb->get_row("
-                SELECT s.value AS string_value, st.value AS string_translation_value, st.status
-                FROM {$wpdb->prefix}icl_string_translations st            
-                    JOIN {$wpdb->prefix}icl_strings s ON st.string_id = s.id
-                WHERE s.context='".$wpdb->escape($context)."' 
-                    AND s.name='".$wpdb->escape($name)."'
-                    AND st.language = '{$sitepress->get_current_language()}'             
-            ");
-            if(!$res){
-                icl_st_debug(__('String not found','sitepress') . "<br />Context: {$context}<br />Name: {$name}" , E_USER_WARNING);
-                $value = $original_value;
-            }else{
-                if($res->string_translation_value && $res->status == ICL_STRING_TRANSLATION_COMPLETE){
-                    $value = $res->string_translation_value;
-                }else{
-                    $value = $original_value;
-                }
-            }        
-        }
        
+    $current_language = $sitepress->get_current_language();
+    $default_language = $sitepress->get_default_language();
+    if($current_language == $default_language && $original_value){
+        
+        $ret_val = $original_value;
+        
+    }else{
+        
+        $result = icl_t_cache_lookup($context, $name); 
+
+        if($result === false || !$result['translated'] && $original_value){        
+            $ret_val = $original_value;    
+        }else{
+            $ret_val = $result['value'];    
+        }
+        
     }
-         
-    return $value;            
+    return $ret_val;
 }
 
 function icl_add_string_translation($string_id, $language, $value, $status = false){
@@ -450,6 +426,66 @@ function icl_st_update_text_widgets_actions($old_options, $new_options){
             }
         }
     }
+}
+
+function icl_t_cache_lookup($context, $name){
+    global $sitepress_settings;
+    static $icl_st_cache;
+    
+    if(!isset($icl_st_cache)){
+        $icl_st_cache = array();
+    }
+    
+    if(isset($icl_st_cache[$context]) && empty($icl_st_cache[$context])){  // cache semi-hit - string is not in the db
+        $ret_value = false;
+    }elseif(!isset($icl_st_cache[$context][$name])){ //cache MISS
+        global $sitepress, $wpdb;        
+        $current_language = $sitepress->get_current_language();
+        $default_language = $sitepress->get_default_language();
+        $res = $wpdb->get_results("
+            SELECT s.name, s.value, t.value AS translation_value, t.status
+            FROM  {$wpdb->prefix}icl_strings s
+            LEFT JOIN {$wpdb->prefix}icl_string_translations t ON s.id = t.string_id
+            WHERE 
+                s.language = '{$default_language}' AND s.context = '{$context}'
+                AND (t.language = '{$current_language}' OR t.language IS NULL)
+            ", ARRAY_A);
+        if($res){
+            foreach($res as $row){
+                if($row['status'] != ICL_STRING_TRANSLATION_COMPLETE || empty($row['translation_value'])){
+                    $icl_st_cache[$context][$row['name']]['translated'] = false;
+                    $icl_st_cache[$context][$row['name']]['value'] = $row['value'];
+                }else{
+                    $icl_st_cache[$context][$row['name']]['translated'] = true;
+                    $icl_st_cache[$context][$row['name']]['value'] = $row['translation_value'];
+                }
+            }
+            $ret_value = $icl_st_cache[$context][$name];            
+        }else{
+            $icl_st_cache[$context] = array();    
+            $ret_value = false;
+        }  
+    }else{ //cache HIT
+        $ret_value = $icl_st_cache[$context][$name];
+   
+    }  
+    
+    // special case of WP strings    
+    if($context == 'WP' && 
+        ($name == 'Blog Title' && is_null($sitepress_settings['st']['sw']['blog_title']) 
+            || $name == 'Tagline' && is_null($sitepress_settings['st']['sw']['tagline'])))
+        {
+            $icl_st_cache[$context] = array();
+        }
+    elseif($context == 'Widgets' &&
+        (preg_match('#^widget title - #', $name) && is_null($sitepress_settings['st']['sw']['widget_titles']) 
+            || preg_match('#^widget body - #', $name) && is_null($sitepress_settings['st']['sw']['text_widgets'])))
+        {
+            $icl_st_cache[$context] = array();
+        }        
+    
+    
+    return $ret_value;    
 }
 
 function icl_st_debug($str){

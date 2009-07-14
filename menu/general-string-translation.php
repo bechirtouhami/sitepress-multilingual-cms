@@ -4,6 +4,8 @@ if((!isset($sitepress_settings['existing_content_language_verified']) || !$sitep
 }
 $icl_string_translations = icl_get_string_translations();
 $active_languages = $sitepress->get_active_languages();            
+
+
 ?>
 <div class="wrap">
     <div id="icon-options-general" class="icon32"><br /></div>
