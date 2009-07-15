@@ -15,7 +15,7 @@ function icl_sitepress_activate(){
         CREATE TABLE `{$table_name}` (
             `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
             `code` VARCHAR( 7 ) NOT NULL ,
-            `english_name` VARCHAR( 128 ) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL ,            
+            `english_name` VARCHAR( 128 ) CHARACTER SET utf8 NOT NULL ,            
             `major` TINYINT NOT NULL DEFAULT '0', 
             `active` TINYINT NOT NULL ,
             UNIQUE KEY `code` (`code`),
@@ -38,7 +38,7 @@ function icl_sitepress_activate(){
             `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
             `language_code`  VARCHAR( 7 ) NOT NULL ,
             `display_language_code` VARCHAR( 7 ) NOT NULL ,            
-            `name` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL,
+            `name` VARCHAR( 255 ) CHARACTER SET utf8 NOT NULL,
             UNIQUE(`language_code`, `display_language_code`)            
         ) DEFAULT CHARSET=utf8";
         mysql_query($sql);
@@ -124,7 +124,7 @@ function icl_sitepress_activate(){
             `attribute_name` VARCHAR( 128 ) NOT NULL ,
             `description` TEXT NOT NULL ,
             `translate` TINYINT NOT NULL DEFAULT 0,
-            `html_entities` TINYINT NOT NUL LDEFAULT 0,
+            `html_entities` TINYINT NOT NULL DEFAULT 0,
             UNIQUE KEY `plugin_name` (`plugin_name`,`attribute_type`,`attribute_name`)            
             ) DEFAULT CHARSET=utf8";
        mysql_query($sql);
