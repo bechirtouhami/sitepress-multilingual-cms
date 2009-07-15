@@ -315,9 +315,15 @@ function icl_get_string_translations($offset=0){
     $limit = 10;
     
     $extra_cond = "";
-    if(isset($sitepress_settings['st']['filter']) && $sitepress_settings['st']['filter'] != -1){
-        $extra_cond .= " AND status = " . $sitepress_settings['st']['filter'];
+    $status_filter = isset($_GET['status']) ? intval($_GET['status']) : false;
+    if($status_filter !== false){
+        $extra_cond .= " AND status = " . $status_filter;
     }
+    $context_filter = isset($_GET['context']) ? $_GET['context'] : false;
+    if($context_filter !== false){
+        $extra_cond .= " AND context = '" . $wpdb->escape($context_filter) . "'";
+    }
+    
     
     if(!isset($_GET['paged'])) $_GET['paged'] = 1;
     $offset = ($_GET['paged']-1)*$limit;
@@ -491,6 +497,12 @@ function icl_t_cache_lookup($context, $name){
     
     
     return $ret_value;    
+}
+
+function icl_st_get_contexts(){
+    global $wpdb;    
+    $results = $wpdb->get_results("SELECT context, COUNT(context) AS c FROM {$wpdb->prefix}icl_strings GROUP BY context ORDER BY context ASC");
+    return $results;
 }
 
 function icl_st_debug($str){

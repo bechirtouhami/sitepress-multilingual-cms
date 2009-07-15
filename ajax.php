@@ -350,10 +350,6 @@ switch($_REQUEST['icl_ajx_action']){
         echo '|';
         echo $icl_st_string_translation_statuses[icl_update_string_status($_POST['icl_st_string_id'])];
         break;
-    case 'icl_st_filter':
-        $iclsettings['st']['filter'] = (int)$_POST['value'];
-        $sitepress->save_settings($iclsettings);
-        break;
     case 'icl_st_delete_strings':
         $arr = explode(',',$_POST['value']);
         __icl_unregister_string_multi($arr);

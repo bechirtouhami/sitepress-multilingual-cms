@@ -4,23 +4,35 @@ if((!isset($sitepress_settings['existing_content_language_verified']) || !$sitep
 }
 $icl_string_translations = icl_get_string_translations();
 $active_languages = $sitepress->get_active_languages();            
+$icl_contexts = icl_st_get_contexts();
 
+$status_filter = isset($_GET['status']) ? intval($_GET['status']) : false;
+$context_filter = isset($_GET['context']) ? $_GET['context'] : false;
 
 ?>
 <div class="wrap">
     <div id="icon-options-general" class="icon32"><br /></div>
     <h2><?php echo __('String translation', 'sitepress') ?></h2>    
-    
-    <h4 style="margin-bottom:0"><?php echo __('Filter by translation status', 'sitepress')?></h4>
     <p>
     <?php echo __('Select which strings to display:', 'sitepress')?>
-    <select name="icl_st_filter">
-        <option value="-1" <?php if($sitepress_settings['st']['filter']==-1):?>selected="selected"<?php endif;?>><?php echo __('All strings', 'sitepress') ?></option>
-        <option value="<?php echo ICL_STRING_TRANSLATION_NOT_TRANSLATED ?>" <?php if($sitepress_settings['st']['filter']===ICL_STRING_TRANSLATION_NOT_TRANSLATED):?>selected="selected"<?php endif;?>><?php echo $icl_st_string_translation_statuses[ICL_STRING_TRANSLATION_NOT_TRANSLATED] ?></option>
-        <option value="<?php echo ICL_STRING_TRANSLATION_COMPLETE ?>" <?php if($sitepress_settings['st']['filter']===ICL_STRING_TRANSLATION_COMPLETE):?>selected="selected"<?php endif;?>><?php echo $icl_st_string_translation_statuses[ICL_STRING_TRANSLATION_COMPLETE] ?></option>
-        <option value="<?php echo ICL_STRING_TRANSLATION_NEEDS_UPDATE ?>" <?php if($sitepress_settings['st']['filter']===ICL_STRING_TRANSLATION_NEEDS_UPDATE):?>selected="selected"<?php endif;?>><?php echo $icl_st_string_translation_statuses[ICL_STRING_TRANSLATION_NEEDS_UPDATE] ?></option>
-        <option value="<?php echo ICL_STRING_TRANSLATION_PARTIAL ?>" <?php if($sitepress_settings['st']['filter']===ICL_STRING_TRANSLATION_PARTIAL):?>selected="selected"<?php endif;?>><?php echo $icl_st_string_translation_statuses[ICL_STRING_TRANSLATION_PARTIAL] ?></option>
+    <select name="icl_st_filter_status">
+        <option value="" <?php if($status_filter === false ):?>selected="selected"<?php endif;?>><?php echo __('All strings', 'sitepress') ?></option>
+        <option value="<?php echo ICL_STRING_TRANSLATION_NOT_TRANSLATED ?>" <?php if($status_filter === ICL_STRING_TRANSLATION_NOT_TRANSLATED):?>selected="selected"<?php endif;?>><?php echo $icl_st_string_translation_statuses[ICL_STRING_TRANSLATION_NOT_TRANSLATED] ?></option>
+        <option value="<?php echo ICL_STRING_TRANSLATION_COMPLETE ?>" <?php if($status_filter == ICL_STRING_TRANSLATION_COMPLETE):?>selected="selected"<?php endif;?>><?php echo $icl_st_string_translation_statuses[ICL_STRING_TRANSLATION_COMPLETE] ?></option>
+        <option value="<?php echo ICL_STRING_TRANSLATION_NEEDS_UPDATE ?>" <?php if($status_filter == ICL_STRING_TRANSLATION_NEEDS_UPDATE):?>selected="selected"<?php endif;?>><?php echo $icl_st_string_translation_statuses[ICL_STRING_TRANSLATION_NEEDS_UPDATE] ?></option>
+        <option value="<?php echo ICL_STRING_TRANSLATION_PARTIAL ?>" <?php if($status_filter == ICL_STRING_TRANSLATION_PARTIAL):?>selected="selected"<?php endif;?>><?php echo $icl_st_string_translation_statuses[ICL_STRING_TRANSLATION_PARTIAL] ?></option>
     </select>
+    
+    <?php if(!empty($icl_contexts)): ?>
+    <?php echo __('Select strings within context:', 'sitepress')?>
+    <select name="icl_st_filter_context">
+        <option value="" <?php if($context_filter === false ):?>selected="selected"<?php endif;?>><?php echo __('All contexts', 'sitepress') ?></option>
+        <?php foreach($icl_contexts as $v):?>
+        <option value="<?php echo htmlentities($v->context)?>" <?php if($context_filter == $v->context ):?>selected="selected"<?php endif;?>><?php echo $v->context . ' ('.$v->c.')'; ?></option>
+        <?php endforeach; ?>
+    </select>    
+    <?php endif; ?>
+    
     </p>
     
     <table id="icl_string_translations" class="widefat" cellspacing="0">

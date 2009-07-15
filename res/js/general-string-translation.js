@@ -3,7 +3,8 @@ jQuery(document).ready(function(){
     jQuery('.icl-st-inline textarea').focus(icl_st_monitor_ta);
     jQuery('.icl-st-inline textarea').keyup(icl_st_monitor_ta_check_modifications);
     jQuery(".icl_st_form").submit(icl_st_submit_translation);
-    jQuery('select[name="icl_st_filter"]').change(icl_st_filter);
+    jQuery('select[name="icl_st_filter_status"]').change(icl_st_filter_status);
+    jQuery('select[name="icl_st_filter_context"]').change(icl_st_filter_context);
     jQuery('.check-column input').click(icl_st_select_all);
     jQuery('#icl_st_delete_selected').click(icl_st_delete_selected);
 });
@@ -55,12 +56,16 @@ function icl_st_submit_translation(){
     })
     return false;
 }
-function icl_st_filter(){
-    postvars = 'icl_ajx_action=icl_st_filter&value='+jQuery(this).val();
-    jQuery.post(icl_ajx_url, postvars, function(msg){
-        location.href=location.href.replace(/#(.*)$/,'').replace(/&paged=([0-9]+)/,'').replace(/&updated=true/,'');
-    });
+
+function icl_st_filter_status(){
+    var qs = jQuery(this).val() != '' ? '&status=' + jQuery(this).val() : '';
+    location.href=location.href.replace(/#(.*)$/,'').replace(/&paged=([0-9]+)/,'').replace(/&updated=true/,'').replace(/&status=([0-9])/g,'') + qs;
 }
+function icl_st_filter_context(){
+    var qs = jQuery(this).val() != '' ? '&context=' + jQuery(this).val() : '';
+    location.href=location.href.replace(/#(.*)$/,'').replace(/&paged=([0-9]+)/,'').replace(/&updated=true/,'').replace(/&context=(.*)/g,'') + qs;
+}
+
 
 function icl_st_select_all(){
     if(jQuery(this).attr('checked')){
