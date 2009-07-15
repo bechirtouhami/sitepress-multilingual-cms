@@ -101,7 +101,7 @@ function icl_link_to_element($element_id, $element_type='post', $link_text='', $
     echo $link;            
 }
 
-function icl_object_id($element_id, $element_type='post', $return_original_if_missing=false){
+function icl_object_id($element_id, $element_type='post', $return_original_if_missing=false, $ulanguage_code=null){
     global $sitepress, $wpdb;
     
     $element_types = array('post', 'post_tag', 'category');
@@ -128,8 +128,12 @@ function icl_object_id($element_id, $element_type='post', $return_original_if_mi
     $trid = $sitepress->get_element_trid($element_id, $icl_element_type);
     $translations = $sitepress->get_element_translations($trid, $icl_element_type);
     
-    if(isset($translations[ICL_LANGUAGE_CODE]->element_id)){
-        $ret_element_id = $translations[ICL_LANGUAGE_CODE]->element_id;
+    if(is_null($ulanguage_code)){
+        $ulanguage_code = ICL_LANGUAGE_CODE;
+    }
+    
+    if(isset($translations[$ulanguage_code]->element_id)){
+        $ret_element_id = $translations[$ulanguage_code]->element_id;
         if($element_type=='category' || $element_type=='post_tag'){
             $ret_element_id = $wpdb->get_var($wpdb->prepare("SELECT t.term_id FROM {$wpdb->term_taxonomy} tx JOIN {$wpdb->terms} t ON t.term_id = tx.term_id WHERE tx.term_taxonomy_id = %d AND tx.taxonomy='{$element_type}'", $ret_element_id));            
         }
