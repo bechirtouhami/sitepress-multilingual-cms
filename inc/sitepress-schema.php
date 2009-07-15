@@ -123,7 +123,8 @@ function icl_sitepress_activate(){
             `attribute_type` VARCHAR( 64 ) NOT NULL ,
             `attribute_name` VARCHAR( 128 ) NOT NULL ,
             `description` TEXT NOT NULL ,
-            `translate` TINYINT NOT NULL ,
+            `translate` TINYINT NOT NULL DEFAULT 0,
+            `html_entities` TINYINT NOT NUL LDEFAULT 0,
             UNIQUE KEY `plugin_name` (`plugin_name`,`attribute_type`,`attribute_name`)            
             ) DEFAULT CHARSET=utf8";
        mysql_query($sql);
@@ -133,42 +134,48 @@ function icl_sitepress_activate(){
                 'attribute_type' => 'custom_field',
                 'attribute_name' => '_top_nav_excluded',
                 'description' => 'Exclude page from top navigation',
-                'translate' => 0
+                'translate' => 0,
+                'html_entities' => 1
                 ),
             1 => array(
                 'plugin_name' => 'sitepress-multilingual-cms/sitepress.php',
                 'attribute_type' => 'custom_field',
                 'attribute_name' => '_cms_nav_minihome',
                 'description' => 'Sets page as a mini home in CMS Navigation',
-                'translate' => 0
+                'translate' => 0,
+                'html_entities' => 1
                 ),
             2 => array(
                 'plugin_name' => 'sitepress-multilingual-cms/sitepress.php',
                 'attribute_type' => 'custom_field',
                 'attribute_name' => '_cms_nav_section',
                 'description' => 'Defines the section the page belong to',
-                'translate' => 1
+                'translate' => 1,
+                'html_entities' => 1
                 ),
             3 => array(
                 'plugin_name' => 'all-in-one-seo-pack/all_in_one_seo_pack.php',
                 'attribute_type' => 'custom_field',
                 'attribute_name' => 'title',
                 'description' => 'Custom title for post/page',
-                'translate' => 1
+                'translate' => 1,
+                'html_entities' => 1
                 ),
             4 => array(
                 'plugin_name' => 'all-in-one-seo-pack/all_in_one_seo_pack.php',
                 'attribute_type' => 'custom_field',
                 'attribute_name' => 'description',
                 'description' => 'Custom description for post/page',
-                'translate' => 1
+                'translate' => 1,
+                'html_entities' => 1
                 ),
             5 => array(
                 'plugin_name' => 'all-in-one-seo-pack/all_in_one_seo_pack.php',
                 'attribute_type' => 'custom_field',
                 'attribute_name' => 'keywords',
                 'description' => 'Custom keywords for post/page',
-                'translate' => 1
+                'translate' => 1,
+                'html_entities' => 1
                 )
        );   
        

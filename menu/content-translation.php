@@ -193,7 +193,7 @@
             </form>
             
             
-            <?php /************
+            <?php /************ */ ?>
             <h3><?php echo __('Plugins texts translation', 'sitepress') ?></h3>                
             <form name="icl_plugins_texts" action="">
             <table id="icl_plugins_texts" class="widefat" cellspacing="0">
@@ -235,7 +235,7 @@
             <input class="button" id="icl_pt_upload" type="submit" value="<?php echo __('Submit', 'sitepress')?>" />        
             <?php if(isset($_GET['csv_upload'])):?>&nbsp;<span class="icl_ajx_response" style="display:inline">CSV file uploaded</span><?php endif;?>    
             </form>
-            *****************/ ?>
+            <?php /*****************/ ?>
             
             <h3 id="icl_create_account_form"><?php echo __('Configure your ICanLocalize account', 'sitepress') ?></h3>             
             <?php if(isset($_POST['icl_form_errors']) || ($icl_account_ready_errors && !$sitepress->icl_account_configured() )):  ?>
