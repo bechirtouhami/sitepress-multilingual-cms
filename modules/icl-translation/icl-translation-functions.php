@@ -998,9 +998,9 @@ function icl_get_post_translation_status($post_id){
 }
 
 function icl_display_post_translation_status($post_id){
-    global $wpdb, $sitepress;                                                                                                           
+    global $wpdb, $sitepress;                                                                                                               
     $tr_info = $wpdb->get_row("
-        SELECT t.trid, lt.name, t.language_code, t.source_language_code 
+        SELECT lt.name, t.language_code, t.source_language_code 
         FROM {$wpdb->prefix}icl_translations t LEFT JOIN {$wpdb->prefix}icl_languages_translations lt ON t.source_language_code=lt.language_code
         WHERE t.element_type='post' AND t.element_id={$post_id} AND lt.display_language_code = '".$sitepress->get_default_language()."'"
         );
@@ -1025,11 +1025,13 @@ function icl_display_post_translation_status($post_id){
     }
     
     if(empty($status)){
-        echo '<table class="widefat">';
-        echo '<tr><td align="center">';
-        echo __('Not translated');
-        echo '</td></tr>';
-        echo '</table>';
+        if(count($sitepress->get_element_translations($sitepress->get_element_trid($post_id), 'post', true)) <= 1 ){
+            echo '<table class="widefat">';
+            echo '<tr><td align="center">';
+            echo __('Not translated');
+            echo '</td></tr>';
+            echo '</table>';
+        }
     }else{  
         if($post_updated){
             echo '
