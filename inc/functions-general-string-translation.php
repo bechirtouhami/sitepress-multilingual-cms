@@ -317,7 +317,11 @@ function icl_get_string_translations($offset=0){
     $extra_cond = "";
     $status_filter = isset($_GET['status']) ? intval($_GET['status']) : false;
     if($status_filter !== false){
-        $extra_cond .= " AND status = " . $status_filter;
+        if($status_filter == ICL_STRING_TRANSLATION_COMPLETE){
+            $extra_cond .= " AND status = " . ICL_STRING_TRANSLATION_COMPLETE;
+        }else{
+            $extra_cond .= " AND status IN (" . ICL_STRING_TRANSLATION_PARTIAL . "," . ICL_STRING_TRANSLATION_NEEDS_UPDATE . "," . ICL_STRING_TRANSLATION_NOT_TRANSLATED . ")";
+        }        
     }
     $context_filter = isset($_GET['context']) ? $_GET['context'] : false;
     if($context_filter !== false){
