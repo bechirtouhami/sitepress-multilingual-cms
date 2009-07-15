@@ -135,7 +135,7 @@ function icl_sitepress_activate(){
                 'attribute_name' => '_top_nav_excluded',
                 'description' => 'Exclude page from top navigation',
                 'translate' => 0,
-                'html_entities' => 1
+                'html_entities' => 0
                 ),
             1 => array(
                 'plugin_name' => 'sitepress-multilingual-cms/sitepress.php',
@@ -143,7 +143,7 @@ function icl_sitepress_activate(){
                 'attribute_name' => '_cms_nav_minihome',
                 'description' => 'Sets page as a mini home in CMS Navigation',
                 'translate' => 0,
-                'html_entities' => 1
+                'html_entities' => 0
                 ),
             2 => array(
                 'plugin_name' => 'sitepress-multilingual-cms/sitepress.php',
@@ -151,7 +151,7 @@ function icl_sitepress_activate(){
                 'attribute_name' => '_cms_nav_section',
                 'description' => 'Defines the section the page belong to',
                 'translate' => 1,
-                'html_entities' => 1
+                'html_entities' => 0
                 ),
             3 => array(
                 'plugin_name' => 'all-in-one-seo-pack/all_in_one_seo_pack.php',
@@ -159,7 +159,7 @@ function icl_sitepress_activate(){
                 'attribute_name' => 'title',
                 'description' => 'Custom title for post/page',
                 'translate' => 1,
-                'html_entities' => 1
+                'html_entities' => 0
                 ),
             4 => array(
                 'plugin_name' => 'all-in-one-seo-pack/all_in_one_seo_pack.php',
@@ -167,7 +167,7 @@ function icl_sitepress_activate(){
                 'attribute_name' => 'description',
                 'description' => 'Custom description for post/page',
                 'translate' => 1,
-                'html_entities' => 1
+                'html_entities' => 0
                 ),
             5 => array(
                 'plugin_name' => 'all-in-one-seo-pack/all_in_one_seo_pack.php',
@@ -175,7 +175,7 @@ function icl_sitepress_activate(){
                 'attribute_name' => 'keywords',
                 'description' => 'Custom keywords for post/page',
                 'translate' => 1,
-                'html_entities' => 1
+                'html_entities' => 0
                 )
        );   
        
