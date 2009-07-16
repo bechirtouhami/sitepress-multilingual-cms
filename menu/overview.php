@@ -101,7 +101,13 @@ if($sitepress_settings['existing_content_language_verified']){
                         <?php endif; ?>
                         <p class="sub">
                         <a href="<?php echo 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php' ?>"><?php echo __('Configure content translation', 'sitepress') ?></a>
-                        </p>                        
+                        </p>        
+                        
+                        <?php if($sitepress->icl_account_configured()): ?>
+                        <p class="sub"><a href="<?php echo 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/modules/icl-translation/icl-translation-dashboard.php' ?>"><?php echo __('Send documents to translation', 'sitepress'); ?></a></p>                
+                        <?php else: ?>
+                        <p class="sub"><a href="<?php echo 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/modules/icl-translation/icl-translation-dashboard.php' ?>"><?php echo __('Cost calculation for translation'); ?></a></p> 
+                        <?php endif; ?>
                     </div>
                 </div>
                 <?php endif; ?>

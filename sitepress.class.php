@@ -767,7 +767,7 @@ class SitePress{
     
     function save_post_actions($pidd){
         global $wpdb;        
-        if($_POST['autosave'] || $_POST['skip_sitepress_actions'] || (isset($_POST['post_ID']) && $_POST['post_ID']!=$pidd)) return;
+        if($_POST['autosave'] || $_POST['skip_sitepress_actions'] || (isset($_POST['post_ID']) && $_POST['post_ID']!=$pidd) || $_POST['post_type']=='revision') return;
         if($_POST['action']=='post-quickpress-publish'){
             $post_id = $pidd;            
             $language_code = $this->get_default_language();
