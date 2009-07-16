@@ -145,7 +145,7 @@ if($sitepress_settings['existing_content_language_verified']){
                             <?php endif; ?>                            
                             
                             <?php if(!isset($sitepress_settings['language_pairs']) || empty($sitepress_settings['language_pairs'])):?>
-                            <p class="sub"><?php echo __('No translation pairs are congigured', 'sitepress'); ?></p>              
+                            <p class="sub"><?php echo __('No translation pairs are configured', 'sitepress'); ?></p>              
                             <?php else:?>
                             <p class="sub"><?php echo __('Translation pairs:', 'sitepress'); ?> <?php echo join(', ', $lpairs)?></p>              
                             <?php endif; ?>

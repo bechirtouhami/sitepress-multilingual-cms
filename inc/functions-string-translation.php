@@ -24,7 +24,11 @@ add_action('update_option_blogdescription', 'icl_st_update_blogdescription_actio
 function icl_st_init(){
     global $sitepress_settings, $sitepress, $wpdb;
                          
-    if(!isset($sitepress_settings['st']['sw']) && isset($sitepress_settings['existing_content_language_verified'])){
+    if(!isset($sitepress_settings['existing_content_language_verified'])){
+        return;
+    }          
+                   
+    if(!isset($sitepress_settings['st']['sw'])){
         $sitepress_settings['st']['sw'] = array(
             'blog_title' => 1,
             'tagline' => 1,
@@ -49,7 +53,7 @@ function icl_st_init(){
             if(isset($_POST['icl_st_sw']['text_widgets']) || isset($init_all)){
                 // create a list of active widgets
                 $active_text_widgets = array();
-                $widgets = get_option('sidebars_widgets');
+                $widgets = (array)get_option('sidebars_widgets');
                 foreach($widgets as $k=>$w){             
                     if(preg_match('#sidebar-[0-9]+#i',$k)){
                         foreach($widgets[$k] as $v){
@@ -106,7 +110,7 @@ function __icl_st_init_register_widget_titles(){
     
     // create a list of active widgets
     $active_widgets = array();
-    $widgets = get_option('sidebars_widgets');
+    $widgets = (array)get_option('sidebars_widgets');    
     foreach($widgets as $k=>$w){             
         if(preg_match('#sidebar-[0-9]+#i',$k)){
             foreach($widgets[$k] as $v){                
@@ -138,7 +142,13 @@ function icl_st_administration_menu(){
 }
    
 function icl_register_string($context, $name, $value){
-    global $wpdb, $sitepress;
+    global $wpdb, $sitepress, $sitepress_settings;
+    
+    // if the default language is not set up return without doing anything
+    if(!isset($sitepress_settings['existing_content_language_verified'])){
+        return;
+    }   
+    
     $language = $sitepress->get_default_language();
     $res = $wpdb->get_row("SELECT id, value, status, language FROM {$wpdb->prefix}icl_strings WHERE context='".$wpdb->escape($context)."' AND name='".$wpdb->escape($name)."'");
     if($res){
@@ -250,8 +260,13 @@ function __icl_unregister_string_multi($arr){
         WHERE s.id IN ({$str})");
 }  
 
-function icl_t($context, $name, $original_value=""){
+function icl_t($context, $name, $original_value=false){
     global $wpdb, $sitepress, $sitepress_settings;
+    
+    // if the default language is not set up return
+    if(!isset($sitepress_settings['existing_content_language_verified'])){
+        return $original_value !== false ? $original_value : $name;
+    }   
        
     $current_language = $sitepress->get_current_language();
     $default_language = $sitepress->get_default_language();
