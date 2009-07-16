@@ -439,7 +439,7 @@ function icl_st_update_text_widgets_actions($old_options, $new_options){
 }
 
 function icl_t_cache_lookup($context, $name){
-    global $icl_cache_log;
+    //global $icl_cache_log;
     
     global $sitepress_settings;
     static $icl_st_cache;
@@ -449,10 +449,10 @@ function icl_t_cache_lookup($context, $name){
     }
     
     if(isset($icl_st_cache[$context]) && empty($icl_st_cache[$context])){  // cache semi-hit - string is not in the db
-        $icl_cache_log[] = "SEMIHIT\t" . $context . "\t" . $name . "\n";
+        //$icl_cache_log[] = "SEMIHIT\t" . $context . "\t" . $name . "\n";
         $ret_value = false;        
     }elseif(!isset($icl_st_cache[$context][$name])){ //cache MISS
-        $icl_cache_log[] = "MISS\t" . $context . "\t" . $name . "\n";
+        //$icl_cache_log[] = "MISS\t" . $context . "\t" . $name . "\n";
         global $sitepress, $wpdb;        
         $current_language = $sitepress->get_current_language();
         $default_language = $sitepress->get_default_language();
@@ -480,7 +480,7 @@ function icl_t_cache_lookup($context, $name){
             $ret_value = false;
         }  
     }else{ //cache HIT
-        $icl_cache_log[] = "HIT\t" . $context . "\t" . $name . "\n";
+        //$icl_cache_log[] = "HIT\t" . $context . "\t" . $name . "\n";
         $ret_value = $icl_st_cache[$context][$name];
    
     }  
@@ -513,6 +513,7 @@ function icl_st_debug($str){
     trigger_error($str, E_USER_WARNING);
 }
 
+/*
 add_action('wp_footer', 'icl_debug_log');
 function icl_debug_log(){
     global $icl_cache_log;
@@ -520,4 +521,5 @@ function icl_debug_log(){
     echo join("", $icl_cache_log);
     echo '</pre></div>';
 }
+*/
 ?>
