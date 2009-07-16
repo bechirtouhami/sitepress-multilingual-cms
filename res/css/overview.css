@@ -1,8 +1,7 @@
 p.sub {
-    color:#777777;
-    font-family:Georgia,"Times New Roman","Bitstream Charter",Times,serif;
+    color:#444444;
+    font-family: Verdana;
     font-size:12px;
-    font-style:italic;
     padding:5px 10px 15px;
     margin:0px;
 }

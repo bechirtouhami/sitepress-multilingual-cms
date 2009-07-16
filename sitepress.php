@@ -47,7 +47,7 @@ require ICL_PLUGIN_PATH . '/sitepress.class.php';
 require ICL_PLUGIN_PATH . '/inc/functions.php';
 require ICL_PLUGIN_PATH . '/inc/hacks.php';
 require ICL_PLUGIN_PATH . '/inc/upgrade.php';
-require ICL_PLUGIN_PATH . '/inc/functions-general-string-translation.php';
+require ICL_PLUGIN_PATH . '/inc/functions-string-translation.php';
 
 
 if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQUEST['action']!='activate-selected') 
