@@ -27,7 +27,7 @@ function icl_st_init(){
     if(!isset($sitepress_settings['existing_content_language_verified'])){
         return;
     }          
-                   
+    
     if(!isset($sitepress_settings['st']['sw'])){
         $sitepress_settings['st']['sw'] = array(
             'blog_title' => 1,
