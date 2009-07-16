@@ -683,18 +683,18 @@ class SitePress{
     function prepopulate_translations($lang){        
         global $wpdb;        
         if($this->settings['existing_content_language_verified']) return;
-        $wpdb->query("TRUNCATE TABLE {$wpdb->prefix}icl_translations");
-        $wpdb->query("
+        mysql_query("TRUNCATE TABLE {$wpdb->prefix}icl_translations");
+        mysql_query("
             INSERT INTO {$wpdb->prefix}icl_translations(element_type, element_id, trid, language_code)
             SELECT 'post', ID, ID, '{$lang}' FROM {$wpdb->posts} WHERE post_type IN ('post','page')
             ");
-        $maxtrid = 1 + $wpdb->get_var("SELECT MAX(trid) FROM {$wpdb->prefix}icl_translations");
-        $wpdb->query("
+        $maxtrid = 1 + $wpdb->get_var("SELECT MAX(trid) FROM {$wpdb->prefix}icl_translations");        
+        mysql_query("
             INSERT INTO {$wpdb->prefix}icl_translations(element_type, element_id, trid, language_code)
             SELECT 'category', term_taxonomy_id, {$maxtrid}+term_taxonomy_id, '{$lang}' FROM {$wpdb->term_taxonomy}
             ");
         $maxtrid = 1 + $wpdb->get_var("SELECT MAX(trid) FROM {$wpdb->prefix}icl_translations");
-        $wpdb->query("
+        mysql_query("
             INSERT INTO {$wpdb->prefix}icl_translations(element_type, element_id, trid, language_code)
             SELECT 'tag', term_taxonomy_id, {$maxtrid}+term_taxonomy_id, '{$lang}' FROM {$wpdb->term_taxonomy}
             ");
