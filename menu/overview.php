@@ -57,6 +57,50 @@ if($sitepress_settings['existing_content_language_verified']){
                     </div>
                 </div>
                 
+                <div id="dashboard_wpml_navigation" class="postbox">
+                    <div class="handlediv" title="Click to toggle">
+                        <br/>
+                    </div>
+                    <h3 class="hndle">
+                        <span><?php echo __('Navigation', 'sitepress')?></span>
+                    </h3>                    
+                    <div class="inside">
+                        <p class="sub"><?php echo __('Out-of-the-box support for full CMS navigation in your WordPress site including drop down menus, breadcrumbs trail and sidebar navigation.', 'sitepress')?></p>
+                        <p class="sub">
+                        <a href="<?php echo 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/navigation.php' ?>"><?php echo __('Configure navigation', 'sitepress') ?></a>
+                        </p>
+                    </div>
+                </div>
+                
+                <div id="dashboard_wpml_stickylinks" class="postbox">
+                    <div class="handlediv" title="Click to toggle">
+                        <br/>
+                    </div>
+                    <h3 class="hndle">
+                        <span><?php echo __('Sticky links', 'sitepress')?></span>
+                    </h3>                    
+                    <div class="inside">
+                    
+                        <p class="sub"><?php echo __('WPML can turn internal links to posts and pages into sticky links. What this means is that links to pages and posts will automatically update if their URL changes.', 'sitepress'); ?></p>
+                    
+                        <?php if($sitepress_settings['modules']['absolute-links']['enabled']):?>
+                        <p class="sub"><?php echo __('Sticky links are enabled.') ?></p>
+                        <?php else: ?>
+                        <p class="sub"><span class="icl_error_text"><?php echo __('Sticky links are disabled.') ?></span></p>
+                        <?php endif; ?>
+                        
+                        <p class="sub">
+                        <a href="<?php echo 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/absolute-links.php' ?>"><?php echo __('Configure sticky links', 'sitepress') ?></a>
+                        </p>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+
+        <div class="postbox-container" style="width: 49%;">
+            <div id="normal-sortables" class="meta-box-sortables ui-sortable">
+            
                 <?php if(2 <= count($sitepress->get_active_languages())) :?>
                 <div id="dashboard_wpml_string_translation" class="postbox">
                     <div class="handlediv" title="Click to toggle">
@@ -124,50 +168,6 @@ if($sitepress_settings['existing_content_language_verified']){
                     </div>
                 </div>
                 <?php endif; ?>
-                
-            </div>
-        </div>
-
-        <div class="postbox-container" style="width: 49%;">
-            <div id="normal-sortables" class="meta-box-sortables ui-sortable">
-            
-                <div id="dashboard_wpml_navigation" class="postbox">
-                    <div class="handlediv" title="Click to toggle">
-                        <br/>
-                    </div>
-                    <h3 class="hndle">
-                        <span><?php echo __('Navigation', 'sitepress')?></span>
-                    </h3>                    
-                    <div class="inside">
-                        <p class="sub"><?php echo __('Out-of-the-box support for full CMS navigation in your WordPress site including drop down menus, breadcrumbs trail and sidebar navigation.', 'sitepress')?></p>
-                        <p class="sub">
-                        <a href="<?php echo 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/navigation.php' ?>"><?php echo __('Configure navigation', 'sitepress') ?></a>
-                        </p>
-                    </div>
-                </div>
-                
-                <div id="dashboard_wpml_stickylinks" class="postbox">
-                    <div class="handlediv" title="Click to toggle">
-                        <br/>
-                    </div>
-                    <h3 class="hndle">
-                        <span><?php echo __('Sticky links', 'sitepress')?></span>
-                    </h3>                    
-                    <div class="inside">
-                    
-                        <p class="sub"><?php echo __('WPML can turn internal links to posts and pages into sticky links. What this means is that links to pages and posts will automatically update if their URL changes.', 'sitepress'); ?></p>
-                    
-                        <?php if($sitepress_settings['modules']['absolute-links']['enabled']):?>
-                        <p class="sub"><?php echo __('Sticky links are enabled.') ?></p>
-                        <?php else: ?>
-                        <p class="sub"><span class="icl_error_text"><?php echo __('Sticky links are disabled.') ?></span></p>
-                        <?php endif; ?>
-                        
-                        <p class="sub">
-                        <a href="<?php echo 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/absolute-links.php' ?>"><?php echo __('Configure sticky links', 'sitepress') ?></a>
-                        </p>
-                    </div>
-                </div>
                                 
                             
             </div>
