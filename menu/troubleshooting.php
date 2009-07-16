@@ -27,7 +27,7 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
 }
 ?>
 <div class="wrap">
-    <div id="icon-options-general" class="icon32"><br /></div>
+    <div id="icon-options-general" class="icon32" style="background: transparent url(<?php echo ICL_PLUGIN_URL; ?>/res/img/icon.png) no-repeat;"><br /></div>
     <h2><?php echo __('Troubleshooting', 'sitepress') ?></h2>    
     <?php
     foreach($icl_tables as $icl_table){

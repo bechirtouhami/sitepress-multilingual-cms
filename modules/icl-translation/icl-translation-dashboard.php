@@ -56,7 +56,7 @@
 ?>
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap">
-    <div id="icon-options-general" class="icon32"><br /></div>
+    <div id="icon-options-general" class="icon32" style="background: transparent url(<?php echo ICL_PLUGIN_URL; ?>/res/img/icon.png) no-repeat;"><br /></div>
     <h2><?php echo __('Translation Dashboard', 'sitepress') ?></h2>        
     
     <?php if(!$sitepress->icl_account_configured() || !$sitepress->get_icl_translation_enabled()): ?>

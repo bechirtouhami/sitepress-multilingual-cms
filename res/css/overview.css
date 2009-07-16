@@ -5,3 +5,6 @@ p.sub {
     padding:5px 10px 15px;
     margin:0px;
 }
+.icon32{
+    background: transparent url(../img/icon.png) no-repeat !important;    
+}

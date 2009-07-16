@@ -27,7 +27,7 @@ if($sitepress_settings['existing_content_language_verified']){
     <div id="dashboard-widgets-wrap">
     
         <div id="icon-options-general" class="icon32"><br /></div>
-        <h2><?php echo __('Overview', 'sitepress') ?></h2>    
+        <h2><?php echo __('WPML Overview', 'sitepress') ?></h2>    
         
         
         <div id="dashboard-widgets" class="metabox-holder">
@@ -66,8 +66,10 @@ if($sitepress_settings['existing_content_language_verified']){
                         <span><?php echo __('String translation', 'sitepress')?></span>
                     </h3>                    
                     <div class="inside">
-                        <?php if($strings_need_update): ?>          
-                        <p class="sub"><span class="icl_error_text"><?php printf(__('There are <b><a href="%s">%s</a></b> strings that need to be updated or translated. ', 'sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/string-translation.php&status=0' ,$strings_need_update)?></span></p>              
+                        <?php if($strings_need_update==1): ?>          
+                        <p class="sub"><span class="icl_error_text"><?php printf(__('There is <a href="%s"><b>1</b> string</a> that need to be updated or translated. ', 'sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/string-translation.php&status=0')?></span></p>                                      
+                        <?php elseif($strings_need_update): ?>          
+                        <p class="sub"><span class="icl_error_text"><?php printf(__('There are <a href="%s"><b>%s</b> strings</a> that needs to be updated or translated. ', 'sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/string-translation.php&status=0' ,$strings_need_update)?></span></p>              
                         <?php else: ?>
                         <p class="sub">
                             <?php echo __('All strings are up to date.', 'sitepress'); ?>
@@ -89,23 +91,31 @@ if($sitepress_settings['existing_content_language_verified']){
                         <span><?php echo __('Content translation', 'sitepress')?></span>
                     </h3>                    
                     <div class="inside">
-                        <?php if(!$sitepress->icl_account_configured()): ?>
-                        <p class="sub"><span class="icl_error_text"><?php echo __('You haven\'t configured your account at ICanLocalize to enable professional translations for your blog', 'sitepress')?></span></p>
+                        <?php if($sitepress_settings['enable_icl_translations']): ?>
+                            <p class="sub"><?php echo __('Content translation is enabled.', 'sitepress');?></p>
+                            <?php if(!$sitepress->icl_account_configured()): ?>
+                            <p class="sub"><span class="icl_error_text"><?php echo __('You haven\'t configured your account at ICanLocalize to enable professional translations for your blog.', 'sitepress')?></span></p>
+                            <?php else: ?>
+                            <p class="sub"><?php echo __('Your account at ICanLocalize is set up.', 'sitepress'); ?></p>
+                            <?php endif; ?>                            
+                            
+                            <?php if(!isset($sitepress_settings['language_pairs']) || empty($sitepress_settings['language_pairs'])):?>
+                            <p class="sub"><?php echo __('No translation pairs are congigured', 'sitepress'); ?></p>              
+                            <?php else:?>
+                            <p class="sub"><?php echo __('Translation pairs:', 'sitepress'); ?> <?php echo join(', ', $lpairs)?></p>              
+                            <?php endif; ?>
+                            
                         <?php else: ?>
-                        <p class="sub"><?php echo __('Your account at ICanLocalize is set up', 'sitepress'); ?></p>
-                        <?php endif; ?>
-                        <?php if(!isset($sitepress_settings['language_pairs']) || empty($sitepress_settings['language_pairs'])):?>
-                        <p class="sub"><?php echo __('No translation pairs are congigured', 'sitepress'); ?></p>              
-                        <?php else:?>
-                        <p class="sub"><?php echo __('Translation pairs:', 'sitepress'); ?> <?php echo join(', ', $lpairs)?></p>              
-                        <?php endif; ?>
+                            <p class="sub"><?php echo __('Content Translation allows you to have all the site\'s contents professionally translated.', 'sitepress'); ?></p>
+                            <p class="sub"><?php printf(__('When enabled, you can use the <a href="%s">Translation Dashboard</a> to send posts and pages for translation. The entire process is completely effortless. The plugin will send the documents that need translation and then create the translated contents, ready to be published.', 'sitepress'), 'tools.php?page='.basename(ICL_PLUGIN_PATH).'/modules/icl-translation/icl-translation-dashboard.php');?></p>                        
+                            <p class="sub"><span class="icl_error_text"><?php echo __('Content translation is disabled' , 'sitepress')?></span></p>
+                        <?php endif;?>
+                        
                         <p class="sub">
                         <a href="<?php echo 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php' ?>"><?php echo __('Configure content translation', 'sitepress') ?></a>
-                        </p>        
+                        </p>                                
                         
-                        <?php if($sitepress->icl_account_configured()): ?>
-                        <p class="sub"><a href="<?php echo 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/modules/icl-translation/icl-translation-dashboard.php' ?>"><?php echo __('Send documents to translation', 'sitepress'); ?></a></p>                
-                        <?php else: ?>
+                        <?php if(!$sitepress->icl_account_configured()): ?>
                         <p class="sub"><a href="<?php echo 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/modules/icl-translation/icl-translation-dashboard.php' ?>"><?php echo __('Cost calculation for translation'); ?></a></p> 
                         <?php endif; ?>
                     </div>
@@ -142,17 +152,12 @@ if($sitepress_settings['existing_content_language_verified']){
                     </h3>                    
                     <div class="inside">
                     
-                        <p class="sub"><?php echo __('WPML can turn internal links to posts and pages into sticky links. What this means is that links to pages and posts will automatically update if their URL changes. There are many reasons why page URL changes:', 'sitepress'); ?></p>
-                        <ul style="list-style:disc;margin-left:20px;">
-                            <li><?php echo __('The slug changes.', 'sitepress'); ?></li>
-                            <li><?php echo __('The page parent changes.', 'sitepress'); ?></li>
-                            <li><?php echo __('Permlink structure changes.', 'sitepress'); ?></li>
-                        </ul>
+                        <p class="sub"><?php echo __('WPML can turn internal links to posts and pages into sticky links. What this means is that links to pages and posts will automatically update if their URL changes.', 'sitepress'); ?></p>
                     
                         <?php if($sitepress_settings['modules']['absolute-links']['enabled']):?>
-                        <p class="sub"><?php echo __('Sticky links is enabled.') ?></p>
+                        <p class="sub"><?php echo __('Sticky links are enabled.') ?></p>
                         <?php else: ?>
-                        <p class="sub"><span class="icl_error_text"><?php echo __('Sticky links is not enabled.') ?></span></p>
+                        <p class="sub"><span class="icl_error_text"><?php echo __('Sticky links are disabled.') ?></span></p>
                         <?php endif; ?>
                         
                         <p class="sub">
