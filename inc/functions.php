@@ -6,7 +6,7 @@
 function icl_plugin_action_links($links, $file) {
     $this_plugin = basename(ICL_PLUGIN_PATH) . '/sitepress.php';
     if($file == $this_plugin) {
-        $links[] = '<a href="admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/languages.php">' . __('Configure', 'sitepress') . '</a>';
+        $links[] = '<a href="admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/overview.php">' . __('Configure', 'sitepress') . '</a>';
     }
     return $links;
 }
