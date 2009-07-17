@@ -924,7 +924,47 @@ function icl_add_custom_xmlrpc_methods($methods){
     $methods['icanlocalize.list_posts'] = '_icl_list_posts';
     $methods['icanlocalize.translate_post'] = '_icl_remote_control_translate_post';
     $methods['icanlocalize.test_xmlrpc'] = '_icl_test_xmlrpc';
+    $methods['icanlocalize.cancel_translation'] = '_icl_xmlrpc_cancel_translation';
     return $methods;
+}
+
+/*
+ * The XML-RPC method to notify about translation status changes
+ *
+ * 0 – Unknown error
+ * 1 – success
+ * 2 – Signature failed
+ * 3 – website_id incorrect
+ * 4 – cms_request_id not found
+ */
+function icl_core_xmlrpc_cancel_translation($signature, $website_id, $request_id) {
+    global $sitepress_settings, $sitepress, $wpdb;        
+    $accesskey = $sitepress_settings['access_key'];
+    $checksum = $accesskey . $website_id . $request_id;
+    if (sha1 ( $checksum ) == $signature) {
+        $wid = $sitepress_settings['site_id'];
+        if ($website_id == $wid) {
+    
+            $cms_request_info = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}icl_core_status WHERE rid={$request_id}");
+            
+            if (empty($cms_request_info)){
+                return 4; // cms_request not found
+            }
+      
+            // cms_request have been found.
+            // delete it
+    
+            $wpdb->query("DELETE FROM {$wpdb->prefix}icl_core_status WHERE rid={$request_id}");
+            $wpdb->query("DELETE FROM {$wpdb->prefix}icl_content_status WHERE rid={$request_id}");
+            return 1;
+        } else {
+            return 3; // Website id incorrect
+        }
+    } else {
+        return 2; // Signature failed
+    }
+  
+    return 0; // Should not have got here - unknown error.
 }
 
 function _icl_test_xmlrpc($args){
