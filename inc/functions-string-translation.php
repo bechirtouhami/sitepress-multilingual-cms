@@ -166,18 +166,19 @@ function icl_register_string($context, $name, $value){
             icl_update_string_status($string_id);
         }        
     }else{
-        $string = array(
-            'language' => $language,
-            'context' => $context,
-            'name' => $name,
-            'value' => $value,
-            'status' => ICL_STRING_TRANSLATION_NOT_TRANSLATED,
-        );
-        $wpdb->insert($wpdb->prefix.'icl_strings', $string);
-        $string_id = $wpdb->insert_id;
-    }
-    
-    
+        if(!empty($string)){
+            $string = array(
+                'language' => $language,
+                'context' => $context,
+                'name' => $name,
+                'value' => $value,
+                'status' => ICL_STRING_TRANSLATION_NOT_TRANSLATED,
+            );
+            $wpdb->insert($wpdb->prefix.'icl_strings', $string);
+            $string_id = $wpdb->insert_id;
+        }
+    }    
+    return $string_id; 
 }  
 
 function icl_rename_string($context, $old_name, $new_name){
