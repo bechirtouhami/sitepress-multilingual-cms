@@ -937,8 +937,11 @@ function icl_add_custom_xmlrpc_methods($methods){
  * 3 – website_id incorrect
  * 4 – cms_request_id not found
  */
-function _icl_xmlrpc_cancel_translation($signature, $website_id, $request_id) {
+function _icl_xmlrpc_cancel_translation($args) {
     global $sitepress_settings, $sitepress, $wpdb;        
+    $signature = $args[0];
+    $website_id = $args[1];
+    $request_id = $args[2];
     $accesskey = $sitepress_settings['access_key'];
     $checksum = $accesskey . $website_id . $request_id;
     if (sha1 ( $checksum ) == $signature) {
