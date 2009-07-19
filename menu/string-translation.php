@@ -13,6 +13,36 @@ $context_filter = isset($_GET['context']) ? $_GET['context'] : false;
 <div class="wrap">
     <div id="icon-options-general" class="icon32"><br /></div>
     <h2><?php echo __('String translation', 'sitepress') ?></h2>    
+    
+    <?php if(isset($icl_st_po_strings) && !empty($icl_st_po_strings)): ?>
+    
+    <table class="widefat" cellspacing="0">
+        <thead>
+            <tr>
+                <th scope="col" class="manage-column column-cb check-column"><input type="checkbox" name="" /></th>
+                <th><?php echo __('String', 'sitepress') ?></th>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th scope="col" class="manage-column column-cb check-column"><input type="checkbox" name="" /></th>
+                <th><?php echo __('String', 'sitepress') ?></th>
+            </tr>
+        </tfoot>        
+        <tbody>
+            <?php foreach($icl_st_po_strings as $str): ?>
+                <tr>
+                    <td><input type="checkbox" name="" /></td>
+                    <td><?php echo $str ?></td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table>
+    
+    <p class="alignright"><input class="button primary" type="submit" name="icl_st_save_strings" value="Save" /></p>
+    
+    <?php else: ?>
+    
     <p>
     <?php echo __('Select which strings to display:', 'sitepress')?>
     <select name="icl_st_filter_status">
@@ -138,8 +168,8 @@ $context_filter = isset($_GET['context']) ? $_GET['context'] : false;
     </div>
     </div>
     
-    <p>
-    <h4 style="margin-bottom:0"><?php echo __('Site wide texts', 'sitepress')?></h4>
+    <div class="colthree">
+    <h4><?php echo __('Site wide texts', 'sitepress')?></h4>
     <form id="icl_st_sw_form" name="icl_st_sw_form" method="post" action="">
     <p class="icl_form_errors" style="display:none"></p>
     <ul>
@@ -155,7 +185,18 @@ $context_filter = isset($_GET['context']) ? $_GET['context'] : false;
     <input class="button-secondary" type="submit" name="iclt_st_sw_save" value="<?php echo __('Save', 'sitepress')?>" />
     <span class="icl_ajx_response" style="display:inline"><?php if(isset($_GET['updated']) && $_GET['updated']=='true') echo __('Settings saved', 'sitepress') ?></span>
     </form>
-    </p>
-    <br />    
+    </div>
+    
+    <div class="colthree">
+    <h4><?php echo __('Add strings from .po file', 'sitepress') ?></h4>
+    <form id="icl_st_po_form"  name="icl_st_po_form" method="post" enctype="multipart/form-data">
+    <input class="button primary" type="file" name="icl_po_file" />  
+    <input class="button" name="icl_po_upload" id="icl_po_upload" type="submit" value="<?php echo __('Submit', 'sitepress')?>" />        
+    </form>
+    </div>
+    
+    <br clear-"all" />    
+    
+    <?php endif; ?>
     
 </div>

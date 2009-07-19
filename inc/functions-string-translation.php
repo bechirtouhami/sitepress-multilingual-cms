@@ -20,9 +20,8 @@ add_action('icl_update_active_languages', 'icl_update_string_status_all');
 add_action('update_option_blogname', 'icl_st_update_blogname_actions',5,2);
 add_action('update_option_blogdescription', 'icl_st_update_blogdescription_actions',5,2);
 
-
 function icl_st_init(){
-    global $sitepress_settings, $sitepress, $wpdb;
+    global $sitepress_settings, $sitepress, $wpdb, $icl_st_err_str;
                          
     if(!isset($sitepress_settings['existing_content_language_verified'])){
         return;
@@ -81,6 +80,29 @@ function icl_st_init(){
             }            
     }
     
+    // handle po file upload
+    if(isset($_POST['icl_po_upload'])){        
+        global $icl_st_po_strings;
+        if($_FILES['icl_po_file']['size']==0){
+            $icl_st_err_str = __('File upload error', 'sitepress');
+        }else{
+            $lines = file($_FILES['icl_po_file']['tmp_name']);
+            $icl_st_po_strings = array();
+            foreach($lines as $l){
+                if(0 === strpos($l, 'msgid "')){
+                    if($str = substr($l,7,strlen($l)-9)){
+                        $icl_st_po_strings[] = substr($l,7,strlen($l)-9);
+                    }                    
+                }
+            }            
+            if(empty($icl_st_po_strings)){
+                $icl_st_err_str = __('No string found', 'sitepress');
+            }else{
+                $icl_st_po_strings = array_unique($icl_st_po_strings);
+            }
+        }
+    }
+    
     // hook into blog title and tag line
     if($sitepress_settings['st']['sw']['blog_title']){
         add_filter('option_blogname', 'icl_sw_filters_blogname');
@@ -102,6 +124,10 @@ function icl_st_init(){
     
     add_action('update_option_widget_text', 'icl_st_update_text_widgets_actions', 5, 2);
     //add_action('update_option_sidebars_widgets', '__icl_st_init_register_widget_titles');
+    
+    if($icl_st_err_str){
+        add_action('admin_notices', 'icl_st_admin_notices');
+    }
     
 }
 
@@ -525,9 +551,17 @@ function icl_st_get_contexts(){
     return $results;
 }
 
+function icl_st_admin_notices(){
+    global $icl_st_err_str;
+    if($icl_st_err_str){
+        echo '<div class="error"><p>' . $icl_st_err_str . '</p></div>';
+    }    
+}
+
 function icl_st_debug($str){
     trigger_error($str, E_USER_WARNING);
 }
+
 
 /*
 add_action('wp_footer', 'icl_debug_log');

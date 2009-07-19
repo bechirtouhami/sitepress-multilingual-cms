@@ -21,3 +21,11 @@
     margin:0;
     line-height:normal;
 }
+
+.colthree{
+    width:33%;
+    float:left;
+}
+.colthree h4{
+    margin-bottom:0;
+}
