@@ -8,6 +8,7 @@ $icl_contexts = icl_st_get_contexts();
 
 $status_filter = isset($_GET['status']) ? intval($_GET['status']) : false;
 $context_filter = isset($_GET['context']) ? $_GET['context'] : false;
+
 ?>
 <div class="wrap">
     <div id="icon-options-general" class="icon32"><br /></div>
