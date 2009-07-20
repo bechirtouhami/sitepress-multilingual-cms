@@ -58,7 +58,7 @@ function icl_st_init(){
                 $active_text_widgets = array();
                 $widgets = (array)get_option('sidebars_widgets');
                 foreach($widgets as $k=>$w){             
-                    if(preg_match('#sidebar-[0-9]+#i',$k)){
+                    if('wp_inactive_widgets' != $k && $k != 'array_version'){
                         foreach($widgets[$k] as $v){
                             if(preg_match('#text-([0-9]+)#i',$v, $matches)){
                                 $active_text_widgets[] = $matches[1];
@@ -169,17 +169,47 @@ function __icl_st_init_register_widget_titles(){
             }
         }
     }
-            
-    $widget_groups = $wpdb->get_results("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE 'widget\\_%'");
-    foreach($widget_groups as $wg){        
-        $name = str_replace('widget_','',$wg->option_name);
-        $value = unserialize($wg->option_value);
-        if(is_array($value)){                        
-            foreach($value as $k=>$w){
-                if(!empty($w) && isset($w['title']) && in_array($name . '-' . $k, $active_widgets)){
-                    icl_register_string('Widgets', 'widget title - ' . md5(apply_filters('widget_title',$w['title'])), apply_filters('widget_title',$w['title']));                                    
-                }
-            }
+    foreach($active_widgets as $aw){        
+        $int = preg_match('#-([0-9]+)$#i',$aw, $matches);
+        if($int){
+            $suffix = $matches[1];
+        }else{
+            $suffix = 1;
+        }
+        $name = preg_replace('#-[0-9]+#','',$aw);                
+        //if($name == 'rss-links') $name = 'rss';
+        $w = $wpdb->get_row("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name = 'widget_{$name}'");
+        $value = unserialize($w->option_value);
+        if(isset($value[$suffix]['title']) && $value[$suffix]['title']){
+            $w_title = $value[$suffix]['title'];     
+        }elseif(preg_match('#archives(-[0-9]+)?$#i',$aw)){                        
+            $w_title = 'Archives';
+        }elseif(preg_match('#categories(-[0-9]+)?$#i',$aw)){
+            $w_title = 'Categories';
+        }elseif(preg_match('#calendar(-[0-9]+)?$#i',$aw)){
+            $w_title = 'Calendar';
+        }elseif(preg_match('#links(-[0-9]+)?$#i',$aw)){
+            $w_title = 'Links';
+        }elseif(preg_match('#meta(-[0-9]+)?$#i',$aw)){
+            $w_title = 'Meta';
+        }elseif(preg_match('#pages(-[0-9]+)?$#i',$aw)){
+            $w_title = 'Pages';
+        }elseif(preg_match('#recent-posts(-[0-9]+)?$#i',$aw)){
+            $w_title = 'Recent Posts';
+        }elseif(preg_match('#recent-comments(-[0-9]+)?$#i',$aw)){
+            $w_title = 'Recent Comments';
+        }elseif(preg_match('#rss-links(-[0-9]+)?$#i',$aw)){
+            $w_title = 'RSS';
+        }elseif(preg_match('#search(-[0-9]+)?$#i',$aw)){
+            $w_title = 'Search';
+        }elseif(preg_match('#tag-cloud(-[0-9]+)?$#i',$aw)){
+            $w_title = 'Tag Cloud';
+        }else{
+            $w_title = false;
+        }
+        
+        if($w_title){
+            icl_register_string('Widgets', 'widget title - ' . md5(apply_filters('widget_title',$w_title)), apply_filters('widget_title',$w_title));                                    
         }
     }
 }
@@ -439,6 +469,10 @@ function icl_sw_filters_blogdescription($val){
 }
 
 function icl_sw_filters_widget_title($val){
+    global $wpdb;
+    //if(!$wpdb->get_var("SELECT id FROM {$wpdb->prefix}icl_strings WHERE context='Widgets' AND name = 'widget title - " . md5($val) ."'")){
+    //    icl_register_string('Widgets', 'widget title - ' . md5($val), $val);
+    //}
     return icl_t('Widgets', 'widget title - ' . md5($val) , $val);    
 }
 
