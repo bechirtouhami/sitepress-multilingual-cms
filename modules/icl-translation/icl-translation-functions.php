@@ -1,4 +1,5 @@
 <?php
+
 function icl_translation_admin_menu(){
     add_management_page(__('Translation Dashboard', 'sitepress'), __('Translation Dashboard', 'sitepress'), 'manage_options', dirname(__FILE__).'/icl-translation-dashboard.php');
 }
@@ -240,6 +241,38 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
             ),
             'target_languages' => $target_for_server
         );
+
+        include_once ICL_PLUGIN_PATH . '/inc/plugins-texts-functions.php';
+        
+        $custom_fields = icl_get_posts_translatable_fields();
+        foreach($custom_fields as $id => $cf){
+            if ($cf->translate) {
+                $custom_fields_value = get_post_meta($post_id, $cf->attribute_name, true);
+                if ($custom_fields_value != '') {
+                    $data['contents']['field-'.$id] = array(
+                        'translate' => 1,
+                        'data' => base64_encode($custom_fields_value),
+                        'format' => 'base64',
+                    );
+                    $data['contents']['field-'.$id.'-name'] = array(
+                        'translate' => 0,
+                        'data' => $cf->attribute_name,
+                    );
+                    $data['contents']['field-'.$id.'-type'] = array(
+                        'translate' => 0,
+                        'data' => $cf->attribute_type,
+                    );
+                    $data['contents']['field-'.$id.'-plugin'] = array(
+                        'translate' => 0,
+                        'data' => $cf->plugin_name,
+                    );
+                    
+                }
+            }
+        }
+                
+                
+
         
         if($post_type=='post'){
             if(is_array($categories_to_translate)){
@@ -352,9 +385,13 @@ function icl_translation_calculate_md5($post_id){
         }
     }
     
-    $custom_fields = array('_cms_nav_section');
+    include_once ICL_PLUGIN_PATH . '/inc/plugins-texts-functions.php';
+
+    $custom_fields = icl_get_posts_translatable_fields();
     foreach($custom_fields as $cf){
-        $custom_fields_values[] = get_post_meta($post_id, $cf, true);    
+        if ($cf->translate) {
+            $custom_fields_values[] = get_post_meta($post_id, $cf->attribute_name, true);
+        }
     }
     
     $md5 = md5($post->post_title . ';' . $post->post_content . ';' . join(',',(array)$post_tags).';' . join(',',(array)$post_categories) . ';' . join(',', $custom_fields_values));    
@@ -775,6 +812,23 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
         $val = get_post_meta($translation['original_id'], $ccf, true);
         update_post_meta($new_post_id, $ccf, $val);
     }    
+    
+    // set the translated custom fields if we have some.
+    $custom_fields = icl_get_posts_translatable_fields();
+    foreach($custom_fields as $id => $cf){
+        if ($cf->translate) {
+            $field_name = $cf->attribute_name;
+            // find it in the translation
+            foreach($translation as $name => $data) {
+                if ($data == $field_name) {
+                    if (preg_match("/field-(.*?)-name/", $name, $match)) {
+                        $field_id = $match[1];
+                        //update_post_meta($new_post_id, $f2s->attribute_name, get_post_meta($translation['original_id'],$f2s->attribute_name,true));
+                    }
+                }
+            }
+        }
+    }
     
     if(!$new_post_id){
         return false;
