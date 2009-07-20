@@ -154,7 +154,47 @@ $context_filter = isset($_GET['context']) ? $_GET['context'] : false;
         </tbody>
     </table>      
     
-    <span class="subsubsub"><input type="button" class="button primary" id="icl_st_delete_selected" value="<?php echo __('Delete selected strings', 'sitepress') ?>" /><span style="display:none"><?php echo __("Are you sure you want to delete these strings?\nTheir translations will be deleted too.",'sitepress') ?></span></span>
+    <span class="subsubsub">
+        <input type="button" class="button primary" id="icl_st_delete_selected" value="<?php echo __('Delete selected strings', 'sitepress') ?>" /><span style="display:none"><?php echo __("Are you sure you want to delete these strings?\nTheir translations will be deleted too.",'sitepress') ?></span>
+        <input type="button" class="button primary" id="icl_st_send_selected" value="<?php echo __('Send selected strings to ICanLocalize', 'sitepress') ?>" />
+            <span class="icl_ajx_response" style="display:none"><?php echo __('Sending translation requests. Please wait!', 'sitepress') ?>&nbsp;<img src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" /></span> 
+    </span>
+    <br /><br />
+    <span class="subsubsub">
+        <input type="button" class="button primary" id="icl_st_send_need_translation" value="<?php echo __('Send all strings that need update to ICanLocalize', 'sitepress') ?>" />
+            <span class="icl_ajx_response" style="display:none"><?php echo __('Sending translation requests. Please wait!', 'sitepress') ?>&nbsp;<img src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" /></span> 
+    </span>
+    <br clear="all" />
+    <ul id="icl-tr-opt">
+        <?php
+            $icl_lang_status = $sitepress_settings['icl_lang_status'];
+            if (isset($icl_lang_status)){
+                foreach($icl_lang_status as $lang){
+                    if($lang['from'] == $sitepress->get_current_language()) {
+                        $target_status[$lang['to']] = $lang['have_translators'];
+                    }
+                }
+            }
+        ?>
+        <?php foreach($active_languages as $lang): if($sitepress->get_current_language()==$lang['code']) continue; ?>
+            <?php if($sitepress_settings['language_pairs'] && isset($sitepress_settings['language_pairs'][$sitepress->get_current_language()][$lang['code']])): ?>
+                <?php if(isset($target_status[$lang['code']]) && $target_status[$lang['code']] == 1): ?>
+                    <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" checked="checked" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name']); ?></label></li>
+                <?php else:  ?>
+                    <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" disabled="disabled" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name'] . __(' - No translators assigned yet in ICanLocalize', 'sitepress')); ?></label></li>
+                <?php endif; ?>
+            <?php else:  ?>
+                <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" disabled="disabled" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name'] . __(' - This language has not been selected for translation by ICanLocalize', 'sitepress')); ?></label></li>
+            <?php endif; ?>
+        <?php endforeach; ?>    
+    </ul>  
+    
+    <?php if(!$sitepress->icl_account_configured() || !$sitepress->get_icl_translation_enabled()): ?>
+    <div class="error">
+    <p><?php printf(__('To send documents to translation, you first need to <a href="%s">set up content translation</a>.' , 'sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php'); ?></p>
+    </div>
+    <?php endif; ?>    
+      
     
     <div class="tablenav">
     <?php                 

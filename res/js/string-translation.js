@@ -7,6 +7,8 @@ jQuery(document).ready(function(){
     jQuery('select[name="icl_st_filter_context"]').change(icl_st_filter_context);
     jQuery('.check-column input').click(icl_st_select_all);
     jQuery('#icl_st_delete_selected').click(icl_st_delete_selected);
+    jQuery('#icl_st_send_selected').click(icl_st_send_selected);
+    jQuery('#icl_st_send_need_translation').click(icl_st_send_need_translation);
     jQuery('#icl_st_po_translations').click(function(){
         if(jQuery(this).attr('checked')){
             jQuery('#icl_st_po_language').removeAttr('disabled').fadeIn();
@@ -90,7 +92,7 @@ function icl_st_delete_selected(){
     jQuery('.icl_st_row_cb:checked').each(function(){
         delids.push(jQuery(this).val());        
     });
-    if(delids){
+    if(delids && trlangs){
         postvars = 'icl_ajx_action=icl_st_delete_strings&value='+delids.join(',');
         jQuery.post(icl_ajx_url, postvars, function(){
             for(i=0; i < delids.length; i++){
@@ -101,3 +103,37 @@ function icl_st_delete_selected(){
     return false;
 }
 
+function icl_st_send_selected(){
+    if(!jQuery('.icl_st_row_cb:checked').length){
+        return false;
+    }
+    thisb = jQuery(this);        
+    var sendids = [];
+    jQuery('.icl_st_row_cb:checked').each(function(){
+        sendids.push(jQuery(this).val());        
+    });
+    var trlangs = [];
+    jQuery('#icl-tr-opt input:checked').each(function(){trlangs.push(jQuery(this).val())});
+    if(sendids.length && trlangs.length){
+        thisb.attr('disabled','disabled').next().fadeIn();
+        postvars = 'icl_ajx_action=icl_st_send_strings&value='+sendids.join(',')+'&langs='+trlangs.join(',');
+        jQuery.post(icl_ajx_url, postvars, function(msg){
+            thisb.removeAttr('disabled').next().fadeOut();
+        });
+    }
+    return false;
+}
+
+function icl_st_send_need_translation(){
+    thisb = jQuery(this);        
+    thisb.attr('disabled','disabled').next().fadeIn();
+    postvars = 'icl_ajx_action=icl_st_send_strings_all'+'&langs='+trlangs.join(',');
+    var trlangs = [];
+    jQuery('#icl-tr-opt input:checked').each(function(){trlangs.push(jQuery(this).val())});    
+    if(trlangs.length){
+        jQuery.post(icl_ajx_url, postvars, function(msg){
+            thisb.removeAttr('disabled').next().fadeOut();
+        });
+    }
+    return false;
+}

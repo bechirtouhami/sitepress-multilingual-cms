@@ -385,6 +385,7 @@ function icl_add_string_translation($string_id, $language, $value, $status = fal
         $st_update = array();
         if($value != $res->value){
             $st_update['value'] = $value;
+            $st_update['md5']   = md5($value);
         }
         if($status){
             $st_update['status'] = $status;
@@ -402,7 +403,8 @@ function icl_add_string_translation($string_id, $language, $value, $status = fal
             'string_id' => $string_id,
             'language'  => $language,
             'value'     => $value,
-            'status'    => $status    
+            'status'    => $status,
+            'md5'       => md5($value)        
         );
         $wpdb->insert($wpdb->prefix.'icl_string_translations', $st);
         $st_id = $wpdb->insert_id;
@@ -622,6 +624,22 @@ function icl_st_admin_notices(){
         echo '<div class="error"><p>' . $icl_st_err_str . '</p></div>';
     }    
 }
+
+
+/*
+ $string_ids - an array of string ids to be sent for translation
+ $target_languages - an array of languages to translate to
+*/
+function icl_st_send_strings($string_ids, $target_languages) {
+    print_r($string_ids);
+}
+
+function icl_st_send_untranslated_strings($target_languages) {
+    global $wpdb;
+    $untranslated = $wpdb->get_results("SELECT id, value FROM {$wpdb->prefix}icl_strings WHERE status <> " . ICL_STRING_TRANSLATION_COMPLETE);
+    
+}
+
 
 function icl_st_debug($str){
     trigger_error($str, E_USER_WARNING);
