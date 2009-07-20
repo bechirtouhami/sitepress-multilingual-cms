@@ -8,39 +8,49 @@ $icl_contexts = icl_st_get_contexts();
 
 $status_filter = isset($_GET['status']) ? intval($_GET['status']) : false;
 $context_filter = isset($_GET['context']) ? $_GET['context'] : false;
-
 ?>
 <div class="wrap">
     <div id="icon-options-general" class="icon32"><br /></div>
     <h2><?php echo __('String translation', 'sitepress') ?></h2>    
-    
+    <p><?php printf(__('These are the strings that we found in your .po file. Please carefully review them. Then, click on the \'add\' or \'cancel\' buttons at the <a href="%s">bottom of this screen</a>. You can exclude individual strings by clearing the check boxes next to them.', 'sitepress'), '#add_po_strings_confirm'); ?></p>
     <?php if(isset($icl_st_po_strings) && !empty($icl_st_po_strings)): ?>
-    
-    <table class="widefat" cellspacing="0">
+    <form method="post" action="">
+    <input type="hidden" name="icl_st_strings_for" value="<?php echo $_POST['icl_st_strings_for'] ?>" />
+    <?php if(isset($_POST['icl_st_po_language'])): ?>
+    <input type="hidden" name="icl_st_po_language" value="<?php echo $_POST['icl_st_po_language'] ?>" />
+    <?php endif; ?>
+    <table id="icl_po_strings" class="widefat" cellspacing="0">
         <thead>
             <tr>
-                <th scope="col" class="manage-column column-cb check-column"><input type="checkbox" name="" /></th>
+                <th scope="col" class="manage-column column-cb check-column"><input type="checkbox" checked="checked" name="" /></th>
                 <th><?php echo __('String', 'sitepress') ?></th>
             </tr>
         </thead>
         <tfoot>
             <tr>
-                <th scope="col" class="manage-column column-cb check-column"><input type="checkbox" name="" /></th>
+                <th scope="col" class="manage-column column-cb check-column"><input type="checkbox" checked="checked" name="" /></th>
                 <th><?php echo __('String', 'sitepress') ?></th>
             </tr>
         </tfoot>        
         <tbody>
-            <?php foreach($icl_st_po_strings as $str): ?>
+            <?php $k = -1; foreach($icl_st_po_strings as $str): $k++; ?>
                 <tr>
-                    <td><input type="checkbox" name="" /></td>
-                    <td><?php echo $str ?></td>
+                    <td><input class="icl_st_row_cb" type="checkbox" name="icl_strings_selected[]" checked="checked" value="<?php echo $k ?>" /></td>
+                    <td>
+                        <input type="text" name="icl_strings[]" value="<?php echo htmlentities($str['string']) ?>" readonly="readonly" style="width:100%;" size="100" />
+                        <?php if(isset($_POST['icl_st_po_language'])): ?>
+                        <input type="text" name="icl_translations[]" value="<?php echo htmlentities($str['translation']) ?>" readonly="readonly" style="width:100%;" size="100" />
+                        <?php endif; ?>
+                    </td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
     </table>
-    
-    <p class="alignright"><input class="button primary" type="submit" name="icl_st_save_strings" value="Save" /></p>
-    
+        
+    <a name="add_po_strings_confirm"></a>
+    <p class="alignright"><input class="button primary" type="submit" name="icl_st_save_strings" value="<?php echo __('Save', 'sitepress'); ?>" /></p>
+    <p class="aligleft"><input class="button primary" type="button" value="<?php echo __('Cancel', 'sitepress'); ?>" onclick="location.href='admin.php?page=<?php echo $_GET['page'] ?>'" /></p>
+    </form>
     <?php else: ?>
     
     <p>
@@ -190,12 +200,28 @@ $context_filter = isset($_GET['context']) ? $_GET['context'] : false;
     <div class="colthree">
     <h4><?php echo __('Add strings from .po file', 'sitepress') ?></h4>
     <form id="icl_st_po_form"  name="icl_st_po_form" method="post" enctype="multipart/form-data">
+    <p>
+        <?php  echo __('Select what the strings are for: ', 'sitepress'); ?>
+        <select name="icl_st_strings_for">
+        <option value="theme"><?php echo __('Theme','sitepress')?></option>
+        <option value="plugin"><?php echo __('Plugin','sitepress')?></option>
+        </select>
+    </p>
+    <p style="line-height:2.3em">
+        <input type="checkbox" id="icl_st_po_translations" />
+        <?php echo __('Also create translations according to the .po file', 'sitepress')?>
+        <select name="icl_st_po_language" id="icl_st_po_language" style="display:none">
+        <?php foreach($active_languages as $al): if($al['code']==$sitepress->get_default_language()) continue; ?>
+        <option value="<?php echo $al['code'] ?>"><?php echo $al['display_name'] ?></option>
+        <?php endforeach; ?>
+        </select>
+    </p>
     <input class="button primary" type="file" name="icl_po_file" />  
     <input class="button" name="icl_po_upload" id="icl_po_upload" type="submit" value="<?php echo __('Submit', 'sitepress')?>" />        
     </form>
     </div>
     
-    <br clear-"all" />    
+    <br clear="all" />    
     
     <?php endif; ?>
     

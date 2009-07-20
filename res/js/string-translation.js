@@ -7,6 +7,13 @@ jQuery(document).ready(function(){
     jQuery('select[name="icl_st_filter_context"]').change(icl_st_filter_context);
     jQuery('.check-column input').click(icl_st_select_all);
     jQuery('#icl_st_delete_selected').click(icl_st_delete_selected);
+    jQuery('#icl_st_po_translations').click(function(){
+        if(jQuery(this).attr('checked')){
+            jQuery('#icl_st_po_language').removeAttr('disabled').fadeIn();
+        }else{
+            jQuery('#icl_st_po_language').attr('disabled','disabled').fadeOut();
+        }
+    })
 });
 
 function icl_st_toggler(){

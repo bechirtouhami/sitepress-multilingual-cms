@@ -1,5 +1,9 @@
 <?php
 
+//echo '<pre>';
+//print_r(get_option('sidebars_widgets'));
+//echo '</pre>';
+
 define('ICL_STRING_TRANSLATION_NOT_TRANSLATED', 0);
 define('ICL_STRING_TRANSLATION_COMPLETE', 1);
 define('ICL_STRING_TRANSLATION_NEEDS_UPDATE', 2);
@@ -62,7 +66,7 @@ function icl_st_init(){
                         }
                     }
                 }
-                                
+                                                                
                 $widget_text = get_option('widget_text');
                 if(is_array($widget_text)){
                     foreach($widget_text as $k=>$w){
@@ -81,27 +85,47 @@ function icl_st_init(){
     }
     
     // handle po file upload
-    if(isset($_POST['icl_po_upload'])){        
+    if(isset($_POST['icl_po_upload'])){                
         global $icl_st_po_strings;
         if($_FILES['icl_po_file']['size']==0){
             $icl_st_err_str = __('File upload error', 'sitepress');
         }else{
             $lines = file($_FILES['icl_po_file']['tmp_name']);
             $icl_st_po_strings = array();
-            foreach($lines as $l){
-                if(0 === strpos($l, 'msgid "')){
-                    if($str = substr($l,7,strlen($l)-9)){
-                        $icl_st_po_strings[] = substr($l,7,strlen($l)-9);
-                    }                    
-                }
+            for($k = 0; $k < count($lines); $k++){
+                if(0 === strpos($lines[$k], 'msgid "')){
+                    if($str = substr($lines[$k],7,strlen($lines[$k])-9)){
+                        $icl_st_po_strings[] = array(
+                            'string' => substr($lines[$k],7,strlen($lines[$k])-9),
+                            'translation' => substr($lines[$k+1], 8, strlen($lines[$k+1])-10)
+                        );
+                        $k++;                        
+                    }                                        
+                }                
             }            
             if(empty($icl_st_po_strings)){
                 $icl_st_err_str = __('No string found', 'sitepress');
-            }else{
-                $icl_st_po_strings = array_unique($icl_st_po_strings);
             }
         }
     }
+    elseif(isset($_POST['icl_st_save_strings'])){
+        $arr = array_intersect_key($_POST['icl_strings'], array_flip($_POST['icl_strings_selected']));
+        $arr = array_map('html_entity_decode', $arr);         
+        if(isset($_POST['icl_st_po_language'])){
+            $arr_t = array_intersect_key($_POST['icl_translations'], array_flip($_POST['icl_strings_selected']));
+            $arr_t = array_map('html_entity_decode', $arr_t);         
+        }
+        
+        foreach($arr as $k=>$string){
+            $string_id = icl_register_string($_POST['icl_st_strings_for'], md5($string), $string);
+            if($string_id && isset($_POST['icl_st_po_language'])){
+                icl_add_string_translation($string_id, $_POST['icl_st_po_language'], $arr_t[$k], ICL_STRING_TRANSLATION_COMPLETE);
+                icl_update_string_status($string_id);
+            }            
+        }
+        
+    }
+    
     
     // hook into blog title and tag line
     if($sitepress_settings['st']['sw']['blog_title']){
@@ -137,14 +161,15 @@ function __icl_st_init_register_widget_titles(){
     // create a list of active widgets
     $active_widgets = array();
     $widgets = (array)get_option('sidebars_widgets');    
+    
     foreach($widgets as $k=>$w){             
-        if(preg_match('#sidebar-[0-9]+#i',$k)){
+        if('wp_inactive_widgets' != $k && $k != 'array_version'){
             foreach($widgets[$k] as $v){                
                 $active_widgets[] = $v;
             }
         }
     }
-    
+            
     $widget_groups = $wpdb->get_results("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE 'widget\\_%'");
     foreach($widget_groups as $wg){        
         $name = str_replace('widget_','',$wg->option_name);
@@ -169,12 +194,10 @@ function icl_st_administration_menu(){
    
 function icl_register_string($context, $name, $value){
     global $wpdb, $sitepress, $sitepress_settings;
-    
     // if the default language is not set up return without doing anything
     if(!isset($sitepress_settings['existing_content_language_verified'])){
         return;
-    }   
-    
+    }       
     $language = $sitepress->get_default_language();
     $res = $wpdb->get_row("SELECT id, value, status, language FROM {$wpdb->prefix}icl_strings WHERE context='".$wpdb->escape($context)."' AND name='".$wpdb->escape($name)."'");
     if($res){
@@ -192,7 +215,7 @@ function icl_register_string($context, $name, $value){
             icl_update_string_status($string_id);
         }        
     }else{
-        if(!empty($string)){
+        if(!empty($value)){
             $string = array(
                 'language' => $language,
                 'context' => $context,
