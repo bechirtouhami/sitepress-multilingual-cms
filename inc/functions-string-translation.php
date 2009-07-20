@@ -233,7 +233,7 @@ function icl_st_administration_menu(){
 function icl_register_string($context, $name, $value){
     global $wpdb, $sitepress, $sitepress_settings;
     // if the default language is not set up return without doing anything
-    if(empty($value) || !trim($value) || !isset($sitepress_settings['existing_content_language_verified'])){
+    if(!isset($sitepress_settings['existing_content_language_verified'])){
         return;
     }       
     $language = $sitepress->get_default_language();
@@ -253,15 +253,17 @@ function icl_register_string($context, $name, $value){
             icl_update_string_status($string_id);
         }        
     }else{
-        $string = array(
-            'language' => $language,
-            'context' => $context,
-            'name' => $name,
-            'value' => $value,
-            'status' => ICL_STRING_TRANSLATION_NOT_TRANSLATED,
-        );
-        $wpdb->insert($wpdb->prefix.'icl_strings', $string);
-        $string_id = $wpdb->insert_id;
+        if(!empty($value) && trim($value)){
+            $string = array(
+                'language' => $language,
+                'context' => $context,
+                'name' => $name,
+                'value' => $value,
+                'status' => ICL_STRING_TRANSLATION_NOT_TRANSLATED,
+            );
+            $wpdb->insert($wpdb->prefix.'icl_strings', $string);
+            $string_id = $wpdb->insert_id;
+        }
     }    
     return $string_id; 
 }  
