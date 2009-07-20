@@ -147,7 +147,7 @@ function icl_st_init(){
     }
     
     add_action('update_option_widget_text', 'icl_st_update_text_widgets_actions', 5, 2);
-    //add_action('update_option_sidebars_widgets', '__icl_st_init_register_widget_titles');
+    add_action('update_option_sidebars_widgets', '__icl_st_init_register_widget_titles');
     
     if($icl_st_err_str){
         add_action('admin_notices', 'icl_st_admin_notices');
@@ -156,19 +156,19 @@ function icl_st_init(){
 }
 
 function __icl_st_init_register_widget_titles(){
-    global $wpdb;
+    global $wpdb;        
     
     // create a list of active widgets
     $active_widgets = array();
     $widgets = (array)get_option('sidebars_widgets');    
     
-    foreach($widgets as $k=>$w){             
+    foreach($widgets as $k=>$w){                     
         if('wp_inactive_widgets' != $k && $k != 'array_version'){
             foreach($widgets[$k] as $v){                
                 $active_widgets[] = $v;
             }
         }
-    }
+    }    
     foreach($active_widgets as $aw){        
         $int = preg_match('#-([0-9]+)$#i',$aw, $matches);
         if($int){
@@ -182,36 +182,44 @@ function __icl_st_init_register_widget_titles(){
         $value = unserialize($w->option_value);
         if(isset($value[$suffix]['title']) && $value[$suffix]['title']){
             $w_title = $value[$suffix]['title'];     
-        }elseif(preg_match('#archives(-[0-9]+)?$#i',$aw)){                        
-            $w_title = 'Archives';
-        }elseif(preg_match('#categories(-[0-9]+)?$#i',$aw)){
-            $w_title = 'Categories';
-        }elseif(preg_match('#calendar(-[0-9]+)?$#i',$aw)){
-            $w_title = 'Calendar';
-        }elseif(preg_match('#links(-[0-9]+)?$#i',$aw)){
-            $w_title = 'Links';
-        }elseif(preg_match('#meta(-[0-9]+)?$#i',$aw)){
-            $w_title = 'Meta';
-        }elseif(preg_match('#pages(-[0-9]+)?$#i',$aw)){
-            $w_title = 'Pages';
-        }elseif(preg_match('#recent-posts(-[0-9]+)?$#i',$aw)){
-            $w_title = 'Recent Posts';
-        }elseif(preg_match('#recent-comments(-[0-9]+)?$#i',$aw)){
-            $w_title = 'Recent Comments';
-        }elseif(preg_match('#rss-links(-[0-9]+)?$#i',$aw)){
-            $w_title = 'RSS';
-        }elseif(preg_match('#search(-[0-9]+)?$#i',$aw)){
-            $w_title = 'Search';
-        }elseif(preg_match('#tag-cloud(-[0-9]+)?$#i',$aw)){
-            $w_title = 'Tag Cloud';
         }else{
-            $w_title = false;
+            $w_title = __icl_get_default_widget_title($aw);
         }
         
-        if($w_title){
+        if($w_title){            
             icl_register_string('Widgets', 'widget title - ' . md5(apply_filters('widget_title',$w_title)), apply_filters('widget_title',$w_title));                                    
+            
         }
-    }
+    }    
+}
+
+function __icl_get_default_widget_title($id){
+    if(preg_match('#archives(-[0-9]+)?$#i',$id)){                        
+        $w_title = 'Archives';
+    }elseif(preg_match('#categories(-[0-9]+)?$#i',$id)){
+        $w_title = 'Categories';
+    }elseif(preg_match('#calendar(-[0-9]+)?$#i',$id)){
+        $w_title = 'Calendar';
+    }elseif(preg_match('#links(-[0-9]+)?$#i',$id)){
+        $w_title = 'Links';
+    }elseif(preg_match('#meta(-[0-9]+)?$#i',$id)){
+        $w_title = 'Meta';
+    }elseif(preg_match('#pages(-[0-9]+)?$#i',$id)){
+        $w_title = 'Pages';
+    }elseif(preg_match('#recent-posts(-[0-9]+)?$#i',$id)){
+        $w_title = 'Recent Posts';
+    }elseif(preg_match('#recent-comments(-[0-9]+)?$#i',$id)){
+        $w_title = 'Recent Comments';
+    }elseif(preg_match('#rss-links(-[0-9]+)?$#i',$id)){
+        $w_title = 'RSS';
+    }elseif(preg_match('#search(-[0-9]+)?$#i',$id)){
+        $w_title = 'Search';
+    }elseif(preg_match('#tag-cloud(-[0-9]+)?$#i',$id)){
+        $w_title = 'Tag Cloud';
+    }else{
+        $w_title = false;
+    }  
+    return $w_title;  
 }
 
 function icl_st_administration_menu(){
@@ -469,10 +477,6 @@ function icl_sw_filters_blogdescription($val){
 }
 
 function icl_sw_filters_widget_title($val){
-    global $wpdb;
-    //if(!$wpdb->get_var("SELECT id FROM {$wpdb->prefix}icl_strings WHERE context='Widgets' AND name = 'widget title - " . md5($val) ."'")){
-    //    icl_register_string('Widgets', 'widget title - ' . md5($val), $val);
-    //}
     return icl_t('Widgets', 'widget title - ' . md5($val) , $val);    
 }
 
@@ -512,13 +516,17 @@ function icl_st_update_blogdescription_actions($old, $new){
     icl_st_update_string_actions('WP', 'Tagline', $old, $new);
 }
 
-function icl_st_update_widget_title_actions($old_options, $new_options){
+function icl_st_update_widget_title_actions($old_options, $new_options){    
     foreach($new_options as $k=>$o){
         if(isset($o['title'])){
             if(isset($old_options[$k]['title'])){
                 icl_st_update_string_actions('Widgets', 'widget title - ' . md5(apply_filters('widget_title', $old_options[$k]['title'])), apply_filters('widget_title', $old_options[$k]['title']), apply_filters('widget_title', $o['title']));        
-            }else{
-                icl_register_string('Widgets', 'widget title - ' . md5(apply_filters('widget_title', $new_options[$k]['title'])), apply_filters('widget_title', $new_options[$k]['title']));
+            }else{                
+                if(!$new_options[$k]['title']){          
+                    //__icl_st_init_register_widget_titles();
+                }else{
+                    icl_register_string('Widgets', 'widget title - ' . md5(apply_filters('widget_title', $new_options[$k]['title'])), apply_filters('widget_title', $new_options[$k]['title']));
+                }                
             }            
         }
     }    
