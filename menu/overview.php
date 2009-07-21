@@ -61,6 +61,7 @@ if($sitepress_settings['existing_content_language_verified']){
                             <b><?php echo __('Need help?', 'sitepress')?></b><br />
                             <?php printf(__('<a href="%s">Ask WPML on Twitter</a>, visit the <a href="%s">support forum</a> or view the <a href="%s">documentation</a>.', 'sitepress'), 'http://twitter.com/wpml','http://forum.wpml.org','http://wpml.org')?>
                         </p>
+                        <?php remove_all_actions('icl_menu_footer'); ?>
                         
                     </div>
                 </div>
