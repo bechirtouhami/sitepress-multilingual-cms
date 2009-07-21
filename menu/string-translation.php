@@ -53,8 +53,10 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
         </table>
             
         <a name="add_po_strings_confirm"></a>
-        <p class="alignright"><input class="button primary" type="submit" name="icl_st_save_strings" value="<?php echo __('Save', 'sitepress'); ?>" /></p>
-        <p class="aligleft"><input class="button primary" type="button" value="<?php echo __('Cancel', 'sitepress'); ?>" onclick="location.href='admin.php?page=<?php echo $_GET['page'] ?>'" /></p>
+        <p class="alignright"></p>
+        <p class="aligleft"><input class="button" type="button" value="<?php echo __('Cancel', 'sitepress'); ?>" onclick="location.href='admin.php?page=<?php echo $_GET['page'] ?>'" />
+        &nbsp; <input class="button-primary" type="submit" name="icl_st_save_strings" value="<?php echo __('Add selected strings', 'sitepress'); ?>" />
+        </p>
         </form>
     <?php else: ?>
     
@@ -227,10 +229,10 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
                 <input type="button" class="button-secondary" id="icl_st_send_selected" value="<?php echo __('Send selected strings to ICanLocalize', 'sitepress') ?>" disabled="disabled" />                    
                 <input type="button" class="button-primary" id="icl_st_send_need_translation" value="<?php echo __('Send all strings that need update to ICanLocalize', 'sitepress') ?>" />                     
             </span><br />
-            <span id="icl_st_send_progress" class="icl_ajx_response" style="display:none;float:left;"><?php echo __('Sending translation requests. Please wait!', 'sitepress') ?>&nbsp;<img src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" /></span>
+            <span id="icl_st_send_progress" class="icl_ajx_response" style="display:none;float:left;"><?php echo __('Sending translation requests. Please wait!', 'sitepress') ?>&nbsp;<img src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" alt="loading" /></span>
     
             <?php if(isset($sitepress_settings['icl_balance'])): ?>
-            <br clear="all">
+            <br clear="all" />
             <p>
                 <?php echo sprintf(__('Your balance with ICanLocalize is %s. Visit your %sICanLocalize finance%s page to deposit additional funds.'),
                                       '$'.$sitepress_settings['icl_balance'],
@@ -279,6 +281,8 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
                     <option value="plugin"><?php echo __('Plugin','sitepress')?></option>
                     </select>
                 </p>
+                <?php echo __('.po file:', 'sitepress')?>
+                <input class="button primary" type="file" name="icl_po_file" />  
                 <p style="line-height:2.3em">
                     <input type="checkbox" id="icl_st_po_translations" />
                     <?php echo __('Also create translations according to the .po file', 'sitepress')?>
@@ -288,7 +292,6 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
                     <?php endforeach; ?>
                     </select>
                 </p>
-                <input class="button primary" type="file" name="icl_po_file" />  
                 <input class="button" name="icl_po_upload" id="icl_po_upload" type="submit" value="<?php echo __('Submit', 'sitepress')?>" />        
             </form>
         </div>
