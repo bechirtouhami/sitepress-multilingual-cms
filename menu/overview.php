@@ -121,9 +121,9 @@ if($sitepress_settings['existing_content_language_verified']){
                     <div class="inside">
                         <p class="sub"><?php echo __('String translation allows you to enter translation for texts such as the site\'s title, tagline, widgets and other text not contained in posts and pages.', 'sitepress')?></p>
                         <?php if($strings_need_update==1): ?>          
-                        <p class="sub"><b><?php printf(__('There is <a href="%s"><b>1</b> string</a> that needs to be updated or translated. ', 'sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/string-translation.php&status=0')?></b></p>                                      
+                        <p class="sub"><b><?php printf(__('There is <a href="%s"><b>1</b> string</a> that needs to be updated or translated. ', 'sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/string-translation.php&amp;status=0')?></b></p>                                      
                         <?php elseif($strings_need_update): ?>          
-                        <p class="sub"><b><?php printf(__('There are <a href="%s"><b>%s</b> strings</a> that need to be updated or translated. ', 'sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/string-translation.php&status=0' ,$strings_need_update)?></b></p>              
+                        <p class="sub"><b><?php printf(__('There are <a href="%s"><b>%s</b> strings</a> that need to be updated or translated. ', 'sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/string-translation.php&amp;status=0' ,$strings_need_update)?></b></p>              
                         <?php else: ?>
                         <p class="sub">
                             <?php echo __('All strings are up to date.', 'sitepress'); ?>
