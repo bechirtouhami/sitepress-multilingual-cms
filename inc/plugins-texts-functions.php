@@ -84,7 +84,7 @@ function icl_pt_handle_upload(){
         }                
     }
     fclose($fh);            
-    if($file['error']==0 && $file['size'] && $file['type']=='text/csv' && !$uplerr){
+    if($file['error']==0 && $file['size'] && /*$file['type']=='text/csv' &&*/ !$uplerr){
         $wpdb->query("DELETE FROM {$wpdb->prefix}icl_plugins_texts WHERE plugin_name='{$plugin}'");
         $fh = fopen($file['tmp_name'], 'rb');
         while($data = fgetcsv($fh)){
