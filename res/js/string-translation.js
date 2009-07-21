@@ -94,7 +94,7 @@ function icl_st_delete_selected(){
     jQuery('.icl_st_row_cb:checked').each(function(){
         delids.push(jQuery(this).val());        
     });
-    if(delids && trlangs){
+    if(delids){
         postvars = 'icl_ajx_action=icl_st_delete_strings&value='+delids.join(',');
         jQuery.post(icl_ajx_url, postvars, function(){
             for(i=0; i < delids.length; i++){

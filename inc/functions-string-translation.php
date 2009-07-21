@@ -178,12 +178,16 @@ function __icl_st_init_register_widget_titles(){
         }
         $name = preg_replace('#-[0-9]+#','',$aw);                
         //if($name == 'rss-links') $name = 'rss';
-        $w = $wpdb->get_row("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name = 'widget_{$name}'");
-        $value = unserialize($w->option_value);
+        
+        //$w = $wpdb->get_row("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name = 'widget_{$name}'");
+        //$value = unserialize($w->option_value);
+        $value = get_option("widget_".$name);
         if(isset($value[$suffix]['title']) && $value[$suffix]['title']){
             $w_title = $value[$suffix]['title'];     
         }else{
             $w_title = __icl_get_default_widget_title($aw);
+            $value[$suffix]['title'] = $w_title;
+            update_option("widget_".$name, $value);
         }
         
         if($w_title){            
@@ -497,15 +501,17 @@ function icl_st_update_string_actions($context, $name, $old_value, $new_value){
             $wpdb->update($wpdb->prefix . 'icl_string_translations', array('status'=>ICL_STRING_TRANSLATION_NEEDS_UPDATE), array('string_id'=>$string->id));
             $wpdb->update($wpdb->prefix . 'icl_strings', array('status'=>ICL_STRING_TRANSLATION_NEEDS_UPDATE), array('id'=>$string->id));
         }
+        
+        if($context == 'Widgets' && $new_value){
+            if(0 === strpos($name, 'widget title - ')){
+                icl_rename_string('Widgets', 'widget title - ' . md5($old_value), 'widget title - ' . md5($new_value));
+            }elseif(0 === strpos($name, 'widget body - ')){
+                icl_rename_string('Widgets', 'widget body - ' . md5($old_value), 'widget body - ' . md5($new_value));
+            }
+        }        
+        
     }
     
-    if($context == 'Widgets'){
-        if(0 === strpos($name, 'widget title - ')){
-            icl_rename_string('Widgets', 'widget title - ' . md5($old_value), 'widget title - ' . md5($new_value));
-        }elseif(0 === strpos($name, 'widget body - ')){
-            icl_rename_string('Widgets', 'widget body - ' . md5($old_value), 'widget body - ' . md5($new_value));
-        }
-    }        
 }
 
 function icl_st_update_blogname_actions($old, $new){
@@ -519,7 +525,7 @@ function icl_st_update_blogdescription_actions($old, $new){
 function icl_st_update_widget_title_actions($old_options, $new_options){        
     foreach($new_options as $k=>$o){
         if(isset($o['title'])){
-            if(isset($old_options[$k]['title'])){
+            if(isset($old_options[$k]['title']) && $old_options[$k]['title']){
                 icl_st_update_string_actions('Widgets', 'widget title - ' . md5(apply_filters('widget_title', $old_options[$k]['title'])), apply_filters('widget_title', $old_options[$k]['title']), apply_filters('widget_title', $o['title']));        
             }else{                
                 if($new_options[$k]['title']){          
@@ -636,5 +642,20 @@ function icl_debug_log(){
     echo join("", $icl_cache_log);
     echo '</pre></div>';
 }
+
 */
+/*
+function debug_arr_to_file($arr){
+    $deb = fopen(ABSPATH . '/debug.txt', 'a');
+    ob_start();
+    echo "----------------------\n";
+    print_r($arr);
+    echo "----------------------\n";
+    $ob = ob_get_contents();
+    ob_end_clean();    
+    fwrite($deb,$ob);
+}
+*/
+
+
 ?>
