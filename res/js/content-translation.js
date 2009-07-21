@@ -5,7 +5,7 @@ addLoadEvent(function(){
     jQuery('#icl_create_account, #icl_configure_account').submit(iclValidateWebsiteKind);
     jQuery('form[name="icl_editor_account"]').submit(iclSaveForm);
     jQuery('form[name="icl_plugins_texts"]').submit(iclSaveForm);
-    jQuery('#icl_enable_content_translation').change(iclToggleContentTranslation);
+    jQuery('#icl_enable_content_translation,#icl_disable_content_translation').click(iclToggleContentTranslation);
     jQuery('a[href="#icl-ct-advanced-options"]').click(iclToggleAdvancedOptions);        
     if(jQuery('input[name="icl_website_kind"]:checked').length==0){
         jQuery('input[name="icl_website_kind"]').click(iclQuickSaveWebsiteKind);
@@ -44,9 +44,8 @@ function saveLanguagePairs(){
 }
 
 function iclToggleContentTranslation(){
-    var val = jQuery(this).attr('checked')?1:0;
+    var val = jQuery(this).attr('id')=='icl_enable_content_translation'?1:0;
     if(!val && !confirm(jQuery('#icl_toggle_ct_confirm_message').html())){
-        jQuery(this).attr('checked','checked');
         return false;
     }
     jQuery.ajax({

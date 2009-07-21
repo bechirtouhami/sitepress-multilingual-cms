@@ -11,14 +11,6 @@
 <div class="wrap">
     <div id="icon-options-general" class="icon32"><br /></div>
     <h2><?php echo __('Setup WPML', 'sitepress') ?></h2>    
-
-    <p>
-    <label for="icl_enable_content_translation">
-    <input type="checkbox" id="icl_enable_content_translation" name="icl_enable_content_translation" value="1" <?php if($sitepress->get_icl_translation_enabled() ): ?>checked="checked"<?php endif;?>/>&nbsp;
-    <?php echo __('Enable content translation', 'sitepress') ?>
-    </label>
-    </p>
-    <span id="icl_toggle_ct_confirm_message" style="display:none"><?php echo __('Are you sure you want to disable content translation?','sitepress'); ?></span>
     
     <?php if(!$sitepress->get_icl_translation_enabled() ): ?>
         <div class="updated fade">
@@ -351,6 +343,11 @@
         <?php endif; ?>
         
     <?php endif; // in content translation enabled ?>
+     
+    <br /> 
+    <p><input id="icl_<?php if($sitepress->get_icl_translation_enabled()): ?>disable<?php else:?>enable<?php endif?>_content_translation" type="button" class="button-primary" value="<?php echo $sitepress->get_icl_translation_enabled() ? __('Disable content translation','sitepress') : __('Enable content translation','sitepress') ?>" /></p>
+    <span id="icl_toggle_ct_confirm_message" style="display:none"><?php echo __('Are you sure you want to disable content translation?','sitepress'); ?></span>
+    <br /> 
      
     <?php do_action('icl_menu_footer'); ?>
     
