@@ -226,7 +226,8 @@ $context_filter = isset($_GET['context']) ? $_GET['context'] : false;
     </div>
     
     <div class="colthree">
-    <h4><?php echo __('Site wide texts', 'sitepress')?></h4>
+    <h4><?php echo __('Translate general settings texts', 'sitepress')?></h4>
+    <p><?php echo __('WPML can translate texts entered in different admin screens. Select which texts to translate.', 'sitepress')?></p>
     <form id="icl_st_sw_form" name="icl_st_sw_form" method="post" action="">
     <p class="icl_form_errors" style="display:none"></p>
     <ul>
@@ -245,7 +246,8 @@ $context_filter = isset($_GET['context']) ? $_GET['context'] : false;
     </div>
     
     <div class="colthree">
-    <h4><?php echo __('Add strings from .po file', 'sitepress') ?></h4>
+    <h4><?php echo __('Translate the theme or plugins', 'sitepress') ?></h4>
+    <p><?php echo __("You can translate the theme's texts using this screen too. To do this, upload the theme's .po file.", 'sitepress')?></p>
     <form id="icl_st_po_form"  name="icl_st_po_form" method="post" enctype="multipart/form-data">
     <p>
         <?php  echo __('Select what the strings are for: ', 'sitepress'); ?>
@@ -268,8 +270,10 @@ $context_filter = isset($_GET['context']) ? $_GET['context'] : false;
     </form>
     </div>
     
-    <br clear="all" />    
+    <br clear="all" /><br />
     
     <?php endif; ?>
+    
+    <?php do_action('icl_menu_footer'); ?>
     
 </div>
