@@ -270,6 +270,7 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
             </form>
         </div>
     
+        <? /*
         <div class="colthree">
             <h4><?php echo __('Translate the theme or plugins', 'sitepress') ?></h4>
             <p><?php echo __("You can translate the theme's texts using this screen too. To do this, upload the theme's .po file.", 'sitepress')?></p>
@@ -295,7 +296,7 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
                 <input class="button" name="icl_po_upload" id="icl_po_upload" type="submit" value="<?php echo __('Submit', 'sitepress')?>" />        
             </form>
         </div>
-    
+        */ ?>
         <br clear="all" /><br />
     
     <?php endif; ?>
