@@ -194,7 +194,8 @@
             
             
             <?php /************ */ ?>
-            <h3><?php echo __('Plugins texts translation', 'sitepress') ?></h3>                
+            <h3><?php echo __('Plugins texts translation', 'sitepress') ?></h3>
+            <p><?php echo __('Select what other texts (besides title and body) you want to include in the translation.', 'sitepress') ?></p>
             <form name="icl_plugins_texts" action="">
             <table id="icl_plugins_texts" class="widefat" cellspacing="0">
             <thead>
@@ -230,11 +231,13 @@
             <form method="post" action="<?php echo ICL_PLUGIN_URL ?>/ajax.php" enctype="multipart/form-data">
             <input type="hidden" name="icl_ajx_action" value="icl_plugins_texts" />
             <input type="hidden" name="icl_pt_file_upload" value="<?php echo $_SERVER['REQUEST_URI'] ?>" />
-            <?php echo __('Upload more plugin texts definitions from a CSV file.', 'sitepress') ?> <a href="#"><?php echo __('Read more', 'sitepress') ?></a>           
-            &nbsp;&nbsp;&nbsp;<input class="button" type="file" name="plugins_texts_csv" />             
+            <?php echo __('If your plugin does not appear in this table, you can upload a CSV file that describes its texts.', 'sitepress') ?> <a href="http://wpml.org/wordpress-translation/translating-custom-fields/"><?php echo __('Read more', 'sitepress') ?></a><br />
+            <?php echo __('CSV plugin description', 'sitepress') ?>
+            <input class="button" type="file" name="plugins_texts_csv" />             
             <input class="button" id="icl_pt_upload" type="submit" value="<?php echo __('Submit', 'sitepress')?>" />        
             <?php if(isset($_GET['csv_upload'])):?>&nbsp;<span class="icl_ajx_response" style="display:inline">CSV file uploaded</span><?php endif;?>    
             </form>
+            <br />
             <?php /*****************/ ?>
             
             <h3 id="icl_create_account_form"><?php echo __('Configure your ICanLocalize account', 'sitepress') ?></h3>             
