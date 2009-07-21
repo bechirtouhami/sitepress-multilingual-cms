@@ -823,7 +823,11 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
                 if ($data == $field_name) {
                     if (preg_match("/field-(.*?)-name/", $name, $match)) {
                         $field_id = $match[1];
-                        //update_post_meta($new_post_id, $f2s->attribute_name, get_post_meta($translation['original_id'],$f2s->attribute_name,true));
+                        $field_translation = $translation['field-'.$field_id];
+                        $field_type = $translation['field-'.$field_id.'-type'];
+                        if ($field_type == 'custom_field') {
+                            update_post_meta($new_post_id, $field_name, $field_translation);
+                        }
                     }
                 }
             }
