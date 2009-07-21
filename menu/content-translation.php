@@ -18,7 +18,7 @@
         <p style="line-height:1.5"><?php printf(__('When enabled, you can use the <a href="%s">Translation Dashboard</a> to send posts and pages for translation. The entire process is completely effortless. The plugin will send the documents that need translation and then create the translated contents, ready to be published.', 'sitepress'), 'tools.php?page='.basename(ICL_PLUGIN_PATH).'/modules/icl-translation/icl-translation-dashboard.php');?></p>
         <p style="line-height:1.5"><?php echo __('All translations are done by professional translators, writing in their native languages. You\'ll be able to chat with your translator and instruct what kind of writing style you prefer and which keywords should be emphasized for search engine optimization.', 'sitepress'); ?></p>        
         <p style="line-height:1.5"><b><?php printf(__('Pricing for content translation is %s USD / word between any language pair.', 'sitepress'), '0.07'); ?></b></p>
-        <p style="line-height:1.5"><?php echo __('Content translation is currently disabled. To enable it, click on the checkbox at the top of this page.', 'sitepress'); ?></p>
+        <p style="line-height:1.5"><?php echo __('Content translation is currently disabled.', 'sitepress'); ?></p>
         </div>
     <?php else: ?>    
         <?php if($sitepress->icl_account_configured() ): ?>
