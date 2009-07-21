@@ -266,6 +266,11 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
                         'translate' => 0,
                         'data' => $cf->plugin_name,
                     );
+                    $data['contents']['field-'.$id.'-html'] = array(
+                        'translate' => 0,
+                        'data' => $cf->html_entities,
+                    );
+                    
                     
                 }
             }
@@ -826,6 +831,9 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
                         $field_translation = $translation['field-'.$field_id];
                         $field_type = $translation['field-'.$field_id.'-type'];
                         if ($field_type == 'custom_field') {
+                            if ($translation['field-'.$field_id.'-html']){
+                                $field_translation = html_entity_decode($field_translation);
+                            }
                             update_post_meta($new_post_id, $field_name, $field_translation);
                         }
                     }
