@@ -146,7 +146,13 @@ $context_filter = isset($_GET['context']) ? $_GET['context'] : false;
                     </div>
                 </td>
                 <td nowrap="nowrap" id="icl_st_string_status_<?php echo $string_id ?>">
-                <?php echo $icl_st_string_translation_statuses[$icl_string['status']] ?>    
+                <?php
+                    $icl_status = icl_translation_get_string_translation_status($string_id);
+                    if ($icl_status != "") {
+                        $icl_status = __(' - ICanLocalize ', 'sitepress').$icl_status;
+                    }
+                    echo $icl_st_string_translation_statuses[$icl_string['status']].$icl_status;
+                ?>    
                 </td>
             </tr>            
             <?php endforeach;?>
@@ -159,7 +165,7 @@ $context_filter = isset($_GET['context']) ? $_GET['context'] : false;
         <input type="button" class="button primary" id="icl_st_send_selected" value="<?php echo __('Send selected strings to ICanLocalize', 'sitepress') ?>" />
             <span class="icl_ajx_response" style="display:none"><?php echo __('Sending translation requests. Please wait!', 'sitepress') ?>&nbsp;<img src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" /></span> 
     </span>
-    <br /><br />
+    <br clear="all" />
     <span class="subsubsub">
         <input type="button" class="button primary" id="icl_st_send_need_translation" value="<?php echo __('Send all strings that need update to ICanLocalize', 'sitepress') ?>" />
             <span class="icl_ajx_response" style="display:none"><?php echo __('Sending translation requests. Please wait!', 'sitepress') ?>&nbsp;<img src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" /></span> 
