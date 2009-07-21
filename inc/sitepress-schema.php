@@ -224,7 +224,6 @@ function icl_sitepress_activate(){
             `rid` BIGINT NOT NULL ,
             `string_translation_id` BIGINT NOT NULL ,
             `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
-            `md5` VARCHAR( 32 ) NOT NULL ,
             INDEX ( `string_translation_id` )
             )"; 
         mysql_query($sql);

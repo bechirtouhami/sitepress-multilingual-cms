@@ -385,7 +385,6 @@ function icl_add_string_translation($string_id, $language, $value, $status = fal
         $st_update = array();
         if($value != $res->value){
             $st_update['value'] = $value;
-            $st_update['md5']   = md5($value);
         }
         if($status){
             $st_update['status'] = $status;
@@ -404,7 +403,6 @@ function icl_add_string_translation($string_id, $language, $value, $status = fal
             'language'  => $language,
             'value'     => $value,
             'status'    => $status,
-            'md5'       => md5($value)        
         );
         $wpdb->insert($wpdb->prefix.'icl_string_translations', $st);
         $st_id = $wpdb->insert_id;
