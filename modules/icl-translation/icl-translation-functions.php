@@ -930,7 +930,11 @@ function icl_process_translated_document($request_id, $language){
     $trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations t JOIN {$wpdb->prefix}icl_content_status c ON t.element_id = c.nid AND t.element_type='post' AND c.rid=".$request_id);
     $translation = $iclq->cms_do_download($request_id, $language);                           
     if($translation){
-        $ret = icl_add_post_translation($trid, $translation, apply_filters('icl_server_languages_map', $language, true), $request_id); //the 'reverse' language filter    
+        if (icl_is_string_translation($translation)){
+            $ret = icl_translation_add_string_translation($trid, $translation, apply_filters('icl_server_languages_map', $language, true), $request_id); //the 'reverse' language filter
+        } else {
+            $ret = icl_add_post_translation($trid, $translation, apply_filters('icl_server_languages_map', $language, true), $request_id); //the 'reverse' language filter
+        }
         if($ret){
             $iclq->cms_update_request_status($request_id, CMS_TARGET_LANGUAGE_DONE, $language);
         } 
@@ -1674,6 +1678,7 @@ function _icl_translation_send_strings($string_ids, $target) {
         );
         $string_values = array();
         foreach($untranslated as $st_id) {
+            
             $string = $wpdb->get_row("SELECT context, name, value FROM {$wpdb->prefix}icl_strings WHERE id={$st_id}");
             $string_values[$st_id] = $string->value;
             $data['contents']['string-'.$st_id.'-context'] = array(
@@ -1726,7 +1731,7 @@ function icl_translation_get_string_translation_status($string_id) {
     global $wpdb;
     $status = $wpdb->get_var("
             SELECT
-                cs.status 
+                MIN(cs.status) 
             FROM
                 {$wpdb->prefix}icl_core_status cs
             JOIN 
@@ -1754,5 +1759,49 @@ function icl_translation_send_untranslated_strings($target_languages) {
     
 }
 
+function icl_is_string_translation($translation) {
+    // determine if the $translation data is for string translation.
+    
+    foreach($translation as $key => $value) {
+        if($key == 'body' or $key == 'title') {
+            return false;
+        }
+        if (preg_match("/string-.*?-value/", $key)){
+            return true;
+        }
+    }
+    
+    // if we get here assume it's not a string.
+    return false;
+    
+}
 
+function icl_translation_add_string_translation($trid, $translation, $lang, $rid){
+    
+    global $wpdb, $sitepress_settings, $sitepress;
+    $lang_code = $wpdb->get_var("SELECT code FROM {$wpdb->prefix}icl_languages WHERE english_name='".$wpdb->escape($lang)."'");
+    if(!$lang_code){        
+        return false;
+    }
+
+    foreach($translation as $key => $value) {
+        if (preg_match("/string-(.*?)-value/", $key, $match)){
+            $string_id = $match[1];
+            
+            $md5_when_sent = $wpdb->get_var("SELECT md5 FROM {$wpdb->prefix}icl_string_status WHERE string_translation_id={$string_id} AND rid={$rid}");
+            $current_string_value = $wpdb->get_var("SELECT value FROM {$wpdb->prefix}icl_strings WHERE id={$string_id}");
+            if ($md5_when_sent == md5($current_string_value)) {
+                $status = ICL_STRING_TRANSLATION_COMPLETE;
+            } else {
+                $status = ICL_STRING_TRANSLATION_NEEDS_UPDATE;
+            }
+            icl_add_string_translation($string_id, $lang_code, html_entity_decode($value), $status);
+        }
+    }
+
+    // update translation status
+    $wpdb->update($wpdb->prefix.'icl_core_status', array('status'=>CMS_TARGET_LANGUAGE_DONE), array('rid'=>$rid, 'target'=>$sitepress->get_language_code($lang)));
+    
+    return true;
+}
 ?>
