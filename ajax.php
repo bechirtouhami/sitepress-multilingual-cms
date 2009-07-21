@@ -357,9 +357,11 @@ switch($_REQUEST['icl_ajx_action']){
     case 'icl_st_send_strings':
         $arr = explode(',',$_POST['value']);
         icl_translation_send_strings($arr, explode(',',$_POST['langs']));
+        echo '1';
         break;    
     case 'icl_st_send_strings_all':
         icl_translation_send_untranslated_strings(explode(',',$_POST['langs']));
+        echo '1';
         break;    
     default:
         echo __('Invalid action','sitepress');                

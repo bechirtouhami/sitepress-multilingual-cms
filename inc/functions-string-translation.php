@@ -516,15 +516,13 @@ function icl_st_update_blogdescription_actions($old, $new){
     icl_st_update_string_actions('WP', 'Tagline', $old, $new);
 }
 
-function icl_st_update_widget_title_actions($old_options, $new_options){    
+function icl_st_update_widget_title_actions($old_options, $new_options){        
     foreach($new_options as $k=>$o){
         if(isset($o['title'])){
             if(isset($old_options[$k]['title'])){
                 icl_st_update_string_actions('Widgets', 'widget title - ' . md5(apply_filters('widget_title', $old_options[$k]['title'])), apply_filters('widget_title', $old_options[$k]['title']), apply_filters('widget_title', $o['title']));        
             }else{                
-                if(!$new_options[$k]['title']){          
-                    //__icl_st_init_register_widget_titles();
-                }else{
+                if($new_options[$k]['title']){          
                     icl_register_string('Widgets', 'widget title - ' . md5(apply_filters('widget_title', $new_options[$k]['title'])), apply_filters('widget_title', $new_options[$k]['title']));
                 }                
             }            

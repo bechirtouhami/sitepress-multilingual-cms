@@ -34,7 +34,7 @@ jQuery(document).ready(function(){
         }
     );    
     
-    jQuery('table.fixed td :checkbox').click(function(){            
+    jQuery('#icl-translation-dashboard td :checkbox').click(function(){            
         var words = parseInt(jQuery('#icl-cw-'+jQuery(this).val()).html());
         if(jQuery(this).attr('checked')){
             iclUpdateTranslationEstimate(words);
@@ -47,7 +47,7 @@ jQuery(document).ready(function(){
     
     jQuery('#icl-tr-sel-doc').click(function(){        
         
-        if(jQuery('table.fixed td :checkbox:checked').length==0) return false;
+        if(jQuery('#icl-translation-dashboard td :checkbox:checked').length==0) return false;
     
         target_languages = new Array();
         jQuery('#icl-tr-opt :checkbox').each(function(){

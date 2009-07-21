@@ -15,7 +15,9 @@ jQuery(document).ready(function(){
         }else{
             jQuery('#icl_st_po_language').attr('disabled','disabled').fadeOut();
         }
-    })
+    });
+    jQuery('#icl-tr-opt :checkbox').click(icl_st_update_languages);
+    jQuery('.icl_st_row_cb, .check-column :checkbox').click(icl_st_update_checked_elements);
 });
 
 function icl_st_toggler(){
@@ -115,10 +117,12 @@ function icl_st_send_selected(){
     var trlangs = [];
     jQuery('#icl-tr-opt input:checked').each(function(){trlangs.push(jQuery(this).val())});
     if(sendids.length && trlangs.length){
-        thisb.attr('disabled','disabled').next().fadeIn();
+        thisb.attr('disabled','disabled');
+        jQuery('#icl_st_send_progress').fadeIn();
         postvars = 'icl_ajx_action=icl_st_send_strings&value='+sendids.join(',')+'&langs='+trlangs.join(',');
         jQuery.post(icl_ajx_url, postvars, function(msg){
-            thisb.removeAttr('disabled').next().fadeOut();
+            if(msg==1) thisb.removeAttr('disabled');
+            jQuery('#icl_st_send_progress').fadeOut('fast', function(){location.href=location.href.replace(/#(.*)$/,'')});
         });
     }
     return false;
@@ -126,14 +130,36 @@ function icl_st_send_selected(){
 
 function icl_st_send_need_translation(){
     thisb = jQuery(this);        
-    thisb.attr('disabled','disabled').next().fadeIn();
-    postvars = 'icl_ajx_action=icl_st_send_strings_all'+'&langs='+trlangs.join(',');
+    thisb.attr('disabled','disabled');
+    jQuery('#icl_st_send_progress').fadeIn();    
     var trlangs = [];
     jQuery('#icl-tr-opt input:checked').each(function(){trlangs.push(jQuery(this).val())});    
+    postvars = 'icl_ajx_action=icl_st_send_strings_all'+'&langs='+trlangs.join(',');
     if(trlangs.length){
         jQuery.post(icl_ajx_url, postvars, function(msg){
-            thisb.removeAttr('disabled').next().fadeOut();
+            if(msg==1) thisb.removeAttr('disabled');
+            jQuery('#icl_st_send_progress').fadeOut('fast', function(){location.href=location.href.replace(/#(.*)$/,'')});
         });
     }
     return false;
+}
+
+function icl_st_update_languages(){
+    if(!jQuery('#icl-tr-opt :checkbox:checked').length){
+        jQuery('#icl_st_send_selected, #icl_st_send_need_translation').attr('disabled','disabled');
+    }else{
+        if(jQuery('.icl_st_row_cb:checked, .check-column :checkbox:checked').length){
+            jQuery('#icl_st_send_selected, #icl_st_send_need_translation').removeAttr('disabled');
+        }
+    }
+}
+
+function icl_st_update_checked_elements(){
+    if(!jQuery('.icl_st_row_cb:checked, .check-column :checkbox:checked').length){
+        jQuery('#icl_st_delete_selected, #icl_st_send_selected').attr('disabled','disabled');
+    }else{
+        if(!jQuery('#icl-tr-opt').length || jQuery('#icl-tr-opt :checkbox:checked').length){
+            jQuery('#icl_st_delete_selected, #icl_st_send_selected').removeAttr('disabled');
+        }
+    }
 }
