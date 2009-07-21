@@ -626,20 +626,6 @@ function icl_st_admin_notices(){
 }
 
 
-/*
- $string_ids - an array of string ids to be sent for translation
- $target_languages - an array of languages to translate to
-*/
-function icl_st_send_strings($string_ids, $target_languages) {
-    print_r($string_ids);
-}
-
-function icl_st_send_untranslated_strings($target_languages) {
-    global $wpdb;
-    $untranslated = $wpdb->get_results("SELECT id, value FROM {$wpdb->prefix}icl_strings WHERE status <> " . ICL_STRING_TRANSLATION_COMPLETE);
-    
-}
-
 
 function icl_st_debug($str){
     trigger_error($str, E_USER_WARNING);

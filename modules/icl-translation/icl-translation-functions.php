@@ -1637,4 +1637,122 @@ function icl_server_languages_map($language_name, $server2plugin = false){
         return $language_name;    
     }
 }
+
+// String translation using ICanLocalize server
+
+/*
+ $string_ids - an array of string ids to be sent for translation
+ $target_languages - an array of languages to translate to
+*/
+function icl_translation_send_strings($string_ids, $target_languages) {
+    // send to each language
+    foreach($target_languages as $target){
+        _icl_translation_send_strings($string_ids, $target);
+    }
+}
+
+function _icl_translation_send_strings($string_ids, $target) {
+    global $wpdb, $sitepress, $sitepress_settings;
+    
+    $target_code = $sitepress->get_language_code($target);
+    
+    // get all the untranslated strings
+    $untranslated = array();
+    foreach($string_ids as $st_id) {
+        $status = $wpdb->get_var("SELECT status FROM {$wpdb->prefix}icl_string_translations WHERE string_id={$st_id} and language='{$target_code}'");
+        if ($status != ICL_STRING_TRANSLATION_COMPLETE) {
+            $untranslated[] = $st_id;
+        }
+    }
+    
+    if (sizeof($untranslated) >  0) {
+        // Something to translate.
+        $target_for_server = apply_filters('icl_server_languages_map', array($target)); //filter some language names to match the names on the server
+        $data = array(
+            'url'=>'', 
+            'target_languages' => $target_for_server,
+        );
+        $string_values = array();
+        foreach($untranslated as $st_id) {
+            $string = $wpdb->get_row("SELECT context, name, value FROM {$wpdb->prefix}icl_strings WHERE id={$st_id}");
+            $string_values[$st_id] = $string->value;
+            $data['contents']['string-'.$st_id.'-context'] = array(
+                    'translate'=>0,
+                    'data'=>base64_encode($string->context),
+                    'format'=>'base64',
+            );
+            $data['contents']['string-'.$st_id.'-name'] = array(
+                    'translate'=>0,
+                    'data'=>base64_encode($string->name),
+                    'format'=>'base64',
+            );
+            $data['contents']['string-'.$st_id.'-value'] = array(
+                    'translate'=>1,
+                    'data'=>base64_encode($string->value),
+                    'format'=>'base64',
+            );
+            
+        }
+
+        $iclq = new ICanLocalizeQuery($sitepress_settings['site_id'], $sitepress_settings['access_key']);
+        
+        $orig_lang = $wpdb->get_var("
+            SELECT language 
+            FROM {$wpdb->prefix}icl_strings
+            WHERE id={$untranslated[0]}"
+            );
+        $orig_lang = $sitepress->get_language_details($orig_lang);
+        $orig_lang_for_server = apply_filters('icl_server_languages_map', $orig_lang['english_name']);
+
+        $timestamp = date('Y-m-d H:i:s');
+        
+        $xml = $iclq->build_cms_request_xml($data, $orig_lang_for_server, $target_for_server);
+        $res = $iclq->send_request($xml, "String translations", $target_for_server, $orig_lang_for_server, "");
+
+        if($res > 0){
+            foreach($string_values as $st_id => $value){
+                $wpdb->insert($wpdb->prefix.'icl_string_status', array('rid'=>$res, 'string_translation_id'=>$st_id, 'timestamp'=>$timestamp, 'md5'=>md5($value))); //insert rid
+            }
+    
+            $wpdb->insert($wpdb->prefix.'icl_core_status', array('rid'=>$res,
+                                                                     'origin'=>$orig_lang['code'],
+                                                                     'target'=>$target_code,
+                                                                     'status'=>CMS_REQUEST_WAITING_FOR_PROJECT_CREATION));
+        }
+    }
+}
+
+function icl_translation_get_string_translation_status($string_id) {
+    global $wpdb;
+    $status = $wpdb->get_var("
+            SELECT
+                cs.status 
+            FROM
+                {$wpdb->prefix}icl_core_status cs
+            JOIN 
+               {$wpdb->prefix}icl_string_status ss
+            ON
+               ss.rid = cs.rid
+            WHERE
+                ss.string_translation_id={$string_id}
+            "   
+            );
+    
+    if ($status === null){
+        return "";
+    }
+    
+    $status = icl_decode_translation_status_id($status);
+    
+    return $status;
+        
+}
+
+function icl_translation_send_untranslated_strings($target_languages) {
+    global $wpdb;
+    $untranslated = $wpdb->get_results("SELECT id, value FROM {$wpdb->prefix}icl_strings WHERE status <> " . ICL_STRING_TRANSLATION_COMPLETE);
+    
+}
+
+
 ?>
