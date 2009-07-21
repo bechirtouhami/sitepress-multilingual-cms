@@ -57,8 +57,11 @@ if($sitepress_settings['existing_content_language_verified']){
                         <a class="button secondary" href="<?php echo 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/languages.php' ?>"><?php echo __('Configure languages', 'sitepress') ?></a>
                         </p>                        
                         
-                        <?php do_action('icl_menu_footer'); ?>
-                        <?php remove_all_actions('icl_menu_footer'); ?>
+                        <p class="sub">
+                            <b><?php echo __('Need help?', 'sitepress')?></b><br />
+                            <?php printf(__('<a href="%s">Ask WPML on Twitter</a>, visit the <a href="%s">support forum</a> or view the <a href="%s">documentation</a>.', 'sitepress'), 'http://twitter.com/wpml','http://forum.wpml.org','http://wpml.org')?>
+                        </p>
+                        
                     </div>
                 </div>
                 
