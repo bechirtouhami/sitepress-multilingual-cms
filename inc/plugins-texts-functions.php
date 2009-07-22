@@ -80,7 +80,7 @@ function icl_pt_handle_upload(){
     $uplerr = false;
     while($data = fgetcsv($fh)){
         if(count($data) != 5){
-            $uplerr = __('The CSV file should have 5 fields.','sitepress');            
+            $uplerr = __('Incorrect CSV file format.','sitepress');            
             break;
         }
         if(!isset($plugin)){
