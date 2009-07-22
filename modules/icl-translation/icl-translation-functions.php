@@ -831,6 +831,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
                         $field_translation = $translation['field-'.$field_id];
                         $field_type = $translation['field-'.$field_id.'-type'];
                         if ($field_type == 'custom_field') {
+                            $field_translation = str_replace ( '&#0A;', "\n", $field_translation );
                             if ($translation['field-'.$field_id.'-html']){
                                 $field_translation = html_entity_decode($field_translation);
                             }
@@ -1795,6 +1796,7 @@ function icl_translation_add_string_translation($trid, $translation, $lang, $rid
             } else {
                 $status = ICL_STRING_TRANSLATION_NEEDS_UPDATE;
             }
+            $value = str_replace ( '&#0A;', "\n", $value );
             icl_add_string_translation($string_id, $lang_code, html_entity_decode($value), $status);
         }
     }
