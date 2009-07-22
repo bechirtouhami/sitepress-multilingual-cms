@@ -335,7 +335,7 @@
             <h3 style="display:inline"><?php echo __('Theme localization', 'sitepress') ?></h3>&nbsp;<a href="#toggle-theme-localization" style="text-decoration:none"><?php echo __('show','sitepress') ?></a><a href="#toggle-theme-localization" style="display:none;text-decoration:none;"><?php echo __('hide','sitepress') ?></a> <span id="icl_tl_arrow">&darr;</span>
             <form id="icl_theme_localization" name="icl_lang_more_options" method="post" action="">
             <input type="hidden" name="icl_post_action" value="save_theme_localization" />
-            <div id="icl_theme_localization_wrap">
+            <div id="icl_theme_localization_wrap"><span id="icl_theme_localization_subwrap">
             <table id="icl_theme_localization_table" class="widefat" cellspacing="0">
             <thead>
             <tr>
@@ -389,12 +389,16 @@
             <?php endforeach; ?>                                                          
             </tbody>        
             </table>
+            <p>
+                <?php echo __('Enter the theme\'s textdomain value:', 'sitepress')?>
+                <input type="text" name="icl_domain_name" value="<?php echo $sitepress_settings['gettext_theme_domain_name'] ?>" />
+            </p>
             </div>
             <p>
                 <input class="button" name="save" value="<?php echo __('Save','sitepress') ?>" type="submit" />
                 <span class="icl_ajx_response" id="icl_ajx_response_fn"></span>
             </p>
-            
+            <span>
             </form>
             <?php endif; ?>
             <br /><br />

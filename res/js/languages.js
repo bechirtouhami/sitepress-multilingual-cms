@@ -209,7 +209,7 @@ function iclSaveThemeLocalization(){
         var par = spl[i].split('=');
         eval('parameters.' + par[0] + ' = par[1]');
     }    
-    jQuery('#icl_theme_localization_wrap').load(location.href + ' #icl_theme_localization_table', parameters, function(){
+    jQuery('#icl_theme_localization_wrap').load(location.href + ' #icl_theme_localization_subwrap', parameters, function(){
         fadeInAjxResp('#icl_ajx_response_fn', icl_ajx_saved);                                         
     }); 
     return false;   

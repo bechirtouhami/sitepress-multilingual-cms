@@ -581,6 +581,8 @@ class SitePress{
                         $locales[str_replace('locale_file_name_','',$k)] = $v;                                                
                     }
                     $this->set_locale_file_names($locales);
+                    $this->settings['gettext_theme_domain_name'] = $_POST['icl_domain_name'];
+                    $this->save_settings();
                     break;
             }
             return;
@@ -1694,7 +1696,9 @@ class SitePress{
             $locale = $l;
         }    
         // theme localization
-        load_textdomain('sitepress', TEMPLATEPATH . '/'.$locale.'.mo');
+        if($this->settings['gettext_theme_domain_name']){
+            load_textdomain($this->settings['gettext_theme_domain_name'], TEMPLATEPATH . '/'.$locale.'.mo');
+        }        
         return $locale;
     }
         
