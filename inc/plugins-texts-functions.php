@@ -80,14 +80,18 @@ function icl_pt_handle_upload(){
     $uplerr = false;
     while($data = fgetcsv($fh)){
         if(count($data) != 5){
-            $uplerr = __('Incorrect CSV file format.','sitepress');            
+            $uplerr = __('Incorrect CSV file format (there should be exactly 5 columns).','sitepress');            
             break;
         }
+        if($data[4] != 0  && $data[4] != 1){
+            $uplerr = __('The fifth column values should be \'0\' or \'1\'.','sitepress');            
+            break;
+        }        
         if(!isset($plugin)){
             $plugin = $data[0];
         }else{
             if($data[0] != $plugin){
-                $uplerr = __('Inconsistent plugin name.','sitepress');                
+                $uplerr = __('Inconsistent plugin name (the first column should have identical values).','sitepress');                
                 break;
             }
         }                
