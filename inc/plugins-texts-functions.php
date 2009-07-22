@@ -49,7 +49,7 @@ function icl_get_posts_translatable_fields($only_sync = false){
     }else{
         $extra_cond = '';
     }
-    $res = $wpdb->get_results("SELECT plugin_name, attribute_name, attribute_type, translate, html_entities FROM {$wpdb->prefix}icl_plugins_texts WHERE plugin_name IN (". join(',', $aps).") {$extra_cond}");
+    $res = $wpdb->get_results("SELECT plugin_name, attribute_name, attribute_type, translate FROM {$wpdb->prefix}icl_plugins_texts WHERE plugin_name IN (". join(',', $aps).") {$extra_cond}");
     return $res;
 } 
 
@@ -93,8 +93,7 @@ function icl_pt_handle_upload(){
                     'attribute_type' => substr($data[1], 0, 64),
                     'attribute_name' => substr($data[2], 0, 128),
                     'description'    => $data[3],
-                    'translate'      => $data[4],
-                    'html_entities'      => $data[5]==1?1:0
+                    'translate'      => $data[4]
                 )
             );
         }

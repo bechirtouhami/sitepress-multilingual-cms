@@ -266,12 +266,6 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
                         'translate' => 0,
                         'data' => $cf->plugin_name,
                     );
-                    $data['contents']['field-'.$id.'-html'] = array(
-                        'translate' => 0,
-                        'data' => $cf->html_entities,
-                    );
-                    
-                    
                 }
             }
         }

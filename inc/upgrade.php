@@ -149,12 +149,7 @@ function icl_plugin_upgrade(){
         
     }
 
-    // version 1.1
-    if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.1.0', '<')){
-        $wpdb->query("ALTER TABLE {$wpdb->prefix}icl_plugins_texts ADD column `html_entities` TINYINT NOT NULL DEFAULT 0");    
-    }
-
-
+    
 
 
     if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '<')){
