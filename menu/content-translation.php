@@ -6,6 +6,11 @@
     $icl_account_ready_errors = $sitepress->icl_account_reqs();
     $icl_plugins_texts = icl_pt_get_texts();
     icl_get_posts_translatable_fields();
+    
+    if(isset($_POST['icl_pt_file_upload'])){            
+        $csv_file_upload_error = icl_pt_handle_upload();    
+    }
+        
 ?>
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap">
@@ -220,14 +225,17 @@
             </p>        
             </form>
             
-            <form method="post" action="<?php echo ICL_PLUGIN_URL ?>/ajax.php" enctype="multipart/form-data">
+            <form method="post" action="admin.php?page=<?php echo $_GET['page'] ?>#icl_plugins_texts" enctype="multipart/form-data">
+            <?php if(isset($csv_file_upload_error) && $csv_file_upload_error): ?>
+            <p class="icl_form_errors"><?php echo $csv_file_upload_error ?></p>            
+            <?php endif; ?>            
             <input type="hidden" name="icl_ajx_action" value="icl_plugins_texts" />
             <input type="hidden" name="icl_pt_file_upload" value="<?php echo $_SERVER['REQUEST_URI'] ?>" />
             <?php echo __('If your plugin does not appear in this table, you can upload a CSV file that describes its texts.', 'sitepress') ?> <a href="http://wpml.org/wordpress-translation/translating-custom-fields/"><?php echo __('Read more', 'sitepress') ?></a><br />
             <?php echo __('CSV plugin description', 'sitepress') ?>
             <input class="button" type="file" name="plugins_texts_csv" />             
             <input class="button" id="icl_pt_upload" type="submit" value="<?php echo __('Submit', 'sitepress')?>" />        
-            <?php if(isset($_GET['csv_upload'])):?>&nbsp;<span class="icl_ajx_response" style="display:inline">CSV file uploaded</span><?php endif;?>    
+            <?php if(empty($csv_file_upload_error)):?>&nbsp;<span class="icl_ajx_response" style="display:inline">CSV file uploaded</span><?php endif;?>    
             </form>
             <br />
             <?php /*****************/ ?>

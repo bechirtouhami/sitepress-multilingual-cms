@@ -194,16 +194,8 @@ switch($_REQUEST['icl_ajx_action']){
         echo '1';
         break;               
     case 'icl_plugins_texts':
-        if(isset($_POST['icl_pt_file_upload'])){
-            require_once ICL_PLUGIN_PATH . '/inc/plugins-texts-functions.php';
-            icl_pt_handle_upload();    
-            header("Location:" . $_POST['icl_pt_file_upload'].'&csv_upload=1#icl_plugins_texts');
-            exit;
-            
-        }else{                
-            update_option('icl_plugins_texts_enabled', $_POST['icl_plugins_texts_enabled']);
-            echo '1|';
-        }
+        update_option('icl_plugins_texts_enabled', $_POST['icl_plugins_texts_enabled']);
+        echo '1|';
         break;
     case 'icl_save_language_negotiation_type':
         $iclsettings['language_negotiation_type'] = $_POST['icl_language_negotiation_type'];

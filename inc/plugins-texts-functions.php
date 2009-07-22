@@ -40,16 +40,20 @@ function icl_pt_get_texts(){
 
 function icl_get_posts_translatable_fields($only_sync = false){
     global $wpdb;
-    $enabled_plugins = (array)get_option('icl_plugins_texts_enabled');
-    foreach($enabled_plugins as $ap){
-        $aps[] = "'" . $ap . "'";
-    }    
-    if($only_sync == true){
-        $extra_cond = ' AND translate = 0';
+    $enabled_plugins = get_option('icl_plugins_texts_enabled');
+    if(!empty($aps)){
+        foreach($enabled_plugins as $ap){
+            $aps[] = "'" . $ap . "'";
+        }    
+        if($only_sync == true){
+            $extra_cond = ' AND translate = 0';
+        }else{
+            $extra_cond = '';
+        }
+        $res = $wpdb->get_results("SELECT plugin_name, attribute_name, attribute_type, translate FROM {$wpdb->prefix}icl_plugins_texts WHERE plugin_name IN (". join(',', $aps).") {$extra_cond}");
     }else{
-        $extra_cond = '';
+        $res = array();
     }
-    $res = $wpdb->get_results("SELECT plugin_name, attribute_name, attribute_type, translate FROM {$wpdb->prefix}icl_plugins_texts WHERE plugin_name IN (". join(',', $aps).") {$extra_cond}");
     return $res;
 } 
 
@@ -70,21 +74,26 @@ function icl_pt_sync_pugins_texts($post_id, $trid){
 }
 
 function icl_pt_handle_upload(){
-    global $wpdb;
+    global $wpdb;    
     $file = $_FILES['plugins_texts_csv'];
     $fh = fopen($file['tmp_name'], 'rb');
+    $uplerr = false;
     while($data = fgetcsv($fh)){
+        if(count($data) != 5){
+            $uplerr = __('The CSV file should have 5 fields.','sitepress');            
+            break;
+        }
         if(!isset($plugin)){
             $plugin = $data[0];
         }else{
             if($data[0] != $plugin){
-                $uplerr = __('Inconsistent plugin name','sitepress');
+                $uplerr = __('Inconsistent plugin name.','sitepress');                
                 break;
             }
         }                
     }
     fclose($fh);            
-    if($file['error']==0 && $file['size'] && /*$file['type']=='text/csv' &&*/ !$uplerr){
+    if($file['error']==0 && $file['size'] && !$uplerr){
         $wpdb->query("DELETE FROM {$wpdb->prefix}icl_plugins_texts WHERE plugin_name='{$plugin}'");
         $fh = fopen($file['tmp_name'], 'rb');
         while($data = fgetcsv($fh)){
@@ -98,20 +107,14 @@ function icl_pt_handle_upload(){
             );
         }
         fclose($fh);
-    }else{
-        echo __('File upload failed.','sitepress');
-        echo '<br>';
-        if($file['type']!='text/csv'){
-            echo __('File type must be csv', 'sitepress');
-        }elseif(!$file['size']){
-            echo __('Please select a CSV file to upload', 'sitepress');
-        }elseif(isset($uplerr)){
-            echo $uplerr;
-        }else{
-            echo $file['error'];
+    }else{      
+        if(!$file['size']){
+            $uplerr = __('Please select a CSV file to upload.', 'sitepress');            
+        }elseif(!$uplerr){
+            $uplerr = $file['error'];
         }
-        echo '<br /><a href="javascript:history.back()">'.__('Back', 'sitepress').'</a>';
-        exit;
-    }            
+    }    
+    return $uplerr;        
 }
+
 ?>
