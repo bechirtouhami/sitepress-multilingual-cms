@@ -201,8 +201,7 @@ function icl_sitepress_activate(){
               `string_id` bigint(20) unsigned NOT NULL,
               `language` varchar(10) NOT NULL,
               `status` tinyint(4) NOT NULL,
-              `value` text NOT NULL,
-              `md5` VARCHAR( 32 ) NOT NULL,
+              `value` text NOT NULL,              
               PRIMARY KEY  (`id`),
               UNIQUE KEY `string_language` (`string_id`,`language`)
             ) DEFAULT CHARSET=utf8";
@@ -217,6 +216,7 @@ function icl_sitepress_activate(){
             `rid` BIGINT NOT NULL ,
             `string_translation_id` BIGINT NOT NULL ,
             `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+            `md5` VARCHAR( 32 ) NOT NULL,
             INDEX ( `string_translation_id` )
             )"; 
         mysql_query($sql);

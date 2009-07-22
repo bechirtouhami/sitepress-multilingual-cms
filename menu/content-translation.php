@@ -235,7 +235,7 @@
             <?php echo __('CSV plugin description', 'sitepress') ?>
             <input class="button" type="file" name="plugins_texts_csv" />             
             <input class="button" id="icl_pt_upload" type="submit" value="<?php echo __('Submit', 'sitepress')?>" />        
-            <?php if(empty($csv_file_upload_error)):?>&nbsp;<span class="icl_ajx_response" style="display:inline">CSV file uploaded</span><?php endif;?>    
+            <?php if(isset($csv_file_upload_error) && empty($csv_file_upload_error)):?>&nbsp;<span class="icl_ajx_response" style="display:inline">CSV file uploaded</span><?php endif;?>    
             </form>
             <br />
             <?php /*****************/ ?>

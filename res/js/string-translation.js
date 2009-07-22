@@ -45,7 +45,6 @@ function icl_st_monitor_ta_check_modifications(){
     if(icl_st_ta_cache[id] != jQuery(this).val()){
         jQuery('#icl_st_cb_'+id).removeAttr('checked');
     }else{
-        console.log(icl_st_cb_cache);
         if(icl_st_cb_cache[id]){
             jQuery('#icl_st_cb_'+id).attr('checked','checked');
         }

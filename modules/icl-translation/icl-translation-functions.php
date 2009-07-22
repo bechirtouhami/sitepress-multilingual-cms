@@ -1734,6 +1734,7 @@ function _icl_translation_send_strings($string_ids, $target) {
         $xml = $iclq->build_cms_request_xml($data, $orig_lang_for_server, $target_for_server);
         $res = $iclq->send_request($xml, "String translations", $target_for_server, $orig_lang_for_server, "");
 
+        
         if($res > 0){
             foreach($string_values as $st_id => $value){
                 $wpdb->insert($wpdb->prefix.'icl_string_status', array('rid'=>$res, 'string_translation_id'=>$st_id, 'timestamp'=>$timestamp, 'md5'=>md5($value))); //insert rid
