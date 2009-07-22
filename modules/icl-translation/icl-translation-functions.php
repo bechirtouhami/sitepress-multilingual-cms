@@ -1474,7 +1474,30 @@ function icl_estimate_word_count($data, $lang_code) {
         if(in_array($lang_code, $asian_languages)){
             $words += strlen(strip_tags($data->post_content)) / 6;
         } else {
-            $words = count(explode(' ',strip_tags($data->post_content)));
+            $words += count(explode(' ',strip_tags($data->post_content)));
+        }
+    }
+    
+    return (int)$words;
+}
+
+function icl_estimate_custom_field_word_count($post_id, $lang_code) {
+    global $asian_languages;
+
+    include_once ICL_PLUGIN_PATH . '/inc/plugins-texts-functions.php';
+    
+    $words = 0;
+    $custom_fields = icl_get_posts_translatable_fields();
+    foreach($custom_fields as $id => $cf){
+        if ($cf->translate) {
+            $custom_fields_value = get_post_meta($post_id, $cf->attribute_name, true);
+            if ($custom_fields_value != "") {
+                if(in_array($lang_code, $asian_languages)){
+                    $words += strlen(strip_tags($custom_fields_value)) / 6;
+                } else {
+                    $words += count(explode(' ',strip_tags($custom_fields_value)));
+                }
+            }
         }
     }
     
@@ -1519,6 +1542,7 @@ function _icl_list_posts($args){
         }
         $documents[$id]->categories = $cats;
         $documents[$id]->words = icl_estimate_word_count($data, $sitepress->get_language_code($lang));
+        $documents[$id]->words += icl_estimate_custom_field_word_count($id, $sitepress->get_language_code($lang));
         unset($documents[$id]->post_content);
         unset($documents[$id]->post_title);
     }

@@ -166,7 +166,11 @@
                 </td>
                 <td scope="col" class="post-title column-title">
                     <a href="<?php echo get_edit_post_link($doc->post_id) ?>"><?php echo $doc->post_title ?></a>
-                    <span id="icl-cw-<?php echo $doc->post_id ?>" style="display:none"><?php echo $wc = icl_estimate_word_count($doc, $selected_language); $wctotal+=$wc; ?></span>
+                    <?php
+                        $wc = icl_estimate_word_count($doc, $selected_language);
+                        $wc += icl_estimate_custom_field_word_count($doc->post_id, $selected_language);
+                    ?>
+                    <span id="icl-cw-<?php echo $doc->post_id ?>" style="display:none"><?php echo $wc; $wctotal+=$wc; ?></span>
                     <span class="icl-tr-details"></span>
                     </td>
                 <td scope="col"><?php echo $icl_post_types[$doc->post_type]; ?></td>
