@@ -22,11 +22,7 @@
     <p><?php echo __('If you select to enable sticky links, internal links to pages and posts will never break. When the URL changes, all links to it will automatically update.', 'sitepress'); ?></p>
     <p><?php echo __('When you edit a page (while sticky links are enabled) you will notice that links in that page change to the default WordPress links. This is a normal thing. Visitors will not see these &#8220;strange&#8221; links. Instead they will get links to the full URL.', 'sitepress'); ?></p>
     
-    <span style="position:absolute;" id="icl_ajax_loader_alp"></span>
-    <p>
-        <label><input type="checkbox" name="icl_enable_absolute_links" <?php if($sitepress_settings['modules']['absolute-links']['enabled']):?>checked="checked"<?php endif;?>/> <?php echo __('Enable sticky links', 'sitepress') ?></label>        
-    </p>
-    
+    <span style="position:absolute;" id="icl_ajax_loader_alp"></span>    
     
     <div id="icl_alp_wrap">
     <?php if($sitepress_settings['modules']['absolute-links']['enabled']):?>    
@@ -42,6 +38,11 @@
     ?>
     <?php endif; ?>
     </div>
+    
+    <br /> 
+    <p><input id="icl_<?php if($sitepress_settings['modules']['absolute-links']['enabled']): ?>disable<?php else:?>enable<?php endif?>_absolute_links" type="button" class="button-primary" value="<?php echo $sitepress_settings['modules']['absolute-links']['enabled'] ? __('Disable Sticky links','sitepress') : __('Enable Sticky links','sitepress') ?>" /></p>
+    <span id="icl_toggle_ct_confirm_message" style="display:none"><?php echo __('Are you sure you want to disable Sticky links?','sitepress'); ?></span>
+    <br /> 
     
     <?php do_action('icl_menu_footer'); ?>
     
