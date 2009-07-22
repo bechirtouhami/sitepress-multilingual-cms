@@ -1756,7 +1756,9 @@ function icl_translation_get_string_translation_status($string_id) {
 
 function icl_translation_send_untranslated_strings($target_languages) {
     global $wpdb;
-    $untranslated = $wpdb->get_results("SELECT id, value FROM {$wpdb->prefix}icl_strings WHERE status <> " . ICL_STRING_TRANSLATION_COMPLETE);
+    $untranslated = $wpdb->get_col("SELECT id FROM {$wpdb->prefix}icl_strings WHERE status <> " . ICL_STRING_TRANSLATION_COMPLETE);
+    
+    icl_translation_send_strings($untranslated, $target_languages);
     
 }
 
