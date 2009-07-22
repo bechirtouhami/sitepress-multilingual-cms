@@ -832,9 +832,9 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
                         $field_type = $translation['field-'.$field_id.'-type'];
                         if ($field_type == 'custom_field') {
                             $field_translation = str_replace ( '&#0A;', "\n", $field_translation );
-                            if (!$translation['field-'.$field_id.'-html']){
-                                $field_translation = html_entity_decode($field_translation);
-                            }
+                            
+                            // always decode html entities  eg decode &amp; to &
+                            $field_translation = html_entity_decode($field_translation);
                             update_post_meta($new_post_id, $field_name, $field_translation);
                         }
                     }
