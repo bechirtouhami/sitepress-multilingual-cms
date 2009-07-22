@@ -29,3 +29,8 @@
 .colthree h4{
     margin-bottom:0;
 }
+
+.meta_comment{
+    font-style: italic;
+    color:#777;
+}

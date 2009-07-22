@@ -155,7 +155,7 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
                     <?php
                         $icl_status = icl_translation_get_string_translation_status($string_id);
                         if ($icl_status != "") {
-                            $icl_status = __(' - ICanLocalize ', 'sitepress').$icl_status;
+                            $icl_status = '<br /><span class="meta_comment">' . __('ICanLocalize ', 'sitepress').$icl_status . '</span>';
                         }
                         echo $icl_st_string_translation_statuses[$icl_string['status']].$icl_status;
                     ?>    
