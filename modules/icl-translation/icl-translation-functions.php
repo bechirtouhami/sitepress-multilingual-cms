@@ -387,6 +387,7 @@ function icl_translation_calculate_md5($post_id){
     include_once ICL_PLUGIN_PATH . '/inc/plugins-texts-functions.php';
 
     $custom_fields = icl_get_posts_translatable_fields();
+    $custom_fields_values = array();
     foreach($custom_fields as $cf){
         if ($cf->translate) {
             $custom_fields_values[] = get_post_meta($post_id, $cf->attribute_name, true);
