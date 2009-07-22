@@ -392,6 +392,9 @@
             <p>
                 <?php echo __('Enter the theme\'s textdomain value:', 'sitepress')?>
                 <input type="text" name="icl_domain_name" value="<?php echo $sitepress_settings['gettext_theme_domain_name'] ?>" />
+                <?php if(!$sitepress_settings['gettext_theme_domain_name']): ?>
+                <span class="icl_error_text"><?php echo __('Theme localization is not enabled because you didn\'t enter a text-domain.', 'sitepress'); ?></span>
+                <?php endif ?>
             </p>
             </div>
             <p>
