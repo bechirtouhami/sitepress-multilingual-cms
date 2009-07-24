@@ -50,11 +50,9 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
                     </tr>
                 <?php endforeach; ?>
             </tbody>
-        </table>
-            
-        <a name="add_po_strings_confirm"></a>
-        <p class="alignright"></p>
-        <p class="aligleft"><input class="button" type="button" value="<?php echo __('Cancel', 'sitepress'); ?>" onclick="location.href='admin.php?page=<?php echo $_GET['page'] ?>'" />
+        </table>            
+        <a name="add_po_strings_confirm"></a>        
+        <p><input class="button" type="button" value="<?php echo __('Cancel', 'sitepress'); ?>" onclick="location.href='admin.php?page=<?php echo $_GET['page'] ?>'" />
         &nbsp; <input class="button-primary" type="submit" name="icl_st_save_strings" value="<?php echo __('Add selected strings', 'sitepress'); ?>" />
         </p>
         </form>
