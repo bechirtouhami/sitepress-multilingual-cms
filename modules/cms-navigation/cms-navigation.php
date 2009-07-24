@@ -4,7 +4,7 @@ Plugin Name: CMS Navigation Simple
 Plugin URI: http://wpml.org/wordpress-cms-plugins/cms-navigation-plugin/
 Description: Adds CMS navigation functions to WP posts and pages
 Author: ICanLocalize
-Author URI: http://www.icanlocalize.com
+Author URI: http://wpml.org
 Version: 1.4
 */
 

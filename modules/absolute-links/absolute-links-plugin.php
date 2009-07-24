@@ -4,7 +4,7 @@ Plugin Name: Absolute Links Plugin
 Plugin URI: http://wpml.org/wordpress-cms-plugins/absolute-links-plugin/
 Description: Doesn't just fix links. Makes sure they can never break. <a href="options-general.php?page=alp">Configure &raquo;</a>.
 Author: ICanLocalize
-Author URI: http://www.icanlocalize.com
+Author URI: http://wpml.org
 Version: 1.1.1
 */
 

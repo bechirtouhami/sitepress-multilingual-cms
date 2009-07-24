@@ -118,7 +118,7 @@
     </form>
     <br />
 
-    <p><?php echo __('To see the status of pending translations or to cancel translation requests, go to the <a href="https://www.icanlocalize.com/websites/'. $sitepress_settings['site_id'] . '/cms_requests">project page</a> in ICanLocalize.') ?></p>    
+    <p><?php printf(__('To see the status of pending translations or to cancel translation requests, go to the <a href="%s">project page</a> in ICanLocalize.', 'sitepress'),ICL_API_ENDPOINT.'/websites/'. $sitepress_settings['site_id'] . '/cms_requests') ?></p>
 
     <table class="widefat fixed" id="icl-translation-dashboard" cellspacing="0">
         <thead>
