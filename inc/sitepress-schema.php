@@ -246,7 +246,7 @@ function icl_sitepress_activate(){
     if(!empty($orphans)){
         $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id IN (".join(',',$orphans).")");
     }
-    
+        
        
     if(defined('ICL_DEBUG_MODE') && ICL_DEBUG_MODE){
         require_once ICL_PLUGIN_PATH . '/inc/functions.php';

@@ -1,9 +1,4 @@
 <?php
-
-//echo '<pre>';
-//print_r(get_option('sidebars_widgets'));
-//echo '</pre>';
-
 define('ICL_STRING_TRANSLATION_NOT_TRANSLATED', 0);
 define('ICL_STRING_TRANSLATION_COMPLETE', 1);
 define('ICL_STRING_TRANSLATION_NEEDS_UPDATE', 2);
@@ -14,8 +9,6 @@ $icl_st_string_translation_statuses = array(
     ICL_STRING_TRANSLATION_NEEDS_UPDATE => __('Translation needs update','sitepress'),
     ICL_STRING_TRANSLATION_NOT_TRANSLATED => __('Not translated','sitepress')
 );
-
-
 
 //add_action('admin_menu', 'icl_st_administration_menu');
 add_action('plugins_loaded', 'icl_st_init');
@@ -36,7 +29,8 @@ function icl_st_init(){
             'blog_title' => 1,
             'tagline' => 1,
             'widget_titles' => 1,
-            'text_widgets' => 1
+            'text_widgets' => 1,
+            'theme_texts' => 1
         );
         $sitepress->save_settings($sitepress_settings); 
         $init_all = true;
@@ -139,6 +133,9 @@ function icl_st_init(){
     }
     if($sitepress_settings['st']['sw']['text_widgets']){
         add_filter('widget_text', 'icl_sw_filters_widget_text');
+    }
+    if($sitepress_settings['st']['sw']['theme_texts']){
+        add_filter('gettext', 'icl_sw_filters_gettext', 9, 2);
     }
     
     $widget_groups = $wpdb->get_results("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE 'widget\\_%'");
@@ -297,6 +294,7 @@ function icl_update_string_status($string_id){
                     $_complete = false;                            
                     break;
                 case ICL_STRING_TRANSLATION_COMPLETE:
+                    $_complete = true;                            
                     $_partial = true;
                     break;
                 case ICL_STRING_TRANSLATION_NEEDS_UPDATE:
@@ -486,6 +484,11 @@ function icl_sw_filters_widget_title($val){
 
 function icl_sw_filters_widget_text($val){    
     return icl_t('Widgets', 'widget body - ' . md5($val) , $val);
+}
+
+function icl_sw_filters_gettext($translation, $text){
+    $icl_translation = icl_t('theme', md5($text), $text);
+    return $icl_translation;
 }
 
 function icl_st_update_string_actions($context, $name, $old_value, $new_value){

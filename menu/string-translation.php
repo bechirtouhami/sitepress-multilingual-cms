@@ -264,13 +264,15 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
                         <?php echo __('Widget titles', 'sitepress'); ?></label></li>
                     <li><label><input type="checkbox" name="icl_st_sw[text_widgets]" value="1" <?php if($sitepress_settings['st']['sw']['text_widgets']): ?>checked="checked"<?php endif ?> /> 
                         <?php echo __('Content for text-widgets', 'sitepress'); ?></label></li>
+                    <li><label><input type="checkbox" name="icl_st_sw[theme_texts]" value="1" <?php if($sitepress_settings['st']['sw']['theme_texts']): ?>checked="checked"<?php endif ?> /> 
+                        <?php echo __('Theme texts', 'sitepress'); ?></label></li>                        
                 </ul>
                 <input class="button-secondary" type="submit" name="iclt_st_sw_save" value="<?php echo __('Save', 'sitepress')?>" />
                 <span class="icl_ajx_response" style="display:inline"><?php if(isset($_GET['updated']) && $_GET['updated']=='true') echo __('Settings saved', 'sitepress') ?></span>
             </form>
         </div>
     
-        <? /*
+        
         <div class="colthree">
             <h4><?php echo __('Translate the theme or plugins', 'sitepress') ?></h4>
             <p><?php echo __("You can translate the theme's texts using this screen too. To do this, upload the theme's .po file.", 'sitepress')?></p>
@@ -296,7 +298,7 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
                 <input class="button" name="icl_po_upload" id="icl_po_upload" type="submit" value="<?php echo __('Submit', 'sitepress')?>" />        
             </form>
         </div>
-        */ ?>
+        
         <br clear="all" /><br />
     
     <?php endif; ?>
