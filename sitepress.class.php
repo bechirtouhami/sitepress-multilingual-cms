@@ -93,63 +93,64 @@ class SitePress{
             add_action('admin_print_scripts-edit-pages.php', array($this,'restrict_manage_pages'));
             
             add_filter('get_edit_post_link', array($this, 'get_edit_post_link'), 1, 2);
-        }
         
-        // short circuit get default category
-        add_filter('pre_option_default_category', array($this, 'pre_option_default_category'));
-        add_filter('the_category', array($this,'the_category_name_filter'));
-        add_filter('get_terms', array($this,'get_terms_filter'));
-        add_filter('single_cat_title', array($this,'the_category_name_filter'));
-        add_filter('term_links-category', array($this,'the_category_name_filter'));
         
-        add_filter('term_links-post_tag', array($this,'the_category_name_filter'));
-        add_filter('tags_to_edit', array($this,'the_category_name_filter'));
-        add_filter('single_tag_title', array($this,'the_category_name_filter'));
-        
-        // adiacent posts links
-        add_filter('get_previous_post_join', array($this,'get_adiacent_post_join'));
-        add_filter('get_next_post_join', array($this,'get_adiacent_post_join'));
-        add_filter('get_previous_post_where', array($this,'get_adiacent_post_where'));
-        add_filter('get_next_post_where', array($this,'get_adiacent_post_where'));
-        
-        // feeds links
-        add_filter('feed_link', array($this,'feed_link'));
-        
-        // commenting links
-        add_filter('post_comments_feed_link', array($this,'post_comments_feed_link'));
-        add_filter('trackback_url', array($this,'trackback_url'));
-        add_filter('user_trailingslashit', array($this,'user_trailingslashit'),1, 2);        
-        
-        // date based archives
-        add_filter('year_link', array($this,'archives_link'));
-        add_filter('month_link', array($this,'archives_link'));
-        add_filter('day_link', array($this,'archives_link'));
-        add_filter('getarchives_join', array($this,'getarchives_join'));
-        add_filter('getarchives_where', array($this,'getarchives_where'));
-        if($this->settings['language_home']){
-            add_filter('pre_option_home', array($this,'pre_option_home'));            
-        }     
-        
-        // language negotiation
-        add_action('query_vars', array($this,'query_vars'));
-        
-        // 
-        add_filter('language_attributes', array($this, 'language_attributes'));
-        
-        add_action('locale', array($this, 'locale'));
-                                        
-        if(isset($_GET['____icl_validate_domain'])){ echo '<!--'.get_option('home').'-->'; exit; }                        
-        
-        add_filter('pre_option_page_on_front', array($this,'pre_option_page_on_front'));
-        add_filter('pre_option_page_for_posts', array($this,'pre_option_page_for_posts'));
-        
-        add_filter('option_sticky_posts', array($this,'option_sticky_posts'));
-                         
-        add_filter('request', array($this,'request_filter'));
-        
-        add_action('wp_head', array($this,'set_wp_query'));
-        
-        add_action('init', array($this,'plugin_localization'));
+            // short circuit get default category
+            add_filter('pre_option_default_category', array($this, 'pre_option_default_category'));
+            add_filter('the_category', array($this,'the_category_name_filter'));
+            add_filter('get_terms', array($this,'get_terms_filter'));
+            add_filter('single_cat_title', array($this,'the_category_name_filter'));
+            add_filter('term_links-category', array($this,'the_category_name_filter'));
+            
+            add_filter('term_links-post_tag', array($this,'the_category_name_filter'));
+            add_filter('tags_to_edit', array($this,'the_category_name_filter'));
+            add_filter('single_tag_title', array($this,'the_category_name_filter'));
+            
+            // adiacent posts links
+            add_filter('get_previous_post_join', array($this,'get_adiacent_post_join'));
+            add_filter('get_next_post_join', array($this,'get_adiacent_post_join'));
+            add_filter('get_previous_post_where', array($this,'get_adiacent_post_where'));
+            add_filter('get_next_post_where', array($this,'get_adiacent_post_where'));
+            
+            // feeds links
+            add_filter('feed_link', array($this,'feed_link'));
+            
+            // commenting links
+            add_filter('post_comments_feed_link', array($this,'post_comments_feed_link'));
+            add_filter('trackback_url', array($this,'trackback_url'));
+            add_filter('user_trailingslashit', array($this,'user_trailingslashit'),1, 2);        
+            
+            // date based archives
+            add_filter('year_link', array($this,'archives_link'));
+            add_filter('month_link', array($this,'archives_link'));
+            add_filter('day_link', array($this,'archives_link'));
+            add_filter('getarchives_join', array($this,'getarchives_join'));
+            add_filter('getarchives_where', array($this,'getarchives_where'));
+            if($this->settings['language_home']){
+                add_filter('pre_option_home', array($this,'pre_option_home'));            
+            }     
+            
+            // language negotiation
+            add_action('query_vars', array($this,'query_vars'));
+            
+            // 
+            add_filter('language_attributes', array($this, 'language_attributes'));
+            
+            add_action('locale', array($this, 'locale'));
+                                            
+            if(isset($_GET['____icl_validate_domain'])){ echo '<!--'.get_option('home').'-->'; exit; }                        
+            
+            add_filter('pre_option_page_on_front', array($this,'pre_option_page_on_front'));
+            add_filter('pre_option_page_for_posts', array($this,'pre_option_page_for_posts'));
+            
+            add_filter('option_sticky_posts', array($this,'option_sticky_posts'));
+                             
+            add_filter('request', array($this,'request_filter'));
+            
+            add_action('wp_head', array($this,'set_wp_query'));
+            
+            add_action('init', array($this,'plugin_localization'));
+        } //end if the initial language is set - existing_content_language_verified
         
     }
                                       
@@ -784,6 +785,7 @@ class SitePress{
         }else{
             $trid = $_POST['icl_trid'];
         }
+        
         // synchronize the page order for translations
         if($trid && $_POST['post_type']=='page' && $this->settings['sync_page_ordering']){
             $menu_order = $wpdb->escape($_POST['menu_order']);

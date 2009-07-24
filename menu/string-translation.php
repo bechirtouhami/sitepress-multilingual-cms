@@ -263,7 +263,7 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
                     <li><label><input type="checkbox" name="icl_st_sw[text_widgets]" value="1" <?php if($sitepress_settings['st']['sw']['text_widgets']): ?>checked="checked"<?php endif ?> /> 
                         <?php echo __('Content for text-widgets', 'sitepress'); ?></label></li>
                     <li><label><input type="checkbox" name="icl_st_sw[theme_texts]" value="1" <?php if($sitepress_settings['st']['sw']['theme_texts']): ?>checked="checked"<?php endif ?> /> 
-                        <?php echo __('Theme texts', 'sitepress'); ?></label></li>                        
+                        <?php echo __('Theme/plugin texts', 'sitepress'); ?></label></li>                        
                 </ul>
                 <input class="button-secondary" type="submit" name="iclt_st_sw_save" value="<?php echo __('Save', 'sitepress')?>" />
                 <span class="icl_ajx_response" style="display:inline"><?php if(isset($_GET['updated']) && $_GET['updated']=='true') echo __('Settings saved', 'sitepress') ?></span>
