@@ -135,7 +135,7 @@ function icl_st_init(){
         add_filter('widget_text', 'icl_sw_filters_widget_text');
     }
     if($sitepress_settings['st']['sw']['theme_texts']){
-        add_filter('gettext', 'icl_sw_filters_gettext', 9, 2);
+        add_filter('gettext', 'icl_sw_filters_gettext', 9, 3);
     }
     
     $widget_groups = $wpdb->get_results("SELECT option_name, option_value FROM {$wpdb->options} WHERE option_name LIKE 'widget\\_%'");
@@ -486,9 +486,12 @@ function icl_sw_filters_widget_text($val){
     return icl_t('Widgets', 'widget body - ' . md5($val) , $val);
 }
 
-function icl_sw_filters_gettext($translation, $text){
-    $icl_translation = icl_t('theme', md5($text), $text);
-    return $icl_translation;
+function icl_sw_filters_gettext($translation, $text, $domain){
+    global $sitepress_settings;
+    if(isset($sitepress_settings['gettext_theme_domain_name']) && $domain == $sitepress_settings['gettext_theme_domain_name']){
+        $translation = icl_t('theme', md5($text), $text);
+    }        
+    return $translation;
 }
 
 function icl_st_update_string_actions($context, $name, $old_value, $new_value){
