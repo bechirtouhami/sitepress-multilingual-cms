@@ -19,6 +19,9 @@ add_action('update_option_blogdescription', 'icl_st_update_blogdescription_actio
 
 function icl_st_init(){
     global $sitepress_settings, $sitepress, $wpdb, $icl_st_err_str;
+    if ( get_magic_quotes_gpc() ){
+        $_POST = stripslashes_deep( $_POST );         
+    }
                          
     if(!isset($sitepress_settings['existing_content_language_verified'])){
         return;

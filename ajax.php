@@ -338,7 +338,10 @@ switch($_REQUEST['icl_ajx_action']){
     
     case 'icl_st_save_translation':
         $icl_st_complete = isset($_POST['icl_st_translation_complete'])?$_POST['icl_st_translation_complete']:null;
-        echo icl_add_string_translation($_POST['icl_st_string_id'], $_POST['icl_st_language'], $_POST['icl_st_translation'], $icl_st_complete);
+        if ( get_magic_quotes_gpc() ){
+            $_POST = stripslashes_deep( $_POST );         
+        }
+        echo icl_add_string_translation($_POST['icl_st_string_id'], $_POST['icl_st_language'], stripslashes($_POST['icl_st_translation']), $icl_st_complete);
         echo '|';
         echo $icl_st_string_translation_statuses[icl_update_string_status($_POST['icl_st_string_id'])];
         break;

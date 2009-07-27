@@ -110,7 +110,7 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
                     <td><?php echo htmlentities($icl_string['name']); ?></td>
                     <td width="70%">                                        
                         <div class="icl-st-original" style="float:left;">                    
-                        <?php echo $icl_string['value']; ?>                    
+                        <?php echo htmlentities($icl_string['value']); ?>                    
                         </div>                    
                         <div style="float:right;">
                             <a href="#icl-st-toggle-translations"><?php echo __('translations','sitepress') ?></a>
@@ -131,9 +131,13 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
                                 ?>
                                 <tr>
                                     <td style="border:none">
-                                        <?php echo $lang['display_name'] ?><br />
+                                        <?php if(preg_match('#<([^>]*)>#im',$icl_string['value'])):?>
+                                        <a href="#" class="alignright icl_htmlpreview_link">HTML preview</a><div style="display:none" class="icl_html_preview"></div>
+                                        <?php endif; ?>
+                                        <?php echo $lang['display_name'] ?>                                        
+                                        <br />
                                         <img class="icl_ajx_loader" src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" style="float:left;display:none;position:absolute;margin:5px" alt="" />
-                                        <textarea rows="2" cols="40" name="icl_st_translation" style="width:100%" <?php if(isset($icl_string['translations'][$lang['code']])): ?>id="icl_st_ta_<?php echo $icl_string['translations'][$lang['code']]['id'] ?>"<?php endif;?>><?php 
+                                        <textarea rows="<?php echo ceil(strlen($icl_string['value'])/80) ?>" cols="40" name="icl_st_translation" style="width:100%" <?php if(isset($icl_string['translations'][$lang['code']])): ?>id="icl_st_ta_<?php echo $icl_string['translations'][$lang['code']]['id'] ?>"<?php endif;?>><?php 
                                             if(isset($icl_string['translations'][$lang['code']])) echo $icl_string['translations'][$lang['code']]['value']; else echo $icl_string['value']; 
                                             ?></textarea>                                        
                                     </td>

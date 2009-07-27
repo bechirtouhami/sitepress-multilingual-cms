@@ -18,6 +18,7 @@ jQuery(document).ready(function(){
     });
     jQuery('#icl-tr-opt :checkbox').click(icl_st_update_languages);
     jQuery('.icl_st_row_cb, .check-column :checkbox').click(icl_st_update_checked_elements);
+    jQuery('.icl_htmlpreview_link').click(icl_st_show_html_preview);
 });
 
 function icl_st_toggler(){
@@ -28,6 +29,7 @@ function icl_st_toggler(){
     }else{
         inl.slideUp();            
     }
+    icl_st_show_html_preview_close();
 }
 
 var icl_st_ta_cache = new Array();
@@ -49,6 +51,7 @@ function icl_st_monitor_ta_check_modifications(){
             jQuery('#icl_st_cb_'+id).attr('checked','checked');
         }
     }
+    icl_st_show_html_preview_close();
 }
 
 function icl_st_submit_translation(){
@@ -161,4 +164,19 @@ function icl_st_update_checked_elements(){
             jQuery('#icl_st_delete_selected, #icl_st_send_selected').removeAttr('disabled');
         }
     }
+}
+
+function icl_st_show_html_preview(){
+    var parent = jQuery(this).parent();    
+    if(parent.find('.icl_html_preview').css('display')=='none'){
+        parent.find('.icl_html_preview').html(parent.find('textarea[name="icl_st_translation"]').val()).slideDown();
+    }else{
+        parent.find('.icl_html_preview').slideUp();
+    }
+    
+    return false;
+}
+
+function icl_st_show_html_preview_close(){
+    jQuery('.icl_html_preview').slideUp();
 }
