@@ -168,8 +168,9 @@ function icl_st_update_checked_elements(){
 
 function icl_st_show_html_preview(){
     var parent = jQuery(this).parent();    
+    var textarea = parent.parent().prev().find('textarea[name="icl_st_translation"]');
     if(parent.find('.icl_html_preview').css('display')=='none'){
-        parent.find('.icl_html_preview').html(parent.find('textarea[name="icl_st_translation"]').val()).slideDown();
+        parent.find('.icl_html_preview').html(textarea.val()).slideDown();
     }else{
         parent.find('.icl_html_preview').slideUp();
     }

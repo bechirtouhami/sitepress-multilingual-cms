@@ -131,9 +131,6 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
                                 ?>
                                 <tr>
                                     <td style="border:none">
-                                        <?php if(preg_match('#<([^>]*)>#im',$icl_string['value'])):?>
-                                        <a href="#" class="alignright icl_htmlpreview_link">HTML preview</a><div style="display:none" class="icl_html_preview"></div>
-                                        <?php endif; ?>
                                         <?php echo $lang['display_name'] ?>                                        
                                         <br />
                                         <img class="icl_ajx_loader" src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" style="float:left;display:none;position:absolute;margin:5px" alt="" />
@@ -144,6 +141,10 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
                                 </tr>
                                 <tr>
                                     <td align="right" style="border:none">                                    
+                                        <?php if(preg_match('#<([^>]*)>#im',$icl_string['value'])):?>
+                                        <div style="text-align:left;display:none" class="icl_html_preview"></div>
+                                        <a href="#" class="alignleft icl_htmlpreview_link">HTML preview</a>
+                                        <?php endif; ?>                                    
                                         <label><input type="checkbox" name="icl_st_translation_complete" value="1" <?php echo $tr_complete_checked ?> <?php if(isset($icl_string['translations'][$lang['code']])): ?>id="icl_st_cb_<?php echo $icl_string['translations'][$lang['code']]['id'] ?>"<?php endif;?> /> <?php echo __('Translation is complete','sitepress')?></label>&nbsp;
                                         <input type="submit" class="button-secondary action" value="<?php echo __('Save', 'sitepress')?>" />
                                     </td>
