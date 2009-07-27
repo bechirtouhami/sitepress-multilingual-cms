@@ -21,7 +21,7 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
         <p><?php printf(__('These are the strings that we found in your .po file. Please carefully review them. Then, click on the \'add\' or \'cancel\' buttons at the <a href="%s">bottom of this screen</a>. You can exclude individual strings by clearing the check boxes next to them.', 'sitepress'), '#add_po_strings_confirm'); ?></p>
         <form method="post" action="">
         <input type="hidden" name="icl_st_strings_for" value="<?php echo $_POST['icl_st_strings_for'] ?>" />
-        <?php if(isset($_POST['icl_st_po_language'])): ?>
+        <?php if(isset($_POST['icl_st_po_translations'])): ?>
         <input type="hidden" name="icl_st_po_language" value="<?php echo $_POST['icl_st_po_language'] ?>" />
         <?php endif; ?>
         <table id="icl_po_strings" class="widefat" cellspacing="0">
@@ -43,8 +43,8 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
                         <td><input class="icl_st_row_cb" type="checkbox" name="icl_strings_selected[]" checked="checked" value="<?php echo $k ?>" /></td>
                         <td>
                             <input type="text" name="icl_strings[]" value="<?php echo htmlentities($str['string']) ?>" readonly="readonly" style="width:100%;" size="100" />
-                            <?php if(isset($_POST['icl_st_po_language'])): ?>
-                            <input type="text" name="icl_translations[]" value="<?php echo htmlentities($str['translation']) ?>" readonly="readonly" style="width:100%;" size="100" />
+                            <?php if(isset($_POST['icl_st_po_translations'])):?>
+                            <input type="text" name="icl_translations[]" value="<?php echo htmlentities(utf8_decode($str['translation'])) ?>" readonly="readonly" style="width:100%;" size="100" />
                             <?php endif; ?>
                         </td>
                     </tr>
@@ -289,7 +289,7 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
                 <?php echo __('.po file:', 'sitepress')?>
                 <input class="button primary" type="file" name="icl_po_file" />  
                 <p style="line-height:2.3em">
-                    <input type="checkbox" id="icl_st_po_translations" />
+                    <input type="checkbox" name="icl_st_po_translations" id="icl_st_po_translations" />
                     <?php echo __('Also create translations according to the .po file', 'sitepress')?>
                     <select name="icl_st_po_language" id="icl_st_po_language" style="display:none">
                     <?php foreach($active_languages as $al): if($al['code']==$sitepress->get_default_language()) continue; ?>

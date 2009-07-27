@@ -107,12 +107,11 @@ function icl_st_init(){
     }
     elseif(isset($_POST['icl_st_save_strings'])){
         $arr = array_intersect_key($_POST['icl_strings'], array_flip($_POST['icl_strings_selected']));
-        $arr = array_map('html_entity_decode', $arr);         
+        //$arr = array_map('html_entity_decode', $arr);         
         if(isset($_POST['icl_st_po_language'])){
             $arr_t = array_intersect_key($_POST['icl_translations'], array_flip($_POST['icl_strings_selected']));
-            $arr_t = array_map('html_entity_decode', $arr_t);         
-        }
-        
+            //$arr_t = array_map('html_entity_decode', $arr_t);         
+        }        
         foreach($arr as $k=>$string){
             $string_id = icl_register_string($_POST['icl_st_strings_for'], md5($string), $string);
             if($string_id && isset($_POST['icl_st_po_language'])){
