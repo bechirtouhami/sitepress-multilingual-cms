@@ -358,6 +358,15 @@ switch($_REQUEST['icl_ajx_action']){
         icl_translation_send_untranslated_strings(explode(',',$_POST['langs']));
         echo '1';
         break;    
+    case 'icl_save_theme_localization_type':
+        $icl_tl_type = (int)$_POST['icl_theme_localization_type'];
+        $iclsettings['theme_localization_type'] = $icl_tl_type;
+        if($icl_tl_type==1){            
+            icl_st_scan_theme_files($sitepress_settings['gettext_theme_domain_name']);
+        }
+        $sitepress->save_settings($iclsettings);
+        echo '1|'.$icl_tl_type;
+        break;
     default:
         echo __('Invalid action','sitepress');                
 }    

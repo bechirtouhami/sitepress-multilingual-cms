@@ -240,6 +240,7 @@ class SitePress{
             add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Content translation','sitepress'), __('Content translation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/content-translation.php'); 
             //add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Comments Translation','sitepress'), __('Comments Translation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/comments-translation.php'); 
         }
+        add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Theme localization','sitepress'), __('Theme localization','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/theme-localization.php'); 
         add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Navigation','sitepress'), __('Navigation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/navigation.php'); 
         add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Sticky links','sitepress'), __('Sticky links','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/absolute-links.php'); 
         add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Troubleshooting','sitepress'), __('Troubleshooting','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/troubleshooting.php'); 
@@ -577,13 +578,21 @@ class SitePress{
         if(isset($_POST['icl_post_action'])){
             switch($_POST['icl_post_action']){
                 case 'save_theme_localization':
+                    $locales = array();
                     foreach($_POST as $k=>$v){
                         if(0 !== strpos($k, 'locale_file_name_') || !trim($v)) continue;
                         $locales[str_replace('locale_file_name_','',$k)] = $v;                                                
                     }
-                    $this->set_locale_file_names($locales);
+                    if(!empty($locales)){
+                        $this->set_locale_file_names($locales);
+                    }                    
                     $this->settings['gettext_theme_domain_name'] = $_POST['icl_domain_name'];
                     $this->save_settings();
+                    global $sitepress_settings;
+                    $sitepress_settings = $this->get_settings();
+                    if($sitepress_settings['theme_localization_type']==1){
+                        icl_st_scan_theme_files($sitepress_settings['gettext_theme_domain_name']);
+                    }
                     break;
             }
             return;

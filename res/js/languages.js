@@ -10,8 +10,6 @@ addLoadEvent(function(){
     jQuery('#icl_save_language_switcher_options').submit(iclSaveForm);    
     jQuery('#icl_lang_more_options').submit(iclSaveForm);    
     jQuery('input[name="icl_language_negotiation_type"]').change(iclLntDomains);
-    jQuery('a[href="#toggle-theme-localization"]').click(iclThemeLocalizationMenu);
-    jQuery('#icl_theme_localization').submit(iclSaveThemeLocalization);
     
 });
 function editingDefaultLanguage(){
@@ -182,35 +180,4 @@ function iclSaveLanguageNegotiationType(){
         }
     });
     return false;     
-}
-
-function iclThemeLocalizationMenu(){
-    var icl_tl_menu = jQuery('#icl_theme_localization');
-    if(icl_tl_menu.css('display') == 'none'){
-        icl_tl_menu.slideDown();
-        jQuery('#icl_tl_arrow').html('&uarr;');
-    }else{
-        jQuery('#icl_tl_arrow').html('&darr;');
-        icl_tl_menu.slideUp();
-    }
-    jQuery('a[href="#toggle-theme-localization"]').toggle();
-}
-
-function iclSaveThemeLocalization(){
-    var ajx = location.href.replace(/#(.*)$/,'');
-    if(-1 == location.href.indexOf('?')){
-        url_glue='?';
-    }else{
-        url_glue='&';
-    }
-    spl = jQuery(this).serialize().split('&');    
-    var parameters = {};
-    for(var i=0; i< spl.length; i++){        
-        var par = spl[i].split('=');
-        eval('parameters.' + par[0] + ' = par[1]');
-    }    
-    jQuery('#icl_theme_localization_wrap').load(location.href + ' #icl_theme_localization_subwrap', parameters, function(){
-        fadeInAjxResp('#icl_ajx_response_fn', icl_ajx_saved);                                         
-    }); 
-    return false;   
 }

@@ -635,7 +635,33 @@ function icl_st_admin_notices(){
     }    
 }
 
-
+function icl_st_scan_theme_files($domain, $dir = false){
+    global $sitepress_settings;
+    if(!isset($sitepress_settings['gettext_theme_domain_name']) || !$sitepress_settings['gettext_theme_domain_name']){
+        return;
+    }                            
+    if($dir === false){
+        $dir = TEMPLATEPATH;
+    }
+    $dh = opendir($dir);
+    static $icl_registered_strings = array();
+    while($file = readdir($dh)){
+        if($file=="." || $file=="..") continue;
+        if(is_dir($dir . "/" . $file)){
+            icl_st_scan_theme_files($domain, $dir . "/" . $file);
+        }elseif(preg_match('#(\.php|\.inc)$#i', $file)){     
+            $content = file_get_contents($dir . "/" . $file);
+            $int = preg_match('#__\((\'|")([^\)]+)(\'|")([, ]+)(\'|")'.$domain.'(\'|")\)#im',$content,$matches);
+            if($int){
+                if(!isset($icl_registered_strings[$matches[2]])){
+                    icl_register_string('theme', md5($matches[2]), $matches[2]);
+                    $icl_registered_strings[$matches[2]] = true;
+                }                
+            }
+        }
+    }
+    closedir($dir);
+}
 
 function icl_st_debug($str){
     trigger_error($str, E_USER_WARNING);

@@ -36,7 +36,7 @@ if($sitepress_settings['existing_content_language_verified']){
             <div id="normal-sortables" class="meta-box-sortables ui-sortable">
             
                 <div id="dashboard_wpml_languages" class="postbox">
-                    <div class="handlediv" title="Click to toggle">
+                    <div class="handlediv" title="<?php echo __('Click to toggle', 'sitepress'); ?>">
                         <br/>
                     </div>
                     <h3 class="hndle">
@@ -67,7 +67,7 @@ if($sitepress_settings['existing_content_language_verified']){
                 </div>
                 
                 <div id="dashboard_wpml_navigation" class="postbox">
-                    <div class="handlediv" title="Click to toggle">
+                    <div class="handlediv" title="<?php echo __('Click to toggle', 'sitepress'); ?>">
                         <br/>
                     </div>
                     <h3 class="hndle">
@@ -82,7 +82,7 @@ if($sitepress_settings['existing_content_language_verified']){
                 </div>
                 
                 <div id="dashboard_wpml_stickylinks" class="postbox">
-                    <div class="handlediv" title="Click to toggle">
+                    <div class="handlediv" title="<?php echo __('Click to toggle', 'sitepress'); ?>">
                         <br/>
                     </div>
                     <h3 class="hndle">
@@ -112,7 +112,7 @@ if($sitepress_settings['existing_content_language_verified']){
             
                 <?php if(2 <= count($sitepress->get_active_languages())) :?>
                 <div id="dashboard_wpml_string_translation" class="postbox">
-                    <div class="handlediv" title="Click to toggle">
+                    <div class="handlediv" title="<?php echo __('Click to toggle', 'sitepress'); ?>">
                         <br/>
                     </div>
                     <h3 class="hndle">
@@ -138,7 +138,7 @@ if($sitepress_settings['existing_content_language_verified']){
                 
                 <?php if($sitepress_settings['existing_content_language_verified']): ?>                
                 <div id="dashboard_wpml_content_translation" class="postbox">
-                    <div class="handlediv" title="Click to toggle">
+                    <div class="handlediv" title="<?php echo __('Click to toggle', 'sitepress'); ?>">
                         <br/>
                     </div>
                     <h3 class="hndle">
@@ -177,7 +177,34 @@ if($sitepress_settings['existing_content_language_verified']){
                     </div>
                 </div>
                 <?php endif; ?>
-                                
+                          
+                          
+                <?php if($sitepress_settings['existing_content_language_verified']): ?>                
+                <div id="dashboard_wpml_content_translation" class="postbox">
+                    <div class="handlediv" title="<?php echo __('Click to toggle', 'sitepress'); ?>">
+                        <br/>
+                    </div>
+                    <h3 class="hndle">
+                        <span><?php echo __('Theme localization', 'sitepress')?></span>
+                    </h3>                    
+                    <div class="inside">
+                        <p class="sub">
+                            <?php 
+                            echo __('Current configuration', 'sitepress');
+                            echo '<br /><strong>';
+                            switch($sitepress_settings['theme_localization_type']){
+                                case '1': echo __('Translate the theme by WPML', 'sitepress'); break;
+                                case '2': echo __('Using a .mo file in the theme directory', 'sitepress'); break;
+                                default: echo __('No localization', 'sitepress'); 
+                            }
+                            echo '</strong>';
+                            ?>
+                        </p>                                                      
+                        
+                        <p class="sub"><a class="button secondary" href="<?php echo 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/theme-localization.php' ?>"><?php echo __('Manage theme localization', 'sitepress'); ?></a></p> 
+                    </div>
+                </div>
+                <?php endif; ?>                                
                             
             </div>
         </div>

@@ -39,16 +39,6 @@ table.language_domains{
     font-size: 11px;
 }
 
-a#toggle-theme-localization{
-    text-decoration: none;
-}
-#icl_theme_localization{
-    display: none;
-}
-#icl_theme_localization input{
-    font-size: 80%;
-}
-
 .icon32{
     background: transparent url(../img/icon.png) no-repeat !important;    
 }
