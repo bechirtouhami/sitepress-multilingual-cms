@@ -19,6 +19,7 @@ jQuery(document).ready(function(){
     jQuery('#icl-tr-opt :checkbox').click(icl_st_update_languages);
     jQuery('.icl_st_row_cb, .check-column :checkbox').click(icl_st_update_checked_elements);
     jQuery('.icl_htmlpreview_link').click(icl_st_show_html_preview);
+    jQuery('#icl_st_po_form').submit(icl_validate_po_upload);
 });
 
 function icl_st_toggler(){
@@ -180,4 +181,18 @@ function icl_st_show_html_preview(){
 
 function icl_st_show_html_preview_close(){
     jQuery('.icl_html_preview').slideUp();
+}
+
+function icl_validate_po_upload(){
+    cont = jQuery(this).contents();
+    cont.find('.icl_error_text').hide();
+    if(!jQuery('#icl_po_file').val()){
+        cont.find('#icl_st_err_po').fadeIn();
+        return false;
+    }    
+    if(!cont.find('input[name="icl_st_domain_name"]').val()){
+        cont.find('#icl_st_err_domain').fadeIn();
+        return false;
+    }
+    
 }

@@ -19,11 +19,13 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
     <?php if(isset($icl_st_po_strings) && !empty($icl_st_po_strings)): ?>
     
         <p><?php printf(__('These are the strings that we found in your .po file. Please carefully review them. Then, click on the \'add\' or \'cancel\' buttons at the <a href="%s">bottom of this screen</a>. You can exclude individual strings by clearing the check boxes next to them.', 'sitepress'), '#add_po_strings_confirm'); ?></p>
-        <form method="post" action="">
+        <form method="post" action="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH) ?>/menu/string-translation.php">
         <input type="hidden" name="icl_st_strings_for" value="<?php echo $_POST['icl_st_strings_for'] ?>" />
         <?php if(isset($_POST['icl_st_po_translations'])): ?>
         <input type="hidden" name="icl_st_po_language" value="<?php echo $_POST['icl_st_po_language'] ?>" />
         <?php endif; ?>
+        <input type="hidden" name="icl_st_domain_name" value="<?php echo $_POST['icl_st_domain_name'] ?>" />
+        
         <table id="icl_po_strings" class="widefat" cellspacing="0">
             <thead>
                 <tr>
@@ -270,8 +272,10 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
                     <li><label><input type="checkbox" name="icl_st_sw[theme_texts]" value="1" <?php if($sitepress_settings['st']['sw']['theme_texts']): ?>checked="checked"<?php endif ?> /> 
                         <?php echo __('Theme/plugin texts', 'sitepress'); ?></label></li>                        
                 </ul>
+                <p class="alignleft">
                 <input class="button-secondary" type="submit" name="iclt_st_sw_save" value="<?php echo __('Save', 'sitepress')?>" />
                 <span class="icl_ajx_response" style="display:inline"><?php if(isset($_GET['updated']) && $_GET['updated']=='true') echo __('Settings saved', 'sitepress') ?></span>
+                </p>
             </form>
         </div>
     
@@ -288,7 +292,7 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
                     </select>
                 </p>
                 <?php echo __('.po file:', 'sitepress')?>
-                <input class="button primary" type="file" name="icl_po_file" />  
+                <input id="icl_po_file" class="button primary" type="file" name="icl_po_file" />  
                 <p style="line-height:2.3em">
                     <input type="checkbox" name="icl_st_po_translations" id="icl_st_po_translations" />
                     <?php echo __('Also create translations according to the .po file', 'sitepress')?>
@@ -298,7 +302,12 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
                     <?php endforeach; ?>
                     </select>
                 </p>
+                <label><?php echo __('Text domain name:', 'sitepress');?> <input type="text" name="icl_st_domain_name" /></label>
+                <p class="alignleft">
                 <input class="button" name="icl_po_upload" id="icl_po_upload" type="submit" value="<?php echo __('Submit', 'sitepress')?>" />        
+                <span id="icl_st_err_domain" class="icl_error_text" style="display:none"><?php echo __('Please enter the text domain name!', 'sitepress')?></span>
+                <span id="icl_st_err_po" class="icl_error_text" style="display:none"><?php echo __('Please select the .po file to upload!', 'sitepress')?></span>
+                </p>
             </form>
         </div>
         

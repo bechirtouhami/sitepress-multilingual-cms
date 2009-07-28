@@ -113,7 +113,7 @@ function icl_st_init(){
             //$arr_t = array_map('html_entity_decode', $arr_t);         
         }        
         foreach($arr as $k=>$string){
-            $string_id = icl_register_string($_POST['icl_st_strings_for'], md5($string), $string);
+            $string_id = icl_register_string($_POST['icl_st_strings_for'] . ' ' . $_POST['icl_st_domain_name'], md5($string), $string);
             if($string_id && isset($_POST['icl_st_po_language'])){
                 icl_add_string_translation($string_id, $_POST['icl_st_po_language'], $arr_t[$k], ICL_STRING_TRANSLATION_COMPLETE);
                 icl_update_string_status($string_id);
