@@ -136,7 +136,7 @@ function icl_st_init(){
     if($sitepress_settings['st']['sw']['text_widgets']){
         add_filter('widget_text', 'icl_sw_filters_widget_text');
     }
-    if($sitepress_settings['st']['sw']['theme_texts']){
+    if($sitepress_settings['st']['sw']['theme_texts'] && $sitepress_settings['theme_localization_type']==1){
         add_filter('gettext', 'icl_sw_filters_gettext', 9, 3);
     }
     
@@ -490,9 +490,7 @@ function icl_sw_filters_widget_text($val){
 
 function icl_sw_filters_gettext($translation, $text, $domain){
     global $sitepress_settings;
-    if(isset($sitepress_settings['gettext_theme_domain_name']) && $domain == $sitepress_settings['gettext_theme_domain_name']){
-        $translation = icl_t('theme', md5($text), $text);
-    }        
+    $translation = icl_t('theme ' . $domain, md5($text), $text);
     return $translation;
 }
 
@@ -647,11 +645,11 @@ function icl_st_scan_theme_files($dir = false){
             icl_st_scan_theme_files($dir . "/" . $file);
         }elseif(preg_match('#(\.php|\.inc)$#i', $file)){     
             $content = file_get_contents($dir . "/" . $file);
-            $int = preg_match('#__\((\'|")([^\)]+)(\'|")([, ]+)(\'|")([^\)]+)(\'|")\)#im',$content,$matches);
+            $int = preg_match('#(__|_e)\((\'|")([^\)]+)(\'|")([, ]+)(\'|")([^\)]+)(\'|")\)#im',$content,$matches);
             if($int){
-                if(!isset($icl_registered_strings[$matches[6].$matches[2]])){
-                    icl_register_string('theme ' . $matches[6], md5($matches[2]), $matches[2]);
-                    $icl_registered_strings[$matches[6].$matches[2]] = true;
+                if(!isset($icl_registered_strings[$matches[7].$matches[7]])){
+                    icl_register_string('theme ' . $matches[7], md5($matches[3]), $matches[3]);
+                    $icl_registered_strings[$matches[7].$matches[3]] = true;
                 }                
             }
         }

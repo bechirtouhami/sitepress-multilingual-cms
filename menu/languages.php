@@ -36,8 +36,7 @@
                 break;
             }
         }
-        $default_language = $sitepress->get_language_details($sitepress->get_default_language());
-        $locales = $sitepress->get_locale_file_names();
+        $default_language = $sitepress->get_language_details($sitepress->get_default_language());        
         $inactive_content = $sitepress->get_inactive_content();        
     }    
 ?>

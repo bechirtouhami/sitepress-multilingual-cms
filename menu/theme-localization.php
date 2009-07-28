@@ -3,7 +3,9 @@ if((!isset($sitepress_settings['existing_content_language_verified']) || !$sitep
     return;
 }
 $active_languages = $sitepress->get_active_languages();              
+$locales = $sitepress->get_locale_file_names();
 //icl_st_scan_theme_files();
+
 ?>
 
 <div class="wrap">

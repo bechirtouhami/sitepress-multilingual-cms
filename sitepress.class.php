@@ -136,7 +136,9 @@ class SitePress{
             // 
             add_filter('language_attributes', array($this, 'language_attributes'));
             
-            add_action('locale', array($this, 'locale'));
+            if($this->settings['theme_localization_type']==2){
+                add_action('locale', array($this, 'locale'));
+            }
                                             
             if(isset($_GET['____icl_validate_domain'])){ echo '<!--'.get_option('home').'-->'; exit; }                        
             
@@ -1726,7 +1728,6 @@ class SitePress{
     function set_locale_file_names($locale_file_names_pairs){
         global $wpdb;
         $lfn = $this->get_locale_file_names();
-        
         $new = array_diff($locale_file_names_pairs, $lfn);        
         if(!empty($new)){
             foreach($new as $code=>$locale){
