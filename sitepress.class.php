@@ -590,9 +590,6 @@ class SitePress{
                     $this->save_settings();
                     global $sitepress_settings;
                     $sitepress_settings = $this->get_settings();
-                    if($sitepress_settings['theme_localization_type']==1){
-                        icl_st_scan_theme_files($sitepress_settings['gettext_theme_domain_name']);
-                    }
                     break;
             }
             return;

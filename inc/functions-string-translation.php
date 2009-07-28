@@ -635,11 +635,7 @@ function icl_st_admin_notices(){
     }    
 }
 
-function icl_st_scan_theme_files($domain, $dir = false){
-    global $sitepress_settings;
-    if(!isset($sitepress_settings['gettext_theme_domain_name']) || !$sitepress_settings['gettext_theme_domain_name']){
-        return;
-    }                            
+function icl_st_scan_theme_files($dir = false){
     if($dir === false){
         $dir = TEMPLATEPATH;
     }
@@ -648,19 +644,19 @@ function icl_st_scan_theme_files($domain, $dir = false){
     while($file = readdir($dh)){
         if($file=="." || $file=="..") continue;
         if(is_dir($dir . "/" . $file)){
-            icl_st_scan_theme_files($domain, $dir . "/" . $file);
+            icl_st_scan_theme_files($dir . "/" . $file);
         }elseif(preg_match('#(\.php|\.inc)$#i', $file)){     
             $content = file_get_contents($dir . "/" . $file);
-            $int = preg_match('#__\((\'|")([^\)]+)(\'|")([, ]+)(\'|")'.$domain.'(\'|")\)#im',$content,$matches);
+            $int = preg_match('#__\((\'|")([^\)]+)(\'|")([, ]+)(\'|")([^\)]+)(\'|")\)#im',$content,$matches);
             if($int){
-                if(!isset($icl_registered_strings[$matches[2]])){
-                    icl_register_string('theme', md5($matches[2]), $matches[2]);
-                    $icl_registered_strings[$matches[2]] = true;
+                if(!isset($icl_registered_strings[$matches[6].$matches[2]])){
+                    icl_register_string('theme ' . $matches[6], md5($matches[2]), $matches[2]);
+                    $icl_registered_strings[$matches[6].$matches[2]] = true;
                 }                
             }
         }
     }
-    closedir($dir);
+    closedir($dh);
 }
 
 function icl_st_debug($str){

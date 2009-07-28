@@ -3,7 +3,7 @@ if((!isset($sitepress_settings['existing_content_language_verified']) || !$sitep
     return;
 }
 $active_languages = $sitepress->get_active_languages();              
-
+//icl_st_scan_theme_files();
 ?>
 
 <div class="wrap">
@@ -28,8 +28,7 @@ $active_languages = $sitepress->get_active_languages();
     <h3><?php echo __('Settings', 'sitepress') ?></h3>
     <form id="icl_theme_localization" name="icl_lang_more_options" method="post" action="">
     <input type="hidden" name="icl_post_action" value="save_theme_localization" />    
-    <div id="icl_theme_localization_wrap"><span id="icl_theme_localization_subwrap">
-    <?php if($sitepress_settings['theme_localization_type']==2):?>
+    <div id="icl_theme_localization_wrap"><span id="icl_theme_localization_subwrap">    
     <table id="icl_theme_localization_table" class="widefat" cellspacing="0">
     <thead>
     <tr>
@@ -37,7 +36,9 @@ $active_languages = $sitepress->get_active_languages();
     <th scope="col"><?php echo __('Code', 'sitepress') ?></th>
     <th scope="col"><?php echo __('Locale file name', 'sitepress') ?></th>        
     <th scope="col"><?php printf(__('MO file in %s', 'sitepress'), LANGDIR) ?></th>        
+    <?php if($sitepress_settings['theme_localization_type']==2):?>
     <th scope="col"><?php printf(__('MO file in %s', 'sitepress'), '/wp-contents/themes/' . get_option('template')) ?></th>        
+    <?php endif; ?>
     </tr>        
     </thead>        
     <tfoot>
@@ -46,7 +47,9 @@ $active_languages = $sitepress->get_active_languages();
     <th scope="col"><?php echo __('Code', 'sitepress') ?></th>
     <th scope="col"><?php echo __('Locale file name', 'sitepress') ?></th>        
     <th scope="col"><?php printf(__('MO file in %s', 'sitepress'), LANGDIR) ?></th>        
+    <?php if($sitepress_settings['theme_localization_type']==2):?>
     <th scope="col"><?php printf(__('MO file in %s', 'sitepress'), '/wp-contents/themes/' . get_option('template')) ?></th>        
+    <?php endif; ?>
     </tr>        
     </tfoot>
     <tbody>
@@ -69,7 +72,8 @@ $active_languages = $sitepress->get_active_languages();
             <span class="icl_error_text"><?php echo __('File not found!', 'sitepress') ?></span>
             <?php endif; ?>
         <?php endif; ?>
-    </td>       
+    </td>
+    <?php if($sitepress_settings['theme_localization_type']==2):?>       
     <td>
         <?php if($lang['code']=='en'): echo '&nbsp;'; else: ?> 
             <?php if(is_readable(TEMPLATEPATH . '/' . $locales[$lang['code']] . '.mo')): ?>
@@ -78,12 +82,13 @@ $active_languages = $sitepress->get_active_languages();
             <span class="icl_error_text"><?php echo __('File not found!', 'sitepress') ?></span>
             <?php endif; ?>
         <?php endif; ?>
-    </td>               
+    </td>              
+    <?php endif; ?> 
     </tr>
     <?php endforeach; ?>                                                          
     </tbody>        
     </table>
-    <?php endif; ?>
+    <?php if($sitepress_settings['theme_localization_type']==2):?>       
     <p>
         <?php echo __('Enter the theme\'s textdomain value:', 'sitepress')?>
         <input type="text" name="icl_domain_name" value="<?php echo $sitepress_settings['gettext_theme_domain_name'] ?>" />
@@ -91,6 +96,7 @@ $active_languages = $sitepress->get_active_languages();
         <span class="icl_error_text"><?php echo __('Theme localization is not enabled because you didn\'t enter a text-domain.', 'sitepress'); ?></span>
         <?php endif ?>
     </p>
+    <?php endif; ?>
     </div>
     <p>
         <input class="button" name="save" value="<?php echo __('Save','sitepress') ?>" type="submit" />
