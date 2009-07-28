@@ -156,72 +156,73 @@ class SitePress{
         
     }
                                       
-    function init(){        
-        if(defined('WP_ADMIN')){
-            if(isset($_GET['lang'])){
-                $this->this_lang = rtrim($_GET['lang'],'/');             
+    function init(){     
+        if($this->settings['existing_content_language_verified']){
+            if(defined('WP_ADMIN')){
+                if(isset($_GET['lang'])){
+                    $this->this_lang = rtrim($_GET['lang'],'/');             
+                }else{
+                    $this->this_lang = $this->get_default_language();
+                }                   
+                //configure callbacks for plugin menu pages
+                if(isset($_GET['page']) && 0 === strpos($_GET['page'],basename(ICL_PLUGIN_PATH).'/')){
+                    add_action('icl_menu_footer', array($this, 'menu_footer'));
+                }            
             }else{
-                $this->this_lang = $this->get_default_language();
-            }
-            //configure callbacks for plugin menu pages
-            if(isset($_GET['page']) && 0 === strpos($_GET['page'],'sitepress-multilingual-cms/')){
-                add_action('icl_menu_footer', array($this, 'menu_footer'));
-            }            
-        }else{
-            $al = $this->get_active_languages();
-            foreach($al as $l){
-                $active_languages[] = $l['code'];
-            }
-            $s = $_SERVER['HTTPS']=='on'?'s':'';
-            $request = 'http' . $s . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-            $home = get_option('home');
-            $url_parts = parse_url($home);
-            $blog_path = $url_parts['path']?$url_parts['path']:'';            
-            switch($this->settings['language_negotiation_type']){
-                case 1:
-                    $path  = str_replace($home,'',$request);
-                    $parts = explode('?', $path);
-                    $path = $parts[0];
-                    $exp = explode('/',trim($path,'/'));                                        
-                    if(in_array($exp[0], $active_languages)){
-                        $this->this_lang = $exp[0];
-                        $_SERVER['REQUEST_URI'] = preg_replace('@^'. $blog_path . '/' . $this->this_lang.'@i', $blog_path ,$_SERVER['REQUEST_URI']);
-                        // Check for special case of www.example.com/fr where the / is missing on the end
-                        $parts = parse_url($_SERVER['REQUEST_URI']);
-                        if(strlen($parts['path']) == 0){
-                            $_SERVER['REQUEST_URI'] = '/' . $_SERVER['REQUEST_URI'];
+                $al = $this->get_active_languages();
+                foreach($al as $l){
+                    $active_languages[] = $l['code'];
+                }
+                $s = $_SERVER['HTTPS']=='on'?'s':'';
+                $request = 'http' . $s . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+                $home = get_option('home');
+                $url_parts = parse_url($home);
+                $blog_path = $url_parts['path']?$url_parts['path']:'';            
+                switch($this->settings['language_negotiation_type']){
+                    case 1:
+                        $path  = str_replace($home,'',$request);
+                        $parts = explode('?', $path);
+                        $path = $parts[0];
+                        $exp = explode('/',trim($path,'/'));                                        
+                        if(in_array($exp[0], $active_languages)){
+                            $this->this_lang = $exp[0];
+                            $_SERVER['REQUEST_URI'] = preg_replace('@^'. $blog_path . '/' . $this->this_lang.'@i', $blog_path ,$_SERVER['REQUEST_URI']);
+                            // Check for special case of www.example.com/fr where the / is missing on the end
+                            $parts = parse_url($_SERVER['REQUEST_URI']);
+                            if(strlen($parts['path']) == 0){
+                                $_SERVER['REQUEST_URI'] = '/' . $_SERVER['REQUEST_URI'];
+                            }
+                        }else{
+                            $this->this_lang = $this->get_default_language();
                         }
-                    }else{
-                        $this->this_lang = $this->get_default_language();
-                    }
-                    break;
-                case 2:    
-                    $exp = explode('.', $_SERVER['HTTP_HOST']);
-                    $__l = array_search('http' . $s . '://' . $_SERVER['HTTP_HOST'] . $blog_path, $this->settings['language_domains']);
-                    $this->this_lang = $__l?$__l:$this->get_default_language(); 
-                    break;
-                case 3:
-                default:
-                    if(isset($_GET['lang'])){
-                        $this->this_lang = rtrim($_GET['lang'],'/');             
-                    }else{
-                        $this->this_lang = $this->get_default_language();
-                    }
+                        break;
+                    case 2:    
+                        $exp = explode('.', $_SERVER['HTTP_HOST']);
+                        $__l = array_search('http' . $s . '://' . $_SERVER['HTTP_HOST'] . $blog_path, $this->settings['language_domains']);
+                        $this->this_lang = $__l?$__l:$this->get_default_language(); 
+                        break;
+                    case 3:
+                    default:
+                        if(isset($_GET['lang'])){
+                            $this->this_lang = rtrim($_GET['lang'],'/');             
+                        }else{
+                            $this->this_lang = $this->get_default_language();
+                        }
+                }
             }
-        }
-        
-        //reorder active language to put 'this_lang' in front
-        foreach($this->active_languages as $k=>$al){
-            if($al['code']==$this->this_lang){                
-                unset($this->active_languages[$k]);
-                $this->active_languages = array_merge(array($al), $this->active_languages);
+            
+            //reorder active language to put 'this_lang' in front
+            foreach($this->active_languages as $k=>$al){
+                if($al['code']==$this->this_lang){                
+                    unset($this->active_languages[$k]);
+                    $this->active_languages = array_merge(array($al), $this->active_languages);
+                }
             }
+            
+            add_filter('get_pagenum_link', array($this,'get_pagenum_link_filter'));        
+            // filter some queries
+            add_filter('query', array($this, 'filter_queries'));                
         }
-        
-        add_filter('get_pagenum_link', array($this,'get_pagenum_link_filter'));        
-        // filter some queries
-        add_filter('query', array($this, 'filter_queries'));
-                
         require ICL_PLUGIN_PATH . '/inc/template-constants.php';        
         
     }
@@ -1014,7 +1015,7 @@ class SitePress{
                 SELECT language_code, COUNT(p.ID) AS c FROM {$wpdb->prefix}icl_translations t 
                 JOIN {$wpdb->posts} p ON t.element_id=p.ID
                 JOIN {$wpdb->prefix}icl_languages l ON t.language_code=l.code AND l.active = 1
-                WHERE p.post_type='{$type}'
+                WHERE p.post_type='{$type}' AND t.element_type='post'
                 GROUP BY language_code            
                 ");         
             foreach($res as $r){
