@@ -559,11 +559,24 @@ class SitePress{
                         break;
                     }
                 }
+                //get menu_order for page
+                
             }
             ?>
             <?php if($is_sticky): ?><script type="text/javascript">addLoadEvent(function(){jQuery('#sticky').attr('checked','checked');});</script><?php endif; ?>               
             <?php
-        } 
+        }elseif('page-new.php' == $pagenow){
+            if(isset($_GET['trid'])){
+                $menu_order = $wpdb->get_var("
+                    SELECT menu_order FROM {$wpdb->prefix}icl_translations t
+                    JOIN {$wpdb->posts} p ON t.element_id = p.ID
+                    WHERE t.trid='{$_GET['trid']}' AND p.post_type='page' AND t.element_type='post'
+                ");                    
+                if($menu_order){
+                    ?><script type="text/javascript">addLoadEvent(function(){jQuery('#menu_order').val(<?php echo $menu_order ?>);});</script><?php
+                }                
+            }
+        }
     }
        
     function front_end_js(){
