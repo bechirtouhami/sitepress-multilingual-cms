@@ -27,7 +27,7 @@
     <?php foreach($active_languages as $lang): if($selected_language==$lang['code']) continue; ?>
     <tr>
         <td><?php echo $lang['display_name'] ?></td>
-        <td><?php echo isset($translations[$lang['code']]->post_title)?'<a href="'.get_edit_post_link($translations[$lang['code']]->element_id).'" title="'.__('Edit','sitepress').'">'.$translations[$lang['code']]->post_title.'</a>':__('n/a','sitepress') ?></td>
+        <td><?php echo isset($translations[$lang['code']]->post_title)?'<a href="'.get_edit_post_link($translations[$lang['code']]->element_id).'" title="'.__('Edit','sitepress').'">'.apply_filters('the_title', $translations[$lang['code']]->post_title?$translations[$lang['code']]->post_title:__('(no title)','sitepress')).'</a>':__('n/a','sitepress') ?></td>
         <td align="right">
             <?php if(!isset($translations[$lang['code']]->element_id)):?>
             <a href="<?php echo get_option('siteurl')?>/wp-admin/<?php echo $post->post_type ?>-new.php?trid=<?php echo $trid ?>&lang=<?php echo $lang['code'] ?>"><?php echo __('add','sitepress') ?></a>
