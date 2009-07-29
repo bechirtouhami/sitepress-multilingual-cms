@@ -15,12 +15,10 @@ addLoadEvent(function(){
     var lhid = document.createElement('input');
     lhid.setAttribute('type','hidden');
     lhid.setAttribute('name','lang');
-    lhid.setAttribute('value',icl_lang); 
-    src = document.getElementById('s');   
+    lhid.setAttribute('value',icl_lang);     
+    src = document.getElementById('searchform');   
     if(src){
-        src.parentNode.appendChild(lhid);
-    }
-    if(document.getElementById('searchform')){
-        document.getElementById('searchform').action=icl_home; 
+        src.appendChild(lhid);
+        src.action=icl_home; 
     }
 });
