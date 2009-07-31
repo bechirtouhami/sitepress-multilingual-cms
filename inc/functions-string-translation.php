@@ -556,8 +556,6 @@ function icl_st_update_text_widgets_actions($old_options, $new_options){
 }
 
 function icl_t_cache_lookup($context, $name){
-    //global $icl_cache_log;
-    
     global $sitepress_settings;
     static $icl_st_cache;
     
@@ -566,10 +564,8 @@ function icl_t_cache_lookup($context, $name){
     }
     
     if(isset($icl_st_cache[$context]) && empty($icl_st_cache[$context])){  // cache semi-hit - string is not in the db
-        //$icl_cache_log[] = "SEMIHIT\t" . $context . "\t" . $name . "\n";
         $ret_value = false;        
     }elseif(!isset($icl_st_cache[$context][$name])){ //cache MISS
-        //$icl_cache_log[] = "MISS\t" . $context . "\t" . $name . "\n";
         global $sitepress, $wpdb;        
         $current_language = $sitepress->get_current_language();
         $default_language = $sitepress->get_default_language();
@@ -597,9 +593,7 @@ function icl_t_cache_lookup($context, $name){
             $ret_value = false;
         }  
     }else{ //cache HIT
-        //$icl_cache_log[] = "HIT\t" . $context . "\t" . $name . "\n";
         $ret_value = $icl_st_cache[$context][$name];
-   
     }  
     
     // special case of WP strings    
@@ -615,8 +609,6 @@ function icl_t_cache_lookup($context, $name){
         {
             $icl_st_cache[$context] = array();
         }        
-    
-    
     return $ret_value;    
 }
 
@@ -634,6 +626,7 @@ function icl_st_admin_notices(){
 }
 
 function icl_st_scan_theme_files($dir = false){
+    require_once ICL_PLUGIN_PATH . '/inc/potx.inc';
     if($dir === false){
         $dir = TEMPLATEPATH;
     }
@@ -644,46 +637,43 @@ function icl_st_scan_theme_files($dir = false){
         if(is_dir($dir . "/" . $file)){
             icl_st_scan_theme_files($dir . "/" . $file);
         }elseif(preg_match('#(\.php|\.inc)$#i', $file)){     
+            
+            // THE potx way
+            _potx_process_file($dir . "/" . $file, 0, '__icl_st_scan_theme_files_store_results','_potx_save_version', POTX_API_7);
+            
+            /*
+            // THE preg match way
             $content = file_get_contents($dir . "/" . $file);
             $int = preg_match('#(__|_e)\((\'|")([^\)]+)(\'|")([, ]+)(\'|")([^\)]+)(\'|")\)#im',$content,$matches);
             if($int){
-                if(!isset($icl_registered_strings[$matches[7].$matches[7]])){
+                if(!isset($icl_registered_strings[$matches[7].$matches[3]])){
                     icl_register_string('theme ' . $matches[7], md5($matches[3]), $matches[3]);
                     $icl_registered_strings[$matches[7].$matches[3]] = true;
                 }                
             }
+            */
         }
     }
     closedir($dh);
+}
+
+function __icl_st_scan_theme_files_store_results($string, $domain){
+    static $__icl_registered_strings;
+    if(!isset($__icl_registered_strings[$domain.'||'.$string])){
+        if(!$domain){
+            icl_register_string('theme', md5($string), $string);
+        }else{
+            icl_register_string('theme ' . $domain, md5($string), $string);
+        }        
+        $__icl_registered_strings[$domain.'||'.$string] = true;
+    }                
+    
 }
 
 function icl_st_debug($str){
     trigger_error($str, E_USER_WARNING);
 }
 
-
-/*
-add_action('wp_footer', 'icl_debug_log');
-function icl_debug_log(){
-    global $icl_cache_log;
-    echo '<div style="text-align:left;margin-left:10px;"><pre style="font-size:12px;>';
-    echo join("", $icl_cache_log);
-    echo '</pre></div>';
-}
-
-*/
-/*
-function debug_arr_to_file($arr){
-    $deb = fopen(ABSPATH . '/debug.txt', 'a');
-    ob_start();
-    echo "----------------------\n";
-    print_r($arr);
-    echo "----------------------\n";
-    $ob = ob_get_contents();
-    ob_end_clean();    
-    fwrite($deb,$ob);
-}
-*/
 
 
 ?>
