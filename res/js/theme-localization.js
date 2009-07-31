@@ -47,7 +47,7 @@ function iclThemeLocalizationRescan(){
         data: "icl_ajx_action=icl_tl_rescan",
         success: function(msg){
             thisb.next().fadeOut();
-            location.href=location.href.replace(/#(.*)$/,'')+'#icl_theme_localization_status';
+            location.href=location.href.replace(/#(.*)$/,'');
         }
     });    
     return false;

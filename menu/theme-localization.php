@@ -111,7 +111,6 @@ $theme_localization_stats = get_theme_localization_stats();
     
     <?php if($sitepress_settings['theme_localization_type'] == 1):?>
         <?php if($theme_localization_stats): ?>
-        <a name="icl_theme_localization_status"></a>
         <h3><?php echo __('Strings in the theme', 'sitepress'); ?></h3>
         <table class="widefat" cellspacing="0">
             <thead>
