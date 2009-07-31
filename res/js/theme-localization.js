@@ -31,7 +31,7 @@ function iclSaveThemeLocalizationType(){
         data: "icl_ajx_action="+jQuery(this).attr('name')+"&"+jQuery(this).serialize(),
         success: function(msg){
             spl = msg.split('|');
-            /*location.href=location.href.replace(/#(.*)$/,'');*/
+            location.href=location.href.replace(/#(.*)$/,'');
         }
     });
     return false;         
