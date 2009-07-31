@@ -4,8 +4,7 @@ if((!isset($sitepress_settings['existing_content_language_verified']) || !$sitep
 }
 $active_languages = $sitepress->get_active_languages();              
 $locales = $sitepress->get_locale_file_names();
-//icl_st_scan_theme_files();
-
+$theme_localization_stats = get_theme_localization_stats();
 ?>
 
 <div class="wrap">
@@ -111,7 +110,58 @@ $locales = $sitepress->get_locale_file_names();
     <?php endif; ?>
     
     <?php if($sitepress_settings['theme_localization_type'] == 1):?>
-    <a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH) ?>/menu/string-translation.php&context=theme&status=0"><?php echo __('Translate themes texts ', 'sitepress')?></a>
+        <?php if($theme_localization_stats): ?>
+        <a name="icl_theme_localization_status"></a>
+        <h3><?php echo __('Strings in the theme', 'sitepress'); ?></h3>
+        <table class="widefat" cellspacing="0">
+            <thead>
+                <tr>
+                    <th scope="col"><?php echo __('Domain', 'sitepress') ?></th>
+                    <th scope="col"><?php echo __('Translation status', 'sitepress') ?></th>
+                    <th scope="col" style="text-align:right"><?php echo __('Count', 'sitepress') ?></th>
+                    <th scope="col">&nbsp;</th>
+                </tr>
+            </thead>  
+            <tbody>
+                <?php foreach($sitepress_settings['st']['theme_localization_domains'] as $tl_domain): ?>
+                <tr scope="col">
+                    <td rowspan="3"><?php echo $tl_domain ? $tl_domain : '<i>' . __('no domain','sitepress') . '</i>'; ?></td>
+                    <td><?php echo __('Fully translated', 'sitepress') ?></td>
+                    <td align="right"><?php echo $_tmpcomp = $theme_localization_stats[$tl_domain ? 'theme ' . $tl_domain : 'theme']['complete'] ?></td>
+                    <td rowspan="3" align="right" style="padding-top:10px;">
+                        <a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH) ?>/menu/string-translation.php&context=<?php echo $tl_domain ? 'theme ' . $tl_domain : 'theme' ?>" class="button-secondary"><?php echo __("View all the theme's texts",'sitepress')?></a>
+                        <a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH) ?>/menu/string-translation.php&context=<?php echo $tl_domain ? 'theme ' . $tl_domain : 'theme' ?>&status=0" class="button-primary"><?php echo __("View strings that need translation",'sitepress')?></a>
+                    </td>
+                </tr>
+                <tr scope="col">
+                    <td><?php echo __('Not translated or needs update', 'sitepress') ?></td>
+                    <td align="right"><?php echo $_tmpinco = $theme_localization_stats[$tl_domain ? 'theme ' . $tl_domain : 'theme']['incomplete'] ?></td>
+                </tr>
+                <tr scope="col" style="background-color:#f9f9f9;">
+                    <td><strong><?php echo __('Total', 'sitepress') ?></strong></td>
+                    <td align="right"><strong><?php echo $_tmpcomp + $_tmpinco; if(1 < count($sitepress_settings['st']['theme_localization_domains'])) { if(!isset($_tmpgt)) $_tmpgt = 0; $_tmpgt += $_tmpcomp + $_tmpinco; } ?></strong></td>
+                </tr>            
+                <?php endforeach  ?>
+            </tbody>
+            <?php if(1 < count($sitepress_settings['st']['theme_localization_domains'])): ?>
+            <tfoot>
+                <tr>                
+                    <th scope="col"><?php echo __('Total', 'sitepress') ?></th>
+                    <th scope="col">&nbsp;</th>
+                    <th scope="col" style="text-align:right"><?php echo $_tmpgt ?></th>
+                    <th scope="col">&nbsp;</th>
+                </tr>
+            </tfoot>                              
+            <?php endif; ?>
+        </table>    
+        <br />
+        
+        <?php endif; ?>
+        
+    <p>
+    <input id="icl_tl_rescan" type="button" class="button-primary" value="<?php echo __("Scan the theme for strings",'sitepress')?>" />
+    <img class="icl_ajx_loader" src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" style="display:none;" alt="" />
+    </p>
     <?php endif; ?>
-           
+               
 </div>

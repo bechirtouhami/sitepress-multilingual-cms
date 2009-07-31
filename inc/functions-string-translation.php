@@ -627,15 +627,17 @@ function icl_st_admin_notices(){
 
 function icl_st_scan_theme_files($dir = false){
     require_once ICL_PLUGIN_PATH . '/inc/potx.inc';
+    
+    global $icl_scan_theme_found_domains, $sitepress, $sitepress_settings;
     if($dir === false){
         $dir = TEMPLATEPATH;
     }
-    $dh = opendir($dir);
-    static $icl_registered_strings = array();
+    $dh = opendir($dir);    
     while($file = readdir($dh)){
         if($file=="." || $file=="..") continue;
         if(is_dir($dir . "/" . $file)){
             icl_st_scan_theme_files($dir . "/" . $file);
+            return;
         }elseif(preg_match('#(\.php|\.inc)$#i', $file)){     
             
             // THE potx way
@@ -643,6 +645,7 @@ function icl_st_scan_theme_files($dir = false){
             
             /*
             // THE preg match way
+            static $icl_registered_strings = array();
             $content = file_get_contents($dir . "/" . $file);
             $int = preg_match('#(__|_e)\((\'|")([^\)]+)(\'|")([, ]+)(\'|")([^\)]+)(\'|")\)#im',$content,$matches);
             if($int){
@@ -654,11 +657,18 @@ function icl_st_scan_theme_files($dir = false){
             */
         }
     }
+    $sitepress_settings['st']['theme_localization_domains'] = array_keys($icl_scan_theme_found_domains);
+    $sitepress->save_settings($sitepress_settings);
     closedir($dh);
 }
 
 function __icl_st_scan_theme_files_store_results($string, $domain){
-    static $__icl_registered_strings;
+    global $icl_scan_theme_found_domains;
+    
+    if(!isset($icl_scan_theme_found_domains[$domain])){
+        $icl_scan_theme_found_domains[$domain] = true;
+    }
+    static $__icl_registered_strings = array();
     if(!isset($__icl_registered_strings[$domain.'||'.$string])){
         if(!$domain){
             icl_register_string('theme', md5($string), $string);
@@ -668,6 +678,37 @@ function __icl_st_scan_theme_files_store_results($string, $domain){
         $__icl_registered_strings[$domain.'||'.$string] = true;
     }                
     
+}
+
+function get_theme_localization_stats(){
+    global $sitepress_settings, $wpdb;
+    $stats = false;
+    if(is_array($sitepress_settings['st']['theme_localization_domains'])){    
+        foreach($sitepress_settings['st']['theme_localization_domains'] as $domain){
+            $domains[] = $domain ? 'theme ' . $domain : 'theme';
+        }
+        $results = $wpdb->get_results("
+            SELECT context, status, COUNT(id) AS c 
+            FROM {$wpdb->prefix}icl_strings
+            WHERE context IN ('".join("','",$domains)."')
+            GROUP BY context, status            
+        ");
+        foreach($results as $r){
+            if(!isset($stats[$r->context]['complete'])){
+                $stats[$r->context]['complete'] = 0;
+            }
+            if(!isset($stats[$r->context]['incomplete'])){
+                $stats[$r->context]['incomplete'] = 0;
+            }            
+            if($r->status == ICL_STRING_TRANSLATION_COMPLETE){
+                $stats[$r->context]['complete'] = $r->c; 
+            }else{
+                $stats[$r->context]['incomplete'] += $r->c; 
+            }
+            
+        }
+    }
+   return $stats; 
 }
 
 function icl_st_debug($str){

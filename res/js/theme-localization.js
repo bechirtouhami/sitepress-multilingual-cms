@@ -1,6 +1,7 @@
 addLoadEvent(function(){     
     jQuery('#icl_theme_localization').submit(iclSaveThemeLocalization);
     jQuery('#icl_theme_localization_type').submit(iclSaveThemeLocalizationType);
+    jQuery('#icl_tl_rescan').click(iclThemeLocalizationRescan);
 });
 
 function iclSaveThemeLocalization(){
@@ -35,4 +36,19 @@ function iclSaveThemeLocalizationType(){
         }
     });
     return false;         
+}
+
+function iclThemeLocalizationRescan(){
+    var thisb = jQuery(this);
+    thisb.next().fadeIn();
+    jQuery.ajax({
+        type: "POST",
+        url: icl_ajx_url,
+        data: "icl_ajx_action=icl_tl_rescan",
+        success: function(msg){
+            thisb.next().fadeOut();
+            location.href=location.href.replace(/#(.*)$/,'')+'#icl_theme_localization_status';
+        }
+    });    
+    return false;
 }
