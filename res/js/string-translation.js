@@ -157,12 +157,13 @@ function icl_st_update_languages(){
     }
 }
 
-function icl_st_update_checked_elements(){
+function icl_st_update_checked_elements(){    
     if(!jQuery('.icl_st_row_cb:checked, .check-column :checkbox:checked').length){
         jQuery('#icl_st_delete_selected, #icl_st_send_selected').attr('disabled','disabled');
-    }else{
+    }else{        
+        jQuery('#icl_st_delete_selected').removeAttr('disabled');
         if(!jQuery('#icl-tr-opt').length || jQuery('#icl-tr-opt :checkbox:checked').length){
-            jQuery('#icl_st_delete_selected, #icl_st_send_selected').removeAttr('disabled');
+            jQuery('#icl_st_send_selected').removeAttr('disabled');
         }
     }
 }
