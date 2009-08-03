@@ -187,7 +187,11 @@
                             <p>
                                 <?php printf(__('When WPML accesses <a target="_blank" href="%s">%s</a> it gets:', 'sitepress'), $__url = get_option('home').'/' . $sample_lang['code'] .'/?____icl_validate_domain=1', $__url); ?>
                                 <?php 
-                                    if($response['response']['code']!='200'){
+                                    if(is_wp_error($response)){
+                                        echo '<strong>';                                            
+                                        echo $response->get_error_message();
+                                        echo '</strong>';
+                                    }elseif($response['response']['code']!='200'){
                                         echo '<strong>';
                                         printf(__('HTTP code: %s (%s)', 'sitepress'), $response['response']['code'], $response['response']['message']);
                                         echo '</strong>';
