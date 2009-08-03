@@ -162,6 +162,10 @@
                         $icl_folder_url_disabled = false;
                     }else{
                         $icl_folder_url_disabled = true;
+                        if($sitepress_settings['language_negotiation_type']==1){
+                            $sitepress_settings['language_negotiation_type']=3;
+                            $sitepress->save_settings($sitepress_settings);
+                        }                        
                     }                    
                     ?>
                     <li>
@@ -179,7 +183,23 @@
                             <li>The web server cannot write to the .htaccess file</li>
                             </ul>
                             <a href="http://wpml.org/support/cannot-activate-language-directories/">How to fix</a>
-                            ', 'sitepress')?></div>
+                            ', 'sitepress')?>                            
+                            <p>
+                                <?php printf(__('When WPML accesses <a target="_blank" href="%s">%s</a> it gets:', 'sitepress'), $__url = get_option('home').'/' . $sample_lang['code'] .'/?____icl_validate_domain=1', $__url); ?>
+                                <?php 
+                                    if($response['response']['code']!='200'){
+                                        echo '<strong>';
+                                        printf(__('HTTP code: %s (%s)', 'sitepress'), $response['response']['code'], $response['response']['message']);
+                                        echo '</strong>';
+                                    }else{
+                                        echo '<div style="width:100%;height:150px;overflow:auto;background-color:#fff;color:#000;font-family:Courier;font-style:normal;border:1px solid #aaa;">'.htmlentities($response['body']).'</div>';
+                                    }
+                                ?>
+                            </p>
+                            <p>
+                                <strong><?php printf(__('The expected value is: %s', 'sitepress'), '&lt;!--'.get_option('home').'--&gt;'); ?></strong>
+                            </p>
+                        </div>                            
                         <?php endif; ?>
                     </li>
                     <?php 
