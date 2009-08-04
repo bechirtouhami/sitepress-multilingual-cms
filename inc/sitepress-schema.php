@@ -7,6 +7,15 @@ function icl_sitepress_activate(){
     global $EZSQL_ERROR;
     require_once(ICL_PLUGIN_PATH . '/inc/lang-data.inc');
     //defines $langs_names
+
+    if ( $wpdb->has_cap( 'collation' ) ) {
+            if ( ! empty($wpdb->charset) )
+                    $charset_collate = "DEFAULT CHARACTER SET $wpdb->charset";
+            if ( ! empty($wpdb->collate) )
+                    $charset_collate .= " COLLATE $wpdb->collate";
+    }else{
+        $charset_collate = '';
+    }    
     
     // languages table
     $table_name = $wpdb->prefix.'icl_languages';        
@@ -15,12 +24,12 @@ function icl_sitepress_activate(){
         CREATE TABLE `{$table_name}` (
             `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
             `code` VARCHAR( 7 ) NOT NULL ,
-            `english_name` VARCHAR( 128 ) CHARACTER SET utf8 NOT NULL ,            
+            `english_name` VARCHAR( 128 ) NOT NULL ,            
             `major` TINYINT NOT NULL DEFAULT '0', 
             `active` TINYINT NOT NULL ,
             UNIQUE KEY `code` (`code`),
             UNIQUE KEY `english_name` (`english_name`)
-        )"; 
+        ) {$charset_collate}"; 
         mysql_query($sql);
         
         //$langs_names is defined in ICL_PLUGIN_PATH . '/inc/lang-data.inc'
@@ -40,7 +49,7 @@ function icl_sitepress_activate(){
             `display_language_code` VARCHAR( 7 ) NOT NULL ,            
             `name` VARCHAR( 255 ) CHARACTER SET utf8 NOT NULL,
             UNIQUE(`language_code`, `display_language_code`)            
-        ) DEFAULT CHARSET=utf8";
+        ) {$charset_collate}"; 
         mysql_query($sql);
     }else{
         mysql_query("TRUNCATE TABLE `{$table_name}`");
@@ -72,7 +81,7 @@ function icl_sitepress_activate(){
             `source_language_code` VARCHAR( 7 ),
             UNIQUE KEY `el_type_id` (`element_type`,`element_id`),
             UNIQUE KEY `trid_lang` (`trid`,`language_code`)
-        )";
+        ) {$charset_collate}"; 
         mysql_query($sql);
     } 
 
@@ -98,8 +107,7 @@ function icl_sitepress_activate(){
             `flag` VARCHAR( 32 ) NOT NULL ,
             `from_template` TINYINT NOT NULL DEFAULT '0',
             UNIQUE (`lang_code`)
-            )      
-        ";
+            ) {$charset_collate}"; 
         mysql_query($sql);
         $codes = $wpdb->get_col("SELECT code FROM {$wpdb->prefix}icl_languages");
         foreach($codes as $code){
@@ -125,7 +133,7 @@ function icl_sitepress_activate(){
             `description` TEXT NOT NULL ,
             `translate` TINYINT NOT NULL DEFAULT 0,
             UNIQUE KEY `plugin_name` (`plugin_name`,`attribute_type`,`attribute_name`)            
-            ) DEFAULT CHARSET=utf8";
+            ) {$charset_collate}"; 
        mysql_query($sql);
        $prepop  = array(
             0 => array(
@@ -190,7 +198,7 @@ function icl_sitepress_activate(){
               `status` TINYINT NOT NULL,
               PRIMARY KEY  (`id`),
               UNIQUE KEY `context_name` (`context`,`name`)
-            ) DEFAULT CHARSET=utf8";
+            ) {$charset_collate}"; 
         mysql_query($sql);
     }
     $table_name = $wpdb->prefix.'icl_string_translations';
@@ -204,7 +212,7 @@ function icl_sitepress_activate(){
               `value` text NOT NULL,              
               PRIMARY KEY  (`id`),
               UNIQUE KEY `string_language` (`string_id`,`language`)
-            ) DEFAULT CHARSET=utf8";
+            ) {$charset_collate}"; 
         mysql_query($sql);
     }
     
@@ -218,7 +226,7 @@ function icl_sitepress_activate(){
             `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
             `md5` VARCHAR( 32 ) NOT NULL,
             INDEX ( `string_translation_id` )
-            )"; 
+            ) {$charset_collate}"; 
         mysql_query($sql);
     }
                   
