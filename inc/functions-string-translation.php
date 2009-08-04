@@ -361,11 +361,12 @@ function __icl_unregister_string_multi($arr){
         WHERE s.id IN ({$str})");
 }  
 
-function icl_t($context, $name, $original_value=false){
+function icl_t($context, $name, $original_value=false, &$has_translation=null){
     global $wpdb, $sitepress, $sitepress_settings;
     
     // if the default language is not set up return
     if(!isset($sitepress_settings['existing_content_language_verified'])){
+        if(isset($has_translation)) $has_translation = false;
         return $original_value !== false ? $original_value : $name;
     }   
        
@@ -374,6 +375,7 @@ function icl_t($context, $name, $original_value=false){
     if($current_language == $default_language && $original_value){
         
         $ret_val = $original_value;
+        if(isset($has_translation)) $has_translation = false;
         
     }else{
         
@@ -381,8 +383,10 @@ function icl_t($context, $name, $original_value=false){
 
         if($result === false || !$result['translated'] && $original_value){        
             $ret_val = $original_value;    
+            if(isset($has_translation)) $has_translation = false;
         }else{
             $ret_val = $result['value'];    
+            if(isset($has_translation)) $has_translation = true;
         }
         
     }
@@ -499,8 +503,12 @@ function icl_sw_filters_widget_text($val){
 
 function icl_sw_filters_gettext($translation, $text, $domain){
     global $sitepress_settings;
-    $translation = icl_t('theme ' . $domain, md5($text), $text);
-    return $translation;
+    $has_translation = 0;
+    $ret_translation = icl_t('theme ' . $domain, md5($text), $text, $has_translation);
+    if(false === $has_translation){
+        $ret_translation = $translation;   
+    }
+    return $ret_translation;
 }
 
 function icl_st_update_string_actions($context, $name, $old_value, $new_value){
