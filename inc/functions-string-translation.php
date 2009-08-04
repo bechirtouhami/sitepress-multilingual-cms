@@ -121,7 +121,16 @@ function icl_st_init(){
         }
         
     }
-    
+    // handle string transkation request preview
+    elseif(isset($_POST['icl_st_action']) && $_POST['icl_st_action'] == 'preview'){
+        global $icl_st_preview_strings;
+        $_POST = stripslashes_deep($_POST);
+        if($_POST['strings']=='need'){
+            $icl_st_preview_strings = $wpdb->get_results("SELECT value FROM {$wpdb->prefix}icl_strings WHERE status <> " . ICL_STRING_TRANSLATION_COMPLETE);
+        }else{
+            $icl_st_preview_strings = $wpdb->get_results("SELECT value FROM {$wpdb->prefix}icl_strings WHERE id IN (".$wpdb->escape($_POST['strings']).")");
+        }        
+    }
     
     // hook into blog title and tag line
     if($sitepress_settings['st']['sw']['blog_title']){

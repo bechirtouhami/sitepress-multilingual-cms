@@ -350,12 +350,12 @@ switch($_REQUEST['icl_ajx_action']){
         __icl_unregister_string_multi($arr);
         break;
     case 'icl_st_send_strings':
-        $arr = explode(',',$_POST['value']);
-        icl_translation_send_strings($arr, explode(',',$_POST['langs']));
+        $arr = explode(',',$_POST['strings']);
+        icl_translation_send_strings($arr, explode(',',$_POST['languages']));
         echo '1';
         break;    
     case 'icl_st_send_strings_all':
-        icl_translation_send_untranslated_strings(explode(',',$_POST['langs']));
+        icl_translation_send_untranslated_strings(explode(',',$_POST['languages']));
         echo '1';
         break;    
     case 'icl_save_theme_localization_type':

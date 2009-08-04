@@ -7,8 +7,9 @@ jQuery(document).ready(function(){
     jQuery('select[name="icl_st_filter_context"]').change(icl_st_filter_context);
     jQuery('.check-column input').click(icl_st_select_all);
     jQuery('#icl_st_delete_selected').click(icl_st_delete_selected);
-    jQuery('#icl_st_send_selected').click(icl_st_send_selected);
     jQuery('#icl_st_send_need_translation').click(icl_st_send_need_translation);
+    jQuery('#icl_st_do_send_strings').submit(icl_st_do_send_strings);
+    
     jQuery('#icl_st_po_translations').click(function(){
         if(jQuery(this).attr('checked')){
             jQuery('#icl_st_po_language').removeAttr('disabled').fadeIn();
@@ -20,6 +21,7 @@ jQuery(document).ready(function(){
     jQuery('.icl_st_row_cb, .check-column :checkbox').click(icl_st_update_checked_elements);
     jQuery('.icl_htmlpreview_link').click(icl_st_show_html_preview);
     jQuery('#icl_st_po_form').submit(icl_validate_po_upload);
+    jQuery('#icl_st_review_strings').submit(icl_st_review_strings);
 });
 
 function icl_st_toggler(){
@@ -108,44 +110,58 @@ function icl_st_delete_selected(){
     return false;
 }
 
-function icl_st_send_selected(){
+function icl_st_review_strings(){
     if(!jQuery('.icl_st_row_cb:checked').length){
         return false;
     }
-    thisb = jQuery(this);        
     var sendids = [];
     jQuery('.icl_st_row_cb:checked').each(function(){
         sendids.push(jQuery(this).val());        
     });
     var trlangs = [];
     jQuery('#icl-tr-opt input:checked').each(function(){trlangs.push(jQuery(this).val())});
-    if(sendids.length && trlangs.length){
-        thisb.attr('disabled','disabled');
-        jQuery('#icl_st_send_progress').fadeIn();
-        postvars = 'icl_ajx_action=icl_st_send_strings&value='+sendids.join(',')+'&langs='+trlangs.join(',');
-        jQuery.post(icl_ajx_url, postvars, function(msg){
-            if(msg==1) thisb.removeAttr('disabled');
-            jQuery('#icl_st_send_progress').fadeOut('fast', function(){location.href=location.href.replace(/#(.*)$/,'')});
-        });
+    
+    if(!sendids.length || !trlangs.length){
+        return false;
     }
-    return false;
+    jQuery('#icl_st_review_strings input[name="strings"]').val(sendids.join(','));
+    jQuery('#icl_st_review_strings input[name="langs"]').val(trlangs.join(','));
+    
+    return true;
+    
 }
 
 function icl_st_send_need_translation(){
-    thisb = jQuery(this);        
-    thisb.attr('disabled','disabled');
-    jQuery('#icl_st_send_progress').fadeIn();    
     var trlangs = [];
-    jQuery('#icl-tr-opt input:checked').each(function(){trlangs.push(jQuery(this).val())});    
-    postvars = 'icl_ajx_action=icl_st_send_strings_all'+'&langs='+trlangs.join(',');
-    if(trlangs.length){
-        jQuery.post(icl_ajx_url, postvars, function(msg){
-            if(msg==1) thisb.removeAttr('disabled');
-            jQuery('#icl_st_send_progress').fadeOut('fast', function(){location.href=location.href.replace(/#(.*)$/,'')});
-        });
+    jQuery('#icl-tr-opt input:checked').each(function(){trlangs.push(jQuery(this).val())});
+    if(!trlangs.length){
+        return false;
     }
+    jQuery('#icl_st_review_strings input[name="strings"]').val('need');
+    jQuery('#icl_st_review_strings input[name="langs"]').val(trlangs.join(','));
+    document.getElementById('icl_st_review_strings').submit();
     return false;
 }
+
+function icl_st_do_send_strings(){    
+    thisf = jQuery(this);        
+    var buttons = thisf.contents().find('input:submit, input:button');
+    if(jQuery('input[name="strings"]').val() == 'need'){
+        var all = '_all';
+    }else{
+        var all = '';   
+    }    
+    buttons.attr('disabled','disabled');
+    jQuery('#icl_st_send_progress').fadeIn();
+    postvars = 'icl_ajx_action=icl_st_send_strings'+all+'&' + thisf.serialize();
+    jQuery.post(icl_ajx_url, postvars, function(msg){
+        if(msg==1) buttons.removeAttr('disabled');
+        jQuery('#icl_st_send_progress').fadeOut('fast', function(){location.href=location.href.replace(/#(.*)$/,'')});
+    });
+    return false;
+}
+
+
 
 function icl_st_update_languages(){
     if(!jQuery('#icl-tr-opt :checkbox:checked').length){
@@ -197,3 +213,4 @@ function icl_validate_po_upload(){
     }
     
 }
+

@@ -58,6 +58,44 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
         &nbsp; <input class="button-primary" type="submit" name="icl_st_save_strings" value="<?php echo __('Add selected strings', 'sitepress'); ?>" />
         </p>
         </form>
+        
+    <?php elseif(isset($icl_st_preview_strings) && !empty($icl_st_preview_strings)): ?>
+        <h3><?php echo __('Preview strings','sitepress') ?></h3>
+        <form name="icl_st_do_send_strings" id="icl_st_do_send_strings" method="post" action="">
+        <input type="hidden" name="strings" value="<?php echo $_POST['strings'] ?>" />
+        <input type="hidden" name="languages" value="<?php echo $_POST['langs'] ?>" />
+        <table id="icl_preview_strings" class="widefat" cellspacing="0">
+            <thead>
+                <tr>                    
+                    <th><?php echo __('String', 'sitepress') ?></th>
+                    <th scope="col" style="text-align:right"><?php echo __('Word count', 'sitepress') ?></th>
+                    <th scope="col" style="text-align:right"><?php echo __('Estimated cost', 'sitepress') ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php $total_cost = $total_wc = 0; ?>
+                <?php foreach($icl_st_preview_strings as $string): ?>
+                    <tr>                        
+                        <td><?php echo htmlentities($string->value) ?></td>
+                        <td align="right"><?php echo $wc = count(explode(' ',$string->value)); $total_wc += $wc; ?></td>
+                        <td align="right"><?php echo '$'; echo money_format($cost = $wc * 0.07, 2); $total_cost += $cost ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th><?php printf(__('Estimated total cost (at $%s per word)', 'sitepress'), '0.7') ?></th>
+                    <th style="text-align:right"><?php echo $total_wc; ?></th>
+                    <th style="text-align:right"><?php echo '$'; echo money_format($total_cost,2); ?></th>
+                </tr>
+            </tfoot>                    
+        </table>    
+        <p>
+            <input class="button" type="button" value="<?php echo __('Cancel', 'sitepress'); ?>" onclick="history.back()" />&nbsp; 
+            <input class="button-primary" type="submit" value="<?php echo __('Send to translation', 'sitepress'); ?>" />
+            &nbsp;<span id="icl_st_send_progress" class="icl_ajx_response" style="display:none;"><?php echo __('Sending translation requests. Please wait!', 'sitepress') ?>&nbsp;<img src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" alt="loading" /></span>
+        </p>
+        </form>        
     <?php else: ?>
     
         <p>
@@ -206,6 +244,10 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
     
         <?php if($icl_st_translation_enabled): ?>
             <h4><?php echo __('Translation options', 'sitepress') ?></h4>            
+            <form method="post" id="icl_st_review_strings" name="icl_st_review_strings" action="">
+            <input type="hidden" name="icl_st_action" value="preview" />
+            <input type="hidden" name="strings" value="" />
+            <input type="hidden" name="langs" value="" />            
             <ul id="icl-tr-opt">
                 <?php
                     $icl_lang_status = $sitepress_settings['icl_lang_status'];
@@ -230,12 +272,12 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
                 <?php endforeach; ?>    
             </ul>  
 
-            <span class="subsubsub">
-                <input type="button" class="button-secondary" id="icl_st_send_selected" value="<?php echo __('Send selected strings to ICanLocalize', 'sitepress') ?>" disabled="disabled" />                    
-                <input type="button" class="button-primary" id="icl_st_send_need_translation" value="<?php echo __('Send all strings that need update to ICanLocalize', 'sitepress') ?>" />                     
+            <span class="subsubsub">                
+                <input type="submit" class="button-secondary" id="icl_st_send_selected" value="<?php echo __('Send selected strings to ICanLocalize', 'sitepress') ?>" disabled="disabled" />                    
+                <input type="button" class="button-primary" id="icl_st_send_need_translation" value="<?php echo __('Send all strings that need update to ICanLocalize', 'sitepress') ?>" />                                     
             </span><br />
             <span id="icl_st_send_progress" class="icl_ajx_response" style="display:none;float:left;"><?php echo __('Sending translation requests. Please wait!', 'sitepress') ?>&nbsp;<img src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" alt="loading" /></span>
-    
+                        
             <?php if(isset($sitepress_settings['icl_balance'])): ?>
             <br clear="all" />
             <p>
@@ -246,7 +288,7 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
                                       'sitepress')?>
             </p>
             <?php endif; ?>
-    
+        </form>    
         <?php else: ?>
     
             <div class="error">
