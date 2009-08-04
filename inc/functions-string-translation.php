@@ -622,8 +622,8 @@ function icl_t_cache_lookup($context, $name){
 }
 
 function icl_st_get_contexts(){
-    global $wpdb;    
-    $results = $wpdb->get_results("SELECT context, COUNT(context) AS c FROM {$wpdb->prefix}icl_strings GROUP BY context ORDER BY context ASC");
+    global $wpdb, $sitepress;    
+    $results = $wpdb->get_results("SELECT context, COUNT(context) AS c FROM {$wpdb->prefix}icl_strings WHERE language='{$sitepress->get_current_language()}' GROUP BY context ORDER BY context ASC");
     return $results;
 }
 

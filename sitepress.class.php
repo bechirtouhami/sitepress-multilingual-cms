@@ -136,9 +136,9 @@ class SitePress{
             // 
             add_filter('language_attributes', array($this, 'language_attributes'));
             
-            if($this->settings['theme_localization_type']==2){
+            //if($this->settings['theme_localization_type']==2 || defined('WP_ADMIN')){
                 add_action('locale', array($this, 'locale'));
-            }
+            //}
                                             
             if(isset($_GET['____icl_validate_domain'])){ echo '<!--'.get_option('home').'-->'; exit; }                        
             
