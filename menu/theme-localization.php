@@ -112,7 +112,8 @@ $theme_localization_stats = get_theme_localization_stats();
     <?php if($sitepress_settings['theme_localization_type'] == 1):?>
         <?php if($theme_localization_stats): ?>
         <h3><?php echo __('Strings in the theme', 'sitepress'); ?></h3>
-        <table class="widefat" cellspacing="0">
+        <div id="icl_strings_in_theme_wrap">
+        <table id="icl_strings_in_theme" class="widefat" cellspacing="0">
             <thead>
                 <tr>
                     <th scope="col"><?php echo __('Domain', 'sitepress') ?></th>
@@ -152,7 +153,9 @@ $theme_localization_stats = get_theme_localization_stats();
                 </tr>
             </tfoot>                              
             <?php endif; ?>
-        </table>    
+        </table>
+        
+        </div>
         <br />
         
         <?php endif; ?>
@@ -161,6 +164,7 @@ $theme_localization_stats = get_theme_localization_stats();
     <input id="icl_tl_rescan" type="button" class="button-primary" value="<?php echo __("Scan the theme for strings",'sitepress')?>" />
     <img class="icl_ajx_loader" src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" style="display:none;" alt="" />
     </p>
+    <div id="icl_tl_scan_stats"></div>  
     <?php endif; ?>
                
 </div>

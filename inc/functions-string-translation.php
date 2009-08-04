@@ -634,22 +634,32 @@ function icl_st_admin_notices(){
     }    
 }
 
-function icl_st_scan_theme_files($dir = false){
+function icl_st_scan_theme_files($dir = false, $recursion = 0){
     require_once ICL_PLUGIN_PATH . '/inc/potx.inc';
-    
+    static $scan_stats = false;
+    static $recursion, $scanned_files = array();
     global $icl_scan_theme_found_domains, $sitepress, $sitepress_settings;
     if($dir === false){
         $dir = TEMPLATEPATH;
     }
+    
+    if(!$scan_stats){
+        $scan_stats = sprintf(__('Scanning theme folder: %s', 'sitepress'),$dir) . PHP_EOL;
+    }    
+        
     $dh = opendir($dir);    
-    while($file = readdir($dh)){
+    while(false !== ($file = readdir($dh))){
         if($file=="." || $file=="..") continue;
+        
         if(is_dir($dir . "/" . $file)){
-            icl_st_scan_theme_files($dir . "/" . $file);
-            return;
+            $recursion++;
+            $scan_stats .= str_repeat("\t",$recursion) . sprintf(__('Opening folder: %s', 'sitepress'), $dir . "/" . $file) . PHP_EOL;
+            icl_st_scan_theme_files($dir . "/" . $file, $recursion);            
+            $recursion--;
         }elseif(preg_match('#(\.php|\.inc)$#i', $file)){     
-            
             // THE potx way
+            $scan_stats .=  str_repeat("\t",$recursion) . sprintf(__('Scanning file: %s', 'sitepress'), $dir . "/" . $file) . PHP_EOL;
+            $scanned_files[] = $dir . "/" . $file;
             _potx_process_file($dir . "/" . $file, 0, '__icl_st_scan_theme_files_store_results','_potx_save_version', POTX_API_7);
             
             /*
@@ -664,11 +674,26 @@ function icl_st_scan_theme_files($dir = false){
                 }                
             }
             */
+        }else{
+            $scan_stats .=  str_repeat("\t",$recursion) . sprintf(__('Skipping file: %s', 'sitepress'), $dir . "/" . $file) . PHP_EOL;    
         }
     }
-    $sitepress_settings['st']['theme_localization_domains'] = array_keys($icl_scan_theme_found_domains);
-    $sitepress->save_settings($sitepress_settings);
-    closedir($dh);
+    
+    if(!$recursion){
+        global $__icl_registered_strings;
+        $scan_stats .= __('Done scanning files', 'sitepress') . PHP_EOL;
+            $sitepress_settings['st']['theme_localization_domains'] = array_keys($icl_scan_theme_found_domains);
+            $sitepress->save_settings($sitepress_settings);
+            closedir($dh);
+            $scan_stats = __('= Your theme was scanned for texts =', 'sitepress') . '<br />' . 
+                          __('The following files were processed:') . '<br />' .
+                          '<ol style="font-size:10px;"><li>' . join('</li><li>', $scanned_files) . '</li></ol>' . 
+                          sprintf(__('WPML found %s strings. They were added to the string translation table.'),count($__icl_registered_strings)) . 
+                          '<br /><a href="#" onclick="jQuery(this).next().toggle();return false;">' . __('More details', 'sitepress') . '</a>'.
+                          '<textarea style="display:none;width:100%;height:150px;font-size:10px;">' . $scan_stats . '</textarea>'; 
+            return $scan_stats;
+    }
+    
 }
 
 function __icl_st_scan_theme_files_store_results($string, $domain){
@@ -677,7 +702,10 @@ function __icl_st_scan_theme_files_store_results($string, $domain){
     if(!isset($icl_scan_theme_found_domains[$domain])){
         $icl_scan_theme_found_domains[$domain] = true;
     }
-    static $__icl_registered_strings = array();
+    global $__icl_registered_strings;
+    if(!isset($__icl_registered_strings)){
+        $__icl_registered_strings = array();
+    }
     if(!isset($__icl_registered_strings[$domain.'||'.$string])){
         if(!$domain){
             icl_register_string('theme', md5($string), $string);

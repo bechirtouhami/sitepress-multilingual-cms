@@ -47,7 +47,9 @@ function iclThemeLocalizationRescan(){
         data: "icl_ajx_action=icl_tl_rescan",
         success: function(msg){
             thisb.next().fadeOut();
-            location.href=location.href.replace(/#(.*)$/,'');
+            spl = msg.split('|');
+            jQuery('#icl_tl_scan_stats').html(spl[1]).fadeIn();
+            jQuery("#icl_strings_in_theme_wrap").load(location.href.replace(/#(.*)$/,'') + ' #icl_strings_in_theme');
         }
     });    
     return false;
