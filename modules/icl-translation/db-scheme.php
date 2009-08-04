@@ -1,5 +1,15 @@
 <?php
   global $wpdb;
+  
+  if ( $wpdb->has_cap( 'collation' ) ) {
+        if ( ! empty($wpdb->charset) )
+                $charset_collate = "DEFAULT CHARACTER SET $wpdb->charset";
+        if ( ! empty($wpdb->collate) )
+                $charset_collate .= " COLLATE $wpdb->collate";
+  }else{
+    $charset_collate = '';
+  }    
+  
   $icl_translation_sql = "
          CREATE TABLE IF NOT EXISTS {$wpdb->prefix}icl_core_status (
         `id` BIGINT NOT NULL auto_increment,
@@ -10,7 +20,7 @@
         `status` SMALLINT NOT NULL,
         PRIMARY KEY ( `id` ) ,
         INDEX ( `rid` )
-        ) 
+        ) {$charset_collate}
   ";
   mysql_query($icl_translation_sql);
   $icl_translation_sql = "
@@ -21,7 +31,7 @@
         `md5` VARCHAR( 32 ) NOT NULL ,
         PRIMARY KEY ( `rid` ) ,
         INDEX ( `nid` )
-        )  
+        ) {$charset_collate} 
   ";  
    mysql_query($icl_translation_sql);
    
@@ -31,7 +41,7 @@
         `md5` VARCHAR( 32 ) NOT NULL ,
         `links_fixed` TINYINT NOT NULL DEFAULT 0,
         PRIMARY KEY ( `nid` )
-        )   
+        ) {$charset_collate}  
   ";  
    mysql_query($icl_translation_sql);
 ?>
