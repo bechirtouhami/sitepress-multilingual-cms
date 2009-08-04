@@ -136,9 +136,7 @@ class SitePress{
             // 
             add_filter('language_attributes', array($this, 'language_attributes'));
             
-            //if($this->settings['theme_localization_type']==2 || defined('WP_ADMIN')){
-                add_action('locale', array($this, 'locale'));
-            //}
+            add_action('locale', array($this, 'locale'));
                                             
             if(isset($_GET['____icl_validate_domain'])){ echo '<!--'.get_option('home').'-->'; exit; }                        
             
@@ -448,7 +446,7 @@ class SitePress{
         $locale = $wpdb->get_var("SELECT locale FROM {$wpdb->prefix}icl_locale_map WHERE code='{$code}'");
         if($locale){
             update_option('WPLANG', $locale);
-        }
+        }      
         if($code != 'en' && !file_exists(ABSPATH . LANGDIR . '/' . $locale . '.mo')){
             return 1; //locale not installed
         }
@@ -1742,6 +1740,7 @@ class SitePress{
             load_textdomain($this->settings['gettext_theme_domain_name'], TEMPLATEPATH . '/'.$locale.'.mo');
         }        
         return $locale;
+        
     }
         
     function get_locale_file_names(){
