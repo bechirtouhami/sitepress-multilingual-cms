@@ -135,7 +135,7 @@ class SitePress{
             
             // 
             add_filter('language_attributes', array($this, 'language_attributes'));
-            
+                        
             add_action('locale', array($this, 'locale'));
                                             
             if(isset($_GET['____icl_validate_domain'])){ echo '<!--'.get_option('home').'-->'; exit; }                        
