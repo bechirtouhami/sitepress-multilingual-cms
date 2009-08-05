@@ -110,9 +110,11 @@ $theme_localization_stats = get_theme_localization_stats();
     <?php endif; ?>
     
     <?php if($sitepress_settings['theme_localization_type'] == 1):?>
-        <?php if($theme_localization_stats): ?>
+        
         <h3><?php echo __('Strings in the theme', 'sitepress'); ?></h3>
         <div id="icl_strings_in_theme_wrap">
+        
+        <?php if($theme_localization_stats): ?>
         <table id="icl_strings_in_theme" class="widefat" cellspacing="0">
             <thead>
                 <tr>
@@ -154,11 +156,14 @@ $theme_localization_stats = get_theme_localization_stats();
             </tfoot>                              
             <?php endif; ?>
         </table>
+        <?php else: ?>
+        <p><?php echo __("To translate your theme's texts, click on the button below. WPML will scan your theme for texts and let you enter translation.", 'sitepress') ?></p>
+        <?php endif; ?>
         
         </div>
         <br />
         
-        <?php endif; ?>
+        
         
     <p>
     <input id="icl_tl_rescan" type="button" class="button-primary" value="<?php echo __("Scan the theme for strings",'sitepress')?>" />
