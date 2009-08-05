@@ -224,7 +224,7 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
             ?>
             <?php if(isset($_GET['show_results']) && $_GET['show_results']=='all'): ?>
             <div class="tablenav-pages">                
-            <a href="admin.php?page=<?php echo $_GET['page'] ?>"><?php printf(__('Display %d results per page', 'sitepress'), $sitepress_settings['st']['strings_per_page']); ?></a>
+            <a href="admin.php?page=<?php echo $_GET['page'] ?><?php if(isset($_GET['context'])) echo '&context='.$_GET['context'];?><?php if(isset($_GET['status'])) echo '&status='.$_GET['status'];?>"><?php printf(__('Display %d results per page', 'sitepress'), $sitepress_settings['st']['strings_per_page']); ?></a>
             </div>
             <?php endif; ?>            
 
@@ -248,7 +248,7 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
                 
                 <?php if(!isset($_GET['show_results'])): ?>
                 &nbsp;
-                <a href="admin.php?page=<?php echo $_GET['page'] ?>&show_results=all"><?php echo __('Display all results', 'sitepress'); ?></a>
+                <a href="admin.php?page=<?php echo $_GET['page'] ?>&show_results=all<?php if(isset($_GET['context'])) echo '&context='.$_GET['context'];?><?php if(isset($_GET['status'])) echo '&status='.$_GET['status'];?>"><?php echo __('Display all results', 'sitepress'); ?></a>
                 <?php endif; ?>
             </div>
             
