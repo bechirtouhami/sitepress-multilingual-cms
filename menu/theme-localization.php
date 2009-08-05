@@ -157,7 +157,7 @@ $theme_localization_stats = get_theme_localization_stats();
             <?php endif; ?>
         </table>
         <?php else: ?>
-        <p><?php echo __("To translate your theme's texts, click on the button below. WPML will scan your theme for texts and let you enter translation.", 'sitepress') ?></p>
+        <p><?php echo __("To translate your theme's texts, click on the button below. WPML will scan your theme for texts and let you enter translations.", 'sitepress') ?></p>
         <?php endif; ?>
         
         </div>
