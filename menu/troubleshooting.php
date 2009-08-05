@@ -8,7 +8,10 @@ $icl_tables = array(
     $wpdb->prefix . 'icl_content_status',
     $wpdb->prefix . 'icl_core_status',
     $wpdb->prefix . 'icl_node',
-    $wpdb->prefix . 'icl_plugins_texts'
+    $wpdb->prefix . 'icl_plugins_texts',
+    $wpdb->prefix . 'icl_strings',
+    $wpdb->prefix . 'icl_string_translations',
+    $wpdb->prefix . 'icl_string_status'
 );
 
 if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_create_nonce('icl_reset_all'))){

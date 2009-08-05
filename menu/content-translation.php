@@ -95,10 +95,7 @@
                 <li>
                     <ul>
                         <li>
-                            <label><input name="icl_interview_translators" type="radio" value="0" <?php if($interview_translators == 0): ?>checked="checked"<?php endif;?> /> <?php echo __('ICanLocalize will assign translators for this work.', 'sitepress'); ?></label><br />
-                        </li>
-                        <li>
-                            <label><input name="icl_interview_translators" type="radio" value="1" <?php if($interview_translators == 1): ?>checked="checked"<?php endif;?> /> <?php echo __('I want to interview my translators.', 'sitepress'); ?></label>
+                            <label><input name="icl_interview_translators" type="radio" value="1" <?php if($interview_translators == 1): ?>checked="checked"<?php endif;?> /> <?php echo __('Use translators from ICanLocalize.', 'sitepress'); ?></label>
                         </li>
                         <li>
                             <label><input name="icl_interview_translators" type="radio" value="2" <?php if($interview_translators == 2): ?>checked="checked"<?php endif;?> /> <?php echo __('Use my own translators.', 'sitepress'); ?></label>

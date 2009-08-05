@@ -149,7 +149,12 @@ function icl_plugin_upgrade(){
         
     }
 
-    
+    if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.2.0', '<')){
+        if($sitepress_settings['icl_interview_translators'] == 0){
+            $sitepress_settings['icl_interview_translators'] = 1;
+            $sitepress->save_settings($sitepress_settings);
+        }    
+    }
 
 
     if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '<')){

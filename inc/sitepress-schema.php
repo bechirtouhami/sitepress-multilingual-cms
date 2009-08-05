@@ -93,7 +93,7 @@ function icl_sitepress_activate(){
                 `code` VARCHAR( 8 ) NOT NULL ,
                 `locale` VARCHAR( 8 ) NOT NULL ,
                 UNIQUE (`code` ,`locale`)
-            )";
+            ) {$charset_collate}"; 
         mysql_query($sql);
     } 
     

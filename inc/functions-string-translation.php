@@ -39,6 +39,14 @@ function icl_st_init(){
         $init_all = true;
     }
     
+    if(!isset($sitepress_settings['st']['strings_per_page'])){
+        $sitepress_settings['st']['strings_per_page'] = 10;
+        $sitepress->save_settings($sitepress_settings); 
+    }elseif(isset($_GET['strings_per_page']) && $_GET['strings_per_page'] > 0){
+        $sitepress_settings['st']['strings_per_page'] = $_GET['strings_per_page'];
+        $sitepress->save_settings($sitepress_settings); 
+    }
+    
     if(isset($_POST['iclt_st_sw_save']) || isset($init_all)){
             if(isset($_POST['icl_st_sw']['blog_title']) || isset($init_all)){
                 icl_register_string('WP',__('Blog Title','sitepress'), get_option('blogname'));
@@ -432,7 +440,6 @@ function icl_add_string_translation($string_id, $language, $value, $status = fal
 
 function icl_get_string_translations($offset=0){
     global $wpdb, $sitepress, $sitepress_settings, $wp_query, $icl_st_string_translation_statuses;
-    $limit = 10;
     
     $extra_cond = "";
     $status_filter = isset($_GET['status']) ? intval($_GET['status']) : false;
@@ -448,9 +455,14 @@ function icl_get_string_translations($offset=0){
         $extra_cond .= " AND context = '" . $wpdb->escape($context_filter) . "'";
     }
     
-    
-    if(!isset($_GET['paged'])) $_GET['paged'] = 1;
-    $offset = ($_GET['paged']-1)*$limit;
+    if(isset($_GET['show_results']) && $_GET['show_results']=='all'){
+        $limit = 5000;
+        $offset = 0;
+    }else{       
+        $limit = $sitepress_settings['st']['strings_per_page']; 
+        if(!isset($_GET['paged'])) $_GET['paged'] = 1;
+        $offset = ($_GET['paged']-1)*$limit;
+    }
 
     $res = $wpdb->get_results("
         SELECT SQL_CALC_FOUND_ROWS id AS string_id, language AS string_language, context, name, value, status                

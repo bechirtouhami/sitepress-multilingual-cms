@@ -107,6 +107,7 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
         </select>
         
         <?php if(!empty($icl_contexts)): ?>
+        &nbsp;&nbsp;
         <?php echo __('Select strings within context:', 'sitepress')?>
         <select name="icl_st_filter_context">
             <option value="" <?php if($context_filter === false ):?>selected="selected"<?php endif;?>><?php echo __('All contexts', 'sitepress') ?></option>
@@ -115,7 +116,6 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
             <?php endforeach; ?>
         </select>    
         <?php endif; ?>
-        
         </p>
     
         <table id="icl_string_translations" class="widefat" cellspacing="0">
@@ -208,15 +208,9 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
                 <?php endif; ?>
             </tbody>
         </table>      
-        
-        <span class="subsubsub">
-            <input type="button" class="button-secondary" id="icl_st_delete_selected" value="<?php echo __('Delete selected strings', 'sitepress') ?>" disabled="disabled" />
-            <span style="display:none"><?php echo __("Are you sure you want to delete these strings?\nTheir translations will be deleted too.",'sitepress') ?></span>
-        </span>
-        <br clear="all" />
-            
+                    
         <?php if($wp_query->found_posts > 10): ?>
-            <div class="tablenav">
+            <div class="tablenav" style="width:70%;float:right;">            
             <?php    
             $page_links = paginate_links( array(
                 'base' => add_query_arg('paged', '%#%' ),
@@ -228,8 +222,14 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
                 'add_args' => isset($icl_translation_filter)?$icl_translation_filter:array() 
             ));         
             ?>
-            <?php if ( $page_links ) { ?>
-            <div class="tablenav-pages">
+            <?php if(isset($_GET['show_results']) && $_GET['show_results']=='all'): ?>
+            <div class="tablenav-pages">                
+            <a href="admin.php?page=<?php echo $_GET['page'] ?>"><?php printf(__('Display %d results per page', 'sitepress'), $sitepress_settings['st']['strings_per_page']); ?></a>
+            </div>
+            <?php endif; ?>            
+
+            <div class="tablenav-pages"> 
+                <?php if ( $page_links ): ?>               
                 <?php $page_links_text = sprintf( '<span class="displaying-num">' . __( 'Displaying %s&#8211;%s of %s', 'sitepress' ) . '</span>%s',
                     number_format_i18n( ( $_GET['paged'] - 1 ) * $wp_query->query_vars['posts_per_page'] + 1 ),
                     number_format_i18n( min( $_GET['paged'] * $wp_query->query_vars['posts_per_page'], $wp_query->found_posts ) ),
@@ -237,11 +237,31 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
                     $page_links
                     ); echo $page_links_text; 
                 ?>
+                <?php endif; ?>
+                <?php echo __('Strings per page:', 'sitepress')?>
+                <select name="icl_st_per_page" onchange="location.href='admin.php?page=<?php echo $_GET['page']?>&amp;strings_per_page='+this.value">
+                    <option value="10"<?php if($sitepress_settings['st']['strings_per_page']==10) echo ' selected="selected"'; ?>>10</option>
+                    <option value="20"<?php if($sitepress_settings['st']['strings_per_page']==20) echo ' selected="selected"'; ?>>20</option>
+                    <option value="50"<?php if($sitepress_settings['st']['strings_per_page']==50) echo ' selected="selected"'; ?>>50</option>
+                    <option value="100"<?php if($sitepress_settings['st']['strings_per_page']==100) echo ' selected="selected"'; ?>>100</option>
+                </select>
+                
+                <?php if(!isset($_GET['show_results'])): ?>
+                &nbsp;
+                <a href="admin.php?page=<?php echo $_GET['page'] ?>&show_results=all"><?php echo __('Display all results', 'sitepress'); ?></a>
+                <?php endif; ?>
             </div>
-            <?php } ?>            
+            
             </div>
         <?php endif; ?>    
     
+        <span class="subsubsub">
+            <input type="button" class="button-secondary" id="icl_st_delete_selected" value="<?php echo __('Delete selected strings', 'sitepress') ?>" disabled="disabled" />
+            <span style="display:none"><?php echo __("Are you sure you want to delete these strings?\nTheir translations will be deleted too.",'sitepress') ?></span>
+        </span>
+        
+        <br clear="all" />    
+        
         <?php if($icl_st_translation_enabled): ?>
             <h4><?php echo __('Translation options', 'sitepress') ?></h4>            
             <form method="post" id="icl_st_review_strings" name="icl_st_review_strings" action="">
