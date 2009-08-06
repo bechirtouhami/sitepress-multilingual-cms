@@ -9,14 +9,13 @@ $context_filter = isset($_GET['context']) ? $_GET['context'] : false;
 $icl_string_translations = icl_get_string_translations();
 $active_languages = $sitepress->get_active_languages();            
 $icl_contexts = icl_st_get_contexts($status_filter);
+/*
 if($status_filter != ICL_STRING_TRANSLATION_COMPLETE){
     $icl_contexts_translated = icl_st_get_contexts(ICL_STRING_TRANSLATION_COMPLETE);
 }else{
     $icl_contexts_translated = $icl_contexts;
 }
-
-
-
+*/
 $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress->get_icl_translation_enabled();
 
 ?>
@@ -54,7 +53,8 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
                         <td>
                             <input type="text" name="icl_strings[]" value="<?php echo htmlentities($str['string']) ?>" readonly="readonly" style="width:100%;" size="100" />
                             <?php if(isset($_POST['icl_st_po_translations'])):?>
-                            <input type="text" name="icl_translations[]" value="<?php echo htmlentities(utf8_decode($str['translation'])) ?>" readonly="readonly" style="width:100%;" size="100" />
+                            <input type="text" name="icl_translations[]" value="<?php echo htmlentities(utf8_decode($str['translation'])) ?>" readonly="readonly" style="width:100%;<?php if($str['fuzzy']):?>;background-color:#ffecec<?php endif; ?>" size="100" />
+                            <input type="hidden" name="icl_fuzzy[]" value="<?php echo $str['fuzzy'] ?>" />
                             <?php endif; ?>
                         </td>
                     </tr>
@@ -417,14 +417,14 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
                                     </p>
                                     
                                 </form>       
-                                <?php if(!empty($icl_contexts_translated)):?>
+                                <?php if(!empty($icl_contexts)):?>
                                 <h5><?php echo __('Export strings into .po file', 'sitepress')?></h5>                         
                                 <form method="post" action="">
                                 <p>
                                     <label for="icl_st_e_context"><?php echo __('Select context:', 'sitepress')?></label>
                                     <select name="icl_st_e_context" id="icl_st_e_context">
                                         <option value="" <?php if($context_filter === false ):?>selected="selected"<?php endif;?>><?php echo __('All contexts', 'sitepress') ?></option>
-                                        <?php foreach($icl_contexts_translated as $v):?>
+                                        <?php foreach($icl_contexts as $v):?>
                                         <option value="<?php echo htmlentities($v->context)?>" <?php if($context_filter == $v->context ):?>selected="selected"<?php endif;?>><?php echo $v->context . ' ('.$v->c.')'; ?></option>
                                         <?php endforeach; ?>
                                     </select>   

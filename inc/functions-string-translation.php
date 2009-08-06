@@ -97,16 +97,34 @@ function icl_st_init(){
         }else{
             $lines = file($_FILES['icl_po_file']['tmp_name']);
             $icl_st_po_strings = array();
+            
+            $fuzzy = 0;    
             for($k = 0; $k < count($lines); $k++){
-                if(0 === strpos($lines[$k], 'msgid "')){
-                    if($str = substr($lines[$k],7,strlen($lines[$k])-9)){
-                        $icl_st_po_strings[] = array(
-                            'string' => substr($lines[$k],7,strlen($lines[$k])-9),
-                            'translation' => substr($lines[$k+1], 8, strlen($lines[$k+1])-10)
-                        );
-                        $k++;                        
-                    }                                        
-                }                
+                if(0 === strpos($lines[$k], '#, fuzzy')){
+                    $fuzzy = 1;
+                    $k++;
+                }                                                        
+                $int = preg_match('#msgid "(.+)"#im',trim($lines[$k]), $matches);
+                if($int){
+                    $string = $matches[1];
+                    $int = preg_match('#msgstr "(.+)"#im',trim($lines[$k+1]),$matches);
+                    if($int){
+                        $translation = $matches[1];
+                    }else{
+                        $translation = "";
+                    }
+                    
+                    $icl_st_po_strings[] = array(     
+                        'string' => $string,
+                        'translation' => $translation,
+                        'fuzzy' => $fuzzy
+                    );
+                    $k++;                        
+                    
+                }
+                if(!trim($lines[$k])){
+                    $fuzzy = 0;    
+                }
             }            
             if(empty($icl_st_po_strings)){
                 $icl_st_err_str = __('No string found', 'sitepress');
@@ -118,13 +136,21 @@ function icl_st_init(){
         //$arr = array_map('html_entity_decode', $arr);         
         if(isset($_POST['icl_st_po_language'])){
             $arr_t = array_intersect_key($_POST['icl_translations'], array_flip($_POST['icl_strings_selected']));
+            $arr_f = array_intersect_key($_POST['icl_fuzzy'], array_flip($_POST['icl_strings_selected']));
             //$arr_t = array_map('html_entity_decode', $arr_t);         
-        }        
+        }   
         foreach($arr as $k=>$string){
             $string_id = icl_register_string($_POST['icl_st_strings_for'] . ' ' . $_POST['icl_st_domain_name'], md5($string), $string);
             if($string_id && isset($_POST['icl_st_po_language'])){
-                icl_add_string_translation($string_id, $_POST['icl_st_po_language'], $arr_t[$k], ICL_STRING_TRANSLATION_COMPLETE);
-                icl_update_string_status($string_id);
+                if($arr_t[$k] != ""){
+                    if($arr_f[$k]){
+                        $_status = ICL_STRING_TRANSLATION_NOT_TRANSLATED;
+                    }else{
+                        $_status = ICL_STRING_TRANSLATION_COMPLETE;
+                    }
+                    icl_add_string_translation($string_id, $_POST['icl_st_po_language'], $arr_t[$k], ICL_STRING_TRANSLATION_COMPLETE);
+                    icl_update_string_status($string_id);
+                }                
             }            
         }
         
@@ -133,17 +159,17 @@ function icl_st_init(){
     //handle po export
     if(isset($_POST['icl_st_pie_e'])){
         //force some filters
-        $_GET['show_results']=='all';
+        $_GET['show_results']='all';
         if($_POST['icl_st_e_context']){
             $_GET['context'] = $_POST['icl_st_e_context'];
         }
-        $_GET['status'] = ICL_STRING_TRANSLATION_COMPLETE;
+
         $_GET['translation_language'] = $_POST['icl_st_e_language'];
         $strings = icl_get_string_translations();
         if(!empty($strings)){
             $po = icl_st_generate_po_file($strings);
         }else{
-            
+            $po = "";  
         }
         header("Content-Type: application/force-download");
         header("Content-Type: application/octet-stream");
@@ -481,7 +507,7 @@ function icl_get_string_translations($offset=0){
     }
     
     if(isset($_GET['show_results']) && $_GET['show_results']=='all'){
-        $limit = 5000;
+        $limit = 9999;
         $offset = 0;
     }else{       
         $limit = $sitepress_settings['st']['strings_per_page']; 
@@ -830,9 +856,18 @@ function icl_st_generate_po_file($strings){
     $po .= '"MIME-Version: 1.0\n"' . PHP_EOL;    
     
     foreach($strings as $s){
-        $po .= PHP_EOL;
+        $po .= PHP_EOL;        
+        if(isset($s['translations'][key($s['translations'])]['value'])){
+            $translation = $s['translations'][key($s['translations'])]['value'];
+            if($s['translations'][key($s['translations'])]['status'] != ICL_STRING_TRANSLATION_COMPLETE){
+                $po .= '#, fuzzy' . PHP_EOL;
+            }
+        }else{
+            $translation = false;
+            $po .= '#, fuzzy' . PHP_EOL;
+        }
         $po .= 'msgid "'.$s['value'].'"' . PHP_EOL;
-        $po .= 'msgstr "'.$s['translations'][key($s['translations'])]['value'].'"' . PHP_EOL;
+        $po .= 'msgstr "'.$translation.'"' . PHP_EOL;
     }
     
     return $po;
