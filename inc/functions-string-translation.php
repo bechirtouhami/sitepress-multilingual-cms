@@ -854,7 +854,7 @@ function icl_st_generate_po_file($strings, $potonly = false){
     $po .= '# WPML is a WordPress plugin that can turn any WordPress or WordPressMU site into a full featured multilingual content management system.' . PHP_EOL;    
     $po .= '# http://wpml.org' . PHP_EOL;
     $po .= 'msgid ""' . PHP_EOL;
-    if(!$potonly) $po .= 'msgstr ""' . PHP_EOL;
+    $po .= 'msgstr ""' . PHP_EOL;
     $po .= '"Content-Type: text/plain; charset=utf-8\n"' . PHP_EOL;
     $po .= '"Content-Transfer-Encoding: 8bit\n"' . PHP_EOL;
     $po .= '"Project-Id-Version: \n"' . PHP_EOL;
@@ -866,18 +866,16 @@ function icl_st_generate_po_file($strings, $potonly = false){
     
     foreach($strings as $s){
         $po .= PHP_EOL;        
-        if(!$potonly && isset($s['translations'][key($s['translations'])]['value'])){
+        if(!!$potonly && isset($s['translations'][key($s['translations'])]['value'])){
             $translation = $s['translations'][key($s['translations'])]['value'];
             if($translation != '' && $s['translations'][key($s['translations'])]['status'] != ICL_STRING_TRANSLATION_COMPLETE){
                 $po .= '#, fuzzy' . PHP_EOL;
             }
         }else{
-            $translation = false;            
+            $translation = '';            
         }
         $po .= 'msgid "'.$s['value'].'"' . PHP_EOL;
-        if(!$potonly){
-            $po .= 'msgstr "'.$translation.'"' . PHP_EOL;
-        }        
+        $po .= 'msgstr "'.$translation.'"' . PHP_EOL;
     }
     
     return $po;

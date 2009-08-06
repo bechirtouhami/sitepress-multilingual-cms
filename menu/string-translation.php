@@ -442,18 +442,15 @@ $available_contexts = array_unique($available_contexts);
                                         <?php endforeach; ?>
                                     </select>   
                                </p>
-                               <p>     
-                                    <label for="icl_st_e_language"><?php echo __('Translation language:', 'sitepress')?></label>
+                               <p style="line-height:2.3em">     
+                                    <input type="checkbox" name="icl_st_pe_translations" id="icl_st_pe_translations" checked="checked" value="1" onchange="if(jQuery(this).attr('checked'))jQuery('#icl_st_e_language').fadeIn('fast'); else jQuery('#icl_st_e_language').fadeOut('fast')" />
+                                    <label for="icl_st_pe_translations"><?php echo __('Also include translations', 'sitepress')?></label>                                
                                     <select name="icl_st_e_language" id="icl_st_e_language">
                                     <?php foreach($active_languages as $al): if($al['code']==$sitepress->get_default_language()) continue; ?>
                                     <option value="<?php echo $al['code'] ?>"><?php echo $al['display_name'] ?></option>
                                     <?php endforeach; ?>
                                     </select>                                     
                                 </p>  
-                                <p>
-                                    <input type="checkbox" name="icl_st_pe_translations" id="icl_st_pe_translations" checked="checked" value="1" />
-                                    <label for="icl_st_pe_translations"><?php echo __('Also include translations', 'sitepress')?></label>                                
-                                </p>                                                             
                                 <p><input type="submit" class="button-secondary" name="icl_st_pie_e" value="<?php echo __('Submit', 'sitepress')?>" /></p>                                                                      
                                 <?php endif ?>
                                 </form>
