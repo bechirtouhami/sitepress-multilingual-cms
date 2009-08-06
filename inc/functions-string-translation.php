@@ -139,6 +139,7 @@ function icl_st_init(){
             $arr_f = array_intersect_key($_POST['icl_fuzzy'], array_flip($_POST['icl_strings_selected']));
             //$arr_t = array_map('html_entity_decode', $arr_t);         
         }   
+        
         foreach($arr as $k=>$string){
             $string_id = icl_register_string($_POST['icl_st_strings_for'] . ' ' . $_POST['icl_st_domain_name'], md5($string), $string);
             if($string_id && isset($_POST['icl_st_po_language'])){
@@ -148,7 +149,7 @@ function icl_st_init(){
                     }else{
                         $_status = ICL_STRING_TRANSLATION_COMPLETE;
                     }
-                    icl_add_string_translation($string_id, $_POST['icl_st_po_language'], $arr_t[$k], ICL_STRING_TRANSLATION_COMPLETE);
+                    icl_add_string_translation($string_id, $_POST['icl_st_po_language'], $arr_t[$k], $_status);
                     icl_update_string_status($string_id);
                 }                
             }            
@@ -159,6 +160,7 @@ function icl_st_init(){
     //handle po export
     if(isset($_POST['icl_st_pie_e'])){
         //force some filters
+        if(isset($_GET['status'])) unset($_GET['status']);
         $_GET['show_results']='all';
         if($_POST['icl_st_e_context']){
             $_GET['context'] = $_POST['icl_st_e_context'];
@@ -859,12 +861,11 @@ function icl_st_generate_po_file($strings){
         $po .= PHP_EOL;        
         if(isset($s['translations'][key($s['translations'])]['value'])){
             $translation = $s['translations'][key($s['translations'])]['value'];
-            if($s['translations'][key($s['translations'])]['status'] != ICL_STRING_TRANSLATION_COMPLETE){
+            if($translation != '' && $s['translations'][key($s['translations'])]['status'] != ICL_STRING_TRANSLATION_COMPLETE){
                 $po .= '#, fuzzy' . PHP_EOL;
             }
         }else{
-            $translation = false;
-            $po .= '#, fuzzy' . PHP_EOL;
+            $translation = false;            
         }
         $po .= 'msgid "'.$s['value'].'"' . PHP_EOL;
         $po .= 'msgstr "'.$translation.'"' . PHP_EOL;
