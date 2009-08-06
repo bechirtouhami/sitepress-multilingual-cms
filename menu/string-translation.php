@@ -18,6 +18,18 @@ if($status_filter != ICL_STRING_TRANSLATION_COMPLETE){
 */
 $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress->get_icl_translation_enabled();
 
+$available_contexts = array();
+if(!empty($icl_contexts)){
+    foreach($icl_contexts as $c){
+        if($c) $available_contexts[] = $c->context;
+    }                                                
+}
+if(is_array($sitepress_settings['st']['theme_localization_domains'])){
+    foreach($sitepress_settings['st']['theme_localization_domains'] as $c){
+        if($c) $available_contexts[] = $c;
+    }
+}
+$available_contexts = array_unique($available_contexts);
 ?>
 <div class="wrap">
     <div id="icon-options-general" class="icon32"><br /></div>
@@ -390,21 +402,22 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
                                     </p>           
                                     <p class="sub" style="line-height:2.3em"    >
                                         <label for="icl_st_domain_name"><?php echo __('Select what the strings are for:', 'sitepress');?></label>
-                                        <?php if(!empty($icl_contexts)): ?>
+                                        <?php if(!empty($available_contexts)): ?>
+                                        
                                         &nbsp;&nbsp;
                                         <span>                                        
                                         <select name="icl_st_i_context">
                                             <option value="">-------</option>
-                                            <?php foreach($icl_contexts as $v):?>
-                                            <option value="<?php echo htmlentities($v->context)?>" <?php if($context_filter == $v->context ):?>selected="selected"<?php endif;?>><?php echo $v->context; ?></option>
+                                            <?php foreach($available_contexts as $v):?>
+                                            <option value="<?php echo htmlentities($v)?>" <?php if($context_filter == $v ):?>selected="selected"<?php endif;?>><?php echo $v; ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                         <a href="#" onclick="var __nxt = jQuery(this).parent().next(); jQuery(this).prev().val(''); jQuery(this).parent().fadeOut('fast',function(){__nxt.fadeIn('fast')});return false;"><?php echo __('new','sitepress')?></a>
                                         </span>
                                         <?php endif; ?>
-                                        <span <?php if(!empty($icl_contexts)):?>style="display:none"<?php endif ?>>                                        
+                                        <span <?php if(!empty($available_contexts)):?>style="display:none"<?php endif ?>>                                        
                                         <input type="text" name="icl_st_i_context_new" />
-                                        <?php if(!empty($icl_contexts)):?>
+                                        <?php if(!empty($available_contexts)):?>
                                         <a href="#" onclick="var __prv = jQuery(this).parent().prev(); jQuery(this).prev().val(''); jQuery(this).parent().fadeOut('fast',function(){__prv.fadeIn('fast')});return false;"><?php echo __('select from existing','sitepress')?></a>
                                         <?php endif ?>
                                         <span>                                        
