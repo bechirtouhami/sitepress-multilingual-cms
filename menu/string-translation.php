@@ -26,7 +26,7 @@ if(!empty($icl_contexts)){
 }
 if(is_array($sitepress_settings['st']['theme_localization_domains'])){
     foreach($sitepress_settings['st']['theme_localization_domains'] as $c){
-        if($c) $available_contexts[] = $c;
+        if($c) $available_contexts[] = 'theme_' . $c;
     }
 }
 $available_contexts = array_unique($available_contexts);
@@ -431,7 +431,7 @@ $available_contexts = array_unique($available_contexts);
                                     
                                 </form>       
                                 <?php if(!empty($icl_contexts)):?>
-                                <h5><?php echo __('Export strings into .po file', 'sitepress')?></h5>                         
+                                <h5><?php echo __('Export strings into .po/.pot file', 'sitepress')?></h5>                         
                                 <form method="post" action="">
                                 <p>
                                     <label for="icl_st_e_context"><?php echo __('Select context:', 'sitepress')?></label>
@@ -449,7 +449,11 @@ $available_contexts = array_unique($available_contexts);
                                     <option value="<?php echo $al['code'] ?>"><?php echo $al['display_name'] ?></option>
                                     <?php endforeach; ?>
                                     </select>                                     
-                                </p>                                                               
+                                </p>  
+                                <p>
+                                    <input type="checkbox" name="icl_st_pe_translations" id="icl_st_pe_translations" checked="checked" value="1" />
+                                    <label for="icl_st_pe_translations"><?php echo __('Also include translations', 'sitepress')?></label>                                
+                                </p>                                                             
                                 <p><input type="submit" class="button-secondary" name="icl_st_pie_e" value="<?php echo __('Submit', 'sitepress')?>" /></p>                                                                      
                                 <?php endif ?>
                                 </form>
