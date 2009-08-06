@@ -448,66 +448,6 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
             </div>
         </div>
         
-        <?php /*
-        <div class="colthree">
-            <h4><?php echo __('Translate general settings texts', 'sitepress')?></h4>
-            <p><?php echo __('WPML can translate texts entered in different admin screens. Select which texts to translate.', 'sitepress')?></p>
-            <form id="icl_st_sw_form" name="icl_st_sw_form" method="post" action="">
-                <p class="icl_form_errors" style="display:none"></p>
-                <ul>
-                    <li><label><input type="checkbox" name="icl_st_sw[blog_title]" value="1" <?php if($sitepress_settings['st']['sw']['blog_title']): ?>checked="checked"<?php endif ?> /> 
-                        <?php echo __('Blog Title', 'sitepress'); ?></label></li>
-                    <li><label><input type="checkbox" name="icl_st_sw[tagline]" value="1" <?php if($sitepress_settings['st']['sw']['tagline']): ?>checked="checked"<?php endif ?> /> 
-                        <?php echo __('Tagline', 'sitepress'); ?></label></li>
-                    <li><label><input type="checkbox" name="icl_st_sw[widget_titles]" value="1" <?php if($sitepress_settings['st']['sw']['widget_titles']): ?>checked="checked"<?php endif ?> /> 
-                        <?php echo __('Widget titles', 'sitepress'); ?></label></li>
-                    <li><label><input type="checkbox" name="icl_st_sw[text_widgets]" value="1" <?php if($sitepress_settings['st']['sw']['text_widgets']): ?>checked="checked"<?php endif ?> /> 
-                        <?php echo __('Content for text-widgets', 'sitepress'); ?></label></li>
-                    <li><label><input type="checkbox" name="icl_st_sw[theme_texts]" value="1" <?php if($sitepress_settings['st']['sw']['theme_texts']): ?>checked="checked"<?php endif ?> /> 
-                        <?php echo __('Theme/plugin texts', 'sitepress'); ?></label></li>                        
-                </ul>
-                <p class="alignleft">
-                <input class="button-secondary" type="submit" name="iclt_st_sw_save" value="<?php echo __('Save', 'sitepress')?>" />
-                <span class="icl_ajx_response" style="display:inline"><?php if(isset($_GET['updated']) && $_GET['updated']=='true') echo __('Settings saved', 'sitepress') ?></span>
-                </p>
-            </form>
-        </div>
-    
-        
-        <div class="colthree">
-            <h4><?php echo __('Translate the theme or plugins', 'sitepress') ?></h4>
-            <p><?php echo __("You can translate the theme's texts using this screen too. To do this, upload the theme's .po file.", 'sitepress')?></p>
-            <form id="icl_st_po_form"  name="icl_st_po_form" method="post" enctype="multipart/form-data">
-                <p>
-                    <?php  echo __('Select what the strings are for: ', 'sitepress'); ?>
-                    <select name="icl_st_strings_for">
-                    <option value="theme"><?php echo __('Theme','sitepress')?></option>
-                    <option value="plugin"><?php echo __('Plugin','sitepress')?></option>
-                    </select>
-                </p>
-                <?php echo __('.po file:', 'sitepress')?>
-                <input id="icl_po_file" class="button primary" type="file" name="icl_po_file" />  
-                <p style="line-height:2.3em">
-                    <input type="checkbox" name="icl_st_po_translations" id="icl_st_po_translations" />
-                    <?php echo __('Also create translations according to the .po file', 'sitepress')?>
-                    <select name="icl_st_po_language" id="icl_st_po_language" style="display:none">
-                    <?php foreach($active_languages as $al): if($al['code']==$sitepress->get_default_language()) continue; ?>
-                    <option value="<?php echo $al['code'] ?>"><?php echo $al['display_name'] ?></option>
-                    <?php endforeach; ?>
-                    </select>
-                </p>
-                <label><?php echo __('Text domain name:', 'sitepress');?> <input type="text" name="icl_st_domain_name" /></label>
-                <p class="alignleft">
-                <input class="button" name="icl_po_upload" id="icl_po_upload" type="submit" value="<?php echo __('Submit', 'sitepress')?>" />        
-                <span id="icl_st_err_domain" class="icl_error_text" style="display:none"><?php echo __('Please enter the text domain name!', 'sitepress')?></span>
-                <span id="icl_st_err_po" class="icl_error_text" style="display:none"><?php echo __('Please select the .po file to upload!', 'sitepress')?></span>
-                </p>
-            </form>
-        </div>
-        
-        
-        
-        */ ?>
         <br clear="all" /><br />
     <?php endif; ?>
     
