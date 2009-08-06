@@ -207,7 +207,7 @@ function icl_validate_po_upload(){
         cont.find('#icl_st_err_po').fadeIn();
         return false;
     }    
-    if(!cont.find('input[name="icl_st_domain_name"]').val()){
+    if(!cont.find('select[name="icl_st_i_context"]').val() && !cont.find('input[name="icl_st_i_context_new"]').val()){
         cont.find('#icl_st_err_domain').fadeIn();
         return false;
     }

@@ -35,3 +35,14 @@
     font-style: italic;
     color:#777;
 }
+
+p.sub {
+    color:#444444;
+    font-family: Verdana;
+    font-size:12px;
+    margin:0 0 5px 0;
+}
+div.postbox div.inside {
+    margin:10px;
+    position:relative;
+}

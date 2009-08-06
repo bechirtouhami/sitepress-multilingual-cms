@@ -2,12 +2,20 @@
 if((!isset($sitepress_settings['existing_content_language_verified']) || !$sitepress_settings['existing_content_language_verified']) || 2 > count($sitepress->get_active_languages())){
     return;
 }
-$icl_string_translations = icl_get_string_translations();
-$active_languages = $sitepress->get_active_languages();            
-$icl_contexts = icl_st_get_contexts();
 
 $status_filter = isset($_GET['status']) ? intval($_GET['status']) : false;
 $context_filter = isset($_GET['context']) ? $_GET['context'] : false;
+
+$icl_string_translations = icl_get_string_translations();
+$active_languages = $sitepress->get_active_languages();            
+$icl_contexts = icl_st_get_contexts($status_filter);
+if($status_filter != ICL_STRING_TRANSLATION_COMPLETE){
+    $icl_contexts_translated = icl_st_get_contexts(ICL_STRING_TRANSLATION_COMPLETE);
+}else{
+    $icl_contexts_translated = $icl_contexts;
+}
+
+
 
 $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress->get_icl_translation_enabled();
 
@@ -24,7 +32,7 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
         <?php if(isset($_POST['icl_st_po_translations'])): ?>
         <input type="hidden" name="icl_st_po_language" value="<?php echo $_POST['icl_st_po_language'] ?>" />
         <?php endif; ?>
-        <input type="hidden" name="icl_st_domain_name" value="<?php echo $_POST['icl_st_domain_name'] ?>" />
+        <input type="hidden" name="icl_st_domain_name" value="<?php echo $_POST['icl_st_i_context_new']?$_POST['icl_st_i_context_new']:$_POST['icl_st_i_context'] ?>" />
         
         <table id="icl_po_strings" class="widefat" cellspacing="0">
             <thead>
@@ -317,6 +325,130 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
     
         <?php endif; ?>    
     
+        <div id="dashboard-widgets-wrap">
+            <div id="dashboard-widgets" class="metabox-holder">
+            
+                <div class="postbox-container" style="width: 49%;">
+                    <div id="normal-sortables-stsel" class="meta-box-sortables ui-sortable">
+                        <div id="dashboard_wpml_stsel" class="postbox">
+                            <div class="handlediv" title="<?php echo __('Click to toggle', 'sitepress'); ?>">
+                                <br/>
+                            </div>
+                            <h3 class="hndle">
+                                <span><?php echo __('Translate general settings texts', 'sitepress')?></span>
+                            </h3>         
+                            <div class="inside">
+                                <p class="sub"><?php echo __('WPML can translate texts entered in different admin screens. Select which texts to translate.', 'sitepress')?></p>
+                                <form id="icl_st_sw_form" name="icl_st_sw_form" method="post" action="">
+                                    <p class="icl_form_errors" style="display:none"></p>
+                                    <ul>
+                                        <li><label><input type="checkbox" name="icl_st_sw[blog_title]" value="1" <?php if($sitepress_settings['st']['sw']['blog_title']): ?>checked="checked"<?php endif ?> /> 
+                                            <?php echo __('Blog Title', 'sitepress'); ?></label></li>
+                                        <li><label><input type="checkbox" name="icl_st_sw[tagline]" value="1" <?php if($sitepress_settings['st']['sw']['tagline']): ?>checked="checked"<?php endif ?> /> 
+                                            <?php echo __('Tagline', 'sitepress'); ?></label></li>
+                                        <li><label><input type="checkbox" name="icl_st_sw[widget_titles]" value="1" <?php if($sitepress_settings['st']['sw']['widget_titles']): ?>checked="checked"<?php endif ?> /> 
+                                            <?php echo __('Widget titles', 'sitepress'); ?></label></li>
+                                        <li><label><input type="checkbox" name="icl_st_sw[text_widgets]" value="1" <?php if($sitepress_settings['st']['sw']['text_widgets']): ?>checked="checked"<?php endif ?> /> 
+                                            <?php echo __('Content for text-widgets', 'sitepress'); ?></label></li>
+                                        <li><label><input type="checkbox" name="icl_st_sw[theme_texts]" value="1" <?php if($sitepress_settings['st']['sw']['theme_texts']): ?>checked="checked"<?php endif ?> /> 
+                                            <?php echo __('Theme/plugin texts', 'sitepress'); ?></label></li>                        
+                                    </ul>
+                                    <p>
+                                    <input class="button-secondary" type="submit" name="iclt_st_sw_save" value="<?php echo __('Save', 'sitepress')?>" />
+                                    <span class="icl_ajx_response" style="display:inline"><?php if(isset($_GET['updated']) && $_GET['updated']=='true') echo __('Settings saved', 'sitepress') ?></span>
+                                    </p>
+                                </form>                                
+                            </div>           
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="postbox-container" style="width: 49%;">
+                    <div id="normal-sortables-poie" class="meta-box-sortables ui-sortable">
+                        <div id="dashboard_wpml_st_poie" class="postbox">
+                            <div class="handlediv" title="<?php echo __('Click to toggle', 'sitepress'); ?>">
+                                <br/>
+                            </div>
+                            <h3 class="hndle">
+                                <span><?php echo __('Import / export .po', 'sitepress')?></span>
+                            </h3>         
+                            <div class="inside">
+                                <h5><?php echo __('Import', 'sitepress')?></h5>                         
+                                <form id="icl_st_po_form"  name="icl_st_po_form" method="post" enctype="multipart/form-data">
+                                    <p class="sub">
+                                         <label for="icl_po_file"><?php echo __('.po file:', 'sitepress')?></label>
+                                        <input id="icl_po_file" class="button primary" type="file" name="icl_po_file" />  
+                                    </p>
+                                    <p class="sub" style="line-height:2.3em">
+                                        <input type="checkbox" name="icl_st_po_translations" id="icl_st_po_translations" />
+                                        <label for="icl_st_po_translations"><?php echo __('Also create translations according to the .po file', 'sitepress')?></label>
+                                        <select name="icl_st_po_language" id="icl_st_po_language" style="display:none">
+                                        <?php foreach($active_languages as $al): if($al['code']==$sitepress->get_default_language()) continue; ?>
+                                        <option value="<?php echo $al['code'] ?>"><?php echo $al['display_name'] ?></option>
+                                        <?php endforeach; ?>
+                                        </select>
+                                    </p>           
+                                    <p class="sub" style="line-height:2.3em"    >
+                                        <label for="icl_st_domain_name"><?php echo __('Select what the strings are for:', 'sitepress');?></label>
+                                        <?php if(!empty($icl_contexts)): ?>
+                                        &nbsp;&nbsp;
+                                        <span>                                        
+                                        <select name="icl_st_i_context">
+                                            <option value="">-------</option>
+                                            <?php foreach($icl_contexts as $v):?>
+                                            <option value="<?php echo htmlentities($v->context)?>" <?php if($context_filter == $v->context ):?>selected="selected"<?php endif;?>><?php echo $v->context; ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                        <a href="#" onclick="var __nxt = jQuery(this).parent().next(); jQuery(this).prev().val(''); jQuery(this).parent().fadeOut('fast',function(){__nxt.fadeIn('fast')});return false;"><?php echo __('new','sitepress')?></a>
+                                        </span>
+                                        <?php endif; ?>
+                                        <span <?php if(!empty($icl_contexts)):?>style="display:none"<?php endif ?>>                                        
+                                        <input type="text" name="icl_st_i_context_new" />
+                                        <?php if(!empty($icl_contexts)):?>
+                                        <a href="#" onclick="var __prv = jQuery(this).parent().prev(); jQuery(this).prev().val(''); jQuery(this).parent().fadeOut('fast',function(){__prv.fadeIn('fast')});return false;"><?php echo __('select from existing','sitepress')?></a>
+                                        <?php endif ?>
+                                        <span>                                        
+                                    </p>  
+                                    
+                                    <p>
+                                    <input class="button" name="icl_po_upload" id="icl_po_upload" type="submit" value="<?php echo __('Submit', 'sitepress')?>" />        
+                                    <span id="icl_st_err_domain" class="icl_error_text" style="display:none"><?php echo __('Please enter a context!', 'sitepress')?></span>
+                                    <span id="icl_st_err_po" class="icl_error_text" style="display:none"><?php echo __('Please select the .po file to upload!', 'sitepress')?></span>
+                                    </p>
+                                    
+                                </form>       
+                                <?php if(!empty($icl_contexts_translated)):?>
+                                <h5><?php echo __('Export strings into .po file', 'sitepress')?></h5>                         
+                                <form method="post" action="">
+                                <p>
+                                    <label for="icl_st_e_context"><?php echo __('Select context:', 'sitepress')?></label>
+                                    <select name="icl_st_e_context" id="icl_st_e_context">
+                                        <option value="" <?php if($context_filter === false ):?>selected="selected"<?php endif;?>><?php echo __('All contexts', 'sitepress') ?></option>
+                                        <?php foreach($icl_contexts_translated as $v):?>
+                                        <option value="<?php echo htmlentities($v->context)?>" <?php if($context_filter == $v->context ):?>selected="selected"<?php endif;?>><?php echo $v->context . ' ('.$v->c.')'; ?></option>
+                                        <?php endforeach; ?>
+                                    </select>   
+                               </p>
+                               <p>     
+                                    <label for="icl_st_e_language"><?php echo __('Translation language:', 'sitepress')?></label>
+                                    <select name="icl_st_e_language" id="icl_st_e_language">
+                                    <?php foreach($active_languages as $al): if($al['code']==$sitepress->get_default_language()) continue; ?>
+                                    <option value="<?php echo $al['code'] ?>"><?php echo $al['display_name'] ?></option>
+                                    <?php endforeach; ?>
+                                    </select>                                     
+                                </p>                                                               
+                                <p><input type="submit" class="button-secondary" name="icl_st_pie_e" value="<?php echo __('Submit', 'sitepress')?>" /></p>                                                                      
+                                <?php endif ?>
+                                </form>
+                            </div>           
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
+        <?php /*
         <div class="colthree">
             <h4><?php echo __('Translate general settings texts', 'sitepress')?></h4>
             <p><?php echo __('WPML can translate texts entered in different admin screens. Select which texts to translate.', 'sitepress')?></p>
@@ -373,8 +505,10 @@ $icl_st_translation_enabled = $sitepress->icl_account_configured() && $sitepress
             </form>
         </div>
         
+        
+        
+        */ ?>
         <br clear="all" /><br />
-    
     <?php endif; ?>
     
     <?php do_action('icl_menu_footer'); ?>
