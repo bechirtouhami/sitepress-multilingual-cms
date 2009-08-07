@@ -65,6 +65,15 @@
     </div>
     <?php endif; ?>    
     
+    <?php if(isset($_GET['post_id'])): ?>
+    <a href="admin.php?page=<?php echo $_GET['page']?>"><?php echo __('Show all documents', 'sitepress')?></a> / <a href="post.php?action=edit&post=<?php echo $_GET['post_id'] ?>"><?php printf(__("Back to editing '%s'", 'sitepress'),$documents[$_GET['post_id']]->post_title); ?></a>
+    <script type="text/javascript">
+    jQuery(document).ready(function(){
+            jQuery('#icl-estimated-words-count').html('<?php echo count(explode(' ', $documents[$_GET['post_id']]->post_content)) ?>');
+            jQuery('#icl-estimated-quote').html('<?php echo 0.07 * count(explode(' ', $documents[$_GET['post_id']]->post_content)) ?>');
+    });
+    </script>
+    <?php else: ?>
     <form method="post" name="translation-dashboard-filter" action="tools.php?page=<?php echo basename(ICL_PLUGIN_PATH); ?>/modules/icl-translation/icl-translation-dashboard.php">
     <table class="form-table">
         <tr valign="top">
@@ -117,13 +126,14 @@
     </table>
     </form>
     <br />
+    <?php endif; ?>
 
-    <p><?php printf(__('To see the status of pending translations or to cancel translation requests, go to the <a href="%s">project page</a> in ICanLocalize.', 'sitepress'),ICL_API_ENDPOINT.'/websites/'. $sitepress_settings['site_id'] . '/cms_requests') ?></p>
+    <p><?php echo __('To see the status of pending translations or to cancel translation requests, go to the <a href="https://www.icanlocalize.com/websites/'. $sitepress_settings['site_id'] . '/cms_requests">project page</a> in ICanLocalize.') ?></p>    
 
     <table class="widefat fixed" id="icl-translation-dashboard" cellspacing="0">
         <thead>
         <tr>
-            <th scope="col" class="manage-column column-cb check-column"><input type="checkbox" /></th>
+            <th scope="col" class="manage-column column-cb check-column"><input type="checkbox" <?php if(isset($_GET['post_id'])) echo 'checked="checked"'?>/></th>
             <th scope="col"><?php echo __('Title', 'sitepress') ?></th>
             <th scope="col" class="manage-column column-date"><?php echo __('Type', 'sitepress') ?></th>
             <th scope="col" class="manage-column column-date"><?php echo __('Status', 'sitepress') ?></th>        
@@ -132,7 +142,7 @@
         </thead>
         <tfoot>
         <tr>
-            <th scope="col" class="manage-column column-cb check-column"><input type="checkbox" /></th>
+            <th scope="col" class="manage-column column-cb check-column"><input type="checkbox" <?php if(isset($_GET['post_id'])) echo 'checked="checked"'?>/></th>
             <th scope="col"><?php echo __('Title', 'sitepress') ?></th>
             <th scope="col" class="manage-column column-date"><?php echo __('Type', 'sitepress') ?></th>
             <th scope="col" class="manage-column column-date"><?php echo __('Status', 'sitepress') ?></th>        
@@ -162,7 +172,7 @@
             ?>            
             <tr<?php if($oddcolumn): ?> class="alternate"<?php endif;?>>
                 <td scope="col">
-                    <input type="checkbox" value="<?php echo $doc->post_id ?>" name="post[]" />
+                    <input type="checkbox" value="<?php echo $doc->post_id ?>" name="post[]" <?php if(isset($_GET['post_id'])) echo 'checked="checked"'?> />
                 </td>
                 <td scope="col" class="post-title column-title">
                     <a href="<?php echo get_edit_post_link($doc->post_id) ?>"><?php echo $doc->post_title ?></a>
@@ -235,7 +245,7 @@
             <?php endif; ?>
         <?php endforeach; ?>    
         <li>
-            <input disabled="disabled" type="submit" class="button-primary" id="icl-tr-sel-doc" value="<?php echo __('Translate selected documents', 'sitepress') ?>" />
+            <input  <?php if(!isset($_GET['post_id'])): ?>disabled="disabled"<?php endif; ?> type="submit" class="button-primary" id="icl-tr-sel-doc" value="<?php echo __('Translate selected documents', 'sitepress') ?>" />
             <span class="icl_ajx_response" id="icl_ajx_response"><?php echo __('Sending translation requests. Please wait!', 'sitepress') ?>&nbsp;<img src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" alt="" /></span>
         </li>
     </ul>

@@ -50,6 +50,12 @@
         <?php endif; ?>
     </tr>
     <?php endforeach; ?>
+    <tr>
+        <td colspan="4">
+            <br />
+            <a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH); ?>/modules/icl-translation/icl-translation-dashboard.php&post_id=<?php echo $post->ID ?><?php if($this->get_current_language() != $this->get_default_language()) echo '&amp;lang=' . $this->get_current_language(); ?>"><?php echo __('Send this document to translation via the Translation Dashboard','sitepress'); ?></a>
+        </td>
+    </tr>
     </table>
     <br clear="all" style="line-height:1px;" />
 <?php endif; ?>

@@ -411,25 +411,31 @@ function icl_translation_get_documents($lang,
     $where = "WHERE 1";
     $order = "ORDER BY p.post_date DESC";
     
-    if ($tstatus == 'in_progress' or $tstatus == 'complete') {
-        $where .= " AND (c.rid IS NOT NULL)";
-        $order = "ORDER BY c.rid DESC";
-    }
-    
-    if($type){
-        $where .= " AND p.post_type = '{$type}'";
+    if(isset($_GET['post_id'])){ // this overrides the others
+        $where .= " AND p.ID=" . (int)$_GET['post_id'];  
     }else{
-        $where .= " AND p.post_type IN ('post','page')";
-    }    
-    if($status){
-        $where .= " AND p.post_status = '{$status}'";
-    }        
-    $where .= " AND t.language_code='{$lang}'";
-    
-    if($from_date and $to_date){
-        $where .= " AND p.post_date > '{$from_date}' AND p.post_date < '{$to_date}'";
+        if ($tstatus == 'in_progress' or $tstatus == 'complete') {
+            $where .= " AND (c.rid IS NOT NULL)";
+            $order = "ORDER BY c.rid DESC";
+        }
+        
+        if($type){
+            $where .= " AND p.post_type = '{$type}'";
+        }else{
+            $where .= " AND p.post_type IN ('post','page')";
+        }  
+        
+        if($status){
+            $where .= " AND p.post_status = '{$status}'";
+        }        
+        
+        $where .= " AND t.language_code='{$lang}'";
+        
+        if($from_date and $to_date){
+            $where .= " AND p.post_date > '{$from_date}' AND p.post_date < '{$to_date}'";
+        }
     }
-    
+        
     if(!isset($_GET['paged'])) $_GET['paged'] = 1;
     $offset = ($_GET['paged']-1)*$limit;
     
