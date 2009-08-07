@@ -1,6 +1,6 @@
 <?php $this->noscript_notice() ?>
 <p style="float:left;">
-<?php echo __('Language', 'sitepress') ?>
+<?php echo __('Language of this post', 'sitepress') ?>&nbsp;
 <select name="icl_post_language">
 <?php foreach($active_languages as $lang):?>
 <?php if(isset($translations[$lang['code']]->element_id) && $translations[$lang['code']]->element_id != $post->ID) continue ?>

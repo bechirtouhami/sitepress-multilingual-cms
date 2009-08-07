@@ -1113,18 +1113,46 @@ function icl_display_post_translation_status($post_id, &$post_translation_status
     global $wpdb, $sitepress;                                                                                                               
     $trid = $sitepress->get_element_trid($post_id);
     $translations = $sitepress->get_element_translations($trid);
+    
+    foreach($translations as $t){
+        if($t->original){
+            $original_updated = $wpdb->get_var("SELECT c.md5<>n.md5 FROM {$wpdb->prefix}icl_content_status c JOIN {$wpdb->prefix}icl_node n ON c.nid=n.nid WHERE c.nid=".$t->element_id);    
+            break;
+        }
+    }    
+    
     $active_languages = $sitepress->get_active_languages();    
     $_tr_status = icl_get_post_translation_status($post_id);    
     foreach($_tr_status as $st){
         $tr_status[$st->target] = $st->status;
     }
+    
+    $tr_info = $wpdb->get_row("
+        SELECT lt.name, t.language_code, t.source_language_code, t.trid 
+        FROM {$wpdb->prefix}icl_translations t LEFT JOIN {$wpdb->prefix}icl_languages_translations lt ON t.source_language_code=lt.language_code
+        WHERE t.element_type='post' AND t.element_id={$post_id} AND lt.display_language_code = '".$sitepress->get_default_language()."'"
+        );    
+    // is ICL translation ?
+    $icl_translation = get_post_meta($post_id,'_icl_translation',true); 
+    if($icl_translation && $tr_info->name){
+        echo '<div style="text-align:center;clear:both;">'. sprintf(__('Translated from %s'),$tr_info->name).'</div>';
+        echo '<div style="text-align:center;clear:both;color:#888;">'. __('This translation is maintained by ICanLocalize. Edits that you do will be overwritten when the translator does an update.').'</div>';        
+    }
+    
     foreach($active_languages as $lang){
         if(isset($translations[$lang['code']])){
             $id = $translations[$lang['code']]->element_id;
-                        
-            $post_updated = $wpdb->get_var("SELECT c.md5<>n.md5 FROM {$wpdb->prefix}icl_content_status c JOIN {$wpdb->prefix}icl_node n ON c.nid=n.nid WHERE c.nid=".$id);
+
+            if($translations[$lang['code']]->original && $original_updated && $id == $post_id){
+                echo '
+                    <div id="noupdate_but">
+                    <input type="button" class="button" value="'.__('This document\'s translation doesn\'t need to update', 'sitepress').'" />
+                    <span id="noupdate_but_wm" style="display:none">'.__('Translations for this document appear to be out-of-date. Are you sure they don\'t need to be updated?','sitepress').'</span>                
+                    </div>';
+            }
             
-            if($tr_status[$lang['code']] == CMS_TARGET_LANGUAGE_DONE && $post_updated){
+            
+            if($original_updated && !$translations[$lang['code']]->original){
                 $post_translation_statuses[$lang['code']] = __('Translation needs update','sitepress');                
             }elseif($translations[$lang['code']]->original){
                 $post_translation_statuses[$lang['code']] = __('Original document','sitepress');                
@@ -1149,7 +1177,8 @@ function icl_display_post_translation_status($post_id, &$post_translation_status
     }
 }
 
-function icl_display_post_translation_status_legacy($post_id, &$post_translation_statuses){
+/*
+function icl_display_post_translation_status_OBSOLETE($post_id, &$post_translation_statuses){
     global $wpdb, $sitepress;                                                                                                               
     $tr_info = $wpdb->get_row("
         SELECT lt.name, t.language_code, t.source_language_code, t.trid 
@@ -1228,6 +1257,7 @@ function icl_display_post_translation_status_legacy($post_id, &$post_translation
         ////echo '</table>';
     }    
 }
+*/
 
 function icl_decode_translation_status_id($status){
     switch($status){
