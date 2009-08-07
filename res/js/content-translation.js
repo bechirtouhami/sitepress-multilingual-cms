@@ -11,6 +11,14 @@ addLoadEvent(function(){
         jQuery('input[name="icl_website_kind"]').click(iclQuickSaveWebsiteKind);
     }
     
+    jQuery('.handlediv').click(function(){
+        if(jQuery(this).parent().hasClass('closed')){
+            jQuery(this).parent().removeClass('closed');
+        }else{
+            jQuery(this).parent().addClass('closed');
+        }
+    })
+    
 });
 
 function toggleTranslationPairsSub(){

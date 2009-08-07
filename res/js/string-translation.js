@@ -22,6 +22,15 @@ jQuery(document).ready(function(){
     jQuery('.icl_htmlpreview_link').click(icl_st_show_html_preview);
     jQuery('#icl_st_po_form').submit(icl_validate_po_upload);
     jQuery('#icl_st_review_strings').submit(icl_st_review_strings);
+    
+    jQuery('.handlediv').click(function(){
+        if(jQuery(this).parent().hasClass('closed')){
+            jQuery(this).parent().removeClass('closed');
+        }else{
+            jQuery(this).parent().addClass('closed');
+        }
+    })
+    
 });
 
 function icl_st_toggler(){

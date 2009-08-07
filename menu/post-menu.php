@@ -22,6 +22,7 @@
         <th align="left"><?php echo __('Language', 'sitepress') ?></th>
         <th align="left"><?php echo __('Title', 'sitepress') ?></th>
         <th align="right"><?php echo __('Operations', 'sitepress') ?></th>
+        <?php do_action('icl_post_languages_options_extra_cols_th') ?>
     </tr>
     
     <?php foreach($active_languages as $lang): if($selected_language==$lang['code']) continue; ?>
@@ -35,6 +36,7 @@
             <a href="<?php echo get_permalink($translations[$lang['code']]->element_id) ?>" target="_blank"><?php echo __('View','sitepress') ?></a>
             <?php endif; ?>        
         </td>
+        <?php do_action('icl_post_languages_options_extra_cols', $post->ID) ?>
     </tr>
     <?php endforeach; ?>
     </table>
