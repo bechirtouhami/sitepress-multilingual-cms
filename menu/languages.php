@@ -176,7 +176,7 @@
                         <?php if($icl_folder_url_disabled):?>                                        
                         <div class="icl_error_text" style="margin:10px;">
                             <p>
-                                <?php echo __('Languages per directories are disabled.', 'sitepress'); ?>
+                                <?php echo __('It looks like languages per directories will not function.', 'sitepress'); ?>
                                 <a href="#" onClick="jQuery(this).parent().parent().next().toggle();return false">Details</a>
                             </p>
                         </div>                                                 

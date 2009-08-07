@@ -22,7 +22,9 @@
         <th align="left"><?php echo __('Language', 'sitepress') ?></th>
         <th align="left"><?php echo __('Title', 'sitepress') ?></th>
         <th align="right"><?php echo __('Operations', 'sitepress') ?></th>
-        <?php do_action('icl_post_languages_options_extra_cols_th') ?>
+        <?php if($this->get_icl_translation_enabled()):?>
+        <th align="right"><?php echo __('ICanLocalize translation', 'sitepress') ?></th>
+        <?php endif; ?>
     </tr>
     
     <?php foreach($active_languages as $lang): if($selected_language==$lang['code']) continue; ?>
@@ -36,7 +38,11 @@
             <a href="<?php echo get_permalink($translations[$lang['code']]->element_id) ?>" target="_blank"><?php echo __('View','sitepress') ?></a>
             <?php endif; ?>        
         </td>
-        <?php do_action('icl_post_languages_options_extra_cols', $post->ID) ?>
+        <?php if($this->get_icl_translation_enabled()):?>
+        <td align="right">
+        <?php echo isset($GLOBALS['__post_translation_status'][$post->ID][$lang['code']]) ? $GLOBALS['__post_translation_status'][$post->ID][$lang['code']] : __('Not translated','sitepress'); ?>
+        </td>
+        <?php endif; ?>
     </tr>
     <?php endforeach; ?>
     </table>

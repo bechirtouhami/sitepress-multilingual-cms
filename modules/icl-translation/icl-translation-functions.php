@@ -1109,6 +1109,7 @@ function icl_get_post_translation_status($post_id){
 }
 
 function icl_display_post_translation_status($post_id){
+    $post_translation_statuses = true;
     global $wpdb, $sitepress;                                                                                                               
     $tr_info = $wpdb->get_row("
         SELECT lt.name, t.language_code, t.source_language_code 
@@ -1130,19 +1131,20 @@ function icl_display_post_translation_status($post_id){
     $post_updated = $wpdb->get_var("SELECT c.md5<>n.md5 FROM {$wpdb->prefix}icl_content_status c JOIN {$wpdb->prefix}icl_node n ON c.nid=n.nid WHERE c.nid=".$post_id);
     
     $status = icl_get_post_translation_status($post_id);    
+    
     foreach($status as $k=>$v){
         $status[$v->target] = $v;
         unset($status[$k]);
     }
     
     if(empty($status)){
-        if(count($sitepress->get_element_translations($sitepress->get_element_trid($post_id), 'post', true)) <= 1 ){
-            echo '<table class="widefat">';
-            echo '<tr><td align="center">';
-            echo __('Not translated');
-            echo '</td></tr>';
-            echo '</table>';
-        }
+        ////if(count($sitepress->get_element_translations($sitepress->get_element_trid($post_id), 'post', true)) <= 1 ){
+        ////    echo '<table class="widefat">';
+        ////    echo '<tr><td align="center">';
+        ////    echo __('Not translated');
+        ////    echo '</td></tr>';
+        ////    echo '</table>';
+        ////}
     }else{  
         if($post_updated){
             echo '
@@ -1151,18 +1153,19 @@ function icl_display_post_translation_status($post_id){
                 <span id="noupdate_but_wm" style="display:none">'.__('Translations for this document appear to be out-of-date. Are you sure they don\'t need to be updated?','sitepress').'</span>                
                 </div>';
         }
-        echo '<p><strong>'.__('Translation status:','sitepress').'</strong></p>';
-        echo '<table id="icl_translations_statuses" class="widefat">';        
-        $oddcolumn = true;
+        
+        ////echo '<p><strong>'.__('Translation status:','sitepress').'</strong></p>';
+        ////echo '<table id="icl_translations_statuses" class="widefat">';        
+        ////$oddcolumn = true;
         $active_languages = $sitepress->get_active_languages();    
         foreach($active_languages as $al){            
             if($al['code']==$sitepress->get_default_language()) continue;
-            $oddcolumn = !$oddcolumn;            
-            echo '<tr'; if($oddcolumn) echo ' class="alternate"'; echo '>';
-            echo '<td scope="col">'.sprintf(__('Translation to %s'), $al['display_name']).'</td>';            
-            echo '<td align="right" scope="col" class="icl_translation_status_msg">';            
+            /////$oddcolumn = !$oddcolumn;            
+            /////echo '<tr'; if($oddcolumn) echo ' class="alternate"'; echo '>';
+            /////echo '<td scope="col">'.sprintf(__('Translation to %s'), $al['display_name']).'</td>';            
+            /////echo '<td align="right" scope="col" class="icl_translation_status_msg">';            
             if($status[$al['code']]->status==CMS_TARGET_LANGUAGE_DONE && $post_updated){
-                echo __('translation needs update','sitepress');
+                $__status = __('translation needs update','sitepress');                
             }else{
                 switch($status[$al['code']]->status){
                     //case CMS_REQUEST_WAITING_FOR_PROJECT_CREATION: echo __('Waiting for project creation','sitepress');break;
@@ -1170,17 +1173,22 @@ function icl_display_post_translation_status($post_id){
                     //case CMS_REQUEST_CREATING_PROJECT: echo __('Creating project','sitepress');break;
                     //case CMS_REQUEST_RELEASED_TO_TRANSLATORS: echo __('Released to translators','sitepress');break;
                     //case CMS_REQUEST_TRANSLATED: echo __('Translated on server','sitepress');break;
-                    case CMS_REQUEST_WAITING_FOR_PROJECT_CREATION: echo __('Translation in progress','sitepress');break;
-                    case CMS_TARGET_LANGUAGE_DONE: echo __('Translation complete','sitepress');break;
-                    case CMS_REQUEST_FAILED: echo __('Request failed','sitepress');break;
-                    default: echo __('Not translated','sitepress');
+                    case CMS_REQUEST_WAITING_FOR_PROJECT_CREATION: $__status = __('Translation in progress','sitepress');break;
+                    case CMS_TARGET_LANGUAGE_DONE: $__status = __('Translation complete','sitepress');break;
+                    case CMS_REQUEST_FAILED: $__status = __('Request failed','sitepress');break;
+                    default: $__status = __('Not translated','sitepress');
                 }
             }
-            echo '</td>';
-            echo '</tr>';            
+            ////echo $__status;            
+            $GLOBALS['__post_translation_status'][$post_id][$al['code']] = $__status;
+            ////echo '</td>';
+            ////echo '</tr>';            
         }        
-        echo '</table>';
+        ////echo '</table>';
     }    
+}
+
+function __icl_get_post_translations_status($post_id){
 }
 
 function icl_decode_translation_status_id($status){
