@@ -952,7 +952,7 @@ class SitePress{
             $where_add = " AND t.trid='{$trid}'"; 
         }   
         $query = "
-            SELECT t.language_code, t.element_id {$sel_add}
+            SELECT t.language_code, t.element_id, t.source_language_code IS NULL AS original {$sel_add}
             FROM {$wpdb->prefix}icl_translations t
                  {$join_add}                 
             WHERE 1 {$where_add}

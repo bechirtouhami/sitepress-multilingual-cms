@@ -12,7 +12,12 @@
 </p>
 <div style="clear:both;font-size:1px">&nbsp;</div>
 
-<?php do_action('icl_post_languages_options_before', $post->ID) ?>
+<?php 
+    do_action('icl_post_languages_options_before', $post->ID);
+    if($this->get_icl_translation_enabled()){
+        icl_display_post_translation_status($post->ID, &$post_translation_statuses);
+    }
+?>
 
 <?php if($trid): ?>
     <p style="clear:both;"><?php echo __('Translations', 'sitepress') ?> (<a href="javascript:;" 
@@ -40,7 +45,7 @@
         </td>
         <?php if($this->get_icl_translation_enabled()):?>
         <td align="right">
-        <?php echo isset($GLOBALS['__post_translation_status'][$post->ID][$lang['code']]) ? $GLOBALS['__post_translation_status'][$post->ID][$lang['code']] : __('Not translated','sitepress'); ?>
+        <?php echo isset($post_translation_statuses[$lang['code']]) ? $post_translation_statuses[$lang['code']] : __('Not translated','sitepress'); ?>
         </td>
         <?php endif; ?>
     </tr>
