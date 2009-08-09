@@ -244,7 +244,7 @@ $available_contexts = array_unique($available_contexts);
             ?>
             <?php if(isset($_GET['show_results']) && $_GET['show_results']=='all'): ?>
             <div class="tablenav-pages">                
-            <a href="admin.php?page=<?php echo $_GET['page'] ?><?php if(isset($_GET['context'])) echo '&context='.$_GET['context'];?><?php if(isset($_GET['status'])) echo '&status='.$_GET['status'];?>"><?php printf(__('Display %d results per page', 'sitepress'), $sitepress_settings['st']['strings_per_page']); ?></a>
+            <a href="admin.php?page=<?php echo $_GET['page'] ?><?php if(isset($_GET['context'])) echo '&amp;context='.$_GET['context'];?><?php if(isset($_GET['status'])) echo '&status='.$_GET['status'];?>"><?php printf(__('Display %d results per page', 'sitepress'), $sitepress_settings['st']['strings_per_page']); ?></a>
             </div>
             <?php endif; ?>            
 
@@ -268,7 +268,7 @@ $available_contexts = array_unique($available_contexts);
                 
                 <?php if(!isset($_GET['show_results'])): ?>
                 &nbsp;
-                <a href="admin.php?page=<?php echo $_GET['page'] ?>&show_results=all<?php if(isset($_GET['context'])) echo '&context='.$_GET['context'];?><?php if(isset($_GET['status'])) echo '&status='.$_GET['status'];?>"><?php echo __('Display all results', 'sitepress'); ?></a>
+                <a href="admin.php?page=<?php echo $_GET['page'] ?>&amp;show_results=all<?php if(isset($_GET['context'])) echo '&amp;context='.$_GET['context'];?><?php if(isset($_GET['status'])) echo '&amp;status='.$_GET['status'];?>"><?php echo __('Display all results', 'sitepress'); ?></a>
                 <?php endif; ?>
             </div>
             
@@ -283,7 +283,8 @@ $available_contexts = array_unique($available_contexts);
         <br clear="all" />    
         
         <?php if($icl_st_translation_enabled): ?>
-            <h4><?php echo __('Translation options', 'sitepress') ?></h4>            
+            <h4><?php _e('Translation by ICanLocalize', 'sitepress') ?></h4>
+            <p><?php _e('You can send all the untranslated strings for translation by ICanLocalize.', 'sitepress') ?></p>
             <form method="post" id="icl_st_review_strings" name="icl_st_review_strings" action="">
             <input type="hidden" name="icl_st_action" value="preview" />
             <input type="hidden" name="strings" value="" />
@@ -327,6 +328,7 @@ $available_contexts = array_unique($available_contexts);
                                       '</a>',
                                       'sitepress')?>
             </p>
+            <br />
             <?php endif; ?>
         </form>    
         <?php else: ?>
@@ -366,7 +368,7 @@ $available_contexts = array_unique($available_contexts);
                                             <?php echo __('Theme/plugin texts', 'sitepress'); ?></label></li>                        
                                     </ul>
                                     <p>
-                                    <input class="button-secondary" type="submit" name="iclt_st_sw_save" value="<?php echo __('Save', 'sitepress')?>" />
+                                    <input class="button-secondary" type="submit" name="iclt_st_sw_save" value="<?php echo __('Save options and rescan strings', 'sitepress')?>" />
                                     <span class="icl_ajx_response" style="display:inline"><?php if(isset($_GET['updated']) && $_GET['updated']=='true') echo __('Settings saved', 'sitepress') ?></span>
                                     </p>
                                 </form>                                
@@ -420,7 +422,7 @@ $available_contexts = array_unique($available_contexts);
                                         <?php if(!empty($available_contexts)):?>
                                         <a href="#" onclick="var __prv = jQuery(this).parent().prev(); jQuery(this).prev().val(''); jQuery(this).parent().fadeOut('fast',function(){__prv.fadeIn('fast')});return false;"><?php echo __('select from existing','sitepress')?></a>
                                         <?php endif ?>
-                                        <span>                                        
+                                        </span>                                        
                                     </p>  
                                     
                                     <p>

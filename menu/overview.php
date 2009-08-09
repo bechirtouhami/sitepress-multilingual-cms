@@ -180,7 +180,7 @@ if($sitepress_settings['existing_content_language_verified']){
                           
                           
                 <?php if($sitepress_settings['existing_content_language_verified']): ?>                
-                <div id="dashboard_wpml_content_translation" class="postbox">
+                <div id="dashboard_wpml_theme_localization" class="postbox">
                     <div class="handlediv" title="<?php echo __('Click to toggle', 'sitepress'); ?>">
                         <br/>
                     </div>
