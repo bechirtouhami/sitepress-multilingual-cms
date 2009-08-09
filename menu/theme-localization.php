@@ -9,15 +9,16 @@ $theme_localization_stats = get_theme_localization_stats();
 
 <div class="wrap">
     <div id="icon-options-general" class="icon32"><br /></div>
-    <h2><?php echo __('Theme localization', 'sitepress') ?></h2>    
+    <h2><?php _e('Theme localization', 'sitepress') ?></h2>    
 
-    <h3><?php echo __('How to localize theme?','sitepress'); ?></h3>
+    <h3><?php _e('Select how to localize the theme','sitepress'); ?></h3>
+    <p><?php _e("If your theme's texts are wrapped in gettext calls, WPML can help you display it multilingual.",'sitepress'); ?></p>
     <form id="icl_theme_localization_type" method="post" action="">
     <input type="hidden" name="icl_ajx_action" value="icl_save_theme_localization_type" />
     <ul>
-        <li><label><input type="radio" name="icl_theme_localization_type" value="0" <?php if($sitepress_settings['theme_localization_type']==0):?>checked="checked"<?php endif; ?> /> <?php echo __('No localization', 'sitepress') ?></label></li>
-        <li><label><input type="radio" name="icl_theme_localization_type" value="1" <?php if($sitepress_settings['theme_localization_type']==1):?>checked="checked"<?php endif; ?> /> <?php echo __('Translate the theme by WPML', 'sitepress') ?></label></li>
-        <li><label><input type="radio" name="icl_theme_localization_type" value="2" <?php if($sitepress_settings['theme_localization_type']==2):?>checked="checked"<?php endif; ?> /> <?php echo __('Using a .mo file in the theme directory', 'sitepress') ?></label></li>
+        <li><label><input type="radio" name="icl_theme_localization_type" value="0" <?php if($sitepress_settings['theme_localization_type']==0):?>checked="checked"<?php endif; ?> /> <?php _e("No localization.<br /><i>The theme's texts will not be localized.</i>", 'sitepress') ?></label></li>
+        <li><label><input type="radio" name="icl_theme_localization_type" value="1" <?php if($sitepress_settings['theme_localization_type']==1):?>checked="checked"<?php endif; ?> /> <?php _e("Translate the theme by WPML.<br /><i>WPML will add the theme's texts to the string translation page, where you can enter translations.</i>", 'sitepress') ?></label></li>
+        <li><label><input type="radio" name="icl_theme_localization_type" value="2" <?php if($sitepress_settings['theme_localization_type']==2):?>checked="checked"<?php endif; ?> /> <?php _e("Using a .mo file in the theme directory.<br /><i>Include the theme's .mo files in the theme's folder and WPML will load the right file for each language.</i>", 'sitepress') ?></label></li>
     </ul>
     <p>
         <input class="button" name="save" value="<?php echo __('Save','sitepress') ?>" type="submit" />        
@@ -25,8 +26,10 @@ $theme_localization_stats = get_theme_localization_stats();
     </form>
     
     <?php if($sitepress_settings['theme_localization_type'] > 0):?>
+    <br />
     <div id="icl_tl">
-    <h3><?php echo __('Settings', 'sitepress') ?></h3>
+    <h3><?php _e('Language locale settings', 'sitepress') ?></h3>
+    <p><?php _e('Select the locale to use for each language. The locale for the default language is set in your wp_config.php file.', 'sitepress') ?></p>
     <form id="icl_theme_localization" name="icl_lang_more_options" method="post" action="">
     <input type="hidden" name="icl_post_action" value="save_theme_localization" />    
     <div id="icl_theme_localization_wrap"><span id="icl_theme_localization_subwrap">    
@@ -98,12 +101,12 @@ $theme_localization_stats = get_theme_localization_stats();
         <?php endif ?>
     </p>
     <?php endif; ?>
+    </span>
     </div>
     <p>
         <input class="button" name="save" value="<?php echo __('Save','sitepress') ?>" type="submit" />
         <span class="icl_ajx_response" id="icl_ajx_response_fn"></span>
     </p>
-    <span>
     </form>
     <br /><br />
     </div> 
@@ -111,10 +114,11 @@ $theme_localization_stats = get_theme_localization_stats();
     
     <?php if($sitepress_settings['theme_localization_type'] == 1):?>
         
-        <h3><?php echo __('Strings in the theme', 'sitepress'); ?></h3>
+        <h3><?php _e('Strings in the theme', 'sitepress'); ?></h3>
         <div id="icl_strings_in_theme_wrap">
         
         <?php if($theme_localization_stats): ?>
+        <p><?php _e('The following strings were found in your theme.', 'sitepress'); ?></p>
         <table id="icl_strings_in_theme" class="widefat" cellspacing="0">
             <thead>
                 <tr>
@@ -124,6 +128,14 @@ $theme_localization_stats = get_theme_localization_stats();
                     <th scope="col">&nbsp;</th>
                 </tr>
             </thead>  
+            <tfoot>
+                <tr>                
+                    <th scope="col"><?php echo __('Total', 'sitepress') ?></th>
+                    <th scope="col">&nbsp;</th>
+                    <th scope="col" style="text-align:right"><?php echo $_tmpgt ?></th>
+                    <th scope="col">&nbsp;</th>
+                </tr>
+            </tfoot>                              
             <tbody>
                 <?php foreach($sitepress_settings['st']['theme_localization_domains'] as $tl_domain): ?>
                 <tr scope="col">
@@ -131,8 +143,8 @@ $theme_localization_stats = get_theme_localization_stats();
                     <td><?php echo __('Fully translated', 'sitepress') ?></td>
                     <td align="right"><?php echo $_tmpcomp = $theme_localization_stats[$tl_domain ? 'theme ' . $tl_domain : 'theme']['complete'] ?></td>
                     <td rowspan="3" align="right" style="padding-top:10px;">
-                        <a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH) ?>/menu/string-translation.php&context=<?php echo $tl_domain ? 'theme ' . $tl_domain : 'theme' ?>" class="button-secondary"><?php echo __("View all the theme's texts",'sitepress')?></a>
-                        <a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH) ?>/menu/string-translation.php&context=<?php echo $tl_domain ? 'theme ' . $tl_domain : 'theme' ?>&status=0" class="button-primary"><?php echo __("View strings that need translation",'sitepress')?></a>
+                        <a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH) ?>/menu/string-translation.php&amp;context=<?php echo $tl_domain ? 'theme ' . $tl_domain : 'theme' ?>" class="button-secondary"><?php echo __("View all the theme's texts",'sitepress')?></a>
+                        <a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH) ?>/menu/string-translation.php&amp;context=<?php echo $tl_domain ? 'theme ' . $tl_domain : 'theme' ?>&amp;status=0" class="button-primary"><?php echo __("View strings that need translation",'sitepress')?></a>
                     </td>
                 </tr>
                 <tr scope="col">
@@ -146,14 +158,6 @@ $theme_localization_stats = get_theme_localization_stats();
                 <?php endforeach  ?>
             </tbody>
             <?php if(1 < count($sitepress_settings['st']['theme_localization_domains'])): ?>
-            <tfoot>
-                <tr>                
-                    <th scope="col"><?php echo __('Total', 'sitepress') ?></th>
-                    <th scope="col">&nbsp;</th>
-                    <th scope="col" style="text-align:right"><?php echo $_tmpgt ?></th>
-                    <th scope="col">&nbsp;</th>
-                </tr>
-            </tfoot>                              
             <?php endif; ?>
         </table>
         <?php else: ?>
