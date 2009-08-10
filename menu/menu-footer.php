@@ -1,4 +1,4 @@
-<div style="background-color: #FFFBCC; border: 1pt solid #E6DB55; margin: 1em; padding: 1em;">
+<div style="background-color: #FFFBCC; border: 1pt solid #E6DB55; padding: 1em;">
 <h3><?php echo __('Need help?', 'sitepress')?></h3>
 
 <p>

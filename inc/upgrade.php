@@ -5,7 +5,7 @@ if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '
 add_action('plugins_loaded', 'icl_plugin_upgrade' , 1);
 
 function icl_plugin_upgrade(){
-    global $wpdb;
+    global $wpdb, $sitepress_settings, $sitepress;
     
     if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '0.9.3', '<')){
         require_once(ICL_PLUGIN_PATH . '/inc/lang-data.inc');      

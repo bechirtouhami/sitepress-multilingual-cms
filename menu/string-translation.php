@@ -256,8 +256,9 @@ $available_contexts = array_unique($available_contexts);
                     number_format_i18n( $wp_query->found_posts ),
                     $page_links
                     ); echo $page_links_text; 
-                ?>
+                ?>                                         
                 <?php endif; ?>
+                <?php if(!isset($_GET['show_results'])): ?>
                 <?php echo __('Strings per page:', 'sitepress')?>
                 <select name="icl_st_per_page" onchange="location.href='admin.php?page=<?php echo $_GET['page']?>&amp;strings_per_page='+this.value">
                     <option value="10"<?php if($sitepress_settings['st']['strings_per_page']==10) echo ' selected="selected"'; ?>>10</option>
@@ -265,8 +266,6 @@ $available_contexts = array_unique($available_contexts);
                     <option value="50"<?php if($sitepress_settings['st']['strings_per_page']==50) echo ' selected="selected"'; ?>>50</option>
                     <option value="100"<?php if($sitepress_settings['st']['strings_per_page']==100) echo ' selected="selected"'; ?>>100</option>
                 </select>
-                
-                <?php if(!isset($_GET['show_results'])): ?>
                 &nbsp;
                 <a href="admin.php?page=<?php echo $_GET['page'] ?>&amp;show_results=all<?php if(isset($_GET['context'])) echo '&amp;context='.$_GET['context'];?><?php if(isset($_GET['status'])) echo '&amp;status='.$_GET['status'];?>"><?php echo __('Display all results', 'sitepress'); ?></a>
                 <?php endif; ?>

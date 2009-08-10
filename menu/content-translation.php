@@ -28,7 +28,11 @@
     <?php else: ?>    
         <?php if($sitepress->icl_account_configured() ): ?>
         <div class="updated fade">
-        <p><?php printf(__('To send documents to translation, use the <a href="%s">Translation dashboard</a>.' , 'sitepress'), 'tools.php?page='.basename(ICL_PLUGIN_PATH).'/modules/icl-translation/icl-translation-dashboard.php'); ?></p>
+        <p>
+            <?php printf(__('To send documents to translation, use the <a href="%s">Translation dashboard</a>.' , 'sitepress'), 'tools.php?page='.basename(ICL_PLUGIN_PATH).'/modules/icl-translation/icl-translation-dashboard.php'); ?>
+            <input id="icl_disable_content_translation" type="button" class="button-primary" value="<?php echo __('Disable content translation','sitepress') ?>" />
+            <span id="icl_toggle_ct_confirm_message" style="display:none"><?php echo __('Are you sure you want to disable content translation?','sitepress'); ?></span>
+        </p>
         </div>
         <?php endif; ?>
         
@@ -298,7 +302,7 @@
                     
     <?php endif; // if content translation enabled ?>
     
-    <?php if($sitepress->icl_account_configured()): ?>
+    <?php if($sitepress->get_icl_translation_enabled()): ?>
     <div id="icl_plugin_texts_wrapper" class="metabox-holder">
     <div class="postbox-container">
         <div id="normal-sortables" class="meta-box-sortables ui-sortable">
@@ -366,12 +370,13 @@
     </div>
     </div>
     <br clear="all" />
-    <?php endif; ?>    
+    <?php else: ?>    
      
     <br /> 
-    <p><input id="icl_<?php if($sitepress->get_icl_translation_enabled()): ?>disable<?php else:?>enable<?php endif?>_content_translation" type="button" class="button-primary" value="<?php echo $sitepress->get_icl_translation_enabled() ? __('Disable content translation','sitepress') : __('Enable content translation','sitepress') ?>" /></p>
-    <span id="icl_toggle_ct_confirm_message" style="display:none"><?php echo __('Are you sure you want to disable content translation?','sitepress'); ?></span>
+    <p><input id="icl_enable_content_translation" type="button" class="button-primary" value="<?php echo __('Enable content translation','sitepress') ?>" /></p>    
     <br /> 
+    
+    <?php endif; ?>    
      
     <?php do_action('icl_menu_footer'); ?>
     
