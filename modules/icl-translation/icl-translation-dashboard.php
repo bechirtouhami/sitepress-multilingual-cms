@@ -71,6 +71,7 @@
     jQuery(document).ready(function(){
             jQuery('#icl-estimated-words-count').html('<?php echo count(explode(' ', $documents[$_GET['post_id']]->post_content)) ?>');
             jQuery('#icl-estimated-quote').html('<?php echo 0.07 * count(explode(' ', $documents[$_GET['post_id']]->post_content)) ?>');
+            jQuery('#icl-estimated-quote-all').html('<?php echo (count($active_languages)-1) * 0.07 * count(explode(' ', $documents[$_GET['post_id']]->post_content)) ?>');            
     });
     </script>
     <?php else: ?>

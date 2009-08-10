@@ -80,6 +80,7 @@ $available_contexts = array_unique($available_contexts);
         </form>
         
     <?php elseif(isset($icl_st_preview_strings) && !empty($icl_st_preview_strings)): ?>
+        <?php $total_langs = count(explode(",",$_POST['langs'])); ?>
         <h3><?php echo __('Preview strings','sitepress') ?></h3>
         <form name="icl_st_do_send_strings" id="icl_st_do_send_strings" method="post" action="">
         <input type="hidden" name="strings" value="<?php echo $_POST['strings'] ?>" />
@@ -89,23 +90,42 @@ $available_contexts = array_unique($available_contexts);
                 <tr>                    
                     <th><?php echo __('String', 'sitepress') ?></th>
                     <th scope="col" style="text-align:right"><?php echo __('Word count', 'sitepress') ?></th>
-                    <th scope="col" style="text-align:right"><?php echo __('Estimated cost', 'sitepress') ?></th>
+                    <?php if(1 < $total_langs): ?>
+                    <th scope="col" style="text-align:right"><?php printf(__('Cost per language (at $%s per word)', 'sitepress'),'0.7'); ?></th>
+                    <?php endif; ?>
+                    <th scope="col" style="text-align:right"><?php printf(__('Cost (at $%s per word)', 'sitepress'),'0.7'); ?></th>
                 </tr>
             </thead>
             <tbody>
-                <?php $total_cost = $total_wc = 0; ?>
+                <?php 
+                    $total_cost = $total_wc = $total_cost_pl = 0; 
+                    $total_langs = count(explode(",",$_POST['langs']));                    
+                ?>
                 <?php foreach($icl_st_preview_strings as $string): ?>
+                    <?php 
+                        $wc = count(explode(' ',$string->value)); $total_wc += $wc;
+                        $cost_pl = $wc * 0.07;
+                        $cost = $wc * 0.07 * $total_langs;
+                        $total_cost += $cost;
+                        $total_cost_pl += $cost_pl;
+                    ?>
                     <tr>                        
                         <td><?php echo htmlentities($string->value) ?></td>
-                        <td align="right"><?php echo $wc = count(explode(' ',$string->value)); $total_wc += $wc; ?></td>
-                        <td align="right"><?php echo '$'; echo money_format($cost = $wc * 0.07, 2); $total_cost += $cost ?></td>
+                        <td align="right"><?php echo $wc ?></td>
+                        <?php if(1 < $total_langs): ?>
+                        <td align="right"><?php echo '$'; echo money_format($cost_pl, 2); ?></td>
+                        <?php endif; ?>
+                        <td align="right"><?php echo '$'; echo money_format($cost, 2); ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
             <tfoot>
                 <tr>
-                    <th><?php printf(__('Estimated total cost (at $%s per word)', 'sitepress'), '0.7') ?></th>
+                    <th><?php echo __('Total', 'sitepress'); ?></th>
                     <th style="text-align:right"><?php echo $total_wc; ?></th>
+                    <?php if(1 < $total_langs): ?>
+                    <th style="text-align:right"><?php echo '$'; echo money_format($total_cost_pl,2); ?></th>
+                    <?php endif; ?>
                     <th style="text-align:right"><?php echo '$'; echo money_format($total_cost,2); ?></th>
                 </tr>
             </tfoot>                    
