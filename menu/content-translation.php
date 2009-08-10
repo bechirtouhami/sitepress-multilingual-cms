@@ -30,7 +30,7 @@
         <div class="updated fade">
         <p>
             <?php printf(__('To send documents to translation, use the <a href="%s">Translation dashboard</a>.' , 'sitepress'), 'tools.php?page='.basename(ICL_PLUGIN_PATH).'/modules/icl-translation/icl-translation-dashboard.php'); ?>
-            <input id="icl_disable_content_translation" type="button" class="button-primary" value="<?php echo __('Disable content translation','sitepress') ?>" />
+            <input id="icl_disable_content_translation" type="button" class="button-secondary" value="<?php echo __('Disable content translation','sitepress') ?>" />
             <span id="icl_toggle_ct_confirm_message" style="display:none"><?php echo __('Are you sure you want to disable content translation?','sitepress'); ?></span>
         </p>
         </div>
