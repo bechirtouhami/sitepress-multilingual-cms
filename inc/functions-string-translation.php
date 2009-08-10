@@ -359,49 +359,34 @@ function icl_update_string_status($string_id){
     if($st){        
         foreach($st as $t){
             $translations[$t->language] = $t->status;
-        }
+        }        
         $active_languages = $sitepress->get_active_languages();
-        
-        $_not_translated = true;
-        $_complete = true;
-        $_partial = false;
-        $_needs_update = false;                
-        foreach($active_languages as $lang){
-            if($lang['code'] == $sitepress->get_current_language()) continue; 
-            switch($translations[$lang['code']]){
-                case ICL_STRING_TRANSLATION_NOT_TRANSLATED:
-                    $_complete = false;                            
-                    break;
-                case ICL_STRING_TRANSLATION_COMPLETE:
-                    $_complete = true;                            
-                    $_partial = true;
-                    break;
-                case ICL_STRING_TRANSLATION_NEEDS_UPDATE:
-                    $_needs_update = true;
-                    $_complete = false;
-                    $_partial = false;
-                    break;
-                default:
-                    $_complete = false;                            
-            }                    
-        }
-        
-        if($_complete){
-            $status = ICL_STRING_TRANSLATION_COMPLETE;
-        }elseif($_partial){
-            $status = ICL_STRING_TRANSLATION_PARTIAL;
-        }elseif($_needs_update){
+        if(empty($translations) || max($translations) == ICL_STRING_TRANSLATION_NOT_TRANSLATED){
+            $status = ICL_STRING_TRANSLATION_NOT_TRANSLATED;
+        }elseif(count($translations) < count($active_languages)-1){
+            if(in_array(ICL_STRING_TRANSLATION_NEEDS_UPDATE,$translations)){
+                $status = ICL_STRING_TRANSLATION_NEEDS_UPDATE;
+            }elseif(in_array(ICL_STRING_TRANSLATION_COMPLETE,$translations)){
+                $status = ICL_STRING_TRANSLATION_PARTIAL;            
+            }else{
+                $status = ICL_STRING_TRANSLATION_NOT_TRANSLATED;
+            }            
+        }elseif(ICL_STRING_TRANSLATION_NEEDS_UPDATE == array_unique($translations)){            
             $status = ICL_STRING_TRANSLATION_NEEDS_UPDATE;
         }else{
-            $status = ICL_STRING_TRANSLATION_NOT_TRANSLATED;
-        }        
+            if(in_array(ICL_STRING_TRANSLATION_NEEDS_UPDATE,$translations)){
+                $status = ICL_STRING_TRANSLATION_NEEDS_UPDATE;
+            }elseif(in_array(ICL_STRING_TRANSLATION_NOT_TRANSLATED,$translations)){
+                $status = ICL_STRING_TRANSLATION_PARTIAL;            
+            }else{
+                $status = ICL_STRING_TRANSLATION_COMPLETE;            
+            }
+        }
     }else{
         $status = ICL_STRING_TRANSLATION_NOT_TRANSLATED;        
-    }
-    
+    }    
     $wpdb->update($wpdb->prefix.'icl_strings', array('status'=>$status), array('id'=>$string_id));
-    return $status;
-    
+    return $status;    
 }
 
 function icl_update_string_status_all(){
@@ -473,8 +458,8 @@ function icl_add_string_translation($string_id, $language, $value, $status = fal
         }
         if($status){
             $st_update['status'] = $status;
-        }else{
-            $st_update['status'] = 2;
+        }elseif($status === ICL_STRING_TRANSLATION_NOT_TRANSLATED){
+            $st_update['status'] = ICL_STRING_TRANSLATION_NOT_TRANSLATED;
         }        
         if(!empty($st_update)){
             $wpdb->update($wpdb->prefix.'icl_string_translations', $st_update, array('id'=>$st_id));
