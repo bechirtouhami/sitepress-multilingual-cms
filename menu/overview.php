@@ -93,9 +93,9 @@ if($sitepress_settings['existing_content_language_verified']){
                         <p class="sub"><?php echo __('With Sticky Links, WPML can automatically ensure that all links on posts and pages are up-to-date, should their URL change.', 'sitepress'); ?></p>
                     
                         <?php if($sitepress_settings['modules']['absolute-links']['enabled']):?>
-                        <p class="sub"><?php echo __('Sticky links are enabled.') ?></p>
+                        <p class="sub"><?php echo __('Sticky links are enabled.','sitepress') ?></p>
                         <?php else: ?>
-                        <p class="sub"><b><?php echo __('Sticky links are disabled.') ?></b></p>
+                        <p class="sub"><b><?php echo __('Sticky links are disabled.','sitepress') ?></b></p>
                         <?php endif; ?>
                         
                         <p class="sub">

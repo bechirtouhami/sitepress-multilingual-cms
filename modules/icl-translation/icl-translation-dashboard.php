@@ -129,7 +129,7 @@
     <br />
     <?php endif; ?>
 
-    <p><?php echo __('To see the status of pending translations or to cancel translation requests, go to the <a href="https://www.icanlocalize.com/websites/'. $sitepress_settings['site_id'] . '/cms_requests">project page</a> in ICanLocalize.') ?></p>    
+    <p><?php printf(__('To see the status of pending translations or to cancel translation requests, go to the <a href="%s">project page</a> in ICanLocalize.','sitepress'),(ICL_API_ENDPOINT.'/websites/'.$sitepress_settings['site_id'].'/cms_requests')) ?></p>    
 
     <table class="widefat fixed" id="icl-translation-dashboard" cellspacing="0">
         <thead>
@@ -254,7 +254,7 @@
     <span id="icl_message_2" style="display:none"><?php echo __('Translation in progress', 'sitepress')?></span>
     <?php if(isset($sitepress_settings['icl_balance'])): ?>
         <p>
-            <?php echo sprintf(__('Your balance with ICanLocalize is %s. Visit your %sICanLocalize finance%s page to deposit additional funds.'),
+            <?php echo sprintf(__('Your balance with ICanLocalize is %s. Visit your %sICanLocalize finance%s page to deposit additional funds.','sitepress'),
                                   '$'.$sitepress_settings['icl_balance'],
                                   '<a href="'.ICL_API_ENDPOINT.ICL_FINANCE_LINK.'">',
                                   '</a>',
