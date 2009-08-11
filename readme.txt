@@ -2,7 +2,7 @@
 Contributors: ICanLocalize
 Tags: CMS, navigation, menus, menu, dropdown, css, sidebar, pages, i18n, translation, localization, language, multilingual, WPML
 Requires at least: 2.6
-Tested up to: 2.8.2
+Tested up to: 2.8.3
 Stable tag: 1.1.0
 
 Turns any WordPress site into a fully featured multilingual content management system (CMS).
@@ -16,7 +16,8 @@ It integrates multilingual content management with robust navigation.
 
  * **Multilingual content** support that allows selecting post/page languages and creating translations.
  * **CMS navigation** elements including drop down menus, breadcrumbs trail and sidebar navigation.
- * **Integrated content translation** makes it possible to run multilingual sites on tiny budgets and with no effort.
+ * Integrated **content translation** makes it possible to run multilingual sites on tiny budgets and with no effort.
+ * Built in **theme localization** without .mo files.
  * Robust links to posts and pages that never break.
 
 *Highlights*
@@ -115,6 +116,12 @@ Also, go through the [detailed description](http://wpml.org/support/cannot-activ
 That's right. WPML is a commercial plugin (still GPL). We make our living doing translation through it. If you want to support us, just spread the word.
 
 == Changelog ==
+
+= 1.2.0 =
+* Adds theme localization.
+* ICanLocalize translation integration for theme and widget texts.
+* Added string translation import and export using .po files.
+* Fix for empty language tables bug.
 
 = 1.1.0 =
 * Adds [translation for general texts](http://wpml.org/wordpress-translation/translation-for-texts-by-other-plugins-and-themes/), such as title, tagline and widgets.
