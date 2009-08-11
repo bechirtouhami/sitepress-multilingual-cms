@@ -1141,8 +1141,8 @@ function icl_display_post_translation_status($post_id, &$post_translation_status
     // is ICL translation ?
     $icl_translation = get_post_meta($post_id,'_icl_translation',true); 
     if($icl_translation && $tr_info->name){
-        echo '<div style="text-align:center;clear:both;">'. sprintf(__('Translated from %s'),$tr_info->name).'</div>';
-        echo '<div style="text-align:center;clear:both;color:#888;">'. __('This translation is maintained by ICanLocalize. Edits that you do will be overwritten when the translator does an update.').'</div>';        
+        echo '<div style="text-align:center;clear:both;">'. sprintf(__('Translated from %s','sitepress'),$tr_info->name).'</div>';
+        echo '<div style="text-align:center;clear:both;color:#888;">'. __('This translation is maintained by ICanLocalize. Edits that you do will be overwritten when the translator does an update.','sitepress').'</div>';        
     }
     
     foreach($active_languages as $lang){
@@ -1198,8 +1198,8 @@ function icl_display_post_translation_status_OBSOLETE($post_id, &$post_translati
     // is ICL translation ?
     $icl_translation = get_post_meta($post_id,'_icl_translation',true); 
     if($icl_translation && $tr_info->name){
-        echo '<div style="text-align:center;clear:both;">'. sprintf(__('Translated from %s'),$tr_info->name).'</div>';
-        echo '<div style="text-align:center;clear:both;color:#888;">'. __('This translation is maintained by ICanLocalize. Edits that you do will be overwritten when the translator does an update.').'</div>';        
+        echo '<div style="text-align:center;clear:both;">'. sprintf(__('Translated from %s','sitepress'),$tr_info->name).'</div>';
+        echo '<div style="text-align:center;clear:both;color:#888;">'. __('This translation is maintained by ICanLocalize. Edits that you do will be overwritten when the translator does an update.','sitepress').'</div>';        
         //return;
         $post_id = $wpdb->get_var("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid='{$tr_info->trid}' AND element_type='post' AND source_language_code IS NULL");
     }
@@ -1602,20 +1602,20 @@ function _icl_list_posts($args){
     $type        = $args[7];
     
     if ( !$sitepress_settings['remote_management']) {
-        return array('err_code'=>1, 'err_str'=>__('remote translation management not enabled'));
+        return array('err_code'=>1, 'err_str'=>__('remote translation management not enabled','sitepress'));
     }    
     if ( !$sitepress->get_icl_translation_enabled() ) {
-        return array('err_code'=>3, 'err_str'=> __( 'Content translation not enabled.'));
+        return array('err_code'=>3, 'err_str'=> __( 'Content translation not enabled.','sitepress'));
     }
 
     //check signature
     $signature_chk = sha1($sitepress_settings['access_key'].$sitepress_settings['site_id'].$lang.$tstatus);
     if($signature_chk != $signature){
-        return array('err_code'=>2, 'err_str'=>__('signature incorrect'));
+        return array('err_code'=>2, 'err_str'=>__('signature incorrect','sitepress'));
     }
     
     if ($site_id != $sitepress_settings['site_id']) {
-        return array('err_code'=>4, 'err_str'=>__('website id is not correct'));
+        return array('err_code'=>4, 'err_str'=>__('website id is not correct','sitepress'));
     }
 
     $documents = icl_translation_get_documents($sitepress->get_language_code($lang), $tstatus, $status, $type, 100000, $from_date, $to_date);
@@ -1645,43 +1645,43 @@ function _icl_remote_control_translate_post($args){
     $langs       = $args[4];
 
     if ( !$sitepress_settings['remote_management']) {
-        return array('err_code'=>1, 'err_str'=>__('remote translation management not enabled'));
+        return array('err_code'=>1, 'err_str'=>__('remote translation management not enabled','sitepress'));
     }    
     if ( !$sitepress->get_icl_translation_enabled() ){
-        return array('err_code'=>3, 'err_str'=> __( 'Content translation not enabled.'));
+        return array('err_code'=>3, 'err_str'=> __( 'Content translation not enabled.','sitepress'));
     }
 
     //check signature
     $signature_chk = sha1($sitepress_settings['access_key'].$sitepress_settings['site_id'].$post_id.$from_lang.implode(',', $langs));
     if($signature_chk != $signature){
-        return array('err_code'=>2, 'err_str'=>__('signature incorrect'));
+        return array('err_code'=>2, 'err_str'=>__('signature incorrect','sitepress'));
     }
     
     if ($site_id != $sitepress_settings['site_id']) {
-        return array('err_code'=>4, 'err_str'=>__('website id is not correct'));
+        return array('err_code'=>4, 'err_str'=>__('website id is not correct','sitepress'));
     }
 
     // check post_id
     $post = $wpdb->get_var("SELECT ID FROM {$wpdb->posts} WHERE ID={$post_id}");
     if(!$post){
-        return array('err_code'=>5, 'err_str'=>__('post id not found'));
+        return array('err_code'=>5, 'err_str'=>__('post id not found','sitepress'));
     }
 
     $element = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}icl_translations WHERE element_id={$post_id} and element_type='post'");
     if(!$element){
-        return array('err_code'=>6, 'err_str'=>__('post id not managed in icl_translations'));
+        return array('err_code'=>6, 'err_str'=>__('post id not managed in icl_translations','sitepress'));
     }
 
     $from_code = $sitepress->get_language_code($from_lang);
     if($element->language_code != $from_code){
-        return array('err_code'=>7, 'err_str'=>__('from language is not correct. '.$from_code.' != '.$element->language_code));
+        return array('err_code'=>7, 'err_str'=>sprintf(__('from language is not correct. %s != %s', 'sitepress'), $from_code, $element->language_code));
     }
     
     $language_pairs = $sitepress_settings['language_pairs'];
     
     foreach($langs as $to_lang){
         if(!isset($language_pairs[$from_code][$sitepress->get_language_code($to_lang)])){
-            return array('err_code'=>8, 'err_str'=>'to language "'.$to_lang.'" is not correct');
+            return array('err_code'=>8, 'err_str'=>sprintf(__('to language %s is not correct','sitepress'), $to_lang));
         }
     }
     
@@ -1693,7 +1693,7 @@ function _icl_remote_control_translate_post($args){
     if ($result != false){
         return array('err_code'=>0, 'rid'=>$result);
     } else {
-        return array('err_code'=>9, 'err_str'=>'failed to send for translation');
+        return array('err_code'=>9, 'err_str'=>_('failed to send for translation','sitepress'));
     }
     
     

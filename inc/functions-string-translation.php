@@ -771,9 +771,9 @@ function icl_st_scan_theme_files($dir = false, $recursion = 0){
             $sitepress->save_settings($sitepress_settings);
             closedir($dh);
             $scan_stats = __('= Your theme was scanned for texts =', 'sitepress') . '<br />' . 
-                          __('The following files were processed:') . '<br />' .
+                          __('The following files were processed:', 'sitepress') . '<br />' .
                           '<ol style="font-size:10px;"><li>' . join('</li><li>', $scanned_files) . '</li></ol>' . 
-                          sprintf(__('WPML found %s strings. They were added to the string translation table.'),count($__icl_registered_strings)) . 
+                          sprintf(__('WPML found %s strings. They were added to the string translation table.','sitepress'),count($__icl_registered_strings)) . 
                           '<br /><a href="#" onclick="jQuery(this).next().toggle();return false;">' . __('More details', 'sitepress') . '</a>'.
                           '<textarea style="display:none;width:100%;height:150px;font-size:10px;">' . $scan_stats . '</textarea>'; 
             return $scan_stats;

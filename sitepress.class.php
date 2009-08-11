@@ -492,9 +492,9 @@ class SitePress{
         ?>
         <script type="text/javascript">        
         var icl_ajx_url = '<?php echo ICL_PLUGIN_URL ?>/ajax.php';
-        var icl_ajx_saved = '<?php echo __('Data saved') ?>';
-        var icl_ajx_error = '<?php echo __('Error: data not saved') ?>';
-        var icl_default_mark = '<?php echo __('default') ?>';     
+        var icl_ajx_saved = '<?php echo __('Data saved','sitepress') ?>';
+        var icl_ajx_error = '<?php echo __('Error: data not saved','sitepress') ?>';
+        var icl_default_mark = '<?php echo __('default','sitepress') ?>';     
         var icl_this_lang = '<?php echo $this->this_lang ?>';   
         var icl_ajxloaderimg = '<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif';
         var icl_cat_adder_msg = '<?php echo __('To add categories that already exist in other languages go to the <a href="categories.php">category management page</a>','sitepress')?>';
@@ -1129,7 +1129,7 @@ class SitePress{
             }            
         }
         if(!$output){
-            $output = '<select id="parent_id"><option value="">' . __('Main Page (no parent)') . '</option></select>';
+            $output = '<select id="parent_id"><option value="">' . __('Main Page (no parent)','sitepress') . '</option></select>';
         }
         return $output;
     }

@@ -68,11 +68,11 @@ function icl_wp_widget_recent_comments_control() {
     if ( !$number = (int) $options['number'] )
         $number = 5;
 ?>
-            <p><label for="recent-comments-title"><?php _e('Title:'); ?> <input class="widefat" id="recent-comments-title" name="recent-comments-title" type="text" value="<?php echo $title; ?>" /></label></p>
+            <p><label for="recent-comments-title"><?php _e('Title:','sitepress'); ?> <input class="widefat" id="recent-comments-title" name="recent-comments-title" type="text" value="<?php echo $title; ?>" /></label></p>
             <p>
-                <label for="recent-comments-number"><?php _e('Number of comments to show:'); ?> <input style="width: 25px; text-align: center;" id="recent-comments-number" name="recent-comments-number" type="text" value="<?php echo $number; ?>" /></label>
+                <label for="recent-comments-number"><?php _e('Number of comments to show:','sitepress'); ?> <input style="width: 25px; text-align: center;" id="recent-comments-number" name="recent-comments-number" type="text" value="<?php echo $number; ?>" /></label>
                 <br />
-                <small><?php _e('(at most 15)'); ?></small>
+                <small><?php _e('(at most 15)','sitepress'); ?></small>
             </p>
             <input type="hidden" id="recent-comments-submit" name="recent-comments-submit" value="1" />
 <?php

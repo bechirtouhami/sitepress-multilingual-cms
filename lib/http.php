@@ -566,7 +566,7 @@ class WP_Http_Fsockopen {
 			if ( $r['redirection']-- > 0 ) {
 				return $this->request($arrHeaders['headers']['location'], $r);
 			} else {
-				return new WP_Error('http_request_failed', __('Too many redirects.'));
+				return new WP_Error('http_request_failed', __('Too many redirects.','sitepress'));
 			}
 		}
 
@@ -639,7 +639,7 @@ class WP_Http_Fopen {
 		$arrURL = parse_url($url);
 
 		if ( false === $arrURL )
-			return new WP_Error('http_request_failed', sprintf(__('Malformed URL: %s'), $url));
+			return new WP_Error('http_request_failed', sprintf(__('Malformed URL: %s','sitepress'), $url));
 
 		if ( 'http' != $arrURL['scheme'] && 'https' != $arrURL['scheme'] )
 			$url = str_replace($arrURL['scheme'], 'http', $url);
@@ -650,7 +650,7 @@ class WP_Http_Fopen {
 			$handle = fopen($url, 'r');
 
 		if (! $handle)
-			return new WP_Error('http_request_failed', sprintf(__('Could not open handle for fopen() to %s'), $url));
+			return new WP_Error('http_request_failed', sprintf(__('Could not open handle for fopen() to %s','sitepress'), $url));
 
 		// WordPress supports PHP 4.3, which has this function. Removed sanity
 		// checking for performance reasons.
@@ -745,7 +745,7 @@ class WP_Http_Streams {
 		$arrURL = parse_url($url);
 
 		if ( false === $arrURL )
-			return new WP_Error('http_request_failed', sprintf(__('Malformed URL: %s'), $url));
+			return new WP_Error('http_request_failed', sprintf(__('Malformed URL: %s','sitepress'), $url));
 
 		if ( 'http' != $arrURL['scheme'] && 'https' != $arrURL['scheme'] )
 			$url = str_replace($arrURL['scheme'], 'http', $url);
@@ -780,7 +780,7 @@ class WP_Http_Streams {
 			$handle = fopen($url, 'r', false, $context);
 
 		if ( ! $handle)
-			return new WP_Error('http_request_failed', sprintf(__('Could not open handle for fopen() to %s'), $url));
+			return new WP_Error('http_request_failed', sprintf(__('Could not open handle for fopen() to %s','sitepress'), $url));
 
 		// WordPress supports PHP 4.3, which has this function. Removed sanity
 		// checking for performance reasons.
@@ -1040,7 +1040,7 @@ class WP_Http_Curl {
 			if ( $curl_error = curl_error($handle) )
 				return new WP_Error('http_request_failed', $curl_error);
 			if ( in_array( curl_getinfo( $handle, CURLINFO_HTTP_CODE ), array(301, 302) ) )
-				return new WP_Error('http_request_failed', __('Too many redirects.'));
+				return new WP_Error('http_request_failed', __('Too many redirects.','sitepress'));
 
 			$theHeaders = array( 'headers' => array() );
 			$theBody = '';

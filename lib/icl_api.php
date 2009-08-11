@@ -64,7 +64,7 @@ class ICanLocalizeQuery{
             if((!$c->results || $c->timed_out) && $https){
                 $c->fetch(str_replace('https://','http://',$request));  
             }          
-            if($c->timed_out){die(__('Error:').$c->error);}
+            if($c->timed_out){die(__('Error:','sitepress').$c->error);}
         }else{
             $c->set_submit_multipart();          
             
@@ -88,7 +88,7 @@ class ICanLocalizeQuery{
             if((!$c->results || $c->timed_out) && $https){
                 $c->submit(str_replace('https://','http://',$request), $formvars, $formfiles);  
             }                      
-            if($c->timed_out){die(__('Error:').$c->error);}
+            if($c->timed_out){die(__('Error:','sitepress').$c->error);}
             update_option('_mp_post_https_tries', 0);
             
         }

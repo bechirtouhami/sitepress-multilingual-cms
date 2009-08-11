@@ -255,8 +255,8 @@ $available_contexts = array_unique($available_contexts);
             $page_links = paginate_links( array(
                 'base' => add_query_arg('paged', '%#%' ),
                 'format' => '',
-                'prev_text' => __('&laquo;'),
-                'next_text' => __('&raquo;'),
+                'prev_text' => '&laquo;',
+                'next_text' => '&raquo;',
                 'total' => $wp_query->max_num_pages,
                 'current' => $_GET['paged'],
                 'add_args' => isset($icl_translation_filter)?$icl_translation_filter:array() 
@@ -341,7 +341,7 @@ $available_contexts = array_unique($available_contexts);
             <?php if(isset($sitepress_settings['icl_balance'])): ?>
             <br clear="all" />
             <p>
-                <?php echo sprintf(__('Your balance with ICanLocalize is %s. Visit your %sICanLocalize finance%s page to deposit additional funds.'),
+                <?php echo sprintf(__('Your balance with ICanLocalize is %s. Visit your %sICanLocalize finance%s page to deposit additional funds.', 'sitepress'),
                                       '$'.$sitepress_settings['icl_balance'],
                                       '<a href="'.ICL_API_ENDPOINT.ICL_FINANCE_LINK.'">',
                                       '</a>',

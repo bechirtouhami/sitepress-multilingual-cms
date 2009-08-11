@@ -85,7 +85,7 @@ switch($_REQUEST['icl_ajx_action']){
                 $iclresponse .= '><label><input type="radio" name="default_language" value="' . $lang['code'] .'" ';
                 if($is_default) $iclresponse .= 'checked="checked"';
                 $iclresponse .= '>' . $lang['display_name'];
-                if($is_default) $iclresponse .= '('. __('default') . ')';
+                if($is_default) $iclresponse .= '('. __('default','sitepress') . ')';
                 $iclresponse .= '</label></li>';                
                 
                 if(!in_array($lang['code'],array_keys($default_categories))){
@@ -150,7 +150,7 @@ switch($_REQUEST['icl_ajx_action']){
         
         $ret = update_icl_account();
         if($ret){
-            echo '1| ('. __('Not updated on ICanLocalize: ') . $ret . ')';
+            echo '1| ('. __('Not updated on ICanLocalize: ', 'sitepress') . $ret . ')';
             break;
         }
         echo "1|";
@@ -178,7 +178,7 @@ switch($_REQUEST['icl_ajx_action']){
 
         $ret = update_icl_account();
         if($ret){
-            echo '1| ('. __('Not updated on ICanLocalize: ') . $ret . ')';
+            echo '1| ('. __('Not updated on ICanLocalize: ', 'sitepress') . $ret . ')';
             break;
         }
         if(isset($is_error)){
