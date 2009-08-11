@@ -1674,14 +1674,14 @@ function _icl_remote_control_translate_post($args){
 
     $from_code = $sitepress->get_language_code($from_lang);
     if($element->language_code != $from_code){
-        return array('err_code'=>7, 'err_str'=>sprintf(__('from language is not correct. %s != %s', 'sitepress'), $from_code, $element->language_code));
+        return array('err_code'=>7, 'err_str'=>sprintf(__('Source language is not correct. %s != %s', 'sitepress'), $from_code, $element->language_code));
     }
     
     $language_pairs = $sitepress_settings['language_pairs'];
     
     foreach($langs as $to_lang){
         if(!isset($language_pairs[$from_code][$sitepress->get_language_code($to_lang)])){
-            return array('err_code'=>8, 'err_str'=>sprintf(__('to language %s is not correct','sitepress'), $to_lang));
+            return array('err_code'=>8, 'err_str'=>sprintf(__('Destination language %s is not correct','sitepress'), $to_lang));
         }
     }
     
