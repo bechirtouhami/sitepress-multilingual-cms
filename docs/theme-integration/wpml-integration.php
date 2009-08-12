@@ -99,14 +99,21 @@ function wpml_languages_selector(){
 
 function wpml_t($context, $name, $original_value){
     if(function_exists(icl_t)){
-        icl_t($context, $name, $original_value);
+        return icl_t($context, $name, $original_value);
     }
 }
 
-function wpml_register_string(){
+function wpml_register_string($content, $name, $value){
     if(function_exists('icl_register_string')){
         icl_register_string($content, $name, $value);
     }    
 }
 
+function wpml_get_object_id($element_id, $element_type='post', $return_original_if_missing=false, $ulanguage_code=null){
+    if(function_exists('icl_object_id')){
+        return icl_object_id($element_id, $element_type, $return_original_if_missing, $ulanguage_code);
+    }else{
+        return $element_id;
+    }    
+}
 ?>
