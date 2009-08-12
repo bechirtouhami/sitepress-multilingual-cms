@@ -8,11 +8,12 @@
 // - get_bloginfo('url')
 // - etc...
 // with wpml_get_home_url()
+// * IMPORTANT: Most themes also add a trailing slash (/) to the URL. This function already includes it, so don't add the slash when using it.
 function wpml_get_home_url(){
     if(!function_exists('icl_get_home_url')){
         return icl_get_home_url();
     }else{
-        return get_bloginfo('url');
+        return rtrim(get_bloginfo('url') , '/') . '/';
     }
 }
 
@@ -71,11 +72,11 @@ function wpml_link_to_element($element_id, $element_type='post', $link_text='', 
 
 // Languages links to display in the footer
 //
-function wpml_languages_list_footer(){
+function wpml_languages_list($skip_missing=0, $div_id = "footer_language_list"){
     if(function_exists('icl_get_languages')){
-        $languages = icl_get_languages();
+        $languages = icl_get_languages('skip_missing='.intval($skip_missing));
         if(!empty($languages)){
-            echo '<div id="footer_language_list"><ul>';
+            echo '<div id="'.$div_id.'"><ul>';
             foreach($languages as $l){
                 echo '<li>';
                 if(!$l['active']) echo '<a href="'.$l['url'].'">';
@@ -91,4 +92,21 @@ function wpml_languages_list_footer(){
         }
     }
 }
+
+function wpml_languages_selector(){
+    do_action('icl_language_selector');    
+}
+
+function wpml_t($context, $name, $original_value){
+    if(function_exists(icl_t)){
+        icl_t($context, $name, $original_value);
+    }
+}
+
+function wpml_register_string(){
+    if(function_exists('icl_register_string')){
+        icl_register_string($content, $name, $value);
+    }    
+}
+
 ?>
