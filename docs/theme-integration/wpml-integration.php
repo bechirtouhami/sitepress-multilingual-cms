@@ -65,7 +65,7 @@ function wpml_link_to_element($element_id, $element_type='post', $link_text='', 
         }
         return $ret;
     }else{
-        return icl_link_to_element($element_id, $element_type='post', $link_text='', $optional_parameters=array(), $anchor='')
+        return icl_link_to_element($element_id, $element_type='post', $link_text='', $optional_parameters=array(), $anchor='');
     }        
 }
 
