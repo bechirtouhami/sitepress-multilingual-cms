@@ -69,4 +69,26 @@ function wpml_link_to_element($element_id, $element_type='post', $link_text='', 
     }        
 }
 
+// Languages links to display in the footer
+//
+function wpml_languages_list_footer(){
+    if(function_exists('icl_get_languages')){
+        $languages = icl_get_languages();
+        if(!empty($languages)){
+            echo '<div id="footer_language_list"><ul>';
+            foreach($languages as $l){
+                echo '<li>';
+                if(!$l['active']) echo '<a href="'.$l['url'].'">';
+                echo '<img src="'.$l['country_flag_url'].'" alt="'.$l['language_code'].'" width="18" height="12" />';
+                if(!$l['active']) echo '</a>';
+                if(!$l['active']) echo '<a href="'.$l['url'].'">';
+                echo $l['native_name'];
+                if(!$l['active']) echo ' ('.$l['translated_name'].')';
+                if(!$l['active']) echo '</a>';
+                echo '</li>';
+            }
+            echo '</ul></div>';
+        }
+    }
+}
 ?>
