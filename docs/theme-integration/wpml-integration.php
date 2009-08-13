@@ -10,7 +10,7 @@
 // with wpml_get_home_url()
 // * IMPORTANT: Most themes also add a trailing slash (/) to the URL. This function already includes it, so don't add the slash when using it.
 function wpml_get_home_url(){
-    if(!function_exists('icl_get_home_url')){
+    if(function_exists('icl_get_home_url')){
         return icl_get_home_url();
     }else{
         return rtrim(get_bloginfo('url') , '/') . '/';
@@ -100,6 +100,8 @@ function wpml_languages_selector(){
 function wpml_t($context, $name, $original_value){
     if(function_exists(icl_t)){
         return icl_t($context, $name, $original_value);
+    }else{
+        return $original_value;
     }
 }
 
