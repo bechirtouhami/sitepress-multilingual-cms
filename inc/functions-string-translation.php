@@ -567,7 +567,8 @@ function icl_sw_filters_widget_text($val){
 function icl_sw_filters_gettext($translation, $text, $domain){
     global $sitepress_settings;
     $has_translation = 0;
-    $ret_translation = icl_t('theme ' . $domain, md5($text), $text, $has_translation);
+    $context = ($domain != 'default') ? 'theme ' . $domain : 'theme';
+    $ret_translation = icl_t($context, md5($text), $text, $has_translation);
     if(false === $has_translation){
         $ret_translation = $translation;   
     }

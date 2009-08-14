@@ -105,9 +105,9 @@ function wpml_t($context, $name, $original_value){
     }
 }
 
-function wpml_register_string($content, $name, $value){
-    if(function_exists('icl_register_string')){
-        icl_register_string($content, $name, $value);
+function wpml_register_string($context, $name, $value){
+    if(function_exists('icl_register_string') && trim($value)){
+        icl_register_string($context, $name, $value);
     }    
 }
 
