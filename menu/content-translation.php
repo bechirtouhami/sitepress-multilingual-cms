@@ -302,7 +302,7 @@
                     
     <?php endif; // if content translation enabled ?>
     
-    <?php if($sitepress->get_icl_translation_enabled()): ?>
+    <?php if($sitepress->get_icl_translation_enabled() && $sitepress->icl_account_configured()): ?>
     <div id="icl_plugin_texts_wrapper" class="metabox-holder">
     <div class="postbox-container">
         <div id="normal-sortables" class="meta-box-sortables ui-sortable">
