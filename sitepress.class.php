@@ -202,6 +202,9 @@ class SitePress{
                             }
                             //
                             
+                            //deal with situations when template files need to be called directly
+                            add_action('template_redirect', array($this, '_allow_calling_template_file_directly'));
+                            
                             $_SERVER['REQUEST_URI'] = preg_replace('@^'. $blog_path . '/' . $this->this_lang.'@i', $blog_path ,$_SERVER['REQUEST_URI']);
                             // Check for special case of www.example.com/fr where the / is missing on the end
                             $parts = parse_url($_SERVER['REQUEST_URI']);
@@ -1982,6 +1985,20 @@ class SitePress{
     
     function menu_footer(){
         include ICL_PLUGIN_PATH . '/menu/menu-footer.php';
+    }
+    
+    function _allow_calling_template_file_directly(){
+        if(is_404()){  
+            global $wp_query, $wpdb;
+            $wp_query->is_404 = false;
+            $parts = parse_url(get_bloginfo('home'));
+            $req = str_replace($parts['path'], '', $_SERVER['REQUEST_URI']);
+            if(file_exists(ABSPATH . $req)){
+                header('HTTP/1.1 200 OK');
+                include ABSPATH . $req;
+                exit;
+            }
+        }
     }
     
 }  
