@@ -286,7 +286,7 @@ class SitePress{
     
     function verify_settings(){
         $default_settings = array(
-            'interview_translators' => 0,
+            'interview_translators' => 1,
             'existing_content_language_verified' => 0,
             'language_negotiation_type' => 3,
             'icl_lso_header' => 0, 
