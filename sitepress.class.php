@@ -65,6 +65,12 @@ class SitePress{
             add_action('create_term',  array($this, 'create_term'),1, 2);
             add_action('delete_term',  array($this, 'delete_term'),1,3);       
             add_filter('list_terms_exclusions', array($this, 'exclude_other_terms'),1,2);         
+            
+            // allow adding terms with the same name in different languages
+            add_filter("pre_term_name", array($this, 'pre_term_name'), 1, 2); 
+            // allow adding categories with the same name in different languages
+            add_action('admin_init', array($this, 'pre_save_category'));
+            
             // category language selection        
             add_action('edit_category',  array($this, 'create_term'),1, 2);        
             if($pagenow == 'categories.php'){
@@ -151,10 +157,12 @@ class SitePress{
             
             add_action('init', array($this,'plugin_localization'));            
             
+            
+            
         } //end if the initial language is set - existing_content_language_verified
         
     }
-                                      
+                                          
     function init(){     
         if($this->settings['existing_content_language_verified']){
             if(defined('WP_ADMIN')){
@@ -1199,6 +1207,33 @@ class SitePress{
             $term_lang = $_POST['icl_'.$el_type.'_language'];        
         }        
         $this->set_element_language_details($tt_id, $el_type, $trid, $term_lang);                
+    }
+    
+    function pre_term_name($value, $taxonomy){
+        //allow adding terms with the same name in different languages
+        global $wpdb;
+        //check if term exists
+        $term_id = $wpdb->get_var("SELECT term_id FROM {$wpdb->terms} WHERE name='".$wpdb->escape($value)."'");
+        // translate to WPML notation
+        if($taxonomy=='post_tag'){
+            $taxonomy = 'tag';
+        }
+        if(!empty($term_id)){
+            if(isset($_POST['icl_'.$taxonomy.'_language']) && $_POST['icl_'.$taxonomy.'_language'] != $this->get_default_language()){
+                $value .= ' @'.$_POST['icl_'.$taxonomy.'_language']; 
+            }
+        }        
+        return $value;
+    }
+    
+    function pre_save_category(){
+        // allow adding categories with the same name in different languages
+        global $wpdb;
+        if(isset($_POST['action']) && $_POST['action']=='add-cat'){
+            if(category_exists($_POST['cat_name']) && isset($_POST['icl_category_language']) && $_POST['icl_category_language'] != $this->get_default_language()){
+                $_POST['cat_name'] .= ' @'.$_POST['icl_category_language'];    
+            }
+        }
     }
     
     function delete_term($cat, $tt_id, $taxonomy){
