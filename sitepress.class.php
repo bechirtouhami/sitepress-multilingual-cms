@@ -636,6 +636,11 @@ class SitePress{
             $user['title'] = get_option('blogname');
             $user['description'] = get_option('blogdescription');
             $user['interview_translators'] = $this->settings['interview_translators'];
+            
+            if(defined('ICL_AFFILIATE_ID') && defined('ICL_AFFILIATE_KEY')){
+                $user['affiliate_id'] = ICL_AFFILIATE_ID;
+                $user['affiliate_key'] = ICL_AFFILIATE_KEY;
+            }
                         
             $user['project_kind'] = $this->settings['website_kind'];
             if(is_null($user['project_kind']) || $user['project_kind']==''){
