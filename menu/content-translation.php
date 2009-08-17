@@ -60,7 +60,7 @@
             </form>
             <br clear="all" />    
             
-            <form name="icl_more_options" action="">
+            <form name="icl_more_options" id="icl_more_options" action="">
 
             <h3><?php echo __('What kind of website is this?','sitepress') ?></h3>
             <div class="icl_form_errors" style="display:none;margin-bottom:1px;"><?php echo __('Please select the kind of website','sitepress')?></div>

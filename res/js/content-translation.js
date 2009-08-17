@@ -87,6 +87,7 @@ function iclValidateWebsiteKind(){
         jQuery('form[name="icl_more_options"] ul:first').css('border','1px solid red').css('padding','2px');
         jQuery('form[name="icl_more_options"] .icl_form_errors').fadeIn();
         iclHaltSave = true;
+        location.href=location.href.replace(/#(.+)$/,'') + '#icl_more_options';
         return false;
     }   
 }
