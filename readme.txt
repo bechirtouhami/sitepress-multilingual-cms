@@ -1,8 +1,9 @@
 === WPML Multilingual CMS ===
 Contributors: ICanLocalize
+Donate link: http://wpml.org/home/want-to-help/
 Tags: CMS, navigation, menus, menu, dropdown, css, sidebar, pages, i18n, translation, localization, language, multilingual, WPML
 Requires at least: 2.6
-Tested up to: 2.8.3
+Tested up to: 2.8.4
 Stable tag: 1.2.0
 
 Turns any WordPress site into a fully featured multilingual content management system (CMS).
@@ -115,7 +116,17 @@ Also, go through the [detailed description](http://wpml.org/support/cannot-activ
 
 That's right. WPML is a commercial plugin (still GPL). We make our living doing translation through it. If you want to support us, just spread the word.
 
+== Screenshots ==
+
+You can find screen shots of WPML in our [press kit](http://wpml.org/home/press-kit/).
+
 == Changelog ==
+
+= 1.2.1 =
+* Allows specifying the locale for the default language.
+* Added a theme integration file - docs/theme-integration/wpml-integration.php.
+* Added an input for affiliate ID for themes.
+* Simplified the setup for [content translation](http://wpml.org/wordpress-translation/content-translation/).
 
 = 1.2.0 =
 * Adds theme localization.
