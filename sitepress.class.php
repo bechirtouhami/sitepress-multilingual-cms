@@ -1793,32 +1793,30 @@ class SitePress{
             SELECT lm.code, locale 
             FROM {$wpdb->prefix}icl_locale_map lm JOIN {$wpdb->prefix}icl_languages l ON lm.code = l.code AND l.active=1");
         foreach($res as $row){
-            if($row->code=='en') continue;
             $locales[$row->code] = $row->locale;
         }
         return $locales;        
     }
     
     function set_locale_file_names($locale_file_names_pairs){
-        global $wpdb;
+        global $wpdb;        
         $lfn = $this->get_locale_file_names();
-        $new = array_diff($locale_file_names_pairs, $lfn);        
+        
+        $new = array_diff(array_keys($locale_file_names_pairs), array_keys($lfn));        
         if(!empty($new)){
-            foreach($new as $code=>$locale){
-                $wpdb->insert($wpdb->prefix.'icl_locale_map', array('code'=>$code,'locale'=>$locale));
+            foreach($new as $code){
+                $wpdb->insert($wpdb->prefix.'icl_locale_map', array('code'=>$code,'locale'=>$locale_file_names_pairs[$code]));
             }
-        }
-        
-        $remove = array_diff($lfn, $locale_file_names_pairs);
+        }        
+        $remove = array_diff(array_keys($lfn), array_keys($locale_file_names_pairs));
         if(!empty($remove)){
-            $wpdb->query("DELETE FROM {$wpdb->prefix}icl_locale_map WHERE code IN (".join(',', array_map(create_function('$a','return "\'".$a."\'";'),array_keys($remove))).")");
+            $wpdb->query("DELETE FROM {$wpdb->prefix}icl_locale_map WHERE code IN (".join(',', array_map(create_function('$a','return "\'".$a."\'";'),$remove)).")");
         }
         
-        $update = array_diff($locale_file_names_pairs, $remove);
+        $update = array_diff($locale_file_names_pairs, $lfn);
         foreach($update as $code=>$locale){
             $wpdb->update($wpdb->prefix.'icl_locale_map', array('locale'=>$locale), array('code'=>$code));
-        }
-        
+        }        
         return true;        
     }
     

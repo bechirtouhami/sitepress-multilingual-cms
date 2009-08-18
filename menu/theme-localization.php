@@ -62,30 +62,22 @@ $theme_localization_stats = get_theme_localization_stats();
     <td scope="col"><?php echo $lang['display_name'] ?></td>
     <td scope="col"><?php echo $lang['code'] ?></td>
     <td scope="col">
-        <?php if($lang['code']=='en'): ?>
-        <?php echo __('default', 'sitepress'); ?>
-        <?php else: ?>
         <input type="text" size="10" name="locale_file_name_<?php echo $lang['code']?>" value="<?php echo $locales[$lang['code']]?>" />.mo
-        <?php endif; ?>        
     </td> 
     <td>
-        <?php if($lang['code']=='en'): echo '&nbsp;'; else: ?> 
-            <?php if(is_readable(ABSPATH . LANGDIR . '/' . $locales[$lang['code']] . '.mo')): ?>
-            <span class="icl_valid_text"><?php echo __('File exists.', 'sitepress') ?></span>                
-            <?php else: ?>
-            <span class="icl_error_text"><?php echo __('File not found!', 'sitepress') ?></span>
-            <?php endif; ?>
+        <?php if(is_readable(ABSPATH . LANGDIR . '/' . $locales[$lang['code']] . '.mo')): ?>
+        <span class="icl_valid_text"><?php echo __('File exists.', 'sitepress') ?></span>                
+        <?php elseif($lang['code'] != $sitepress->get_default_language() ): ?>
+        <span class="icl_error_text"><?php echo __('File not found!', 'sitepress') ?></span>
         <?php endif; ?>
     </td>
     <?php if($sitepress_settings['theme_localization_type']==2):?>       
     <td>
-        <?php if($lang['code']=='en'): echo '&nbsp;'; else: ?> 
-            <?php if(is_readable(TEMPLATEPATH . '/' . $locales[$lang['code']] . '.mo')): ?>
-            <span class="icl_valid_text"><?php echo __('File exists.', 'sitepress') ?></span>                
-            <?php else: ?>
-            <span class="icl_error_text"><?php echo __('File not found!', 'sitepress') ?></span>
-            <?php endif; ?>
-        <?php endif; ?>
+        <?php if(is_readable(TEMPLATEPATH . '/' . $locales[$lang['code']] . '.mo')): ?>
+        <span class="icl_valid_text"><?php echo __('File exists.', 'sitepress') ?></span>                
+        <?php elseif($lang['code'] != $sitepress->get_default_language() ): ?>
+        <span class="icl_error_text"><?php echo __('File not found!', 'sitepress') ?></span>
+        <?php endif; ?>        
     </td>              
     <?php endif; ?> 
     </tr>
