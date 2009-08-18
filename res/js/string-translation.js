@@ -177,8 +177,9 @@ function icl_st_update_languages(){
         jQuery('#icl_st_send_selected, #icl_st_send_need_translation').attr('disabled','disabled');
     }else{
         if(jQuery('.icl_st_row_cb:checked, .check-column :checkbox:checked').length){
-            jQuery('#icl_st_send_selected, #icl_st_send_need_translation').removeAttr('disabled');
+            jQuery('#icl_st_send_selected').removeAttr('disabled');            
         }
+        jQuery('#icl_st_send_need_translation').removeAttr('disabled');            
     }
 }
 

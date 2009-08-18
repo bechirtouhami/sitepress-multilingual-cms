@@ -319,9 +319,10 @@ $available_contexts = array_unique($available_contexts);
                         }
                     }
                 ?>
+                <?php $_one_lang_enabled = false; ?>
                 <?php foreach($active_languages as $lang): if($sitepress->get_current_language()==$lang['code']) continue; ?>
                     <?php if($sitepress_settings['language_pairs'] && isset($sitepress_settings['language_pairs'][$sitepress->get_current_language()][$lang['code']])): ?>
-                        <?php if(isset($target_status[$lang['code']]) && $target_status[$lang['code']] == 1): ?>
+                        <?php if(isset($target_status[$lang['code']]) && $target_status[$lang['code']] == 1): $_one_lang_enabled = true;?>
                             <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" checked="checked" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name']); ?></label></li>
                         <?php else:  ?>
                             <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" disabled="disabled" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name'] . __(' - No translators assigned yet in ICanLocalize', 'sitepress')); ?></label></li>
@@ -334,7 +335,7 @@ $available_contexts = array_unique($available_contexts);
 
             <span class="subsubsub">                
                 <input type="submit" class="button-secondary" id="icl_st_send_selected" value="<?php echo __('Send selected strings to ICanLocalize', 'sitepress') ?>" disabled="disabled" />                    
-                <input type="button" class="button-primary" id="icl_st_send_need_translation" value="<?php echo __('Send all strings that need update to ICanLocalize', 'sitepress') ?>" />                                     
+                <input type="button" class="button-primary" id="icl_st_send_need_translation" value="<?php echo __('Send all strings that need update to ICanLocalize', 'sitepress') ?>" <?php if(!$_one_lang_enabled):?>disabled="disabled"<?php endif;?> />                                     
             </span><br />
             <span id="icl_st_send_progress" class="icl_ajx_response" style="display:none;float:left;"><?php echo __('Sending translation requests. Please wait!', 'sitepress') ?>&nbsp;<img src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" alt="loading" /></span>
                         
