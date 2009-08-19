@@ -351,6 +351,19 @@
                 <label><input type="checkbox" id="icl_sync_page_parent" name="icl_sync_page_parent" <?php if($sitepress_settings['sync_page_parent']): ?>checked="checked"<?php endif; ?> value="1" />
                 <?php echo __('Set page parent for translation according to page parent of the original language.', 'sitepress') ?></label>                        
             </p>
+            <?php if(is_admin()): ?>
+            <p>
+                <label>
+                    <?php _e('Default admin language: '); ?>
+                    <select name="icl_admin_default_language">
+                    <?php foreach($active_languages as $al):?>
+                    <option value="<?php echo $al['code'] ?>"<?php if($sitepress_settings['admin_default_language']==$al['code']) echo ' selected="selected"'?>><?php echo $al['display_name'] ?>&nbsp;</option>
+                    <?php endforeach; ?>
+                    </select>
+                </label>
+            </p>
+            <?php endif; ?>
+            <p><?php printf(__('Each user can choose the admin language. You can edit your language preferences by visiting your <a href="%s">profile page</a>.','sitepress'),'profile.php#wpml')?></p>
             <p>
                 <input class="button" name="save" value="<?php echo __('Save','sitepress') ?>" type="submit" />
                 <span class="icl_ajx_response" id="icl_ajx_response_mo"></span>

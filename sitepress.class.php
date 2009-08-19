@@ -1,4 +1,4 @@
-<?php
+<?php   
 class SitePress{
    
     private $settings;
@@ -157,6 +157,8 @@ class SitePress{
             
             add_action('init', array($this,'plugin_localization'));            
             
+            add_action('show_user_profile', array($this, 'show_user_options'));
+            add_action('personal_options_update', array($this, 'save_user_options'));
             
             
         } //end if the initial language is set - existing_content_language_verified
@@ -268,7 +270,7 @@ class SitePress{
         icl_st_administration_menu();
         if($this->settings['existing_content_language_verified']){
             add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Content translation','sitepress'), __('Content translation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/content-translation.php'); 
-            //add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Comments Translation','sitepress'), __('Comments Translation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/comments-translation.php'); 
+            add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Comments Translation','sitepress'), __('Comments Translation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/comments-translation.php'); 
         }
         add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Theme localization','sitepress'), __('Theme localization','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/theme-localization.php'); 
         add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Navigation','sitepress'), __('Navigation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/navigation.php'); 
@@ -1769,9 +1771,16 @@ class SitePress{
     }
     
     function locale(){
-        global $wpdb, $locale;
-        if(defined('WP_ADMIN')){
-            $l = $wpdb->get_var("SELECT locale FROM {$wpdb->prefix}icl_locale_map WHERE code='{$this->get_default_language()}'");
+        global $wpdb, $locale, $current_user;
+        if(is_null($current_user)){
+            $current_user = wp_get_current_user();
+        }
+        if(defined('WP_ADMIN')){            
+            if($user_admin_language = get_usermeta($current_user->data->ID,'icl_admin_language',true)){
+                $l = $wpdb->get_var("SELECT locale FROM {$wpdb->prefix}icl_locale_map WHERE code='{$user_admin_language}'");
+            }else{
+                $l = $wpdb->get_var("SELECT locale FROM {$wpdb->prefix}icl_locale_map WHERE code='{$this->settings['admin_default_language']}'");
+            } 
         }else{
             $l = $wpdb->get_var("SELECT locale FROM {$wpdb->prefix}icl_locale_map WHERE code='{$this->this_lang}'");
         }        
@@ -1781,9 +1790,8 @@ class SitePress{
         // theme localization
         if($this->settings['gettext_theme_domain_name']){
             load_textdomain($this->settings['gettext_theme_domain_name'], TEMPLATEPATH . '/'.$locale.'.mo');
-        }        
+        }   
         return $locale;
-        
     }
         
     function get_locale_file_names(){
@@ -2033,6 +2041,46 @@ class SitePress{
             }
         }
     }
+    
+    function show_user_options(){
+        global $current_user;
+        $active_languages = $this->get_active_languages();
+        $default_language = $this->get_default_language();
+        $user_language = get_usermeta($current_user->data->ID,'icl_admin_language',true);
+        $lang_details = $this->get_language_details($this->settings['admin_default_language']);
+        $admin_default_language = $lang_details['display_name'];
+        ?>
+        <a name="wpml"></a>
+        <h3><?php _e('WPML language settings','sitepress'); ?></h3>
+        <table class="form-table">
+            <tbody>
+                <tr>
+                    <th>&nbsp;</th>
+                    <td><?php printf(__('Default language (currently %s).','sitepress'), $admin_default_language );?> </td>
+                </tr>
+                <tr>
+                    <th><?php _e('Select your language:', 'sitepress') ?></th>
+                    <td>                        
+                        <select name="icl_user_admin_language">
+                        <?php foreach($active_languages as $al):?>
+                        <option value="<?php echo $al['code'] ?>"<?php if($user_language==$al['code']) echo ' selected="selected"'?>><?php echo $al['display_name'] ?>&nbsp;</option>
+                        <?php endforeach; ?>
+                        </select>                        
+                        <span class="description"><?php _e('this will be your admin language and will also be used for translating comments.'); ?></span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>        
+        <?php
+    }
+    
+    function  save_user_options(){
+        $user_id = $_POST['user_id'];
+        if($user_id){
+            update_usermeta($user_id,'icl_admin_language',$_POST['icl_user_admin_language']);        
+        }        
+    }
+    
     
 }  
 ?>

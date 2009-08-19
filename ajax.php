@@ -222,6 +222,7 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings['language_home'] = $_POST['icl_language_home'];
         $iclsettings['sync_page_ordering'] = $_POST['icl_sync_page_ordering'];        
         $iclsettings['sync_page_parent'] = $_POST['icl_sync_page_parent'];        
+        $iclsettings['admin_default_language'] = $_POST['icl_admin_default_language'];
         $sitepress->save_settings($iclsettings);
         echo 1; 
        break;        
@@ -370,6 +371,23 @@ switch($_REQUEST['icl_ajx_action']){
     case 'icl_tl_rescan':
         $scan_stats = icl_st_scan_theme_files();
         echo '1|'.$scan_stats;
+        break;
+    
+    case 'save_ct_user_pref':
+        $users = $wpdb->get_col("SELECT id FROM {$wpdb->users}");
+        foreach($users as $uid){
+            if(isset($_POST['icl_enable_comments_translation'][$uid])){
+                update_usermeta($uid, 'icl_enable_comments_translation', 1);
+            }else{
+                delete_usermeta($uid, 'icl_enable_comments_translation');
+            }
+            if(isset($_POST['icl_enable_replies_translation'][$uid])){
+                update_usermeta($uid, 'icl_enable_replies_translation', 1);
+            }else{
+                delete_usermeta($uid, 'icl_enable_replies_translation');
+            }            
+        }
+        echo '1|';
         break;
     default:
         echo __('Invalid action','sitepress');                

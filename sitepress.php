@@ -49,7 +49,6 @@ require ICL_PLUGIN_PATH . '/inc/hacks.php';
 require ICL_PLUGIN_PATH . '/inc/upgrade.php';
 require ICL_PLUGIN_PATH . '/inc/functions-string-translation.php';
 
-
 if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQUEST['action']!='activate-selected') 
     || (($_REQUEST['plugin'] != basename(ICL_PLUGIN_PATH).'/'.basename(__FILE__)) 
         && !in_array(basename(ICL_PLUGIN_PATH).'/'.basename(__FILE__), (array)$_REQUEST['checked']))){
@@ -74,6 +73,11 @@ if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQ
 
     // Content Translation    
     require ICL_PLUGIN_PATH . '/modules/icl-translation/icl-translation.php';
+    
+    // Comments translation
+    if($sitepress_settings['existing_content_language_verified']){
+        require ICL_PLUGIN_PATH . '/inc/comments-translation/functions.php';    
+    }
     
 }
  
