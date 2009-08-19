@@ -114,7 +114,7 @@ class IclCommentsTranslation{
     function &get_post_translated_comments($arg=null){
         global $wp_query, $wpdb, $user_ID;
         global $comments;        
-        print_r($wp_query);
+        //print_r($wp_query);
         if(!is_single() && !is_page() && !is_admin()) return;
         $post_id = $wp_query->post->ID;        
         /*
