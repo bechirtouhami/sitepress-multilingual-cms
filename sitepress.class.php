@@ -790,7 +790,7 @@ class SitePress{
             }else{
                 //get source
                 $src_language_code = $wpdb->get_var("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE trid={$trid} AND source_language_code IS NULL"); 
-                // case of adding a new language
+                // case of adding a new language                
                 $wpdb->insert($wpdb->prefix.'icl_translations', 
                     array(
                         'trid'=>$trid, 
@@ -813,6 +813,17 @@ class SitePress{
             );    
         }
         return $trid;
+    }
+    
+    function delete_element_translation($trid, $el_type, $language_code = false){
+        global $wpdb;
+        $trid = intval($trid);
+        $el_type = $wpdb->escape($el_type);
+        $where = '';
+        if($language_code){
+            $where .= " AND language_code='".$wpdb->escape($language_code)."'";
+        }
+        $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE trid='{$trid}' AND element_type='{$el_type}' {$where}");
     }
     
     function get_element_language_details($el_id, $el_type){        
@@ -959,7 +970,7 @@ class SitePress{
                 $sel_add = ', p.post_title, p.post_status';
                 $join_add = " LEFT JOIN {$wpdb->posts} p ON t.element_id=p.ID";
                 $groupby_add = "";
-            }elseif($el_type=='category' || $el_type='tag'){
+            }elseif($el_type=='category' || $el_type=='tag'){
                 $sel_add = ', tm.name, tm.term_id, COUNT(tr.object_id) AS instances';
                 $join_add = " LEFT JOIN {$wpdb->term_taxonomy} tt ON t.element_id=tt.term_taxonomy_id
                               LEFT JOIN {$wpdb->terms} tm ON tt.term_id = tm.term_id
@@ -1775,8 +1786,24 @@ class SitePress{
         if(is_null($current_user)){
             $current_user = wp_get_current_user();
         }
+        
+        $user_admin_language = get_usermeta($current_user->data->ID,'icl_admin_language',true);
+        
+        $active_languages = $this->get_active_languages();
+        foreach($active_languages as $al){
+            $al_codes[] = $al['code'];
+        }
+        if(!in_array($user_admin_language, (array)$al_codes)){
+            $user_admin_language = '';
+            delete_usermeta($current_user->data->ID,'icl_admin_language');
+        }
+        if(!in_array($this->settings['admin_default_language'], (array)$al_codes)){
+            $this->settings['admin_default_language'] = $this->get_default_language();
+            $this->save_settings();
+        }
+        
         if(defined('WP_ADMIN')){            
-            if($user_admin_language = get_usermeta($current_user->data->ID,'icl_admin_language',true)){
+            if($user_admin_language){
                 $l = $wpdb->get_var("SELECT locale FROM {$wpdb->prefix}icl_locale_map WHERE code='{$user_admin_language}'");
             }else{
                 $l = $wpdb->get_var("SELECT locale FROM {$wpdb->prefix}icl_locale_map WHERE code='{$this->settings['admin_default_language']}'");
@@ -2055,13 +2082,10 @@ class SitePress{
         <table class="form-table">
             <tbody>
                 <tr>
-                    <th>&nbsp;</th>
-                    <td><?php printf(__('Default language (currently %s).','sitepress'), $admin_default_language );?> </td>
-                </tr>
-                <tr>
                     <th><?php _e('Select your language:', 'sitepress') ?></th>
                     <td>                        
                         <select name="icl_user_admin_language">
+                        <option value=""<?php if($user_language==$this->settings['admin_default_language']) echo ' selected="selected"'?>><?php printf(__('Default language (currently %s)','sitepress'), $admin_default_language );?>&nbsp;</option>
                         <?php foreach($active_languages as $al):?>
                         <option value="<?php echo $al['code'] ?>"<?php if($user_language==$al['code']) echo ' selected="selected"'?>><?php echo $al['display_name'] ?>&nbsp;</option>
                         <?php endforeach; ?>

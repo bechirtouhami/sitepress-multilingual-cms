@@ -8,7 +8,7 @@ if($user_language = get_usermeta($current_user->data->ID,'icl_admin_language',tr
     $lang_details = $sitepress->get_language_details($user_language);
     $user_language = $lang_details['display_name'];
 }else{
-    $user_language = __('none','sitepress');
+    $user_language = __('the default language','sitepress');
 }
 ?>
 <div class="wrap">

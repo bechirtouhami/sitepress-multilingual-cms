@@ -157,6 +157,7 @@ function icl_plugin_upgrade(){
     }
 
     if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.3.0', '<')){
+        mysql_query("ALTER TABLE `{$wpdb->prefix}icl_translations` CHANGE `element_type` `element_type` VARCHAR( 32 ) NOT NULL DEFAULT 'post'");
         if(!$sitepress_settings['admin_default_language']){
             $sitepress_settings['admin_default_language'] = $sitepress->get_default_language();
             $sitepress->save_settings($sitepress_settings);
