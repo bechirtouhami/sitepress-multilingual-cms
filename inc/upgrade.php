@@ -6,7 +6,6 @@ add_action('plugins_loaded', 'icl_plugin_upgrade' , 1);
 
 function icl_plugin_upgrade(){
     global $wpdb, $sitepress_settings, $sitepress;
-    
     if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '0.9.3', '<')){
         require_once(ICL_PLUGIN_PATH . '/inc/lang-data.inc');      
         $wpdb->query("UPDATE {$wpdb->prefix}icl_languages SET english_name='Norwegian Bokmål', code='nb' WHERE english_name='Norwegian'");      
@@ -150,17 +149,19 @@ function icl_plugin_upgrade(){
     }
 
     if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.2.0', '<')){
-        if($sitepress_settings['icl_interview_translators'] == 0){
-            $sitepress_settings['icl_interview_translators'] = 1;
-            $sitepress->save_settings($sitepress_settings);
+        $iclsettings = get_option('icl_sitepress_settings');
+        if($iclsettings['icl_interview_translators'] == 0){
+            $iclsettings['icl_interview_translators'] = 1;    
+            update_option('icl_sitepress_settings',$iclsettings);
         }    
     }
 
     if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.3.0', '<')){
+        $iclsettings = get_option('icl_sitepress_settings');
         mysql_query("ALTER TABLE `{$wpdb->prefix}icl_translations` CHANGE `element_type` `element_type` VARCHAR( 32 ) NOT NULL DEFAULT 'post'");
-        if(!$sitepress_settings['admin_default_language']){
-            $sitepress_settings['admin_default_language'] = $sitepress->get_default_language();
-            $sitepress->save_settings($sitepress_settings);
+        if(!$iclsettings['admin_default_language']){
+            $iclsettings['admin_default_language'] = $iclsettings['default_language'];
+            update_option('icl_sitepress_settings',$iclsettings);
         }
     }
 
