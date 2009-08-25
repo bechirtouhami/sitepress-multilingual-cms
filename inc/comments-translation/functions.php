@@ -54,6 +54,7 @@ class IclCommentsTranslation{
         if(isset($_POST['action']) && $_POST['action']=='editedcomment'){
             add_action('transition_comment_status', array($this, 'transition_comment_status_actions'), 1, 3);
         }
+        add_action('edit_comment', array($this, 'edit_comment_actions'));
         
         add_action('comment_form', array($this, 'comment_form_options'));        
         
@@ -188,6 +189,20 @@ class IclCommentsTranslation{
                     $ids_processed[] = $t->element_id;
                 }
             }
+        }        
+    }
+    
+    function edit_comment_actions($comment_id){
+        // we'll use this hook ONLY for updating comments - not for new comments
+        global $wpdb;
+        $res = $wpdb->get_row("
+            SELECT MD5(c.comment_content)<> ms.md5 AND ms.md5 IS NOT NULL AS updated, ms.to_language
+            FROM {$wpdb->comments} c 
+                JOIN {$wpdb->prefix}icl_message_status ms ON c.comment_ID
+                WHERE c.comment_ID = {$comment_id} AND ms.object_type='comment'
+            ");
+        if(isset($res->updated) && $res->updated){
+            $this->send_comment_to_translation($comment_id, $res->to_language);
         }        
     }
     
@@ -466,15 +481,24 @@ class IclCommentsTranslation{
         $body = $wpdb->get_var("SELECT comment_content FROM {$wpdb->comments} WHERE comment_ID={$comment_id}");
         $rid = $iclq->cms_create_message($body, $from_lang_server, $to_lang_server);
         if($rid > 0){
-            $wpdb->insert($wpdb->prefix.'icl_message_status', array(
-                'rid'           => $rid,
-                'object_id'     => $comment_id,
-                'from_language' => $this->user_language,
-                'to_language'   => $to_language,
-                'md5'           => md5($body),
-                'object_type'   => 'comment',
-                'status'        => MESSAGE_TRANSLATION_IN_PROGRESS
-            ));
+            // does this comment already exist in the messages status queue?
+            $msid = $wpdb->get_var("SELECT id FROM {$wpdb->prefix}icl_message_status WHERE object_type='comment' AND object_id={$comment_id}");
+            if($msid){
+                $wpdb->update($wpdb->prefix.'icl_message_status', 
+                    array('rid'=>$rid, 'md5' => md5($body), 'status' => MESSAGE_TRANSLATION_IN_PROGRESS),
+                    array('id' => $msid)
+                    );
+            }else{
+                $wpdb->insert($wpdb->prefix.'icl_message_status', array(
+                    'rid'           => $rid,
+                    'object_id'     => $comment_id,
+                    'from_language' => $this->user_language,
+                    'to_language'   => $to_language,
+                    'md5'           => md5($body),
+                    'object_type'   => 'comment',
+                    'status'        => MESSAGE_TRANSLATION_IN_PROGRESS
+                ));
+            }
         }
     }
     
@@ -513,15 +537,28 @@ class IclCommentsTranslation{
                     AND element_type='comment' AND language_code='{$to_language}'");
         }        
         
+        $original_comment_id = $original_comment['comment_ID'];
         unset($original_comment);
         $new_comment['comment_content'] = $translation;
         unset($new_comment['comment_ID']);
         
         //remove_action('wp_insert_comment', array($this, 'wp_insert_comment'));
         
-        $new_id = wp_insert_comment($new_comment);
-        
+        //check whether a translation for this comment in this language already exists
         $trid = $sitepress->get_element_trid($original_comment_id, 'comment');        
+        
+        $existing_comment_id = $wpdb->get_var("
+            SELECT element_id FROM {$wpdb->prefix}icl_translations 
+            WHERE trid={$trid} AND element_type='comment' AND language_code='{$to_language}'");
+        
+        if(!$existing_comment_id){
+            $new_id = wp_insert_comment($new_comment);
+        }else{
+            $new_id = $new_comment['comment_ID'] = $existing_comment_id;
+            remove_action('transition_comment_status', array($this, 'transition_comment_status_actions'));
+            wp_update_comment($new_comment);
+        }
+        
         $sitepress->set_element_language_details($new_id, 'comment', $trid, $to_language);
                         
         $wpdb->update($wpdb->prefix.'icl_message_status', array('status'=>MESSAGE_TRANSLATION_COMPLETE), array('rid'=>$rid));
