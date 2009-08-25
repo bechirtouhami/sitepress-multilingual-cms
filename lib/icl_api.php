@@ -112,7 +112,7 @@ class ICanLocalizeQuery{
         return $this->_request($request_url, 'GET', null, null, $gzipped);
     }   
        
-    function build_cms_request_xml($data, $orig_lang, $langs, $previous_rid = false, $linkTo = '') {
+    function build_cms_request_xml($data, $orig_lang, $previous_rid = false, $linkTo = '') {
         if($previous_rid){
             $command = 'update_content';
             $previous_rid = 'previous_cms_request_id="'.$previous_rid.'"';
@@ -269,6 +269,25 @@ class ICanLocalizeQuery{
       readgzfile($g);
       $d=ob_get_clean();
       return $d;
+    }
+    
+    function cms_create_message($body, $from_language, $to_language){
+        $request_url = ICL_API_ENDPOINT . '/websites/'. $this->site_id . '/create_message.xml';    
+        $parameters['accesskey'] = $this->access_key;
+        $parameters['body'] = base64_encode($body);
+        $parameters['from_language'] = $from_language;
+        $parameters['to_language'] = $to_language;
+        $parameters['signature'] = md5($body.$from_language.$to_language);
+        $res = $this->_request($request_url, 'POST' , $parameters);        
+        
+        if($res['info']['status']['attr']['err_code']=='0'){
+            return $res['info']['result']['attr']['id'];
+        }else{
+            return isset($res['info']['status']['attr']['err_code'])?-1*$res['info']['status']['attr']['err_code']:0;
+        }
+        
+        return $res;
+        
     }
     
 }

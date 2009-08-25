@@ -14,4 +14,7 @@ define ( 'CMS_TARGET_LANGUAGE_DONE', 3);
 
 define ( 'ICL_FINANCE_LINK', '/finance');
 
+define('MESSAGE_TRANSLATION_IN_PROGRESS', 3);
+define('MESSAGE_TRANSLATION_COMPLETE', 4);
+
 ?>

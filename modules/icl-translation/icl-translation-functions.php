@@ -311,7 +311,7 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
             $permlink = false;
         }
         
-        $xml = $iclq->build_cms_request_xml($data, $orig_lang_for_server, $target_for_server, $previous_rid_for_target);
+        $xml = $iclq->build_cms_request_xml($data, $orig_lang_for_server, $previous_rid_for_target);
         $res = $iclq->send_request($xml, $post->post_title, $target_for_server, $orig_lang_for_server, $permlink);
         
         if($res > 0){
@@ -1129,7 +1129,7 @@ function icl_display_post_translation_status($post_id, &$post_translation_status
     
     $active_languages = $sitepress->get_active_languages();    
     $_tr_status = icl_get_post_translation_status($post_id);    
-    foreach($_tr_status as $st){
+    foreach((array)$_tr_status as $st){
         $tr_status[$st->target] = $st->status;
     }
     
@@ -1815,7 +1815,7 @@ function _icl_translation_send_strings($string_ids, $target) {
 
         $timestamp = date('Y-m-d H:i:s');
         
-        $xml = $iclq->build_cms_request_xml($data, $orig_lang_for_server, $target_for_server);
+        $xml = $iclq->build_cms_request_xml($data, $orig_lang_for_server);
         $res = $iclq->send_request($xml, "String translations", $target_for_server, $orig_lang_for_server, "");
 
         
