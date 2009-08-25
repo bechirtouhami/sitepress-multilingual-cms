@@ -2106,5 +2106,5 @@ class SitePress{
     }
     
     
-}  
+} /* */  
 ?>
