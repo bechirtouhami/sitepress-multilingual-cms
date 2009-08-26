@@ -587,6 +587,8 @@ class SitePress{
                     ?><script type="text/javascript">addLoadEvent(function(){jQuery('#menu_order').val(<?php echo $menu_order ?>);});</script><?php
                 }                
             }
+        }elseif('edit-comments.php' == $pagenow || 'index.php' == $pagenow || 'post.php' == $pagenow){
+            wp_enqueue_script('sitepress-' . $page_basename, ICL_PLUGIN_URL . '/res/js/comments-translation.js', array(), ICL_SITEPRESS_VERSION);
         }
     }
        
@@ -1750,7 +1752,7 @@ class SitePress{
     // TO REVISE
     function pre_option_home(){                              
         $dbbt = debug_backtrace();                                     
-        if($dbbt[3]['file'] == realpath(TEMPLATEPATH . '/header.php')){
+        if($dbbt[3]['file'] == @realpath(TEMPLATEPATH . '/header.php')){
             $ret = $this->language_url($this->this_lang);                                       
         }else{
             $ret = false;

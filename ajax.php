@@ -389,6 +389,21 @@ switch($_REQUEST['icl_ajx_action']){
         }
         echo '1|';
         break;
+    case 'get_original_comment':
+        $comment_id = $_POST['comment_id'];
+        $trid = $sitepress->get_element_trid($comment_id, 'comment');
+        $res = $wpdb->get_row("SELECT element_id, language_code FROM {$wpdb->prefix}icl_translations WHERE trid='{$trid}' AND element_type='comment' AND element_id <> {$comment_id} ");
+        $original_cid = $res->element_id;
+        $comment = $wpdb->get_row("SELECT * FROM {$wpdb->comments} WHERE comment_ID={$original_cid}");
+        $comment->language_code = $res->language_code;
+        if($res->language_code == $IclCommentsTranslation->user_language){
+            $comment->translated_version = 1;
+        }else{
+            $comment->translated_version = 0;
+            $comment->anchor_text = __('Back to translated version', 'sitepress');
+        }        
+        echo json_encode($comment);
+        break;
     default:
         echo __('Invalid action','sitepress');                
 }    

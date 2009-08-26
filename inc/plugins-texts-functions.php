@@ -76,7 +76,8 @@ function icl_pt_sync_pugins_texts($post_id, $trid){
 function icl_pt_handle_upload(){
     global $wpdb;    
     $file = $_FILES['plugins_texts_csv'];
-    $fh = fopen($file['tmp_name'], 'rb');
+    
+    $fh = fopen($file['tmp_name'], 'r');
     $uplerr = false;
     while($data = fgetcsv($fh)){
         if(count($data) != 5){
