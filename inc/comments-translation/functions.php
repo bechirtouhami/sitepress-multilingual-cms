@@ -617,7 +617,7 @@ class IclCommentsTranslation{
             }
             
             if(isset($comment_originals[$comment->comment_ID])){
-                $str  = '<p style="display:none;border:1px dotted #aaa;background-color:#f0f0f0;padding:4px;margin-bottom:0;" id="icl_olc_'.$comment->comment_ID.'">' . htmlentities($comment_originals[$comment->comment_ID]) . '</p>';
+                $str  = '<div style="font-weight:normal;display:none;border:1px dotted #aaa;background-color:#f0f0f0;padding:4px;margin-bottom:0;" id="icl_olc_'.$comment->comment_ID.'">' . htmlspecialchars($comment_originals[$comment->comment_ID]) . '</div>';
                 $str  .= '<p style="margin-top:0;"><i><a href="#" onclick="var iclcst = document.getElementById(\'icl_olc_'.$comment->comment_ID.'\').style; iclcst.display = iclcst.display == \'block\' ? \'none\' :\'block\' ;return false;">'. sprintf(__('Comment in %s', 'sitepress'),$page_language).'</a></i></p>';
                 $comment_text .= $str;
             }
