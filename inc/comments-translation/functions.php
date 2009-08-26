@@ -520,9 +520,6 @@ class IclCommentsTranslation{
     }
     
     function add_comment_translation($args){
-        // TODO
-        // handle updates
-        // check whether the translation exists and update it rather than create a new comment
         
         global $wpdb, $sitepress, $sitepress_settings;
         $signature      = $args[0];

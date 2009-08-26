@@ -229,6 +229,28 @@ function icl_sitepress_activate(){
             ) {$charset_collate}"; 
         mysql_query($sql);
     }
+       
+    // message status table
+    $table_name = $wpdb->prefix.'icl_message_status';
+    if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
+        $sql = "
+             CREATE TABLE `{$table_name}` (
+                  `id` bigint(20) unsigned NOT NULL auto_increment,
+                  `rid` bigint(20) unsigned NOT NULL,
+                  `object_id` bigint(20) unsigned NOT NULL,
+                  `from_language` varchar(10) NOT NULL,
+                  `to_language` varchar(10) NOT NULL,
+                  `timestamp` timestamp NOT NULL default CURRENT_TIMESTAMP,
+                  `md5` varchar(32) NOT NULL,
+                  `object_type` varchar(64) NOT NULL,
+                  `status` smallint(6) NOT NULL,
+                  PRIMARY KEY  (`id`),
+                  UNIQUE KEY `rid` (`rid`),
+                  KEY `object_id` (`object_id`)
+            ) {$charset_collate}"; 
+        mysql_query($sql);
+    }
+    
                   
    if(get_option('icl_sitepress_version')){
        icl_plugin_upgrade();               
