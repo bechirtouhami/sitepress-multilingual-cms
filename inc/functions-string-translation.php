@@ -141,7 +141,7 @@ function icl_st_init(){
         }   
         
         foreach($arr as $k=>$string){
-            $string_id = icl_register_string($_POST['icl_st_strings_for'] . ' ' . $_POST['icl_st_domain_name'], md5($string), $string);
+            $string_id = icl_register_string($_POST['icl_st_domain_name'], md5($string), $string);
             if($string_id && isset($_POST['icl_st_po_language'])){
                 if($arr_t[$k] != ""){
                     if($arr_f[$k]){

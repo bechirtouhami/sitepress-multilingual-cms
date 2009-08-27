@@ -9,6 +9,7 @@ $context_filter = isset($_GET['context']) ? $_GET['context'] : false;
 $icl_string_translations = icl_get_string_translations();
 $active_languages = $sitepress->get_active_languages();            
 $icl_contexts = icl_st_get_contexts($status_filter);
+
 /*
 if($status_filter != ICL_STRING_TRANSLATION_COMPLETE){
     $icl_contexts_translated = icl_st_get_contexts(ICL_STRING_TRANSLATION_COMPLETE);
@@ -26,7 +27,7 @@ if(!empty($icl_contexts)){
 }
 if(is_array($sitepress_settings['st']['theme_localization_domains'])){
     foreach($sitepress_settings['st']['theme_localization_domains'] as $c){
-        if($c) $available_contexts[] = 'theme_' . $c;
+        if($c) $available_contexts[] = 'theme ' . $c;
     }
 }
 $available_contexts = array_unique($available_contexts);
@@ -39,7 +40,6 @@ $available_contexts = array_unique($available_contexts);
     
         <p><?php printf(__('These are the strings that we found in your .po file. Please carefully review them. Then, click on the \'add\' or \'cancel\' buttons at the <a href="%s">bottom of this screen</a>. You can exclude individual strings by clearing the check boxes next to them.', 'sitepress'), '#add_po_strings_confirm'); ?></p>
         <form method="post" action="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH) ?>/menu/string-translation.php">
-        <input type="hidden" name="icl_st_strings_for" value="<?php echo $_POST['icl_st_strings_for'] ?>" />
         <?php if(isset($_POST['icl_st_po_translations'])): ?>
         <input type="hidden" name="icl_st_po_language" value="<?php echo $_POST['icl_st_po_language'] ?>" />
         <?php endif; ?>
