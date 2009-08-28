@@ -32,8 +32,7 @@ function icl_st_init(){
             'blog_title' => 1,
             'tagline' => 1,
             'widget_titles' => 1,
-            'text_widgets' => 1,
-            'theme_texts' => 1
+            'text_widgets' => 1
         );
         $sitepress->save_settings($sitepress_settings); 
         $init_all = true;
@@ -212,8 +211,8 @@ function icl_st_init(){
     }
     if($sitepress_settings['st']['sw']['text_widgets']){
         add_filter('widget_text', 'icl_sw_filters_widget_text');
-    }
-    if($sitepress_settings['st']['sw']['theme_texts'] && $sitepress_settings['theme_localization_type']==1){
+    }                     
+    if($sitepress_settings['theme_localization_type']==1){
         add_filter('gettext', 'icl_sw_filters_gettext', 9, 3);
     }
     

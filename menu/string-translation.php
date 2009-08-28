@@ -384,8 +384,6 @@ $available_contexts = array_unique($available_contexts);
                                             <?php echo __('Widget titles', 'sitepress'); ?></label></li>
                                         <li><label><input type="checkbox" name="icl_st_sw[text_widgets]" value="1" <?php if($sitepress_settings['st']['sw']['text_widgets']): ?>checked="checked"<?php endif ?> /> 
                                             <?php echo __('Content for text-widgets', 'sitepress'); ?></label></li>
-                                        <li><label><input type="checkbox" name="icl_st_sw[theme_texts]" value="1" <?php if($sitepress_settings['st']['sw']['theme_texts']): ?>checked="checked"<?php endif ?> /> 
-                                            <?php echo __('Theme/plugin texts', 'sitepress'); ?></label></li>                        
                                     </ul>
                                     <p>
                                     <input class="button-secondary" type="submit" name="iclt_st_sw_save" value="<?php echo __('Save options and rescan strings', 'sitepress')?>" />
