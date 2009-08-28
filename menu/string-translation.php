@@ -63,9 +63,9 @@ $available_contexts = array_unique($available_contexts);
                     <tr>
                         <td><input class="icl_st_row_cb" type="checkbox" name="icl_strings_selected[]" checked="checked" value="<?php echo $k ?>" /></td>
                         <td>
-                            <input type="text" name="icl_strings[]" value="<?php echo htmlentities($str['string']) ?>" readonly="readonly" style="width:100%;" size="100" />
+                            <input type="text" name="icl_strings[]" value="<?php echo htmlspecialchars($str['string']) ?>" readonly="readonly" style="width:100%;" size="100" />
                             <?php if(isset($_POST['icl_st_po_translations'])):?>
-                            <input type="text" name="icl_translations[]" value="<?php echo htmlentities(utf8_decode($str['translation'])) ?>" readonly="readonly" style="width:100%;<?php if($str['fuzzy']):?>;background-color:#ffecec<?php endif; ?>" size="100" />
+                            <input type="text" name="icl_translations[]" value="<?php echo htmlspecialchars($str['translation']) ?>" readonly="readonly" style="width:100%;<?php if($str['fuzzy']):?>;background-color:#ffecec<?php endif; ?>" size="100" />
                             <input type="hidden" name="icl_fuzzy[]" value="<?php echo $str['fuzzy'] ?>" />
                             <?php endif; ?>
                         </td>
@@ -110,7 +110,7 @@ $available_contexts = array_unique($available_contexts);
                         $total_cost_pl += $cost_pl;
                     ?>
                     <tr>                        
-                        <td><?php echo htmlentities($string->value) ?></td>
+                        <td><?php echo htmlspecialchars($string->value) ?></td>
                         <td align="right"><?php echo $wc ?></td>
                         <?php if(1 < $total_langs): ?>
                         <td align="right"><?php echo '$'; echo money_format($cost_pl, 2); ?></td>
@@ -152,7 +152,7 @@ $available_contexts = array_unique($available_contexts);
         <select name="icl_st_filter_context">
             <option value="" <?php if($context_filter === false ):?>selected="selected"<?php endif;?>><?php echo __('All contexts', 'sitepress') ?></option>
             <?php foreach($icl_contexts as $v):?>
-            <option value="<?php echo htmlentities($v->context)?>" <?php if($context_filter == $v->context ):?>selected="selected"<?php endif;?>><?php echo $v->context . ' ('.$v->c.')'; ?></option>
+            <option value="<?php echo htmlspecialchars($v->context)?>" <?php if($context_filter == $v->context ):?>selected="selected"<?php endif;?>><?php echo $v->context . ' ('.$v->c.')'; ?></option>
             <?php endforeach; ?>
         </select>    
         <?php endif; ?>
@@ -186,11 +186,11 @@ $available_contexts = array_unique($available_contexts);
                 <?php foreach($icl_string_translations as $string_id=>$icl_string): ?> 
                 <tr valign="top">
                     <td><input class="icl_st_row_cb" type="checkbox" value="<?php echo $string_id ?>" /></td>
-                    <td><?php echo htmlentities($icl_string['context']); ?></td>
-                    <td><?php echo htmlentities($icl_string['name']); ?></td>
+                    <td><?php echo htmlspecialchars($icl_string['context']); ?></td>
+                    <td><?php echo htmlspecialchars($icl_string['name']); ?></td>
                     <td width="70%">                                        
                         <div class="icl-st-original" style="float:left;">                    
-                        <?php echo htmlentities($icl_string['value']); ?>                    
+                        <?php echo htmlspecialchars($icl_string['value']); ?>                    
                         </div>                    
                         <div style="float:right;">
                             <a href="#icl-st-toggle-translations"><?php echo __('translations','sitepress') ?></a>
@@ -429,7 +429,7 @@ $available_contexts = array_unique($available_contexts);
                                         <select name="icl_st_i_context">
                                             <option value="">-------</option>
                                             <?php foreach($available_contexts as $v):?>
-                                            <option value="<?php echo htmlentities($v)?>" <?php if($context_filter == $v ):?>selected="selected"<?php endif;?>><?php echo $v; ?></option>
+                                            <option value="<?php echo htmlspecialchars($v)?>" <?php if($context_filter == $v ):?>selected="selected"<?php endif;?>><?php echo $v; ?></option>
                                             <?php endforeach; ?>
                                         </select>
                                         <a href="#" onclick="var __nxt = jQuery(this).parent().next(); jQuery(this).prev().val(''); jQuery(this).parent().fadeOut('fast',function(){__nxt.fadeIn('fast')});return false;"><?php echo __('new','sitepress')?></a>
@@ -458,7 +458,7 @@ $available_contexts = array_unique($available_contexts);
                                     <select name="icl_st_e_context" id="icl_st_e_context">
                                         <option value="" <?php if($context_filter === false ):?>selected="selected"<?php endif;?>><?php echo __('All contexts', 'sitepress') ?></option>
                                         <?php foreach($icl_contexts as $v):?>
-                                        <option value="<?php echo htmlentities($v->context)?>" <?php if($context_filter == $v->context ):?>selected="selected"<?php endif;?>><?php echo $v->context . ' ('.$v->c.')'; ?></option>
+                                        <option value="<?php echo htmlspecialchars($v->context)?>" <?php if($context_filter == $v->context ):?>selected="selected"<?php endif;?>><?php echo $v->context . ' ('.$v->c.')'; ?></option>
                                         <?php endforeach; ?>
                                     </select>   
                                </p>
