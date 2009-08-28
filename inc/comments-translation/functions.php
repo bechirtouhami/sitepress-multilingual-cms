@@ -341,17 +341,18 @@ class IclCommentsTranslation{
             ");
             
             // filter comments in the user's language
-            $res = $wpdb->get_results("
-                SELECT element_id, trid 
-                FROM {$wpdb->prefix}icl_translations
-                WHERE element_type='comment' AND trid IN (".join(',',$trids).") AND language_code = '{$this->user_language}'
-            ");
             $translated_comments_trids = array(0);
-            foreach($res as $row){
-                $comments_in_the_users_language[] = $row->element_id;
-                $translated_comments_trids[] = $row->trid;
-            }
-            
+            if(!empty($trids)){
+                $res = $wpdb->get_results("
+                    SELECT element_id, trid 
+                    FROM {$wpdb->prefix}icl_translations
+                    WHERE element_type='comment' AND trid IN (".join(',',$trids).") AND language_code = '{$this->user_language}'
+                ");                            
+                foreach($res as $row){
+                    $comments_in_the_users_language[] = $row->element_id;
+                    $translated_comments_trids[] = $row->trid;
+                }
+            }            
             $comments_not_translated_trids = array_diff($trids, $translated_comments_trids);
             
             if($comments_not_translated_trids){

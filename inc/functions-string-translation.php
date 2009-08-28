@@ -785,6 +785,8 @@ function icl_st_scan_theme_files($dir = false, $recursion = 0){
 function __icl_st_scan_theme_files_store_results($string, $domain){
     global $icl_scan_theme_found_domains;
     
+    $string = stripslashes($string);
+    
     if(!isset($icl_scan_theme_found_domains[$domain])){
         $icl_scan_theme_found_domains[$domain] = true;
     }
@@ -792,6 +794,7 @@ function __icl_st_scan_theme_files_store_results($string, $domain){
     if(!isset($__icl_registered_strings)){
         $__icl_registered_strings = array();
     }
+    
     if(!isset($__icl_registered_strings[$domain.'||'.$string])){
         if(!$domain){
             icl_register_string('theme', md5($string), $string);

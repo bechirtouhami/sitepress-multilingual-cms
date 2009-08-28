@@ -29,7 +29,7 @@ function wpml_content_languages($args=''){
     if(function_exists('icl_get_languages')){
         $languages = icl_get_languages($args);
         if(1 < count($languages)){
-            echo isset($before) ? $before : __('This post is also available in: ');
+            echo isset($before) ? $before : __('This post is also available in: ', 'sitepress');
             foreach($languages as $l){
                 if(!$l['active']) $langs[] = '<a href="'.$l['url'].'">'.$l['translated_name'].'</a>';
             }
