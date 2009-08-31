@@ -21,21 +21,21 @@ class IclCommentsTranslation{
         if(defined('WP_ADMIN')){
             add_action('show_user_profile', array($this, 'show_user_options'));
             add_action('personal_options_update', array($this, 'save_user_options'));
-        }else{
-            if($this->enable_comments_translation){
-                //
-            }        
-            
         }
         
-        add_action('admin_print_scripts', array($this,'js_scripts_setup'));
+        if(defined('WP_ADMIN') && $this->enable_replies_translation){
+            add_action('admin_print_scripts', array($this,'js_scripts_setup'));
+        }
+        
         
         add_filter('comments_array', array($this,'comments_array_filter'));
-        add_action('manage_comments_nav', array($this,'use_comments_array_filter'));
+        if($this->enable_comments_translation){
+            add_action('manage_comments_nav', array($this,'use_comments_array_filter'));
+        }
         add_filter('comment_feed_join', array($this, 'comment_feed_join'));
         add_filter('query', array($this, 'filter_queries'));
         //add_filter('comment_feed_where', array($this, 'comment_feed_where'));
-        
+                
         
         $this->user_language = get_usermeta($current_user->data->ID,'icl_admin_language',true);
         if(!$this->user_language){
@@ -53,8 +53,9 @@ class IclCommentsTranslation{
         
         add_action('comment_post', array($this, 'comment_post'));
         
-        //only for dashboard for now
-        add_filter('comment_row_actions', array($this,'comment_row_actions'),1, 2);
+        if(defined('WP_ADMIN') && $this->enable_replies_translation){
+            add_filter('comment_row_actions', array($this,'comment_row_actions'),1, 2);
+        }
         
         if(defined('WP_ADMIN')){
             add_filter('comment_text', array($this, 'comment_text_filter_admin'));
@@ -245,10 +246,10 @@ class IclCommentsTranslation{
         
         <input type="hidden" name="icl_comment_language" value="<?php echo $sitepress->get_current_language() ?>" />
         
-        <?php if($userdata->user_level > 7 && $user_lang_info['code'] != $sitepress->get_current_language()): ?>
+        <?php if($this->enable_replies_translation && $userdata->user_level > 7 && $user_lang_info['code'] != $sitepress->get_current_language()): ?>
         <label style="cursor:pointer">       
         <input type="hidden" name="icl_user_language" value="<?php echo $this->user_language ?>" />
-        <input style="width:15px;" type="checkbox" name="icl_translate_reply" <?php if($this->enable_replies_translation):?>checked="checked"<?php endif;?> />         
+        <input style="width:15px;" type="checkbox" name="icl_translate_reply" checked="checked" />         
         <span><?php echo sprintf(__('Translate from %s into %s', 'sitepress'),$user_lang_info['display_name'], $page_lang_info); ?></span>
         </label>
         <?php endif; ?>  
