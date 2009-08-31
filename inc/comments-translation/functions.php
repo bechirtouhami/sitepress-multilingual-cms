@@ -529,7 +529,7 @@ class IclCommentsTranslation{
         
         $signature_check = md5($sitepress_settings['access_key'] . $sitepress_settings['site_id'] . $rid);
         if($signature != $signature_check){
-            return array('err_code'=>1, 'err_str'=> __('Signature mismatch','sitepress'));
+            return 0; // array('err_code'=>1, 'err_str'=> __('Signature mismatch','sitepress'));
         }
         
         $to_language = $wpdb->get_var("SELECT to_language FROM {$wpdb->prefix}icl_message_status WHERE rid={$rid}");
@@ -577,7 +577,7 @@ class IclCommentsTranslation{
                         
         $wpdb->update($wpdb->prefix.'icl_message_status', array('status'=>MESSAGE_TRANSLATION_COMPLETE), array('rid'=>$rid));
         
-        return array('err_code'=>0, 'err_str'=> __('Success','sitepress'));
+        return 1; //success
     }
     
     function add_custom_xmlrpc_methods($methods){
