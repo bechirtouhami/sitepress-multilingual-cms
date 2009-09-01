@@ -292,10 +292,16 @@ switch($_REQUEST['icl_ajx_action']){
         break;
         
     case 'send_translation_request':
-        $post_id = $_POST['post_id'];        
+        $post_ids = explode(',',$_POST['post_ids']);
         $target_languages = explode('#', $_POST['target_languages']);
         $post_type = $_POST['type'];
-        echo icl_translation_send_post($post_id, $target_languages, $post_type);
+        foreach($post_ids as $post_id){            
+            $resp[] = array(
+                'post_id'=>$post_id, 
+                'status'=>icl_translation_send_post($post_id, $target_languages, $post_type)
+            );
+        }
+        echo json_encode($resp);
         break;
     case 'get_translator_status':
         if(!$sitepress->icl_account_configured()) break;

@@ -55,33 +55,38 @@ jQuery(document).ready(function(){
                 target_languages.push(jQuery(this).val());
             }
         });
-        jQuery('#icl_ajx_response').fadeIn();
+        jQuery('#icl_ajx_response').fadeIn();        
         jQuery('#icl-tr-sel-doc').attr('disabled','disabled');    
+        var post_ids = new Array();
+        var tmpback = new Array();
         jQuery('#icl-translation-dashboard :checkbox').each(function(){
             if(jQuery(this).attr('checked') && jQuery(this).val()!='on'){
                 post_id = jQuery(this).val();
-                tmpback = jQuery('#icl-tr-status-'+post_id).html();
-                jQuery.ajax({
-                    type: "POST",
-                    async: false,
-                    url: icl_ajx_url,
-                    data: "icl_ajx_action=send_translation_request&post_id="+post_id+'&type=post&target_languages='+target_languages.join('#'),
-                    success: function(msg){
-                        if(msg > 0){
-                            jQuery('#icl-tr-status-'+post_id).html(jQuery('#icl_message_2').html());
-                        }else{
-                            jQuery('#icl-tr-status-'+post_id).html(tmpback);
-                        }
-                        jQuery('#icl-tr-status-'+post_id).fadeIn();
-                        location.href = location.href;
-                    }
-                });
+                tmpback[post_id] = jQuery('#icl-tr-status-'+post_id).html();
+                post_ids.push(post_id);
             }            
-        });        
-        jQuery('#icl_ajx_response').html(jQuery('#icl_message_1').html());
-        jQuery('#icl-tr-sel-doc').removeAttr('disabled');    
-        //window.setTimeout('location.reload()',3000);
-        
+        });
+
+        jQuery.ajax({
+            type: "POST",
+            url: icl_ajx_url,
+            dataType: 'json',
+            data: "icl_ajx_action=send_translation_request&post_ids="+post_ids+'&type=post&target_languages='+target_languages.join('#'),
+            success: function(msg){
+                for(i in msg){
+                    p = msg[i];    
+                    if(p.status > 0){
+                        jQuery('#icl-tr-status-'+p.post_id).html(jQuery('#icl_message_2').html());
+                    }else{
+                        jQuery('#icl-tr-status-'+p.post_id).html(tmpback[p.post_id]);
+                    }
+                    jQuery('#icl-tr-status-'+p.post_id).fadeIn();
+                }
+                jQuery('#icl-tr-sel-doc').removeAttr('disabled');    
+                jQuery('#icl_ajx_response').html(jQuery('#icl_message_1').html());
+                location.href = location.href;
+            }
+        });
     });
     
     jQuery('#icl-tr-opt :checkbox').click(function(){
