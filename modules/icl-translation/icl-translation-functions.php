@@ -1,5 +1,4 @@
 <?php
-
 function icl_translation_admin_menu(){
     add_management_page(__('Translation Dashboard', 'sitepress'), __('Translation Dashboard', 'sitepress'), 'manage_options', dirname(__FILE__).'/icl-translation-dashboard.php');
 }

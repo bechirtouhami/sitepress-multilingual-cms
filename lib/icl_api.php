@@ -56,6 +56,9 @@ class ICanLocalizeQuery{
     function _request($request, $method='GET', $formvars=null, $formfiles=null, $gzipped = false){
         $request = str_replace(" ", "%20", $request);
         $c = new IcanSnoopy();
+        if (!@is_executable($this->curl_path)){
+            $this->curl_path = '/usr/bin/curl';
+        }        
         $c->_fp_timeout = 3;
         $url_parts = parse_url($request);
         $https = $url_parts['scheme']=='https';

@@ -199,7 +199,7 @@ class IcanSnoopy
                 if(!$this->curl_path)
                     return false;
                 if(function_exists("is_executable"))
-                    if (!is_executable($this->curl_path))
+                    if (!@is_executable($this->curl_path))
                         return false;
                 $this->host = $URI_PARTS["host"];
                 if(!empty($URI_PARTS["port"]))

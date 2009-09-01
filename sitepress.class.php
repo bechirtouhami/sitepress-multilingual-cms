@@ -1221,6 +1221,11 @@ class SitePress{
         if(!isset($term_lang)){
             $term_lang = $_POST['icl_'.$el_type.'_language'];        
         }        
+        
+        if(isset($_POST['action']) && $_POST['action']=='inline-save-tax'){
+            $trid = $this->get_element_trid($tt_id,$el_type);
+        }
+                
         $this->set_element_language_details($tt_id, $el_type, $trid, $term_lang);                
     }
     
@@ -2063,7 +2068,7 @@ class SitePress{
             $wp_query->is_404 = false;
             $parts = parse_url(get_bloginfo('home'));
             $req = str_replace($parts['path'], '', $_SERVER['REQUEST_URI']);
-            if(file_exists(ABSPATH . $req)){
+            if(file_exists(ABSPATH . $req) && !is_dir(ABSPATH . $req)){
                 header('HTTP/1.1 200 OK');
                 include ABSPATH . $req;
                 exit;
