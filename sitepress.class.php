@@ -7,7 +7,8 @@ class SitePress{
     private $wp_query;
     
     function __construct(){
-        global $wpdb;   
+        global $wpdb;
+        
         $this->settings = get_option('icl_sitepress_settings');                                
         if(false != $this->settings){
             $this->verify_settings();
@@ -160,12 +161,11 @@ class SitePress{
             add_action('show_user_profile', array($this, 'show_user_options'));
             add_action('personal_options_update', array($this, 'save_user_options'));
             
-            
         } //end if the initial language is set - existing_content_language_verified
         
     }
-                                          
-    function init(){     
+                                              
+    function init(){ 
         if($this->settings['existing_content_language_verified']){
             if(defined('WP_ADMIN')){
                 if(isset($_GET['lang'])){
@@ -1790,6 +1790,7 @@ class SitePress{
     
     function locale(){
         global $wpdb, $locale, $current_user;
+        
         if(is_null($current_user)){
             $current_user = wp_get_current_user();
         }
@@ -1814,18 +1815,27 @@ class SitePress{
                 $l = $wpdb->get_var("SELECT locale FROM {$wpdb->prefix}icl_locale_map WHERE code='{$user_admin_language}'");
             }else{
                 $l = $wpdb->get_var("SELECT locale FROM {$wpdb->prefix}icl_locale_map WHERE code='{$this->settings['admin_default_language']}'");
-            } 
+            }             
         }else{
             $l = $wpdb->get_var("SELECT locale FROM {$wpdb->prefix}icl_locale_map WHERE code='{$this->this_lang}'");
         }        
         if($l){
             $locale = $l;
         }    
+        
+        add_filter('language_attributes', array($this, '_language_attributes'));
+        
         // theme localization
         if($this->settings['gettext_theme_domain_name']){
             load_textdomain($this->settings['gettext_theme_domain_name'], TEMPLATEPATH . '/'.$locale.'.mo');
         }   
         return $locale;
+    }
+    
+    function _language_attributes($latr){
+        global $locale;
+        $latr = preg_replace('#lang="(.[a-z])"#i', 'lang="'.str_replace('_','-',$locale).'"', $latr);
+        return $latr;
     }
         
     function get_locale_file_names(){
