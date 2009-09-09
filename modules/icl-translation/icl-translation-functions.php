@@ -151,7 +151,8 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
   
     $iclq = new ICanLocalizeQuery($sitepress_settings['site_id'], $sitepress_settings['access_key']);
     
-    $post_url       = get_permalink($post_id);
+    //$post_url       = get_permalink($post_id);
+    $post_url       = get_option('home') . '?p=' . ($post_id);
     
     $orig_lang = $wpdb->get_var("
         SELECT l.english_name 

@@ -54,10 +54,15 @@ class ICanLocalizeQuery{
     
     
     function _request($request, $method='GET', $formvars=null, $formfiles=null, $gzipped = false){
+        
+        //reset errors displaying settings
+        $_display_errors = ini_get('display_errors');
+        ini_set('display_errors', 'off');
+        
         $request = str_replace(" ", "%20", $request);
         $c = new IcanSnoopy();
-        if (!@is_executable($this->curl_path)){
-            $this->curl_path = '/usr/bin/curl';
+        if (!@is_readable($c->curl_path) || !@is_executable($c->curl_path)){
+            $c->curl_path = '/usr/bin/curl';
         }        
         $c->_fp_timeout = 3;
         $url_parts = parse_url($request);
@@ -107,6 +112,10 @@ class ICanLocalizeQuery{
             $this->error = $results['info']['status']['value'];            
             return false;
         }
+        
+        //restore errors displaying settings
+        ini_set('display_errors', $_display_errors);        
+        
         return $results;
     }
     

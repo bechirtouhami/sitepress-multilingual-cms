@@ -1791,7 +1791,7 @@ class SitePress{
     function locale(){
         global $wpdb, $locale, $current_user;
         
-        if(is_null($current_user)){
+        if(is_null($current_user) && function_exists('wp_get_current_user')){
             $current_user = wp_get_current_user();
         }
         
