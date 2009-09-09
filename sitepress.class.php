@@ -1336,7 +1336,7 @@ class SitePress{
             WHERE tt.taxonomy='{$taxonomy}' AND t.element_type='{$element_type}' AND t.language_code <> '{$this_lang}'
             ");        
         $exclude[] = 0;         
-        $exclusions .= ' AND term_taxonomy_id NOT IN ('.join(',',$exclude).')';
+        $exclusions .= ' AND tt.term_taxonomy_id NOT IN ('.join(',',$exclude).')';
         return $exclusions;
     }
   
