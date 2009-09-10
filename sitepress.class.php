@@ -999,7 +999,7 @@ class SitePress{
     }
     
     function get_element_trid($element_id, $el_type='post'){
-        global $wpdb;   
+        global $wpdb;           
         return $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id='{$element_id}' AND element_type='{$el_type}'");
     }
     
