@@ -142,8 +142,14 @@ function wpml_default_link($anchor){
         $qv = 's=' . get_query_var('s');
     }
     
+    if(false !== strpos(wpml_get_home_url(),'?')){
+        $url_glue = '&';
+    }else{
+        $url_glue = '?';
+    }
+    
     if($qv){
-        $link = '<a href="' . wpml_get_home_url() . '?' . $qv . '" rel="nofollow">' . $anchor . '</a>';
+        $link = '<a href="' . wpml_get_home_url() . $url_glue . $qv . '" rel="nofollow">' . $anchor . '</a>';
     }else{
         $link = '';
     } 
