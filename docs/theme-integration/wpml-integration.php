@@ -123,8 +123,10 @@ function wpml_default_link($anchor){
     
     $qv = false;
     
-    if(is_singular()){
+    if(is_single()){
         $qv = 'p=' . get_the_ID();
+    }elseif(is_page()){
+        $qv = 'page_id=' . get_the_ID();
     }elseif(is_tag()){
         $tag = &get_term(intval( get_query_var('tag_id') ), 'post_tag', OBJECT, 'display');        
         $qv = 'tag=' . $tag->slug;
