@@ -48,6 +48,7 @@ require ICL_PLUGIN_PATH . '/inc/functions.php';
 require ICL_PLUGIN_PATH . '/inc/hacks.php';
 require ICL_PLUGIN_PATH . '/inc/upgrade.php';
 require ICL_PLUGIN_PATH . '/inc/functions-string-translation.php';
+require ICL_PLUGIN_PATH . '/inc/wpml-api.php';
 
 if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQUEST['action']!='activate-selected') 
     || (($_REQUEST['plugin'] != basename(ICL_PLUGIN_PATH).'/'.basename(__FILE__)) 
@@ -86,6 +87,5 @@ register_activation_hook( __FILE__, 'icl_sitepress_activate' );
 register_deactivation_hook(__FILE__, 'icl_sitepress_deactivate');
 
 add_filter('plugin_action_links', 'icl_plugin_action_links', 10, 2); 
-
 
 ?>

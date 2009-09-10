@@ -49,7 +49,7 @@ if($sitepress_settings['existing_content_language_verified']){
                         <?php else: ?>
                         <p class="sub">
                             <?php echo __('Currently configured languages:', 'sitepress')?>
-                            <?php echo join(', ', $alanguages_links)?>
+                            <?php echo join(', ', (array)$alanguages_links)?>
                         </p>
                         <?php endif; ?>                                                
                         

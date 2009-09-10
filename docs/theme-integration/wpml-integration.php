@@ -118,4 +118,35 @@ function wpml_get_object_id($element_id, $element_type='post', $return_original_
         return $element_id;
     }    
 }
+
+function wpml_default_link($anchor){
+    
+    $qv = false;
+    
+    if(is_singular()){
+        $qv = 'p=' . get_the_ID();
+    }elseif(is_tag()){
+        $tag = &get_term(intval( get_query_var('tag_id') ), 'post_tag', OBJECT, 'display');        
+        $qv = 'tag=' . $tag->slug;
+    }elseif(is_category()){        
+        $qv = 'cat=' . get_query_var('cat');
+    }elseif(is_year()){        
+        $qv = 'year=' . get_query_var('year');
+    }elseif(is_month()){        
+        $qv = 'm=' . get_query_var('year') . sprintf('%02d', get_query_var('monthnum'));
+    }elseif(is_day()){        
+        $qv = 'm=' . get_query_var('year') . sprintf('%02d', get_query_var('monthnum')) . sprintf('%02d', get_query_var('day'));
+    }elseif(is_search()){        
+        $qv = 's=' . get_query_var('s');
+    }
+    
+    if($qv){
+        $link = '<a href="' . get_option('home') . '?' . $qv . '">' . $anchor . '</a>';
+    }else{
+        $link = '';
+    } 
+
+    return $link;
+}
+
 ?>
