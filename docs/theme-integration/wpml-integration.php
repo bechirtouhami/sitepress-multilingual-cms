@@ -143,7 +143,7 @@ function wpml_default_link($anchor){
     }
     
     if($qv){
-        $link = '<a href="' . get_option('home') . '?' . $qv . '" rel="nofollow">' . $anchor . '</a>';
+        $link = '<a href="' . wpml_get_home_url() . '?' . $qv . '" rel="nofollow">' . $anchor . '</a>';
     }else{
         $link = '';
     } 
