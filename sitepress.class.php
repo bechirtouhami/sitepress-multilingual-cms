@@ -254,7 +254,9 @@ class SitePress{
             add_filter('query', array($this, 'filter_queries'));                
         }
         require ICL_PLUGIN_PATH . '/inc/template-constants.php';        
-        
+        if(defined(WPML_LOAD_API_SUPPORT)){
+            require ICL_PLUGIN_PATH . '/inc/wpml-api.php';
+        }        
     }
                 
     function ajax_responses(){

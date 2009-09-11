@@ -270,12 +270,12 @@ function wpml_get_content_translation($content_type, $content_id, $language_code
         return WPML_API_CONTENT_NOT_FOUND;
     }
         
-    $translations = $sitepress->get_element_translations($trid, $content_type, $skip_missing);
+    $translations = $sitepress->get_element_translations($trid, $content_type, true);
     
     if(!isset($translations[$language_code])){
         return WPML_API_TRANSLATION_NOT_FOUND;
     }else{
-        return array($lang => $translations[$language_code]->element_id);
+        return array($language_code => $translations[$language_code]->element_id);
     }
     
 }
