@@ -21,6 +21,7 @@ function _wpml_api_allowed_content_type($content_type){
         'page'      => 1, 
         'tag'       => 1, 
         'category'  => 1,
+        'post_tag'  => 1, 
         'comment'   => 1
     );
     return !isset($reserved_types[$content_type]) && preg_match('#([a-z0-9_\-])#i', $content_type);
@@ -203,18 +204,40 @@ function wpml_get_content_trid($content_type, $content_id){
  *  */
 
 function wpml_get_content($content_type, $content_id, $return_original = true){
-    global $sitepress;
-    
-    if(!_wpml_api_allowed_content_type($content_type)){
-        return WPML_API_GET_CONTENT_ERROR; //WPML_API_INVALID_CONTENT_TYPE;
-    }
+    global $sitepress, $wpdb;
     
     $trid = $sitepress->get_element_trid($content_id, $content_type);
     
     if(!$trid){
         return WPML_API_GET_CONTENT_ERROR;
     }else{
-        return icl_object_id($content_id, $content_type, $return_original);
+        if($content_id <= 0){
+            return $content_id;
+        } 
+        if($content_type=='category' || $content_type=='post_tag' || $content_type=='tag'){
+            $content_id = $wpdb->get_var($wpdb->prepare("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id= %d AND taxonomy='{$content_type}'",$content_id));
+        }
+        if($content_type=='post_tag'){
+            $icl_element_type = 'tag';
+        }elseif($content_type=='page'){
+            $icl_element_type = 'post';
+        }else{
+            $icl_element_type = $content_type;
+        }
+        
+        $trid = $sitepress->get_element_trid($content_id, $icl_element_type);
+        $translations = $sitepress->get_element_translations($trid, $icl_element_type);
+        
+        if(isset($translations[ICL_LANGUAGE_CODE]->element_id)){
+            $ret_element_id = $translations[ICL_LANGUAGE_CODE]->element_id;
+            if($element_type=='category' || $element_type=='post_tag'){
+                $ret_element_id = $wpdb->get_var($wpdb->prepare("SELECT t.term_id FROM {$wpdb->term_taxonomy} tx JOIN {$wpdb->terms} t ON t.term_id = tx.term_id WHERE tx.term_taxonomy_id = %d AND tx.taxonomy='{$content_type}'", $ret_element_id));            
+            }
+        }else{
+            $ret_element_id = $return_original ? $content_id : null;
+        }
+        
+        return $ret_element_id;
     } 
 }
 
