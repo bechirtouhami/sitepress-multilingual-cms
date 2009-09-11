@@ -376,4 +376,27 @@ function wpml_get_contents($content_type, $language_code = false){
     return $contents;
     
 }
+
+/**
+ *  Returns google translation for given string
+ *  
+ * @since 1.3
+ * @package WPML
+ * @subpackage WPML API
+ *
+ * @param string $string String
+ * @param string $from_language Language to translate from
+ * @param string $to_language Language to translate into
+ *    
+ * @return int (error code) or string
+ *  */
+function wpml_machine_translation($string, $from_language, $to_language){
+    global $sitepress;
+    
+    if(!$sitepress->get_language_details($from_language) || !$sitepress->get_language_details($to_language)){
+        return WPML_API_INVALID_LANGUAGE_CODE; 
+    }
+    
+    return IclCommentsTranslation::machine_translate($from_language, $to_language, $string);    
+}
 ?>
