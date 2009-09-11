@@ -1011,17 +1011,35 @@ class SitePress{
         return $wpdb->get_var("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE element_id='{$element_id}' AND element_type='{$el_type}'");
     }
 
+    function get_elements_without_translations($el_type, $language){
+        global $wpdb;
+        
+        $sql = "SELECT
+                    element_id
+                FROM
+                    {$wpdb->prefix}icl_translations
+                GROUP BY
+                    trid
+                HAVING COUNT(trid) = 1
+                    AND language_code = '{$language}'
+                    AND element_type = '{$el_type}'
+                    ";
+        
+        return $wpdb->get_col($sql);
+    }
+    
     function meta_box($post){
         global $wpdb;   
         $active_languages = $this->get_active_languages();
+        $default_language = $this->get_default_language();
         if($post->ID){
             $res = $wpdb->get_row("SELECT trid, language_code, source_language_code FROM {$wpdb->prefix}icl_translations WHERE element_id='{$post->ID}' AND element_type='post'");
             $trid = $res->trid;
             if($trid){                
                 $element_lang_code = $res->language_code;
             }else{
-                $trid = $this->set_element_language_details($post->ID,'post',null,$this->get_default_language());
-                $element_lang_code = $this->get_default_language();
+                $trid = $this->set_element_language_details($post->ID,'post',null,$default_language);
+                $element_lang_code = $default_language;
             }            
         }else{
             $trid = $_GET['trid'];
@@ -1029,8 +1047,17 @@ class SitePress{
         }                 
         if($trid){
             $translations = $this->get_element_translations($trid, 'post');        
-        }        
-        $selected_language = $element_lang_code?$element_lang_code:$this->get_default_language();
+        }
+        $selected_language = $element_lang_code?$element_lang_code:$default_language;
+        
+        // determine if this is for a "post" or a "page"
+        $is_page = false;
+        if (stristr($_SERVER['REQUEST_URI'], 'page-new.php') > 0) {
+            $is_page = true;
+        }elseif ($post->ID){
+            $is_page = 'page' == $wpdb->get_var("SELECT post_type FROM {$wpdb->prefix}posts WHERE ID={$post->ID}");
+        }
+        $untranslated_ids = $this->get_elements_without_translations("post", $default_language);
         
         include ICL_PLUGIN_PATH . '/menu/post-menu.php';
     }
