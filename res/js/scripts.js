@@ -2,8 +2,7 @@ jQuery(document).ready(function(){
     if(jQuery('#category-adder').html()){
         jQuery('#category-adder').prepend('<p>'+icl_cat_adder_msg+'</p>');
     }
-    jQuery('select[name="icl_post_language"]').change(iclPostLanguageSwitch);
-    
+    jQuery('#icl_set_post_language').click(iclPostLanguageSwitch);
     jQuery('#noupdate_but input[type="button"]').click(iclSetDocumentToDate);
 });
 
@@ -54,8 +53,9 @@ function iclSaveForm(){
 }
 
 function iclPostLanguageSwitch(){
-    var lang = jQuery(this).attr('value');
+    var lang = jQuery('#icl_post_language').val();
     var ajx = location.href.replace(/#(.*)$/,'');
+    var translation_of = jQuery('#icl_translation_of').val();
     if(-1 == location.href.indexOf('?')){
         url_glue='?';
     }else{
@@ -74,8 +74,7 @@ function iclPostLanguageSwitch(){
         ltlhlpr.setAttribute('id','icl_ltlhlpr');
         jQuery(this).append(ltlhlpr);
         jQuery('#categorydiv').slideUp();
-        jQuery('#icl_ltlhlpr').load(ajx+url_glue+'lang='+lang + ' #categorydiv',{}, function(){
-            /*alert(jQuery('#icl_ltlhlpr div').html());*/
+        jQuery('#icl_ltlhlpr').load(ajx+url_glue+'icl_action=set_post_language&translation_of='+translation_of+'&lang='+lang + ' #categorydiv',{}, function(){
             jQuery('#categorydiv').html(jQuery('#icl_ltlhlpr div').html());
             jQuery('#categorydiv').slideDown();
             jQuery('#icl_ltlhlpr').remove();    

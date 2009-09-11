@@ -1,12 +1,21 @@
 <?php $this->noscript_notice() ?>
 <p style="float:left;">
 <?php echo __('Language of this post', 'sitepress') ?>&nbsp;
-<select name="icl_post_language">
+<select name="icl_post_language" id="icl_post_language">
 <?php foreach($active_languages as $lang):?>
 <?php if(isset($translations[$lang['code']]->element_id) && $translations[$lang['code']]->element_id != $post->ID) continue ?>
-<option value="<?php echo $lang['code'] ?>" <?php if($selected_language==$lang['code']): ?>selected="selected"<?php endif;?>><?php echo $lang['display_name'] ?></option>
+<option value="<?php echo $lang['code'] ?>" <?php if($selected_language==$lang['code']): ?>selected="selected"<?php endif;?>><?php echo $lang['display_name'] ?>&nbsp;</option>
 <?php endforeach; ?>
-</select>
+</select> 
+<?php 
+    $ueoptions = '<option value="0">--------&nbsp;</option>';
+    foreach($untranslated_elements as $ue){
+        if($post->ID == $ue->element_id) continue;
+        $ueoptions .= '<option value="'.$ue->element_id.'">' . $ue->post_title . '&nbsp;</option>';
+    }
+?>
+<?php echo sprintf(__('Translation of %s', 'sitepress'),'<select id="icl_translation_of">'.$ueoptions.'</select>'); ?>
+&nbsp;<input class="button secondary" type="button" value="<?php echo __('update', 'sitepress'); ?>" id="icl_set_post_language" />
 
 <input type="hidden" name="icl_trid" value="<?php echo $trid ?>" />
 </p>

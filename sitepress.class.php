@@ -257,7 +257,8 @@ class SitePress{
         if(defined('WPML_LOAD_API_SUPPORT')){
             require ICL_PLUGIN_PATH . '/inc/wpml-api.php';
             
-        }        
+        }   
+             
     }
                 
     function ajax_responses(){
@@ -766,9 +767,18 @@ class SitePress{
     }
     
     function post_edit_language_options(){
+        global $wpdb;
         if(function_exists('add_meta_box')){
             add_meta_box('icl_div', __('Language options', 'sitepress'), array($this,'meta_box'), 'post', 'normal', 'high');
             add_meta_box('icl_div', __('Language options', 'sitepress'), array($this,'meta_box'), 'page', 'normal', 'high');
+        }
+        if(isset($_GET['icl_action']) && $_GET['icl_action']=='set_post_language'){
+            $src_trid = $this->get_element_trid($_GET['translation_of'], 'post');
+            $wpdb->update(
+                $wpdb->prefix.'icl_translations', 
+                array('trid'=>$src_trid, 'language_code'=>$_GET['lang'], 'source_language_code'=>$this->get_default_language()), 
+                array('element_id'=>$_GET['post'], 'element_type'=>'post')
+            );
         }
     }
     
@@ -1012,20 +1022,35 @@ class SitePress{
     }
 
     function get_elements_without_translations($el_type, $language){
-        global $wpdb;
+        global $wpdb, $pagenow;
         
+        $where = '';
+        $join = '';
+        if($el_type=='post'){
+            $post_type = $pagenow=='page-new.php' ? 'page' : 'post';
+            $where .= "AND post_type = '{$post_type}'";
+            $join .= "JOIN {$wpdb->posts} p ON t.element_id = p.ID";
+        }
+        
+        $sql = "SELECT trid, COUNT(element_id) AS c
+                FROM {$wpdb->prefix}icl_translations   
+                WHERE element_type = '{$el_type}'       
+                GROUP BY trid
+                HAVING c = 1
+        ";
+        $singular_trids = $wpdb->get_col($sql);
+        
+        if(empty($singular_trids)){
+            $singular_trids = array(0);
+        }
         $sql = "SELECT
-                    element_id
+                    t.element_id, p.post_title
                 FROM
-                    {$wpdb->prefix}icl_translations
-                GROUP BY
-                    trid
-                HAVING COUNT(trid) = 1
-                    AND language_code = '{$language}'
-                    AND element_type = '{$el_type}'
-                    ";
-        
-        return $wpdb->get_col($sql);
+                    {$wpdb->prefix}icl_translations t {$join} 
+                WHERE trid IN (" . join(',',$singular_trids) . ") AND t.language_code = '{$language}'
+                {$where}             
+                ";
+        return $wpdb->get_results($sql);
     }
     
     function meta_box($post){
@@ -1057,7 +1082,8 @@ class SitePress{
         }elseif ($post->ID){
             $is_page = 'page' == $wpdb->get_var("SELECT post_type FROM {$wpdb->prefix}posts WHERE ID={$post->ID}");
         }
-        $untranslated_ids = $this->get_elements_without_translations("post", $default_language);
+        
+        $untranslated_elements = $this->get_elements_without_translations("post", $default_language);
         
         include ICL_PLUGIN_PATH . '/menu/post-menu.php';
     }
