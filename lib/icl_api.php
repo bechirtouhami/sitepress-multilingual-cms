@@ -290,7 +290,6 @@ class ICanLocalizeQuery{
         $parameters['to_language'] = $to_language;
         $parameters['signature'] = md5($body.$from_language.$to_language);
         $res = $this->_request($request_url, 'POST' , $parameters);        
-        
         if($res['info']['status']['attr']['err_code']=='0'){
             return $res['info']['result']['attr']['id'];
         }else{

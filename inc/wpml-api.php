@@ -11,6 +11,8 @@ define('WPML_API_CONTENT_NOT_FOUND' , 4);
 define('WPML_API_TRANSLATION_NOT_FOUND' , 5);
 define('WPML_API_INVALID_CONTENT_TYPE' , 6);
 define('WPML_API_CONTENT_EXISTS' , 7);
+define('WPML_API_FUNCTION_ALREADY_DECLARED', 8);
+define('WPML_API_CONTENT_TRANSLATION_DISABLED', 9);
 
 define('WPML_API_GET_CONTENT_ERROR' , 0);
 
@@ -398,5 +400,86 @@ function wpml_machine_translation($string, $from_language, $to_language){
     }
     
     return IclCommentsTranslation::machine_translate($from_language, $to_language, $string);    
+}
+
+/**
+ *  Sends piece of content (string) to professional translation @ ICanLocalize
+ *  
+ * @since 1.3
+ * @package WPML
+ * @subpackage WPML API
+ *
+ * @param string $string String
+ * @param string $from_language Language to translate from
+ * @param int $content_id Content ID
+ * @param string $content_type Content Type
+ * @param string $to_language Language to translate into
+ *    
+ * @return int request id
+ *  */
+function wpml_send_content_to_translation($string, $content_id, $content_type, $from_language, $to_language){
+    global $sitepress, $sitepress_settings, $wpdb;
+    
+    if(!$sitepress->get_icl_translation_enabled()){
+        return 0; //WPML_API_CONTENT_TRANSLATION_DISABLED
+    }
+    
+    if(!_wpml_api_allowed_content_type($content_type)){
+        return 0; //WPML_API_INVALID_CONTENT_TYPE
+    }
+    
+    if(!$sitepress->get_language_details($from_language) || !$sitepress->get_language_details($to_language)){
+        return 0; // WPML_API_INVALID_LANGUAGE_CODE
+    }
+    
+    $from_lang = $sitepress->get_language_details($from_language);
+    $to_lang   = $sitepress->get_language_details($to_language);    
+    $from_lang_server = apply_filters('icl_server_languages_map', $from_lang['english_name']);
+    $to_lang_server = apply_filters('icl_server_languages_map', $to_lang['english_name']);
+    
+    $iclq = new ICanLocalizeQuery($sitepress_settings['site_id'], $sitepress_settings['access_key']);    
+    
+    $rid = $iclq->cms_create_message($string, $from_lang_server, $to_lang_server);
+    
+    if($rid > 0){
+        // does this comment already exist in the messages status queue?
+        $msid = $wpdb->get_var("SELECT id FROM {$wpdb->prefix}icl_message_status WHERE object_type='{$content_type}' AND object_id={$content_id}");
+        if($msid){
+            $wpdb->update($wpdb->prefix.'icl_message_status', 
+                array('rid'=>$rid, 'md5' => md5($body), 'status' => MESSAGE_TRANSLATION_IN_PROGRESS),
+                array('id' => $msid)
+                );
+        }else{
+            $wpdb->insert($wpdb->prefix.'icl_message_status', array(
+                'rid'           => $rid,
+                'object_id'     => $content_id,
+                'from_language' => $from_language,
+                'to_language'   => $to_language,
+                'md5'           => md5($string),
+                'object_type'   => $content_type,
+                'status'        => MESSAGE_TRANSLATION_IN_PROGRESS
+            ));
+        }
+    }  
+    
+    return $rid;  
+}
+
+/**
+ * Registers a callback for when a translation is received from the server.
+ * The callback parameters are int $request_id, string $content, string $language
+ * @since 1.3
+ * @package WPML
+ * @subpackage WPML API
+ *
+ * @param string $callback
+ *    
+ * @return error code (0 on success)
+ *  */
+function wpml_add_callback_for_received_translation($callback){
+    if(function_exists($callback)){
+        return WPML_API_FUNCTION_ALREADY_DECLARED;
+    }
+    add_action('wpml_add_message_translation', $callback, $request_id, $content, $language);    
 }
 ?>

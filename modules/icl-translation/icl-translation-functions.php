@@ -999,6 +999,7 @@ function icl_add_custom_xmlrpc_methods($methods){
     $methods['icanlocalize.translate_post'] = '_icl_remote_control_translate_post';
     $methods['icanlocalize.test_xmlrpc'] = '_icl_test_xmlrpc';
     $methods['icanlocalize.cancel_translation'] = '_icl_xmlrpc_cancel_translation';
+    $methods['icanlocalize.notify_message_translation'] =  '_icl_xmlrpc_add_message_translation';
     return $methods;
 }
 
@@ -1114,7 +1115,6 @@ function icl_get_post_translation_status($post_id){
     return $status;
 }
 
-
 function icl_display_post_translation_status($post_id, &$post_translation_statuses){
     global $wpdb, $sitepress;                                                                                                               
     $trid = $sitepress->get_element_trid($post_id);
@@ -1182,88 +1182,6 @@ function icl_display_post_translation_status($post_id, &$post_translation_status
         }
     }
 }
-
-/*
-function icl_display_post_translation_status_OBSOLETE($post_id, &$post_translation_statuses){
-    global $wpdb, $sitepress;                                                                                                               
-    $tr_info = $wpdb->get_row("
-        SELECT lt.name, t.language_code, t.source_language_code, t.trid 
-        FROM {$wpdb->prefix}icl_translations t LEFT JOIN {$wpdb->prefix}icl_languages_translations lt ON t.source_language_code=lt.language_code
-        WHERE t.element_type='post' AND t.element_id={$post_id} AND lt.display_language_code = '".$sitepress->get_default_language()."'"
-        );
-    if($post_id==0){
-        return;
-    }
-    
-    // is ICL translation ?
-    $icl_translation = get_post_meta($post_id,'_icl_translation',true); 
-    if($icl_translation && $tr_info->name){
-        echo '<div style="text-align:center;clear:both;">'. sprintf(__('Translated from %s','sitepress'),$tr_info->name).'</div>';
-        echo '<div style="text-align:center;clear:both;color:#888;">'. __('This translation is maintained by ICanLocalize. Edits that you do will be overwritten when the translator does an update.','sitepress').'</div>';        
-        //return;
-        $post_id = $wpdb->get_var("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid='{$tr_info->trid}' AND element_type='post' AND source_language_code IS NULL");
-    }
-    
-    $post_updated = $wpdb->get_var("SELECT c.md5<>n.md5 FROM {$wpdb->prefix}icl_content_status c JOIN {$wpdb->prefix}icl_node n ON c.nid=n.nid WHERE c.nid=".$post_id);
-    
-    $status = icl_get_post_translation_status($post_id);    
-        
-    foreach($status as $k=>$v){
-        $status[$v->target] = $v;
-        unset($status[$k]);
-    }
-    
-    if(empty($status)){
-        ////if(count($sitepress->get_element_translations($sitepress->get_element_trid($post_id), 'post', true)) <= 1 ){
-        ////    echo '<table class="widefat">';
-        ////    echo '<tr><td align="center">';
-        ////    echo __('Not translated');
-        ////    echo '</td></tr>';
-        ////    echo '</table>';
-        ////}
-    }else{  
-        if($post_updated){
-            echo '
-                <div id="noupdate_but">
-                <input type="button" class="button" value="'.__('This document\'s translation doesn\'t need to update', 'sitepress').'" />
-                <span id="noupdate_but_wm" style="display:none">'.__('Translations for this document appear to be out-of-date. Are you sure they don\'t need to be updated?','sitepress').'</span>                
-                </div>';
-        }
-        
-        ////echo '<p><strong>'.__('Translation status:','sitepress').'</strong></p>';
-        ////echo '<table id="icl_translations_statuses" class="widefat">';        
-        ////$oddcolumn = true;
-        $active_languages = $sitepress->get_active_languages();    
-        foreach($active_languages as $al){            
-            ////if($al['code']==$sitepress->get_default_language()) continue;
-            /////$oddcolumn = !$oddcolumn;            
-            /////echo '<tr'; if($oddcolumn) echo ' class="alternate"'; echo '>';
-            /////echo '<td scope="col">'.sprintf(__('Translation to %s'), $al['display_name']).'</td>';            
-            /////echo '<td align="right" scope="col" class="icl_translation_status_msg">';            
-            if($status[$al['code']]->status==CMS_TARGET_LANGUAGE_DONE && $post_updated){
-                $__status = __('translation needs update','sitepress');                
-            }else{
-                switch($status[$al['code']]->status){
-                    //case CMS_REQUEST_WAITING_FOR_PROJECT_CREATION: echo __('Waiting for project creation','sitepress');break;
-                    //case CMS_REQUEST_PROJECT_CREATION_REQUESTED: echo __('Project creation requested','sitepress');break;
-                    //case CMS_REQUEST_CREATING_PROJECT: echo __('Creating project','sitepress');break;
-                    //case CMS_REQUEST_RELEASED_TO_TRANSLATORS: echo __('Released to translators','sitepress');break;
-                    //case CMS_REQUEST_TRANSLATED: echo __('Translated on server','sitepress');break;
-                    case CMS_REQUEST_WAITING_FOR_PROJECT_CREATION: $__status = __('Translation in progress','sitepress');break;
-                    case CMS_TARGET_LANGUAGE_DONE: $__status = __('Translation complete','sitepress');break;
-                    case CMS_REQUEST_FAILED: $__status = __('Request failed','sitepress');break;
-                    default: $__status = __('Not translated','sitepress');
-                }
-            }
-            ////echo $__status;            
-            $post_translation_statuses[$al['code']] = $__status;
-            ////echo '</td>';
-            ////echo '</tr>';            
-        }        
-        ////echo '</table>';
-    }    
-}
-*/
 
 function icl_decode_translation_status_id($status){
     switch($status){
@@ -1911,5 +1829,30 @@ function icl_translation_add_string_translation($trid, $translation, $lang, $rid
     $wpdb->update($wpdb->prefix.'icl_core_status', array('status'=>CMS_TARGET_LANGUAGE_DONE), array('rid'=>$rid, 'target'=>$sitepress->get_language_code($lang)));
     
     return true;
+}
+
+
+function _icl_xmlrpc_add_message_translation($args){
+    global $wpdb, $sitepress, $sitepress_settings;
+    $signature      = $args[0];
+    $site_id        = $args[1];
+    $rid            = $args[2];
+    $translation    = $args[3];
+    
+    $signature_check = md5($sitepress_settings['access_key'] . $sitepress_settings['site_id'] . $rid);
+    if($signature != $signature_check){
+        return 0; // array('err_code'=>1, 'err_str'=> __('Signature mismatch','sitepress'));
+    }
+    
+    $res = $wpdb->get_row("SELECT to_language, object_id, object_type FROM {$wpdb->prefix}icl_message_status WHERE rid={$rid}");
+    
+    $to_language = $res->to_language;
+    $object_id   = $res->object_id;
+    $object_type   = $res->object_type;
+    
+    do_action('wpml_add_message_translation', $object_id, $object_type, $to_language, $translation);
+                            
+    $wpdb->update($wpdb->prefix.'icl_message_status', array('status'=>MESSAGE_TRANSLATION_COMPLETE), array('rid'=>$rid));
+    
 }
 ?>
