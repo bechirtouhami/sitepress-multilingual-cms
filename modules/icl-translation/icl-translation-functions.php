@@ -999,7 +999,7 @@ function icl_add_custom_xmlrpc_methods($methods){
     $methods['icanlocalize.translate_post'] = '_icl_remote_control_translate_post';
     $methods['icanlocalize.test_xmlrpc'] = '_icl_test_xmlrpc';
     $methods['icanlocalize.cancel_translation'] = '_icl_xmlrpc_cancel_translation';
-    $methods['icanlocalize.notify_message_translation'] =  '_icl_xmlrpc_add_message_translation';
+    $methods['icanlocalize.notify_comment_translation'] =  '_icl_xmlrpc_add_message_translation';
     return $methods;
 }
 
@@ -1833,25 +1833,30 @@ function icl_translation_add_string_translation($trid, $translation, $lang, $rid
 
 
 function _icl_xmlrpc_add_message_translation($args){
-    global $wpdb, $sitepress, $sitepress_settings;
+    global $wpdb, $sitepress, $sitepress_settings, $wpml_add_message_translation_callbacks;
     $signature      = $args[0];
     $site_id        = $args[1];
     $rid            = $args[2];
     $translation    = $args[3];
-    
+    /*
     $signature_check = md5($sitepress_settings['access_key'] . $sitepress_settings['site_id'] . $rid);
     if($signature != $signature_check){
         return 0; // array('err_code'=>1, 'err_str'=> __('Signature mismatch','sitepress'));
     }
-    
+    */
     $res = $wpdb->get_row("SELECT to_language, object_id, object_type FROM {$wpdb->prefix}icl_message_status WHERE rid={$rid}");
     
     $to_language = $res->to_language;
     $object_id   = $res->object_id;
     $object_type   = $res->object_type;
     
-    do_action('wpml_add_message_translation', $object_id, $object_type, $to_language, $translation);
-                            
+    if(is_array($wpml_add_message_translation_callbacks[$object_type])){
+        foreach($wpml_add_message_translation_callbacks[$object_type] as $callback){
+            if ( !is_null($callback) ) {
+                call_user_func($callback, $object_id, $to_language, $translation);    
+            } 
+        }
+    }                            
     $wpdb->update($wpdb->prefix.'icl_message_status', array('status'=>MESSAGE_TRANSLATION_COMPLETE), array('rid'=>$rid));
     
 }

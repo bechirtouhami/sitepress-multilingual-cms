@@ -476,10 +476,9 @@ function wpml_send_content_to_translation($string, $content_id, $content_type, $
  *    
  * @return error code (0 on success)
  *  */
-function wpml_add_callback_for_received_translation($callback){
-    if(function_exists($callback)){
-        return WPML_API_FUNCTION_ALREADY_DECLARED;
-    }
-    add_action('wpml_add_message_translation', $callback, $request_id, $content, $language);    
+function wpml_add_callback_for_received_translation($content_type, $callback){
+    global $wpml_add_message_translation_callbacks;
+    $wpml_add_message_translation_callbacks[$content_type][] = $callback;
+    return 0;    
 }
 ?>

@@ -66,6 +66,9 @@ class IclCommentsTranslation{
         add_filter('xmlrpc_methods',array($this, 'add_custom_xmlrpc_methods'));
         
         add_filter('get_comments_number', array($this, 'get_comments_number_filter'));        
+        
+        global $wpml_add_message_translation_callbacks;
+        $wpml_add_message_translation_callbacks['comment'][] = array($this, 'add_comment_translation');
                 
     }
     
@@ -519,7 +522,7 @@ class IclCommentsTranslation{
         }
     }
     
-    function add_comment_translation($args){
+    function add_comment_translationOLD($args){
         
         global $wpdb, $sitepress, $sitepress_settings;
         $signature      = $args[0];
@@ -580,8 +583,54 @@ class IclCommentsTranslation{
         return 1; //success
     }
     
+    function add_comment_translation($object_id, $to_language, $translation){
+        global $wpdb, $sitepress, $sitepress_settings;
+    
+        $original_comment = $wpdb->get_row("
+            SELECT * 
+            FROM {$wpdb->comments} WHERE comment_ID = {$object_id}
+            ", ARRAY_A);
+        $new_comment = $original_comment;
+        
+        //sync comment parent
+        if($original_comment['comment_parent']){
+            $ctrid = (int)$sitepress->get_element_trid($original_comment['comment_parent'],'comment');
+            $new_comment['comment_parent'] =  (int) $wpdb->get_var("
+                SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid={$ctrid} 
+                    AND element_type='comment' AND language_code='{$to_language}'");
+        }        
+        
+        $original_comment_id = $original_comment['comment_ID'];
+        unset($original_comment);
+        $new_comment['comment_content'] = $translation;
+        unset($new_comment['comment_ID']);
+        
+        //remove_action('wp_insert_comment', array($this, 'wp_insert_comment'));
+        
+        //check whether a translation for this comment in this language already exists
+        $trid = $sitepress->get_element_trid($original_comment_id, 'comment');        
+        
+        $existing_comment_id = $wpdb->get_var("
+            SELECT element_id FROM {$wpdb->prefix}icl_translations 
+            WHERE trid={$trid} AND element_type='comment' AND language_code='{$to_language}'");
+        
+        if(!$existing_comment_id){
+            $new_id = wp_insert_comment($new_comment);
+        }else{
+            $new_id = $new_comment['comment_ID'] = $existing_comment_id;
+            remove_action('transition_comment_status', array($this, 'transition_comment_status_actions'));
+            wp_update_comment($new_comment);
+        }
+        
+        $sitepress->set_element_language_details($new_id, 'comment', $trid, $to_language);
+                                
+        return 1; //success
+    }
+    
+    
+    
     function add_custom_xmlrpc_methods($methods){
-        $methods['icanlocalize.notify_comment_translation'] = array($this, 'add_comment_translation');
+        //$methods['icanlocalize.notify_comment_translation'] = array($this, 'add_comment_translation');
         return $methods;
     }
     
