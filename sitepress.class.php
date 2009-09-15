@@ -1063,6 +1063,26 @@ class SitePress{
         
         return $wpdb->get_col($sql);        
     }
+
+    function get_posts_without_translations($is_page, $selected_language, $default_language) {
+        global $wpdb;
+        $untranslated_ids = $this->get_elements_without_translations("post", $selected_language, $default_language);
+        if (sizeof($untranslated_ids)) {
+            // filter for "page" or "post"
+            $ids = join(',',$untranslated_ids);
+            $type = $is_page?"page":"post";
+            $untranslated_ids = $wpdb->get_col("SELECT ID FROM {$wpdb->prefix}posts WHERE ID IN ({$ids}) AND post_type = '{$type}'");
+        }
+        
+        $untranslated = array();
+        
+        foreach ($untranslated_ids as $id) {
+            $untranslated[$id] = $wpdb->get_var("SELECT post_title FROM {$wpdb->prefix}posts WHERE ID = {$id}");
+        }
+        
+        return $untranslated;
+    }
+            
     
     function meta_box($post){
         global $wpdb;   
@@ -1094,13 +1114,8 @@ class SitePress{
         }elseif ($post->ID){
             $is_page = 'page' == $wpdb->get_var("SELECT post_type FROM {$wpdb->prefix}posts WHERE ID={$post->ID}");
         }
-        $untranslated_ids = $this->get_elements_without_translations("post", $selected_language, $default_language);
-        if (sizeof($untranslated_ids)) {
-            // filter for "page" or "post"
-            $ids = join(',',$untranslated_ids);
-            $type = $is_page?"page":"post";
-            $untranslated_ids = $wpdb->get_col("SELECT ID FROM {$wpdb->prefix}posts WHERE ID IN ({$ids}) AND post_type = '{$type}'");
-        }
+        
+        $untranslated = $this->get_posts_without_translations($is_page, $selected_language, $default_language);
         
         include ICL_PLUGIN_PATH . '/menu/post-menu.php';
     }
