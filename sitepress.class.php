@@ -1263,14 +1263,16 @@ class SitePress{
         $element_id = $term->term_taxonomy_id;    
         $element_type = $pagenow=='categories.php'?'category':'tag';
         
+        $default_language = $this->get_default_language();
+        
         if($element_id){
             $res = $wpdb->get_row("SELECT trid, language_code, source_language_code FROM {$wpdb->prefix}icl_translations WHERE element_id='{$element_id}' AND element_type='{$element_type}'");
             $trid = $res->trid;
             if($trid){                
                 $element_lang_code = $res->language_code;
             }else{
-                $trid = $this->set_element_language_details($post->ID, $element_type, null, $this->get_default_language());
-                $element_lang_code = $this->get_default_language();
+                $trid = $this->set_element_language_details($element_id, $element_type, null, $default_language);
+                $element_lang_code = $default_language;
             }                            
         }else{
             $trid = $_GET['trid'];
@@ -1280,7 +1282,10 @@ class SitePress{
             $translations = $this->get_element_translations($trid, $element_type);        
         }                                   
         $active_languages = $this->get_active_languages();
-        $this_lang = $element_lang_code?$element_lang_code:$this->get_default_language();
+        $this_lang = $element_lang_code?$element_lang_code:$default_language;
+        
+        $untranslated_ids = $this->get_elements_without_translations($element_type, $this_lang, $default_language);
+        
         include ICL_PLUGIN_PATH . '/menu/'.$element_type.'-menu.php';        
     }
     
