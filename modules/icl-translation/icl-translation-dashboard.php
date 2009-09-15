@@ -201,7 +201,8 @@
     <span id="icl-cw-total" style="display:none"><?php echo $wctotal; ?></span>    
     <div class="tablenav">
     <div style="float:left;margin-top:4px;"><strong><?php echo __('Translation Cost Estimate:', 'sitepress') ?></strong> <?php printf(__('%s words, %s USD to each language at 0.07 USD/word. <span id="icl-estimated-all" style="display:none;"> (%s USD to all selected languages)</span>', 'sitepress'), '<span id="icl-estimated-words-count">0</span>', '<strong><span id="icl-estimated-quote">0.00</span></strong>', '<strong><span id="icl-estimated-quote-all">0.00</span></strong>')?></div>
-    <?php                 
+    <?php   
+        echo add_query_arg('paged', '%#%' );
         $page_links = paginate_links( array(
             'base' => add_query_arg('paged', '%#%' ),
             'format' => '',

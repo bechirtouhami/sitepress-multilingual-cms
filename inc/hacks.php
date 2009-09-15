@@ -5,5 +5,6 @@ add_action('init', 'icl_load_hacks');
 
 function icl_load_hacks(){    
     include ICL_PLUGIN_PATH . '/inc/hacks/language-domains-preview.php';    
+    include ICL_PLUGIN_PATH . '/inc/hacks/supress-warnings-for-xmlrpc.php';        
 }
 ?>
