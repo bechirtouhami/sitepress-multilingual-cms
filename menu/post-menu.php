@@ -49,37 +49,39 @@
 
 <?php 
     do_action('icl_post_languages_options_before', $post->ID);
-    if($this->get_icl_translation_enabled()){
-        icl_display_post_translation_status($post->ID, &$post_translation_statuses);
-    }
 ?>
 
 <?php if($trid): ?>
 
-    <p style="clear:both;"><b>Translate</b>
-    <table>
-    <?php foreach($active_languages as $lang): if($selected_language==$lang['code']) continue; ?>
-    <tr>
-        <?php if(!isset($translations[$lang['code']]->element_id)):?>
-            <td><?php echo $lang['display_name'] ?></td>
-            <td><a href="<?php echo get_option('siteurl')?>/wp-admin/<?php echo $post->post_type ?>-new.php?trid=<?php echo $trid ?>&lang=<?php echo $lang['code'] ?>"><?php echo __('add','sitepress') ?></a></td>
-        <?php endif; ?>        
-    </tr>
-    <?php endforeach; ?>
-    </table>
-    </p>
-
     <?php
-        // count number of translated pages.
+        // count number of translated and un-translated pages.
         $translations_found = 0;
+        $untranslated_found = 0;
         foreach($active_languages as $lang) {
             if($selected_language==$lang['code']) continue;
             if(isset($translations[$lang['code']]->element_id)) {
                 $translations_found += 1;
+            } else {
+                $untranslated_found += 1;
             }
         }
     ?>
     
+    <?php if($untranslated_found > 0): ?>    
+        <p style="clear:both;"><b>Translate</b>
+        <table>
+        <?php foreach($active_languages as $lang): if($selected_language==$lang['code']) continue; ?>
+        <tr>
+            <?php if(!isset($translations[$lang['code']]->element_id)):?>
+                <td><?php echo $lang['display_name'] ?></td>
+                <td><a href="<?php echo get_option('siteurl')?>/wp-admin/<?php echo $post->post_type ?>-new.php?trid=<?php echo $trid ?>&lang=<?php echo $lang['code'] ?>"><?php echo __('add','sitepress') ?></a></td>
+            <?php endif; ?>        
+        </tr>
+        <?php endforeach; ?>
+        </table>
+        </p>
+    <?php endif; ?>
+
     <?php if($translations_found > 0): ?>    
         <p style="clear:both;"><b><?php echo __('Translations', 'sitepress') ?></b> (<a href="javascript:;" 
             onclick="jQuery('#icl_translations_table').toggle();if(jQuery(this).html()=='<?php echo __('hide','sitepress')?>') jQuery(this).html('<?php echo __('show','sitepress')?>'); else jQuery(this).html('<?php echo __('hide','sitepress')?>')"><?php echo __('show','sitepress')?></a>)</p>
@@ -89,11 +91,36 @@
         <tr>
             <?php if(isset($translations[$lang['code']]->element_id)):?>
                 <td><?php echo $lang['display_name'] ?></td>
-                <td>(<?php echo isset($translations[$lang['code']]->post_title)?'<a href="'.get_edit_post_link($translations[$lang['code']]->element_id).'" title="'.__('Edit','sitepress').'">'.apply_filters('the_title', $translations[$lang['code']]->post_title?$translations[$lang['code']]->post_title:__('(no title)','sitepress')).'</a>':__('n/a','sitepress') ?>)</td>
+                <td><?php echo isset($translations[$lang['code']]->post_title)?'<a href="'.get_edit_post_link($translations[$lang['code']]->element_id).'" title="'.__('Edit','sitepress').'">'.apply_filters('the_title', __('edit','sitepress')).'</a>':__('n/a','sitepress') ?></td>
+                
             <?php endif; ?>        
         </tr>
         <?php endforeach; ?>
         </table>
+        
+        <?php if($this->get_icl_translation_enabled()):?>
+            <p style="clear:both;"><b><?php echo __('ICanlocalize translation status:', 'sitepress') ?></b> (<a href="javascript:;" 
+            onclick="jQuery('#icl_translations_status').toggle();jQuery('#noupdate_but').toggle();if(jQuery(this).html()=='<?php echo __('hide','sitepress')?>') jQuery(this).html('<?php echo __('show','sitepress')?>'); else jQuery(this).html('<?php echo __('hide','sitepress')?>')"><?php echo __('show','sitepress')?></a>)</p>
+
+            <?php icl_display_post_translation_status($post->ID, &$post_translation_statuses, true); ?>
+            <table width="100%" id="icl_translations_status" style="display:none;">
+            
+            <?php foreach($active_languages as $lang): if($selected_language==$lang['code']) continue; ?>
+            <tr>
+                <?php if(isset($translations[$lang['code']]->element_id)):?>
+                    <td><?php echo $lang['display_name'] ?></td>
+                    <td>
+                    <?php echo isset($post_translation_statuses[$lang['code']]) ? $post_translation_statuses[$lang['code']] : __('Not translated','sitepress'); ?>
+                    </td>
+                    
+                <?php endif; ?>        
+            </tr>
+            <?php endforeach; ?>
+            </table>
+        <?php endif; ?>
+        
+        
+        
     <?php endif; ?>
     
     <p>

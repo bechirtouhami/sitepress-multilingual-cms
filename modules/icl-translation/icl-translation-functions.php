@@ -1115,7 +1115,7 @@ function icl_get_post_translation_status($post_id){
     return $status;
 }
 
-function icl_display_post_translation_status($post_id, &$post_translation_statuses){
+function icl_display_post_translation_status($post_id, &$post_translation_statuses, $short = false){
     global $wpdb, $sitepress;                                                                                                               
     $trid = $sitepress->get_element_trid($post_id);
     $translations = $sitepress->get_element_translations($trid);
@@ -1151,24 +1151,40 @@ function icl_display_post_translation_status($post_id, &$post_translation_status
 
             if($translations[$lang['code']]->original && $original_updated && $id == $post_id){
                 echo '
-                    <div id="noupdate_but">
-                    <input type="button" class="button" value="'.__('This document\'s translation doesn\'t need to update', 'sitepress').'" />
+                    <div id="noupdate_but" style="display:none;">
+                    <input type="button" class="button" value="'.__('Translation don\'t need updating', 'sitepress').'" title="'.__('The translations for this document are OK.', 'sitepress').'"/>
                     <span id="noupdate_but_wm" style="display:none">'.__('Translations for this document appear to be out-of-date. Are you sure they don\'t need to be updated?','sitepress').'</span>                
                     </div>';
             }
             
             
             if($original_updated && !$translations[$lang['code']]->original){
-                $post_translation_statuses[$lang['code']] = __('Translation needs update','sitepress');                
+                if ($short) {
+                    $post_translation_statuses[$lang['code']] = __('Needs update','sitepress');
+                } else {
+                    $post_translation_statuses[$lang['code']] = __('Translation needs update','sitepress');
+                }
             }elseif($translations[$lang['code']]->original){
-                $post_translation_statuses[$lang['code']] = __('Original document','sitepress');                
+                if ($short) {
+                    $post_translation_statuses[$lang['code']] = __('Original','sitepress');
+                } else {
+                    $post_translation_statuses[$lang['code']] = __('Original document','sitepress');
+                }
             }else{
                 switch($tr_status[$lang['code']]){
                     case CMS_REQUEST_WAITING_FOR_PROJECT_CREATION: 
-                        $post_translation_statuses[$lang['code']] = __('Translation in progress','sitepress');
+                        if ($short) {
+                            $post_translation_statuses[$lang['code']] = __('In progress','sitepress');
+                        } else {
+                            $post_translation_statuses[$lang['code']] = __('Translation in progress','sitepress');
+                        }
                         break;
                     case CMS_TARGET_LANGUAGE_DONE: 
-                        $post_translation_statuses[$lang['code']] = __('Translation complete','sitepress');
+                        if ($short) {
+                            $post_translation_statuses[$lang['code']] = __('Complete','sitepress');
+                        } else {
+                            $post_translation_statuses[$lang['code']] = __('Translation complete','sitepress');
+                        }
                         break;
                     case CMS_REQUEST_FAILED: 
                         $post_translation_statuses[$lang['code']] = __('Request failed','sitepress');
@@ -1178,7 +1194,7 @@ function icl_display_post_translation_status($post_id, &$post_translation_status
                 }
             }                        
         }else{
-            $post_translation_statuses[$lang['code']] = __('Not translated','sitepress');    
+            $post_translation_statuses[$lang['code']] = __('Not translated','sitepress');
         }
     }
 }
