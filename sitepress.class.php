@@ -1095,10 +1095,12 @@ class SitePress{
             $is_page = 'page' == $wpdb->get_var("SELECT post_type FROM {$wpdb->prefix}posts WHERE ID={$post->ID}");
         }
         $untranslated_ids = $this->get_elements_without_translations("post", $selected_language, $default_language);
-        // filter for "page" or "post"
-        $ids = join(',',$untranslated_ids);
-        $type = $is_page?"page":"post";
-        $untranslated_ids = $wpdb->get_col("SELECT ID FROM {$wpdb->prefix}posts WHERE ID IN ({$ids}) AND post_type = '{$type}'");
+        if (sizeof($untranslated_ids)) {
+            // filter for "page" or "post"
+            $ids = join(',',$untranslated_ids);
+            $type = $is_page?"page":"post";
+            $untranslated_ids = $wpdb->get_col("SELECT ID FROM {$wpdb->prefix}posts WHERE ID IN ({$ids}) AND post_type = '{$type}'");
+        }
         
         include ICL_PLUGIN_PATH . '/menu/post-menu.php';
     }
