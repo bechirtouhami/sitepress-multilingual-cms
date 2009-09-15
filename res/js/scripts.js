@@ -4,6 +4,7 @@ jQuery(document).ready(function(){
     }
     jQuery('select[name="icl_post_language"]').change(iclPostLanguageSwitch);
     jQuery('#noupdate_but input[type="button"]').click(iclSetDocumentToDate);
+    jQuery('select[name="icl_translation_of"]').change(function(){jQuery('#icl_translate_options').fadeOut();});
 });
 
 function fadeInAjxResp(spot, msg, err){
@@ -61,6 +62,12 @@ function iclPostLanguageSwitch(){
         url_glue='&';
     }
     
+    if(icl_this_lang != lang){
+        jQuery('#icl_translate_options').fadeOut();
+    }else{
+        jQuery('#icl_translate_options').fadeIn();
+    }
+    
     if(jQuery('#parent_id').length > 0){
         jQuery('#parent_id').load(ajx+url_glue+'lang='+lang + ' #parent_id option',{lang_switch:jQuery('#post_ID').attr('value')}, function(resp){
             tow1 = resp.indexOf('<div id="translation_of_wrap">');
@@ -76,7 +83,7 @@ function iclPostLanguageSwitch(){
         ltlhlpr.setAttribute('id','icl_ltlhlpr');
         jQuery(this).after(ltlhlpr);
         jQuery('#categorydiv').slideUp();
-        jQuery('#icl_ltlhlpr').load(ajx+url_glue+'lang='+lang + ' #categorydiv',{}, function(resp){ 
+        jQuery('#icl_ltlhlpr').load(ajx+url_glue+'icl_ajx=1&lang='+lang + ' #categorydiv',{}, function(resp){ 
             tow1 = resp.indexOf('<div id="translation_of_wrap">');
             tow2 = resp.indexOf('</div><!--//translation_of_wrap-->');            
             jQuery('#translation_of_wrap').html(resp.substr(tow1+31, tow2-tow1-31));           

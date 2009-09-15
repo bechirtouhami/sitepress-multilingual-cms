@@ -30,15 +30,15 @@
                         $src_language_title = $wpdb->get_var("SELECT post_title FROM {$wpdb->prefix}posts WHERE ID = {$src_language_id}");
                     }
                 ?>
-                <?php if($src_language_title): ?>
-                    <option value="<?php echo $src_language_id ?>" selected="selected"><?php echo $src_language_title ?></option>
+                <?php if($src_language_title && !isset($_GET['icl_ajx'])): ?>
+                    <option value="<?php echo $src_language_id ?>" selected="selected"><?php echo $src_language_title ?>&nbsp;</option>
                 <?php endif; ?>
             <?php else: ?>
                 <option value="none" selected="selected"><?php echo __('--None--', 'sitepress') ?></option>
             <?php endif; ?>
             <?php foreach($untranslated as $translation_of_id => $translation_of_title):?>
                 <?php if ($translation_of_id != $src_language_id): ?>
-                    <option value="<?php echo $translation_of_id ?>"><?php echo $translation_of_title ?></option>
+                    <option value="<?php echo $translation_of_id ?>"><?php echo $translation_of_title ?>&nbsp;</option>
                 <?php endif; ?>
             <?php endforeach; ?>
         </select>
@@ -54,7 +54,7 @@
 ?>
 
 <?php if($trid): ?>
-
+    <span id="icl_translate_options">
     <?php
         // count number of translated and un-translated pages.
         $translations_found = 0;
@@ -130,6 +130,7 @@
     </p>
     
     <br clear="all" style="line-height:1px;" />
+    </span>
 <?php endif; ?>
 
 <?php do_action('icl_post_languages_options_after') ?>
