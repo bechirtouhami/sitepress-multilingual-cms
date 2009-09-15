@@ -1312,9 +1312,20 @@ class SitePress{
             $term_lang = $this->get_default_language();
         }
         
+        $el_type = $wpdb->get_var("SELECT taxonomy FROM {$wpdb->term_taxonomy} WHERE term_taxonomy_id={$tt_id}");
+
         // has trid only when it's a translation of another tag             
         $trid = isset($_POST['icl_trid']) && (isset($_POST['icl_tag_language']) || isset($_POST['icl_category_language']))?$_POST['icl_trid']:null;        
-        $el_type = $wpdb->get_var("SELECT taxonomy FROM {$wpdb->term_taxonomy} WHERE term_taxonomy_id={$tt_id}");
+        // see if we have a "translation of" setting.
+        if ($_POST['icl_translation_of']) {
+            $src_term_id = $_POST['icl_translation_of'];
+            if ($src_term_id != 'none') {
+                $trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id={$src_term_id} AND element_type='{$el_type}'"); 
+            } else {
+                $trid = null;
+            }
+        }
+
         if($el_type == 'post_tag') $el_type = 'tag'; 
         if(!isset($term_lang)){
             $term_lang = $_POST['icl_'.$el_type.'_language'];        
