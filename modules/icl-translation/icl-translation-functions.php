@@ -1152,7 +1152,7 @@ function icl_display_post_translation_status($post_id, &$post_translation_status
             if($translations[$lang['code']]->original && $original_updated && $id == $post_id){
                 echo '
                     <div id="noupdate_but" style="display:none;">
-                    <input type="button" class="button" value="'.__('Translation don\'t need updating', 'sitepress').'" title="'.__('The translations for this document are OK.', 'sitepress').'"/>
+                    <input type="button" class="button" value="'.__('Translations don\'t need updating', 'sitepress').'" title="'.__('The translations for this document are OK.', 'sitepress').'"/>
                     <span id="noupdate_but_wm" style="display:none">'.__('Translations for this document appear to be out-of-date. Are you sure they don\'t need to be updated?','sitepress').'</span>                
                     </div>';
             }
