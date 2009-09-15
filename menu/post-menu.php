@@ -14,36 +14,38 @@
 
 </p>
 
-<?php if($selected_language != $default_language): ?>
-    <div style="clear:both;font-size:1px">&nbsp;</div>
-    
-    <p style="float:left;">
-    <?php echo __('This is a translation of', 'sitepress') ?>&nbsp;
-    <select name="icl_translation_of" id="icl_translation_of">
-        <?php if($trid): ?>
-            <option value="none"><?php echo __('--None--', 'sitepress') ?></option>
-            <?php
-                //get source
-                $src_language_id = $wpdb->get_var("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid={$trid} AND language_code='{$default_language}'");
-                if($src_language_id) {
-                    $src_language_title = $wpdb->get_var("SELECT post_title FROM {$wpdb->prefix}posts WHERE ID = {$src_language_id}");
-                }
-            ?>
-            <?php if($src_language_title): ?>
-                <option value="<?php echo $src_language_id ?>" selected="selected"><?php echo $src_language_title ?></option>
+<div id="translation_of_wrap">
+    <?php if($selected_language != $default_language || (isset($_GET['lang']) && $_GET['lang']!=$default_language)): ?>
+        <div style="clear:both;font-size:1px">&nbsp;</div>
+        
+        <p style="float:left;">
+        <?php echo __('This is a translation of', 'sitepress') ?>&nbsp;
+        <select name="icl_translation_of" id="icl_translation_of">
+            <?php if($trid): ?>
+                <option value="none"><?php echo __('--None--', 'sitepress') ?></option>
+                <?php
+                    //get source
+                    $src_language_id = $wpdb->get_var("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid={$trid} AND language_code='{$default_language}'");
+                    if($src_language_id) {
+                        $src_language_title = $wpdb->get_var("SELECT post_title FROM {$wpdb->prefix}posts WHERE ID = {$src_language_id}");
+                    }
+                ?>
+                <?php if($src_language_title): ?>
+                    <option value="<?php echo $src_language_id ?>" selected="selected"><?php echo $src_language_title ?></option>
+                <?php endif; ?>
+            <?php else: ?>
+                <option value="none" selected="selected"><?php echo __('--None--', 'sitepress') ?></option>
             <?php endif; ?>
-        <?php else: ?>
-            <option value="none" selected="selected"><?php echo __('--None--', 'sitepress') ?></option>
-        <?php endif; ?>
-        <?php foreach($untranslated as $translation_of_id => $translation_of_title):?>
-            <?php if ($translation_of_id != $src_language_id): ?>
-                <option value="<?php echo $translation_of_id ?>"><?php echo $translation_of_title ?></option>
-            <?php endif; ?>
-        <?php endforeach; ?>
-    </select>
+            <?php foreach($untranslated as $translation_of_id => $translation_of_title):?>
+                <?php if ($translation_of_id != $src_language_id): ?>
+                    <option value="<?php echo $translation_of_id ?>"><?php echo $translation_of_title ?></option>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        </select>
 
-    </p>
-<?php endif; ?>
+        </p>
+    <?php endif; ?>
+</div><!--//translation_of_wrap-->
 
 <div style="clear:both;font-size:1px">&nbsp;</div>
 

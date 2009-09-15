@@ -772,6 +772,7 @@ class SitePress{
             add_meta_box('icl_div', __('Language', 'sitepress'), array($this,'meta_box'), 'post', 'side', 'high');
             add_meta_box('icl_div', __('Language', 'sitepress'), array($this,'meta_box'), 'page', 'side', 'high');
         }
+        /*
         if(isset($_GET['icl_action']) && $_GET['icl_action']=='set_post_language'){
             // delete the original translation information.
             $post_id = $_GET['post'];
@@ -782,6 +783,7 @@ class SitePress{
                 array('element_id'=>$post_id, 'element_type'=>'post')
             );
         }
+        */
     }
     
     function set_element_language_details($el_id, $el_type='post', $trid, $language_code){
