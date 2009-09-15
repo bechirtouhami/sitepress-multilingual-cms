@@ -36,7 +36,9 @@
             <option value="none" selected="selected"><?php echo __('--None--', 'sitepress') ?></option>
         <?php endif; ?>
         <?php foreach($untranslated as $translation_of_id => $translation_of_title):?>
-            <option value="<?php echo $translation_of_id ?>"><?php echo $translation_of_title ?></option>
+            <?php if ($translation_of_id != $src_language_id): ?>
+                <option value="<?php echo $translation_of_id ?>"><?php echo $translation_of_title ?></option>
+            <?php endif; ?>
         <?php endforeach; ?>
     </select>
 
