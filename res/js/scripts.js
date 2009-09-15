@@ -2,7 +2,7 @@ jQuery(document).ready(function(){
     if(jQuery('#category-adder').html()){
         jQuery('#category-adder').prepend('<p>'+icl_cat_adder_msg+'</p>');
     }
-    jQuery('#icl_set_post_language').click(iclPostLanguageSwitch);
+    jQuery('select[name="icl_post_language"]').change(iclPostLanguageSwitch);
     jQuery('#noupdate_but input[type="button"]').click(iclSetDocumentToDate);
 });
 
