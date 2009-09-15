@@ -1041,6 +1041,8 @@ class SitePress{
     function get_elements_without_translations($el_type, $target_lang, $source_lang){
         global $wpdb;
         
+        // first get all the trids for the target languages
+        // These will be the trids that we don't want.
         $sql = "SELECT
                     trid
                 FROM
@@ -1051,6 +1053,8 @@ class SitePress{
         $trids_for_target = $wpdb->get_col($sql);
         $trids_for_target = join(',', $trids_for_target);
         
+        // Now get all the elements that are in the source language that
+        // are not already translated into the target language.
         $sql = "SELECT
                     element_id
                 FROM
