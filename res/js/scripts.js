@@ -62,7 +62,10 @@ function iclPostLanguageSwitch(){
     }
     
     if(jQuery('#parent_id').length > 0){
-        jQuery('#parent_id').load(ajx+url_glue+'lang='+lang + ' #parent_id option',{lang_switch:jQuery('#post_ID').attr('value')}, function(){
+        jQuery('#parent_id').load(ajx+url_glue+'lang='+lang + ' #parent_id option',{lang_switch:jQuery('#post_ID').attr('value')}, function(resp){
+            tow1 = resp.indexOf('<div id="translation_of_wrap">');
+            tow2 = resp.indexOf('</div><!--//translation_of_wrap-->');            
+            jQuery('#translation_of_wrap').html(resp.substr(tow1+31, tow2-tow1-31));                   
             if(-1 == jQuery('#parent_id').html().indexOf('selected="selected"')){
                 jQuery('#parent_id').attr('value','');
             }        
