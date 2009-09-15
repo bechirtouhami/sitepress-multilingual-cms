@@ -9,6 +9,9 @@
 </select> 
 
 <input type="hidden" name="icl_trid" value="<?php echo $trid ?>" />
+
+<input type="hidden" name="icl_is_page" value="<?php echo $is_page ?>" />
+
 </p>
 
 <?php if($selected_language != $default_language): ?>
@@ -32,8 +35,8 @@
         <?php else: ?>
             <option value="none" selected="selected"><?php echo __('--None--', 'sitepress') ?></option>
         <?php endif; ?>
-        <?php foreach($untranslated_ids as $translation_of_id):?>
-            <option value="<?php echo $translation_of_id ?>"><?php echo $wpdb->get_var("SELECT post_title FROM {$wpdb->prefix}posts WHERE ID = {$translation_of_id}") ?></option>
+        <?php foreach($untranslated as $translation_of_id => $translation_of_title):?>
+            <option value="<?php echo $translation_of_id ?>"><?php echo $translation_of_title ?></option>
         <?php endforeach; ?>
     </select>
 
