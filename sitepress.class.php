@@ -253,7 +253,7 @@ class SitePress{
             // filter some queries
             add_filter('query', array($this, 'filter_queries'));                
             
-            if(1 || empty($this->settings['dont_show_help_admin_notice'])){
+            if(empty($this->settings['dont_show_help_admin_notice'])){
                 add_action('admin_notices', array($this, 'help_admin_notice'));
             }
             
