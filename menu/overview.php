@@ -29,6 +29,9 @@ remove_all_actions('icl_menu_footer');
         <div id="icon-options-general" class="icon32"><br /></div>
         <h2><?php echo __('WPML Overview', 'sitepress') ?></h2>    
         
+        <h3><?php _e('WPML at a glance', 'sitepress')?></h3>
+        <p><?php printf(__('WPML helps you translate your blog to other languages. You are using <b>WPML %s</b>', 'sitepress'), ICL_SITEPRESS_VERSION)?></p>
+        
         <h3><?php _e('Multilingual', 'sitepress') ?></h3>
         <table class="widefat">
             <thead>
@@ -39,9 +42,8 @@ remove_all_actions('icl_menu_footer');
             </thead>
             <tbody>
                 <tr>
-                    <td><?php _e('WPML at a glance', 'sitepress')?></td>
-                    <td>
-                        <p><?php printf(__('WPML helps you translate your blog to other languages. You are using <b>WPML %s</b>', 'sitepress'), ICL_SITEPRESS_VERSION)?></p>
+                    <td><?php _e('Languages', 'sitepress')?></td>
+                    <td>                        
                         <?php if(!$sitepress_settings['existing_content_language_verified']): ?>          
                         <p><b><?php printf(__('You have to set the set up the language of the existing content of your blog.<br /> Click <a href="%s">here</a> to do that.', 'sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/languages.php')?></b></p>              
                         <?php else: ?>
