@@ -19,17 +19,29 @@
 
 <input type="hidden" name="icl_trid" value="<?php echo $trid ?>" />
 
+<?php
+function get_category_name($id) {
+    global $wpdb;
+    $term_id = $wpdb->get_var("SELECT term_id FROM {$wpdb->prefix}term_taxonomy WHERE term_taxonomy_id = {$id}");
+    if ($term_id) {
+        return $wpdb->get_var("SELECT name FROM {$wpdb->prefix}terms WHERE term_id = {$term_id}");
+    } else {
+        return null;
+    }
+}
+?>
+
 <?php if($this_lang != $default_language): ?>
-    <br />
-    <?php echo __('This is a translation of', 'sitepress') ?>&nbsp;
-    <select name="icl_translation_of" id="icl_translation_of">
+    <br /><br />
+    <?php echo __('This is a translation of', 'sitepress') ?><br />
+    <select name="icl_translation_of" id="icl_translation_of"<?php if($_GET['action'] != 'edit' && $trid) echo " disabled"?>>
         <?php if($trid): ?>
             <option value="none"><?php echo __('--None--', 'sitepress') ?></option>
             <?php
                 //get source
                 $src_language_id = $wpdb->get_var("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid={$trid} AND language_code='{$default_language}'");
                 if($src_language_id) {
-                    $src_language_title = $wpdb->get_var("SELECT name FROM {$wpdb->prefix}terms WHERE term_id = {$src_language_id}");
+                    $src_language_title = get_category_name($src_language_id);
                 }
             ?>
             <?php if($src_language_title): ?>
@@ -40,7 +52,10 @@
         <?php endif; ?>
         <?php foreach($untranslated_ids as $translation_of_id):?>
             <?php if ($translation_of_id != $src_language_id): ?>
-                <option value="<?php echo $translation_of_id ?>"><?php echo $wpdb->get_var("SELECT name FROM {$wpdb->prefix}terms WHERE term_id = {$translation_of_id}") ?></option>
+                <?php $title = get_category_name($translation_of_id)?>
+                <?php if ($title): ?>
+                    <option value="<?php echo $translation_of_id ?>"><?php echo $title ?></option>
+                <?php endif; ?>
             <?php endif; ?>
         <?php endforeach; ?>
     </select>
