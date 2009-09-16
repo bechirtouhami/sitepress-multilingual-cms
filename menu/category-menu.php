@@ -103,6 +103,7 @@ function get_category_name($id) {
         <tr>
             <?php if(isset($translations[$lang['code']]->element_id)):?>
                 <td style="padding: 0px;line-height:normal;"><?php echo $lang['display_name'] ?></td>
+                <?php $edit_link = "categories.php?action=edit&amp;cat_ID=" . $translations[$lang['code']]->term_id; ?>
                 <td style="padding: 0px;line-height:normal;"><?php echo isset($translations[$lang['code']]->name)?'<a href="'.$edit_link.'" title="'.__('Edit','sitepress').'">'.$translations[$lang['code']]->name.'</a>':__('n/a','sitepress') ?></td>
                         
             <?php endif; ?>        
