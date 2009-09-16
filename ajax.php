@@ -410,6 +410,10 @@ switch($_REQUEST['icl_ajx_action']){
         }        
         echo json_encode($comment);
         break;
+    case 'dismiss_help':
+        $iclsettings['dont_show_help_admin_notice'] = true;
+        $sitepress->save_settings($iclsettings);
+        break;
     default:
         echo __('Invalid action','sitepress');                
 }    

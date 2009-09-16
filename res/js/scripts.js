@@ -5,6 +5,7 @@ jQuery(document).ready(function(){
     jQuery('select[name="icl_post_language"]').change(iclPostLanguageSwitch);
     jQuery('#noupdate_but input[type="button"]').click(iclSetDocumentToDate);
     jQuery('select[name="icl_translation_of"]').change(function(){jQuery('#icl_translate_options').fadeOut();});
+    jQuery('#icl_dismiss_help').click(iclDismissHelp);
 });
 
 function fadeInAjxResp(spot, msg, err){
@@ -117,4 +118,17 @@ function iclSetDocumentToDate(){
                 jQuery('#icl_minor_change_box').fadeIn();
             }
         });        
+}
+
+function iclDismissHelp(){
+    var thisa = jQuery(this);
+    jQuery.ajax({
+            type: "POST",
+            url: icl_ajx_url,
+            data: "icl_ajx_action=dismiss_help",
+            success: function(msg){
+                thisa.parent().parent().fadeOut();    
+            }
+    });    
+    return false;
 }

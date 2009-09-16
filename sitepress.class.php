@@ -252,6 +252,11 @@ class SitePress{
             add_filter('get_pagenum_link', array($this,'get_pagenum_link_filter'));        
             // filter some queries
             add_filter('query', array($this, 'filter_queries'));                
+            
+            if(1 || empty($this->settings['dont_show_help_admin_notice'])){
+                add_action('admin_notices', array($this, 'help_admin_notice'));
+            }
+            
         }
         require ICL_PLUGIN_PATH . '/inc/template-constants.php';        
         if(defined('WPML_LOAD_API_SUPPORT')){
@@ -2234,6 +2239,14 @@ class SitePress{
         if($user_id){
             update_usermeta($user_id,'icl_admin_language',$_POST['icl_user_admin_language']);        
         }        
+    }
+    
+    function help_admin_notice(){
+        echo '<br clear="all" /><div id="message" class="updated message fade" style="clear:both;margin-top:5px;"><p>';
+        echo '<a title="'.__('Stop showing this message', 'sitepress').'" id="icl_dismiss_help" href="#" style="float:right">'.__('Dismiss', 'sitepress').'</a>';
+        _e('Need help with WPML? ');        
+        printf(__('<a href="%s">Ask WPML on Twitter</a>, visit the <a href="%s">support forum</a> or view the <a href="%s">documentation</a>.', 'sitepress'), 'http://twitter.com/wpml','http://forum.wpml.org','http://wpml.org');
+        echo '</p></div>';
     }
     
     
