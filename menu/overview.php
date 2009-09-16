@@ -171,6 +171,8 @@ remove_all_actions('icl_menu_footer');
             </tbody>
         </table>
         
-    <?php do_action('icl_menu_footer'); ?>
+        <p><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/troubleshooting.php"><?php _e('Troubleshooting', 'sitepress')?></p>
+        
+        <?php do_action('icl_menu_footer'); ?>
     
 </div>
