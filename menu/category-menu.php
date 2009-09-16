@@ -2,16 +2,13 @@
 <div id="icl_category_menu" style="display:none">
 
 <div id="dashboard-widgets" class="metabox-holder">
-<div class="postbox-container" style="width: 80%;">
+<div class="postbox-container" style="width: 99%;line-height:normal;">
 
-<div id="icl_category_lang" class="postbox">
-    <div class="handlediv" title="<?php echo __('Click to toggle', 'sitepress'); ?>">
-        <br/>
-    </div>
+<div id="icl_category_lang" class="postbox" style="line-height:normal;">
     <h3 class="hndle">
         <span><?php echo __('Language', 'sitepress')?></span>
     </h3>                    
-    <div class="inside">
+    <div class="inside" style="padding: 10px;">
 
 <select name="icl_category_language">
 <?php foreach($active_languages as $lang):?>   
@@ -73,8 +70,8 @@
         <?php foreach($active_languages as $lang): if($selected_language==$lang['code']) continue; ?>
         <tr>
             <?php if(!isset($translations[$lang['code']]->element_id)):?>
-                <td><?php echo $lang['display_name'] ?></td>
-                <td><a href="categories.php?trid=<?php echo $trid ?>&lang=<?php echo $lang['code'] ?>"><?php echo __('add','sitepress') ?></a></td>
+                <td style="padding: 0px;line-height:normal;"><?php echo $lang['display_name'] ?></td>
+                <td style="padding: 0px;line-height:normal;"><a href="categories.php?trid=<?php echo $trid ?>&lang=<?php echo $lang['code'] ?>"><?php echo __('add','sitepress') ?></a></td>
             <?php endif; ?>        
         </tr>
         <?php endforeach; ?>
@@ -90,8 +87,8 @@
         <?php foreach($active_languages as $lang): if($selected_language==$lang['code']) continue; ?>
         <tr>
             <?php if(isset($translations[$lang['code']]->element_id)):?>
-                <td><?php echo $lang['display_name'] ?></td>
-                <td><?php echo isset($translations[$lang['code']]->name)?'<a href="'.$edit_link.'" title="'.__('Edit','sitepress').'">'.$translations[$lang['code']]->name.'</a>':__('n/a','sitepress') ?></td>
+                <td style="padding: 0px;line-height:normal;"><?php echo $lang['display_name'] ?></td>
+                <td style="padding: 0px;line-height:normal;"><?php echo isset($translations[$lang['code']]->name)?'<a href="'.$edit_link.'" title="'.__('Edit','sitepress').'">'.$translations[$lang['code']]->name.'</a>':__('n/a','sitepress') ?></td>
                         
             <?php endif; ?>        
         </tr>
