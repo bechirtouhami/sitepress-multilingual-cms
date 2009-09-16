@@ -1,6 +1,18 @@
 <?php $this->noscript_notice() ?>
 <div id="icl_category_menu" style="display:none">
-<?php echo __('Language', 'sitepress') ?>
+
+<div id="dashboard-widgets" class="metabox-holder">
+<div class="postbox-container" style="width: 80%;">
+
+<div id="icl_category_lang" class="postbox">
+    <div class="handlediv" title="<?php echo __('Click to toggle', 'sitepress'); ?>">
+        <br/>
+    </div>
+    <h3 class="hndle">
+        <span><?php echo __('Language', 'sitepress')?></span>
+    </h3>                    
+    <div class="inside">
+
 <select name="icl_category_language">
 <?php foreach($active_languages as $lang):?>   
 <?php if(isset($translations[$lang['code']]->element_id) && $translations[$lang['code']]->element_id != $element_id) continue ?>     
@@ -39,7 +51,7 @@
 <?php endif; ?>
 
 
-<?php if($trid): ?>
+<?php if($trid && $_GET['action'] == 'edit'): ?>
 
     <?php
         // count number of translated and un-translated pages.
@@ -117,4 +129,8 @@
     </table>
 <?php endif; ?>
 
+</div>
+</div>
+</div>
+</div>
 </div>
