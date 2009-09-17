@@ -158,11 +158,12 @@ function icl_plugin_upgrade(){
 
     if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.3.0', '<')){
         $iclsettings = get_option('icl_sitepress_settings');
+        $iclsettings['modules']['cms-navigation']['enabled'] = 1;
         mysql_query("ALTER TABLE `{$wpdb->prefix}icl_translations` CHANGE `element_type` `element_type` VARCHAR( 32 ) NOT NULL DEFAULT 'post'");
         if(!$iclsettings['admin_default_language']){
-            $iclsettings['admin_default_language'] = $iclsettings['default_language'];
-            update_option('icl_sitepress_settings',$iclsettings);
+            $iclsettings['admin_default_language'] = $iclsettings['default_language'];            
         }
+        update_option('icl_sitepress_settings',$iclsettings);
     }
 
     if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '<')){

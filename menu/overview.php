@@ -149,9 +149,15 @@ remove_all_actions('icl_menu_footer');
                         <p>
                             <?php echo __('WPML provides advanced menus and navigation to go with your WordPress website, including drop-down menus, breadcrumbs and sidebar navigation.', 'sitepress')?>
                         </p>
+                        <?php if(!$sitepress_settings['modules']['cms-navigation']['enabled']):?>
+                        <p><?php echo __('CMS Navigation is disabled.','sitepress') ?></p>
+                        <p><a class="button secondary" href="<?php echo 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/overview.php&enable-cms-navigation=1' ?>"><?php echo __('Enable CMS navigation', 'sitepress') ?></a></p>
+                        <?php else: ?>
                         <p>
                             <a class="button secondary" href="<?php echo 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/navigation.php' ?>"><?php echo __('Configure navigation', 'sitepress') ?></a>
-                        </p>                    
+                            <a class="button secondary" href="<?php echo 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/overview.php&enable-cms-navigation=0' ?>"><?php echo __('Disable CMS navigation', 'sitepress') ?></a>
+                        </p>        
+                        <?php endif; ?>            
                     </td>
                 </tr>            
                 <tr>
