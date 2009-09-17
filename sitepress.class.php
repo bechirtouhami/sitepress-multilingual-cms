@@ -1319,10 +1319,21 @@ class SitePress{
             <div class="inside" style="padding: 10px;">
         
         <select name="icl_<?php echo $type ?>_language">
-        <?php foreach($active_languages as $lang):?>   
-        <?php if(isset($translations[$lang['code']]->element_id) && $translations[$lang['code']]->element_id != $element_id) continue ?>     
-        <option value="<?php echo $lang['code'] ?>"<?php if($selected_language==$lang['code']): ?> selected="selected"<?php endif;?>><?php echo $lang['display_name'] ?></option>
-        <?php endforeach; ?>
+        
+            <?php
+                foreach($active_languages as $lang){
+                    if ($lang['code'] == $selected_language) {
+                        ?>
+                        <option value="<?php echo $selected_language ?>" selected="selected"><?php echo $lang['display_name'] ?></option>
+                        <?php
+                    }
+                }
+            ?>
+            
+            <?php foreach($active_languages as $lang):?>   
+                <?php if($lang['code'] == $selected_language || (isset($translations[$lang['code']]->element_id) && $translations[$lang['code']]->element_id != $element_id)) continue ?>     
+                    <option value="<?php echo $lang['code'] ?>"<?php if($selected_language==$lang['code']): ?> selected="selected"<?php endif;?>><?php echo $lang['display_name'] ?></option>
+            <?php endforeach; ?>
         </select>
         <?php
         }
