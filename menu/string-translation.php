@@ -353,8 +353,9 @@ $available_contexts = array_unique($available_contexts);
         </form>    
         <?php else: ?>
     
-            <div class="error">
-            <p><?php printf(__('To send documents to translation, you first need to <a href="%s">set up content translation</a>.' , 'sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php'); ?></p>
+            <div class="error" style="margin: 1em;">
+            <p><?php _e('To translate yourself, click on the <b>Translation</b> link next to each strings.','sitepress') ?></p>
+            <p><?php printf(__('To send these strings to translation by ICanLocalize you first need to set up <a href="%s">ICanLocalize translation</a>.' , 'sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php'); ?></p>
             </div>
     
         <?php endif; ?>    

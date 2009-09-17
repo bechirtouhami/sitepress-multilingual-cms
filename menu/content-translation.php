@@ -8,15 +8,15 @@
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap">
     <div id="icon-options-general" class="icon32"><br /></div>
-    <h2><?php echo __('Setup WPML', 'sitepress') ?></h2>    
+    <h2><?php _e('ICanLocalize Translation', 'sitepress') ?></h2>    
         
     <?php if(!$sitepress->get_icl_translation_enabled() ): ?>
         <div class="updated fade">
-        <p style="line-height:1.5"><?php echo __('Content Translation allows you to have all the site\'s contents professionally translated.', 'sitepress'); ?></p>
+        <p style="line-height:1.5"><?php echo __('ICanLocalize can provide professional translation for your site\'s contents.', 'sitepress'); ?></p>
         <p style="line-height:1.5"><?php printf(__('When enabled, you can use the <a href="%s">Translation Dashboard</a> to send posts and pages for translation. The entire process is completely effortless. The plugin will send the documents that need translation and then create the translated contents, ready to be published.', 'sitepress'), 'tools.php?page='.basename(ICL_PLUGIN_PATH).'/modules/icl-translation/icl-translation-dashboard.php');?></p>
         <p style="line-height:1.5"><?php echo __('All translations are done by professional translators, writing in their native languages. You\'ll be able to chat with your translator and instruct what kind of writing style you prefer and which keywords should be emphasized for search engine optimization.', 'sitepress'); ?></p>        
-        <p style="line-height:1.5"><b><?php printf(__('Pricing for content translation is %s USD / word between any language pair.', 'sitepress'), '0.07'); ?></b></p>
-        <p style="line-height:1.5"><?php echo __('Content translation is currently disabled.', 'sitepress'); ?></p>
+        <p style="line-height:1.5"><b><?php printf(__('Pricing for translation by ICanLocalize is %s USD / word between any language pair.', 'sitepress'), '0.07'); ?></b></p>
+        <p style="line-height:1.5"><?php echo __('ICanLocalize translation is currently disabled.', 'sitepress'); ?></p>
         </div>
     <?php else: ?>    
         <div class="updated fade">
@@ -24,8 +24,8 @@
         <?php if($sitepress->icl_account_configured() ): ?>
             <?php printf(__('To send documents to translation, use the <a href="%s">Translation dashboard</a>.' , 'sitepress'), 'tools.php?page='.basename(ICL_PLUGIN_PATH).'/modules/icl-translation/icl-translation-dashboard.php'); ?>
         <?php endif; ?>
-        <input id="icl_disable_content_translation" type="button" class="button-secondary" value="<?php echo __('Disable content translation','sitepress') ?>" />
-        <span id="icl_toggle_ct_confirm_message" style="display:none"><?php echo __('Are you sure you want to disable content translation?','sitepress'); ?></span>        
+        <input id="icl_disable_content_translation" type="button" class="button-secondary" value="<?php echo __('Disable ICanLocalize translation','sitepress') ?>" />
+        <span id="icl_toggle_ct_confirm_message" style="display:none"><?php echo __('Are you sure you want to disable ICanLocalize translation?','sitepress'); ?></span>        
         </p>
         </div>
         
@@ -172,7 +172,7 @@
 
                 </li>
                 <li>
-                    <i><?php echo __("Content translation can be managed remotely via xmlrpc calls.", 'sitepress') ?></i><br />
+                    <i><?php _e("ICanLocalize translation can be managed remotely via xmlrpc calls.", 'sitepress') ?></i><br />
                 </li>
             </ul>
             </div> <? // div id="icl-content-translation-advanced-options ?>
@@ -297,7 +297,7 @@
      
     <?php if(!$sitepress->get_icl_translation_enabled()): ?>
     <br /> 
-    <p><input id="icl_enable_content_translation" type="button" class="button-primary" value="<?php echo __('Enable content translation','sitepress') ?>" /></p>    
+    <p><input id="icl_enable_content_translation" type="button" class="button-primary" value="<?php echo __('Enable ICanLocalize translation','sitepress') ?>" /></p>    
     <br />     
     <?php endif; ?>    
      

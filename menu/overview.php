@@ -21,7 +21,6 @@ if($sitepress_settings['existing_content_language_verified']){
         $strings_need_update = $wpdb->get_var("SELECT COUNT(id) FROM {$wpdb->prefix}icl_strings WHERE status <> 1");            
     }
 }
-remove_all_actions('icl_menu_footer');
 ?>
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap">
@@ -30,7 +29,7 @@ remove_all_actions('icl_menu_footer');
         <h2><?php echo __('WPML Overview', 'sitepress') ?></h2>    
         
         <h3><?php _e('WPML at a glance', 'sitepress')?></h3>
-        <p><?php printf(__('WPML helps you translate your blog to other languages. You are using <b>WPML %s</b>', 'sitepress'), ICL_SITEPRESS_VERSION)?></p>
+        <p><?php printf(__('WPML helps you translate your blog to other languages. You are using <b>WPML %s</b>.', 'sitepress'), ICL_SITEPRESS_VERSION)?></p>
         
         <h3><?php _e('Multilingual', 'sitepress') ?></h3>
         <table class="widefat">
@@ -61,7 +60,28 @@ remove_all_actions('icl_menu_footer');
                         </p>
                     </td>
                 </tr>  
-                <?php if(2 <= count($sitepress->get_active_languages())) :?>                      
+
+                <?php if(2 <= count($sitepress->get_active_languages())) :?>
+                
+                <tr>
+                    <td><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/theme-localization.php"><?php _e('Theme localization', 'sitepress')?></a></td>
+                    <td>
+                        <p>
+                            <?php 
+                            echo __('Current configuration', 'sitepress');
+                            echo '<br /><strong>';
+                            switch($sitepress_settings['theme_localization_type']){
+                                case '1': echo __('Translate the theme by WPML', 'sitepress'); break;
+                                case '2': echo __('Using a .mo file in the theme directory', 'sitepress'); break;
+                                default: echo __('No localization', 'sitepress'); 
+                            }
+                            echo '</strong>';
+                            ?>
+                        </p>                                                                              
+                        <p><a class="button secondary" href="<?php echo 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/theme-localization.php' ?>"><?php echo __('Manage theme localization', 'sitepress'); ?></a></p>                     
+                    </td>
+                </tr>                            
+                
                 <tr>
                     <td><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/string-translation.php"><?php _e('String translation', 'sitepress')?></a></td>
                     <td>
@@ -81,37 +101,6 @@ remove_all_actions('icl_menu_footer');
                     </td>
                 </tr>
                 
-                <?php if($sitepress->get_icl_translation_enabled() && $sitepress->icl_account_configured()): ?>
-                <tr>
-                    <td><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/translation-synchronization.php"><?php _e('Translation synchronization', 'sitepress')?></a></td>
-                    <td>
-                    &nbsp;
-                    </td>
-                </tr>  
-                <?php endif; ?>
-                                
-                <?php if($sitepress_settings['existing_content_language_verified']): ?>                
-                <tr>
-                    <td><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/theme-localization.php"><?php _e('Theme localization', 'sitepress')?></a></td>
-                    <td>
-                        <p>
-                            <?php 
-                            echo __('Current configuration', 'sitepress');
-                            echo '<br /><strong>';
-                            switch($sitepress_settings['theme_localization_type']){
-                                case '1': echo __('Translate the theme by WPML', 'sitepress'); break;
-                                case '2': echo __('Using a .mo file in the theme directory', 'sitepress'); break;
-                                default: echo __('No localization', 'sitepress'); 
-                            }
-                            echo '</strong>';
-                            ?>
-                        </p>                                                                              
-                        <p><a class="button secondary" href="<?php echo 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/theme-localization.php' ?>"><?php echo __('Manage theme localization', 'sitepress'); ?></a></p>                     
-                    </td>
-                </tr>                            
-                <?php endif; ?>                      
-                
-                <?php if($sitepress_settings['existing_content_language_verified']): ?>                
                 <tr>
                     <td><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/content-translation.php"><?php _e('ICanLocalize translation', 'sitepress')?></a></td>
                     <td>
@@ -143,8 +132,22 @@ remove_all_actions('icl_menu_footer');
                         <?php endif; ?>                    
                     </td>
                 </tr>  
+                
+                <?php if($sitepress->icl_account_configured() && $sitepress_settings['enable_icl_translations']): ?>
+                <tr>
+                    <td><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/comments-translation.php"><?php _e('Comments translation', 'sitepress')?></a></td>
+                    <td><?php _e('WPML can translate comments that visitors leave you in languages that you don\'t speak and translate back your replies.','sitepress') ?></td>
+                </tr>
                 <?php endif; ?>
                 
+                <?php if($sitepress->get_icl_translation_enabled() && $sitepress->icl_account_configured()): ?>
+                <tr>
+                    <td><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/translation-synchronization.php"><?php _e('Translation synchronization', 'sitepress')?></a></td>
+                    <td><?php _e('Controls how to synchronize between contents in different languages.','sitepress') ?></td>
+                    </td>
+                </tr>  
+                <?php endif; ?>
+                                
                 <?php endif; //if(2 <= count($sitepress->get_active_languages())) ?>
                 
             </tbody>
@@ -196,7 +199,8 @@ remove_all_actions('icl_menu_footer');
             </tbody>
         </table>
         
-        <p><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/troubleshooting.php"><?php _e('Troubleshooting', 'sitepress')?></p>
+        <br />
+        <p><?php echo(sprintf(__('For advanced access or to completely uninstall WPML and remove all language information, use the <a href="%s">troubleshooting</a> page.','sitepress'),'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/troubleshooting.php')); ?></p>
         
         <?php do_action('icl_menu_footer'); ?>
     

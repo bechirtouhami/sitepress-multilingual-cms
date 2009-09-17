@@ -280,7 +280,7 @@ class SitePress{
         if(1 < count($this->get_active_languages())){
             icl_st_administration_menu();
             if($this->settings['existing_content_language_verified']){
-                add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Content translation','sitepress'), __('Content translation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/content-translation.php'); 
+                add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('ICanLocalize translation','sitepress'), __('ICanLocalize translation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/content-translation.php'); 
                 if($this->get_icl_translation_enabled() && $this->icl_account_configured()){
                     add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Translation synchronization','sitepress'), __('Translation synchronization','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/translation-synchronization.php');             
                 }            
@@ -507,7 +507,7 @@ class SitePress{
     function icl_account_reqs(){
         $errors = array();
         if(!$this->get_icl_translation_enabled()){
-            $errors[] = __('Content translation not enabled', 'sitepress');  
+            $errors[] = __('ICanLocalize translation not enabled', 'sitepress');  
         }
         return $errors;        
     }
