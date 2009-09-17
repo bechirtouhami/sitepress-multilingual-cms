@@ -16,7 +16,14 @@ jQuery(document).ready(function(){
             url_glue='?';
         }else{
             url_glue='&';
-        }   
+        }
+        
+        if(icl_this_lang != lang){
+            jQuery('#icl_translate_options').fadeOut();
+        }else{
+            jQuery('#icl_translate_options').fadeIn();
+        }
+        
         jQuery('#posts-filter').parent().load(ajx+url_glue+'lang='+lang + ' #posts-filter', {}, function(resp){
             strt = resp.indexOf('<span id="icl_subsubsub">');
             endd = resp.indexOf('</span>\'', strt);

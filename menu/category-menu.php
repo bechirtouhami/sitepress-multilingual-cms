@@ -76,6 +76,8 @@ function get_category_name($id) {
 
 <?php if($trid && $_GET['action'] == 'edit'): ?>
 
+    <span id="icl_translate_options">
+
     <?php
         // count number of translated and un-translated pages.
         $translations_found = 0;
@@ -97,7 +99,8 @@ function get_category_name($id) {
         <tr>
             <?php if(!isset($translations[$lang['code']]->element_id)):?>
                 <td style="padding: 0px;line-height:normal;"><?php echo $lang['display_name'] ?></td>
-                <td style="padding: 0px;line-height:normal;"><a href="categories.php?trid=<?php echo $trid ?>&lang=<?php echo $lang['code'] ?>"><?php echo __('add','sitepress') ?></a></td>
+                <?php $add_link = "categories.php?trid=" . $trid . "&lang=" . $lang['code'] . "&source_lang=" . $selected_language; ?>
+                <td style="padding: 0px;line-height:normal;"><a href="<?php echo $add_link ?>"><?php echo __('add','sitepress') ?></a></td>
             <?php endif; ?>        
         </tr>
         <?php endforeach; ?>
@@ -114,7 +117,7 @@ function get_category_name($id) {
         <tr>
             <?php if(isset($translations[$lang['code']]->element_id)):?>
                 <td style="padding: 0px;line-height:normal;"><?php echo $lang['display_name'] ?></td>
-                <?php $edit_link = "categories.php?action=edit&amp;cat_ID=" . $translations[$lang['code']]->term_id; ?>
+                <?php $edit_link = "categories.php?action=edit&amp;cat_ID=" . $translations[$lang['code']]->term_id . "&amp;lang=" . $lang['code']; ?>
                 <td style="padding: 0px;line-height:normal;"><?php echo isset($translations[$lang['code']]->name)?'<a href="'.$edit_link.'" title="'.__('Edit','sitepress').'">'.$translations[$lang['code']]->name.'</a>':__('n/a','sitepress') ?></td>
                         
             <?php endif; ?>        
@@ -127,6 +130,8 @@ function get_category_name($id) {
     <?php endif; ?>
     
     <br clear="all" style="line-height:1px;" />
+    
+    </span>
 <?php endif; ?>
 
 </div>
