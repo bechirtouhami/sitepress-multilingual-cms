@@ -20,7 +20,7 @@
         
         <p style="float:left;">
         <?php echo __('This is a translation of', 'sitepress') ?>&nbsp;
-        <select name="icl_translation_of" id="icl_translation_of">
+        <select name="icl_translation_of" id="icl_translation_of"<?php if($_GET['action'] != 'edit' && $trid) echo " disabled"?>>
             <?php if($trid): ?>
                 <option value="none"><?php echo __('--None--', 'sitepress') ?></option>
                 <?php
