@@ -446,7 +446,7 @@ function wpml_send_content_to_translation($string, $content_id, $content_type, $
         $msid = $wpdb->get_var("SELECT id FROM {$wpdb->prefix}icl_message_status WHERE object_type='{$content_type}' AND object_id={$content_id}");
         if($msid){
             $wpdb->update($wpdb->prefix.'icl_message_status', 
-                array('rid'=>$rid, 'md5' => md5($body), 'status' => MESSAGE_TRANSLATION_IN_PROGRESS),
+                array('rid'=>$rid, 'md5' => md5($string), 'status' => MESSAGE_TRANSLATION_IN_PROGRESS),
                 array('id' => $msid)
                 );
         }else{
