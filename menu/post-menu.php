@@ -55,6 +55,13 @@
 
 <?php if($trid): ?>
     <span id="icl_translate_options">
+    <?php if($this->get_icl_translation_enabled()):?>
+        <p>
+            <?php echo __('You can ', 'sitepress') ?><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH); ?>/modules/icl-translation/icl-translation-dashboard.php&post_id=<?php echo $post->ID ?><?php if($this->get_current_language() != $this->get_default_language()) echo '&amp;lang=' . $this->get_current_language(); ?>"><?php echo __('let ICanLocalize translate this page professionally','sitepress'); ?></a>.
+        </p>
+    <?php endif; ?>
+        
+
     <?php
         // count number of translated and un-translated pages.
         $translations_found = 0;
@@ -70,7 +77,11 @@
     ?>
     
     <?php if($untranslated_found > 0): ?>    
-        <p style="clear:both;"><b>Translate</b>
+        <?php if($this->get_icl_translation_enabled()):?>
+            <p style="clear:both;"><b>or, translate manually:</b>
+        <?php else: ?>
+            <p style="clear:both;"><b>Translate</b>
+        <?php endif; ?>
         <table>
         <?php foreach($active_languages as $lang): if($selected_language==$lang['code']) continue; ?>
         <tr>
@@ -124,10 +135,6 @@
         
         
     <?php endif; ?>
-    
-    <p>
-        <?php echo __('You can also ', 'sitepress') ?><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH); ?>/modules/icl-translation/icl-translation-dashboard.php&post_id=<?php echo $post->ID ?><?php if($this->get_current_language() != $this->get_default_language()) echo '&amp;lang=' . $this->get_current_language(); ?>"><?php echo __('let ICanLocalize translate this page professionally','sitepress'); ?></a>.
-    </p>
     
     <br clear="all" style="line-height:1px;" />
     </span>
