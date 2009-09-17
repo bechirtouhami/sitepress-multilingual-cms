@@ -41,3 +41,12 @@ jQuery(document).ready(function(){
    
 });
 
+jQuery(function($) {
+	var addAfter3 = function( r, settings ) {
+            JQuery('input[name="icl_trid"]').remove();
+	}
+        
+	$('#the-list').wpList( { addAfter: addAfter3} );
+        
+
+});
