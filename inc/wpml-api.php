@@ -16,6 +16,10 @@ define('WPML_API_CONTENT_TRANSLATION_DISABLED', 9);
 
 define('WPML_API_GET_CONTENT_ERROR' , 0);
 
+define('WPML_API_MAGIC_NUMBER', 6);
+define('WPML_API_ASIAN_LANGUAGES', 'zh-hans|zh-hant|ja|ko');
+define('WPML_API_COST_PER_WORD', 0.07);
+
 
 function _wpml_api_allowed_content_type($content_type){
     $reserved_types = array(
@@ -482,6 +486,32 @@ function wpml_add_callback_for_received_translation($content_type, $callback){
     return 0;    
 }
 
-function wpml_get_word_count($string){
+/**
+ * Returns the number of the words that will be sent to translation and a cost estimate
+ * @since 1.3
+ * @package WPML
+ * @subpackage WPML API
+ *
+ * @param string $string
+ * @param string $language - should be specified when the language is one of zh-hans|zh-hant|ja|ko
+ *    
+ * @return array (count, cost)
+ *  */
+function wpml_get_word_count($string, $language = false){
+    
+    $asian_languages = explode('|', WPML_API_ASIAN_LANGUAGES);
+    
+    if($language && in_array($language, $asian_languages)){
+        $count = ceil(mb_strlen($string)/WPML_API_MAGIC_NUMBER);
+    }else{
+        $count = count(explode(' ', $string));
+    }
+    
+    $cost  = $count * WPML_API_COST_PER_WORD;
+    
+    $ret = array('count'=>$count, 'cost'=>$cost);
+        
+    return $ret;
+    
 }
 ?>
