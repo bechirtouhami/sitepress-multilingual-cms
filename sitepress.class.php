@@ -1350,6 +1350,16 @@ class SitePress{
         $this->set_element_language_details($tt_id, $el_type, $trid, $term_lang);                
     }
     
+    function get_language_for_term($term_id, $el_type) {
+        global $wpdb;
+        $term_id = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->prefix}term_taxonomy WHERE term_id = {$term_id}");
+        if ($term_id) {
+            return $wpdb->get_var("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE element_id = {$term_id} AND element_type = '{$el_type}'");
+        } else {
+            return $this->get_default_language();
+        }
+        
+    }
     function pre_term_name($value, $taxonomy){
         //allow adding terms with the same name in different languages
         global $wpdb;
@@ -1360,8 +1370,14 @@ class SitePress{
             $taxonomy = 'tag';
         }
         if(!empty($term_id)){
-            if(isset($_POST['icl_'.$taxonomy.'_language']) && $_POST['icl_'.$taxonomy.'_language'] != $this->get_default_language()){
-                $value .= ' @'.$_POST['icl_'.$taxonomy.'_language']; 
+            if(isset($_POST['icl_'.$taxonomy.'_language'])) {
+                // see if the term_id is for a different language
+                $this_lang = $_POST['icl_'.$taxonomy.'_language'];
+                if ($this_lang != $this->get_language_for_term($term_id, $taxonomy)) {
+                    if ($this_lang != $this->get_default_language()){
+                        $value .= ' @'.$_POST['icl_'.$taxonomy.'_language'];
+                    }
+                }
             }
         }        
         return $value;
