@@ -280,6 +280,9 @@ class SitePress{
         icl_st_administration_menu();
         if($this->settings['existing_content_language_verified']){
             add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Content translation','sitepress'), __('Content translation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/content-translation.php'); 
+            if($this->get_icl_translation_enabled() && $this->icl_account_configured()){
+                add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Custom fields translation','sitepress'), __('Custom fields translation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/custom-fields-translation.php');             
+            }            
             add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Comments translation','sitepress'), __('Comments translation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/comments-translation.php'); 
         }
         add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Theme localization','sitepress'), __('Theme localization','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/theme-localization.php'); 
@@ -2459,8 +2462,7 @@ class SitePress{
     function help_admin_notice(){
         echo '<br clear="all" /><div id="message" class="updated message fade" style="clear:both;margin-top:5px;"><p>';
         echo '<a title="'.__('Stop showing this message', 'sitepress').'" id="icl_dismiss_help" href="#" style="float:right">'.__('Dismiss', 'sitepress').'</a>';
-        _e('Need help with WPML? ');        
-        printf(__('<a href="%s">Ask WPML on Twitter</a>, visit the <a href="%s">support forum</a> or view the <a href="%s">documentation</a>.', 'sitepress'), 'http://twitter.com/wpml','http://forum.wpml.org','http://wpml.org');
+        printf(__('Please go to <a href="%s">WPML’s configuration</a> to setup languages or CMS navigation.', 'sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/overview.php');
         echo '</p></div>';
     }
     
