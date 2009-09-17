@@ -285,14 +285,13 @@ function icl_sitepress_activate(){
 }
 
 function icl_sitepress_deactivate(){
+    /*
+    if(isset($_GET['no-survey'])) return;
     $s = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']=='on' ? 's' : ''; 
     $src_url = 'http' . $s . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-    ?>
-    <script type="text/javascript">
-    window.open('http://dev3.monline.ro/survey.php?src=<?php echo base64_encode($src_url) ?>', 'wpml_survey');
-    wpml_survey.focus();
-    </script>
-    <?php
+    header("Location:/survey.php?src=" . base64_encode($src_url));
+    exit;
+    */
 } 
 
 if(isset($_GET['activate'])){
