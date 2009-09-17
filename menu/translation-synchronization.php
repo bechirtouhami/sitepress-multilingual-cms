@@ -11,7 +11,7 @@
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap">
     <div id="icon-options-general" class="icon32"><br /></div>
-    <h2><?php echo __('Custom fields translation', 'sitepress') ?></h2>    
+    <h2><?php echo __('Translation synchronization', 'sitepress') ?></h2>    
     
     <?php if($sitepress->get_icl_translation_enabled() && $sitepress->icl_account_configured()): ?>
     <div id="icl_plugin_texts_wrapper" class="metabox-holder">
