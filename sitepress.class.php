@@ -1296,6 +1296,8 @@ class SitePress{
         $active_languages = $this->get_active_languages();
         $selected_language = $element_lang_code?$element_lang_code:$default_language;
         
+        $source_language = $_GET['source_lang'];
+        
         $untranslated_ids = $this->get_elements_without_translations($element_type, $selected_language, $default_language);
         
         include ICL_PLUGIN_PATH . '/menu/'.$element_type.'-menu.php';        

@@ -46,29 +46,50 @@ function get_category_name($id) {
     <br /><br />
     <?php echo __('This is a translation of', 'sitepress') ?><br />
     <select name="icl_translation_of" id="icl_translation_of"<?php if($_GET['action'] != 'edit' && $trid) echo " disabled"?>>
-        <?php if($trid): ?>
-            <option value="none"><?php echo __('--None--', 'sitepress') ?></option>
-            <?php
-                //get source
-                $src_language_id = $wpdb->get_var("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid={$trid} AND language_code='{$default_language}'");
-                if($src_language_id) {
-                    $src_language_title = get_category_name($src_language_id);
-                }
-            ?>
-            <?php if($src_language_title): ?>
-                <option value="<?php echo $src_language_id ?>" selected="selected"><?php echo $src_language_title ?></option>
-            <?php endif; ?>
-        <?php else: ?>
-            <option value="none" selected="selected"><?php echo __('--None--', 'sitepress') ?></option>
-        <?php endif; ?>
-        <?php foreach($untranslated_ids as $translation_of_id):?>
-            <?php if ($translation_of_id != $src_language_id): ?>
-                <?php $title = get_category_name($translation_of_id)?>
-                <?php if ($title): ?>
-                    <option value="<?php echo $translation_of_id ?>"><?php echo $title ?></option>
+        <?php if($source_language == null || $source_language == $default_language): ?>
+            <?php if($trid): ?>
+                <option value="none"><?php echo __('--None--', 'sitepress') ?></option>
+                <?php
+                    //get source
+                    $src_language_id = $wpdb->get_var("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid={$trid} AND language_code='{$default_language}'");
+                    if(!$src_language_id) {
+                        // select the first id found for this trid
+                        $src_language_id = $wpdb->get_var("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid={$trid}");
+                    }
+                    if($src_language_id) {
+                        $src_language_title = get_category_name($src_language_id);
+                    }
+                ?>
+                <?php if($src_language_title): ?>
+                    <option value="<?php echo $src_language_id ?>" selected="selected"><?php echo $src_language_title ?></option>
                 <?php endif; ?>
+            <?php else: ?>
+                <option value="none" selected="selected"><?php echo __('--None--', 'sitepress') ?></option>
             <?php endif; ?>
-        <?php endforeach; ?>
+            <?php foreach($untranslated_ids as $translation_of_id):?>
+                <?php if ($translation_of_id != $src_language_id): ?>
+                    <?php $title = get_category_name($translation_of_id)?>
+                    <?php if ($title): ?>
+                        <option value="<?php echo $translation_of_id ?>"><?php echo $title ?></option>
+                    <?php endif; ?>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <?php if($trid): ?>
+                <?php
+                    // add the source language
+                    $src_language_id = $wpdb->get_var("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid={$trid} AND language_code='{$source_language}'");
+                    if($src_language_id) {
+                        $src_language_title = get_category_name($src_language_id);
+                    }
+                ?>
+                <?php if($src_language_title): ?>
+                    <option value="<?php echo $src_language_id ?>" selected="selected"><?php echo $src_language_title ?></option>
+                <?php endif; ?>
+            <?php else: ?>
+                <option value="none" selected="selected"><?php echo __('--None--', 'sitepress') ?></option>
+            <?php endif; ?>
+        <?php endif; ?>
     </select>
 
 <?php endif; ?>
