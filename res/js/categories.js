@@ -9,6 +9,7 @@ jQuery(document).ready(function(){
     jQuery('#icl_category_menu').remove();
    
    jQuery('select[name="icl_category_language"]').change(function(){
+    
         var lang = jQuery(this).val();
         var ajx = location.href.replace(/#(.*)$/,'');
         ajx = ajx.replace(/pagenum=([0-9]+)/,'');
@@ -36,43 +37,7 @@ jQuery(document).ready(function(){
             jQuery('#category_parent').html(sel_sel)
             
         });        
-   })     
+   })
+   
 });
 
-jQuery(function($) {
-        // this function will be called after a category is added to the list
-        // We need to check to see if the trid is in the url
-        // and redirect to the page without the trid after "Add Category" is
-        // done for a translation.
-	var addAfter3 = function( r, settings ) {
-            var temp = location.search.substring(1); // remove the '?'
-            var params = temp.split('&');
-            
-            temp = '';
-            var redirect_required = false;
-            for (var i in params) {
-                
-                if (params[i].substr(0, 5) == 'trid=') {
-                    redirect_required = true
-                } else {
-                    if (temp != '') {
-                        temp += '&' + params[i];
-                    } else {
-                        temp += params[i];
-                    }
-                }
-            }
-
-            if (redirect_required) {
-                var new_url = location.protocol + '//' + location.host + location.pathname;
-                if (temp != '') {
-                    new_url += '?' + temp;
-                }
-                window.location = new_url;
-            }
-	}
-        
-	$('#the-list').wpList( { addAfter: addAfter3} );
-        
-
-});
