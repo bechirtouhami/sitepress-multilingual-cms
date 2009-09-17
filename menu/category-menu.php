@@ -24,7 +24,7 @@
 <select name="icl_category_language">
 <?php foreach($active_languages as $lang):?>   
 <?php if(isset($translations[$lang['code']]->element_id) && $translations[$lang['code']]->element_id != $element_id) continue ?>     
-<option value="<?php echo $lang['code'] ?>"<?php if($this_lang==$lang['code']): ?> selected="selected"<?php endif;?>><?php echo $lang['display_name'] ?></option>
+<option value="<?php echo $lang['code'] ?>"<?php if($selected_language==$lang['code']): ?> selected="selected"<?php endif;?>><?php echo $lang['display_name'] ?></option>
 <?php endforeach; ?>
 </select>
 
@@ -42,7 +42,7 @@ function get_category_name($id) {
 }
 ?>
 
-<?php if($this_lang != $default_language): ?>
+<?php if($selected_language != $default_language): ?>
     <br /><br />
     <?php echo __('This is a translation of', 'sitepress') ?><br />
     <select name="icl_translation_of" id="icl_translation_of"<?php if($_GET['action'] != 'edit' && $trid) echo " disabled"?>>
