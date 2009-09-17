@@ -1138,6 +1138,8 @@ class SitePress{
         }        
         $untranslated = $this->get_posts_without_translations($is_page, $selected_language, $default_language);
         
+        $source_language = $_GET['source_lang'];
+        
         include ICL_PLUGIN_PATH . '/menu/post-menu.php';
     }
     
@@ -1356,6 +1358,7 @@ class SitePress{
                                                  $default_language,
                                                  $source_language,
                                                  $untranslated_ids,
+                                                 $element_id,
                                                  $type) {
         global $wpdb;
         ?>
@@ -1375,7 +1378,7 @@ class SitePress{
                                 // select the first id found for this trid
                                 $src_language_id = $wpdb->get_var("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid={$trid}");
                             }
-                            if($src_language_id) {
+                            if($src_language_id && $src_language_id != $element_id) {
                                 $src_language_title = $this->get_category_name($src_language_id);
                             }
                         ?>

@@ -23,6 +23,7 @@
                                                  $default_language,
                                                  $source_language,
                                                  $untranslated_ids,
+                                                 $element_id,
                                                  'category');
     $sitepress->add_translate_options($trid,
                                    $active_languages,

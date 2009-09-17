@@ -21,26 +21,47 @@
         <p style="float:left;">
         <?php echo __('This is a translation of', 'sitepress') ?>&nbsp;
         <select name="icl_translation_of" id="icl_translation_of"<?php if($_GET['action'] != 'edit' && $trid) echo " disabled"?>>
-            <?php if($trid): ?>
-                <option value="none"><?php echo __('--None--', 'sitepress') ?></option>
-                <?php
-                    //get source
-                    $src_language_id = $wpdb->get_var("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid={$trid} AND language_code='{$default_language}'");
-                    if($src_language_id) {
-                        $src_language_title = $wpdb->get_var("SELECT post_title FROM {$wpdb->prefix}posts WHERE ID = {$src_language_id}");
-                    }
-                ?>
-                <?php if($src_language_title && !isset($_GET['icl_ajx'])): ?>
-                    <option value="<?php echo $src_language_id ?>" selected="selected"><?php echo $src_language_title ?>&nbsp;</option>
+            <?php if($source_language == null || $source_language == $default_language): ?>
+                <?php if($trid): ?>
+                    <option value="none"><?php echo __('--None--', 'sitepress') ?></option>
+                    <?php
+                        //get source
+                        $src_language_id = $wpdb->get_var("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid={$trid} AND language_code='{$default_language}'");
+                        if(!$src_language_id) {
+                            // select the first id found for this trid
+                            $src_language_id = $wpdb->get_var("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid={$trid}");
+                        }
+                        if($src_language_id && $src_language_id != $post->ID) {
+                            $src_language_title = $wpdb->get_var("SELECT post_title FROM {$wpdb->prefix}posts WHERE ID = {$src_language_id}");
+                        }
+                    ?>
+                    <?php if($src_language_title && !isset($_GET['icl_ajx'])): ?>
+                        <option value="<?php echo $src_language_id ?>" selected="selected"><?php echo $src_language_title ?>&nbsp;</option>
+                    <?php endif; ?>
+                <?php else: ?>
+                    <option value="none" selected="selected"><?php echo __('--None--', 'sitepress') ?></option>
                 <?php endif; ?>
+                <?php foreach($untranslated as $translation_of_id => $translation_of_title):?>
+                    <?php if ($translation_of_id != $src_language_id): ?>
+                        <option value="<?php echo $translation_of_id ?>"><?php echo $translation_of_title ?>&nbsp;</option>
+                    <?php endif; ?>
+                <?php endforeach; ?>
             <?php else: ?>
-                <option value="none" selected="selected"><?php echo __('--None--', 'sitepress') ?></option>
-            <?php endif; ?>
-            <?php foreach($untranslated as $translation_of_id => $translation_of_title):?>
-                <?php if ($translation_of_id != $src_language_id): ?>
-                    <option value="<?php echo $translation_of_id ?>"><?php echo $translation_of_title ?>&nbsp;</option>
+                <?php if($trid): ?>
+                    <?php
+                        // add the source language
+                        $src_language_id = $wpdb->get_var("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid={$trid} AND language_code='{$source_language}'");
+                        if($src_language_id) {
+                            $src_language_title = $wpdb->get_var("SELECT post_title FROM {$wpdb->prefix}posts WHERE ID = {$src_language_id}");
+                        }
+                    ?>
+                    <?php if($src_language_title): ?>
+                        <option value="<?php echo $src_language_id ?>" selected="selected"><?php echo $src_language_title ?></option>
+                    <?php endif; ?>
+                <?php else: ?>
+                    <option value="none" selected="selected"><?php echo __('--None--', 'sitepress') ?></option>
                 <?php endif; ?>
-            <?php endforeach; ?>
+            <?php endif; ?>
         </select>
 
         </p>
@@ -87,7 +108,10 @@
         <tr>
             <?php if(!isset($translations[$lang['code']]->element_id)):?>
                 <td><?php echo $lang['display_name'] ?></td>
-                <td><a href="<?php echo get_option('siteurl')?>/wp-admin/<?php echo $post->post_type ?>-new.php?trid=<?php echo $trid ?>&lang=<?php echo $lang['code'] ?>"><?php echo __('add','sitepress') ?></a></td>
+                <?php
+                    $add_link = get_option('siteurl') . "/wp-admin/" . $post->post_type . "-new.php?trid=" . $trid . "&lang=" . $lang['code'] . "&source_lang=" . $selected_language;
+                ?>
+                <td><a href="<?php echo $add_link?>"><?php echo __('add','sitepress') ?></a></td>
             <?php endif; ?>        
         </tr>
         <?php endforeach; ?>
