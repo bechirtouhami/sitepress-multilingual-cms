@@ -61,7 +61,7 @@
     
     <?php if(!$sitepress->icl_account_configured() || !$sitepress->get_icl_translation_enabled()): ?>
     <div class="error">
-    <p><?php printf(__('To send documents to translation, you first need to set up <a href="%s">ICanLocalize translation</a>.' , 'sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php'); ?></p>
+    <p><?php printf(__('To send documents to translation, you first need to set up <a href="%s">professional translation</a>.' , 'sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php'); ?></p>
     </div>
     <?php endif; ?>    
     

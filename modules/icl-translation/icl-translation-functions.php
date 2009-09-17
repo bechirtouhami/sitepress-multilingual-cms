@@ -1539,7 +1539,7 @@ function _icl_list_posts($args){
         return array('err_code'=>1, 'err_str'=>__('remote translation management not enabled','sitepress'));
     }    
     if ( !$sitepress->get_icl_translation_enabled() ) {
-        return array('err_code'=>3, 'err_str'=> __( 'Content translation not enabled.','sitepress'));
+        return array('err_code'=>3, 'err_str'=> __( 'Professional translation not enabled.','sitepress'));
     }
 
     //check signature
@@ -1582,7 +1582,7 @@ function _icl_remote_control_translate_post($args){
         return array('err_code'=>1, 'err_str'=>__('remote translation management not enabled','sitepress'));
     }    
     if ( !$sitepress->get_icl_translation_enabled() ){
-        return array('err_code'=>3, 'err_str'=> __( 'Content translation not enabled.','sitepress'));
+        return array('err_code'=>3, 'err_str'=> __( 'Professional translation not enabled.','sitepress'));
     }
 
     //check signature
