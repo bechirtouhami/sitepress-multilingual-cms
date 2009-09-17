@@ -110,6 +110,16 @@ remove_all_actions('icl_menu_footer');
                     </td>
                 </tr>  
                 <?php endif; ?>                      
+                
+                <?php if($sitepress->get_icl_translation_enabled() && $sitepress->icl_account_configured()): ?>
+                <tr>
+                    <td><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/custom-fields-translation.php"><?php _e('Custom fields translation', 'sitepress')?></a></td>
+                    <td>
+                    &nbsp;
+                    </td>
+                </tr>  
+                <?php endif; ?>
+                                
                 <?php if($sitepress_settings['existing_content_language_verified']): ?>                
                 <tr>
                     <td><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/theme-localization.php"><?php _e('Theme localization', 'sitepress')?></a></td>
