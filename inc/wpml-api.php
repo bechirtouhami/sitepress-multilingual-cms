@@ -481,4 +481,7 @@ function wpml_add_callback_for_received_translation($content_type, $callback){
     $wpml_add_message_translation_callbacks[$content_type][] = $callback;
     return 0;    
 }
+
+function wpml_get_word_count($string){
+}
 ?>

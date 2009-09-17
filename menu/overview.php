@@ -113,7 +113,7 @@ remove_all_actions('icl_menu_footer');
                 
                 <?php if($sitepress->get_icl_translation_enabled() && $sitepress->icl_account_configured()): ?>
                 <tr>
-                    <td><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/custom-fields-translation.php"><?php _e('Custom fields translation', 'sitepress')?></a></td>
+                    <td><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/translation-synchronization.php"><?php _e('Translation synchronization', 'sitepress')?></a></td>
                     <td>
                     &nbsp;
                     </td>
