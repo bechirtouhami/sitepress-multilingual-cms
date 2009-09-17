@@ -42,7 +42,7 @@ remove_all_actions('icl_menu_footer');
             </thead>
             <tbody>
                 <tr>
-                    <td><?php _e('Languages', 'sitepress')?></td>
+                    <td><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/languages.php"><?php _e('Languages', 'sitepress')?></a></td>
                     <td>                        
                         <?php if(!$sitepress_settings['existing_content_language_verified']): ?>          
                         <p><b><?php printf(__('You have to set the set up the language of the existing content of your blog.<br /> Click <a href="%s">here</a> to do that.', 'sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/languages.php')?></b></p>              
@@ -60,7 +60,7 @@ remove_all_actions('icl_menu_footer');
                 </tr>  
                 <?php if(2 <= count($sitepress->get_active_languages())) :?>                      
                 <tr>
-                    <td><?php _e('String translation', 'sitepress')?></td>
+                    <td><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/string-translation.php"><?php _e('String translation', 'sitepress')?></a></td>
                     <td>
                         <p><?php echo __('String translation allows you to enter translation for texts such as the site\'s title, tagline, widgets and other text not contained in posts and pages.', 'sitepress')?></p>
                         <?php if($strings_need_update==1): ?>          
@@ -77,10 +77,9 @@ remove_all_actions('icl_menu_footer');
                         </p>                                            
                     </td>
                 </tr>
-                <?php endif; ?>            
                 <?php if($sitepress_settings['existing_content_language_verified']): ?>                
                 <tr>
-                    <td><?php _e('Content translation', 'sitepress')?></td>
+                    <td><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/content-translation.php"><?php _e('Content translation', 'sitepress')?></a></td>
                     <td>
                         <?php if($sitepress_settings['enable_icl_translations']): ?>
                             <p><?php echo __('Content translation is enabled.', 'sitepress');?></p>
@@ -113,7 +112,7 @@ remove_all_actions('icl_menu_footer');
                 <?php endif; ?>                      
                 <?php if($sitepress_settings['existing_content_language_verified']): ?>                
                 <tr>
-                    <td><?php _e('Theme localization', 'sitepress')?></td>
+                    <td><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/theme-localization.php"><?php _e('Theme localization', 'sitepress')?></a></td>
                     <td>
                         <p>
                             <?php 
@@ -131,6 +130,7 @@ remove_all_actions('icl_menu_footer');
                     </td>
                 </tr>                            
                 <?php endif; ?>                      
+                <?php endif; //if(2 <= count($sitepress->get_active_languages())) ?>                      
             </tbody>
         </table>
         
@@ -144,7 +144,7 @@ remove_all_actions('icl_menu_footer');
             </thead>
             <tbody>
                 <tr>
-                    <td><?php _e('Navigation', 'sitepress')?></td>
+                    <td><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/navigation.php"><?php _e('Navigation', 'sitepress')?></a></td>
                     <td>
                         <p>
                             <?php echo __('WPML provides advanced menus and navigation to go with your WordPress website, including drop-down menus, breadcrumbs and sidebar navigation.', 'sitepress')?>
@@ -153,6 +153,7 @@ remove_all_actions('icl_menu_footer');
                         <p><?php echo __('CMS Navigation is disabled.','sitepress') ?></p>
                         <p><a class="button secondary" href="<?php echo 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/overview.php&enable-cms-navigation=1' ?>"><?php echo __('Enable CMS navigation', 'sitepress') ?></a></p>
                         <?php else: ?>
+                        <p><?php echo __('CMS Navigation is enabled.','sitepress') ?></p>
                         <p>
                             <a class="button secondary" href="<?php echo 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/navigation.php' ?>"><?php echo __('Configure navigation', 'sitepress') ?></a>
                             <a class="button secondary" href="<?php echo 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/overview.php&enable-cms-navigation=0' ?>"><?php echo __('Disable CMS navigation', 'sitepress') ?></a>
@@ -161,7 +162,7 @@ remove_all_actions('icl_menu_footer');
                     </td>
                 </tr>            
                 <tr>
-                    <td><?php _e('Sticky links', 'sitepress')?></td>
+                    <td><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/absolute-links.php"><?php _e('Sticky links', 'sitepress')?></a></td>
                     <td>
                         <p><?php echo __('With Sticky Links, WPML can automatically ensure that all links on posts and pages are up-to-date, should their URL change.', 'sitepress'); ?></p>
                     
