@@ -838,7 +838,11 @@ class SitePress{
                         )
                 );
             }
-        }else{ // it's a new element         
+        }else{ // it's a new element or we are removing it from a trid
+            if($translation_id = $wpdb->get_var("SELECT translation_id FROM {$wpdb->prefix}icl_translations WHERE element_type='{$el_type}' AND element_id='{$el_id}'")){
+                $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id={$translation_id}");    
+            } 
+        
             $trid = 1 + $wpdb->get_var("SELECT MAX(trid) FROM {$wpdb->prefix}icl_translations");
             $wpdb->insert($wpdb->prefix.'icl_translations', 
                 array(
@@ -847,7 +851,7 @@ class SitePress{
                     'element_id'=>$el_id,
                     'language_code'=>$language_code
                 )
-            );    
+            );
         }
         return $trid;
     }
