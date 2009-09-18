@@ -113,15 +113,28 @@ switch($_REQUEST['icl_ajx_action']){
             $resp[1] = $iclresponse;
             // response 1 - blog got more than 2 languages; -1 blog reduced to 1 language; 0 - no change            
             if(count($lang_codes) > 1){
-                $resp[2] = 1;
+                if(!$iclsettings['setup_complete']){
+                    $resp[2] = -2; //don't refresh the page and enable 'next'
+                }else{
+                    $resp[2] = 1;
+                }
             }elseif($old_active_languages_count > 1 && count($lang_codes) < 2){
-                $resp[2] = -1;
+                if(!$iclsettings['setup_complete']){
+                    $resp[2] = -3; //don't refresh the page and disable 'next'
+                }else{
+                    $resp[2] = -1;
+                }
             }else{
-                $resp[2] = 0;
+                if(!$iclsettings['setup_complete']){
+                    $resp[2] = -3; //don't refresh the page and disable 'next'
+                }else{
+                    $resp[2] = 0;
+                }
             }  
         }else{
             $resp[0] = 0;
         }
+        
         echo join('|',$resp);
         do_action('icl_update_active_languages');
         break;
@@ -225,7 +238,7 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings['icl_lso_flags'] = intval($_POST['icl_lso_flags']);
         $iclsettings['icl_lso_native_lang'] = intval($_POST['icl_lso_native_lang']);
         $iclsettings['icl_lso_display_lang'] = intval($_POST['icl_lso_display_lang']);
-        $iclsettings['setup_complete'] = 0;
+        $iclsettings['setup_complete'] = 1;
         if(!$iclsettings['icl_lso_flags'] && !$iclsettings['icl_lso_native_lang'] && !$iclsettings['icl_lso_display_lang']){
             echo '0|';
             echo __('At least one of the language switcher style options needs to be checked', 'sitepress');    
@@ -437,6 +450,11 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings['dont_show_translate_help'] = true;
         $sitepress->save_settings($iclsettings);
         break;        
+    case 'setup_got_to_step1':
+        $iclsettings['existing_content_language_verified'] = 0;
+        $wpdb->query("TRUNCATE TABLE {$wpdb->prefix}icl_translations");
+        $sitepress->save_settings($iclsettings);
+        break;
     default:
         echo __('Invalid action','sitepress');                
 }    

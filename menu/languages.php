@@ -76,6 +76,7 @@
     <?php endif; /* setup wizard */ ?>
     
     <?php if(!$sitepress_settings['existing_content_language_verified']): ?>        
+        <form id="icl_initial_language" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
         <table class="widefat">
             <thead>
                 <tr>
@@ -83,8 +84,7 @@
                 </tr>
             </thead>
             <tbody>
-                <td>
-                    <form id="icl_initial_language" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+                <td>                    
                     <?php wp_nonce_field('icl_initial_language','icl_initial_languagenonce') ?>            
                     <p>
                         <?php echo __('Before adding other languages, please select the language existing contents are written in:', 'sitepress') ?><br /><br />
@@ -94,13 +94,13 @@
                         <?php endforeach; ?>
                         </select>            
                         &nbsp;
-                        <input class="button" name="save" value="<?php echo __('Apply', 'sitepress') ?>" type="submit" />
                     </p>
-                    </form>                
                 </td>
             </tbody>
-        </table> 
+        </table>         
         <br />
+        <div style="text-align:right"><input class="button-primary" name="save" value="<?php echo __('Next', 'sitepress') ?>" type="submit" /></div>
+        </form>                
     <?php else: ?>
     
         <?php if(count($active_languages) <= 1 || $sitepress_settings['setup_complete']): ?>            
@@ -196,6 +196,12 @@
             </tbody>
         </table> 
         <br />
+        <?php if(!$sitepress_settings['setup_complete']): ?>             
+        <div style="text-align:right">
+            <input id="icl_setup_back_1" class="button-primary" name="save" value="<?php echo __('Back', 'sitepress') ?>" type="button" />
+            <input id="icl_setup_next_1" class="button-primary" name="save" value="<?php echo __('Next', 'sitepress') ?>" type="submit" <?php if(count($active_languages) < 2):?>disabled="disabled"<?php endif;?> />
+        </div>
+        <?php endif; ?>                      
         <?php endif; ?>                      
         
         
@@ -335,17 +341,16 @@
             
             <div id="icl_lso">
             <?php if(count($active_languages) > 1):?>     
-            
-                <table class="widefat">
-                    <thead>
-                        <tr>
-                            <th><?php echo __('Language switcher options', 'sitepress') ?></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <td>
-                            <form id="icl_save_language_switcher_options" name="icl_save_language_switcher_options" action="">
-                            
+
+                <form id="icl_save_language_switcher_options" name="icl_save_language_switcher_options" action="">            
+                    <table class="widefat">
+                        <thead>
+                            <tr>
+                                <th><?php echo __('Language switcher options', 'sitepress') ?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <td>
                                 <p class="icl_form_errors" style="display:none"></p>
                                 <ul>
                                     <li>
@@ -417,19 +422,23 @@
                                         </ul>
                                     </li>
                                 </ul>
-
-                                <p>
-                                    <input class="button" name="save" value="<?php echo __('Apply','sitepress') ?>" type="submit" />
-                                    <span class="icl_ajx_response" id="icl_ajx_response3"></span>
-                                </p>                                    
-                                
-
-                            </form>                          
-                        </td>
-                    </tbody>
-                </table> 
-                <br />            
-          
+                                <?php if($sitepress_settings['setup_complete']): ?>             
+                                    <p>
+                                        <input class="button" name="save" value="<?php echo __('Apply','sitepress') ?>" type="submit" />
+                                        <span class="icl_ajx_response" id="icl_ajx_response3"></span>
+                                    </p>                                    
+                                <?php endif; ?>
+                            </td>
+                        </tbody>
+                    </table> 
+                    <br /> 
+                    <?php if(!$sitepress_settings['setup_complete']): ?>             
+                    <div style="text-align:right">
+                        <input class="button-primary" name="save" value="<?php echo __('Back', 'sitepress') ?>" type="submit" />
+                        <input class="button-primary" name="save" value="<?php echo __('Finish', 'sitepress') ?>" type="submit" />
+                    </div>
+                    <?php endif; ?>
+                </form>                                          
             <?php endif; ?>
             </div>
             

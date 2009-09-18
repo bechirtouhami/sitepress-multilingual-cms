@@ -15,6 +15,9 @@ addLoadEvent(function(){
     jQuery('#icl_lang_more_options').submit(iclSaveForm);    
     jQuery('input[name="icl_language_negotiation_type"]').change(iclLntDomains);
     jQuery('#icl_dismiss_translate_help').click(iclDismissTranslateHelp);
+    jQuery('#icl_setup_back_1').click(iclSetupStep1);
+    jQuery('#icl_setup_next_1').click(function(){location.href = location.href.replace(/#.*/,'');});
+    
     
 });
 function editingDefaultLanguage(){
@@ -107,7 +110,12 @@ function saveLanguageSelection(){
                 location.href = location.href.replace(/#.*/,'');
             }else if(spl[2]=='-1'){
                 location.href = location.href.replace(/#.*/,'');
+            }else if(spl[2]=='-2'){
+                jQuery('#icl_setup_next_1').removeAttr('disabled');
+            }else if(spl[2]=='-3'){
+                jQuery('#icl_setup_next_1').attr('disabled','disabled');
             }                   
+
         }
     });
     hideLanguagePicker();
@@ -195,6 +203,18 @@ function iclDismissTranslateHelp(){
             data: "icl_ajx_action=dismiss_translate_help",
             success: function(msg){
                 thisa.parent().fadeOut();    
+            }
+    });    
+    return false;
+}
+
+function iclSetupStep1(){
+    jQuery.ajax({
+            type: "POST",
+            url: icl_ajx_url,
+            data: "icl_ajx_action=setup_got_to_step1",
+            success: function(msg){
+                location.href = location.href.replace(/#.*/,'');
             }
     });    
     return false;
