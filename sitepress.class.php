@@ -133,9 +133,7 @@ class SitePress{
             add_filter('day_link', array($this,'archives_link'));
             add_filter('getarchives_join', array($this,'getarchives_join'));
             add_filter('getarchives_where', array($this,'getarchives_where'));
-            if($this->settings['language_home']){
-                add_filter('pre_option_home', array($this,'pre_option_home'));            
-            }     
+            add_filter('pre_option_home', array($this,'pre_option_home'));            
             
             // language negotiation
             add_action('query_vars', array($this,'query_vars'));
@@ -329,7 +327,6 @@ class SitePress{
             'icl_lso_flags' => 0,
             'icl_lso_native_lang' => 1,
             'icl_lso_display_lang' => 1,
-            'language_home' => 1,
             'sync_page_ordering' => 1,
             'translated_document_status' => 0,
             'translation_pickup_method' => 0,

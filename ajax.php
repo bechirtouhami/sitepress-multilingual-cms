@@ -214,7 +214,9 @@ switch($_REQUEST['icl_ajx_action']){
                 if(false !== $key && $k !== $_POST['icl_language_switcher_sidebar']){
                     unset($swidgets[$k][$key]);
                 }elseif($k==$_POST['icl_language_switcher_sidebar'] && !in_array('language-selector',$swidgets[$k])){
+                    $swidgets[$k] = array_reverse($swidgets[$k], false);
                     array_push($swidgets[$k],'language-selector');
+                    $swidgets[$k] = array_reverse($swidgets[$k], false);
                 }
             }
             wp_set_sidebars_widgets($swidgets);
@@ -233,7 +235,6 @@ switch($_REQUEST['icl_ajx_action']){
         }                
         break;
     case 'icl_lang_more_options':
-        $iclsettings['language_home'] = $_POST['icl_language_home'];
         $iclsettings['sync_page_ordering'] = $_POST['icl_sync_page_ordering'];        
         $iclsettings['sync_page_parent'] = $_POST['icl_sync_page_parent'];        
         $iclsettings['admin_default_language'] = $_POST['icl_admin_default_language'];

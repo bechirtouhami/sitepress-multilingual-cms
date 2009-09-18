@@ -45,7 +45,7 @@
     <div id="icon-options-general" class="icon32"><br /></div>
     <h2><?php echo __('Setup WPML', 'sitepress') ?></h2>    
 
-    <div id="icl_advanced_switch">
+    <div class="icl_advanced_switch">
         <span><?php _e('Basic setup mode', 'sitepress') ?> <a href="#" title="<?php _e("Switch to advanced setup mode", 'sitepress') ?>"><?php _e('(advanced)', 'sitepress')?></a></span>
         <span style="display:none"><?php _e('Advanced setup mode', 'sitepress') ?> <a href="#" title="<?php _e("Switch to basic setup mode", 'sitepress') ?>"><?php _e('(basic)', 'sitepress')?></a></span>
     </div>
@@ -151,30 +151,18 @@
                             </td>
                         </tr>
                     </table>                
-                </td>
-            </tbody>
-        </table> 
-        <br />
-
-        
-        <?php if(!empty($inactive_content)): ?>
-            <?php 
-                foreach($inactive_content as $language=>$ic){
-                    $t_posts += $ic['post'];
-                    $t_pages += $ic['page'];
-                    $t_cats += $ic['category'];
-                    $t_tags += $ic['post_tag'];
-                } 
-            ?>        
-            
-            <table class="widefat">
-                <thead>
-                    <tr>
-                        <th><?php echo __('Inactive content', 'sitepress') ?></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <td>
+                    
+                    <?php if(!empty($inactive_content)): ?>
+                        <?php 
+                            foreach($inactive_content as $language=>$ic){
+                                $t_posts += $ic['post'];
+                                $t_pages += $ic['page'];
+                                $t_cats += $ic['category'];
+                                $t_tags += $ic['post_tag'];
+                            } 
+                        ?>        
+                        <br />
+                        <h3><?php echo __('Inactive content', 'sitepress') ?></h3>
                         <small><?php echo __('In order to edit or delete these you need to activate the corresponding language first', 'sitepress') ?></small>
                         <table id="icl_inactive_content_table" class="widefat" cellspacing="0">
                         <thead>
@@ -206,12 +194,14 @@
                         </tr>
                         <?php endforeach; ?>                                                                  
                         </tbody>        
-                        </table>                        
-                    </td>
-                </tbody>
-            </table> 
-            <br />        
-        <?php endif; ?> 
+                        </table>    
+                    <?php endif; ?>                      
+                    
+                </td>
+            </tbody>
+        </table> 
+        <br />
+
         
         
         <div id="icl_more_languages_wrap">
@@ -364,7 +354,7 @@
                                 <p class="icl_form_errors" style="display:none"></p>
                                 <ul>
                                     <li>
-                                        <h4><?php echo __('Language switcher widget', 'sitepress')?></h4>                                
+                                        <h4 class="icl_advanced_feature"><?php echo __('Language switcher widget', 'sitepress')?></h4>                                
                                         <?php _e('Choose where to display the language switcher widget:', 'sitepress') ?>
                                         <?php 
                                         global $wp_registered_sidebars; 
@@ -461,10 +451,6 @@
                             <br />
                             <form id="icl_lang_more_options" name="icl_lang_more_options" action="">        
                             <p>
-                                <label><input type="checkbox" id="icl_language_home" name="icl_language_home" <?php if($sitepress_settings['language_home']): ?>checked="checked"<?php endif; ?> value="1" />
-                                <?php echo __('Use language specific home pages.', 'sitepress') ?></label>
-                            </p>
-                            <p>
                                 <label><input type="checkbox" id="icl_sync_page_ordering" name="icl_sync_page_ordering" <?php if($sitepress_settings['sync_page_ordering']): ?>checked="checked"<?php endif; ?> value="1" />
                                 <?php echo __('Synchronize page order for translations.', 'sitepress') ?></label>                        
                             </p>
@@ -510,6 +496,10 @@
     <br />   
     <?php endif; ?>
     
+    <div class="icl_advanced_switch">
+        <span><?php _e('Basic setup mode', 'sitepress') ?> <a href="#" title="<?php _e("Switch to advanced setup mode", 'sitepress') ?>"><?php _e('(advanced)', 'sitepress')?></a></span>
+        <span style="display:none"><?php _e('Advanced setup mode', 'sitepress') ?> <a href="#" title="<?php _e("Switch to basic setup mode", 'sitepress') ?>"><?php _e('(basic)', 'sitepress')?></a></span>
+    </div>    
     
     <?php do_action('icl_menu_footer'); ?>
     

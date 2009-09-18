@@ -6,7 +6,7 @@ jQuery(document).ready(function(){
     jQuery('#noupdate_but input[type="button"]').click(iclSetDocumentToDate);
     jQuery('select[name="icl_translation_of"]').change(function(){jQuery('#icl_translate_options').fadeOut();});
     jQuery('#icl_dismiss_help').click(iclDismissHelp);
-    jQuery('#icl_advanced_switch a').click(iclToggleAdvancedSetup);
+    jQuery('.icl_advanced_switch a').click(iclToggleAdvancedSetup);
 });
 
 function fadeInAjxResp(spot, msg, err){
@@ -139,7 +139,7 @@ function iclDismissHelp(){
 }
 
 function iclToggleAdvancedSetup(){
-    jQuery('#icl_advanced_switch span').toggle();
+    jQuery('.icl_advanced_switch span').toggle();
     if(jQuery(".icl_advanced_feature:hidden").length > 0){
         jQuery(".icl_advanced_feature").fadeIn('slow');
     }else{
