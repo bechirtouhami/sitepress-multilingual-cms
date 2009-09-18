@@ -106,8 +106,8 @@
         </form>                
     <?php else: ?>
     
-        <?php if(count($active_languages) <= 1 || $sitepress_settings['setup_complete'] || $setup_step == 2): ?>            
-        <table class="widefat">
+        <?php if(count($active_languages) <= 1): ?>            
+        <table id="icl_languages_selection_table" class="widefat" <?php if($sitepress_settings['setup_complete'] || $setup_step == 2):?>style="display:none;"<?php endif; ?> >
             <thead>
                 <tr>
                     <th><?php echo __('Site Languages', 'sitepress') ?></th>
@@ -441,7 +441,7 @@
                     </table> 
                     <br /> 
                     <?php if(!$sitepress_settings['setup_complete']): ?>             
-                    <div style="text-align:right">
+                    <div id="icl_setup_nav_3" style="text-align:right">
                         <input class="button-primary" name="save" value="<?php echo __('Back', 'sitepress') ?>" type="button" onclick="location.href='admin.php?page=<?php echo basename(ICL_PLUGIN_PATH) ?>/menu/languages.php&setup=2'" />
                         <input class="button-primary" name="save" value="<?php echo __('Finish', 'sitepress') ?>" type="submit" />
                     </div>

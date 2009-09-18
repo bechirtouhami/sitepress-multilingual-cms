@@ -10,6 +10,9 @@ addLoadEvent(function(){
     iclSaveForm_success_cb.push(function(){
         jQuery('#icl_setup_wizard_wrap').fadeOut();
         jQuery('#icl_translate_help').fadeIn();
+        jQuery('#icl_languages_selection_table').fadeIn();
+        jQuery('#icl_setup_nav_3').hide();
+        
     })
     jQuery('#icl_save_language_switcher_options').submit(iclSaveForm);    
     jQuery('#icl_lang_more_options').submit(iclSaveForm);    
