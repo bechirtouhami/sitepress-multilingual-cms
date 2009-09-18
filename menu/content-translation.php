@@ -55,9 +55,15 @@
                         <td>
 
                             <form id="icl_language_pairs_form" name="icl_language_pairs_form" action="">
-                            <ul id="icl_language_pairs" >
                                 <?php $show_enabled_first = array(true, false) ?>
                                 <?php foreach($show_enabled_first as $show_enabled): ?>
+                                    <?php if($show_enabled): ?>
+                                        <div id="icl_languages_enabled" >
+                                    <?php else: ?>
+                                        <p><a href="#icl-show_disabled_langs"><span><?php echo __('Show more translation pairs','sitepress') ?></span><span style="display:none;"><?php echo __('Hide additional languages','sitepress') ?></span></a></p>
+                                        <div id="icl_languages_disabled" style="display:none">
+                                    <?php endif; ?>
+                                    <ul id="icl_language_pairs" class="icl_language_pairs">
                                     <?php foreach($active_languages as $lang): ?>            
                                         <?php $enabled = $sitepress->get_icl_translation_enabled($lang['code']); ?>
                                         <?php if(($show_enabled &&  $enabled) || (!$show_enabled && !$enabled)): ?>
@@ -76,8 +82,9 @@
                                             
                                         <?php endif; ?>
                                     <?php endforeach; ?>
+                                    </ul>
+                                    </div>
                                 <?php endforeach; ?>
-                            </ul>    
                             <input id="icl_save_language_pairs" type="button" class="button-secondary action" value="<?php echo __('Save', 'sitepress') ?>" />
                             <span class="icl_ajx_response" id="icl_ajx_response"></span>
                             
@@ -240,7 +247,7 @@
             <table class="widefat">
                 <thead>
                     <tr>
-                        <th><?php _e('ICanlocalize Account', 'sitepress') ?></th>
+                        <th><?php _e('ICanlocalize account setup', 'sitepress') ?></th>
                     </tr>
                 </thead>
                 <tbody>
