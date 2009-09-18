@@ -13,7 +13,6 @@
     <div id="icon-options-general" class="icon32"><br /></div>
     <h2><?php echo __('Translation synchronization', 'sitepress') ?></h2>    
     
-    <?php if($sitepress->get_icl_translation_enabled() && $sitepress->icl_account_configured()): ?>
     <div id="icl_plugin_texts_wrapper" class="metabox-holder">
     <div class="postbox-container">
         <div id="normal-sortables" class="meta-box-sortables ui-sortable">
@@ -80,7 +79,34 @@
         </div>
     </div>
     </div>
-    <br clear="all" />
-    <?php endif ?>    
-        
+    
+    <table class="widefat">
+        <thead>
+            <tr>
+                <th><?php _e('Page synchronization', 'sitepress');?></t>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <br />
+                    <form id="icl_page_sync_options" name="icl_page_sync_options" action="">        
+                    <p>
+                        <label><input type="checkbox" id="icl_sync_page_ordering" name="icl_sync_page_ordering" <?php if($sitepress_settings['sync_page_ordering']): ?>checked="checked"<?php endif; ?> value="1" />
+                        <?php echo __('Synchronize page order for translations.', 'sitepress') ?></label>                        
+                    </p>
+                    <p>
+                        <label><input type="checkbox" id="icl_sync_page_parent" name="icl_sync_page_parent" <?php if($sitepress_settings['sync_page_parent']): ?>checked="checked"<?php endif; ?> value="1" />
+                        <?php echo __('Set page parent for translation according to page parent of the original language.', 'sitepress') ?></label>                        
+                    </p>
+                    <p>
+                        <input class="button" name="save" value="<?php echo __('Save','sitepress') ?>" type="submit" />
+                        <span class="icl_ajx_response" id="icl_ajx_response_mo"></span>
+                    </p>
+                    </form>                
+                </td>
+            </tr>
+        </tbody>
+    </table>
+            
 </div>

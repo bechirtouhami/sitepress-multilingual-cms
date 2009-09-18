@@ -45,10 +45,12 @@
     <div id="icon-options-general" class="icon32"><br /></div>
     <h2><?php echo __('Setup WPML', 'sitepress') ?></h2>    
 
+    <?php if($sitepress_settings['setup_complete']): ?>  
     <div class="icl_advanced_switch">
         <span><?php _e('Basic setup mode', 'sitepress') ?> <a href="#" title="<?php _e("Switch to advanced setup mode", 'sitepress') ?>"><?php _e('(advanced)', 'sitepress')?></a></span>
         <span style="display:none"><?php _e('Advanced setup mode', 'sitepress') ?> <a href="#" title="<?php _e("Switch to basic setup mode", 'sitepress') ?>"><?php _e('(basic)', 'sitepress')?></a></span>
     </div>
+    <?php endif; ?>
     
     <?php if(!$sitepress_settings['setup_complete']): /* setup wizard */ ?>
     <?php 
@@ -60,24 +62,16 @@
             $sw_width = 84;
         }
     ?>
-    <table id="icl_setup_wizard_wrap" class="widefat">
-        <thead>
-            <tr>
-                <th><?php _e('Before you can start using WPML, it needs to be set up', 'sitepress') ?></th>
-            </tr>
-        </thead>
-        <tbody>
-            <td>
-                <div id="icl_setup_wizard">
-                    <div class="icl_setup_wizard_step"><strong><?php _e('1. Language for existing contents', 'sitepress')?></strong></div>
-                    <div class="icl_setup_wizard_step"><strong><?php _e('2. Select languages', 'sitepress')?></strong></div>
-                    <div class="icl_setup_wizard_step"><strong><?php _e('3. Add a language switcher', 'sitepress')?></strong></div>            
-                </div>        
-                <br clear="all" />
-                <div id="icl_setup_wizard_progress"><div id="icl_setup_wizard_progress_bar" style="width:<?php echo $sw_width ?>%">&nbsp;</div></div>
-            </td>
-        </tbody>
-    </table>
+    <div id="icl_setup_wizard_wrap">
+        <h3><?php _e('Before you can start using WPML, it needs to be set up', 'sitepress') ?></h3>
+        <div id="icl_setup_wizard">
+            <div class="icl_setup_wizard_step"><strong><?php _e('1. Language for existing contents', 'sitepress')?></strong></div>
+            <div class="icl_setup_wizard_step"><strong><?php _e('2. Select languages', 'sitepress')?></strong></div>
+            <div class="icl_setup_wizard_step"><strong><?php _e('3. Add a language switcher', 'sitepress')?></strong></div>            
+        </div>        
+        <br clear="all" />
+        <div id="icl_setup_wizard_progress"><div id="icl_setup_wizard_progress_bar" style="width:<?php echo $sw_width ?>%">&nbsp;</div></div>
+    </div>
     <br />
     <?php endif; /* setup wizard */ ?>
     
@@ -109,6 +103,7 @@
         <br />
     <?php else: ?>
     
+        <?php if(count($active_languages) <= 1 || $sitepress_settings['setup_complete']): ?>            
         <table class="widefat">
             <thead>
                 <tr>
@@ -201,7 +196,7 @@
             </tbody>
         </table> 
         <br />
-
+        <?php endif; ?>                      
         
         
         <div id="icl_more_languages_wrap">
@@ -450,14 +445,6 @@
                         <td>
                             <br />
                             <form id="icl_lang_more_options" name="icl_lang_more_options" action="">        
-                            <p>
-                                <label><input type="checkbox" id="icl_sync_page_ordering" name="icl_sync_page_ordering" <?php if($sitepress_settings['sync_page_ordering']): ?>checked="checked"<?php endif; ?> value="1" />
-                                <?php echo __('Synchronize page order for translations.', 'sitepress') ?></label>                        
-                            </p>
-                            <p>
-                                <label><input type="checkbox" id="icl_sync_page_parent" name="icl_sync_page_parent" <?php if($sitepress_settings['sync_page_parent']): ?>checked="checked"<?php endif; ?> value="1" />
-                                <?php echo __('Set page parent for translation according to page parent of the original language.', 'sitepress') ?></label>                        
-                            </p>
                             <?php if(is_admin()): ?>
                             <p>
                                 <label>
@@ -496,10 +483,12 @@
     <br />   
     <?php endif; ?>
     
+    <?php if($sitepress_settings['setup_complete']): ?>  
     <div class="icl_advanced_switch">
         <span><?php _e('Basic setup mode', 'sitepress') ?> <a href="#" title="<?php _e("Switch to advanced setup mode", 'sitepress') ?>"><?php _e('(advanced)', 'sitepress')?></a></span>
         <span style="display:none"><?php _e('Advanced setup mode', 'sitepress') ?> <a href="#" title="<?php _e("Switch to basic setup mode", 'sitepress') ?>"><?php _e('(basic)', 'sitepress')?></a></span>
     </div>    
+    <?php endif; ?>
     
     <?php do_action('icl_menu_footer'); ?>
     

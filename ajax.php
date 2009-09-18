@@ -225,7 +225,7 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings['icl_lso_flags'] = intval($_POST['icl_lso_flags']);
         $iclsettings['icl_lso_native_lang'] = intval($_POST['icl_lso_native_lang']);
         $iclsettings['icl_lso_display_lang'] = intval($_POST['icl_lso_display_lang']);
-        $iclsettings['setup_complete'] = 1;
+        $iclsettings['setup_complete'] = 0;
         if(!$iclsettings['icl_lso_flags'] && !$iclsettings['icl_lso_native_lang'] && !$iclsettings['icl_lso_display_lang']){
             echo '0|';
             echo __('At least one of the language switcher style options needs to be checked', 'sitepress');    
@@ -235,12 +235,16 @@ switch($_REQUEST['icl_ajx_action']){
         }                
         break;
     case 'icl_lang_more_options':
-        $iclsettings['sync_page_ordering'] = $_POST['icl_sync_page_ordering'];        
-        $iclsettings['sync_page_parent'] = $_POST['icl_sync_page_parent'];        
         $iclsettings['admin_default_language'] = $_POST['icl_admin_default_language'];
         $sitepress->save_settings($iclsettings);
         echo 1; 
-       break;        
+        break;
+    case 'icl_page_sync_options':
+        $iclsettings['sync_page_ordering'] = intval($_POST['icl_sync_page_ordering']);        
+        $iclsettings['sync_page_parent'] = intval($_POST['icl_sync_page_parent']);            
+        $sitepress->save_settings($iclsettings);
+        echo 1; 
+        break;        
     case 'language_domains':
         $active_languages = $sitepress->get_active_languages();
         $default_language = $sitepress->get_default_language();
