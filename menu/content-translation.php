@@ -55,21 +55,27 @@
                         <td>
 
                             <form id="icl_language_pairs_form" name="icl_language_pairs_form" action="">
-                            <ul id="icl_language_pairs" >    
-                                <?php foreach($active_languages as $lang): ?>            
-                                    <li style="float:left;width:100%;">
-                                        <label><input class="icl_tr_from" type="checkbox" name="icl_lng_from_<?php echo $lang['code']?>" id="icl_lng_from_<?php echo $lang['code']?>" <?php if($sitepress->get_icl_translation_enabled($lang['code'])): ?>checked="checked"<?php endif?> />
-                                        <?php printf(__('Translate from %s to these languages','sitepress'), $lang['display_name']) ?></label>
-                                        <ul id="icl_tr_pair_sub_<?php echo $lang['code'] ?>" <?php if(!$sitepress->get_icl_translation_enabled($lang['code'])): ?>style="display:none"<?php endif?>>
-                                        <?php foreach($active_languages as $langto): if($lang['code']==$langto['code']) continue; ?>        
-                                            <li style="float:left;list-style:none;width:50%;">
-                                                <label><input class="icl_tr_to" type="checkbox" name="icl_lng_to_<?php echo $lang['code']?>_<?php echo $langto['code']?>" id="icl_lng_from_<?php echo $lang['code']?>_<?php echo $langto['code']?>" <?php if($sitepress->get_icl_translation_enabled($lang['code'],$langto['code'])): ?>checked="checked"<?php endif?> />
-                                                <?php echo $langto['display_name'] ?></label>
-                                            </li>    
+                            <ul id="icl_language_pairs" >
+                                <?php $show_enabled_first = array(true, false) ?>
+                                <?php foreach($show_enabled_first as $show_enabled): ?>
+                                    <?php $enabled = $sitepress->get_icl_translation_enabled($lang['code']); ?>
+                                    <?php if(($show_enabled &&  $enabled) || (!$show_enabled && !$enabled)): ?>
+                                        <?php foreach($active_languages as $lang): ?>            
+                                            <li style="float:left;width:98%;">
+                                                <label><input class="icl_tr_from" type="checkbox" name="icl_lng_from_<?php echo $lang['code']?>" id="icl_lng_from_<?php echo $lang['code']?>" <?php if($sitepress->get_icl_translation_enabled($lang['code'])): ?>checked="checked"<?php endif?> />
+                                                <?php printf(__('Translate from %s to these languages','sitepress'), $lang['display_name']) ?></label>
+                                                <ul id="icl_tr_pair_sub_<?php echo $lang['code'] ?>" <?php if(!$sitepress->get_icl_translation_enabled($lang['code'])): ?>style="display:none"<?php endif?>>
+                                                <?php foreach($active_languages as $langto): if($lang['code']==$langto['code']) continue; ?>        
+                                                    <li style="float:left;list-style:none;width:50%;">
+                                                        <label><input class="icl_tr_to" type="checkbox" name="icl_lng_to_<?php echo $lang['code']?>_<?php echo $langto['code']?>" id="icl_lng_from_<?php echo $lang['code']?>_<?php echo $langto['code']?>" <?php if($sitepress->get_icl_translation_enabled($lang['code'],$langto['code'])): ?>checked="checked"<?php endif?> />
+                                                        <?php echo $langto['display_name'] ?></label>
+                                                    </li>    
+                                                <?php endforeach; ?>
+                                                </ul>
+                                            </li>
+                                            
                                         <?php endforeach; ?>
-                                        </ul>
-                                    </li>
-                                    
+                                    <?php endif; ?>
                                 <?php endforeach; ?>
                             </ul>    
                             <input id="icl_save_language_pairs" type="button" class="button-secondary action" value="<?php echo __('Save', 'sitepress') ?>" />
