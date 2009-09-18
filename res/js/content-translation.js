@@ -110,7 +110,7 @@ function iclQuickSaveWebsiteKind(){
     jQuery.ajax({
         type: "POST",
         url: icl_ajx_url,
-        data: "icl_ajx_action=icl_save_website_kind&icl_website_kind="+jQuery(this).val(),
+        data: "icl_ajx_action=icl_save_website_kind&icl_website_kind="+jQuery(this).val()
     });
     return false;     
 }
