@@ -66,7 +66,7 @@
                                     <?php else: ?>
                                         <p><a href="#icl-show_disabled_langs"><span><?php _e('Show more translation pairs &raquo;','sitepress') ?></span><span style="display:none;"><?php _e('&laquo; Hide additional languages','sitepress') ?></span></a></p>
                                         <div id="icl_languages_disabled" style="display:none;">
-                                        <ul id="icl_language_pairs" class="icl_language_pairs">
+                                        <ul class="icl_language_pairs">
                                     <?php endif; ?>
                                     <?php foreach($active_languages as $lang): ?>            
                                         <?php $enabled = $sitepress->get_icl_translation_enabled($lang['code']); ?>
