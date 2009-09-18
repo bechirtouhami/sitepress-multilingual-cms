@@ -90,8 +90,6 @@ function iclToggleMoreLanguages(){
         jQuery('#icl_languages_disabled').fadeOut('fast',function(){
             jqthis.children().toggle();
         });
-        jQuery('#icl_languages_disabled').show(false);
-        
     }    
 }
 
