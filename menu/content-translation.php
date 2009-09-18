@@ -58,9 +58,9 @@
                             <ul id="icl_language_pairs" >
                                 <?php $show_enabled_first = array(true, false) ?>
                                 <?php foreach($show_enabled_first as $show_enabled): ?>
-                                    <?php $enabled = $sitepress->get_icl_translation_enabled($lang['code']); ?>
-                                    <?php if(($show_enabled &&  $enabled) || (!$show_enabled && !$enabled)): ?>
-                                        <?php foreach($active_languages as $lang): ?>            
+                                    <?php foreach($active_languages as $lang): ?>            
+                                        <?php $enabled = $sitepress->get_icl_translation_enabled($lang['code']); ?>
+                                        <?php if(($show_enabled &&  $enabled) || (!$show_enabled && !$enabled)): ?>
                                             <li style="float:left;width:98%;">
                                                 <label><input class="icl_tr_from" type="checkbox" name="icl_lng_from_<?php echo $lang['code']?>" id="icl_lng_from_<?php echo $lang['code']?>" <?php if($sitepress->get_icl_translation_enabled($lang['code'])): ?>checked="checked"<?php endif?> />
                                                 <?php printf(__('Translate from %s to these languages','sitepress'), $lang['display_name']) ?></label>
@@ -74,8 +74,8 @@
                                                 </ul>
                                             </li>
                                             
-                                        <?php endforeach; ?>
-                                    <?php endif; ?>
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
                                 <?php endforeach; ?>
                             </ul>    
                             <input id="icl_save_language_pairs" type="button" class="button-secondary action" value="<?php echo __('Save', 'sitepress') ?>" />
