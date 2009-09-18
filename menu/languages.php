@@ -106,8 +106,8 @@
         </form>                
     <?php else: ?>
     
-        <?php if(count($active_languages) <= 1): ?>            
-        <table id="icl_languages_selection_table" class="widefat" <?php if($sitepress_settings['setup_complete'] || $setup_step == 2):?>style="display:none;"<?php endif; ?> >
+        <?php if(count($active_languages) <= 1 || $sitepress_settings['setup_complete'] || $setup_step == 2): ?>            
+        <table id="icl_languages_selection_table" class="widefat" <?php if(0):?>style="display:none;"<?php endif; ?> >
             <thead>
                 <tr>
                     <th><?php echo __('Site Languages', 'sitepress') ?></th>
