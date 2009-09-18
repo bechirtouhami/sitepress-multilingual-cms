@@ -373,15 +373,17 @@
         <?php else:?>
             <p class='icl_form_errors'><?php echo __('After you configure more languages for your blog, the translation options will show here', 'sitepress'); ?></p>
         <?php endif; ?>
-                    
+           
+        <br />         
     <?php endif; // if Professional translation enabled ?>
      
     <?php if(!$sitepress->get_icl_translation_enabled()): ?>
     <br /> 
     <p><input id="icl_enable_content_translation" type="button" class="button-primary" value="<?php echo __('Enable professional translation','sitepress') ?>" /></p>    
-    <br />     
+    <br /> 
     <?php endif; ?>    
      
+    
     <?php do_action('icl_menu_footer'); ?>
     
 </div>
