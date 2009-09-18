@@ -378,7 +378,6 @@
     <?php endif; // if Professional translation enabled ?>
      
     <?php if(!$sitepress->get_icl_translation_enabled()): ?>
-    <br /> 
     <p><input id="icl_enable_content_translation" type="button" class="button-primary" value="<?php echo __('Enable professional translation','sitepress') ?>" /></p>    
     <br /> 
     <?php endif; ?>    
