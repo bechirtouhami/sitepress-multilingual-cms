@@ -1,16 +1,16 @@
 #icl_language_pairs{
     /*display: none;*/    
 }
-#icl_language_pairs li{
+.icl_language_pairs li{
     background-color:#fff;
     border:1px solid #ccc;
     padding:5px;
 }
-#icl_language_pairs ul{
+.icl_language_pairs ul{
     /*display:none;*/
     margin:10px;
 }
-#icl_language_pairs ul li{
+.icl_language_pairs ul li{
     border:none; 
     float:none;
     width:auto; 
