@@ -9,10 +9,12 @@ addLoadEvent(function(){
     jQuery('#icl_save_language_negotiation_type').submit(iclSaveLanguageNegotiationType);    
     iclSaveForm_success_cb.push(function(){
         jQuery('#icl_setup_wizard_wrap').fadeOut();
+        jQuery('#icl_translate_help').fadeIn();
     })
     jQuery('#icl_save_language_switcher_options').submit(iclSaveForm);    
     jQuery('#icl_lang_more_options').submit(iclSaveForm);    
     jQuery('input[name="icl_language_negotiation_type"]').change(iclLntDomains);
+    jQuery('#icl_dismiss_translate_help').click(iclDismissTranslateHelp);
     
 });
 function editingDefaultLanguage(){
@@ -183,4 +185,17 @@ function iclSaveLanguageNegotiationType(){
         }
     });
     return false;     
+}
+
+function iclDismissTranslateHelp(){
+    var thisa = jQuery(this);
+    jQuery.ajax({
+            type: "POST",
+            url: icl_ajx_url,
+            data: "icl_ajx_action=dismiss_translate_help",
+            success: function(msg){
+                thisa.parent().fadeOut();    
+            }
+    });    
+    return false;
 }

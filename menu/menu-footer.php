@@ -1,4 +1,4 @@
-<div style="background-color: #FFFBCC; border: 1pt solid #E6DB55; padding: 1em; margin: 0em;">
+<div class="icl_yellow_box">
 <h3><?php echo __('Need help?', 'sitepress')?></h3>
 
 <p>

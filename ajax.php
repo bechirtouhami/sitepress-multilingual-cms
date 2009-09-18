@@ -428,6 +428,10 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings['dont_show_help_admin_notice'] = true;
         $sitepress->save_settings($iclsettings);
         break;
+    case 'dismiss_translate_help':
+        $iclsettings['dont_show_translate_help'] = true;
+        $sitepress->save_settings($iclsettings);
+        break;        
     default:
         echo __('Invalid action','sitepress');                
 }    

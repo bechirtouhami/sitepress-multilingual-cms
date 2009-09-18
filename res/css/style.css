@@ -45,10 +45,16 @@
     text-align: center;
 }
 
+.icl_yellow_box{
+    background-color: #FFFBCC; 
+    border: 1pt solid #E6DB55; 
+    padding: 1em; 
+    margin: 0em;
+}
+
 #icl-content-translation-advanced-options{
     display:none;
 }
-
 #icl_advanced_switch{
     text-align: right;
     margin-bottom:5px;
