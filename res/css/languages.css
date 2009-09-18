@@ -75,3 +75,7 @@ a#toggle-theme-localization{
     background-color: #777;
     height:10px;
 }
+
+#icl_more_languages_wrap .widefat h4{
+    margin:15px 0 5px 0;
+}

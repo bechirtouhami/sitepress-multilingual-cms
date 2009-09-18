@@ -224,6 +224,7 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings['icl_lso_flags'] = intval($_POST['icl_lso_flags']);
         $iclsettings['icl_lso_native_lang'] = intval($_POST['icl_lso_native_lang']);
         $iclsettings['icl_lso_display_lang'] = intval($_POST['icl_lso_display_lang']);
+        $iclsettings['setup_complete'] = 1;
         if(!$iclsettings['icl_lso_flags'] && !$iclsettings['icl_lso_native_lang'] && !$iclsettings['icl_lso_display_lang']){
             echo '0|';
             echo __('At least one of the language switcher style options needs to be checked', 'sitepress');    

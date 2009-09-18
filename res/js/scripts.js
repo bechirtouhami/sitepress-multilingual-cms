@@ -28,6 +28,7 @@ var icl_ajxloaderimg_src = icl_ajxloaderimg;
 icl_ajxloaderimg = '<img src="'+icl_ajxloaderimg+'" alt="loading" width="16" height="16" />';
 
 var iclHaltSave = false; // use this for multiple 'submit events'
+var iclSaveForm_success_cb = new Array();
 function iclSaveForm(){
     if(iclHaltSave){
         return false;
@@ -44,6 +45,9 @@ function iclSaveForm(){
             spl = msg.split('|');
             if(spl[0]=='1'){
                 fadeInAjxResp('#'+ajx_resp, icl_ajx_saved);                                         
+                for(i=0;i<iclSaveForm_success_cb.length;i++){
+                    iclSaveForm_success_cb[i]();    
+                }
             }else{                        
                 jQuery('form[name="'+formname+'"] .icl_form_errors').html(spl[1]);
                 jQuery('form[name="'+formname+'"] .icl_form_errors').fadeIn()
