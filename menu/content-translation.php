@@ -22,6 +22,7 @@
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap">
     <div id="icon-options-general" class="icon32"><br /></div>
+    <img src="<?php echo ICL_PLUGIN_URL?>/res/img/web_logo_large.png" align="right" valign="top" style="padding: 16px 10px 10px 10px;"/>
     <h2><?php _e('Professional Translation', 'sitepress') ?></h2>    
         
     <?php if(!$sitepress->get_icl_translation_enabled() ): ?>
@@ -32,8 +33,9 @@
         <p style="line-height:1.5"><b><?php printf(__('Pricing for translation by ICanLocalize is %s USD / word between any language pair.', 'sitepress'), '0.07'); ?></b></p>
         <p style="line-height:1.5"><?php echo __('Professional translation is currently disabled.', 'sitepress'); ?></p>
         </div>
-    <?php else: ?>    
-        <p style="line-height:1.5"><?php echo __('ICanLocalize can provide professional translation for your site\'s contents.', 'sitepress'); ?></p>            
+    <?php else: ?>
+        <p style="line-height:1.5">
+        <?php echo __('ICanLocalize can provide professional translation for your site\'s contents.', 'sitepress'); ?></p>            
         <p>
         <?php if($sitepress->icl_account_configured() ): ?>
             <?php printf(__('To send documents to translation, use the <a href="%s">Translation dashboard</a>.' , 'sitepress'), 'tools.php?page='.basename(ICL_PLUGIN_PATH).'/modules/icl-translation/icl-translation-dashboard.php'); ?>
@@ -66,7 +68,7 @@
                                     <ul id="icl_language_pairs" class="icl_language_pairs">
                                     <?php foreach($active_languages as $lang): ?>            
                                         <?php $enabled = $sitepress->get_icl_translation_enabled($lang['code']); ?>
-                                        <?php if(($show_enabled &&  $enabled) || (!$show_enabled && !$enabled)): ?>
+                                        <?php if(($show_enabled && ($enabled || $lang['code'] == $default_language)) || (!$show_enabled && !($enabled || $lang['code'] == $default_language))): ?>
                                             <li style="float:left;width:98%;">
                                                 <label><input class="icl_tr_from" type="checkbox" name="icl_lng_from_<?php echo $lang['code']?>" id="icl_lng_from_<?php echo $lang['code']?>" <?php if($sitepress->get_icl_translation_enabled($lang['code'])): ?>checked="checked"<?php endif?> />
                                                 <?php printf(__('Translate from %s to these languages','sitepress'), $lang['display_name']) ?></label>
