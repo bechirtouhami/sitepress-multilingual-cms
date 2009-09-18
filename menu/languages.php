@@ -45,6 +45,11 @@
     <div id="icon-options-general" class="icon32"><br /></div>
     <h2><?php echo __('Setup WPML', 'sitepress') ?></h2>    
 
+    <div id="icl_advanced_switch">
+        <span><?php _e('Basic setup mode', 'sitepress') ?> <a href="#" title="<?php _e("Switch to advanced setup mode", 'sitepress') ?>"><?php _e('(advanced)', 'sitepress')?></a></span>
+        <span style="display:none"><?php _e('Advanced setup mode', 'sitepress') ?> <a href="#" title="<?php _e("Switch to basic setup mode", 'sitepress') ?>"><?php _e('(basic)', 'sitepress')?></a></span>
+    </div>
+    
     <?php if(!$sitepress_settings['setup_complete']): /* setup wizard */ ?>
     <?php 
         if(!$sitepress_settings['existing_content_language_verified']){
@@ -210,7 +215,7 @@
         
         
         <div id="icl_more_languages_wrap">
-            <div id="icl_lnt">
+            <div id="icl_lnt" class="icl_advanced_feature">
             <?php if(count($active_languages) > 1): ?>            
             
                 <table class="widefat">
@@ -359,47 +364,6 @@
                                 <p class="icl_form_errors" style="display:none"></p>
                                 <ul>
                                     <li>
-                                        <h4><?php echo __('How to handle languages without translation', 'sitepress')?></h4>
-                                        <p><?php echo __('Some pages or posts may not be translated to all languages. Select how the language selector should behave in case translation is missing.', 'sitepress') ?></p>
-                                        <ul>
-                                            <li>
-                                                <label>
-                                                    <input type="radio" name="icl_lso_link_empty" value="0" <?php if(!$sitepress_settings['icl_lso_link_empty']):?>checked="checked"<?php endif?> />
-                                                    <?php echo __('Skip language', 'sitepress') ?>
-                                                </label>
-                                            </li>
-                                            <li>
-                                            <label>
-                                                <input type="radio" name="icl_lso_link_empty" value="1" <?php if($sitepress_settings['icl_lso_link_empty']==1):?>checked="checked"<?php endif?> />
-                                                <?php echo __('Link to home of language for missing translations', 'sitepress') ?>
-                                            </label>                    
-                                            </li>
-                                        </ul>
-                                    </li>                    
-                                    <li>
-                                        <h4><?php echo __('Language switcher style', 'sitepress')?></h4>
-                                        <ul>
-                                            <li>
-                                                <label>
-                                                    <input type="checkbox" name="icl_lso_flags" value="1" <?php if($sitepress_settings['icl_lso_flags']):?>checked="checked"<?php endif?> />
-                                                    <?php echo __('Flag', 'sitepress') ?>
-                                                </label>
-                                            </li>
-                                            <li>
-                                            <label>
-                                                <input type="checkbox" name="icl_lso_native_lang" value="1" <?php if($sitepress_settings['icl_lso_native_lang']):?>checked="checked"<?php endif?> />
-                                                <?php echo __('Native language name (the language name as it\'s written in that language)', 'sitepress') ?>
-                                            </label>                    
-                                            </li>
-                                            <li>
-                                            <label>
-                                                <input type="checkbox" name="icl_lso_display_lang" value="1" <?php if($sitepress_settings['icl_lso_display_lang']):?>checked="checked"<?php endif?> />
-                                                <?php echo __('Language name in display language (the language name as it\'s written in the currently displayed language)', 'sitepress') ?>
-                                            </label>                    
-                                            </li>                            
-                                        </ul>
-                                    </li>
-                                    <li>
                                         <h4><?php echo __('Language switcher widget', 'sitepress')?></h4>                                
                                         <?php _e('Choose where to display the language switcher widget:', 'sitepress') ?>
                                         <?php 
@@ -425,9 +389,48 @@
                                         <p><?php echo __('You can also create custom language switchers, such as a list of languages or country flags.','sitepress'); ?>
                                         <a href="http://wpml.org/home/getting-started-guide/language-setup/custom-language-switcher/"><?php echo __('Custom language switcher creation guide','sitepress')?></a>.
                                         </p>
-                                        
-                                        
+                                    </li>                                   
+                                    <li class="icl_advanced_feature">
+                                        <h4><?php echo __('How to handle languages without translation', 'sitepress')?></h4>
+                                        <p><?php echo __('Some pages or posts may not be translated to all languages. Select how the language selector should behave in case translation is missing.', 'sitepress') ?></p>
+                                        <ul>
+                                            <li>
+                                                <label>
+                                                    <input type="radio" name="icl_lso_link_empty" value="0" <?php if(!$sitepress_settings['icl_lso_link_empty']):?>checked="checked"<?php endif?> />
+                                                    <?php echo __('Skip language', 'sitepress') ?>
+                                                </label>
+                                            </li>
+                                            <li>
+                                            <label>
+                                                <input type="radio" name="icl_lso_link_empty" value="1" <?php if($sitepress_settings['icl_lso_link_empty']==1):?>checked="checked"<?php endif?> />
+                                                <?php echo __('Link to home of language for missing translations', 'sitepress') ?>
+                                            </label>                    
+                                            </li>
+                                        </ul>
                                     </li>                    
+                                    <li class="icl_advanced_feature">
+                                        <h4><?php echo __('Language switcher style', 'sitepress')?></h4>
+                                        <ul>
+                                            <li>
+                                                <label>
+                                                    <input type="checkbox" name="icl_lso_flags" value="1" <?php if($sitepress_settings['icl_lso_flags']):?>checked="checked"<?php endif?> />
+                                                    <?php echo __('Flag', 'sitepress') ?>
+                                                </label>
+                                            </li>
+                                            <li>
+                                            <label>
+                                                <input type="checkbox" name="icl_lso_native_lang" value="1" <?php if($sitepress_settings['icl_lso_native_lang']):?>checked="checked"<?php endif?> />
+                                                <?php echo __('Native language name (the language name as it\'s written in that language)', 'sitepress') ?>
+                                            </label>                    
+                                            </li>
+                                            <li>
+                                            <label>
+                                                <input type="checkbox" name="icl_lso_display_lang" value="1" <?php if($sitepress_settings['icl_lso_display_lang']):?>checked="checked"<?php endif?> />
+                                                <?php echo __('Language name in display language (the language name as it\'s written in the currently displayed language)', 'sitepress') ?>
+                                            </label>                    
+                                            </li>                            
+                                        </ul>
+                                    </li>
                                 </ul>
 
                                 <p>
@@ -445,12 +448,12 @@
             <?php endif; ?>
             </div>
             
-            <div id="icl_mo">
+            <div id="icl_mo" class="icl_advanced_feature">
             <?php if(count($active_languages) > 1): ?>   
                 <table class="widefat">
                     <thead>
                         <tr>
-                            <th><?php echo __('More options', 'sitepress') ?></th>
+                            <th><?php echo __('Admin language', 'sitepress') ?></th>
                         </tr>
                     </thead>
                     <tbody>

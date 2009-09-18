@@ -48,3 +48,15 @@
 #icl-content-translation-advanced-options{
     display:none;
 }
+
+#icl_advanced_switch{
+    text-align: right;
+    margin-bottom:5px;
+}
+#icl_advanced_switch a{
+    text-decoration: none;
+    font-size: 70%;
+}
+.icl_advanced_feature{
+    display:none;
+}

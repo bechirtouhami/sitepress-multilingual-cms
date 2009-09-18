@@ -206,7 +206,6 @@ switch($_REQUEST['icl_ajx_action']){
         echo 1;
         break;
     case 'icl_save_language_switcher_options':
-        
         if(isset($_POST['icl_language_switcher_sidebar'])){
             global $wp_registered_widgets;
             $swidgets = wp_get_sidebars_widgets();
