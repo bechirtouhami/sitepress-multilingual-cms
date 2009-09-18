@@ -16,8 +16,6 @@ addLoadEvent(function(){
     jQuery('input[name="icl_language_negotiation_type"]').change(iclLntDomains);
     jQuery('#icl_dismiss_translate_help').click(iclDismissTranslateHelp);
     jQuery('#icl_setup_back_1').click(iclSetupStep1);
-    jQuery('#icl_setup_next_1').click(function(){location.href = location.href.replace(/#.*/,'');});
-    
     
 });
 function editingDefaultLanguage(){
@@ -66,7 +64,7 @@ function saveDefaultLanguage(){
                 if(spl[2]){
                     jQuery('#icl_ajx_response').html(spl[2]);
                 }else{                    
-                    location.href = location.href.replace(/#.*/,'');
+                    location.href = location.href.replace(/#.*/,'')+'&setup=2';
                 }                
             }else{                        
                 fadeInAjxResp('#icl_ajx_response',icl_ajx_error);                                         
