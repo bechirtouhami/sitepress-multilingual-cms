@@ -47,7 +47,7 @@
     <h2><?php echo __('Setup WPML', 'sitepress') ?></h2>    
 
     <?php if($sitepress_settings['setup_complete']): ?>  
-    <div class="icl_advanced_switch">
+    <div class="icl_advanced_switch" style="text-align: right;">
         <span><?php _e('Basic setup mode', 'sitepress') ?> <a href="#" title="<?php _e("Switch to advanced setup mode", 'sitepress') ?>"><?php _e('(advanced)', 'sitepress')?></a></span>
         <span style="display:none"><?php _e('Advanced setup mode', 'sitepress') ?> <a href="#" title="<?php _e("Switch to basic setup mode", 'sitepress') ?>"><?php _e('(basic)', 'sitepress')?></a></span>
     </div>
@@ -119,14 +119,14 @@
                         <table id="icl_setup_table" class="form-table">
                             <tr valign="top">            
                                 <td>
-                                    <?php echo __('This list shows the languages that are enabled for this site. Select the default language for contents.','sitepress'); ?><br />
+                                    <?php _e('These languages that enabled for this site.','sitepress'); ?><br />
                                     <ul id="icl_enabled_languages">
                                             <?php foreach($active_languages as $lang): $is_default = ($sitepress->get_default_language()==$lang['code']); ?>
                                         <li <?php if($is_default):?>class="default_language"<?php endif;?>><label><input name="default_language" type="radio" value="<?php echo $lang['code'] ?>" <?php if($is_default):?>checked="checked"<?php endif;?> /> <?php echo $lang['display_name'] ?> <?php if($is_default):?>(<?php echo __('default', 'sitepress') ?>)<?php endif?></label></li>
                                         <?php endforeach ?>
                                     </ul>
                                     <br clear="all" />
-                                    <input id="icl_save_default_button" type="button" class="button-secondary action" value="<?php echo __('Save default language', 'sitepress') ?>" />
+                                    <input id="icl_save_default_button" type="button" class="button-secondary action" value="<?php echo __('Apply', 'sitepress') ?>" />
                                     <input id="icl_cancel_default_button" type="button" class="button-secondary action" value="<?php echo __('Cancel', 'sitepress') ?>" />                                    
                                     <input id="icl_change_default_button" type="button" class="button-secondary action" value="<?php echo __('Change default language', 'sitepress') ?>" <?php if(count($active_languages) < 2): ?>style="display:none"<?php endif ?> />
                                     
@@ -143,7 +143,7 @@
                                         </ul>
                                         <br clear="all" />
                                         <div>
-                                            <input id="icl_save_language_selection" type="button" class="button-secondary action" value="<?php echo __('Save language selection', 'sitepress') ?>" />
+                                            <input id="icl_save_language_selection" type="button" class="button-secondary action" value="<?php echo __('Apply', 'sitepress') ?>" />
                                             <input id="icl_cancel_language_selection" type="button" class="button-secondary action" value="<?php echo __('Cancel', 'sitepress') ?>" />                                
                                         </div>
                                     </div>
@@ -381,9 +381,9 @@
                                             </select>
                                             
                                             
-                                            <p><?php printf(__('The drop-down language switcher can be added to your theme by inserting this PHP code: %s or as a widget','sitepress'),
+                                            <p class="icl_advanced_feature"><?php printf(__('The drop-down language switcher can be added to your theme by inserting this PHP code: %s or as a widget','sitepress'),
                                             '<code class="php">&lt;?php do_action(\'icl_language_selector\'); ?&gt;</code>'); ?>.</p>
-                                            <p><?php echo __('You can also create custom language switchers, such as a list of languages or country flags.','sitepress'); ?>
+                                            <p class="icl_advanced_feature"><?php echo __('You can also create custom language switchers, such as a list of languages or country flags.','sitepress'); ?>
                                             <a href="http://wpml.org/home/getting-started-guide/language-setup/custom-language-switcher/"><?php echo __('Custom language switcher creation guide','sitepress')?></a>.
                                             </p>
                                         </li>                                   
@@ -461,7 +461,6 @@
                     <tbody>
                         <tr>
                             <td>
-                                <br />
                                 <form id="icl_lang_more_options" name="icl_lang_more_options" action="">        
                                 <?php if(is_admin()): ?>
                                 <p>
@@ -492,21 +491,22 @@
         </div>
     <?php endif; ?>
     
+    <?php if($sitepress_settings['setup_complete']): ?>  
+    <div class="icl_advanced_switch">
+        <span><?php _e('To customize the language switcher, setup language URLs or choose a different admin language, go to advanced mode.', 'sitepress') ?> <a href="#" title="<?php _e("Switch to advanced setup mode", 'sitepress') ?>"><?php _e('Advanced &raquo;', 'sitepress')?></a></span>
+        <span style="display:none"><?php _e('You are now in advanced setup mode', 'sitepress') ?> <a href="#" title="<?php _e("Switch to basic setup mode.", 'sitepress') ?>"><?php _e('&laquo; Basic', 'sitepress')?></a></span>
+    </div>
+    <br />
+    <?php endif; ?>
+    
     <?php if(!$sitepress_settings['dont_show_translate_help']): ?>
     <div id="icl_translate_help" class="icl_yellow_box" <?php if(!$sitepress_settings['setup_complete']) echo 'style="display:none"' ?>>
     <h3><?php _e('How to translate ', 'sitepress')?></h3>
     <p><?php _e('You can add translations to posts, pages, tags and categories. Each edit page now includes a new languages box. From that box you can add translations to other languages.', 'sitepress'); ?></p>
     <p><?php printf(__('If you need help translating, you can also try the <a href="%s">professional translation</a> option.','sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php'); ?></p>
-    <input id="icl_dismiss_translate_help" type="button" class="button secondary" value="<?php _e('dismiss this message', 'sitepress');?>" />
+    <input id="icl_dismiss_translate_help" type="button" class="button secondary" value="<?php _e('Dismiss this message', 'sitepress');?>" />
     </div> 
     <br />   
-    <?php endif; ?>
-    
-    <?php if($sitepress_settings['setup_complete']): ?>  
-    <div class="icl_advanced_switch">
-        <span><?php _e('Basic setup mode', 'sitepress') ?> <a href="#" title="<?php _e("Switch to advanced setup mode", 'sitepress') ?>"><?php _e('(advanced)', 'sitepress')?></a></span>
-        <span style="display:none"><?php _e('Advanced setup mode', 'sitepress') ?> <a href="#" title="<?php _e("Switch to basic setup mode", 'sitepress') ?>"><?php _e('(basic)', 'sitepress')?></a></span>
-    </div>    
     <?php endif; ?>
     
     <?php do_action('icl_menu_footer'); ?>

@@ -29,18 +29,23 @@
         
     <?php if(!$sitepress->get_icl_translation_enabled() ): ?>
         <img src="<?php echo ICL_PLUGIN_URL?>/res/img/web_logo_large.png" style="float: right; border: 1pt solid #C0C0C0; margin: 16px 10px 10px 10px;" alt="ICanLocalize" />
-        <p style="line-height:1.5"><?php echo __('ICanLocalize can provide professional translation for your site\'s contents.', 'sitepress'); ?></p>
+        <p style="line-height:1.5"><?php echo __('<a href="http://www.icanlocalize.com">ICanLocalize</a> can provide professional translation for your site\'s contents.', 'sitepress'); ?></p>
         <p style="line-height:1.5"><?php printf(__('When enabled, you can use the <a href="%s">Translation Dashboard</a> to send posts and pages for translation. The entire process is completely effortless. The plugin will send the documents that need translation and then create the translated contents, ready to be published.', 'sitepress'), 'tools.php?page='.basename(ICL_PLUGIN_PATH).'/modules/icl-translation/icl-translation-dashboard.php');?></p>
         <p style="line-height:1.5"><?php echo __('All translations are done by professional translators, writing in their native languages. You\'ll be able to chat with your translator and instruct what kind of writing style you prefer and which keywords should be emphasized for search engine optimization.', 'sitepress'); ?></p>        
         <p style="line-height:1.5"><b><?php printf(__('Pricing for translation by ICanLocalize is %s USD / word between any language pair.', 'sitepress'), '0.07'); ?></b></p>
-        <p style="line-height:1.5"><?php echo __('Professional translation is currently disabled.', 'sitepress'); ?></p>
     <?php else: ?>
-        <p style="line-height:1.5">
-        <?php echo __('ICanLocalize can provide professional translation for your site\'s contents.', 'sitepress'); ?></p>            
-        <p>
         <?php if($sitepress->icl_account_configured() ): ?>
+            <p style="line-height:1.5">
             <?php printf(__('To send documents to translation, use the <a href="%s">Translation dashboard</a>.' , 'sitepress'), 'tools.php?page='.basename(ICL_PLUGIN_PATH).'/modules/icl-translation/icl-translation-dashboard.php'); ?>
+            </p>
+        <?php else: ?>
+            <p style="line-height:1.5">
+            <?php _e('To enable professional translation by <a href="http://www.icanlocalize.com">ICanLocalize</a> please complete this setup screen.', 'sitepress'); ?></p>            
+            </p><p style="line-height:1.5">
+            <?php _e('Creating an account in ICanLocalize is free. You will only need to pay when sending posts and pages for translation.', 'sitepress'); ?></p>            
+            </p>
         <?php endif; ?>
+        <p style="line-height:1.5">
         <input id="icl_disable_content_translation" type="button" class="button-secondary" value="<?php echo __('Disable professional translation','sitepress') ?>" />
         <span id="icl_toggle_ct_confirm_message" style="display:none"><?php echo __('Are you sure you want to disable professional translation?','sitepress'); ?></span>        
         </p>
