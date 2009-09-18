@@ -206,6 +206,19 @@ switch($_REQUEST['icl_ajx_action']){
         echo 1;
         break;
     case 'icl_save_language_switcher_options':
+        
+        if(isset($_POST['icl_language_switcher_sidebar'])){
+            global $wp_registered_widgets;
+            $swidgets = wp_get_sidebars_widgets();
+            foreach($swidgets as $k=>$v){
+                if($key = array_search('language-selector',$swidgets[$k]) && $k != $_POST['icl_language_switcher_sidebar']){
+                    unset($swidgets[$k][$key]);
+                }elseif($k==$_POST['icl_language_switcher_sidebar'] && !in_array('language-selector',$swidgets[$k])){
+                    array_push($swidgets[$k],'language-selector');
+                }
+            }
+            wp_set_sidebars_widgets($swidgets);
+        }
         $iclsettings['icl_lso_link_empty'] = intval($_POST['icl_lso_link_empty']);
         $iclsettings['icl_lso_flags'] = intval($_POST['icl_lso_flags']);
         $iclsettings['icl_lso_native_lang'] = intval($_POST['icl_lso_native_lang']);

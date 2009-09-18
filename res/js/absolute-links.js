@@ -46,7 +46,7 @@ function iclToggleAbsoluteLinks(){
         if(val){
             jQuery('#icl_alp_wrap').load(location.href + ' #icl_alp_wrap',{icl_enable_alp:1}, function(){jQuery('#icl_ajax_loader_alp').html('');location.reload()});
         }else{
-            jQuery('#icl_alp_wrap').load(location.href + ' #icl_alp_wrap',{icl_enable_alp:0}, function(){jQuery('#icl_ajax_loader_alp').html('');location.reload()});
+            jQuery('#icl_alp_wrap').load(location.href + ' #icl_alp_wrap',{icl_enable_alp:0}, function(){jQuery('#icl_ajax_loader_alp').html('');location.href=jQuery('#icl_overview_url').html()});
         }
     }
 }

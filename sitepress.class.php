@@ -292,7 +292,9 @@ class SitePress{
         if($this->settings['modules']['cms-navigation']['enabled']){
             add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Navigation','sitepress'), __('Navigation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/navigation.php'); 
         }
-        add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Sticky links','sitepress'), __('Sticky links','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/absolute-links.php'); 
+        if($this->settings['modules']['absolute-links']['enabled']){
+            add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Sticky links','sitepress'), __('Sticky links','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/absolute-links.php'); 
+        }
         if($_GET['page'] == basename(ICL_PLUGIN_PATH).'/menu/troubleshooting.php'){
             add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Troubleshooting','sitepress'), __('Troubleshooting','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/troubleshooting.php'); 
         }

@@ -44,6 +44,27 @@
 <div class="wrap">
     <div id="icon-options-general" class="icon32"><br /></div>
     <h2><?php echo __('Setup WPML', 'sitepress') ?></h2>    
+
+    <?php /* setup wizard */ ?>
+    <?php 
+        if(!$sitepress_settings['existing_content_language_verified']){
+            $sw_width = 16;
+        }elseif(count($sitepress->get_active_languages()) < 2){
+            $sw_width = 50;
+        }else{
+            $sw_width = 84;
+        }
+    ?>
+    <h3><?php _e('Before you can start using WPML, it needs to be set up', 'sitepress') ?></h3>
+    <div id="icl_setup_wizard">
+        <div class="icl_setup_wizard_step"><strong><?php _e('1. Language for existing contents', 'sitepress')?></strong></div>
+        <div class="icl_setup_wizard_step"><strong><?php _e('2. Select languages', 'sitepress')?></strong></div>
+        <div class="icl_setup_wizard_step"><strong><?php _e('3. Add a language switcher', 'sitepress')?></strong></div>            
+    </div>        
+    <br clear="all" />
+    <div id="icl_setup_wizard_progress"><div id="icl_setup_wizard_progress_bar" style="width:<?php echo $sw_width ?>%">&nbsp;</div></div>
+    <br />
+    <?php /* setup wizard */ ?>
     
     <?php if(!$sitepress_settings['existing_content_language_verified']): ?>
         <h3><?php echo __('Current content language', 'sitepress') ?></h3>    
@@ -268,6 +289,24 @@
             <?php if(count($active_languages) > 1):?>            
                 <h3><?php echo __('Language switcher options', 'sitepress') ?></h3>    
                 <form id="icl_save_language_switcher_options" name="icl_save_language_switcher_options" action="">
+                
+                <?php _e('Choose where to display the language switcher widget:', 'sitepress') ?>
+                <?php 
+                global $wp_registered_sidebars; 
+                $swidgets = wp_get_sidebars_widgets();
+                $sb = '';
+                foreach($swidgets as $k=>$v){
+                    if(in_array('language-selector', $v)){
+                        $sb = $k;
+                    }
+                }
+                ?>                
+                <select name="icl_language_switcher_sidebar">
+                <?php foreach($wp_registered_sidebars as $rs): ?>                
+                <option value="<?php echo $rs['id']?>" <?php if($sb == $rs['id']) echo 'selected="SELECTED"'?>><?php echo $rs['name']?>&nbsp;</option>
+                <?php endforeach;?>
+                </select>
+                
                 <p class="icl_form_errors" style="display:none"></p>
                 <ul>
                     <li>

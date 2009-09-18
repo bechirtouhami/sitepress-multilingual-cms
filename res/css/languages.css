@@ -60,3 +60,18 @@ a#toggle-theme-localization{
     text-align: right;
 }
 #icl_inactive_content_table tfoot td{font-weight:bold;}
+
+#icl_setup_wizard .icl_setup_wizard_step{
+    width:33%;
+    float:left;
+}
+#icl_setup_wizard_progress{
+    height:10px;
+    background-color: #ccc;
+    margin: 10px 0 10px 0;
+    width:90%;
+}
+#icl_setup_wizard_progress_bar{
+    background-color: #777;
+    height:10px;
+}

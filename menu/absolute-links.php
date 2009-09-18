@@ -42,6 +42,7 @@
     <br /> 
     <p><input id="icl_<?php if($sitepress_settings['modules']['absolute-links']['enabled']): ?>disable<?php else:?>enable<?php endif?>_absolute_links" type="button" class="button-primary" value="<?php echo $sitepress_settings['modules']['absolute-links']['enabled'] ? __('Disable Sticky links','sitepress') : __('Enable Sticky links','sitepress') ?>" /></p>
     <span id="icl_toggle_ct_confirm_message" style="display:none"><?php echo __('Are you sure you want to disable Sticky links?','sitepress'); ?></span>
+    <span id="icl_overview_url" style="display:none"><?php echo 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/overview.php'; ?></span>
     <br /> 
     
     <?php do_action('icl_menu_footer'); ?>

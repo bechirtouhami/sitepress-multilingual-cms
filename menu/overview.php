@@ -182,13 +182,15 @@ if($sitepress_settings['existing_content_language_verified']){
                     
                         <?php if($sitepress_settings['modules']['absolute-links']['enabled']):?>
                         <p><b><?php echo __('Sticky links are enabled.','sitepress') ?></b></p>
+                        <p>
+                            <a class="button secondary" href="<?php echo 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/absolute-links.php' ?>"><?php echo __('Configure sticky links', 'sitepress') ?></a>
+                            <a class="button secondary" href="<?php echo 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/overview.php&icl_enable_alp=0' ?>"><?php echo __('Disable sticky links', 'sitepress') ?></a>
+                        </p>                    
+                        
                         <?php else: ?>
                         <p><b><?php echo __('Sticky links are disabled.','sitepress') ?></b></p>
+                        <p><a class="button secondary" href="<?php echo 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/overview.php&icl_enable_alp=1' ?>"><?php echo __('Enable sticky links', 'sitepress') ?></a></p>
                         <?php endif; ?>
-                        
-                        <p>
-                        <a class="button secondary" href="<?php echo 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/absolute-links.php' ?>"><?php echo __('Configure sticky links', 'sitepress') ?></a>
-                        </p>                    
                     </td>
                 </tr>                            
             </tbody>

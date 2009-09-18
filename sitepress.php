@@ -69,8 +69,8 @@ if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQ
     }
     
     // Sticky Links
-    if(isset($_POST['icl_enable_alp'])){
-        $sitepress_settings['modules']['absolute-links']['enabled'] = intval($_POST['icl_enable_alp']);
+    if(isset($_REQUEST['icl_enable_alp'])){
+        $sitepress_settings['modules']['absolute-links']['enabled'] = intval($_REQUEST['icl_enable_alp']);
         $sitepress->save_settings($sitepress_settings);
     }
     if($sitepress_settings['modules']['absolute-links']['enabled']){
