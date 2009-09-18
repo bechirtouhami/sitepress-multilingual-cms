@@ -28,7 +28,6 @@ if($sitepress_settings['existing_content_language_verified']){
         <div id="icon-options-general" class="icon32"><br /></div>
         <h2><?php echo __('WPML Overview', 'sitepress') ?></h2>    
         
-        <br />
         <p><?php printf(__('WPML makes it possible to run full multilingual websites with WordPress. You are using <b>WPML %s</b>.', 'sitepress'), ICL_SITEPRESS_VERSION)?></p>
         
         <h3><?php _e('Multilingual', 'sitepress') ?></h3>
@@ -112,8 +111,7 @@ if($sitepress_settings['existing_content_language_verified']){
                         <?php else: ?>
                             <p><b><?php _e('ICanLocalize can translate your site\'s contents professionally.', 'sitepress'); ?></b></p>
                             <p><?php printf(__('When enabled, you can use the <a href="%s">Translation Dashboard</a> to send posts and pages for translation.', 'sitepress'), 'tools.php?page='.basename(ICL_PLUGIN_PATH).'/modules/icl-translation/icl-translation-dashboard.php');?></p>
-                            <p><?php _e('WPML will send the documents that need translation to ICanLocalize and then create the translated posts and pages.','sitepress'); ?>
-                            <a href="#">Learn more &raquo;</a></p><!-- MIHAI, this should open a popup box that explains about our translation -->
+                            <p><?php _e('WPML will send the documents that need translation to ICanLocalize and then create the translated posts and pages.','sitepress'); ?></p>
                             <p><i><?php _e('* You can always translate yourself by clicking on the \'add translation\' links when editing.') ?></i></p>
                             <p><b><?php echo __('Professional translation is disabled' , 'sitepress')?></b></p>
                         <?php endif;?>                        
@@ -184,12 +182,12 @@ if($sitepress_settings['existing_content_language_verified']){
                         <p><b><?php echo __('Sticky links are enabled.','sitepress') ?></b></p>
                         <p>
                             <a class="button secondary" href="<?php echo 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/absolute-links.php' ?>"><?php echo __('Configure sticky links', 'sitepress') ?></a>
-                            <a class="button secondary" href="<?php echo 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/overview.php&icl_enable_alp=0' ?>"><?php echo __('Disable sticky links', 'sitepress') ?></a>
+                            <a class="button secondary" href="<?php echo 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/overview.php&amp;icl_enable_alp=0' ?>"><?php echo __('Disable sticky links', 'sitepress') ?></a>
                         </p>                    
                         
                         <?php else: ?>
                         <p><b><?php echo __('Sticky links are disabled.','sitepress') ?></b></p>
-                        <p><a class="button secondary" href="<?php echo 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/overview.php&icl_enable_alp=1' ?>"><?php echo __('Enable sticky links', 'sitepress') ?></a></p>
+                        <p><a class="button secondary" href="<?php echo 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/overview.php&amp;icl_enable_alp=1' ?>"><?php echo __('Enable sticky links', 'sitepress') ?></a></p>
                         <?php endif; ?>
                     </td>
                 </tr>                            

@@ -23,12 +23,12 @@
 <div class="wrap">
     <div id="icon-options-general" class="icon32"><br /></div>
     <?php if($sitepress->get_icl_translation_enabled() ): ?>
-        <img src="<?php echo ICL_PLUGIN_URL?>/res/img/web_logo_large.png" align="right" valign="top" style="padding: 16px 10px 10px 10px;"/>
+        <img src="<?php echo ICL_PLUGIN_URL?>/res/img/web_logo_large.png" style="float: right; border: 1pt solid #C0C0C0; margin: 16px 10px 10px 10px;" alt="ICanLocalize" />
     <?php endif; ?>
     <h2><?php _e('Professional Translation', 'sitepress') ?></h2>    
         
     <?php if(!$sitepress->get_icl_translation_enabled() ): ?>
-        <img src="<?php echo ICL_PLUGIN_URL?>/res/img/web_logo_large.png" align="right" valign="top" style="padding: 5px 20px 5px 5px;"/>
+        <img src="<?php echo ICL_PLUGIN_URL?>/res/img/web_logo_large.png" style="float: right; border: 1pt solid #C0C0C0; margin: 16px 10px 10px 10px;" alt="ICanLocalize" />
         <p style="line-height:1.5"><?php echo __('ICanLocalize can provide professional translation for your site\'s contents.', 'sitepress'); ?></p>
         <p style="line-height:1.5"><?php printf(__('When enabled, you can use the <a href="%s">Translation Dashboard</a> to send posts and pages for translation. The entire process is completely effortless. The plugin will send the documents that need translation and then create the translated contents, ready to be published.', 'sitepress'), 'tools.php?page='.basename(ICL_PLUGIN_PATH).'/modules/icl-translation/icl-translation-dashboard.php');?></p>
         <p style="line-height:1.5"><?php echo __('All translations are done by professional translators, writing in their native languages. You\'ll be able to chat with your translator and instruct what kind of writing style you prefer and which keywords should be emphasized for search engine optimization.', 'sitepress'); ?></p>        
@@ -63,7 +63,7 @@
                                     <?php if($show_enabled): ?>
                                         <div id="icl_languages_enabled" >
                                     <?php else: ?>
-                                        <p><a href="#icl-show_disabled_langs"><span><?php echo __('Show more translation pairs','sitepress') ?></span><span style="display:none;"><?php echo __('Hide additional languages','sitepress') ?></span></a></p>
+                                        <p><a href="#icl-show_disabled_langs"><span><?php _e('Show more translation pairs &raquo;','sitepress') ?></span><span style="display:none;"><?php _e('&laquo; Hide additional languages','sitepress') ?></span></a></p>
                                         <div id="icl_languages_disabled" style="display:none">
                                     <?php endif; ?>
                                     <ul id="icl_language_pairs" class="icl_language_pairs">
@@ -121,19 +121,19 @@
                                 <li> 
                                     <ul>
                                         <li>
-                                            <label><input name="icl_website_kind" type="radio" value="0" <?php if($sitepress_settings['website_kind'] === "0"): ?>checked="checked"<?php endif;?> /> <?php echo __("Test site - I'm only testing out the system and don't need to have translators assigned yet.", 'sitepress'); ?></label><br />
+                                            <label><input name="icl_website_kind" type="radio" value="0" <?php if($sitepress_settings['website_kind'] === "0"): ?>checked="checked"<?php endif;?> /> <?php echo __("Test site - translators will not be assigned and you an test the system.", 'sitepress'); ?></label><br />
                                         </li>
                                         <li>
-                                            <label><input name="icl_website_kind" type="radio" value="1" <?php if($sitepress_settings['website_kind'] == 1): ?>checked="checked"<?php endif;?> /> <?php echo __("Development site with real contents - This site includes real contents that need to be translated, but still running on a development server.", 'sitepress'); ?></label><br />
+                                            <label><input name="icl_website_kind" type="radio" value="1" <?php if($sitepress_settings['website_kind'] == 1): ?>checked="checked"<?php endif;?> /> <?php echo __("Development site with real contents", 'sitepress'); ?></label><br />
                                         </li>
                                         <li>
-                                            <label><input name="icl_website_kind" type="radio" value="2" <?php if($sitepress_settings['website_kind'] == 2): ?>checked="checked"<?php endif;?> /> <?php echo __("Production site (running on the live server) - This is the actual production site with contents that need to be translated.", 'sitepress'); ?></label><br />
+                                            <label><input name="icl_website_kind" type="radio" value="2" <?php if($sitepress_settings['website_kind'] == 2): ?>checked="checked"<?php endif;?> /> <?php echo __("Live site", 'sitepress'); ?></label><br />
                                         </li>
                                     </ul>
                                 </li>
                             </ul>
                             
-                            <p><a href="#icl-ct-advanced-options"><span><?php echo __('Show advanced options','sitepress') ?></span><span style="display:none;"><?php echo __('Hide advanced options','sitepress') ?></span></a></p>
+                            <br /><p><a href="#icl-ct-advanced-options"><span><?php _e('Show advanced options &raquo;','sitepress') ?></span><span style="display:none;"><?php _e('&laquo; Hide advanced options','sitepress') ?></span></a></p>
                             <div id="icl-content-translation-advanced-options">
                             <h3><?php echo __('Translator selection','sitepress') ?></h3>
                             <?php
@@ -157,12 +157,9 @@
                                     </ul>
                 
                                 </li>
-                                <li>
-                                    <i><?php echo __("If you want to choose translators, you will be notified by email whenever a translator applies to work on your project.", 'sitepress') ?></i><br />
-                                </li>
                             </ul>
                 
-                            <h3><?php echo __('Translation delivery','sitepress') ?></h3>    
+                            <div style="display: none;"><h3><?php echo __('Translation delivery','sitepress') ?></h3>    
                             <ul>
                                 <li>
                                     <?php echo __("Select the desired translation delivery mehtod:", 'sitepress') ?><br />
@@ -180,7 +177,7 @@
                                 <li>
                                     <i><?php echo __("Choose polling if your site is inaccessible from the Internet.", 'sitepress') ?></i><br />
                                 </li>
-                            </ul>
+                            </ul></div>
                 
                             <h3><?php echo __("Notification preferences:", 'sitepress') ?></h3>
                             <ul>
@@ -196,7 +193,7 @@
                 
                                 </li>
                                 <li>
-                                    <i><?php echo __("ICanLocalize will send notifications messages via email of these events.", 'sitepress') ?></i><br />
+                                    <i><?php echo __("ICanLocalize will send email notifications for these events.", 'sitepress') ?></i><br />
                                 </li>
                             </ul>
                                 
@@ -229,7 +226,7 @@
                 
                                 </li>
                                 <li>
-                                    <i><?php _e("Professional translation can be managed remotely via xmlrpc calls.", 'sitepress') ?></i><br />
+                                    <i><?php _e("This feature is intended for blog networks. It allows controlling the translation process remotely via XML-RPC calls without going through the WordPress admin pages.<br />If you are running a single site, you don't need to enable this.", 'sitepress') ?></i><br />
                                 </li>
                             </ul>
                             </div> <? // div id="icl-content-translation-advanced-options ?>
@@ -336,7 +333,7 @@
                                 <?php wp_nonce_field('icl_view_website_access_data','icl_view_website_access_data_nonce') ?>    
                                 <p class="submit">
                                     <?php echo __('Your ICanLocalize account is configured.', 'sitepress')?>
-                                    <a href="javascript:;" onclick="jQuery('#icl_create_account').hide();jQuery('#icl_configure_account').fadeIn();"><?php echo __('Show access settings', 'sitepress') ?></a>
+                                    <a href="javascript:;" onclick="jQuery('#icl_create_account').hide();jQuery('#icl_configure_account').fadeIn();"><?php echo __('Show access settings &raquo;', 'sitepress') ?></a>
                                 </p>
                                 </form> 
                 
