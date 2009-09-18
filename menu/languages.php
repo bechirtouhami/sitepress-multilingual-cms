@@ -302,6 +302,7 @@
                 }
                 ?>                
                 <select name="icl_language_switcher_sidebar">
+                <option value=""><?php _e('--none--', 'sitepress'); ?></option>
                 <?php foreach($wp_registered_sidebars as $rs): ?>                
                 <option value="<?php echo $rs['id']?>" <?php if($sb == $rs['id']) echo 'selected="SELECTED"'?>><?php echo $rs['name']?>&nbsp;</option>
                 <?php endforeach;?>

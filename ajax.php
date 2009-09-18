@@ -211,7 +211,8 @@ switch($_REQUEST['icl_ajx_action']){
             global $wp_registered_widgets;
             $swidgets = wp_get_sidebars_widgets();
             foreach($swidgets as $k=>$v){
-                if($key = array_search('language-selector',$swidgets[$k]) && $k != $_POST['icl_language_switcher_sidebar']){
+                $key = array_search('language-selector',$swidgets[$k]);
+                if(false !== $key && $k !== $_POST['icl_language_switcher_sidebar']){
                     unset($swidgets[$k][$key]);
                 }elseif($k==$_POST['icl_language_switcher_sidebar'] && !in_array('language-selector',$swidgets[$k])){
                     array_push($swidgets[$k],'language-selector');
