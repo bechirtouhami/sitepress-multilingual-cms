@@ -164,6 +164,10 @@ class SitePress{
     }
                                               
     function init(){ 
+        //configure callbacks for plugin menu pages
+        if(defined('WP_ADMIN') && isset($_GET['page']) && 0 === strpos($_GET['page'],basename(ICL_PLUGIN_PATH).'/')){
+            add_action('icl_menu_footer', array($this, 'menu_footer'));
+        }
         if($this->settings['existing_content_language_verified']){
             if(defined('WP_ADMIN')){
                 if(isset($_GET['lang'])){
@@ -171,10 +175,6 @@ class SitePress{
                 }else{
                     $this->this_lang = $this->get_default_language();
                 }                   
-                //configure callbacks for plugin menu pages
-                if(isset($_GET['page']) && 0 === strpos($_GET['page'],basename(ICL_PLUGIN_PATH).'/')){
-                    add_action('icl_menu_footer', array($this, 'menu_footer'));
-                }            
             }else{
                 $al = $this->get_active_languages();
                 foreach($al as $l){

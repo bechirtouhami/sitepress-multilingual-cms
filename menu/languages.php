@@ -94,7 +94,7 @@
                         <?php endforeach; ?>
                         </select>            
                         &nbsp;
-                        <input class="button" name="save" value="<?php echo __('Save', 'sitepress') ?>" type="submit" />
+                        <input class="button" name="save" value="<?php echo __('Apply', 'sitepress') ?>" type="submit" />
                     </p>
                     </form>                
                 </td>
@@ -322,7 +322,7 @@
                                 </li>
                             </ul>
                             <p>
-                                <input class="button" name="save" value="<?php echo __('Save','sitepress') ?>" type="submit" />
+                                <input class="button" name="save" value="<?php echo __('Apply','sitepress') ?>" type="submit" />
                                 <span class="icl_ajx_response" id="icl_ajx_response2"></span>
                             </p>
                             </form>                           
@@ -419,7 +419,7 @@
                                 </ul>
 
                                 <p>
-                                    <input class="button" name="save" value="<?php echo __('Save','sitepress') ?>" type="submit" />
+                                    <input class="button" name="save" value="<?php echo __('Apply','sitepress') ?>" type="submit" />
                                     <span class="icl_ajx_response" id="icl_ajx_response3"></span>
                                 </p>                                    
                                 
@@ -459,7 +459,7 @@
                             <?php endif; ?>
                             <p><?php printf(__('Each user can choose the admin language. You can edit your language preferences by visiting your <a href="%s">profile page</a>.','sitepress'),'profile.php#wpml')?></p>
                             <p>
-                                <input class="button" name="save" value="<?php echo __('Save','sitepress') ?>" type="submit" />
+                                <input class="button" name="save" value="<?php echo __('Apply','sitepress') ?>" type="submit" />
                                 <span class="icl_ajx_response" id="icl_ajx_response_mo"></span>
                             </p>
                             </form>
