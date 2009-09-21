@@ -730,6 +730,7 @@ class SitePress{
             $blog_default_cat_tax_id = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id='{$blog_default_cat}' AND taxonomy='category'");
             $this->settings['default_categories'] = array($_POST['icl_initial_language_code'] => $blog_default_cat_tax_id);
             $this->settings['existing_content_language_verified'] = 1;
+            $this->settings['setup_wizard_step'] = 2;
             $this->settings['default_language'] = $_POST['icl_initial_language_code'];            
             $this->save_settings();                                
             global $sitepress_settings;

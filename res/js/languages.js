@@ -12,6 +12,7 @@ addLoadEvent(function(){
     jQuery('input[name="icl_language_negotiation_type"]').change(iclLntDomains);
     jQuery('#icl_dismiss_translate_help').click(iclDismissTranslateHelp);
     jQuery('#icl_setup_back_1').click(iclSetupStep1);
+    jQuery('#icl_setup_back_2').click(iclSetupStep2);
     jQuery('#icl_setup_next_1').click(saveLanguageSelection);
     jQuery('#icl_avail_languages_picker li input:checkbox').click(function(){             
         if(jQuery('#icl_avail_languages_picker li input:checkbox:checked').length > 1){
@@ -214,6 +215,17 @@ function iclSetupStep1(){
             type: "POST",
             url: icl_ajx_url,
             data: "icl_ajx_action=setup_got_to_step1",
+            success: function(msg){
+                location.href = location.href.replace(/#.*/,'');
+            }
+    });    
+    return false;
+}
+function iclSetupStep2(){
+    jQuery.ajax({
+            type: "POST",
+            url: icl_ajx_url,
+            data: "icl_ajx_action=setup_got_to_step2",
             success: function(msg){
                 location.href = location.href.replace(/#.*/,'');
             }

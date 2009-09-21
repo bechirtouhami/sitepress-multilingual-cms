@@ -39,7 +39,6 @@
         $default_language = $sitepress->get_language_details($sitepress->get_default_language());        
         $inactive_content = $sitepress->get_inactive_content();        
     }    
-    $setup_step = isset($_GET['setup']) ? $_GET['setup'] : 0;
 ?>
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap">
@@ -57,7 +56,7 @@
     <?php 
         if(!$sitepress_settings['existing_content_language_verified']){
             $sw_width = 16;
-        }elseif(count($sitepress->get_active_languages()) < 2 || $setup_step == 2){
+        }elseif(count($sitepress->get_active_languages()) < 2 || $sitepress_settings['setup_wizard_step'] == 2){
             $sw_width = 50;
         }else{
             $sw_width = 84;
@@ -111,15 +110,8 @@
         <div style="text-align:right"><input class="button-primary" name="save" value="<?php echo __('Next', 'sitepress') ?>" type="submit" /></div>
         </form>                
     <?php else: ?>
-    
-        <?php 
-        if(count($active_languages) <= 1 || $sitepress_settings['setup_complete'] || $setup_step == 2){ 
-            $display_type = 'table';
-        }else{
-            $display_type = 'none';
-        }
-        ?>            
-        <table id="icl_languages_selection_table" class="widefat" style="display:<?php echo $display_type ?>">
+        <?php if($sitepress_settings['setup_complete'] || $sitepress_settings['setup_wizard_step'] == 2): ?>
+        <table id="icl_languages_selection_table" class="widefat">
             <thead>
                 <tr>
                     <th><?php echo __('Site Languages', 'sitepress') ?></th>
@@ -222,11 +214,12 @@
             </tbody>
         </table> 
         <br />
-        <?php if(!$sitepress_settings['setup_complete'] && (count($active_languages) <= 1 || $setup_step==2)): ?>             
+        <?php if($sitepress_settings['setup_wizard_step']==2): ?>             
         <div style="text-align:right">
             <input id="icl_setup_back_1" class="button-primary" name="save" value="<?php echo __('Back', 'sitepress') ?>" type="button" />
             <input id="icl_setup_next_1" class="button-primary" name="save" value="<?php echo __('Next', 'sitepress') ?>" type="button" <?php if(count($active_languages) < 2):?>disabled="disabled"<?php endif;?> />
         </div>
+        <?php endif; ?>                      
         <?php endif; ?>                      
 
         
@@ -367,7 +360,7 @@
             </div>
             
             <div id="icl_lso">
-            <?php if(count($active_languages) > 1 && $setup_step != 2):?>     
+            <?php if($sitepress_settings['setup_complete'] && count($active_languages) > 1 || $sitepress_settings['setup_wizard_step']==3): ?>
 
                 <form id="icl_save_language_switcher_options" name="icl_save_language_switcher_options" action="">            
                     <table class="widefat">
@@ -463,7 +456,7 @@
                     <br /> 
                     <?php if(!$sitepress_settings['setup_complete']): ?>             
                     <div id="icl_setup_nav_3" style="text-align:right">
-                        <input class="button-primary" name="save" value="<?php echo __('Back', 'sitepress') ?>" type="button" onclick="location.href='admin.php?page=<?php echo basename(ICL_PLUGIN_PATH) ?>/menu/languages.php&setup=2'" />
+                        <input id="icl_setup_back_2" class="button-primary" name="save" value="<?php echo __('Back', 'sitepress') ?>" type="button" />
                         <input class="button-primary" name="save" value="<?php echo __('Finish', 'sitepress') ?>" type="submit" />
                     </div>
                     <script type="text/javascript">

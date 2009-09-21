@@ -135,6 +135,11 @@ switch($_REQUEST['icl_ajx_action']){
             $resp[0] = 0;
         }
         
+        if(!$iclsettings['setup_complete']){
+            $iclsettings['setup_wizard_step'] = 3;
+            $sitepress->save_settings($iclsettings);
+        }
+        
         echo join('|',$resp);
         do_action('icl_update_active_languages');
         break;
@@ -238,6 +243,7 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings['icl_lso_flags'] = intval($_POST['icl_lso_flags']);
         $iclsettings['icl_lso_native_lang'] = intval($_POST['icl_lso_native_lang']);
         $iclsettings['icl_lso_display_lang'] = intval($_POST['icl_lso_display_lang']);
+        $iclsettings['setup_wizard_step'] = 0;
         $iclsettings['setup_complete'] = 1;
         if(!$iclsettings['icl_lso_flags'] && !$iclsettings['icl_lso_native_lang'] && !$iclsettings['icl_lso_display_lang']){
             echo '0|';
@@ -452,9 +458,14 @@ switch($_REQUEST['icl_ajx_action']){
         break;        
     case 'setup_got_to_step1':
         $iclsettings['existing_content_language_verified'] = 0;
+        $iclsettings['setup_wizard_step'] = 1;
         $wpdb->query("TRUNCATE TABLE {$wpdb->prefix}icl_translations");
         $sitepress->save_settings($iclsettings);
         break;
+    case 'setup_got_to_step2':
+        $iclsettings['setup_wizard_step'] = 2;
+        $sitepress->save_settings($iclsettings);
+        break;        
     default:
         echo __('Invalid action','sitepress');                
 }    
