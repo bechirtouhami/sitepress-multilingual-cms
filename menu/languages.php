@@ -91,6 +91,12 @@
                         <p>
                             <?php echo __('Before adding other languages, please select the language existing contents are written in:', 'sitepress') ?><br /><br />
                             <select name="icl_initial_language_code">
+                            <?php 
+                                // for the wizard
+                                if($sitepress->get_default_language()){
+                                    $blog_current_lang = $sitepress->get_default_language();
+                                }
+                            ?>
                             <?php foreach($languages as $lang):?>
                             <option <?php if($blog_current_lang==$lang['code']):?>selected="selected"<?php endif;?> value="<?php echo $lang['code']?>"><?php echo $lang['display_name']?></option>
                             <?php endforeach; ?>
