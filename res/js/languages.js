@@ -7,18 +7,20 @@ addLoadEvent(function(){
     jQuery('#icl_save_language_selection').click(saveLanguageSelection);                        
     jQuery('#icl_enabled_languages input').attr('disabled','disabled');    
     jQuery('#icl_save_language_negotiation_type').submit(iclSaveLanguageNegotiationType);    
-    iclSaveForm_success_cb.push(function(){
-        jQuery('#icl_setup_wizard_wrap').fadeOut();
-        jQuery('#icl_translate_help').fadeIn();
-        jQuery('#icl_languages_selection_table').fadeIn();
-        jQuery('#icl_setup_nav_3').hide();
-        
-    })
     jQuery('#icl_save_language_switcher_options').submit(iclSaveForm);    
     jQuery('#icl_lang_more_options').submit(iclSaveForm);    
     jQuery('input[name="icl_language_negotiation_type"]').change(iclLntDomains);
     jQuery('#icl_dismiss_translate_help').click(iclDismissTranslateHelp);
     jQuery('#icl_setup_back_1').click(iclSetupStep1);
+    jQuery('#icl_setup_next_1').click(saveLanguageSelection);
+    jQuery('#icl_avail_languages_picker li input:checkbox').click(function(){             
+        if(jQuery('#icl_avail_languages_picker li input:checkbox:checked').length > 1){
+            jQuery('#icl_setup_next_1').removeAttr('disabled');
+        }else{
+            jQuery('#icl_setup_next_1').attr('disabled', 'disabled');
+        }
+    })
+    
     
 });
 function editingDefaultLanguage(){
@@ -111,10 +113,8 @@ function saveLanguageSelection(){
                 location.href = location.href.replace(/#.*/,'');
             }else if(spl[2]=='-1'){
                 location.href = location.href.replace(/#.*/,'');
-            }else if(spl[2]=='-2'){
-                jQuery('#icl_setup_next_1').removeAttr('disabled');
-            }else if(spl[2]=='-3'){
-                jQuery('#icl_setup_next_1').attr('disabled','disabled');
+            }else {
+                location.href = location.href.replace(/(#|&).*/,'');
             }                   
 
         }

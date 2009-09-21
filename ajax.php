@@ -221,7 +221,7 @@ switch($_REQUEST['icl_ajx_action']){
     case 'icl_save_language_switcher_options':
         if(isset($_POST['icl_language_switcher_sidebar'])){
             global $wp_registered_widgets;
-            $swidgets = wp_get_sidebars_widgets();
+            $swidgets = wp_get_sidebars_widgets();            
             foreach($swidgets as $k=>$v){
                 $key = array_search('language-selector',$swidgets[$k]);
                 if(false !== $key && $k !== $_POST['icl_language_switcher_sidebar']){
@@ -231,7 +231,7 @@ switch($_REQUEST['icl_ajx_action']){
                     array_push($swidgets[$k],'language-selector');
                     $swidgets[$k] = array_reverse($swidgets[$k], false);
                 }
-            }
+            }            
             wp_set_sidebars_widgets($swidgets);
         }
         $iclsettings['icl_lso_link_empty'] = intval($_POST['icl_lso_link_empty']);

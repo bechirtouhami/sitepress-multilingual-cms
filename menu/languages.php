@@ -106,8 +106,14 @@
         </form>                
     <?php else: ?>
     
-        <?php if(count($active_languages) <= 1 || $sitepress_settings['setup_complete'] || $setup_step == 2): ?>            
-        <table id="icl_languages_selection_table" class="widefat" <?php if(0):?>style="display:none;"<?php endif; ?> >
+        <?php 
+        if(count($active_languages) <= 1 || $sitepress_settings['setup_complete'] || $setup_step == 2){ 
+            $display_type = 'table';
+        }else{
+            $display_type = 'none';
+        }
+        ?>            
+        <table id="icl_languages_selection_table" class="widefat" style="display:<?php echo $display_type ?>">
             <thead>
                 <tr>
                     <th><?php echo __('Site Languages', 'sitepress') ?></th>
@@ -119,21 +125,29 @@
                         <table id="icl_setup_table" class="form-table">
                             <tr valign="top">            
                                 <td>
-                                    <?php _e('These languages that enabled for this site.','sitepress'); ?><br />
-                                    <ul id="icl_enabled_languages">
-                                            <?php foreach($active_languages as $lang): $is_default = ($sitepress->get_default_language()==$lang['code']); ?>
-                                        <li <?php if($is_default):?>class="default_language"<?php endif;?>><label><input name="default_language" type="radio" value="<?php echo $lang['code'] ?>" <?php if($is_default):?>checked="checked"<?php endif;?> /> <?php echo $lang['display_name'] ?> <?php if($is_default):?>(<?php echo __('default', 'sitepress') ?>)<?php endif?></label></li>
-                                        <?php endforeach ?>
-                                    </ul>
-                                    <br clear="all" />
+                                    <?php if($sitepress_settings['setup_complete']): ?>
+                                        <?php _e('These languages that enabled for this site.','sitepress'); ?><br />
+                                        <ul id="icl_enabled_languages">
+                                                <?php foreach($active_languages as $lang): $is_default = ($sitepress->get_default_language()==$lang['code']); ?>
+                                            <li <?php if($is_default):?>class="default_language"<?php endif;?>><label><input name="default_language" type="radio" value="<?php echo $lang['code'] ?>" <?php if($is_default):?>checked="checked"<?php endif;?> /> <?php echo $lang['display_name'] ?> <?php if($is_default):?>(<?php echo __('default', 'sitepress') ?>)<?php endif?></label></li>
+                                            <?php endforeach ?>
+                                        </ul>
+                                        <br clear="all" />
+                                    <?php else: ?>
+                                        <?php _e('Select the languages to enable for your site (you can also add and remove languages later).','sitepress'); ?><br />
+                                    <?php endif; ?>
                                     <input id="icl_save_default_button" type="button" class="button-secondary action" value="<?php echo __('Apply', 'sitepress') ?>" />
                                     <input id="icl_cancel_default_button" type="button" class="button-secondary action" value="<?php echo __('Cancel', 'sitepress') ?>" />                                    
+                                    <?php if($sitepress_settings['setup_complete']): ?>
                                     <input id="icl_change_default_button" type="button" class="button-secondary action" value="<?php echo __('Change default language', 'sitepress') ?>" <?php if(count($active_languages) < 2): ?>style="display:none"<?php endif ?> />
+                                    <?php endif; ?>
                                     
+                                    <?php if($sitepress_settings['setup_complete']): ?>
                                     <input id="icl_add_remove_button" type="button" class="button-secondary action" value="<?php echo __('Add / Remove languages', 'sitepress') ?>" />
                                     <span class="icl_ajx_response" id="icl_ajx_response"></span>
                                     <br clear="all" />
-                                    <div id="icl_avail_languages_picker">                
+                                    <?php endif; ?>
+                                    <div id="icl_avail_languages_picker" <?php if(!$sitepress_settings['setup_complete']) echo 'style="display:block"' ?>>                
                                         <ul>
                                         <?php foreach($languages as $lang): ?>
                                             <li><label><input type="checkbox" value="<?php echo $lang['code'] ?>" <?php if($lang['active']):?>checked="checked"<?php endif;?> 
@@ -141,11 +155,13 @@
                                                 <?php if($lang['major']):?><strong><?php endif;?><?php echo $lang['display_name'] ?><?php if($lang['major']):?></strong><?php endif;?></label></li>
                                         <?php endforeach ?>
                                         </ul>
+                                        <?php if($sitepress_settings['setup_complete']): ?>
                                         <br clear="all" />
                                         <div>
                                             <input id="icl_save_language_selection" type="button" class="button-secondary action" value="<?php echo __('Apply', 'sitepress') ?>" />
                                             <input id="icl_cancel_language_selection" type="button" class="button-secondary action" value="<?php echo __('Cancel', 'sitepress') ?>" />                                
                                         </div>
+                                        <?php endif; ?>
                                     </div>
                                 </td>
                             </tr>
@@ -200,14 +216,13 @@
             </tbody>
         </table> 
         <br />
-        <?php if(!$sitepress_settings['setup_complete']): ?>             
+        <?php if(!$sitepress_settings['setup_complete'] && (count($active_languages) <= 1 || $setup_step==2)): ?>             
         <div style="text-align:right">
             <input id="icl_setup_back_1" class="button-primary" name="save" value="<?php echo __('Back', 'sitepress') ?>" type="button" />
-            <input id="icl_setup_next_1" class="button-primary" name="save" value="<?php echo __('Next', 'sitepress') ?>" type="submit" <?php if(count($active_languages) < 2):?>disabled="disabled"<?php endif;?> onclick="location.href='admin.php?page=<?php echo basename(ICL_PLUGIN_PATH) ?>/menu/languages.php'" />
+            <input id="icl_setup_next_1" class="button-primary" name="save" value="<?php echo __('Next', 'sitepress') ?>" type="button" <?php if(count($active_languages) < 2):?>disabled="disabled"<?php endif;?> />
         </div>
         <?php endif; ?>                      
-        <?php endif; ?>                      
-        
+
         
         <div id="icl_more_languages_wrap">
             <div id="icl_lnt" class="icl_advanced_feature">
@@ -445,6 +460,15 @@
                         <input class="button-primary" name="save" value="<?php echo __('Back', 'sitepress') ?>" type="button" onclick="location.href='admin.php?page=<?php echo basename(ICL_PLUGIN_PATH) ?>/menu/languages.php&setup=2'" />
                         <input class="button-primary" name="save" value="<?php echo __('Finish', 'sitepress') ?>" type="submit" />
                     </div>
+                    <script type="text/javascript">
+                    addLoadEvent(function(){     
+                        jQuery('#icl_save_language_switcher_options').submit(function(){
+                            iclSaveForm_success_cb.push(function(){
+                                location.href = location.href.replace(/#.*/,'')
+                            });
+                        });
+                    });
+                    </script>
                     <?php endif; ?>
                 </form>                                          
             <?php endif; ?>
