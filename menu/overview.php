@@ -21,12 +21,6 @@ if($sitepress_settings['existing_content_language_verified']){
         $strings_need_update = $wpdb->get_var("SELECT COUNT(id) FROM {$wpdb->prefix}icl_strings WHERE status <> 1");            
     }
 }
-if(empty($sitepress_settings['dont_show_help_admin_notice'])){
-    $sitepress_settings['dont_show_help_admin_notice'] = true;
-    $sitepress->save_settings($sitepress_settings);    
-}
-
-
 ?>
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap">

@@ -252,9 +252,14 @@ class SitePress{
             add_filter('query', array($this, 'filter_queries'));                
             
         }
-        
-        if(empty($this->settings['dont_show_help_admin_notice']) && count($this->get_active_languages()) < 2 && basename($_GET['page']!='overview.php')){
-            add_action('admin_notices', array($this, 'help_admin_notice'));
+
+        if(empty($this->settings['dont_show_help_admin_notice'])){
+            if(basename($_GET['page'])=='overview.php'){
+                $this->settings['dont_show_help_admin_notice'] = true;
+                $this->save_settings();                
+            }elseif(count($this->get_active_languages()) < 2){
+                add_action('admin_notices', array($this, 'help_admin_notice'));
+            }
         }
         
         require ICL_PLUGIN_PATH . '/inc/template-constants.php';        
