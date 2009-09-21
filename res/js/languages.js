@@ -20,7 +20,8 @@ addLoadEvent(function(){
         }else{
             jQuery('#icl_setup_next_1').attr('disabled', 'disabled');
         }
-    })
+    });
+    jQuery('#icl_translate_help_collapsed').click(function(){jQuery(this).hide();jQuery('#icl_translate_help').fadeIn()});
     
     
 });
@@ -204,7 +205,7 @@ function iclDismissTranslateHelp(){
             url: icl_ajx_url,
             data: "icl_ajx_action=dismiss_translate_help",
             success: function(msg){
-                thisa.parent().fadeOut();    
+                thisa.parent().fadeOut('fast',function(){jQuery('#icl_translate_help_collapsed').fadeIn();});                    
             }
     });    
     return false;

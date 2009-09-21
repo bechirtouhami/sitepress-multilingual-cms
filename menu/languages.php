@@ -522,15 +522,17 @@
     <br />
     <?php endif; ?>
     
-    <?php if(!$sitepress_settings['dont_show_translate_help']): ?>
-    <div id="icl_translate_help" class="icl_yellow_box" <?php if(!$sitepress_settings['setup_complete']) echo 'style="display:none"' ?>>
+    <div id="icl_translate_help_collapsed" <?php if(!$sitepress_settings['dont_show_translate_help']) echo 'style="display:none"' ?>>
+    <img src="<?php echo ICL_PLUGIN_URL ?>/res/img/question-green.png" width="16" height="16" />&nbsp;<a href="#"><?php _e('Instructions for translating contents', 'sitepress'); ?> &raquo;</a>
+    </div>    
+    <div id="icl_translate_help" class="icl_yellow_box" <?php if(!$sitepress_settings['setup_complete'] || $sitepress_settings['dont_show_translate_help']) echo 'style="display:none"' ?>>
     <h3><?php _e('How to translate ', 'sitepress')?></h3>
     <p><?php _e('You can add translations to posts, pages, tags and categories. Each edit page now includes a new languages box. From that box you can add translations to other languages.', 'sitepress'); ?></p>
     <p><?php printf(__('If you need help translating, you can also try the <a href="%s">professional translation</a> option.','sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php'); ?></p>
     <input id="icl_dismiss_translate_help" type="button" class="button secondary" value="<?php _e('Dismiss this message', 'sitepress');?>" />
     </div> 
     <br />   
-    <?php endif; ?>
+    
     
     <?php do_action('icl_menu_footer'); ?>
     
