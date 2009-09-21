@@ -131,6 +131,10 @@ switch($_REQUEST['icl_ajx_action']){
                     $resp[2] = 0;
                 }
             }  
+            if(count($active_langs) > 1){
+                $iclsettings['dont_show_help_admin_notice'] = true;
+                $sitepress->save_settings($iclsettings);
+            }
         }else{
             $resp[0] = 0;
         }
