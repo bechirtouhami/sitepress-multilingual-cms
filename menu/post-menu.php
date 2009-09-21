@@ -146,7 +146,7 @@
             <tr>
                 <?php if(isset($translations[$lang['code']]->element_id)):?>
                     <td><?php echo $lang['display_name'] ?></td>
-                    <td>
+                    <td class="icl_translation_status_msg">
                     <?php echo isset($post_translation_statuses[$lang['code']]) ? $post_translation_statuses[$lang['code']] : __('Not translated','sitepress'); ?>
                     </td>
                     

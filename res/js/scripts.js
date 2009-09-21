@@ -115,8 +115,8 @@ function iclSetDocumentToDate(){
                 spl = msg.split('|');
                 thisbut.removeAttr('disabled');
                 thisbut.css({'background-image':'none'});
-                thisbut.parent().fadeOut();
-                var st = jQuery('#icl_translations_statuses td.icl_translation_status_msg');
+                thisbut.parent().remove();
+                var st = jQuery('#icl_translations_status td.icl_translation_status_msg');
                 st.each(function(){
                     jQuery(this).html(jQuery(this).html().replace(spl[0],spl[1]))                     
                 })

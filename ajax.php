@@ -370,9 +370,9 @@ switch($_REQUEST['icl_ajx_action']){
         $nid = (int) $_POST['post_id'];
         $md5 = $wpdb->get_var("SELECT md5 FROM {$wpdb->prefix}icl_node WHERE nid={$nid}");
         $wpdb->query("UPDATE {$wpdb->prefix}icl_content_status SET md5 = '{$md5}' WHERE nid='{$nid}'");
-        echo __('translation needs update','sitepress');
+        echo __('Needs update','sitepress');
         echo '|';
-        echo __('Translation complete','sitepress');
+        echo __('Complete','sitepress');
         break;    
     
     case 'icl_st_save_translation':
