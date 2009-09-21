@@ -27,8 +27,13 @@ function toggleTranslationPairsSub(){
     if(jQuery(this).attr('checked')){
         jQuery('#icl_tr_pair_sub_'+code).slideDown();
     }else{
-        jQuery('#icl_tr_pair_sub_'+code+' input[type="checkbox"]').removeAttr('checked');
-        jQuery('#icl_tr_pair_sub_'+code).slideUp();
+        // we should leave any to languages checked.
+        //jQuery('#icl_tr_pair_sub_'+code+' input[type="checkbox"]').removeAttr('checked');
+        
+        //jQuery('#icl_tr_pair_sub_'+code).slideUp();
+        // NOTE:
+        // slideup is not working in wp2.8.4 so set display to none instead.
+        jQuery('#icl_tr_pair_sub_'+code).css("display", "none");
     }            
 }
 
@@ -87,9 +92,15 @@ function iclToggleMoreLanguages(){
             jqthis.children().toggle();
         });        
     }else{
+        /* NOTE:
+            this fade out is not working in wp 2.8.4. set the display to none instead.
         jQuery('#icl_languages_disabled').fadeOut('fast',function(){
             jqthis.children().toggle();
         });
+        */
+        
+        jQuery('#icl_languages_disabled').css('display', 'none');
+        jqthis.children().toggle();
     }    
 }
 
