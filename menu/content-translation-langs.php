@@ -42,7 +42,7 @@
                                         <div id="icl_languages_enabled" >
                                         <ul class="icl_language_pairs">
                                     <?php else: ?>
-                                        <p><a href="#icl-show_disabled_langs"><span><?php _e('Show more translation pairs &raquo;','sitepress') ?></span><span style="display:none;"><?php _e('&laquo; Hide additional languages','sitepress') ?></span></a></p>
+                                        <p style="clear:both;"><a href="#icl-show_disabled_langs"><span><?php _e('Show more translation pairs &raquo;','sitepress') ?></span><span style="display:none;"><?php _e('&laquo; Hide additional languages','sitepress') ?></span></a></p>
                                         <div id="icl_languages_disabled" style="display:none;">
                                         <ul class="icl_language_pairs">
                                     <?php endif; ?>

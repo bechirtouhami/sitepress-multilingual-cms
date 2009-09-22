@@ -60,7 +60,9 @@
     <h2><?php echo __('Translation Dashboard', 'sitepress') ?></h2>        
     
     <?php if(!$sitepress->icl_account_configured() || !$sitepress->get_icl_translation_enabled()): ?>
-    <div class="error">
+    <div class="icl_yellow_box">
+    <p><?php _e('To calculate the cost of translation, select the pages and posts from the table below. The total cost for translation appears at the bottom of the table.','sitepress') ?></p>
+
     <p><?php printf(__('To send documents to translation, you first need to set up <a href="%s">professional translation</a>.' , 'sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php'); ?></p>
     </div>
     <?php endif; ?>    

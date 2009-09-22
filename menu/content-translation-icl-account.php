@@ -33,7 +33,6 @@
                             
                                 <form id="icl_create_account" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>#icl_create_account_form" <?php if($_POST['icl_acct_option2']):?>style="display:none"<?php endif?>>
                                 <?php wp_nonce_field('icl_create_account', 'icl_create_account_nonce') ?>    
-                                <i><?php echo __('Translation will only be available once your ICanLocalize account has been created. Complete this form and click on \'Create account\'.', 'sitepress')?></i>
                                 <table class="form-table icl-account-setup">
                                     <tbody>
                                     <tr class="form-field">
@@ -70,7 +69,6 @@
                 
                                 <form id="icl_configure_account" action="<?php echo $_SERVER['REQUEST_URI'] ?>#icl_create_account_form" method="post" <?php if(!$_POST['icl_acct_option2']):?>style="display:none"<?php endif?>>
                                 <?php wp_nonce_field('icl_configure_account','icl_configure_account_nonce') ?>    
-                                <i><?php echo __('Translation will only be available once this project has been added to your ICanLocalize account. Enter your login information below and click on \'Add this project to my account\'.', 'sitepress')?></i>
                                 <table class="form-table icl-account-setup">
                                     <tbody>
                                     <tr class="form-field">

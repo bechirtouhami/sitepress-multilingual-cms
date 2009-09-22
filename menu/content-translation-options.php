@@ -39,9 +39,6 @@
                                         </li>
                                     </ul>
                                 </li>
-                                <li>
-                                    <i><?php echo __("Select how you want to choose translators.", 'sitepress') ?></i><br />
-                                </li>
                             </ul>
                             
                             <br /><p><a href="#icl-ct-advanced-options"><span><?php _e('Show advanced options &raquo;','sitepress') ?></span><span style="display:none;"><?php _e('&laquo; Hide advanced options','sitepress') ?></span></a></p>

@@ -68,9 +68,8 @@
         <?php else: ?>
             <p style="line-height:1.5">
             <?php _e('To enable professional translation by <a href="http://www.icanlocalize.com">ICanLocalize</a> please complete this setup screen.', 'sitepress'); ?></p>            
-            </p><p style="line-height:1.5">
+            <p style="line-height:1.5">
             <?php _e('Creating an account in ICanLocalize is free. You will only need to pay when sending posts and pages for translation.', 'sitepress'); ?></p>            
-            </p>
         <?php endif; ?>
         <?php if($sitepress_settings['content_translation_setup_complete']): ?>
             <p style="line-height:1.5">
