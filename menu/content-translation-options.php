@@ -1,3 +1,14 @@
+        <?php if(!$sitepress_settings['content_translation_setup_complete']): /* run wizard */?>        
+            <form id="icl_more_options_wizard" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
+            <?php wp_nonce_field('icl_more_options_wizard','icl_more_options_wizardnounce') ?>
+            <?php
+                if($sitepress_settings['website_kind'] === null) {
+                    $sitepress_settings['website_kind'] = 2;
+                    $sitepress_settings['interview_translators'] = 1;
+                }
+            ?>
+        <?php endif; ?>
+
             <table class="widefat">
                 <thead>
                     <tr>
@@ -8,29 +19,26 @@
                     <tr>
                         <td>
             
-                            <?php if(!$sitepress_settings['content_translation_setup_complete']): ?>        
-                                <form id="icl_more_options_wizard" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
-                                <?php wp_nonce_field('icl_more_options_wizard','icl_more_options_wizardnounce') ?>            
-                            <?php else: ?>
+                            <?php if($sitepress_settings['content_translation_setup_complete']): ?>        
                                 <form name="icl_more_options" id="icl_more_options" action="">
                             <?php endif; ?>
                 
-                            <h3><?php echo __('What kind of website is this?','sitepress') ?></h3>
+                            <h3><?php echo __('How to choose translators?','sitepress') ?></h3>
                             <div class="icl_form_errors" style="display:none;margin-bottom:1px;"><?php echo __('Please select the kind of website','sitepress')?></div>
                             <ul>                
                                 <li>
-                                    <?php echo __("ICanLocalize needs to assign professional translators to each website that we translate. Please help us by indicating what kind of website you're setting up.", 'sitepress') ?><br />
+                                    <?php echo __("Select how you want to choose translators.", 'sitepress') ?><br />
                                 </li>
                                 <li> 
                                     <ul>
                                         <li>
-                                            <label><input name="icl_website_kind" type="radio" value="0" <?php if($sitepress_settings['website_kind'] === "0"): ?>checked="checked"<?php endif;?> /> <?php echo __("Test site - translators will not be assigned and you an test the system.", 'sitepress'); ?></label><br />
+                                            <label><input name="icl_translator_choice" type="radio" value="0" <?php if($sitepress_settings['website_kind'] == 2 && $sitepress_settings['interview_translators'] == 1): ?>checked="checked"<?php endif;?> /> <?php echo __("Professional translators from ICanLocalize.", 'sitepress'); ?></label><br />
                                         </li>
                                         <li>
-                                            <label><input name="icl_website_kind" type="radio" value="1" <?php if($sitepress_settings['website_kind'] == 1): ?>checked="checked"<?php endif;?> /> <?php echo __("Development site with real contents", 'sitepress'); ?></label><br />
+                                            <label><input name="icl_translator_choice" type="radio" value="1" <?php if($sitepress_settings['website_kind'] == 2 && $sitepress_settings['interview_translators'] == 0): ?>checked="checked"<?php endif;?> /> <?php echo __("My own translators using ICanLocalize translation system.", 'sitepress'); ?></label><br />
                                         </li>
                                         <li>
-                                            <label><input name="icl_website_kind" type="radio" value="2" <?php if($sitepress_settings['website_kind'] == 2): ?>checked="checked"<?php endif;?> /> <?php echo __("Live site", 'sitepress'); ?></label><br />
+                                            <label><input name="icl_translator_choice" type="radio" value="2" <?php if($sitepress_settings['website_kind'] == 0): ?>checked="checked"<?php endif;?> /> <?php echo __("No translators - this is a test site.", 'sitepress'); ?></label><br />
                                         </li>
                                     </ul>
                                 </li>
@@ -38,29 +46,6 @@
                             
                             <br /><p><a href="#icl-ct-advanced-options"><span><?php _e('Show advanced options &raquo;','sitepress') ?></span><span style="display:none;"><?php _e('&laquo; Hide advanced options','sitepress') ?></span></a></p>
                             <div id="icl-content-translation-advanced-options">
-                            <h3><?php echo __('Translator selection','sitepress') ?></h3>
-                            <?php
-                                $interview_translators = $sitepress_settings['interview_translators'];
-                                if(!in_array($interview_translators, array(0, 1, 2))){
-                                    $interview_translators = 0;
-                                }
-                            ?>
-                            <ul>
-                                <li>
-                                    <?php echo __("Select how you want to select translators:", 'sitepress') ?><br />
-                                </li>
-                                <li>
-                                    <ul>
-                                        <li>
-                                            <label><input name="icl_interview_translators" type="radio" value="1" <?php if($interview_translators == 1): ?>checked="checked"<?php endif;?> /> <?php echo __('Use translators from ICanLocalize.', 'sitepress'); ?></label>
-                                        </li>
-                                        <li>
-                                            <label><input name="icl_interview_translators" type="radio" value="2" <?php if($interview_translators == 2): ?>checked="checked"<?php endif;?> /> <?php echo __('Use my own translators.', 'sitepress'); ?></label>
-                                        </li>
-                                    </ul>
-                
-                                </li>
-                            </ul>
                 
                             <div style="display: none;"><h3><?php echo __('Translation delivery','sitepress') ?></h3>    
                             <ul>
@@ -134,20 +119,23 @@
                             </ul>
                             </div> <? // div id="icl-content-translation-advanced-options ?>
                                         
-                            <?php if(!$sitepress_settings['content_translation_setup_complete']): ?>        
-                                <div style="text-align:right">
-                                    <input id="icl_content_trans_setup_back_1" class="button-primary" name="icl_content_trans_setup_back_1" value="<?php echo __('Back', 'sitepress') ?>" type="submit" />
-                                    <input id="icl_content_trans_setup_next_1" class="button-primary" name="icl_content_trans_setup_next_1" value="<?php echo __('Next', 'sitepress') ?>" type="submit" />
-                                </div>
-                            <?php else: ?>
+                            <?php if($sitepress_settings['content_translation_setup_complete']): ?>        
                                 <p class="submit">
                                     <input class="button" name="create account" value="<?php echo __('Save', 'sitepress') ?>" type="submit" />
                                     <span class="icl_ajx_response" id="icl_ajx_response2"></span>    
                                 </p>
+                                </form>
                             <?php endif; ?>
-                            </form>
             
                         </td>
                     </tr>
                 </tbody>
             </table>
+        <?php if(!$sitepress_settings['content_translation_setup_complete']): ?>
+            <br />
+            <div style="text-align:right">
+                <input id="icl_content_trans_setup_back_1" class="button-primary" name="icl_content_trans_setup_back_1" value="<?php echo __('Back', 'sitepress') ?>" type="submit" />
+                <input id="icl_content_trans_setup_next_1" class="button-primary" name="icl_content_trans_setup_next_1" value="<?php echo __('Next', 'sitepress') ?>" type="submit" />
+            </div>
+            </form>
+        <?php endif; ?>

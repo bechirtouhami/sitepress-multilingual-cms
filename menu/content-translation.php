@@ -83,9 +83,9 @@
         <?php if(!$sitepress_settings['content_translation_setup_complete']): /* setup wizard */ ?>
         <?php 
             if(!$sitepress_settings['content_translation_languages_setup']){
-                $sw_width = 16;
+                $sw_width = 10;
             }elseif($sitepress_settings['content_translation_setup_wizard_step'] == 2){
-                $sw_width = 50;
+                $sw_width = 45;
             }else{
                 $sw_width = 84;
             }
@@ -95,7 +95,7 @@
             <div id="icl_setup_wizard">
                 <div class="icl_setup_wizard_step"><strong><?php _e('1. Translation Languages', 'sitepress')?></strong></div>
                 <div class="icl_setup_wizard_step"><strong><?php _e('2. Choose translators', 'sitepress')?></strong></div>
-                <div class="icl_setup_wizard_step"><strong><?php _e('3. ICanLocalize account settings', 'sitepress')?></strong></div>            
+                <div class="icl_setup_wizard_step"><strong><?php _e('3. ICanLocalize account setup', 'sitepress')?></strong></div>            
             </div>        
             <br clear="all" />
             <div id="icl_setup_wizard_progress"><div id="icl_setup_wizard_progress_bar" style="width:<?php echo $sw_width ?>%">&nbsp;</div></div>
