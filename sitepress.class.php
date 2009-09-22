@@ -727,10 +727,6 @@ class SitePress{
                 }
                 $user['pickup_type'] = intval($this->settings['translation_pickup_method']);
                 
-                //REMOVE THIS ##############################################3
-                $user['pickup_type'] = 1;
-                //REMOVE THIS ##############################################3
-        
                 $data['pickup_type'] = $this->settings['translation_pickup_method'];
         
                 $notifications = 0;
