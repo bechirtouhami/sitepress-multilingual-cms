@@ -26,9 +26,6 @@
                             <h3><?php echo __('How to choose translators?','sitepress') ?></h3>
                             <div class="icl_form_errors" style="display:none;margin-bottom:1px;"><?php echo __('Please select the kind of website','sitepress')?></div>
                             <ul>                
-                                <li>
-                                    <?php echo __("Select how you want to choose translators.", 'sitepress') ?><br />
-                                </li>
                                 <li> 
                                     <ul>
                                         <li>
@@ -41,6 +38,9 @@
                                             <label><input name="icl_translator_choice" type="radio" value="2" <?php if($sitepress_settings['website_kind'] == 0): ?>checked="checked"<?php endif;?> /> <?php echo __("No translators - this is a test site.", 'sitepress'); ?></label><br />
                                         </li>
                                     </ul>
+                                </li>
+                                <li>
+                                    <i><?php echo __("Select how you want to choose translators.", 'sitepress') ?></i><br />
                                 </li>
                             </ul>
                             
