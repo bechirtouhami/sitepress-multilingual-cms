@@ -132,13 +132,11 @@ if($sitepress_settings['existing_content_language_verified']){
                     <td><?php _e('WPML can translate comments that visitors leave you in languages that you don\'t speak and translate back your replies.','sitepress') ?></td>
                 </tr>
                 <?php endif; ?>
-                
-                <?php if($sitepress->get_icl_translation_enabled() && $sitepress->icl_account_configured()): ?>
+
                 <tr>
                     <td><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/translation-synchronization.php"><?php _e('Translation synchronization', 'sitepress')?></a></td>
                     <td><?php _e('Controls how to synchronize between contents in different languages.','sitepress') ?></td>
                 </tr>  
-                <?php endif; ?>
                                 
                 <?php endif; //if(2 <= count($sitepress->get_active_languages())) ?>
                 
@@ -156,7 +154,11 @@ if($sitepress_settings['existing_content_language_verified']){
             </thead>
             <tbody>
                 <tr>
-                    <td><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/navigation.php"><?php _e('Navigation', 'sitepress')?></a></td>
+                    <td>
+                        <?php if($sitepress_settings['modules']['cms-navigation']['enabled']):?><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/navigation.php"><?php endif;?>
+                        <?php _e('Navigation', 'sitepress')?>
+                        <?php if($sitepress_settings['modules']['cms-navigation']['enabled']):?></a><?php endif;?>
+                    </td>
                     <td>
                         <p>
                             <?php echo __('WPML provides advanced menus and navigation to go with your WordPress website, including drop-down menus, breadcrumbs and sidebar navigation.', 'sitepress')?>
@@ -174,7 +176,11 @@ if($sitepress_settings['existing_content_language_verified']){
                     </td>
                 </tr>            
                 <tr>
-                    <td><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/absolute-links.php"><?php _e('Sticky links', 'sitepress')?></a></td>
+                    <td>
+                        <?php if($sitepress_settings['modules']['absolute-links']['enabled']):?><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/absolute-links.php"><?php endif; ?>
+                        <?php _e('Sticky links', 'sitepress')?>
+                        <?php if($sitepress_settings['modules']['absolute-links']['enabled']):?></a><?php endif; ?>
+                    </td>
                     <td>
                         <p><?php echo __('With Sticky Links, WPML can automatically ensure that all links on posts and pages are up-to-date, should their URL change.', 'sitepress'); ?></p>
                     

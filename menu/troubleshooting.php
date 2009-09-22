@@ -21,6 +21,7 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
         }
         delete_option('icl_sitepress_settings');
         delete_option('icl_sitepress_version');
+        delete_option('WPLANG');        
         deactivate_plugins(basename(ICL_PLUGIN_PATH) . '/sitepress.php');
         $ra = get_option('recently_activated');
         $ra[basename(ICL_PLUGIN_PATH) . '/sitepress.php'] = time();
