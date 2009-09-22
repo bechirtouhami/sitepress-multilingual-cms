@@ -409,6 +409,39 @@ class SitePress{
         $iclsettings['remote_management'] = intval($_POST['icl_remote_management']);
         $this->save_settings($iclsettings);
     }
+
+    function save_language_pairs() {    
+        // clear existing languages
+        $lang_pairs = $this->settings['language_pairs'];
+        if (is_array($lang_pairs)) {
+            foreach ($lang_pairs as $from => $to) {
+                $lang_pairs[$from] = array();
+            }
+        }
+        
+        // get the from languages
+        $from_languages = array();
+        foreach($_POST as $k=>$v){
+            if(0 === strpos($k,'icl_lng_from_')){
+                $f = str_replace('icl_lng_from_','',$k);
+                $from_languages[] = $f;
+            }
+        }
+
+        foreach($_POST as $k=>$v){
+            if(0 !== strpos($k,'icl_lng_')) continue;
+            if(0 === strpos($k,'icl_lng_to')){
+                $t = str_replace('icl_lng_to_','',$k);
+                $exp = explode('_',$t);
+                if (in_array($exp[0], $from_languages)){
+                    $lang_pairs[$exp[0]][$exp[1]] = 1;
+                }
+            }
+        }
+
+        $iclsettings['language_pairs'] = $lang_pairs; 
+        $this->save_settings($iclsettings);
+    }
     
     function get_active_languages($refresh = false){
         global $wpdb;
@@ -813,36 +846,7 @@ class SitePress{
             }            
             
         }elseif(isset($_POST['icl_language_pairs_formnounce']) && $_POST['icl_language_pairs_formnounce'] == wp_create_nonce('icl_language_pairs_form')) {
-            // clear existing languages
-            $lang_pairs = $this->settings['language_pairs'];
-            if (is_array($lang_pairs)) {
-                foreach ($lang_pairs as $from => $to) {
-                    $lang_pairs[$from] = array();
-                }
-            }
-            
-            // get the from languages
-            $from_languages = array();
-            foreach($_POST as $k=>$v){
-                if(0 === strpos($k,'icl_lng_from_')){
-                    $f = str_replace('icl_lng_from_','',$k);
-                    $from_languages[] = $f;
-                }
-            }
-
-            foreach($_POST as $k=>$v){
-                if(0 !== strpos($k,'icl_lng_')) continue;
-                if(0 === strpos($k,'icl_lng_to')){
-                    $t = str_replace('icl_lng_to_','',$k);
-                    $exp = explode('_',$t);
-                    if (in_array($exp[0], $from_languages)){
-                        $lang_pairs[$exp[0]][$exp[1]] = 1;
-                    }
-                }
-            }
-
-            $iclsettings['language_pairs'] = $lang_pairs; 
-            $this->save_settings($iclsettings);
+            $this->save_language_pairs();
 
             $this->settings['content_translation_languages_setup'] = 1;
             $this->settings['content_translation_setup_wizard_step'] = 2;

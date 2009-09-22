@@ -159,16 +159,7 @@ switch($_REQUEST['icl_ajx_action']){
         }
         break;
     case 'save_language_pairs':                
-        foreach($_POST as $k=>$v){
-            if(0 !== strpos($k,'icl_lng_')) continue;
-            if(0 === strpos($k,'icl_lng_to')){
-                $t = str_replace('icl_lng_to_','',$k);
-                $exp = explode('_',$t);
-                $lang_pairs[$exp[0]][$exp[1]] = 1;
-            }
-        }
-        $iclsettings['language_pairs'] = $lang_pairs; 
-        $sitepress->save_settings($iclsettings);
+        $sitepress->save_language_pairs();
         
         $ret = update_icl_account();
         if($ret){
