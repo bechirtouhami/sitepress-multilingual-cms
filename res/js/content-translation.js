@@ -105,16 +105,19 @@ function iclToggleMoreLanguages(){
 }
 
 function iclValidateWebsiteKind(){
-    jQuery('form[name="icl_more_options"] ul:first').css('border','none').css('padding','0');
-    jQuery('form[name="icl_more_options"] .icl_form_errors').fadeOut();
-    iclHaltSave = false;
-    if(jQuery('input[name="icl_website_kind"]:checked').length==0){
-        jQuery('form[name="icl_more_options"] ul:first').css('border','1px solid red').css('padding','2px');
-        jQuery('form[name="icl_more_options"] .icl_form_errors').fadeIn();
-        iclHaltSave = true;
-        location.href=location.href.replace(/#(.+)$/,'') + '#icl_more_options';
-        return false;
-    }   
+    if (JQuery('form[name="icl_more_options"]').length > 0 ) {
+        
+        jQuery('form[name="icl_more_options"] ul:first').css('border','none').css('padding','0');
+        jQuery('form[name="icl_more_options"] .icl_form_errors').fadeOut();
+        iclHaltSave = false;
+        if(jQuery('input[name="icl_website_kind"]:checked').length==0){
+            jQuery('form[name="icl_more_options"] ul:first').css('border','1px solid red').css('padding','2px');
+            jQuery('form[name="icl_more_options"] .icl_form_errors').fadeIn();
+            iclHaltSave = true;
+            location.href=location.href.replace(/#(.+)$/,'') + '#icl_more_options';
+            return false;
+        }
+    }
 }
 
 function iclQuickSaveWebsiteKind(){

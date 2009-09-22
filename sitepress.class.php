@@ -375,6 +375,23 @@ class SitePress{
             $this->save_settings();
         }          
     }
+
+    function update_icl_more_options() {    
+        $iclsettings['website_kind'] = $_POST['icl_website_kind'];
+        $iclsettings['interview_translators'] = $_POST['icl_interview_translators'];        
+        $iclsettings['translation_pickup_method'] = $_POST['icl_delivery_method'];        
+        if ($iclsettings['translation_pickup_method'] == 1){
+            add_action('poll_for_translations', 'icl_poll_for_translations');
+            wp_schedule_event(time(), 'hourly', 'poll_for_translations');
+        } else {
+            wp_clear_scheduled_hook('poll_for_translations');            
+        }
+        $iclsettings['translated_document_status'] = $_POST['icl_translated_document_status'];        
+        $iclsettings['alert_delay'] = intval($_POST['icl_alert_delay']);
+        $iclsettings['notify_complete'] = intval($_POST['icl_notify_complete']);
+        $iclsettings['remote_management'] = intval($_POST['icl_remote_management']);
+        $this->save_settings($iclsettings);
+    }
     
     function get_active_languages($refresh = false){
         global $wpdb;
@@ -665,70 +682,90 @@ class SitePress{
             return;
         }
         if( (isset($_POST['icl_create_account_nonce']) && $_POST['icl_create_account_nonce']==wp_create_nonce('icl_create_account')) || (isset($_POST['icl_configure_account_nonce']) && $_POST['icl_configure_account_nonce']==wp_create_nonce('icl_configure_account'))){
-            $user = $_POST['user'];
-            $user['create_account'] = isset($_POST['icl_create_account_nonce']) ? 1 : 0;
-            $user['platform_kind'] = 2;
-            $user['cms_kind'] = 1;
-            $user['blogid'] = $wpdb->blogid?$wpdb->blogid:1;
-            $user['url'] = get_option('home');
-            $user['title'] = get_option('blogname');
-            $user['description'] = get_option('blogdescription');
-            $user['interview_translators'] = $this->settings['interview_translators'];
-            
-            if($user['create_account'] && defined('ICL_AFFILIATE_ID') && defined('ICL_AFFILIATE_KEY')){
-                $user['affiliate_id'] = ICL_AFFILIATE_ID;
-                $user['affiliate_key'] = ICL_AFFILIATE_KEY;
-            }
-                        
-            $user['project_kind'] = $this->settings['website_kind'];
-            if(is_null($user['project_kind']) || $user['project_kind']==''){
-                $_POST['icl_form_errors'] = __('Please select the kind of website','sitepress');               
-                return;
-            }
-            $user['pickup_type'] = intval($this->settings['translation_pickup_method']);
-    
-            $data['pickup_type'] = $this->settings['translation_pickup_method'];
-    
-            $notifications = 0;
-            if ( $this->settings['icl_notify_complete']){
-                $notifications += 1;
-            }
-            if ( $this->settings['alert_delay']){
-                $notifications += 2;
-            }
-            $user['notifications'] = $notifications;
-
-            // prepare language pairs
-            $language_pairs = $this->settings['language_pairs'];
-            $lang_pairs = array();
-            if(isset($language_pairs)){
-                foreach($language_pairs as $k=>$v){
-                    $english_fr = $wpdb->get_var("SELECT english_name FROM {$wpdb->prefix}icl_languages WHERE code='{$k}' ");
-                    foreach($v as $k=>$v){
-                        $incr++;
-                        $english_to = $wpdb->get_var("SELECT english_name FROM {$wpdb->prefix}icl_languages WHERE code='{$k}' ");
-                        $lang_pairs['from_language'.$incr] = apply_filters('icl_server_languages_map', $english_fr); 
-                        $lang_pairs['to_language'.$incr] = apply_filters('icl_server_languages_map', $english_to);
-                    }                    
+            if (isset($_POST['icl_content_trans_setup_back_2'])) {
+                // back button in wizard mode.
+                $this->settings['content_translation_setup_wizard_step'] = 2;
+                $this->save_settings();
+                
+            } else {
+                $user = $_POST['user'];
+                $user['create_account'] = isset($_POST['icl_create_account_nonce']) ? 1 : 0;
+                $user['platform_kind'] = 2;
+                $user['cms_kind'] = 1;
+                $user['blogid'] = $wpdb->blogid?$wpdb->blogid:1;
+                $user['url'] = get_option('home');
+                $user['title'] = get_option('blogname');
+                $user['description'] = get_option('blogdescription');
+                $user['interview_translators'] = $this->settings['interview_translators'];
+                
+                if($user['create_account'] && defined('ICL_AFFILIATE_ID') && defined('ICL_AFFILIATE_KEY')){
+                    $user['affiliate_id'] = ICL_AFFILIATE_ID;
+                    $user['affiliate_key'] = ICL_AFFILIATE_KEY;
                 }
-            }
-            $icl_query = new ICanLocalizeQuery();
-            list($site_id, $access_key) = $icl_query->createAccount(array_merge($user,$lang_pairs));                
-            if(!$site_id){
-                $_POST['icl_form_errors'] = $access_key;
-            }else{                    
-                $iclsettings['site_id'] = $site_id;
-                $iclsettings['access_key'] = $access_key;
-                $this->save_settings($iclsettings);
-                if($user['create_account']==1){
-                    $_POST['icl_form_success'] = __('An account has been created for you in ICanLocalize - Next steps:', 'sitepress') . '<br />';
-                    $_POST['icl_form_success'] .= '<ol><li>' . __('Confirm your email address – a confirmation email was just sent to you from <b>notify@icanlocalize.com</b>. Go to your inbox and click on the confirmation link in that email.', 'sitepress') . '</li>';
-                    $_POST['icl_form_success'] .= '<li>' . sprintf(__('Use the <a href="%s">Translation Dashboard</a> to send documents to translation.', 'sitepress'), 'tools.php?page='.basename(ICL_PLUGIN_PATH).'/modules/icl-translation/icl-translation-dashboard.php') . '</li></ol>';
+                            
+                $user['project_kind'] = $this->settings['website_kind'];
+                if(is_null($user['project_kind']) || $user['project_kind']==''){
+                    $_POST['icl_form_errors'] = __('Please select the kind of website','sitepress');               
+                    return;
+                }
+                $user['pickup_type'] = intval($this->settings['translation_pickup_method']);
+                
+                //REMOVE THIS ##############################################3
+                $user['pickup_type'] = 1;
+                //REMOVE THIS ##############################################3
+        
+                $data['pickup_type'] = $this->settings['translation_pickup_method'];
+        
+                $notifications = 0;
+                if ( $this->settings['icl_notify_complete']){
+                    $notifications += 1;
+                }
+                if ( $this->settings['alert_delay']){
+                    $notifications += 2;
+                }
+                $user['notifications'] = $notifications;
+    
+                // prepare language pairs
+                $language_pairs = $this->settings['language_pairs'];
+                $lang_pairs = array();
+                if(isset($language_pairs)){
+                    foreach($language_pairs as $k=>$v){
+                        $english_fr = $wpdb->get_var("SELECT english_name FROM {$wpdb->prefix}icl_languages WHERE code='{$k}' ");
+                        foreach($v as $k=>$v){
+                            $incr++;
+                            $english_to = $wpdb->get_var("SELECT english_name FROM {$wpdb->prefix}icl_languages WHERE code='{$k}' ");
+                            $lang_pairs['from_language'.$incr] = apply_filters('icl_server_languages_map', $english_fr); 
+                            $lang_pairs['to_language'.$incr] = apply_filters('icl_server_languages_map', $english_to);
+                        }                    
+                    }
+                }
+                $icl_query = new ICanLocalizeQuery();
+                list($site_id, $access_key) = $icl_query->createAccount(array_merge($user,$lang_pairs));                
+                if(!$site_id){
+                    $_POST['icl_form_errors'] = $access_key;
+                }else{                    
+                    $iclsettings['site_id'] = $site_id;
+                    $iclsettings['access_key'] = $access_key;
+                    $this->save_settings($iclsettings);
+                    if($user['create_account']==1){
+                        $_POST['icl_form_success'] = __('An account has been created for you in ICanLocalize - Next steps:', 'sitepress') . '<br />';
+                        $_POST['icl_form_success'] .= '<ol><li>' . __('Confirm your email address – a confirmation email was just sent to you from <b>notify@icanlocalize.com</b>. Go to your inbox and click on the confirmation link in that email.', 'sitepress') . '</li>';
+                        $_POST['icl_form_success'] .= '<li>' . sprintf(__('Use the <a href="%s">Translation Dashboard</a> to send documents to translation.', 'sitepress'), 'tools.php?page='.basename(ICL_PLUGIN_PATH).'/modules/icl-translation/icl-translation-dashboard.php') . '</li></ol>';
+                        
+                    }else{
+                        $_POST['icl_form_success'] = __('Project added','sitepress');
+                    }                
+                }
+
+                if (isset($_POST['icl_content_trans_setup_finish']) && !isset($_POST['icl_form_errors'])) {
+                    // we are running the wizard, so we can finish it now.
+                    $this->settings['content_translation_setup_complete'] = 1;
+                    $this->settings['content_translation_setup_wizard_step'] = 0;
+                    $this->save_settings();
                     
-                }else{
-                    $_POST['icl_form_success'] = __('Project added','sitepress');
-                }                
-            }            
+                }
+                
+            }
         }
         elseif(isset($_POST['icl_initial_languagenonce']) && $_POST['icl_initial_languagenonce']==wp_create_nonce('icl_initial_language')){
             $this->prepopulate_translations($_POST['icl_initial_language_code']);
@@ -762,6 +799,34 @@ class SitePress{
                 $_POST['icl_form_errors'] = $message;
             }            
             
+        }elseif(isset($_POST['icl_language_pairs_formnounce']) && $_POST['icl_language_pairs_formnounce'] == wp_create_nonce('icl_language_pairs_form')) {
+            foreach($_POST as $k=>$v){
+                if(0 !== strpos($k,'icl_lng_')) continue;
+                if(0 === strpos($k,'icl_lng_to')){
+                    $t = str_replace('icl_lng_to_','',$k);
+                    $exp = explode('_',$t);
+                    $lang_pairs[$exp[0]][$exp[1]] = 1;
+                }
+            }
+            $iclsettings['language_pairs'] = $lang_pairs; 
+            $this->save_settings($iclsettings);
+
+            $this->settings['content_translation_languages_setup'] = 1;
+            $this->settings['content_translation_setup_wizard_step'] = 2;
+            $this->save_settings();
+            
+        }elseif(isset($_POST['icl_more_options_wizardnounce']) && $_POST['icl_more_options_wizardnounce'] == wp_create_nonce('icl_more_options_wizard')) {
+            if(isset($_POST['icl_content_trans_setup_back_1'])){
+                // back button.
+                $this->settings['content_translation_languages_setup'] = 0;
+                $this->settings['content_translation_setup_wizard_step'] = 1;
+                $this->save_settings();
+            }elseif(isset($_POST['icl_content_trans_setup_next_1'])){
+                // next button.
+                $this->update_icl_more_options();
+                $this->settings['content_translation_setup_wizard_step'] = 3;
+                $this->save_settings();
+            }
         }
     }
     

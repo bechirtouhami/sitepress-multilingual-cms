@@ -183,20 +183,7 @@ switch($_REQUEST['icl_ajx_action']){
         echo '1';
         break;
     case 'icl_more_options':
-        $iclsettings['website_kind'] = $_POST['icl_website_kind'];
-        $iclsettings['interview_translators'] = $_POST['icl_interview_translators'];        
-        $iclsettings['translation_pickup_method'] = $_POST['icl_delivery_method'];        
-        if ($iclsettings['translation_pickup_method'] == 1){
-            add_action('poll_for_translations', 'icl_poll_for_translations');
-            wp_schedule_event(time(), 'hourly', 'poll_for_translations');
-        } else {
-            wp_clear_scheduled_hook('poll_for_translations');            
-        }
-        $iclsettings['translated_document_status'] = $_POST['icl_translated_document_status'];        
-        $iclsettings['alert_delay'] = intval($_POST['icl_alert_delay']);
-        $iclsettings['notify_complete'] = intval($_POST['icl_notify_complete']);
-        $iclsettings['remote_management'] = intval($_POST['icl_remote_management']);
-        $sitepress->save_settings($iclsettings);
+        $sitepress->update_icl_more_options();
 
         $ret = update_icl_account();
         if($ret){
