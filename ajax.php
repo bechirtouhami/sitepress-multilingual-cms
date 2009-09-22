@@ -207,8 +207,14 @@ switch($_REQUEST['icl_ajx_action']){
         break;
     case 'icl_save_language_switcher_options':
         if(isset($_POST['icl_language_switcher_sidebar'])){
-            global $wp_registered_widgets;
+            global $wp_registered_widgets, $wp_registered_sidebars;
             $swidgets = wp_get_sidebars_widgets();            
+            if(empty($swidgets)){
+                $sidebars = array_keys($wp_registered_sidebars);    
+                foreach($sidebars as $sb){
+                    $swidgets[$sb] = array();
+                }
+            }
             foreach($swidgets as $k=>$v){
                 $key = array_search('language-selector',$swidgets[$k]);
                 if(false !== $key && $k !== $_POST['icl_language_switcher_sidebar']){
@@ -225,8 +231,20 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings['icl_lso_flags'] = intval($_POST['icl_lso_flags']);
         $iclsettings['icl_lso_native_lang'] = intval($_POST['icl_lso_native_lang']);
         $iclsettings['icl_lso_display_lang'] = intval($_POST['icl_lso_display_lang']);
-        $iclsettings['setup_wizard_step'] = 0;
-        $iclsettings['setup_complete'] = 1;
+        if(!$iclsettings['setup_complete']){
+            $iclsettings['setup_wizard_step'] = 0;
+            $iclsettings['setup_complete'] = 1;
+            $active_languages = $sitepress->get_active_languages();
+            $default_language = $sitepress->get_default_language();
+            foreach($active_languages as $al){
+                if($al != $default_language){
+                    if($sitepress->_validate_language_per_directory($al)){
+                        $iclsettings['language_negotiation_type'] = 1;
+                    }            
+                    break;
+                }
+            }            
+        }
         if(!$iclsettings['icl_lso_flags'] && !$iclsettings['icl_lso_native_lang'] && !$iclsettings['icl_lso_display_lang']){
             echo '0|';
             echo __('At least one of the language switcher style options needs to be checked', 'sitepress');    

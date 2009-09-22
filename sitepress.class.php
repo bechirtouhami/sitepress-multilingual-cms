@@ -322,6 +322,7 @@ class SitePress{
     }    
     
     function verify_settings(){
+        
         $default_settings = array(
             'interview_translators' => 1,
             'existing_content_language_verified' => 0,
@@ -376,6 +377,18 @@ class SitePress{
         }          
     }
 
+    function _validate_language_per_directory($language_code){
+        if(!class_exists('WP_Http')){
+           include_once ICL_PLUGIN_PATH . '/lib/http.php';
+        }
+        $client = new WP_Http();
+        if(false === strpos($_POST['url'],'?')){$url_glue='?';}else{$url_glue='&';}                    
+        //set_error_handler('trigger_error');
+        $response = $client->request(get_option('home') . '/' . $language_code .'/' . $url_glue . '____icl_validate_domain=1', array('timeout'=>15, 'decompress'=>false));
+        //restore_error_handler();
+        return (!is_wp_error($response) && ($response['response']['code']=='200') && ($response['body'] == '<!--'.get_option('home').'-->'));
+    }
+    
     function update_icl_more_options() {
         switch($_POST['icl_translator_choice']) {
             case '0':
