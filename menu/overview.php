@@ -97,6 +97,16 @@ if($sitepress_settings['existing_content_language_verified']){
                 </tr>
                 
                 <tr>
+                    <td><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/translation-synchronization.php"><?php _e('Translation synchronization', 'sitepress')?></a></td>
+                    <td><?php _e('Controls how to synchronize between contents in different languages.','sitepress') ?></td>
+                </tr>
+                
+                <tr>
+                    <td><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/comments-translation.php"><?php _e('Comments translation', 'sitepress')?></a></td>
+                    <td><?php _e('WPML can translate comments that visitors leave you in languages that you don\'t speak and translate back your replies.','sitepress') ?></td>
+                </tr>
+
+                <tr>
                     <td><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/content-translation.php"><?php _e('Professional translation', 'sitepress')?></a></td>
                     <td>
                         <?php if($sitepress_settings['enable_icl_translations']): ?>
@@ -124,20 +134,8 @@ if($sitepress_settings['existing_content_language_verified']){
                         <?php endif; ?>
                         </p>
                     </td>
-                </tr>  
-                
-                <?php if($sitepress->icl_account_configured() && $sitepress_settings['enable_icl_translations']): ?>
-                <tr>
-                    <td><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/comments-translation.php"><?php _e('Comments translation', 'sitepress')?></a></td>
-                    <td><?php _e('WPML can translate comments that visitors leave you in languages that you don\'t speak and translate back your replies.','sitepress') ?></td>
                 </tr>
-                <?php endif; ?>
-
-                <tr>
-                    <td><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/translation-synchronization.php"><?php _e('Translation synchronization', 'sitepress')?></a></td>
-                    <td><?php _e('Controls how to synchronize between contents in different languages.','sitepress') ?></td>
-                </tr>  
-                                
+                
                 <?php endif; //if(2 <= count($sitepress->get_active_languages())) ?>
                 
             </tbody>

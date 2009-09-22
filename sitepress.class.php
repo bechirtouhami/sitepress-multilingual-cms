@@ -284,10 +284,10 @@ class SitePress{
         if(1 < count($this->get_active_languages())){
             add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Theme localization','sitepress'), __('Theme localization','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/theme-localization.php'); 
             icl_st_administration_menu();
-            add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Pro translation','sitepress'), __('Pro translation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/content-translation.php');                 
-            add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/content-translation.php', __('Pro translation','sitepress'), __('Pro translation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/content-translation-how-it-works.php');                 
             add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Translation sync','sitepress'), __('Translation sync','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/translation-synchronization.php');                             
             add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Comments translation','sitepress'), __('Comments translation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/comments-translation.php'); 
+            add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Pro translation','sitepress'), __('Pro translation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/content-translation.php');                 
+            add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/content-translation.php', __('Pro translation','sitepress'), __('Pro translation','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/content-translation-how-it-works.php');
             
         }
         
