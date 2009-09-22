@@ -931,7 +931,7 @@ class SitePress{
                 WHERE   trid = '{$trid}' 
                     AND language_code = '{$language_code}' 
                     AND element_id <> '{$el_id}'
-            ");
+            ");            
             if($translation_id){
                 $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id={$translation_id}");    
             }
@@ -941,10 +941,10 @@ class SitePress{
                 $wpdb->update($wpdb->prefix.'icl_translations', 
                     array('language_code'=>$language_code), 
                     array('translation_id'=>$translation_id));                
-            } elseif($existing_trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_type='{$el_type}' AND element_id='{$el_id}'")){
+            } elseif($existing_trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_type='{$el_type}' AND element_id='{$el_id}'")){                
                 //case of changing the "translation of"
                 $wpdb->update($wpdb->prefix.'icl_translations', 
-                    array('trid'=>$trid), 
+                    array('trid'=>$trid, 'language_code'=>$language_code), 
                     array('element_type'=>$el_type, 'element_id'=>$el_id));                
             }else{
                 //get source
@@ -1024,7 +1024,6 @@ class SitePress{
                 } 
             }
         }
-
         $this->set_element_language_details($post_id, 'post', $trid, $language_code);
         
         // synchronize the page order for translations
