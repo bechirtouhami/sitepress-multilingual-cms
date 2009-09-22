@@ -819,8 +819,10 @@ class SitePress{
         }elseif(isset($_POST['icl_language_pairs_formnounce']) && $_POST['icl_language_pairs_formnounce'] == wp_create_nonce('icl_language_pairs_form')) {
             // clear existing languages
             $lang_pairs = $this->settings['language_pairs'];
-            foreach ($lang_pairs as $from => $to) {
-                $lang_pairs[$from] = array();
+            if (is_array($lang_pairs)) {
+                foreach ($lang_pairs as $from => $to) {
+                    $lang_pairs[$from] = array();
+                }
             }
             
             // get the from languages
