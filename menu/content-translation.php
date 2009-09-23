@@ -77,7 +77,7 @@
             </p>
         <?php endif; ?>        
         
-        <span id="icl_toggle_ct_confirm_message" style="display:none"><?php echo __('Are you sure you want to disable professional translation?','sitepress'); ?></span>        
+        <span id="icl_toggle_ct_confirm_message" style="display:none"><?php echo __('Professional translations is not set up yet. Are you sure you want to cancel?','sitepress'); ?></span>        
         
         <?php if(!$sitepress_settings['content_translation_setup_complete']): /* setup wizard */ ?>
         <?php 
