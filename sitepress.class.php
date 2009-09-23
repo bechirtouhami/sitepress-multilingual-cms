@@ -866,12 +866,12 @@ class SitePress{
             $this->save_settings();
             
         }elseif(isset($_POST['icl_more_options_wizardnounce']) && $_POST['icl_more_options_wizardnounce'] == wp_create_nonce('icl_more_options_wizard')) {
-            if(isset($_POST['icl_content_trans_setup_back_1'])){
+            if(isset($_POST['icl_content_trans_setup_back_2'])){
                 // back button.
                 $this->settings['content_translation_languages_setup'] = 0;
                 $this->settings['content_translation_setup_wizard_step'] = 1;
                 $this->save_settings();
-            }elseif(isset($_POST['icl_content_trans_setup_next_1'])){
+            }elseif(isset($_POST['icl_content_trans_setup_next_2'])){
                 // next button.
                 $this->update_icl_more_options();
                 $this->settings['content_translation_setup_wizard_step'] = 3;

@@ -85,7 +85,7 @@
                          
         <?php if(!$sitepress_settings['content_translation_languages_setup']): ?>        
             <br />   
-            <div style="text-align:right"><input class="button-primary" name="icl_content_trans_setup_next_1" value="<?php echo __('Next', 'sitepress') ?>" type="submit" /></div>
+            <div style="text-align:right"><input class="button-primary" name="icl_content_trans_setup_next_1" disabled="disabled" value="<?php echo __('Next', 'sitepress') ?>" type="submit" /></div>
             </form>
         <?php endif; ?>
                             

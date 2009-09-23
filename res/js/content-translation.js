@@ -1,5 +1,7 @@
 addLoadEvent(function(){         
     jQuery('.icl_language_pairs .icl_tr_from').change(toggleTranslationPairsSub);
+    jQuery('.icl_language_pairs .icl_tr_from').change(iclShowNextButtonStep1);
+    jQuery('.icl_tr_to').change(iclShowNextButtonStep1);
     jQuery('#icl_save_language_pairs').click(saveLanguagePairs);    
     jQuery('form[name="icl_more_options"]').submit(iclSaveForm);
     jQuery('#icl_create_account, #icl_configure_account').submit(iclValidateWebsiteKind);
@@ -20,7 +22,31 @@ addLoadEvent(function(){
         }
     })
     
+    if (jQuery('input[name="icl_content_trans_setup_next_1"]').length > 0) {
+        iclShowNextButtonStep1();
+    }
+    
 });
+
+function iclShowNextButtonStep1() {
+    // See if we have a language pair selected and enable the button if we have.
+    var found = false;
+    
+    jQuery('.icl_tr_from:checked').each(function(){
+        var from = this.id.substring(13);
+        jQuery('.icl_tr_to:checked').each(function(){
+            if (this.id.substr(13, 2) == from){
+                found = true;
+            }
+        })
+    });
+    
+    if (found) {
+        jQuery('input[name="icl_content_trans_setup_next_1"]').attr("disabled", "");
+    } else {
+        jQuery('input[name="icl_content_trans_setup_next_1"]').attr("disabled", "disabled");
+    }
+}
 
 function toggleTranslationPairsSub(){
     var code = jQuery(this).attr('name').split('_').pop();
