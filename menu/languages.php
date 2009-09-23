@@ -488,7 +488,7 @@
                                 <?php if(is_admin()): ?>
                                 <p>
                                     <label>
-                                        <?php _e('Default admin language: '); ?>
+                                        <?php _e('Default admin language: ', 'sitepress'); ?>
                                         <select name="icl_admin_default_language">
                                         <?php foreach($active_languages as $al):?>
                                         <option value="<?php echo $al['code'] ?>"<?php if($sitepress_settings['admin_default_language']==$al['code']) echo ' selected="selected"'?>><?php echo $al['display_name'] ?>&nbsp;</option>

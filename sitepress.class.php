@@ -2577,7 +2577,7 @@ class SitePress{
                         <option value="<?php echo $al['code'] ?>"<?php if($user_language==$al['code']) echo ' selected="selected"'?>><?php echo $al['display_name'] ?>&nbsp;</option>
                         <?php endforeach; ?>
                         </select>                        
-                        <span class="description"><?php _e('this will be your admin language and will also be used for translating comments.'); ?></span>
+                        <span class="description"><?php _e('this will be your admin language and will also be used for translating comments.', 'sitepress'); ?></span>
                     </td>
                 </tr>
             </tbody>
