@@ -103,7 +103,13 @@ if($sitepress_settings['existing_content_language_verified']){
                 
                 <tr>
                     <td><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/comments-translation.php"><?php _e('Comments translation', 'sitepress')?></a></td>
-                    <td><?php _e('WPML can translate comments that visitors leave you in languages that you don\'t speak and translate back your replies.','sitepress') ?></td>
+                    <td>
+                        <?php _e('WPML can translate comments that visitors leave you in languages that you don\'t speak and translate back your replies.','sitepress') ?>
+                        <?php if(!$sitepress->icl_account_configured()): ?>
+                        <br />
+                        <?php printf(__('To translate your replies, you need to enable <a href="%s">professional translation</a>.','sitepress'),'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php')?>
+                        <?php endif; ?>
+                    </td>
                 </tr>
 
                 <tr>
