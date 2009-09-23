@@ -118,18 +118,16 @@
         </table>
         </p>
     <?php endif; ?>
-    <?php $sitepress_settings['show_translations_flag'] = 0 ?>
     <?php if($translations_found > 0): ?>    
-
         <p style="clear:both;">
             <b><?php _e('Translations', 'sitepress') ?></b> 
-            (<a onclick="jQuery(this).toggle();jQuery(this).next().toggle();jQuery('#icl_translations_table').toggle();" href="#" <?php if(!$sitepress_settings['show_translations_flag']):?>style="display:none;"<?php endif;?>><?php _e('hide','sitepress')?></a><a onclick="jQuery(this).toggle();jQuery(this).prev().toggle();jQuery('#icl_translations_table').toggle();" href="#" <?php if($sitepress_settings['show_translations_flag']):?>style="display:none;"<?php endif;?>><?php _e('show','sitepress')?></a>)                
-        <table width="100%" id="icl_translations_table" <?php if(!$sitepress_settings['show_translations_flag']):?>style="display:none;"<?php endif;?>>        
+            (<a class="icl_toggle_show_translations" href="#" <?php if(!$this->settings['show_translations_flag']):?>style="display:none;"<?php endif;?>><?php _e('hide','sitepress')?></a><a class="icl_toggle_show_translations" href="#" <?php if($this->settings['show_translations_flag']):?>style="display:none;"<?php endif;?>><?php _e('show','sitepress')?></a>)                
+        <table width="97%" cellspacing="1" id="icl_translations_table" <?php if(!$this->settings['show_translations_flag']):?>style="display:none;"<?php endif;?>>        
         <?php foreach($active_languages as $lang): if($selected_language==$lang['code']) continue; ?>
         <tr>
             <?php if(isset($translations[$lang['code']]->element_id)):?>
                 <td><?php echo $lang['display_name'] ?></td>
-                <td><?php echo isset($translations[$lang['code']]->post_title)?'<a href="'.get_edit_post_link($translations[$lang['code']]->element_id).'" title="'.__('Edit','sitepress').'">'.apply_filters('the_title', __('edit','sitepress')).'</a>':__('n/a','sitepress') ?></td>
+                <td align="right" width="20%"><?php echo isset($translations[$lang['code']]->post_title)?'<a href="'.get_edit_post_link($translations[$lang['code']]->element_id).'" title="'.__('Edit','sitepress').'">'.apply_filters('the_title', __('edit','sitepress')).'</a>':__('n/a','sitepress') ?></td>
                 
             <?php endif; ?>        
         </tr>

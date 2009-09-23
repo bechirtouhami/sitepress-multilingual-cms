@@ -65,3 +65,13 @@
 .icl_advanced_feature{
     display:none;
 }
+
+#icl_translations_table{    
+    background-color: #f2f2f2;
+    margin: 0 5px 0 5px;
+}
+#icl_translations_table td{
+    font-size: 11px;
+    padding:5px;
+    background-color: #fcfcfc;
+}

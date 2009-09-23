@@ -458,6 +458,7 @@ switch($_REQUEST['icl_ajx_action']){
         $sitepress->save_settings($iclsettings);
         break;
     case 'dismiss_translate_help':
+        var_dump($iclsettings);
         $iclsettings['dont_show_translate_help'] = true;
         $sitepress->save_settings($iclsettings);
         break;        
@@ -470,6 +471,11 @@ switch($_REQUEST['icl_ajx_action']){
     case 'setup_got_to_step2':
         $iclsettings['setup_wizard_step'] = 2;
         $sitepress->save_settings($iclsettings);
+        break;
+    case 'toggle_show_translations':
+        $iclsettings = $sitepress->get_settings();
+        $iclsettings['show_translations_flag'] = intval(!$iclsettings['show_translations_flag']);
+        $sitepress->save_settings($iclsettings);    
         break;        
     default:
         echo __('Invalid action','sitepress');                

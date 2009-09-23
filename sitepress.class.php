@@ -1577,7 +1577,7 @@ class SitePress{
             
             <?php if($untranslated_found > 0): ?>    
                 <p style="clear:both;"><b>Translate</b>
-                <table>
+                <table cellspacing="1">
                 <?php foreach($active_languages as $lang): if($selected_language==$lang['code']) continue; ?>
                 <tr>
                     <?php if(!isset($translations[$lang['code']]->element_id)):?>
@@ -1598,14 +1598,15 @@ class SitePress{
             <?php endif; ?>
         
             <?php if($translations_found > 0): ?>    
-                <p style="clear:both;"><b><?php echo __('Translations', 'sitepress') ?></b> (<a href="javascript:;" 
-                    onclick="jQuery('#icl_translations_table').toggle();if(jQuery(this).html()=='<?php echo __('hide','sitepress')?>') jQuery(this).html('<?php echo __('show','sitepress')?>'); else jQuery(this).html('<?php echo __('hide','sitepress')?>')"><?php echo __('show','sitepress')?></a>)</p>
-                <table width="100%" id="icl_translations_table" style="display:none;">
+            <p style="clear:both;margin:5px 0 5px 0">
+                <b><?php _e('Translations', 'sitepress') ?></b> 
+                (<a class="icl_toggle_show_translations" href="#" <?php if(!$this->settings['show_translations_flag']):?>style="display:none;"<?php endif;?>><?php _e('hide','sitepress')?></a><a class="icl_toggle_show_translations" href="#" <?php if($this->settings['show_translations_flag']):?>style="display:none;"<?php endif;?>><?php _e('show','sitepress')?></a>)                
+                <table cellspacing="1" width="100%" id="icl_translations_table" style="<?php if(!$this->settings['show_translations_flag']):?>display:none;<?php endif;?>margin-left:0;">
                 
                 <?php foreach($active_languages as $lang): if($selected_language==$lang['code']) continue; ?>
                 <tr>
                     <?php if(isset($translations[$lang['code']]->element_id)):?>
-                        <td style="padding: 0px;line-height:normal;"><?php echo $lang['display_name'] ?></td>
+                        <td style="line-height:normal;"><?php echo $lang['display_name'] ?></td>
                         <?php
                             if ($type == 'tag') {
                                 $edit_link = "edit-tags.php?action=edit&amp;tag_ID=" . $translations[$lang['code']]->term_id . "&amp;lang=" . $lang['code'];
@@ -1613,7 +1614,7 @@ class SitePress{
                                 $edit_link = "categories.php?action=edit&amp;cat_ID=" . $translations[$lang['code']]->term_id . "&amp;lang=" . $lang['code'];
                             }
                         ?>
-                        <td style="padding: 0px;line-height:normal;"><?php echo isset($translations[$lang['code']]->name)?'<a href="'.$edit_link.'" title="'.__('Edit','sitepress').'">'.$translations[$lang['code']]->name.'</a>':__('n/a','sitepress') ?></td>
+                        <td align="right" width="30%" style="line-height:normal;"><?php echo isset($translations[$lang['code']]->name)?'<a href="'.$edit_link.'" title="'.__('Edit','sitepress').'">'.$translations[$lang['code']]->name.'</a>':__('n/a','sitepress') ?></td>
                                 
                     <?php endif; ?>        
                 </tr>
