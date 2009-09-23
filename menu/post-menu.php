@@ -118,12 +118,13 @@
         </table>
         </p>
     <?php endif; ?>
-
+    <?php $sitepress_settings['show_translations_flag'] = 0 ?>
     <?php if($translations_found > 0): ?>    
-        <p style="clear:both;"><b><?php echo __('Translations', 'sitepress') ?></b> (<a href="javascript:;" 
-            onclick="jQuery('#icl_translations_table').toggle();if(jQuery(this).html()=='<?php echo __('hide','sitepress')?>') jQuery(this).html('<?php echo __('show','sitepress')?>'); else jQuery(this).html('<?php echo __('hide','sitepress')?>')"><?php echo __('show','sitepress')?></a>)</p>
-        <table width="100%" id="icl_translations_table" style="display:none;">
-        
+
+        <p style="clear:both;">
+            <b><?php _e('Translations', 'sitepress') ?></b> 
+            (<a onclick="jQuery(this).toggle();jQuery(this).next().toggle();jQuery('#icl_translations_table').toggle();" href="#" <?php if(!$sitepress_settings['show_translations_flag']):?>style="display:none;"<?php endif;?>><?php _e('hide','sitepress')?></a><a onclick="jQuery(this).toggle();jQuery(this).prev().toggle();jQuery('#icl_translations_table').toggle();" href="#" <?php if($sitepress_settings['show_translations_flag']):?>style="display:none;"<?php endif;?>><?php _e('show','sitepress')?></a>)                
+        <table width="100%" id="icl_translations_table" <?php if(!$sitepress_settings['show_translations_flag']):?>style="display:none;"<?php endif;?>>        
         <?php foreach($active_languages as $lang): if($selected_language==$lang['code']) continue; ?>
         <tr>
             <?php if(isset($translations[$lang['code']]->element_id)):?>
