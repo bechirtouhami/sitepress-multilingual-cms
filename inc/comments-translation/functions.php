@@ -125,22 +125,26 @@ class IclCommentsTranslation{
     }
     
     function show_user_options(){        
+        global $sitepress;
         ?>
         <table class="form-table">
             <tbody>
                 <tr>
                     <th><?php _e('Comments Translation:', 'sitepress') ?></th>
                     <td>
-                        <label><input type="checkbox" name="icl_enable_comments_translation" id="icl_enable_comments_translation" value="1" 
+                        <p><label><input type="checkbox" name="icl_enable_comments_translation" id="icl_enable_comments_translation" value="1" 
                         <?php if($this->enable_comments_translation): ?> checked="checked" <?php endif?> /> 
-                        <?php _e('Show translated comments.', 'sitepress') ?></label>                         
+                        <?php _e('Show translated comments.', 'sitepress') ?></label></p>                         
                         <span class="description"><?php _e("This enables you to see the comments translated in the language that the post was originally written in. The translation is automatic (made by a machine) so it might not be 100% accurate. It's also free.", 'sitepress')?></span>
                         <br />
-                        <label><input type="checkbox" name="icl_enable_replies_translation" id="icl_enable_replies_translation" value="1" 
-                        <?php if($this->enable_replies_translation): ?> checked="checked" <?php endif?> /> 
-                        <?php _e('Translate my replies.', 'sitepress') ?></label>            
+                        <p><label><input type="checkbox" name="icl_enable_replies_translation" id="icl_enable_replies_translation" value="1" 
+                        <?php if($this->enable_replies_translation && $sitepress->get_icl_translation_enabled() && $sitepress->icl_account_configured()): ?> checked="checked" <?php endif?> <?php if(!$sitepress->get_icl_translation_enabled() || !$sitepress->icl_account_configured()) echo 'disabled="disabled"' ?> /> 
+                        <?php _e('Translate my replies.', 'sitepress') ?></label>
+                        <?php if(!$sitepress->get_icl_translation_enabled() || !$sitepress->icl_account_configured()): ?>
+                        <?php printf(__('To translate your replies, you need to enable <a href="%s">professional translation</a>.','sitepress'),'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php')?>
+                        <?php endif; ?>                        
+                        </p>            
                         <span class="description"><?php _e("When this is checked you can write comments in the post's original language. They will not be published immediately but sent to the ICanLocalize translation server and translated. Once translated they are published automatically on your blog.", 'sitepress')?></span>             
-
                     </td>
                 </tr>
             </tbody>

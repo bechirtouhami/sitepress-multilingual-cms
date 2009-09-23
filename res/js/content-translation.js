@@ -5,8 +5,7 @@ addLoadEvent(function(){
     jQuery('#icl_save_language_pairs').click(saveLanguagePairs);    
     jQuery('form[name="icl_more_options"]').submit(iclSaveForm);
     jQuery('#icl_create_account, #icl_configure_account').submit(iclValidateWebsiteKind);
-    jQuery('form[name="icl_editor_account"]').submit(iclSaveForm);
-    jQuery('form[name="icl_plugins_texts"]').submit(iclSaveForm);
+    jQuery('form[name="icl_editor_account"]').submit(iclSaveForm);    
     jQuery('#icl_enable_content_translation,#icl_disable_content_translation').click(iclToggleContentTranslation);
     jQuery('a[href="#icl-ct-advanced-options"]').click(iclToggleAdvancedOptions);        
     jQuery('a[href="#icl-show_disabled_langs"]').click(iclToggleMoreLanguages);        
