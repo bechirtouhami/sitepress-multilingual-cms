@@ -117,10 +117,8 @@
                             </div> <? // div id="icl-content-translation-advanced-options ?>
                                         
                             <?php if($sitepress_settings['content_translation_setup_complete']): ?>        
-                                <p class="submit">
-                                    <input class="button" name="create account" value="<?php echo __('Save', 'sitepress') ?>" type="submit" />
-                                    <span class="icl_ajx_response" id="icl_ajx_response2"></span>    
-                                </p>
+                                <input class="button" name="create account" value="<?php echo __('Save', 'sitepress') ?>" type="submit" />
+                                <span class="icl_ajx_response" id="icl_ajx_response2"></span>    
                                 </form>
                             <?php endif; ?>
             
