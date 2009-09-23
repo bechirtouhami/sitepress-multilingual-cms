@@ -44,7 +44,7 @@ function icl_link_to_element($element_id, $element_type='post', $link_text='', $
     }elseif($element_type=='category'){
         $element_id = $wpdb->get_var($wpdb->prepare("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id= %d AND taxonomy='category'",$element_id));        
     }elseif($element_type=='page'){
-        $element_type=='post'; 
+        $element_type='post'; 
     }    
     
     if(!$element_id) return '';
