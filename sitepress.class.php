@@ -1190,7 +1190,12 @@ class SitePress{
                     language_code = '{$target_lang}'";
         
         $trids_for_target = $wpdb->get_col($sql);
-        $trids_for_target = join(',', $trids_for_target);
+        if (sizeof($trids_for_target) > 0) {
+            $trids_for_target = join(',', $trids_for_target);
+            $not_trids = 'AND trid NOT IN (' .$trids_for_target . ')';
+        } else {
+            $not_trids = '';
+        }
         
         // Now get all the elements that are in the source language that
         // are not already translated into the target language.
@@ -1200,8 +1205,7 @@ class SitePress{
                     {$wpdb->prefix}icl_translations
                 WHERE
                         language_code = '{$source_lang}'
-                    AND
-                        trid NOT IN ({$trids_for_target})
+                    {$not_trids}
                     AND element_type= '{$el_type}'";
         
         return $wpdb->get_col($sql);        
