@@ -18,10 +18,6 @@
                 
             
                                     
-                            <?php if($sitepress_settings['content_translation_languages_setup']): ?>        
-                                <form id="icl_language_pairs_form" name="icl_language_pairs_form" action="">
-                                <?php $enable_default = false;?>
-                            <?php endif; ?>
             <table class="widefat">
                 <thead>
                     <tr>
