@@ -13,6 +13,7 @@ addLoadEvent(function(){
     if(jQuery('input[name="icl_website_kind"]:checked').length==0){
         jQuery('input[name="icl_website_kind"]').click(iclQuickSaveWebsiteKind);
     }
+    jQuery('input[name="icl_content_trans_setup_cancel"]').click(iclWizardCancel)
     
     jQuery('.handlediv').click(function(){
         if(jQuery(this).parent().hasClass('closed')){
@@ -27,6 +28,21 @@ addLoadEvent(function(){
     }
     
 });
+
+function iclWizardCancel() {
+    if(!confirm(jQuery('#icl_toggle_ct_confirm_message').html())){
+        return false;
+    }
+    jQuery.ajax({
+        type: "POST",
+        url: icl_ajx_url,
+        data: "icl_ajx_action=toggle_content_translation&new_val=0",
+        success: function(msg){
+            location.href=location.href;
+        }
+    });         
+    
+}
 
 function iclShowNextButtonStep1() {
     // See if we have a language pair selected and enable the button if we have.

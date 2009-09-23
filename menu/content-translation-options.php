@@ -129,6 +129,7 @@
         <?php if(!$sitepress_settings['content_translation_setup_complete']): ?>
             <br />
             <div style="text-align:right">
+                <input class="button" name="icl_content_trans_setup_cancel" value="<?php echo __('Cancel', 'sitepress') ?>" type="button" />
                 <input id="icl_content_trans_setup_back_2" class="button-primary" name="icl_content_trans_setup_back_2" value="<?php echo __('Back', 'sitepress') ?>" type="submit" />
                 <input id="icl_content_trans_setup_next_2" class="button-primary" name="icl_content_trans_setup_next_2" value="<?php echo __('Next', 'sitepress') ?>" type="submit" />
             </div>
