@@ -124,7 +124,7 @@
                             <tr valign="top">            
                                 <td>
                                     <?php if($sitepress_settings['setup_complete']): ?>
-                                        <?php _e('These languages that enabled for this site.','sitepress'); ?><br />
+                                        <?php _e('These languages are enabled for this site.','sitepress'); ?><br />
                                         <ul id="icl_enabled_languages">
                                                 <?php foreach($active_languages as $lang): $is_default = ($sitepress->get_default_language()==$lang['code']); ?>
                                             <li <?php if($is_default):?>class="default_language"<?php endif;?>><label><input name="default_language" type="radio" value="<?php echo $lang['code'] ?>" <?php if($is_default):?>checked="checked"<?php endif;?> /> <?php echo $lang['display_name'] ?> <?php if($is_default):?>(<?php echo __('default', 'sitepress') ?>)<?php endif?></label></li>
