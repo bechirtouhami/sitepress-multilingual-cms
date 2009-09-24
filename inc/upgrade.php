@@ -167,6 +167,13 @@ function icl_plugin_upgrade(){
             $iclsettings['admin_default_language'] = $iclsettings['default_language'];            
         }
         update_option('icl_sitepress_settings',$iclsettings);
+        
+        $maxtrid = 1 + $wpdb->get_var("SELECT MAX(trid) FROM {$wpdb->prefix}icl_translations");
+        mysql_query("
+            INSERT INTO {$wpdb->prefix}icl_translations(element_type, element_id, trid, language_code, source_language_code)
+            SELECT 'comment', comment_ID, {$maxtrid}+comment_ID, '{$iclsettings['default_language']}', NULL FROM {$wpdb->comments}
+            ");            
+        
     }
 
     if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '<')){

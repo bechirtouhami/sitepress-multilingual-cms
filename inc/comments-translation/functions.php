@@ -69,11 +69,26 @@ class IclCommentsTranslation{
         
         global $wpml_add_message_translation_callbacks;
         $wpml_add_message_translation_callbacks['comment'][] = array($this, 'add_comment_translation');
+        
+        
+        if(isset($_GET['retry_mtr'])){
+            global $wpdb;
+            $nonce = wp_create_nonce('machine-translation-failed'.$_GET['retry_mtr']);
+            if($_GET['nonce']==$nonce){
+                $wpdb->query("DELETE FROM {$wpdb->comments} WHERE comment_ID=" . intval($_GET['retry_mtr']));
+                $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE element_type='comment' AND element_id=" . intval($_GET['retry_mtr']));
+                add_action('template_redirect', array($this, '__reload_page'));
+            }                      
+        }
                 
     }
     
+    function __reload_page(){
+        wp_redirect(get_permalink());
+    }
+    
     function js_scripts_setup(){
-        global $pagenow, $sitepress;        
+        global $pagenow, $sitepress;                
         if($pagenow == 'index.php' || $pagenow == 'edit-comments.php' || $pagenow == 'post.php'): 
             $user_lang_info = $sitepress->get_language_details($this->user_language);
             ?>
@@ -296,14 +311,7 @@ class IclCommentsTranslation{
         */
         return $arg;
     }
-    
-    function get_comment_text_translated($comment_text, $show_tooltip = true){        
-        global $comment, $wpdb;
-        $id = $comment->comment_ID;   
-        return $this->machine_translate('fr','en', $comment_text);
-        //return $translation;
-    }
-    
+        
     function comments_array_filter($comments){
         if(defined('__comments_array_filter_runonce')){
             return $comments;                
@@ -383,6 +391,7 @@ class IclCommentsTranslation{
                     $machine_translation = $this->machine_translate($original_comment->language_code, $this->user_language, $comment_content);                                        
                     $comment_new = clone $comments_by_id[$original_comment->element_id];                    
                     $comment_new->comment_content = $machine_translation;
+                    
                     unset($comment_new->comment_ID);
                     $wpdb->insert($wpdb->comments, (array)$comment_new);
                     $new_comment_id = $wpdb->insert_id;
@@ -393,7 +402,14 @@ class IclCommentsTranslation{
                         $cptrid = $sitepress->get_element_trid($original_comment_parent, 'comment');
                         $comment_new->comment_parent = $wpdb->get_var("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid={$cptrid} AND element_type='comment' AND language_code='{$this->user_language}'");
                         $wpdb->update($wpdb->comments, array('comment_parent'=>$comment_new->comment_parent), array('comment_ID'=>$new_comment_id));
-                    }                                                                
+                    }          
+                    
+                    if(!$machine_translation){
+                        $nonce = wp_create_nonce('machine-translation-failed'.$new_comment_id);
+                        $comment_new->comment_content = '<i>' . sprintf(__('Machine translation failed. <a%s>retry</a>'), ' onclick="icl_retry_mtr(this)" id="icl_retry_mtr_'.$comment_new->comment_ID.'_'.$nonce.'" href="#"') . '</i>';
+                        $wpdb->update($wpdb->comments, array('comment_content'=>$comment_new->comment_content), array('comment_ID'=>$new_comment_id));
+                    } 
+                                                                          
                     $comments_in_the_users_language[] = $new_comment_id;
                     $comments[] = $comment_new;
                 }

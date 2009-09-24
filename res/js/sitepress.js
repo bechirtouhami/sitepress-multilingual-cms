@@ -9,7 +9,7 @@ function addLoadEvent(func) {
       }
       func();
     }
-  }
+  }  
 }
 addLoadEvent(function(){
     var lhid = document.createElement('input');
@@ -22,3 +22,18 @@ addLoadEvent(function(){
         src.action=icl_home; 
     }
 });
+
+function icl_retry_mtr(a){
+    var id = a.getAttribute('id');
+    spl = id.split('_');
+    if(-1 == location.href.indexOf('?')){
+        url_glue='?';
+    }else{
+        url_glue='&';
+    }    
+    
+    location.href=location.href.replace(/#(.*)$/,'').replace(/(&|\?)(retry_mtr)=([0-9]+)/g,'').replace(/&nonce=([0-9a-z]+)(&|$)/g,'')+url_glue+'retry_mtr='+spl[3]+'&nonce='+spl[4];
+    
+    
+    return false;
+}
