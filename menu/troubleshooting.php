@@ -78,7 +78,7 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
     
     
     echo '<br /><hr /><h3 id="wpml-settings"> ' . __('Reset', 'sitepress') . '</h3>';
-    echo '<form method="post" onsubmit="return confirm(\''.__('Are you sure you want to reset all languages data? This operation cannot be revered.', 'sitepress').'\')">';
+    echo '<form method="post" onsubmit="return confirm(\''.__('Are you sure you want to reset all languages data? This operation cannot be reversed.', 'sitepress').'\')">';
     wp_nonce_field('icl_reset_all','icl_reset_allnonce');
     echo '<label><input type="checkbox" name="icl-reset-all" onchange="if(this.checked) jQuery(\'#reset-all-but\').removeAttr(\'disabled\'); else  jQuery(\'#reset-all-but\').attr(\'disabled\',\'disabled\');" /> ' . __('I am about to reset all language data.', 'sitepress') . '</label><br /><br />';
     echo '<input id="reset-all-but" type="submit" disabled="disabled" class="button-primary" value="'.__('Reset all language data and deactivate WPML', 'sitepress').'" />';    
