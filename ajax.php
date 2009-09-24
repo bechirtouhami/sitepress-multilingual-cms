@@ -16,6 +16,8 @@ function update_icl_account(){
     //if the account is configured - update language pairs
     if($sitepress->icl_account_configured()){
         $iclsettings = $sitepress->get_settings();
+        
+        $pay_per_use = $iclsettings['website_kind'] && $iclsettings['interview_translators'] == 0;
 
         // prepare language pairs
         
@@ -27,7 +29,12 @@ function update_icl_account(){
                 $incr++;
                 $english_to = $wpdb->get_var("SELECT english_name FROM {$wpdb->prefix}icl_languages WHERE code='{$k}' ");
                 $lpairs['from_language'.$incr] = apply_filters('icl_server_languages_map', $english_fr); 
-                $lpairs['to_language'.$incr] = apply_filters('icl_server_languages_map', $english_to); 
+                $lpairs['to_language'.$incr] = apply_filters('icl_server_languages_map', $english_to);
+                if ($pay_per_use) {
+                    $lpairs['pay_per_use'.$incr] = 1;
+                } else {
+                    $lpairs['pay_per_use'.$incr] = 0;
+                }
             }    
         }
         $data['site_id'] = $iclsettings['site_id'];                    
