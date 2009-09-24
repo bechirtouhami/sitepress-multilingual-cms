@@ -816,7 +816,7 @@ class SitePress{
                     }                
                 }
 
-                if (isset($_POST['icl_content_trans_setup_finish']) && !isset($_POST['icl_form_errors'])) {
+                if ((isset($_POST['icl_content_trans_setup_finish']) || isset($_POST['icl_content_trans_setup_finish_enter'])) && !isset($_POST['icl_form_errors'])) {
                     // we are running the wizard, so we can finish it now.
                     $this->settings['content_translation_setup_complete'] = 1;
                     $this->settings['content_translation_setup_wizard_step'] = 0;
@@ -871,7 +871,7 @@ class SitePress{
                 $this->settings['content_translation_languages_setup'] = 0;
                 $this->settings['content_translation_setup_wizard_step'] = 1;
                 $this->save_settings();
-            }elseif(isset($_POST['icl_content_trans_setup_next_2'])){
+            }elseif(isset($_POST['icl_content_trans_setup_next_2']) || isset($_POST['icl_content_trans_setup_next_2_enter'])){
                 // next button.
                 $this->update_icl_more_options();
                 $this->settings['content_translation_setup_wizard_step'] = 3;
