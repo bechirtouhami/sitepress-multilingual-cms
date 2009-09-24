@@ -562,7 +562,10 @@ class IclCommentsTranslation{
                 }
             }
         }else{
-            $lang = $_POST['icl_comment_language'];
+            $lang = $wpdb->get_var("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE element_type='post' AND element_id={$_POST['comment_post_ID']}");
+            if(!$lang){
+                $lang = $this->user_language; // just in case
+            }
         }
         if(!$lang){
             $lang = $this->user_language;
