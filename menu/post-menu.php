@@ -74,7 +74,7 @@
     do_action('icl_post_languages_options_before', $post->ID);
 ?>
 
-<?php if($trid): ?>
+<?php if($_GET['action'] == 'edit' && $trid): ?>
     <span id="icl_translate_options">
     <?php if($this->get_icl_translation_enabled()):?>
         <p>
