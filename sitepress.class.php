@@ -767,14 +767,14 @@ class SitePress{
                 }
                             
                 $user['project_kind'] = $this->settings['website_kind'];
-                if(is_null($user['project_kind']) || $user['project_kind']==''){
+                /*
+                 if(is_null($user['project_kind']) || $user['project_kind']==''){
                     $_POST['icl_form_errors'] = __('Please select the kind of website','sitepress');               
                     return;
                 }
+                */
                 $user['pickup_type'] = intval($this->settings['translation_pickup_method']);
-                
-                $data['pickup_type'] = $this->settings['translation_pickup_method'];
-        
+                                
                 $notifications = 0;
                 if ( $this->settings['icl_notify_complete']){
                     $notifications += 1;
@@ -785,6 +785,9 @@ class SitePress{
                 $user['notifications'] = $notifications;
     
                 // prepare language pairs
+                
+                $pay_per_use = $user['project_kind'] && $user['interview_translators'] == 0;
+                
                 $language_pairs = $this->settings['language_pairs'];
                 $lang_pairs = array();
                 if(isset($language_pairs)){
@@ -795,6 +798,9 @@ class SitePress{
                             $english_to = $wpdb->get_var("SELECT english_name FROM {$wpdb->prefix}icl_languages WHERE code='{$k}' ");
                             $lang_pairs['from_language'.$incr] = apply_filters('icl_server_languages_map', $english_fr); 
                             $lang_pairs['to_language'.$incr] = apply_filters('icl_server_languages_map', $english_to);
+                            if ($pay_per_use) {
+                                $lang_pairs['pay_per_use'.$incr] = 1;
+                            }
                         }                    
                     }
                 }
