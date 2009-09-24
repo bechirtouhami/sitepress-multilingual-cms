@@ -6,83 +6,32 @@ Requires at least: 2.6
 Tested up to: 2.8.4
 Stable tag: 1.2.1
 
-Turns any WordPress site into a fully featured multilingual content management system (CMS).
+Allows building complete multilingual sites with WordPress.
 
 == Description ==
 
-WPML makes it easy to build full multilingual websites with WordPress.
-It integrates multilingual content management with robust navigation.
+**WPML makes multilingual content management easy, just like running a site in one language.**
 
-*Features*
+= Features =
 
- * **Multilingual content** support that allows selecting post/page languages and creating translations.
- * **CMS navigation** elements including drop down menus, breadcrumbs trail and sidebar navigation.
- * Integrated **content translation** makes it possible to run multilingual sites on tiny budgets and with no effort.
- * Built in **theme localization** without .mo files.
- * Robust links to posts and pages that never break.
+ * Turns a single WordPress install into a [multilingual site](http://wpml.org/wordpress-translation/).
+ * Built-in theme localization without .mo files.
+ * Comment translation allows you to moderate and reply to comments in your own language.
+ * Integrated [professional translation](http://wpml.org/wordpress-translation/content-translation/) (optional feature for folks who need help translating).
+ * Includes [CMS navigation](http://wpml.org/wordpress-cms-plugins/cms-navigation-plugin/) elements for drop down menus, breadcrumbs trail and sidebar navigation.
+ * [Robust links](http://wpml.org/wordpress-cms-plugins/absolute-links-plugin/) to posts and pages that never break.
 
-*Highlights*
+= Highlights =
 
-* When running a multilingual site, each page, post, tag or category has its own language. Translations for the same contents are grouped together, but not mixed in the database.
-* CMS navigation elements work together to provide accurate and easy to use site-wide navigation.
-* All drop down menus are implemented with pure CSS, are 100% HTML valid and support IE6, IE7, Firefox, Safari, Chrome, Opera and any other browser we tested on.
-* Extra simple CSS for easy customization.
+* Translations are grouped together and not mixed in the database.
+* CMS navigation elements provide accurate and easy to use site-wide navigation.
+* Simple CSS for easy [customization](http://wpml.org/support/drop-down-menu-customization/).
+* An active [community](http://forum.wpml.org) of developers building professional multilingual sites.
 
-= Multilingual content support =
+WPML makes it possible to turn WordPress blogs multilingual in a few minutes with no knowledge of PHP or WordPress.
+Its advanced features allow professional web developers to build full multilingual websites.
 
-One WordPress site will be able to run multiple languages. The plugin allows selecting which languages to include and how to arrange them (in language folders or independent domains).
-
-To configure languages, go to WPML->Languages. Select which languages to include and the default site language (which is also the admin language).
-The plugin will set the WP_LANG variable, so that the correct .mo files are loaded and the content language is set by WordPress.
-
-Each page, post, tag or category will have a new section for translations. This section allows switching from one language to the other and adding translations to existing contents.
-
-See more info in the [language setup howto](http://wpml.org/home/getting-started-guide/language-setup/) page.
-
-= Content Translation =
-
-This service is intended for people who don't want to translate the contents of their WordPress sites themselves.
-
-**WPML's tranlsation interface can send all contents that need to be translated to professional (human) translators**. It's a paid service.
-
-Because this translation service is highly integrated with the multilingual content management functions, it's completely effortless to use. Just one click and everything is sent to translation.
-Translated contents are returned directly to WordPress and can be published immediately or stay held for review.
-
-You can learn more about WPML's content translation in the [content translation guide](http://wpml.org/wordpress-translation/content-translation/).
-
-**The translation service is an optional feature of the plugin**. People who need it can use it, others can translate themselves with ease.
-
-= CMS navigation =
-
-WPML makes it easy to add CMS navigation to your website. It will let you create:
-
-* Top navigation with drop down menus.
-* Breadcrumbs trail showing how to get from each page to the home page (and all pages in between).
-* Sidebar navigation that shows pages next to the current one, arranged by their page hierarchy.
-
-The sidebar element is widget ready. You can include it in the theme or drop as a widget. The top-navigation and breadcrumbs trail should be included in the theme.
-
-For integration instruction in the theme, visit the [navigation usage](http://wpml.org/home/getting-started-guide/site-navigation/) page.
-
-To style the drop down menu, you can use the [Drop down menu customization tool](http://wpml.org/support/drop-down-menu-customization/).
-
-= Sticky links =
-
-WPML can turn ordinary internal links into unbreakable sticky links. Sticky links track the URL of the page and update when the target page updates.
-
-If you're linking to *example.com/about_us* and that page changes to *example.com/we_sell/company*, all Sticky links to that page will update immediately.
-
-Learn more about it in the [Sticky links usage](http://wpml.org/home/getting-started-guide/sticky-links/) page.
-
-= Template integration = 
-
-Besides the hooks for adding the navigation elements the plugin defines the following constants which you can use in your template:
-
-* `ICL_LANGUAGE_CODE` - the current language code (e.g. fr).
-* `ICL_LANGUAGE_NAME` - the current language name in the current language (e.g. Français).
-* `ICL_LANGUAGE_NAME_EN` - the current language name in English (e.g. French).
-
-These constants can be used to create language dependent design for your site.
+WPML's [showcase](http://wpml.org/showcase/) includes samples of blogs, full websites and even multilingual BuddyPress portals.
 
 == Installation ==
 
@@ -94,6 +43,12 @@ WPML needs to create tables in your database. These tables are used to hold the 
 For help, visit the [support forum](http://forum.wpml.org).
 
 == Frequently Asked Questions ==
+
+= Can I translate myself, or do I need to pay for it? =
+
+You can certainly translate your site yourself. The professional translation is an optional feature intended for people who don't want to translate themselves.
+
+If you're translating your site yourself, just ignore that option.
 
 = Languages list is empty =
 
@@ -109,12 +64,8 @@ Have a look at this [theme localization guide](http://wpml.org/2009/05/wordpress
 
 = Languages per directories are disabled =
 
-To be able to use languages in directories, you should use a none default permlink structure.
+To be able to use languages in directories, you should use a non-default permlink structure.
 Also, go through the [detailed description](http://wpml.org/support/cannot-activate-language-directories/).
-
-= No donate button? =
-
-That's right. WPML is a commercial plugin (still GPL). We make our living doing translation through it. If you want to support us, just spread the word.
 
 == Screenshots ==
 
@@ -122,11 +73,19 @@ You can find screen shots of WPML in our [press kit](http://wpml.org/home/press-
 
 == Changelog ==
 
+= 1.3.0 =
+* Added translation for comments.
+* Allow associating existing contents as translation.
+* Modified the layout of the translation boxes.
+* Added a setup wizard.
+* Fixed bugs that prevented WPML to work with MySQL in strict mode.
+* Fixed bugs that prevented working with some other plugins.
+
 = 1.2.1 =
 * Allows specifying the locale for the default language.
 * Added a theme integration file - docs/theme-integration/wpml-integration.php.
 * Added an input for affiliate ID for themes.
-* Simplified the setup for [content translation](http://wpml.org/wordpress-translation/content-translation/).
+* Simplified the setup for [professional translation](http://wpml.org/wordpress-translation/content-translation/).
 
 = 1.2.0 =
 * Adds theme localization.
@@ -137,7 +96,7 @@ You can find screen shots of WPML in our [press kit](http://wpml.org/home/press-
 = 1.1.0 =
 * Adds [translation for general texts](http://wpml.org/wordpress-translation/translation-for-texts-by-other-plugins-and-themes/), such as title, tagline and widgets.
 * Can [translate custom fields](http://wpml.org/wordpress-translation/translating-custom-fields/) by ICanLocalize.
-* Added an overview page, for quick access to all functions and an snapshot of WPML's status.
+* Added an overview page, for quick access to all functions and a snapshot of WPML's status.
 
 = 1.0.4 =
 * Fixed the bug which caused errors when upgrading the plugin from previous versions.
@@ -149,7 +108,7 @@ You can find screen shots of WPML in our [press kit](http://wpml.org/home/press-
 * Added icl_object_id which returns the ID of translated objects.
 * Fixed permlinks for newly created posts (autosave by WordPress).
 * Fixed bug which prevented sub-pages from being excluded from the navigation.
-* Simplified the content translation setup page.
+* Simplified the professional translation setup page.
 
 = 1.0.3 =
 * Added a hook for adding [custom HTML in menu items](http://wpml.org/wordpress-cms-plugins/cms-navigation-plugin/custom-html-for-menu-items/).
