@@ -171,8 +171,13 @@ switch($_REQUEST['icl_ajx_action']){
     case 'toggle_content_translation':
         $iclsettings['enable_icl_translations'] = $_POST['new_val'];
         if ($iclsettings['enable_icl_translations'] == 0) {
-            $iclsettings['content_translation_languages_setup'] = false;
-            $iclsettings['content_translation_setup_wizard_step'] = 1;
+            $settings = $sitepress->get_settings();
+            
+            if (!$settings['content_translation_setup_complete']) {
+                // the wizard wasn't complete so set back to step 1.
+                $iclsettings['content_translation_languages_setup'] = false;
+                $iclsettings['content_translation_setup_wizard_step'] = 1;
+            }
         }
         
         $sitepress->save_settings($iclsettings);
