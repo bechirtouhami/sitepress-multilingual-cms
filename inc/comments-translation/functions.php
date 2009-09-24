@@ -23,7 +23,7 @@ class IclCommentsTranslation{
             add_action('personal_options_update', array($this, 'save_user_options'));
         }
         
-        if(defined('WP_ADMIN') && $this->enable_replies_translation){
+        if(defined('WP_ADMIN') && $this->enable_comments_translation){
             add_action('admin_print_scripts', array($this,'js_scripts_setup'));
         }
         
@@ -53,7 +53,7 @@ class IclCommentsTranslation{
         
         add_action('comment_post', array($this, 'comment_post'));
         
-        if(defined('WP_ADMIN') && $this->enable_replies_translation){
+        if(defined('WP_ADMIN') && $this->enable_comments_translation){
             add_filter('comment_row_actions', array($this,'comment_row_actions'),1, 2);
         }
         
@@ -62,7 +62,7 @@ class IclCommentsTranslation{
         }else{
             add_filter('comment_text', array($this, 'comment_text_filter'));
         }
-        
+            
         add_filter('xmlrpc_methods',array($this, 'add_custom_xmlrpc_methods'));
         
         add_filter('get_comments_number', array($this, 'get_comments_number_filter'));        
@@ -77,7 +77,11 @@ class IclCommentsTranslation{
             if($_GET['nonce']==$nonce){
                 $wpdb->query("DELETE FROM {$wpdb->comments} WHERE comment_ID=" . intval($_GET['retry_mtr']));
                 $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE element_type='comment' AND element_id=" . intval($_GET['retry_mtr']));
-                add_action('template_redirect', array($this, '__reload_page'));
+                if(defined('WP_ADMIN')){
+                    wp_redirect(rtrim(preg_replace('@retry_mtr=([0-9]+)&nonce=([0-9a-z]+)@','',$_SERVER['REQUEST_URI']),'?'));            
+                }else{
+                    add_action('template_redirect', array($this, '__reload_page'));
+                }
             }                      
         }
                 
@@ -94,6 +98,7 @@ class IclCommentsTranslation{
             ?>
             <script type="text/javascript">        
             var icl_comment_original_language = new Array();
+            <?php if($this->enable_replies_translation): ?>
             function icl_comment_reply_options(){
                 for(i in icl_comment_original_language){
                     oc = icl_comment_original_language[i];
@@ -107,6 +112,7 @@ class IclCommentsTranslation{
                 jQuery('#replysubmit').prepend(content_ro);
             }
             addLoadEvent(icl_comment_reply_options);        
+            <?php endif; ?>
             </script>
         <?php endif; 
     }
@@ -542,67 +548,6 @@ class IclCommentsTranslation{
         }
     }
     
-    function add_comment_translationOLD($args){
-        
-        global $wpdb, $sitepress, $sitepress_settings;
-        $signature      = $args[0];
-        $site_id        = $args[1];
-        $rid            = $args[2];
-        $translation    = $args[3];
-        
-        $signature_check = md5($sitepress_settings['access_key'] . $sitepress_settings['site_id'] . $rid);
-        if($signature != $signature_check){
-            return 0; // array('err_code'=>1, 'err_str'=> __('Signature mismatch','sitepress'));
-        }
-        
-        $to_language = $wpdb->get_var("SELECT to_language FROM {$wpdb->prefix}icl_message_status WHERE rid={$rid}");
-                
-        $original_comment = $wpdb->get_row("
-            SELECT c.* 
-            FROM {$wpdb->comments} c
-            JOIN {$wpdb->prefix}icl_message_status m ON c.comment_ID = m.object_id
-            WHERE m.rid = {$rid}
-        ", ARRAY_A);
-        
-        $new_comment = $original_comment;
-        
-        //sync comment parent
-        if($original_comment['comment_parent']){
-            $ctrid = (int)$sitepress->get_element_trid($original_comment['comment_parent'],'comment');
-            $new_comment['comment_parent'] =  (int) $wpdb->get_var("
-                SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid={$ctrid} 
-                    AND element_type='comment' AND language_code='{$to_language}'");
-        }        
-        
-        $original_comment_id = $original_comment['comment_ID'];
-        unset($original_comment);
-        $new_comment['comment_content'] = $translation;
-        unset($new_comment['comment_ID']);
-        
-        //remove_action('wp_insert_comment', array($this, 'wp_insert_comment'));
-        
-        //check whether a translation for this comment in this language already exists
-        $trid = $sitepress->get_element_trid($original_comment_id, 'comment');        
-        
-        $existing_comment_id = $wpdb->get_var("
-            SELECT element_id FROM {$wpdb->prefix}icl_translations 
-            WHERE trid={$trid} AND element_type='comment' AND language_code='{$to_language}'");
-        
-        if(!$existing_comment_id){
-            $new_id = wp_insert_comment($new_comment);
-        }else{
-            $new_id = $new_comment['comment_ID'] = $existing_comment_id;
-            remove_action('transition_comment_status', array($this, 'transition_comment_status_actions'));
-            wp_update_comment($new_comment);
-        }
-        
-        $sitepress->set_element_language_details($new_id, 'comment', $trid, $to_language);
-                        
-        $wpdb->update($wpdb->prefix.'icl_message_status', array('status'=>MESSAGE_TRANSLATION_COMPLETE), array('rid'=>$rid));
-        
-        return 1; //success
-    }
-    
     function add_comment_translation($object_id, $to_language, $translation){
         global $wpdb, $sitepress, $sitepress_settings;
     
@@ -658,7 +603,7 @@ class IclCommentsTranslation{
         global $sitepress, $comment, $wp_query, $wpdb;
         static $comment_ids, $comment_originals, $page_language, $translation_status;
                                               
-        //if($this->enable_comments_translation && $this->user_language != $sitepress->get_current_language() ){
+        //if($this->enable_comments_translation && $this->user_language != $sitepress->get_current_language() ){        
         if($this->enable_comments_translation){
             // run this block once
             if(empty($comment_ids)){
@@ -671,11 +616,12 @@ class IclCommentsTranslation{
                 
                 foreach($wp_query->comments as $c){
                     $comment_ids[] = $c->comment_ID;
-                }
+                }                
                 $res = $wpdb->get_results("
                     SELECT t.element_id, t.trid, ms.status 
-                    FROM {$wpdb->prefix}icl_translations t JOIN {$wpdb->prefix}icl_message_status ms ON t.element_id=ms.object_id 
-                    WHERE t.element_id IN(".join(',',$comment_ids).") AND t.element_type='comment' AND ms.object_type='comment'");
+                    FROM {$wpdb->prefix}icl_translations t 
+                    LEFT JOIN {$wpdb->prefix}icl_message_status ms ON t.element_id=ms.object_id 
+                    WHERE t.element_id IN(".join(',',$comment_ids).") AND t.element_type='comment' AND (ms.object_type='comment' OR ms.object_type IS NULL)");
                 foreach($res as $row){
                     $tridsmap[$row->trid] = $row->element_id;
                     $translation_status[$row->element_id] = $row->status;
@@ -691,7 +637,6 @@ class IclCommentsTranslation{
                     }
                 }
             }
-            
             
             $str  = '';
             if(isset($comment_originals[$comment->comment_ID])){
@@ -726,7 +671,6 @@ class IclCommentsTranslation{
     function comment_text_filter_admin($comment_text){
         global $comment, $comments, $wpdb;
         static $comment_ids, $translation_status;
-        
         if(empty($comment_ids)){
             foreach($comments as $c){
                 $comment_ids[] = $c->comment_ID;
@@ -734,13 +678,14 @@ class IclCommentsTranslation{
             
             $res = $wpdb->get_results("
                 SELECT t.element_id, ms.status 
-                FROM {$wpdb->prefix}icl_translations t JOIN {$wpdb->prefix}icl_message_status ms ON t.element_id=ms.object_id 
-                WHERE t.element_id IN(".join(',',$comment_ids).") AND t.element_type='comment' AND ms.object_type='comment'");
+                FROM {$wpdb->prefix}icl_translations t 
+                LEFT JOIN {$wpdb->prefix}icl_message_status ms ON t.element_id=ms.object_id 
+                WHERE t.element_id IN(".join(',',$comment_ids).") AND t.element_type='comment' AND (ms.object_type='comment' OR ms.object_type IS NULL)");
             foreach($res as $row){
-                $translation_status[$row->element_id] = $row->status;
+                $translation_status[$row->element_id] = $row->status ? $row->status : CMS_REQUEST_WAITING_FOR_PROJECT_CREATION;
             }                
         }
-
+        
         if(isset($translation_status[$comment->comment_ID])){
             if($translation_status[$comment->comment_ID] == MESSAGE_TRANSLATION_IN_PROGRESS){
                 $str = '<p><i>' . __('Translation in progress', 'sitepress' ) . '</i></p>';
