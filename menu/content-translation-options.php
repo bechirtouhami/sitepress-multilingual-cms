@@ -39,6 +39,24 @@
                                         </li>
                                     </ul>
                                 </li>
+                                <?php
+                                    if($sitepress_settings['content_translation_setup_complete'] && $sitepress_settings['website_kind'] == 2 && $sitepress_settings['interview_translators'] == 0) {
+                                        $show_own_message = 'style=""';
+                                    } else {
+                                        $show_own_message = 'style="display:none"';
+                                    }
+                                ?>
+                                <div id="icl_own_translators_message" <?php echo $show_own_message?>>
+                                    <li>
+                                        <b>
+                                            <?php 
+                                                $fr = array('[a]','[/a]');
+                                                $to = array('<a href="'.ICL_API_ENDPOINT.'/private_translators">','</a>');
+                                                echo str_replace($fr, $to, __('To translate with your own translators, go to the [a]private translators[/a] management and invite them.', 'sitepress'));
+                                                ?>
+                                        </b>
+                                    </li>
+                                </div>
                             </ul>
                             
                             <br /><p><a href="#icl-ct-advanced-options"><span><?php _e('Show advanced options &raquo;','sitepress') ?></span><span style="display:none;"><?php _e('&laquo; Hide advanced options','sitepress') ?></span></a></p>

@@ -4,6 +4,7 @@ addLoadEvent(function(){
     jQuery('.icl_tr_to').change(iclShowNextButtonStep1);
     jQuery('#icl_save_language_pairs').click(saveLanguagePairs);    
     jQuery('form[name="icl_more_options"]').submit(iclSaveForm);
+    jQuery('form[name="icl_more_options"]').submit(iclSaveMoreOptions);
     jQuery('#icl_create_account, #icl_configure_account').submit(iclValidateWebsiteKind);
     jQuery('form[name="icl_editor_account"]').submit(iclSaveForm);    
     jQuery('#icl_enable_content_translation,#icl_disable_content_translation').click(iclToggleContentTranslation);
@@ -27,6 +28,16 @@ addLoadEvent(function(){
     }
     
 });
+
+function iclSaveMoreOptions() {
+    jQuery('input[name="icl_translator_choice"]:checked').each(function(){
+        if (this.value == '1') {
+            jQuery('#icl_own_translators_message').css("display", "");
+        } else {
+            jQuery('#icl_own_translators_message').css("display", "none");
+        }
+    });
+}
 
 function iclWizardCancel() {
     if(!confirm(jQuery('#icl_toggle_ct_confirm_message').html())){
