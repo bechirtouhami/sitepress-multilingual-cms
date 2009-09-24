@@ -564,6 +564,9 @@ class IclCommentsTranslation{
         }else{
             $lang = $_POST['icl_comment_language'];
         }
+        if(!$lang){
+            $lang = $this->user_language;
+        }
         $trid = $sitepress->set_element_language_details($comment_id, 'comment', null, $lang);        
     }
     
