@@ -706,11 +706,14 @@ class IclCommentsTranslation{
                     SELECT t.element_id, t.trid, ms.status 
                     FROM {$wpdb->prefix}icl_translations t 
                     LEFT JOIN {$wpdb->prefix}icl_message_status ms ON t.element_id=ms.object_id 
-                    WHERE t.element_id IN(".join(',',$comment_ids).") AND t.element_type='comment' AND (ms.object_type='comment' OR ms.object_type IS NULL)");
+                    WHERE t.element_id IN(".join(',',$comment_ids).") AND t.element_type='comment' AND t.language_code <> '".$sitepress->get_current_language()."' AND (ms.object_type='comment' OR ms.object_type IS NULL)");
                 foreach($res as $row){
                     $tridsmap[$row->trid] = $row->element_id;
-                    $translation_status[$row->element_id] = $row->status;
-                }    
+                    if($row->status){
+                        $translation_status[$row->element_id] = $row->status;
+                    }
+                    
+                }
                 if(!empty($tridsmap)){            
                     $res = $wpdb->get_results("
                         SELECT t.trid, c.comment_content
@@ -724,11 +727,11 @@ class IclCommentsTranslation{
             }
             
             $str  = '';
-            if(isset($comment_originals[$comment->comment_ID])){
+            if(isset($comment_originals[$comment->comment_ID])){                
                 $str  .= '<div style="font-weight:normal;display:none;border:1px dotted #aaa;background-color:#f0f0f0;padding:4px;margin-bottom:0;" id="icl_olc_'.$comment->comment_ID.'">' . htmlspecialchars($comment_originals[$comment->comment_ID]) . '</div>';
             }
             
-            if(isset($translation_status[$comment->comment_ID]) || isset($comment_originals[$comment->comment_ID])){
+            if($translation_status[$comment->comment_ID] || isset($comment_originals[$comment->comment_ID])){
                 $str  .= '<p style="margin-top:1px;">';
             }
             if(isset($translation_status[$comment->comment_ID])){
@@ -742,7 +745,7 @@ class IclCommentsTranslation{
                 $str  .= '<i><a href="#" onclick="var iclcst = document.getElementById(\'icl_olc_'.$comment->comment_ID.'\').style; iclcst.display = iclcst.display == \'block\' ? \'none\' :\'block\' ;return false;">'. sprintf(__('Comment in %s', 'sitepress'),$page_language).'</a></i>';
                 
             }    
-            if(isset($translation_status[$comment->comment_ID]) || isset($comment_originals[$comment->comment_ID])){
+            if($translation_status[$comment->comment_ID] || isset($comment_originals[$comment->comment_ID])){
                 $str  .= '</p>';
             }
             
