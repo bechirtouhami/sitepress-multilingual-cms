@@ -485,7 +485,7 @@ class IclCommentsTranslation{
             }
             
             //filter out comments in other languages than the user's
-            foreach($comments as $k=>$c){
+            foreach((array)$comments as $k=>$c){
                 if(!in_array($c->comment_ID , (array)$comments_in_the_users_language)){
                     unset($comments[$k]);
                 }
