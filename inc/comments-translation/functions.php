@@ -5,18 +5,29 @@ require_once ICL_PLUGIN_PATH . '/inc/comments-translation/google_languages_map.i
 
 class IclCommentsTranslation{
     
-    var $enable_comments_translation = false;
-    var $enable_replies_translation = false;
+    var $enable_comments_translation;
+    var $enable_replies_translation;
     var $user_language;
+    var $is_visitor = false;
     
     function __construct(){
         add_action('init', array($this, 'init'));
     }
     
     function init(){
-        global $current_user, $sitepress_settings;
-        $this->enable_comments_translation = get_usermeta($current_user->data->ID,'icl_enable_comments_translation',true);
-        $this->enable_replies_translation = get_usermeta($current_user->data->ID,'icl_enable_replies_translation',true);
+        global $current_user, $sitepress_settings, $sitepress;
+        if($current_user->ID){
+            $this->enable_comments_translation = get_usermeta($current_user->data->ID,'icl_enable_comments_translation',true);
+            $this->enable_replies_translation = get_usermeta($current_user->data->ID,'icl_enable_replies_translation',true);
+            
+            $this->user_language = get_usermeta($current_user->data->ID,'icl_admin_language',true);
+            if(!$this->user_language){
+                $this->user_language = $sitepress_settings['admin_default_language'];
+            }            
+        }else{
+            $this->is_visitor = true;
+            $this->user_language = $sitepress->get_current_language();
+        }
         
         if(defined('WP_ADMIN')){
             add_action('show_user_profile', array($this, 'show_user_options'));
@@ -24,22 +35,16 @@ class IclCommentsTranslation{
         }
         
         if(defined('WP_ADMIN') && $this->enable_comments_translation){
-            add_action('admin_print_scripts', array($this,'js_scripts_setup'));
+            add_action('admin_print_scripts', array($this,'js_scripts_setup'));            
         }
-                                                                              
-        add_filter('comments_array', array($this,'comments_array_filter'));
-        
         
         add_action('manage_comments_nav', array($this,'use_comments_array_filter'));
+                                                                              
+        add_filter('comments_array', array($this,'comments_array_filter'));
         
         add_filter('comment_feed_join', array($this, 'comment_feed_join'));
         add_filter('query', array($this, 'filter_queries'));
         //add_filter('comment_feed_where', array($this, 'comment_feed_where'));
-        
-        $this->user_language = get_usermeta($current_user->data->ID,'icl_admin_language',true);
-        if(!$this->user_language){
-            $this->user_language = $sitepress_settings['admin_default_language'];
-        }
         
         add_action('delete_comment', array($this, 'delete_comment_actions'));
         add_action('wp_set_comment_status', array($this, 'wp_set_comment_status_actions'), 1, 2);
@@ -322,7 +327,6 @@ class IclCommentsTranslation{
         if(defined('__comments_array_filter_runonce')){
             return $comments;                
         }
-        
         global $wpdb, $sitepress, $google_languages_map;
             
         define('__comments_array_filter_runonce', true);
@@ -333,8 +337,24 @@ class IclCommentsTranslation{
         
         foreach($comments as $c){
             $cids[] = $c->comment_ID;
-        }        
-        if(!$this->enable_comments_translation){
+        }  
+        
+        if($this->is_visitor){
+            // get comments in visitor's language
+            if(!empty($cids)){
+                $comment_ids = $wpdb->get_col("
+                    SELECT element_id
+                    FROM {$wpdb->prefix}icl_translations
+                    WHERE element_type='comment' AND element_id IN(".join(',', $cids).")                    
+                    AND language_code = '{$this->user_language}'
+                "); 
+                foreach($comments as $k=>$c){
+                    if(!in_array($c->comment_ID , (array)$comment_ids)){
+                        unset($comments[$k]);
+                    }
+                } 
+            }
+        }elseif(!$this->enable_comments_translation){            
             // show only original comments regardless of the user language
             if(!empty($cids)){
                 $comment_ids = $wpdb->get_col("
@@ -483,7 +503,7 @@ class IclCommentsTranslation{
                     $comments[] = $row;
                 }      
                 
-                if(!$this->enable_comments_translation){
+                if(!$this->enable_comments_translation && $comments){
                     // show only original comments regardless of the user language
                     
                     foreach($comments as $c){
@@ -497,10 +517,12 @@ class IclCommentsTranslation{
                             WHERE element_type='comment' AND element_id IN(".join(',', $cids).")                    
                             AND source_language_code IS NULL
                         ");
+                        if(!empty($comment_ids)){
+                            $sql = "SELECT * FROM {$matches[1]}comments c 
+                                    WHERE c.comment_ID IN (".join(',',$comment_ids).")
+                                    ORDER BY c.comment_date_gmt DESC LIMIT {$matches[2]}, {$matches[3]}";
+                        }
                     }
-                    $sql = "SELECT * FROM {$matches[1]}comments c 
-                            WHERE c.comment_ID IN (".join(',',$comment_ids).")
-                            ORDER BY c.comment_date_gmt DESC LIMIT {$matches[2]}, {$matches[3]}";
                 }else{
                     $this->comments_array_filter($comments);
                     unset($comments);                                    
@@ -650,8 +672,6 @@ class IclCommentsTranslation{
         return 1; //success
     }
     
-    
-    
     function add_custom_xmlrpc_methods($methods){
         //$methods['icanlocalize.notify_comment_translation'] = array($this, 'add_comment_translation');
         return $methods;
@@ -660,7 +680,7 @@ class IclCommentsTranslation{
     function comment_text_filter($comment_text){
         global $sitepress, $comment, $wp_query, $wpdb;
         static $comment_ids, $comment_originals, $page_language, $translation_status;
-                                              
+                                                                                           
         //if($this->enable_comments_translation && $this->user_language != $sitepress->get_current_language() ){        
         if($this->enable_comments_translation){
             // run this block once
