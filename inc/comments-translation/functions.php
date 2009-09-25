@@ -109,7 +109,7 @@ class IclCommentsTranslation{
                     oc = icl_comment_original_language[i];
                     jQuery('#replycontainer').prepend('<input type="hidden" name="icl_comment_language_'+oc.c+'" value="'+oc.lang+'" />');
                 }
-                var content_ro = '<label style="cursor:pointer">';       
+                var content_ro = '<label id="icl_translate_from_lang" style="cursor:pointer">';       
                 content_ro += '<input type="hidden" name="icl_user_language" value="<?php echo $this->user_language ?>" />';
                 content_ro += '<input style="width:15px;" type="checkbox" name="icl_translate_reply" <?php if($this->enable_replies_translation):?>checked="checked"<?php endif;?> />';         
                 content_ro += '<?php echo sprintf(__('Translate from %s', 'sitepress'),$user_lang_info['display_name']); ?>';
@@ -118,6 +118,17 @@ class IclCommentsTranslation{
                 jQuery('input[name="icl_translate_reply"]').click(function(){  
                     jQuery(this).val(jQuery(this).attr('checked')?1:0);
                 });
+                
+                jQuery('.vim-r').click(function(){
+                    var oc = jQuery(this).parent().parent().parent().parent().attr('id').split('-');
+                    if(jQuery('input[name="icl_comment_language_'+oc[1]+'"]').length){
+                        jQuery('input[name="icl_translate_reply"]').attr('checked','checked');
+                        jQuery('#icl_translate_from_lang').show();                                                
+                    }else{
+                        jQuery('input[name="icl_translate_reply"]').removeAttr('checked');
+                        jQuery('#icl_translate_from_lang').hide();
+                    }
+                })
             }
             addLoadEvent(icl_comment_reply_options);        
             <?php endif; ?>
