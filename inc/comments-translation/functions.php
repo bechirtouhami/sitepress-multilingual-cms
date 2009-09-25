@@ -115,6 +115,9 @@ class IclCommentsTranslation{
                 content_ro += '<?php echo sprintf(__('Translate from %s', 'sitepress'),$user_lang_info['display_name']); ?>';
                 content_ro += '</label><br clear="all" /><br />';
                 jQuery('#replysubmit').prepend(content_ro);
+                jQuery('input[name="icl_translate_reply"]').click(function(){  
+                    jQuery(this).val(jQuery(this).attr('checked')?1:0);
+                });
             }
             addLoadEvent(icl_comment_reply_options);        
             <?php endif; ?>
@@ -557,16 +560,20 @@ class IclCommentsTranslation{
     
     function comment_post($comment_id){
         global $sitepress, $wpdb;
+        /*
         if(isset($_POST['icl_comment_language_'.$_POST['comment_ID']])){
             $_POST['icl_comment_language'] = $_POST['icl_comment_language_'.$_POST['comment_ID']];
         }
+        */
         if(isset($_POST['icl_user_language'])){
-            if(isset($_POST['icl_translate_reply'])){
+            if($_POST['icl_translate_reply']){
                 $lang = $_POST['icl_user_language'];
                 // send the comment to translation
-                $this->send_comment_to_translation($comment_id,$_POST['icl_comment_language']);
+                $this->send_comment_to_translation($comment_id,$wpdb->get_var("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE element_type='post' AND element_id={$_POST['comment_post_ID']}"));
             }else{
-                $lang = $_POST['icl_comment_language'];
+                //$lang = $_POST['icl_comment_language'];
+                $lang = $wpdb->get_var("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE element_type='post' AND element_id={$_POST['comment_post_ID']}");
+                
                 // sync comment parent
                 // look for comment parent in original language and set for the comment that's been added
                 if(isset($_POST['comment_parent'])){
@@ -588,7 +595,7 @@ class IclCommentsTranslation{
             if(!$lang){
                 $lang = $this->user_language; // just in case
             }
-        }
+        }        
         if(!$lang){
             $lang = $this->user_language;
         }
