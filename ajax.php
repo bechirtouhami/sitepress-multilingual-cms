@@ -360,12 +360,23 @@ switch($_REQUEST['icl_ajx_action']){
         break;
     case 'get_translator_status':
         if(!$sitepress->icl_account_configured()) break;
+
+        $iclsettings = $sitepress->get_settings();
+        
+        if(isset($_POST['cache'])) {
+            $last_call = $iclsettings['last_get_translator_status_call'];
+            if ($time - $last_call < 24 * 60 * 60) {
+                break;
+            }
+        }
+        
+        $iclsettings['last_get_translator_status_call'] = time();
+        
         // check what languages we have translators for.
         require_once ICL_PLUGIN_PATH . '/lib/Snoopy.class.php';
         require_once ICL_PLUGIN_PATH . '/lib/xml2array.php';
         require_once ICL_PLUGIN_PATH . '/lib/icl_api.php';
         
-        $iclsettings = $sitepress->get_settings();
         $icl_query = new ICanLocalizeQuery($iclsettings['site_id'], $iclsettings['access_key']);
         $res = $icl_query->get_website_details();
         
@@ -387,6 +398,7 @@ switch($_REQUEST['icl_ajx_action']){
             $iclsettings['icl_balance'] = $res['client']['attr']['balance'];
         }
         $sitepress->save_settings($iclsettings);
+        
         break;
     
     case 'set_post_to_date':

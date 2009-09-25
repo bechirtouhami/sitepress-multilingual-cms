@@ -2107,6 +2107,19 @@ class SitePress{
         include ICL_PLUGIN_PATH . '/menu/language-selector.php';            
     }
     
+    function have_icl_translator($source, $target){
+        // returns true if we have ICL translators for the language pair
+        if (isset($this->settings['icl_lang_status'])){
+            foreach($this->settings['icl_lang_status'] as $lang) {
+                if ($lang['from'] == $source && $lang['to'] == $target) {
+                    return $lang['have_translators'];
+                }
+            }
+            
+        }
+        
+        return false;
+    }
     function get_default_categories(){
         $default_categories_all = $this->settings['default_categories'];
         

@@ -106,11 +106,16 @@ jQuery(document).ready(function(){
       
     jQuery('a.translation_details_but').click(toogleTranslationDetails);
     
+    var cache = '&cache=1';
+    if (location.href.indexOf("icl-translation-dashboard.php") != -1) {
+        cache = '';
+    }
+    
     jQuery.ajax({
         type: "POST",
         async: false,
         url: icl_ajx_url,
-        data: "icl_ajx_action=get_translator_status"
+        data: "icl_ajx_action=get_translator_status"+cache
     });
 
     // initialize the word count
