@@ -17,7 +17,7 @@ function update_icl_account(){
     if($sitepress->icl_account_configured()){
         $iclsettings = $sitepress->get_settings();
         
-        $pay_per_use = $iclsettings['website_kind'] && $iclsettings['interview_translators'] == 0;
+        $pay_per_use = $iclsettings['translator_choice'] == 1;
 
         // prepare language pairs
         

@@ -1,12 +1,11 @@
+        <?php if($sitepress_settings['translator_choice'] === null) {
+            $sitepress_settings['translator_choice'] = 0;
+        }
+        ?>
+
         <?php if(!$sitepress_settings['content_translation_setup_complete']): /* run wizard */?>        
             <form id="icl_more_options_wizard" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
             <?php wp_nonce_field('icl_more_options_wizard','icl_more_options_wizardnounce') ?>
-            <?php
-                if($sitepress_settings['website_kind'] === null) {
-                    $sitepress_settings['website_kind'] = 2;
-                    $sitepress_settings['interview_translators'] = 1;
-                }
-            ?>
         <?php endif; ?>
 
             <table class="widefat">
@@ -29,18 +28,18 @@
                                 <li> 
                                     <ul>
                                         <li>
-                                            <label><input name="icl_translator_choice" type="radio" value="0" <?php if($sitepress_settings['website_kind'] == 2 && $sitepress_settings['interview_translators'] == 1): ?>checked="checked"<?php endif;?> /> <?php echo __("Professional translators from ICanLocalize.", 'sitepress'); ?></label><br />
+                                            <label><input name="icl_translator_choice" type="radio" value="0" <?php if($sitepress_settings['translator_choice'] == 0): ?>checked="checked"<?php endif;?> /> <?php echo __("Professional translators from ICanLocalize.", 'sitepress'); ?></label><br />
                                         </li>
                                         <li>
-                                            <label><input name="icl_translator_choice" type="radio" value="1" <?php if($sitepress_settings['website_kind'] == 2 && $sitepress_settings['interview_translators'] == 0): ?>checked="checked"<?php endif;?> /> <?php echo __("My own translators using ICanLocalize translation system.", 'sitepress'); ?></label><br />
+                                            <label><input name="icl_translator_choice" type="radio" value="1" <?php if($sitepress_settings['translator_choice'] == 1): ?>checked="checked"<?php endif;?> /> <?php echo __("My own translators using ICanLocalize translation system.", 'sitepress'); ?></label><br />
                                         </li>
                                         <li>
-                                            <label><input name="icl_translator_choice" type="radio" value="2" <?php if($sitepress_settings['website_kind'] == 0): ?>checked="checked"<?php endif;?> /> <?php echo __("No translators - this is a test site.", 'sitepress'); ?></label><br />
+                                            <label><input name="icl_translator_choice" type="radio" value="2" <?php if($sitepress_settings['translator_choice'] == 2): ?>checked="checked"<?php endif;?> /> <?php echo __("No translators - this is a test site.", 'sitepress'); ?></label><br />
                                         </li>
                                     </ul>
                                 </li>
                                 <?php
-                                    if($sitepress_settings['content_translation_setup_complete'] && $sitepress_settings['website_kind'] == 2 && $sitepress_settings['interview_translators'] == 0) {
+                                    if($sitepress_settings['content_translation_setup_complete'] && $sitepress_settings['translator_choice'] == 1) {
                                         $show_own_message = 'style=""';
                                     } else {
                                         $show_own_message = 'style="display:none"';

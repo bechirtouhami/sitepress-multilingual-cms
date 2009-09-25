@@ -390,6 +390,7 @@ class SitePress{
     }
     
     function update_icl_more_options() {
+        $iclsettings['translator_choice'] = $_POST['icl_translator_choice'];
         switch($_POST['icl_translator_choice']) {
             case '0':
                 $iclsettings['website_kind'] = 2;
@@ -398,7 +399,7 @@ class SitePress{
                 
             case '1':
                 $iclsettings['website_kind'] = 2;
-                $iclsettings['interview_translators'] = 0;
+                $iclsettings['interview_translators'] = 1;
                 break;
                 
             default:
@@ -759,13 +760,14 @@ class SitePress{
                 $user['url'] = get_option('home');
                 $user['title'] = get_option('blogname');
                 $user['description'] = get_option('blogdescription');
-                $user['interview_translators'] = $this->settings['interview_translators'];
                 
                 if($user['create_account'] && defined('ICL_AFFILIATE_ID') && defined('ICL_AFFILIATE_KEY')){
                     $user['affiliate_id'] = ICL_AFFILIATE_ID;
                     $user['affiliate_key'] = ICL_AFFILIATE_KEY;
                 }
+
                             
+                $user['interview_translators'] = $this->settings['interview_translators'];
                 $user['project_kind'] = $this->settings['website_kind'];
                 /*
                  if(is_null($user['project_kind']) || $user['project_kind']==''){
@@ -786,7 +788,7 @@ class SitePress{
     
                 // prepare language pairs
                 
-                $pay_per_use = $user['project_kind'] && $user['interview_translators'] == 0;
+                $pay_per_use = $this->settings['translator_choice'] == 1;
                 
                 $language_pairs = $this->settings['language_pairs'];
                 $lang_pairs = array();
