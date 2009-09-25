@@ -711,7 +711,7 @@ class IclCommentsTranslation{
                 ");        
                 
                 foreach($wp_query->comments as $c){
-                    $comment_ids[] = $c->comment_ID;
+                    $comment_ids[] = (int)$c->comment_ID;
                 }                
                 $res = $wpdb->get_results("
                     SELECT t.element_id, t.trid, ms.status 
