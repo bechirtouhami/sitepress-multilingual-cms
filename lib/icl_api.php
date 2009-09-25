@@ -175,13 +175,17 @@ class ICanLocalizeQuery{
         //$parameters['list_type'] = 'post';          
         //$parameters['list_id'] = $timestamp;          
         
-        $file = tempnam("/tmp", "iclt_cms_request_details__") . ".xml.gz";                    
+        
+        $upload_dir = wp_upload_dir();
+        $file = tempnam($upload_dir['path'],'wpml_uploads_')  . ".xml.gz";
+        
         $fh = fopen($file,'wb') or die('File create error');
         fwrite($fh,gzencode($xml));
         fclose($fh);
         
         $res = $this->_request($request_url, 'POST' , $parameters, array('file1[uploaded_data]'=>$file));
 
+        @unlink($file);
                 
         if($res['info']['status']['attr']['err_code']=='0'){
             return $res['info']['result']['attr']['id'];
