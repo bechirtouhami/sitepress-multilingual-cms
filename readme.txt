@@ -15,8 +15,8 @@ Allows building complete multilingual sites with WordPress.
 = Features =
 
  * Turns a single WordPress install into a [multilingual site](http://wpml.org/wordpress-translation/).
- * Built-in theme localization without .mo files.
- * Comment translation allows you to moderate and reply to comments in your own language.
+ * Built-in [theme localization](http://wpml.org/home/getting-started-guide/theme-localization/) without .mo files.
+ * [Comments translation](http://wpml.org/wordpress-translation/translation-for-visitor-comments/) allows you to moderate and reply to comments in your own language.
  * Integrated [professional translation](http://wpml.org/wordpress-translation/content-translation/) (optional feature for folks who need help translating).
  * Includes [CMS navigation](http://wpml.org/wordpress-cms-plugins/cms-navigation-plugin/) elements for drop down menus, breadcrumbs trail and sidebar navigation.
  * [Robust links](http://wpml.org/wordpress-cms-plugins/absolute-links-plugin/) to posts and pages that never break.
@@ -69,7 +69,7 @@ Also, go through the [detailed description](http://wpml.org/support/cannot-activ
 
 == Screenshots ==
 
-You can find screen shots of WPML in our [press kit](http://wpml.org/home/press-kit/).
+You can find screen shots of WPML in the [quick intro](http://wpml.org/home/press-kit/) page.
 
 == Changelog ==
 
