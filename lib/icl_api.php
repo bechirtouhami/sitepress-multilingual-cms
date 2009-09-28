@@ -67,6 +67,11 @@ class ICanLocalizeQuery{
         $url_parts = parse_url($request);
         $https = $url_parts['scheme']=='https';
         if($method=='GET'){            
+            $_force_mp_post_http = get_option('_force_mp_post_http');
+            if($_force_mp_post_http){
+                $request = str_replace('https://','http://',$request);
+                $https = false;
+            }
             $c->fetch($request);  
             if((!$c->results || $c->timed_out) && $https){
                 $c->fetch(str_replace('https://','http://',$request));  
