@@ -181,6 +181,15 @@ function icl_plugin_upgrade(){
         $wpdb->update($wpdb->prefix.'icl_translations', array('language_code'=>$iclsettings['admin_default_language']), array('language_code'=>'', 'element_type'=>'comment', 'source_language_code'=>''));
     }
 
+
+    if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.3.0.3', '<')){
+        if ($sitepress->icl_account_configured()) {
+            $iclsettings = get_option('icl_sitepress_settings');
+            $iclsettings['content_translation_setup_complete'] = 1;
+            update_option('icl_sitepress_settings',$iclsettings);
+        }
+    }
+
     if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '<')){
         update_option('icl_sitepress_version', ICL_SITEPRESS_VERSION);
     }
