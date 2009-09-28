@@ -2457,7 +2457,7 @@ class SitePress{
     
     // adds the language parameter to the admin post filtering/search
     function restrict_manage_posts(){
-        echo '<input type="hidden" name="lang" value="'.$this->this_lang.'">';
+        echo '<input type="hidden" name="lang" value="'.$this->this_lang.'" />';
     }
     
     // adds the language parameter to the admin pages search
@@ -2671,7 +2671,17 @@ class SitePress{
             if($v['code']==$this->get_current_language()) continue;
             $langs[] = $v['code'];
         }
-        $colh = join('&nbsp;', $langs);
+        $res = $wpdb->get_results("
+            SELECT lang_code, flag, from_template FROM {$wpdb->prefix}icl_flags WHERE lang_code IN('".join("','",$langs)."')
+        ");
+        foreach($res as $r){
+            if($r->from_template){
+                $fpath = get_bloginfo('template_directory') . '/images/flags/';
+            }else{
+            }   $fpath = ICL_PLUGIN_URL . '/res/flags/';
+            $flags[] = '<img src="'.$fpath.$r->flag.'" width="18" heigth="12" alt="'.$r->lang_code.'" title="'.$r->lang_code.'" />';
+        }
+        $colh = join('&nbsp;', $flags);
         foreach($columns as $k=>$v){
             $new_columns[$k] = $v;
             if($k=='title'){
@@ -2697,8 +2707,8 @@ class SitePress{
                 $link = 'post-new.php?trid=' . $__management_columns_posts_translations[$id][$this->get_current_language()]->trid.'&amp;lang='.$v['code'].'&amp;source_lang=' . $src_lang;
             }
             echo '<a href="'.$link.'" title="'.$alt.'">';
-            echo '<img src="'.ICL_PLUGIN_URL . '/res/img/' .$img.'" alt="'.$alt.'" width="16" height="16" />';
-            echo '</a>';
+            echo '<img style="padding:1px;" border="0" src="'.ICL_PLUGIN_URL . '/res/img/' .$img.'" alt="'.$alt.'" width="16" height="16" />';
+            echo '</a>&nbsp;';
         }
     }
      
