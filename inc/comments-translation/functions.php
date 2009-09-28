@@ -736,7 +736,7 @@ class IclCommentsTranslation{
     function comment_text_filter_admin($comment_text){
         global $comment, $comments, $wpdb;
         static $comment_ids, $translation_status;
-        if(empty($comment_ids)){
+        if(empty($comment_ids) && !empty($comments)){
             
             foreach($comments as $c){
                 $comment_ids[] = $c->comment_ID;

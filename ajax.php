@@ -270,11 +270,16 @@ switch($_REQUEST['icl_ajx_action']){
             echo 1;
         }                
         break;
-    case 'icl_lang_more_options':
+    case 'icl_admin_language_options':
         $iclsettings['admin_default_language'] = $_POST['icl_admin_default_language'];
         $sitepress->save_settings($iclsettings);
         echo 1; 
-        break;
+        break;    
+    case 'icl_lang_more_options':
+        $iclsettings['hide_translation_controls_on_posts_lists'] = !$_POST['icl_translation_controls_on_posts_lists'];
+        $sitepress->save_settings($iclsettings);
+        echo 1; 
+        break;        
     case 'icl_page_sync_options':
         $iclsettings['sync_page_ordering'] = intval($_POST['icl_sync_page_ordering']);        
         $iclsettings['sync_page_parent'] = intval($_POST['icl_sync_page_parent']);            

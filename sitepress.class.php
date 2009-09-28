@@ -159,6 +159,16 @@ class SitePress{
             add_action('show_user_profile', array($this, 'show_user_options'));
             add_action('personal_options_update', array($this, 'save_user_options'));
             
+            if($pagenow == 'edit.php' && !$this->settings['hide_translation_controls_on_posts_lists']){
+                add_filter('manage_posts_columns',array($this,'add_posts_management_column'));
+                add_action('manage_posts_custom_column',array($this,'add_content_for_posts_management_column'));            
+            }
+            if($pagenow == 'edit-pages.php' && !$this->settings['hide_translation_controls_on_posts_lists']){
+                add_filter('manage_pages_columns',array($this,'add_posts_management_column'));
+                add_action('manage_pages_custom_column',array($this,'add_content_for_posts_management_column'));
+            }
+            
+            
         } //end if the initial language is set - existing_content_language_verified
         
     }
@@ -761,11 +771,10 @@ class SitePress{
                 $user['title'] = get_option('blogname');
                 $user['description'] = get_option('blogdescription');
                 
-                if($user['create_account'] && defined('ICL_AFFILIATE_ID') && defined('ICL_AFFILIATE_KEY')){
+               if($user['create_account'] && defined('ICL_AFFILIATE_ID') && defined('ICL_AFFILIATE_KEY')){
                     $user['affiliate_id'] = ICL_AFFILIATE_ID;
                     $user['affiliate_key'] = ICL_AFFILIATE_KEY;
                 }
-
                             
                 $user['interview_translators'] = $this->settings['interview_translators'];
                 $user['project_kind'] = $this->settings['website_kind'];
@@ -806,7 +815,7 @@ class SitePress{
                         }                    
                     }
                 }
-                $icl_query = new ICanLocalizeQuery();
+                $icl_query = new ICanLocalizeQuery();                
                 list($site_id, $access_key) = $icl_query->createAccount(array_merge($user,$lang_pairs));                
                 if(!$site_id){
                     $_POST['icl_form_errors'] = $access_key;
@@ -2625,6 +2634,73 @@ class SitePress{
         echo '</p></div>';
     }
     
+    function add_posts_management_column($columns){
+        global $posts, $wpdb, $__management_columns_posts_translations;
+        if(empty($posts)){
+            return $columns;
+        }
+        if(is_null($__management_columns_posts_translations)){        
+            foreach($posts as $p){
+                $post_ids[] = $p->ID;
+            }
+            // get posts translations
+            // get trids
+            $trids = $wpdb->get_col("
+                SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_type='post' AND element_id IN (".join(',', $post_ids).")
+            ");
+            $ptrs = $wpdb->get_results("
+                SELECT trid, element_id, language_code, source_language_code FROM {$wpdb->prefix}icl_translations WHERE trid IN (".join(',', $trids).")
+            ");
+            foreach($ptrs as $v){
+                $by_trid[$v->trid][] = $v;
+            }
+
+            foreach($ptrs as $v){
+                if(in_array($v->element_id, $post_ids)){
+                    $el_trid = $v->trid;
+                    foreach($ptrs as $val){
+                        if($val->trid == $el_trid){
+                            $__management_columns_posts_translations[$v->element_id][$val->language_code] = $val;
+                        }
+                    }
+                }
+            }
+        }
+        $active_languages = $this->get_active_languages();
+        foreach($active_languages as $k=>$v){
+            if($v['code']==$this->get_current_language()) continue;
+            $langs[] = $v['code'];
+        }
+        $colh = join('&nbsp;', $langs);
+        foreach($columns as $k=>$v){
+            $new_columns[$k] = $v;
+            if($k=='title'){
+                $new_columns['translations'] = $colh;
+            }
+        }
+        return $new_columns;
+    }
     
+    function add_content_for_posts_management_column(){
+        global $id, $__management_columns_posts_translations;
+        $active_languages = $this->get_active_languages();
+        foreach($active_languages as $k=>$v){
+            if($v['code']==$this->get_current_language()) continue;
+            if($__management_columns_posts_translations[$id][$v['code']]){
+                $img = 'edit_translation.png';
+                $alt = sprintf(__('Edit the %s translation'), $v['display_name']);                
+                $link = 'post.php?action=edit&post='.$__management_columns_posts_translations[$id][$v['code']]->element_id.'&lang='.$v['code'];
+            }else{
+                $img = 'add_translation.png';
+                $alt = sprintf(__('Add translation to %s'), $v['display_name']);
+                $src_lang = $this->get_current_language() == 'all' ? $this->get_default_language() : $this->get_current_language();
+                $link = 'post-new.php?trid=' . $__management_columns_posts_translations[$id][$this->get_current_language()]->trid.'&lang='.$v['code'].'&source_lang=' . $src_lang;
+            }
+            echo '<a href="'.$link.'" title="'.$alt.'">';
+            echo '<img src="'.ICL_PLUGIN_URL . '/res/img/' .$img.'" alt="'.$alt.'" width="16" height="16" />';
+            echo '</a>';
+        }
+    }
+     
 }
 ?>

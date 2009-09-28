@@ -484,7 +484,7 @@
                     <tbody>
                         <tr>
                             <td>
-                                <form id="icl_lang_more_options" name="icl_lang_more_options" action="">        
+                                <form id="icl_admin_language_options" name="icl_admin_language_options" action="">        
                                 <?php if(is_admin()): ?>
                                 <p>
                                     <label>
@@ -500,7 +500,7 @@
                                 <p><?php printf(__('Each user can choose the admin language. You can edit your language preferences by visiting your <a href="%s">profile page</a>.','sitepress'),'profile.php#wpml')?></p>
                                 <p>
                                     <input class="button" name="save" value="<?php echo __('Apply','sitepress') ?>" type="submit" />
-                                    <span class="icl_ajx_response" id="icl_ajx_response_mo"></span>
+                                    <span class="icl_ajx_response" id="icl_ajx_response_al"></span>
                                 </p>
                                 </form>
                             </td>
@@ -510,6 +510,36 @@
                 <br />
             <?php endif; ?>                            
             </div>
+            
+            <div id="icl_mo" class="icl_advanced_feature">
+            <?php if(count($active_languages) > 1): ?>   
+                <table class="widefat">
+                    <thead>
+                        <tr>
+                            <th><?php echo __('More options', 'sitepress') ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <form id="icl_lang_more_options" name="icl_lang_more_options" action="">        
+                                <p>
+                                    <label>
+                                        <input type="checkbox" name="icl_translation_controls_on_posts_lists" <?php if(!$sitepress_settings['hide_translation_controls_on_posts_lists']) echo 'checked="checked"' ?> /> <?php _e('Display translation controls on posts and pages lists.','sitepress'); ?>
+                                    </label>
+                                </p>
+                                <p>
+                                    <input class="button" name="save" value="<?php echo __('Apply','sitepress') ?>" type="submit" />
+                                    <span class="icl_ajx_response" id="icl_ajx_response_mo"></span>
+                                </p>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br />
+            <?php endif; ?>                            
+            </div>            
 
         </div>
     <?php endif; ?>
