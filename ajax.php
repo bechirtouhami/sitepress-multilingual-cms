@@ -399,6 +399,7 @@ switch($_REQUEST['icl_ajx_action']){
         }
         $sitepress->save_settings($iclsettings);
         
+        echo json_encode($iclsettings['icl_lang_status']);
         break;
     
     case 'set_post_to_date':
