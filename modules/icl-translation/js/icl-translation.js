@@ -113,9 +113,28 @@ jQuery(document).ready(function(){
     
     jQuery.ajax({
         type: "POST",
-        async: false,
         url: icl_ajx_url,
-        data: "icl_ajx_action=get_translator_status"+cache
+        dataType: 'json',
+        data: "icl_ajx_action=get_translator_status"+cache,
+        success: function(msg){
+            if (cache == '') {
+                var from_lang = jQuery('input[name="filter[lang]"]:checked').attr('value');
+                for(i in msg){
+                    if(msg[i]['from'] == from_lang) {
+                        if(msg[i]['have_translators'] == 1) {
+                            var to_lang = msg[i]['to'];
+                            if(jQuery('#icl-tr-not-avail-to-'+to_lang).length > 0) {
+                                jQuery('input[name="icl-tr-to-'+to_lang+'"]').removeAttr('disabled');
+                                jQuery('#icl-tr-not-avail-to-'+to_lang).remove();
+                            }
+                            
+                        }
+                    }
+                    
+                }
+            }
+            
+        }
     });
 
     // initialize the word count

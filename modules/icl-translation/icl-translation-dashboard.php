@@ -243,7 +243,7 @@
                 <?php if(isset($target_status[$lang['code']]) and $target_status[$lang['code']] == 1): ?>
                     <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" checked="checked" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name']); ?></label></li>
                 <?php else:  ?>
-                    <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" disabled="disabled" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name'] . __(' - No translators assigned yet in ICanLocalize', 'sitepress')); ?></label></li>
+                    <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" disabled="disabled" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name'])?><span id="icl-tr-not-avail-to-<?php echo $lang['code']?>"><?php echo __(' - No translators assigned yet in ICanLocalize', 'sitepress'); ?></span></label></li>
                 <?php endif; ?>
             <?php else:  ?>
                 <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" disabled="disabled" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name'] . __(' - This language has not been selected for translation by ICanLocalize', 'sitepress')); ?></label></li>
