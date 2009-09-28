@@ -162,12 +162,13 @@ class SitePress{
             if($pagenow == 'edit.php' && !$this->settings['hide_translation_controls_on_posts_lists']){
                 add_filter('manage_posts_columns',array($this,'add_posts_management_column'));
                 add_action('manage_posts_custom_column',array($this,'add_content_for_posts_management_column'));            
+                add_action('admin_print_scripts', array($this, '__set_posts_management_column_width'));
             }
             if($pagenow == 'edit-pages.php' && !$this->settings['hide_translation_controls_on_posts_lists']){
                 add_filter('manage_pages_columns',array($this,'add_posts_management_column'));
                 add_action('manage_pages_custom_column',array($this,'add_content_for_posts_management_column'));
+                add_action('admin_print_scripts', array($this, '__set_posts_management_column_width'));
             }
-            
             
         } //end if the initial language is set - existing_content_language_verified
         
@@ -2679,9 +2680,9 @@ class SitePress{
                 $fpath = get_bloginfo('template_directory') . '/images/flags/';
             }else{
             }   $fpath = ICL_PLUGIN_URL . '/res/flags/';
-            $flags[] = '<img src="'.$fpath.$r->flag.'" width="18" heigth="12" alt="'.$r->lang_code.'" title="'.$r->lang_code.'" />';
+            $flags[] = '<img src="'.$fpath.$r->flag.'" width="18" height="12" alt="'.$r->lang_code.'" title="'.$r->lang_code.'" />';
         }
-        $colh = join('&nbsp;', $flags);
+        $colh = join('', $flags);
         foreach($columns as $k=>$v){
             $new_columns[$k] = $v;
             if($k=='title'){
@@ -2707,10 +2708,16 @@ class SitePress{
                 $link = 'post-new.php?trid=' . $__management_columns_posts_translations[$id][$this->get_current_language()]->trid.'&amp;lang='.$v['code'].'&amp;source_lang=' . $src_lang;
             }
             echo '<a href="'.$link.'" title="'.$alt.'">';
-            echo '<img style="padding:1px;" border="0" src="'.ICL_PLUGIN_URL . '/res/img/' .$img.'" alt="'.$alt.'" width="16" height="16" />';
-            echo '</a>&nbsp;';
+            echo '<img style="padding:1px;margin:2px;" border="0" src="'.ICL_PLUGIN_URL . '/res/img/' .$img.'" alt="'.$alt.'" width="16" height="16" />';
+            echo '</a>';
         }
     }
+    
+    function __set_posts_management_column_width(){
+        $w = 22 * count($this->get_active_languages());
+        echo '<style>.column-translations{width:'.$w.'px;}.column-translations img{margin:2px;}</style>';
+    }
+    
      
 }
 ?>
