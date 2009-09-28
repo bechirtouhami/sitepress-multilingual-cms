@@ -181,14 +181,11 @@ class ICanLocalizeQuery{
         //$parameters['list_id'] = $timestamp;          
         
         
-        $upload_dir = wp_upload_dir();
-        $file = tempnam($upload_dir['path'],'wpml_uploads_')  . ".xml.gz";
+        $file = "cms_request_details.xml.gz";
         
-        $fh = fopen($file,'wb') or die('File create error');
-        fwrite($fh,gzencode($xml));
-        fclose($fh);
-        
-        $res = $this->_request($request_url, 'POST' , $parameters, array('file1[uploaded_data]'=>$file));
+        // send the file upload as the file_name and file_content in an array.
+        // Snoopy has been changed to use this format.
+        $res = $this->_request($request_url, 'POST' , $parameters, array('file1[uploaded_data]'=>array(array($file, gzencode($xml)))));
 
         @unlink($file);
                 

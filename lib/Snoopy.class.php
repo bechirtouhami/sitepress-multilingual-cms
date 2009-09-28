@@ -1226,12 +1226,21 @@ class IcanSnoopy
                 while (list($field_name, $file_names) = each($formfiles)) {
                     settype($file_names, "array");
                     while (list(, $file_name) = each($file_names)) {
-                        if (!is_readable($file_name)) continue;
-
-                        $fp = fopen($file_name, "r");
-                        $file_content = fread($fp, filesize($file_name));
-                        fclose($fp);
-                        $base_name = basename($file_name);
+                        // HACK: check to see if $file_name is an array
+                        if (is_array($file_name)) {
+                            // passing the file_name and file_data in an array.
+                            $file_content = $file_name[1];
+                            $file_name = $file_name[0];
+                            $base_name = basename($file_name);
+                            
+                        } else {
+                            if (!is_readable($file_name)) continue;
+    
+                            $fp = fopen($file_name, "r");
+                            $file_content = fread($fp, filesize($file_name));
+                            fclose($fp);
+                            $base_name = basename($file_name);
+                        }
 
                         $postdata .= "--".$this->_mime_boundary."\r\n";
                         $postdata .= "Content-Disposition: form-data; name=\"$field_name\"; filename=\"$base_name\"\r\n"; //HACK
