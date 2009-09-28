@@ -278,12 +278,20 @@ class ICanLocalizeQuery{
     }
     
     function _gzdecode($data){
-      $g=tempnam('/tmp','ff');
-      @file_put_contents($g,$data);
-      ob_start();
-      readgzfile($g);
-      $d=ob_get_clean();
-      return $d;
+        
+        $upload_dir = wp_upload_dir();
+        $file = tempnam($upload_dir['path'],'wpml_uploads_')  . ".xml.gz";
+        
+        $fh = fopen($file,'wb') or die('File create error');
+        fwrite($fh,$data);
+        fclose($fh);
+        
+        ob_start();
+        readgzfile($file);
+        $d=ob_get_clean();
+      
+        @unlink($file);
+        return $d;
     }
     
     function cms_create_message($body, $from_language, $to_language){
