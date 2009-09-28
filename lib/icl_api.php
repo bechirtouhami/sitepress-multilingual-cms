@@ -187,8 +187,6 @@ class ICanLocalizeQuery{
         // Snoopy has been changed to use this format.
         $res = $this->_request($request_url, 'POST' , $parameters, array('file1[uploaded_data]'=>array(array($file, gzencode($xml)))));
 
-        @unlink($file);
-                
         if($res['info']['status']['attr']['err_code']=='0'){
             return $res['info']['result']['attr']['id'];
         }else{

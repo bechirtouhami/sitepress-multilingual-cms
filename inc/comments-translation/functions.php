@@ -302,40 +302,6 @@ class IclCommentsTranslation{
         <?php endif; ?>  
         <?php 
     }    
-    
-    function &get_post_translated_comments($arg=null){
-        global $wp_query, $wpdb, $user_ID;
-        global $comments;        
-        print_r($wp_query);
-        if(!is_single() && !is_page() && !is_admin()) return;
-        $post_id = $wp_query->post->ID;        
-        /*
-        if($post_id){
-            $cond = "p1.comment_post_ID='{$post_id}' AND comment_approved = 1 OR comment_approved = 0";
-        }else{
-            if($comments){
-                foreach($comments as $c){ $cs[] = $c->comment_ID; }
-                $cond = "p1.comment_ID IN (" . $cids = join(',',$cs) . ")";            
-            }
-        }
-        $translated_comments = $wpdb->get_results("
-            SELECT p2.id, p2.translation, p1.comment_approved, p1.user_id FROM {$wpdb->comments} p1 
-            LEFT JOIN {$wpdb->prefix}comments_translated p2 ON p1.comment_ID=p2.id
-            WHERE $cond 
-        ");                  
-        if($translated_comments){
-            foreach($translated_comments as $t){                
-                if($t->comment_approved=='0' && $t->user_id==$user_ID){
-                    $t->translation = '<small style="color:#f77">' . 
-                        __("You submitted this comment to translation.\nThe comment will visible to others as soon as the translation is completed.") 
-                        . '</small><br />' . $t->translation;
-                }
-                $this->post_comments_translated[$t->id] = $t->translation;
-            }   
-        }
-        */
-        return $arg;
-    }
         
     function comments_array_filter($comments){
         if(defined('__comments_array_filter_runonce')){

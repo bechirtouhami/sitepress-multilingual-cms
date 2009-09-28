@@ -80,7 +80,6 @@ function emw_check_cross_domain_login () {
                         delete_option ('emw_login');
                         header ('HTTP/1.1 301 Moved Permanently');
                         header ('Location: '.$options['redirect']);
-                        print_r ($options);
                         die();
                     }
                 }
@@ -96,8 +95,7 @@ function emw_check_cross_domain_login () {
         $domains = $sitepress_settings['language_domains'];
         if ($domains) {
             $languages=icl_get_languages('skip_missing=0');
-            $language_index = $_GET['next_language']+1;
-            //print_r ($languages[$language_index]);
+            $language_index = $_GET['next_language']+1;            
             if (isset($languages[$language_index]['language_code'])) {
                 $next_domain = $domains[$languages[$language_index]['language_code']];
                 wp_clear_auth_cookie();
