@@ -1055,6 +1055,8 @@ function _icl_test_xmlrpc($args){
  * 2 – Signature failed
  * 3 – website_id incorrect
  * 4 – cms_request_id not found
+ * 5 - icl translation not enabled
+ * 6 - unknown error processing translation
  */
 
 function setTranslationStatus($args){
@@ -1085,14 +1087,14 @@ function setTranslationStatus($args){
         }
         
         if ( !$sitepress->get_icl_translation_enabled() ) {
-            return 0;
+            return 5;
         }
                
         try{
             if (icl_process_translated_document($request_id, $language) === true){
                 return 1;
             } else {
-                return 0;
+                return 6;
             }
         } catch(Exception $e) {
             return $e->getMessage();
