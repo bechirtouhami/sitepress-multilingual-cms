@@ -476,6 +476,7 @@ function wpml_send_content_to_translation($string, $content_id, $content_type, $
  * @package WPML
  * @subpackage WPML API
  *
+ * @param string $content_type
  * @param string $callback
  *    
  * @return error code (0 on success)
