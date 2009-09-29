@@ -14,13 +14,8 @@ class SitePress{
         if(false != $this->settings){
             $this->verify_settings();
         } 
-
+        
         add_action('plugins_loaded', array($this,'init'));
-                
-        // Ajax feedback
-        if(isset($_POST['icl_ajx_action'])){
-            add_action('init', array($this,'ajax_responses'));
-        }
         
         // Administration menus
         add_action('admin_menu', array($this, 'administration_menu'));
@@ -31,6 +26,9 @@ class SitePress{
         }        
         
         if($this->settings['existing_content_language_verified']){
+            // Admin language 
+            add_action('plugins_loaded', array($this, 'set_admin_language'));
+            
             // Post/page language box
             add_action('admin_head', array($this,'post_edit_language_options'));        
             
@@ -281,10 +279,38 @@ class SitePress{
         }   
              
     }
-                
-    function ajax_responses(){
-        //global $wpdb;
-        // moved
+                    
+    function set_admin_language(){
+        global $wpdb, $current_user;
+        
+        if(is_null($current_user) && function_exists('wp_get_current_user')){
+            $current_user = wp_get_current_user();
+        }
+        
+        
+        $active_languages = $wpdb->get_col("SELECT code FROM {$wpdb->prefix}icl_languages WHERE active = 1");
+        
+        $this->admin_language = get_usermeta($current_user->data->ID,'icl_admin_language',true);
+        if(!in_array($this->admin_language, $active_languages)){
+            delete_usermeta($current_user->data->ID,'icl_admin_language');
+        }
+        if(!in_array($this->settings['admin_default_language'], $active_languages)){
+            $this->settings['admin_default_language'] = $this->get_default_language();
+            $this->save_settings();
+        }
+        
+        if(!$this->admin_language){
+            $this->admin_language = $this->settings['admin_default_language'];
+        }
+        if(!$this->admin_language){
+            $this->admin_language = $this->get_default_language();
+            $this->settings['admin_default_language'];
+            $this->save_settings();
+        }
+    }
+    
+    function get_admin_language(){
+        return $this->admin_language;
     }
       
     function administration_menu(){
@@ -470,21 +496,32 @@ class SitePress{
     }
     
     function get_active_languages($refresh = false){
-        global $wpdb, $locale;
+        global $wpdb;        
         if($refresh || !$this->active_languages){
+            $in_language = defined('WP_ADMIN') ? $this->admin_language : $this->get_current_language() ;
             $res = $wpdb->get_results("
                 SELECT code, english_name, active, lt.name AS display_name 
                 FROM {$wpdb->prefix}icl_languages l
                     JOIN {$wpdb->prefix}icl_languages_translations lt ON l.code=lt.language_code           
                 WHERE 
-                    active=1 AND lt.display_language_code = '{$locale}' 
+                    active=1 AND lt.display_language_code = '{$in_language}' 
                 ORDER BY major DESC, english_name ASC", ARRAY_A);        
             $languages = array();
             if($res){
                 foreach($res as $r){
-                    $languages[] = $r;
+                    $languages[$r['code']] = $r;
                 }        
             } 
+            
+            $res = $wpdb->get_results("
+                SELECT language_code, name 
+                FROM {$wpdb->prefix}icl_languages_translations
+                WHERE language_code IN ('".join("','",array_keys($languages))."') AND language_code = display_language_code
+            ");
+            foreach($res as $row){
+                $languages[$row->language_code]['native_name'] = $row->name;     
+            }
+            
             $this->active_languages = $languages;           
         }
         return $this->active_languages;
@@ -538,12 +575,17 @@ class SitePress{
     
     function get_language_details($code){
         global $wpdb;
+        if(defined('WP_ADMIN')){
+            $dcode = $this->admin_language;
+        }else{
+            $dcode = $code;
+        }
         $language = $wpdb->get_row("
             SELECT 
                 code, english_name, major, active, lt.name AS display_name   
             FROM {$wpdb->prefix}icl_languages l
                 JOIN {$wpdb->prefix}icl_languages_translations lt ON l.code=lt.language_code           
-            WHERE lt.display_language_code = '{$code}' AND code='{$code}'
+            WHERE lt.display_language_code = '{}' AND code='{$code}'
             ORDER BY major DESC, english_name ASC", ARRAY_A);
         return $language;
     }
@@ -2296,33 +2338,10 @@ class SitePress{
     }
     
     function locale(){
-        global $wpdb, $locale, $current_user;
-        
-        if(is_null($current_user) && function_exists('wp_get_current_user')){
-            $current_user = wp_get_current_user();
-        }
-        
-        $user_admin_language = get_usermeta($current_user->data->ID,'icl_admin_language',true);
-        
-        $active_languages = $this->get_active_languages();
-        foreach($active_languages as $al){
-            $al_codes[] = $al['code'];
-        }
-        if(!in_array($user_admin_language, (array)$al_codes)){
-            $user_admin_language = '';
-            delete_usermeta($current_user->data->ID,'icl_admin_language');
-        }
-        if(!in_array($this->settings['admin_default_language'], (array)$al_codes)){
-            $this->settings['admin_default_language'] = $this->get_default_language();
-            $this->save_settings();
-        }
+        global $wpdb, $locale;
         
         if(defined('WP_ADMIN')){            
-            if($user_admin_language){
-                $l = $wpdb->get_var("SELECT locale FROM {$wpdb->prefix}icl_locale_map WHERE code='{$user_admin_language}'");
-            }else{
-                $l = $wpdb->get_var("SELECT locale FROM {$wpdb->prefix}icl_locale_map WHERE code='{$this->settings['admin_default_language']}'");
-            }             
+            $l = $wpdb->get_var("SELECT locale FROM {$wpdb->prefix}icl_locale_map WHERE code='{$this->admin_language}'");
         }else{
             $l = $wpdb->get_var("SELECT locale FROM {$wpdb->prefix}icl_locale_map WHERE code='{$this->this_lang}'");
         }        
@@ -2611,7 +2630,7 @@ class SitePress{
                         <select name="icl_user_admin_language">
                         <option value=""<?php if($user_language==$this->settings['admin_default_language']) echo ' selected="selected"'?>><?php printf(__('Default language (currently %s)','sitepress'), $admin_default_language );?>&nbsp;</option>
                         <?php foreach($active_languages as $al):?>
-                        <option value="<?php echo $al['code'] ?>"<?php if($user_language==$al['code']) echo ' selected="selected"'?>><?php echo $al['display_name'] ?>&nbsp;</option>
+                        <option value="<?php echo $al['code'] ?>"<?php if($user_language==$al['code']) echo ' selected="selected"'?>><?php echo $al['display_name']; if($this->admin_language != $al['code']) echo ' ('. $al['native_name'] .')'; ?>&nbsp;</option>
                         <?php endforeach; ?>
                         </select>                        
                         <span class="description"><?php _e('this will be your admin language and will also be used for translating comments.', 'sitepress'); ?></span>
@@ -2673,12 +2692,11 @@ class SitePress{
             if($v['code']==$this->get_current_language()) continue;
             $langs[] = $v['code'];
         }
-        $cur_lang = $this->get_current_language() != 'all' ? $this->get_current_language() : $this->get_default_language();
         $res = $wpdb->get_results("
             SELECT f.lang_code, f.flag, f.from_template, l.name 
             FROM {$wpdb->prefix}icl_flags f 
                 JOIN {$wpdb->prefix}icl_languages_translations l ON f.lang_code = l.language_code
-            WHERE l.display_language_code = '".$cur_lang."' AND f.lang_code IN('".join("','",$langs)."')
+            WHERE l.display_language_code = '".$this->admin_language."' AND f.lang_code IN('".join("','",$langs)."')
         ");
         foreach($res as $r){
             if($r->from_template){

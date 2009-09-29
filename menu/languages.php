@@ -31,7 +31,7 @@
         $languages = $sitepress->get_languages();            
         $sitepress_settings = $sitepress->get_settings();
         foreach($active_languages as $lang){
-            if($lang['code']!=$sitepress->get_default_language()){
+            if($lang['code'] != $sitepress->get_default_language()){
                 $sample_lang = $lang;
                 break;
             }
@@ -491,7 +491,7 @@
                                         <?php _e('Default admin language: ', 'sitepress'); ?>
                                         <select name="icl_admin_default_language">
                                         <?php foreach($active_languages as $al):?>
-                                        <option value="<?php echo $al['code'] ?>"<?php if($sitepress_settings['admin_default_language']==$al['code']) echo ' selected="selected"'?>><?php echo $al['display_name'] ?>&nbsp;</option>
+                                        <option value="<?php echo $al['code'] ?>"<?php if($sitepress_settings['admin_default_language']==$al['code']) echo ' selected="selected"'?>><?php echo $al['display_name']; if($sitepress->get_admin_language() != $al['code']) echo ' ('. $al['native_name'] .')' ?>&nbsp;</option>
                                         <?php endforeach; ?>
                                         </select>
                                     </label>
