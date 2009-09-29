@@ -488,7 +488,6 @@ switch($_REQUEST['icl_ajx_action']){
         $sitepress->save_settings($iclsettings);
         break;
     case 'dismiss_translate_help':
-        var_dump($iclsettings);
         $iclsettings['dont_show_translate_help'] = true;
         $sitepress->save_settings($iclsettings);
         break;        
