@@ -26,8 +26,6 @@ class SitePress{
         }        
         
         if($this->settings['existing_content_language_verified']){
-            // Admin language 
-            add_action('plugins_loaded', array($this, 'set_admin_language'));
             
             // Post/page language box
             add_action('admin_head', array($this,'post_edit_language_options'));        
@@ -174,6 +172,7 @@ class SitePress{
     }
                                               
     function init(){ 
+        $this->set_admin_language();
         //configure callbacks for plugin menu pages
         if(defined('WP_ADMIN') && isset($_GET['page']) && 0 === strpos($_GET['page'],basename(ICL_PLUGIN_PATH).'/')){
             add_action('icl_menu_footer', array($this, 'menu_footer'));
@@ -498,7 +497,8 @@ class SitePress{
     function get_active_languages($refresh = false){
         global $wpdb;        
         if($refresh || !$this->active_languages){
-            $in_language = defined('WP_ADMIN') && $this->admin_language ? $this->admin_language : $this->get_current_language() ;
+            $this->admin_language;
+            $in_language = defined('WP_ADMIN') && $this->admin_language ? $this->admin_language : $this->get_current_language()?$this->get_current_language():$this->get_default_language() ;
             $res = $wpdb->get_results("
                 SELECT code, english_name, active, lt.name AS display_name 
                 FROM {$wpdb->prefix}icl_languages l
