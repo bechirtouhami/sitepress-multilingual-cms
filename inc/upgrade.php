@@ -183,8 +183,8 @@ function icl_plugin_upgrade(){
 
 
     if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.3.0.3', '<')){
-        if ($sitepress->icl_account_configured()) {
-            $iclsettings = get_option('icl_sitepress_settings');
+        $iclsettings = get_option('icl_sitepress_settings');
+        if ($iclsettings['site_id'] && $iclsettings['access_key']) {            
             $iclsettings['content_translation_setup_complete'] = 1;
             update_option('icl_sitepress_settings',$iclsettings);
         }
