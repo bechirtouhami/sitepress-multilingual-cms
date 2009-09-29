@@ -95,7 +95,6 @@ class ICanLocalizeQuery{
                     update_option('_mp_post_https_tries', $_mp_post_https_tries);
                 }
             }
-            echo $request;
             $c->submit($request, $formvars, $formfiles);            
             if((!$c->results || $c->timed_out) && $https){
                 $c->submit(str_replace('https://','http://',$request), $formvars, $formfiles);  
