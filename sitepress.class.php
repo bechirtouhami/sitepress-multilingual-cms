@@ -244,7 +244,7 @@ class SitePress{
                             $this->this_lang = rtrim($_GET['lang'],'/');             
                         }else{
                             $this->this_lang = $this->get_default_language();
-                        }
+                        }                        
                 }
             }
             
@@ -2410,7 +2410,7 @@ class SitePress{
                     $page_on_front_sc = $t->element_id;
                 }
             }        
-        }
+        }             
         return $page_on_front_sc;
     }      
       
@@ -2719,7 +2719,7 @@ class SitePress{
     }
     
     function add_content_for_posts_management_column(){
-        global $id, $__management_columns_posts_translations;
+        global $id, $__management_columns_posts_translations, $pagenow;
         $active_languages = $this->get_active_languages();
         foreach($active_languages as $k=>$v){
             if($v['code']==$this->get_current_language()) continue;
@@ -2731,7 +2731,12 @@ class SitePress{
                 $img = 'add_translation.png';
                 $alt = sprintf(__('Add translation to %s'), $v['display_name']);
                 $src_lang = $this->get_current_language() == 'all' ? $this->get_default_language() : $this->get_current_language();
-                $link = 'post-new.php?trid=' . $__management_columns_posts_translations[$id][$this->get_current_language()]->trid.'&amp;lang='.$v['code'].'&amp;source_lang=' . $src_lang;
+                if($pagenow=='edit.php'){
+                    $link = 'post-new.php';
+                }else{
+                    $link = 'page-new.php';
+                }
+                $link .= '?trid=' . $__management_columns_posts_translations[$id][$this->get_current_language()]->trid.'&amp;lang='.$v['code'].'&amp;source_lang=' . $src_lang;
             }
             echo '<a href="'.$link.'" title="'.$alt.'">';
             echo '<img style="padding:1px;margin:2px;" border="0" src="'.ICL_PLUGIN_URL . '/res/img/' .$img.'" alt="'.$alt.'" width="16" height="16" />';
