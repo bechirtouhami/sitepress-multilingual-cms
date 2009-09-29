@@ -498,7 +498,7 @@ class SitePress{
     function get_active_languages($refresh = false){
         global $wpdb;        
         if($refresh || !$this->active_languages){
-            $in_language = defined('WP_ADMIN') ? $this->admin_language : $this->get_current_language() ;
+            $in_language = defined('WP_ADMIN') && $this->admin_language ? $this->admin_language : $this->get_current_language() ;
             $res = $wpdb->get_results("
                 SELECT code, english_name, active, lt.name AS display_name 
                 FROM {$wpdb->prefix}icl_languages l
