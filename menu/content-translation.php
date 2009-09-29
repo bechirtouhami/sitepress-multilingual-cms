@@ -58,7 +58,7 @@
         <br clear='all' />
         <p style="line-height:1.5"><?php echo __('All translations are done by professional translators, writing in their native languages. You\'ll be able to chat with your translator and instruct what kind of writing style you prefer and which keywords should be emphasized for search engine optimization.', 'sitepress'); ?></p>
         <p style="line-height:1.5"><b><?php printf(__('Pricing for translation by ICanLocalize is a low %s USD per word between any language pair.', 'sitepress'), '0.07'); ?></b></p>
-        <p><b>Don't worry</b>, you wont need to pay anything until you decide to use ICanLocalize for your translations!</p>
+        <!-- p><b>Don't worry</b>, you wont need to pay anything until you decide to use ICanLocalize for your translations!</p -->
         <br />
     <?php else: ?>
         <?php if($sitepress->icl_account_configured() ): ?>
