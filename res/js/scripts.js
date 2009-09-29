@@ -156,7 +156,7 @@ function iclToggleShowTranslations(){
     jQuery.ajax({
             type: "POST",
             url: icl_ajx_url,
-            data: "icl_ajx_action=toggle_show_translations",
+            data: "icl_ajx_action=toggle_show_translations"
     });        
     return false;
 }

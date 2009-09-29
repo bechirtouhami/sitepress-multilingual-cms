@@ -5,6 +5,7 @@ class SitePress{
     private $active_languages = array();
     private $this_lang;
     private $wp_query;
+    private $admin_language = null;
     
     function __construct(){
         global $wpdb;
@@ -469,14 +470,14 @@ class SitePress{
     }
     
     function get_active_languages($refresh = false){
-        global $wpdb;
+        global $wpdb, $locale;
         if($refresh || !$this->active_languages){
             $res = $wpdb->get_results("
                 SELECT code, english_name, active, lt.name AS display_name 
                 FROM {$wpdb->prefix}icl_languages l
                     JOIN {$wpdb->prefix}icl_languages_translations lt ON l.code=lt.language_code           
                 WHERE 
-                    active=1 AND lt.display_language_code = '{$this->get_default_language()}' 
+                    active=1 AND lt.display_language_code = '{$locale}' 
                 ORDER BY major DESC, english_name ASC", ARRAY_A);        
             $languages = array();
             if($res){

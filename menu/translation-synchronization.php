@@ -108,5 +108,6 @@
             </tr>
         </tbody>
     </table>
-            
+     
+    <?php do_action('icl_menu_footer'); ?>       
 </div>

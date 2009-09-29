@@ -24,6 +24,7 @@ function iclSaveThemeLocalization(){
 }
 
 function iclSaveThemeLocalizationType(){
+    
     var formname = jQuery(this).attr('name');
     ajx_resp = jQuery('form[name="'+formname+'"] .icl_ajx_response').attr('id');
     jQuery.ajax({
