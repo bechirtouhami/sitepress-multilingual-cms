@@ -585,7 +585,7 @@ class SitePress{
                 code, english_name, major, active, lt.name AS display_name   
             FROM {$wpdb->prefix}icl_languages l
                 JOIN {$wpdb->prefix}icl_languages_translations lt ON l.code=lt.language_code           
-            WHERE lt.display_language_code = '{}' AND code='{$code}'
+            WHERE lt.display_language_code = '{$dcode}' AND code='{$code}'
             ORDER BY major DESC, english_name ASC", ARRAY_A);
         return $language;
     }
