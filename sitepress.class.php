@@ -2672,17 +2672,24 @@ class SitePress{
             if($v['code']==$this->get_current_language()) continue;
             $langs[] = $v['code'];
         }
+        $cur_lang = $this->get_current_language() != 'all' ? $this->get_current_language() : $this->get_default_language();
         $res = $wpdb->get_results("
-            SELECT lang_code, flag, from_template FROM {$wpdb->prefix}icl_flags WHERE lang_code IN('".join("','",$langs)."')
+            SELECT f.lang_code, f.flag, f.from_template, l.name 
+            FROM {$wpdb->prefix}icl_flags f 
+                JOIN {$wpdb->prefix}icl_languages_translations l ON f.lang_code = l.language_code
+            WHERE l.display_language_code = '".$cur_lang."' AND f.lang_code IN('".join("','",$langs)."')
         ");
         foreach($res as $r){
             if($r->from_template){
                 $fpath = get_bloginfo('template_directory') . '/images/flags/';
             }else{
             }   $fpath = ICL_PLUGIN_URL . '/res/flags/';
-            $flags[] = '<img src="'.$fpath.$r->flag.'" width="18" height="12" alt="'.$r->lang_code.'" title="'.$r->lang_code.'" />';
+            $flags[$r->lang_code] = '<img src="'.$fpath.$r->flag.'" width="18" height="12" alt="'.$r->name.'" title="'.$r->name.'" />';
         }
-        $colh = join('', $flags);
+        $colh = '';
+        foreach($active_languages as $v){
+            $colh .= $flags[$v['code']];
+        }
         foreach($columns as $k=>$v){
             $new_columns[$k] = $v;
             if($k=='title'){
