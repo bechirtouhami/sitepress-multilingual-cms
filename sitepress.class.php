@@ -286,7 +286,6 @@ class SitePress{
             $current_user = wp_get_current_user();
         }
         
-        
         $active_languages = $wpdb->get_col("SELECT code FROM {$wpdb->prefix}icl_languages WHERE active = 1");
         
         $this->admin_language = get_usermeta($current_user->data->ID,'icl_admin_language',true);
@@ -498,7 +497,11 @@ class SitePress{
         global $wpdb;        
         if($refresh || !$this->active_languages){
             $this->admin_language;
-            $in_language = defined('WP_ADMIN') && $this->admin_language ? $this->admin_language : $this->get_current_language()?$this->get_current_language():$this->get_default_language() ;
+            if(defined('WP_ADMIN') && $this->admin_language){
+                $in_language = $this->admin_language;
+            }else{
+                $in_language = $this->get_current_language()?$this->get_current_language():$this->get_default_language();    
+            }  
             $res = $wpdb->get_results("
                 SELECT code, english_name, active, lt.name AS display_name 
                 FROM {$wpdb->prefix}icl_languages l
