@@ -174,7 +174,7 @@ function icl_st_init(){
         }
         if(!isset($_POST['icl_st_pe_translations'])){
             $popot = 'pot';
-            $poname = $_POST['icl_st_e_context'] ? $_POST['icl_st_e_context'] : 'all_context'; 
+            $poname = $_POST['icl_st_e_context'] ? urlencode($_POST['icl_st_e_context']) : 'all_context'; 
         }else{
             $popot = 'po';
             $poname = $_GET['translation_language'];
@@ -854,7 +854,7 @@ function icl_st_generate_po_file($strings, $potonly = false){
     
     foreach($strings as $s){
         $po .= PHP_EOL;        
-        if(!!$potonly && isset($s['translations'][key($s['translations'])]['value'])){
+        if(!$potonly && isset($s['translations'][key($s['translations'])]['value'])){
             $translation = $s['translations'][key($s['translations'])]['value'];
             if($translation != '' && $s['translations'][key($s['translations'])]['status'] != ICL_STRING_TRANSLATION_COMPLETE){
                 $po .= '#, fuzzy' . PHP_EOL;
