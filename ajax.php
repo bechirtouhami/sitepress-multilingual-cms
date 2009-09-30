@@ -488,7 +488,7 @@ switch($_REQUEST['icl_ajx_action']){
         $sitepress->save_settings($iclsettings);
         break;
     case 'dismiss_upgrade_notice':
-        $iclsettings['show_upgrade_notice'] = false;
+        $iclsettings['hide_upgrade_notice'] = implode('.', array_slice(explode('.', ICL_SITEPRESS_VERSION), 0, 3));
         $sitepress->save_settings($iclsettings);
         break;
     case 'dismiss_translate_help':

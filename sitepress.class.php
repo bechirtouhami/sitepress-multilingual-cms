@@ -270,7 +270,9 @@ class SitePress{
                 add_action('admin_notices', array($this, 'help_admin_notice'));
             }
         }
-        if(!empty($this->settings['show_upgrade_notice'])){
+        
+        $short_v = implode('.', array_slice(explode('.', ICL_SITEPRESS_VERSION), 0, 3));
+        if($this->settings['hide_upgrade_notice'] != $short_v){
             add_action('admin_notices', array($this, 'upgrade_notice'));
         }
         

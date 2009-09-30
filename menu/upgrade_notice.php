@@ -3,9 +3,7 @@ $upgrade_lines =  array(
     '1.3.1' => __('stuff added in 1.3.1', 'sitepress')
 );
 
-
 $short_v = implode('.', array_slice(explode('.', ICL_SITEPRESS_VERSION), 0, 3));
-
 if(!isset($upgrade_lines[$short_v])) return;
 
 ?>
