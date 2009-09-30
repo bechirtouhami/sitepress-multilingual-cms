@@ -270,6 +270,9 @@ class SitePress{
                 add_action('admin_notices', array($this, 'help_admin_notice'));
             }
         }
+        if(!empty($this->settings['show_upgrade_notice'])){
+            add_action('admin_notices', array($this, 'upgrade_notice'));
+        }
         
         require ICL_PLUGIN_PATH . '/inc/template-constants.php';        
         if(defined('WPML_LOAD_API_SUPPORT')){
@@ -2656,6 +2659,10 @@ class SitePress{
         echo '<a title="'.__('Stop showing this message', 'sitepress').'" id="icl_dismiss_help" href="#" style="float:right">'.__('Dismiss', 'sitepress').'</a>';
         printf(__('Please go to <a href="%s">WPML’s configuration</a> to setup languages or CMS navigation.', 'sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/overview.php');
         echo '</p></div>';
+    }
+    
+    function upgrade_notice(){
+        include ICL_PLUGIN_PATH . '/menu/upgrade_notice.php';
     }
     
     function add_posts_management_column($columns){

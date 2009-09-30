@@ -6,6 +6,7 @@ jQuery(document).ready(function(){
     jQuery('#noupdate_but input[type="button"]').click(iclSetDocumentToDate);
     jQuery('select[name="icl_translation_of"]').change(function(){jQuery('#icl_translate_options').fadeOut();});
     jQuery('#icl_dismiss_help').click(iclDismissHelp);
+    jQuery('#icl_dismiss_upgrade_notice').click(iclDismissUpgradeNotice);
     jQuery('.icl_advanced_switch a').click(iclToggleAdvancedSetup);
     jQuery('a.icl_toggle_show_translations').click(iclToggleShowTranslations);
 });
@@ -132,6 +133,19 @@ function iclDismissHelp(){
             type: "POST",
             url: icl_ajx_url,
             data: "icl_ajx_action=dismiss_help",
+            success: function(msg){
+                thisa.parent().parent().fadeOut();    
+            }
+    });    
+    return false;
+}
+
+function iclDismissUpgradeNotice(){
+    var thisa = jQuery(this);
+    jQuery.ajax({
+            type: "POST",
+            url: icl_ajx_url,
+            data: "icl_ajx_action=dismiss_upgrade_notice",
             success: function(msg){
                 thisa.parent().parent().fadeOut();    
             }

@@ -186,6 +186,7 @@ function icl_plugin_upgrade(){
         $iclsettings = get_option('icl_sitepress_settings');
         if ($iclsettings['site_id'] && $iclsettings['access_key']) {            
             $iclsettings['content_translation_setup_complete'] = 1;
+            $iclsettings['show_upgrade_notice'] = 1;
             update_option('icl_sitepress_settings',$iclsettings);
         }
     }
