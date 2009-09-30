@@ -261,7 +261,10 @@ function icl_sitepress_activate(){
 
     
     if(!get_option('icl_sitepress_settings')){
-        $settings = array();
+        $short_v = implode('.', array_slice(explode('.', ICL_SITEPRESS_VERSION), 0, 3));
+        $settings = array(
+            'hide_upgrade_notice' => $short_v
+        );
         add_option('icl_sitepress_settings', $settings, '', true);        
     }  
        
