@@ -1,4 +1,5 @@
 <?php
+
 if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '=') 
     || (isset($_REQUEST['action']) && $_REQUEST['action'] == 'error_scrape') || !isset($wpdb) ) return;
 
@@ -168,10 +169,12 @@ function icl_plugin_upgrade(){
         }
         update_option('icl_sitepress_settings',$iclsettings);
         
+                
         $maxtrid = 1 + $wpdb->get_var("SELECT MAX(trid) FROM {$wpdb->prefix}icl_translations");
         mysql_query("
             INSERT INTO {$wpdb->prefix}icl_translations(element_type, element_id, trid, language_code, source_language_code)
-            SELECT 'comment', comment_ID, {$maxtrid}+comment_ID, '{$iclsettings['default_language']}', NULL FROM {$wpdb->comments}
+            SELECT 'comment', comment_ID, {$maxtrid}+comment_ID, t.language_code, NULL 
+                FROM {$wpdb->comments} c JOIN {$wpdb->prefix}icl_translations t ON c.comment_post_id = t.element_id AND t.element_type='post'
             ");            
         
     }
@@ -189,11 +192,44 @@ function icl_plugin_upgrade(){
         }
     }
 
+    
+    if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.3.2', '<')){
+        $comment_translations = array();
+        $res = mysql_query("
+            SELECT element_id, language_code, trid
+                FROM {$wpdb->prefix}icl_translations WHERE element_type='comment'
+            ");
+        while($row = mysql_fetch_assoc($res)){
+            $comment_translations[$row['element_id']] = $row;
+        }
+        
+        $res = mysql_query("
+            SELECT c.comment_ID, t.language_code AS post_language
+                FROM {$wpdb->comments} c 
+                    JOIN {$wpdb->prefix}icl_translations t ON  c.comment_post_ID = t.element_id AND t.element_type='post'                    
+            ");
+        while($row = mysql_fetch_object($res)){
+            if($row->post_language != $comment_translations[$row->comment_ID]['language_code']){
+                //check whether we have a comment in this comment's trid that's in the post language
+                if(!$wpdb->get_var("
+                    SELECT translation_id 
+                    FROM {$wpdb->prefix}icl_translations 
+                    WHERE trid={$comment_translations[$row->comment_ID]['trid']} AND element_id<>{$row->comment_ID}
+                    ")){
+                    $wpdb->update($wpdb->prefix.'icl_translations', array('language_code'=>$row->post_language), array('element_id'=>$row->comment_ID, 'element_type'=>'comment'));
+                }
+            }
+        }
+    }
+    
+    
     if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '<')){
         update_option('icl_sitepress_version', ICL_SITEPRESS_VERSION);
     }
 
     
 }
+
+
 
 ?>
