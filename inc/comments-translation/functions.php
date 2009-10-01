@@ -342,7 +342,7 @@ class IclCommentsTranslation{
                     FROM {$wpdb->prefix}icl_translations
                     WHERE element_type='comment' AND element_id IN(".join(',', $cids).")                    
                     AND source_language_code IS NULL
-                ");
+                ");                
             }
             foreach($comments as $k=>$c){
                 if(!in_array($c->comment_ID , (array)$comment_ids)){
@@ -516,13 +516,16 @@ class IclCommentsTranslation{
                 
             }
         }elseif($_POST['action']=='get-comments' && $_POST['mode']=='single'){
+            $res = mysql_query("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE element_id={$_POST['post_ID']} AND element_type='post'");
+            $row = mysql_fetch_row($res);
+            $post_language = $row[0];
             if(preg_match('#SELECT \* FROM (.+)comments USE INDEX \(comment_date_gmt\) WHERE \( comment_approved = \'0\' OR comment_approved = \'1\' \)  AND comment_post_ID = \'([0-9]+)\'  ORDER BY comment_date_gmt ASC LIMIT ([0-9]+), ([0-9]+)#i',$sql,$matches)){
                 $sql = "
                 SELECT * 
                 FROM {$matches[1]}comments c USE INDEX (comment_date_gmt) 
                     JOIN {$matches[1]}icl_translations t ON t.element_id=c.comment_ID 
                 WHERE 
-                    t.element_type='comment' AND t.language_code='{$this->user_language}' AND
+                    t.element_type='comment' AND t.language_code='{$post_language}' AND
                     ( comment_approved = '0' OR comment_approved = '1' ) AND comment_post_ID = '{$matches[2]}' ORDER BY comment_date_gmt ASC LIMIT {$matches[3]}, {$matches[4]}";
             }
         }
