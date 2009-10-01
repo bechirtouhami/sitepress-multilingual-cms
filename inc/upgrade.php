@@ -217,7 +217,6 @@ function icl_plugin_upgrade(){
                     WHERE trid={$comment_translations[$row->comment_ID]['trid']} AND element_id<>{$row->comment_ID}
                     ")){
                     $wpdb->update($wpdb->prefix.'icl_translations', array('language_code'=>$row->post_language), array('element_id'=>$row->comment_ID, 'element_type'=>'comment'));
-                    fwrite(fopen(ABSPATH.'/deb.txt','a'), "change lanaguage for comment {$row->comment_ID} to {$row->post_language}");
                 }
             }
         }
