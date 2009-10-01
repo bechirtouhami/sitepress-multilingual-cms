@@ -73,6 +73,9 @@ You can find screen shots of WPML in the [quick intro](http://wpml.org/home/pres
 
 == Changelog ==
 
+= 1.3.2 =
+* Fixes to the comments translation. This will bring back comments that were hidden on translated pages after upgrading from a previous release.
+
 = 1.3.1 =
 * Added a translations summary to posts and pages lists.
 * Fixed bug when replying to comments from the admin screen.
