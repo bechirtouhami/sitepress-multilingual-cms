@@ -423,7 +423,7 @@ $available_contexts = array_unique($available_contexts);
                                         </select>
                                     </p>           
                                     <p class="sub" style="line-height:2.3em"    >
-                                        <label for="icl_st_domain_name"><?php echo __('Select what the strings are for:', 'sitepress');?></label>
+                                        <?php echo __('Select what the strings are for:', 'sitepress');?>
                                         <?php if(!empty($available_contexts)): ?>
                                         
                                         &nbsp;&nbsp;
@@ -456,7 +456,7 @@ $available_contexts = array_unique($available_contexts);
                                 <h5><?php echo __('Export strings into .po/.pot file', 'sitepress')?></h5>                         
                                 <form method="post" action="">
                                 <p>
-                                    <label for="icl_st_e_context"><?php echo __('Select context:', 'sitepress')?></label>
+                                    <?php echo __('Select context:', 'sitepress')?>
                                     <select name="icl_st_e_context" id="icl_st_e_context">
                                         <option value="" <?php if($context_filter === false ):?>selected="selected"<?php endif;?>><?php echo __('All contexts', 'sitepress') ?></option>
                                         <?php foreach($icl_contexts as $v):?>
