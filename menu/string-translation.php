@@ -360,6 +360,7 @@ $available_contexts = array_unique($available_contexts);
     
         <?php endif; ?>    
     
+        <br style="clear:both;" />
         <div id="dashboard-widgets-wrap">
             <div id="dashboard-widgets" class="metabox-holder">
             
