@@ -828,8 +828,8 @@ class IclCommentsTranslation{
         
         if (!$pre_load_done && !DISABLE_CACHE) {
             // search previous queries for a group of posts
-            foreach ($wpdb->queries as $query){
-                $pos = strstr($query[0], 'post_id IN (');
+            foreach ($sitepress->queries as $query){
+                $pos = strstr($query, 'post_id IN (');
                 if ($pos !== FALSE) {
                     $group = substr($pos, 11);
                     $group = substr($group, 0, strpos($group, ')') + 1);

@@ -39,6 +39,7 @@ class SitePress{
             add_filter('posts_join', array($this,'posts_join_filter'));
             add_filter('comment_feed_join', array($this,'comment_feed_join'));
             
+            $this->queries = array();
             
             global $pagenow;
             if($pagenow == 'edit.php'){
@@ -1112,8 +1113,8 @@ class SitePress{
         static $pre_load_done = false;
         if (!$pre_load_done && !DISABLE_CACHE) {
             // search previous queries for a group of posts
-            foreach ($wpdb->queries as $query){
-                $pos = strstr($query[0], 'post_id IN (');
+            foreach ($this->queries as $query){
+                $pos = strstr($query, 'post_id IN (');
                 if ($pos !== FALSE) {
                     $group = substr($pos, 10);
                     $group = substr($group, 0, strpos($group, ')') + 1);
@@ -2702,6 +2703,10 @@ class SitePress{
     
     function filter_queries($sql){                                                                               
         global $wpdb, $pagenow;
+        
+        // keep a record of the queries
+        $this->queries[] = $sql;
+        
 
         if($pagenow=='categories.php' || $pagenow=='edit-tags.php'){
             if(preg_match('#^SELECT COUNT\(\*\) FROM '.$wpdb->term_taxonomy.' WHERE taxonomy = \'(category|post_tag)\' $#',$sql,$matches)){
