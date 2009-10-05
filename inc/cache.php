@@ -24,4 +24,55 @@ function icl_cache_clear($key){
     icl_cache_set($key, null);
 }
 
+define('DISABLE_CACHE', false);
+
+class icl_cache{
+   
+    private $data;
+    
+    function __construct($name = "", $cache_to_option = false){
+        $this->data = array();
+        $this->name = $name;
+        $this->cache_to_option = $cache_to_option;
+        
+        if ($cache_to_option) {
+            $this->data = icl_cache_get($name.'_cache_class');
+            if ($this->data == false){
+                $this->data = array();
+            }
+        }
+    }
+    
+    function get($key) {
+        if(DISABLE_CACHE){
+            return null;
+        }
+        return $this->data[$key];
+    }
+    
+    function has_key($key){
+        if(DISABLE_CACHE){
+            return false;
+        }
+        return array_key_exists($key, $this->data);
+    }
+    
+    function set($key, $value) {
+        if(DISABLE_CACHE){
+            return;
+        }
+        $this->data[$key] = $value;
+        if ($this->cache_to_option) {
+            icl_cache_set($this->name.'_cache_class', $this->data);
+        }
+    }
+    
+    function clear() {
+        $this->data = array();
+        if ($this->cache_to_option) {
+            icl_cache_clear($this->name.'_cache_class');
+        }
+    }
+}
+
 ?>

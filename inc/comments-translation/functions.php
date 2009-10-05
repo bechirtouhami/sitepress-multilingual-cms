@@ -20,7 +20,7 @@ class IclCommentsTranslation{
             $this->enable_comments_translation = get_usermeta($current_user->data->ID,'icl_enable_comments_translation',true);
             $this->enable_replies_translation = get_usermeta($current_user->data->ID,'icl_enable_replies_translation',true);
             
-            $this->user_language = get_usermeta($current_user->data->ID,'icl_admin_language',true);
+            $this->user_language = $sitepress->get_user_admin_language($current_user->data->ID);
             if(!$this->user_language){
                 $this->user_language = $sitepress_settings['admin_default_language'];
             }            
@@ -88,6 +88,9 @@ class IclCommentsTranslation{
                 }
             }                      
         }
+                
+        require_once ICL_PLUGIN_PATH . '/inc/cache.php';        
+        $this->icl_comment_count_cache = new icl_cache();
                 
     }
     
@@ -818,13 +821,53 @@ class IclCommentsTranslation{
     }
     
     function get_comments_number_filter($count){
-        global $wpdb, $post;
-        $post_lang = $wpdb->get_var("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE element_id='{$post->ID}' AND element_type='post'");
-        $comment_count = $wpdb->get_var("
-            SELECT COUNT(*) FROM {$wpdb->comments} c 
-            JOIN {$wpdb->prefix}icl_translations t ON c.comment_ID = t.element_id AND t.element_type='comment'
-            WHERE c.comment_post_ID={$post->ID} AND t.language_code='{$post_lang}'            
-        ");
+        global $wpdb, $post, $sitepress;
+        static $pre_load_done = false;
+        $details = $sitepress->get_element_language_details($post->ID, 'post');
+        $post_lang = $details->language_code;
+        
+        if (!$pre_load_done && !DISABLE_CACHE) {
+            // search previous queries for a group of posts
+            foreach ($wpdb->queries as $query){
+                $pos = strstr($query[0], 'post_id IN (');
+                if ($pos !== FALSE) {
+                    $group = substr($pos, 11);
+                    $group = substr($group, 0, strpos($group, ')') + 1);
+                    
+                    $post_ids = explode(',', substr($group, 1, strlen($group) - 2));
+                    $counts = array();
+                    foreach($post_ids as $id) {
+                        $counts[$id] = 0;
+                    }
+                    
+                    $query = 
+                        "SELECT c.comment_post_ID FROM {$wpdb->comments} c 
+                        JOIN {$wpdb->prefix}icl_translations t ON c.comment_ID = t.element_id AND t.element_type='comment'
+                        WHERE c.comment_post_ID IN {$group} AND t.language_code='{$post_lang}'"           ;
+                    $ret = $wpdb->get_results($query);        
+                    foreach($ret as $details){
+                        $counts[$details->comment_post_ID] = $counts[$details->comment_post_ID] + 1;
+                    }
+                    
+                    foreach($counts as $id => $comment_count) {
+                        $this->icl_comment_count_cache->set($id.$post_lang, $comment_count);
+                    }
+                    
+                    break;
+                }
+            }
+            $pre_load_done = true;
+        }
+        
+        $comment_count = $this->icl_comment_count_cache->get($post->ID.$post_lang);
+        if ($comment_count === null) {
+            $comment_count = $wpdb->get_var("
+                SELECT COUNT(*) FROM {$wpdb->comments} c 
+                JOIN {$wpdb->prefix}icl_translations t ON c.comment_ID = t.element_id AND t.element_type='comment'
+                WHERE c.comment_post_ID={$post->ID} AND t.language_code='{$post_lang}'            
+            ");
+            $this->icl_comment_count_cache->set($post->ID.$post_lang, $comment_count);
+        }
         return $comment_count;
     }
     

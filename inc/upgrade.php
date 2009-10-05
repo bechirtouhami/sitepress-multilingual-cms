@@ -7,6 +7,12 @@ add_action('plugins_loaded', 'icl_plugin_upgrade' , 1);
 
 function icl_plugin_upgrade(){
     global $wpdb, $sitepress_settings, $sitepress;
+    
+    // clear any caches
+    require ICL_PLUGIN_PATH . '/inc/cache.php';
+    icl_cache_clear('flags_cache_class');
+    icl_cache_clear('language_name_cache_class');
+    
     if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '0.9.3', '<')){
         require_once(ICL_PLUGIN_PATH . '/inc/lang-data.inc');      
         $wpdb->query("UPDATE {$wpdb->prefix}icl_languages SET english_name='Norwegian Bokmål', code='nb' WHERE english_name='Norwegian'");      

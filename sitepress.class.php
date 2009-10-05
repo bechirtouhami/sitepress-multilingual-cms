@@ -172,6 +172,14 @@ class SitePress{
     }
                                               
     function init(){ 
+        require ICL_PLUGIN_PATH . '/inc/cache.php';        
+        $this->icl_translations_cache = new icl_cache();
+        $this->icl_locale_cache = new icl_cache('locale', true);
+        $this->icl_flag_cache = new icl_cache('flags', true);
+        $this->icl_language_name_cache = new icl_cache('language_name', true);
+        $this->icl_term_taxonomy_cache = new icl_cache();
+             
+
         $this->set_admin_language();
         //configure callbacks for plugin menu pages
         if(defined('WP_ADMIN') && isset($_GET['page']) && 0 === strpos($_GET['page'],basename(ICL_PLUGIN_PATH).'/')){
@@ -280,8 +288,8 @@ class SitePress{
         if(defined('WPML_LOAD_API_SUPPORT')){
             require ICL_PLUGIN_PATH . '/inc/wpml-api.php';
             
-        }   
-             
+        }
+        
     }
                     
     function set_admin_language(){
@@ -291,10 +299,14 @@ class SitePress{
             $current_user = wp_get_current_user();
         }
         
-        $active_languages = $wpdb->get_col("SELECT code FROM {$wpdb->prefix}icl_languages WHERE active = 1");
+        $active_languages = $this->icl_language_name_cache->get('active_languages');
+        if (!$active_languages) {
+            $active_languages = $wpdb->get_col("SELECT code FROM {$wpdb->prefix}icl_languages WHERE active = 1");
+            $this->icl_language_name_cache->set('active_languages', $active_languages);
+        }
         
-        $this->admin_language = get_usermeta($current_user->data->ID,'icl_admin_language',true);
-        if(!in_array($this->admin_language, $active_languages)){
+        $this->admin_language = $this->get_user_admin_language($current_user->data->ID);
+        if($this->admin_language != '' && !in_array($this->admin_language, $active_languages)){
             delete_usermeta($current_user->data->ID,'icl_admin_language');
         }
         if(!in_array($this->settings['admin_default_language'], $active_languages)){
@@ -316,6 +328,13 @@ class SitePress{
         return $this->admin_language;
     }
       
+    function get_user_admin_language($user_id) {
+        static $lang = null;
+        if ($lang === null) {
+            $lang = get_usermeta($user_id,'icl_admin_language',true);
+        }
+        return $lang;
+    }
     function administration_menu(){
         add_action('admin_print_scripts', array($this,'js_scripts_setup'));
         add_action('admin_print_styles', array($this,'css_setup'));
@@ -507,25 +526,35 @@ class SitePress{
             }else{
                 $in_language = $this->get_current_language()?$this->get_current_language():$this->get_default_language();    
             }  
-            $res = $wpdb->get_results("
-                SELECT code, english_name, active, lt.name AS display_name 
-                FROM {$wpdb->prefix}icl_languages l
-                    JOIN {$wpdb->prefix}icl_languages_translations lt ON l.code=lt.language_code           
-                WHERE 
-                    active=1 AND lt.display_language_code = '{$in_language}' 
-                ORDER BY major DESC, english_name ASC", ARRAY_A);        
+            $res = $this->icl_language_name_cache->get('in_language_'.$in_language);
+            if (!$res) {
+                $res = $wpdb->get_results("
+                    SELECT code, english_name, active, lt.name AS display_name 
+                    FROM {$wpdb->prefix}icl_languages l
+                        JOIN {$wpdb->prefix}icl_languages_translations lt ON l.code=lt.language_code           
+                    WHERE 
+                        active=1 AND lt.display_language_code = '{$in_language}' 
+                    ORDER BY major DESC, english_name ASC", ARRAY_A);
+                $this->icl_language_name_cache->set('in_language_'.$in_language, $res);
+            }
+            
             $languages = array();
             if($res){
                 foreach($res as $r){
                     $languages[$r['code']] = $r;
                 }        
             } 
+
+            $res = $this->icl_language_name_cache->get('languages_'.$languages);
+            if (!$res) {
             
-            $res = $wpdb->get_results("
-                SELECT language_code, name 
-                FROM {$wpdb->prefix}icl_languages_translations
-                WHERE language_code IN ('".join("','",array_keys($languages))."') AND language_code = display_language_code
-            ");
+                $res = $wpdb->get_results("
+                    SELECT language_code, name 
+                    FROM {$wpdb->prefix}icl_languages_translations
+                    WHERE language_code IN ('".join("','",array_keys($languages))."') AND language_code = display_language_code
+                ");
+                $this->icl_language_name_cache->set('languages_'.$languages, $res);
+            }
             foreach($res as $row){
                 $languages[$row->language_code]['native_name'] = $row->name;     
             }
@@ -543,7 +572,8 @@ class SitePress{
             }
             $codes = '(' . join(',',$tmp) . ')';
             $wpdb->update($wpdb->prefix.'icl_languages', array('active'=>0), array('active'=>'1'));
-            $wpdb->query("UPDATE {$wpdb->prefix}icl_languages SET active=1 WHERE code IN {$codes}");            
+            $wpdb->query("UPDATE {$wpdb->prefix}icl_languages SET active=1 WHERE code IN {$codes}");
+            $this->icl_language_name_cache->clear();
         }
         
         $res = $wpdb->get_results("
@@ -588,14 +618,19 @@ class SitePress{
         }else{
             $dcode = $code;
         }
-        $language = $wpdb->get_row("
-            SELECT 
-                code, english_name, major, active, lt.name AS display_name   
-            FROM {$wpdb->prefix}icl_languages l
-                JOIN {$wpdb->prefix}icl_languages_translations lt ON l.code=lt.language_code           
-            WHERE lt.display_language_code = '{$dcode}' AND code='{$code}'
-            ORDER BY major DESC, english_name ASC", ARRAY_A);
-        return $language;
+        $details = $this->icl_language_name_cache->get('language_details_'.$code.$dcode);
+        if (!$details){
+            $details = $wpdb->get_row("
+                SELECT 
+                    code, english_name, major, active, lt.name AS display_name   
+                FROM {$wpdb->prefix}icl_languages l
+                    JOIN {$wpdb->prefix}icl_languages_translations lt ON l.code=lt.language_code           
+                WHERE lt.display_language_code = '{$dcode}' AND code='{$code}'
+                ORDER BY major DESC, english_name ASC", ARRAY_A);
+            $this->icl_language_name_cache->set('language_details_'.$code.$dcode, $details);
+        }
+        
+        return $details;
     }
 
     function get_language_code($english_name){
@@ -622,7 +657,7 @@ class SitePress{
         $this->save_settings($iclsettings);
         
         // change WP locale
-        $locale = $wpdb->get_var("SELECT locale FROM {$wpdb->prefix}icl_locale_map WHERE code='{$code}'");
+        $locale = $this->get_locale($code);
         if($locale){
             update_option('WPLANG', $locale);
         }      
@@ -952,6 +987,9 @@ class SitePress{
     function prepopulate_translations($lang){        
         global $wpdb;        
         if($this->settings['existing_content_language_verified']) return;
+        
+        $this->icl_translations_cache->clear();
+        
         mysql_query("TRUNCATE TABLE {$wpdb->prefix}icl_translations");
         mysql_query("
             INSERT INTO {$wpdb->prefix}icl_translations(element_type, element_id, trid, language_code, source_language_code)
@@ -1007,7 +1045,8 @@ class SitePress{
                     AND element_id <> '{$el_id}'
             ");            
             if($translation_id){
-                $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id={$translation_id}");    
+                $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id={$translation_id}");
+                $this->icl_translations_cache->clear();
             }
             
             if($translation_id = $wpdb->get_var("SELECT translation_id FROM {$wpdb->prefix}icl_translations WHERE element_type='{$el_type}' AND element_id='{$el_id}' AND trid='{$trid}'")){
@@ -1019,7 +1058,8 @@ class SitePress{
                 //case of changing the "translation of"
                 $wpdb->update($wpdb->prefix.'icl_translations', 
                     array('trid'=>$trid, 'language_code'=>$language_code), 
-                    array('element_type'=>$el_type, 'element_id'=>$el_id));                
+                    array('element_type'=>$el_type, 'element_id'=>$el_id));
+                $this->icl_translations_cache->clear();
             }else{
                 //get source
                 $src_language_code = $wpdb->get_var("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE trid={$trid} AND source_language_code IS NULL"); 
@@ -1033,10 +1073,13 @@ class SitePress{
                         'source_language_code'=>$src_language_code
                         )
                 );
+                $this->icl_translations_cache->clear();
+                
             }
         }else{ // it's a new element or we are removing it from a trid
             if($translation_id = $wpdb->get_var("SELECT translation_id FROM {$wpdb->prefix}icl_translations WHERE element_type='{$el_type}' AND element_id='{$el_id}'")){
                 $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id={$translation_id}");    
+                $this->icl_translations_cache->clear();
             } 
         
             $trid = 1 + $wpdb->get_var("SELECT MAX(trid) FROM {$wpdb->prefix}icl_translations");
@@ -1061,14 +1104,85 @@ class SitePress{
             $where .= " AND language_code='".$wpdb->escape($language_code)."'";
         }
         $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE trid='{$trid}' AND element_type='{$el_type}' {$where}");
+        $this->icl_translations_cache->clear();
     }
     
     function get_element_language_details($el_id, $el_type){        
         global $wpdb;
-        $details = $wpdb->get_row("
-            SELECT trid, language_code, source_language_code 
-            FROM {$wpdb->prefix}icl_translations
-            WHERE element_id='{$el_id}' AND element_type='{$el_type}'");
+        static $pre_load_done = false;
+        if (!$pre_load_done && !DISABLE_CACHE) {
+            // search previous queries for a group of posts
+            foreach ($wpdb->queries as $query){
+                $pos = strstr($query[0], 'post_id IN (');
+                if ($pos !== FALSE) {
+                    $group = substr($pos, 10);
+                    $group = substr($group, 0, strpos($group, ')') + 1);
+
+                    $query = 
+                        "SELECT element_id, trid, language_code, source_language_code 
+                        FROM {$wpdb->prefix}icl_translations
+                        WHERE element_id IN {$group} AND element_type='post'";
+                    $ret = $wpdb->get_results($query);        
+                    foreach($ret as $details){
+                        $this->icl_translations_cache->set($details->element_id.'post', $details);
+                    }
+                    
+                    // get the taxonomy for the posts for later use
+                    // categories first
+                    $query =
+                        "SELECT DISTINCT(tr.term_taxonomy_id), tt.term_id, tt.taxonomy, icl.trid, icl.language_code, icl.source_language_code
+                        FROM {$wpdb->prefix}term_relationships as tr
+                        LEFT JOIN {$wpdb->prefix}term_taxonomy AS tt
+                        ON tr.term_taxonomy_id = tt.term_taxonomy_id
+                        LEFT JOIN {$wpdb->prefix}icl_translations as icl ON tr.term_taxonomy_id = icl.element_id
+                        WHERE tr.object_id IN {$group}
+                        AND (icl.element_type='category' and tt.taxonomy='category')
+                        ";
+                    $query .= "UNION
+                    ";
+                    $query .=
+                        "SELECT DISTINCT(tr.term_taxonomy_id), tt.term_id, tt.taxonomy, icl.trid, icl.language_code, icl.source_language_code
+                        FROM {$wpdb->prefix}term_relationships as tr
+                        LEFT JOIN {$wpdb->prefix}term_taxonomy AS tt
+                        ON tr.term_taxonomy_id = tt.term_taxonomy_id
+                        LEFT JOIN {$wpdb->prefix}icl_translations as icl ON tr.term_taxonomy_id = icl.element_id
+                        WHERE tr.object_id IN {$group}
+                        AND (icl.element_type='tag' and tt.taxonomy='post_tag')"
+                        ;
+                    $ret = $wpdb->get_results($query);        
+                    foreach($ret as $details){
+                        // save language details
+                        $lang_details = new stdClass();
+                        $lang_details->trid = $details->trid;
+                        $lang_details->language_code = $details->language_code;
+                        $lang_details->source_language_code = $details->source_language_code;
+                        if ($details->taxonomy == 'category') {
+                            $this->icl_translations_cache->set($details->term_taxonomy_id.'category', $lang_details);
+                            // save the term taxonomy
+                            $this->icl_term_taxonomy_cache->set('category'.$details->term_id, $details->term_taxonomy_id);
+                        } else {
+                            $this->icl_translations_cache->set($details->term_taxonomy_id.'tag', $lang_details);
+                            // save the term taxonomy
+                            $this->icl_term_taxonomy_cache->set('post_tag'.$details->term_id, $details->term_taxonomy_id);
+                        }
+                    }
+                    
+                    break;
+                }
+            }
+            $pre_load_done = true;
+        }
+        $details = $this->icl_translations_cache->get($el_id.$el_type);
+        if ($this->icl_translations_cache->has_key($el_id.$el_type)) {
+            return $details;            
+        }
+        if (!$details){
+            $details = $wpdb->get_row("
+                SELECT trid, language_code, source_language_code 
+                FROM {$wpdb->prefix}icl_translations
+                WHERE element_id='{$el_id}' AND element_type='{$el_type}'");
+            $this->icl_translations_cache->set($el_id.$el_type, $details);
+        }
         return $details;
     }
     
@@ -1310,7 +1424,7 @@ class SitePress{
         $active_languages = $this->get_active_languages();
         $default_language = $this->get_default_language();
         if($post->ID){
-            $res = $wpdb->get_row("SELECT trid, language_code, source_language_code FROM {$wpdb->prefix}icl_translations WHERE element_id='{$post->ID}' AND element_type='post'");
+            $res = $this->get_element_language_details($post->ID, 'post');
             $trid = $res->trid;
             if($trid){                
                 $element_lang_code = $res->language_code;
@@ -1950,7 +2064,13 @@ class SitePress{
     
     function category_permalink_filter($p, $cat_id){
         global $wpdb;
-        $cat_id = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id={$cat_id} AND taxonomy='category'");
+        $term_cat_id = $this->icl_term_taxonomy_cache->get('category'.$cat_id);
+        if (!$term_cat_id) {
+            $term_cat_id = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id={$cat_id} AND taxonomy='category'");
+            $this->icl_term_taxonomy_cache->set('category'.$cat_id, $term_cat_id);
+        }
+        $cat_id = $term_cat_id;
+        
         $element_lang_details = $this->get_element_language_details($cat_id,'category');
         if($this->get_default_language() != $element_lang_details->language_code){
             $p = $this->convert_url($p, $element_lang_details->language_code);
@@ -1963,7 +2083,11 @@ class SitePress{
         if(is_object($tag)){                        
             $tag_id = $tag->term_taxonomy_id;
         }else{
-            $tag_id = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id={$tag} AND taxonomy='post_tag'");
+            $tag_id = $this->icl_term_taxonomy_cache->get('post_tag'.$tag);
+            if (!$tag_id) {
+                $tag_id = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id={$tag} AND taxonomy='post_tag'");
+                $this->icl_term_taxonomy_cache->set('post_tag'.$tag, $tag_id);
+            }
         }        
         $element_lang_details = $this->get_element_language_details($tag_id,'tag');
         if($this->get_default_language() != $element_lang_details->language_code){
@@ -2127,13 +2251,13 @@ class SitePress{
                 $lang_code = $w_active_languages[$k]['language_code'] = $w_active_languages[$k]['code'];
                 unset($w_active_languages[$k]['code']);
 
-                $native_name = $wpdb->get_var("SELECT name FROM {$wpdb->prefix}icl_languages_translations WHERE language_code='{$lang_code}' AND display_language_code='{$lang_code}'");        
+                $native_name = $this->get_language_name($lang_code, $lang_code);        
                 if(!$native_name) $native_name = $w_active_languages[$k]['english_name'];    
                 $w_active_languages[$k]['native_name'] = $native_name;                
                 unset($w_active_languages[$k]['english_name']);
                 
 
-                $translated_name = $wpdb->get_var("SELECT name FROM {$wpdb->prefix}icl_languages_translations WHERE language_code='{$lang_code}' AND display_language_code='{$this->get_current_language()}'");        
+                $translated_name = $this->get_language_name($lang_code, $this->get_current_language());        
                 if(!$translated_name) $translated_name = $w_active_languages[$k]['english_name'];    
                 $w_active_languages[$k]['translated_name'] = $translated_name;                
                 unset($w_active_languages[$k]['display_name']);
@@ -2141,8 +2265,8 @@ class SitePress{
                 $w_active_languages[$k]['url'] = $w_active_languages[$k]['translated_url']; 
                 unset($w_active_languages[$k]['translated_url']);
                                 
-
-                $flag = $wpdb->get_row("SELECT flag, from_template FROM {$wpdb->prefix}icl_flags WHERE lang_code='{$lang_code}'");
+                $flag = $this->get_flag($lang_code);
+                    
                 if($flag->from_template){
                     $flag_url = get_bloginfo('template_directory') . '/images/flags/'.$flag->flag;
                 }else{
@@ -2155,7 +2279,29 @@ class SitePress{
             return $w_active_languages;
             
     }
+
+    function get_language_name($lang_code, $display_code) {
+        global $wpdb;
+        $translated_name = $this->icl_language_name_cache->get($lang_code.$display_code);
+        if (!$translated_name) {
+            $translated_name = $wpdb->get_var("SELECT name FROM {$wpdb->prefix}icl_languages_translations WHERE language_code='{$lang_code}' AND display_language_code='{$display_code}'");
+            $this->icl_language_name_cache->set($lang_code.$display_code, $translated_name);
+        }
+        return $translated_name;
+    }
+    
+    function get_flag($lang_code){
+        global $wpdb;
         
+        $flag = $this->icl_flag_cache->get($lang_code);
+        if (!$flag) {
+            $flag = $wpdb->get_row("SELECT flag, from_template FROM {$wpdb->prefix}icl_flags WHERE lang_code='{$lang_code}'");
+            $this->icl_flag_cache->set($lang_code, $flag);
+        }
+        
+        return $flag;
+    }
+                      
     function language_selector(){
         $active_languages = $this->get_ls_languages();
         foreach($active_languages as $k=>$al){
@@ -2349,9 +2495,9 @@ class SitePress{
         global $wpdb, $locale;
         
         if(defined('WP_ADMIN')){            
-            $l = $wpdb->get_var("SELECT locale FROM {$wpdb->prefix}icl_locale_map WHERE code='{$this->admin_language}'");
+            $l = $this->get_locale($this->admin_language);
         }else{
-            $l = $wpdb->get_var("SELECT locale FROM {$wpdb->prefix}icl_locale_map WHERE code='{$this->this_lang}'");
+            $l = $this->get_locale($this->this_lang);
         }        
         if($l){
             $locale = $l;
@@ -2372,6 +2518,21 @@ class SitePress{
         return $latr;
     }
         
+    function get_locale($code) {
+        global $wpdb;
+        
+        if ($this->icl_locale_cache->has_key($code)){
+            return $this->icl_locale_cache->get($code);
+        }
+        
+        $locale = $this->icl_locale_cache->get($code);
+        if (!$locale) {
+            $locale = $wpdb->get_var("SELECT locale FROM {$wpdb->prefix}icl_locale_map WHERE code='{$code}'");
+            $this->icl_locale_cache->set($code, $locale);
+        }
+        return $locale;
+    }
+    
     function get_locale_file_names(){
         global $wpdb;
         $locales = array();
@@ -2402,38 +2563,48 @@ class SitePress{
         $update = array_diff($locale_file_names_pairs, $lfn);
         foreach($update as $code=>$locale){
             $wpdb->update($wpdb->prefix.'icl_locale_map', array('locale'=>$locale), array('code'=>$code));
-        }        
+        }
+        
+        $this->icl_locale_cache->clear();
+        
         return true;        
     }
     
     function pre_option_page_on_front(){
         global $wpdb;
-        $page_on_front_sc = false;
-        $page_on_front = $wpdb->get_var("SELECT option_value FROM {$wpdb->options} WHERE option_name='page_on_front'");
-        $trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id='{$page_on_front}' AND element_type='post'");
-        if($trid){            
-            $translations = $wpdb->get_results("SELECT element_id, language_code FROM {$wpdb->prefix}icl_translations WHERE trid={$trid}");
-            foreach($translations as $t){
-                if($t->language_code==$this->this_lang){
-                    $page_on_front_sc = $t->element_id;
-                }
-            }        
-        }             
+        static $page_on_front_sc = null;
+        if ($page_on_front_sc === null || DISABLE_CACHE) {
+            $page_on_front_sc = false;
+            $page_on_front = $wpdb->get_var("SELECT option_value FROM {$wpdb->options} WHERE option_name='page_on_front'");
+            $trid = $this->get_element_language_details($page_on_front, 'post')->trid;
+            if($trid){            
+                $translations = $wpdb->get_results("SELECT element_id, language_code FROM {$wpdb->prefix}icl_translations WHERE trid={$trid}");
+                foreach($translations as $t){
+                    if($t->language_code==$this->this_lang){
+                        $page_on_front_sc = $t->element_id;
+                    }
+                }        
+            }
+        }
         return $page_on_front_sc;
     }      
       
     function pre_option_page_for_posts(){
         global $wpdb;
-        $page_for_posts_sc = false;
-        $page_for_posts = $wpdb->get_var("SELECT option_value FROM {$wpdb->options} WHERE option_name='page_for_posts'");
-        $trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id='{$page_for_posts}' AND element_type='post'");
-        if($trid){
-            $translations = $wpdb->get_results("SELECT element_id, language_code FROM {$wpdb->prefix}icl_translations WHERE trid={$trid}");
-            foreach($translations as $t){
-                if($t->language_code==$this->this_lang){
-                    $page_for_posts_sc = $t->element_id;
-                }
-            }                    
+        static $page_for_posts_sc = null;
+        if ($page_for_posts_sc === null || DISABLE_CACHE) {
+
+            $page_for_posts_sc = false;
+            $page_for_posts = $wpdb->get_var("SELECT option_value FROM {$wpdb->options} WHERE option_name='page_for_posts'");
+            $trid = $this->get_element_language_details($page_for_posts, 'post')->trid;
+            if($trid){
+                $translations = $wpdb->get_results("SELECT element_id, language_code FROM {$wpdb->prefix}icl_translations WHERE trid={$trid}");
+                foreach($translations as $t){
+                    if($t->language_code==$this->this_lang){
+                        $page_for_posts_sc = $t->element_id;
+                    }
+                }                    
+            }
         }
         return $page_for_posts_sc;
     } 
@@ -2500,8 +2671,8 @@ class SitePress{
     
     function get_edit_post_link($link, $id){
         if($id){
-            global $wpdb;        
-            $lang = $wpdb->get_var("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE element_id={$id} AND element_type='post'");
+            $details = $this->get_element_language_details($id, 'post');
+            $lang = $details->language_code;
             if($lang != $this->get_default_language()){
                 $link .= '&lang=' . $lang;
             }        
