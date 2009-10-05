@@ -15,7 +15,7 @@ class SitePress{
             $this->verify_settings();
         } 
         
-        add_action('plugins_loaded', array($this,'init'));
+        add_action('plugins_loaded', array($this,'init'), 1);
         
         // Administration menus
         add_action('admin_menu', array($this, 'administration_menu'));
