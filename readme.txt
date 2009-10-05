@@ -50,17 +50,9 @@ You can certainly translate your site yourself. The professional translation is 
 
 If you're translating your site yourself, just ignore that option.
 
-= Languages list is empty =
+= Everything in the theme still appears without translation =
 
-This is usually due to the languages table missing or empty. To check what's causing this problem:
-
-1. Disable WPML.
-2. Enable [debug mode](http://wpml.org/support/debugging-wpml/).
-3. Activate WPML again. This time, you'll see the source of the problem.
-
-= Theme localization not working =
-
-Have a look at this [theme localization guide](http://wpml.org/2009/05/wordpress-theme-localization/).
+Have a look at this [theme localization guide](http://wpml.org/home/getting-started-guide/theme-localization/).
 
 = Languages per directories are disabled =
 
@@ -69,7 +61,9 @@ Also, go through the [detailed description](http://wpml.org/support/cannot-activ
 
 == Screenshots ==
 
-You can find screen shots of WPML in the [quick intro](http://wpml.org/home/press-kit/) page.
+1. Translation controls in posts and pages lists.
+
+You can see more screenshots and a video tutorial in the [quick intro](http://wpml.org/home/press-kit/) page.
 
 == Changelog ==
 
