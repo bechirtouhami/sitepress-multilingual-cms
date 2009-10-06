@@ -250,7 +250,22 @@ function icl_sitepress_activate(){
             ) ENGINE=MyISAM {$charset_collate}"; 
         mysql_query($sql);
     }
-    
+
+    // cms navigation caching
+    $table_name = $wpdb->prefix.'icl_cms_nav_cache';
+    if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
+        $sql = "
+            CREATE TABLE `{$table_name}` (
+            `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+            `cache_key` VARCHAR( 128 ) NOT NULL ,
+            `type` VARCHAR( 128 ) NOT NULL ,
+            `user_ref` bigint(20) unsigned NOT NULL,
+            `data` TEXT NOT NULL ,
+            `md5` VARCHAR( 32 ) NOT NULL,
+            `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+            ) ENGINE=MyISAM {$charset_collate}"; 
+       mysql_query($sql);
+    }    
                   
    if(get_option('icl_sitepress_version')){
        icl_plugin_upgrade();               

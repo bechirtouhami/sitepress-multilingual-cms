@@ -68,295 +68,384 @@ class CMSNavigation{
     } 
     
     function cms_navigation_breadcrumb(){
-        global $post, $sitepress;
+        global $post, $sitepress, $current_user, $wpdb;
         
-        if(0 === strpos('page', get_option('show_on_front'))){
-            $page_on_front = (int)get_option('page_on_front'); 
-            $page_for_posts  = (int)get_option('page_for_posts');
-        }else{
-            $page_on_front = 0;
-            $page_for_posts  = 0;        
-        }
+        $cahce_key = $post->ID.'-'.$sitepress->get_current_language();
+        $output = $wpdb->get_var("
+                            SELECT data
+                            FROM {$wpdb->prefix}icl_cms_nav_cache
+                            WHERE cache_key='{$cahce_key}'
+                            AND user_ref='{$current_user->ID}'
+                            AND type='nav_breadcrumb'");
+        if (!$output || ICL_DISABLE_CACHE) {
         
-        if($page_on_front!=$post->ID){ 
-            if($page_on_front){
-                ?><a href="<?php echo get_permalink($page_on_front); ?>"><?php echo get_the_title($page_on_front) ?></a> &raquo; <?php
-            }elseif(!is_home() || (is_home() && !$page_on_front && $page_for_posts)){
-                ?><a href="<?php echo $sitepress->language_url() ?>"><?php echo __('Home', 'sitepress') ?></a> &raquo; <?php
+            // save the menu to a cache
+            ob_start();
+        
+            if(0 === strpos('page', get_option('show_on_front'))){
+                $page_on_front = (int)get_option('page_on_front'); 
+                $page_for_posts  = (int)get_option('page_for_posts');
+            }else{
+                $page_on_front = 0;
+                $page_for_posts  = 0;        
             }
-        }
-        
-        if(!is_page() && !is_home() && $page_for_posts){
-            ?><a href="<?php echo get_permalink($page_for_posts); ?>"><?php echo get_the_title($page_for_posts) ?></a> &raquo; <?php
-        }
-        
-        if(is_home() && $page_for_posts){
-            echo get_the_title($page_for_posts);
-        }elseif(is_page() && $page_on_front!=$post->ID){        
-            the_post();
-            if(is_array($post->ancestors)){            
-                $ancestors = array_reverse($post->ancestors);
-                foreach($ancestors as $anc){
-                    if($page_on_front==$anc) {continue;}
-                    ?>
-                    <a href="<?php echo get_permalink($anc); ?>"><?php echo get_the_title($anc) ?></a> &raquo; 
-                    <?php
-                }            
-            }    
-            echo get_the_title();
-            rewind_posts();
-        }elseif(is_single()){
-            the_post();
-            $cat = get_the_category($id);
-            $cat = $cat[0]->cat_ID;                
-            $parents = get_category_parents($cat, TRUE, ' &raquo; ');
-            if(is_string($parents)){
-                echo $parents;
+            
+            if($page_on_front!=$post->ID){ 
+                if($page_on_front){
+                    ?><a href="<?php echo get_permalink($page_on_front); ?>"><?php echo get_the_title($page_on_front) ?></a> &raquo; <?php
+                }elseif(!is_home() || (is_home() && !$page_on_front && $page_for_posts)){
+                    ?><a href="<?php echo $sitepress->language_url() ?>"><?php echo __('Home', 'sitepress') ?></a> &raquo; <?php
+                }
             }
-            the_title();   
-            rewind_posts();         
-        }elseif (is_category()) {
-            $cat = get_term(intval( get_query_var('cat')), 'category', OBJECT, 'display');
-            if($cat->category_parent){
-                echo get_category_parents($cat->category_parent, TRUE, ' &raquo; ');                 
+            
+            if(!is_page() && !is_home() && $page_for_posts){
+                ?><a href="<?php echo get_permalink($page_for_posts); ?>"><?php echo get_the_title($page_for_posts) ?></a> &raquo; <?php
             }
-            single_cat_title();
-        }elseif(is_tag()){
-            echo __('Articles tagged ', 'sitepress') ,'&#8216;'; 
-            single_tag_title();
-            echo '&#8217;';    
-        }elseif (is_month()){
-            echo the_time('F, Y');
-        }elseif (is_search()){
-            echo __('Search for: ', 'sitepress'), strip_tags(get_query_var('s'));
-        /*    
-        }elseif (is_404()){
-            echo __('Not found', 'sitepress');
-        */
-        }        
+            
+            if(is_home() && $page_for_posts){
+                echo get_the_title($page_for_posts);
+            }elseif(is_page() && $page_on_front!=$post->ID){        
+                the_post();
+                if(is_array($post->ancestors)){            
+                    $ancestors = array_reverse($post->ancestors);
+                    foreach($ancestors as $anc){
+                        if($page_on_front==$anc) {continue;}
+                        ?>
+                        <a href="<?php echo get_permalink($anc); ?>"><?php echo get_the_title($anc) ?></a> &raquo; 
+                        <?php
+                    }            
+                }    
+                echo get_the_title();
+                rewind_posts();
+            }elseif(is_single()){
+                the_post();
+                $cat = get_the_category($id);
+                $cat = $cat[0]->cat_ID;                
+                $parents = get_category_parents($cat, TRUE, ' &raquo; ');
+                if(is_string($parents)){
+                    echo $parents;
+                }
+                the_title();   
+                rewind_posts();         
+            }elseif (is_category()) {
+                $cat = get_term(intval( get_query_var('cat')), 'category', OBJECT, 'display');
+                if($cat->category_parent){
+                    echo get_category_parents($cat->category_parent, TRUE, ' &raquo; ');                 
+                }
+                single_cat_title();
+            }elseif(is_tag()){
+                echo __('Articles tagged ', 'sitepress') ,'&#8216;'; 
+                single_tag_title();
+                echo '&#8217;';    
+            }elseif (is_month()){
+                echo the_time('F, Y');
+            }elseif (is_search()){
+                echo __('Search for: ', 'sitepress'), strip_tags(get_query_var('s'));
+            /*    
+            }elseif (is_404()){
+                echo __('Not found', 'sitepress');
+            */
+            }        
+            $output = ob_get_contents();
+            ob_end_clean();
+            
+            if (!$output){
+                $output = ' ';
+            }
+            $wpdb->insert($wpdb->prefix.'icl_cms_nav_cache', 
+                array(
+                    'cache_key'=>$cahce_key, 
+                    'type'=>'nav_breadcrumb', 
+                    'user_ref'=>$current_user->ID, 
+                    'data'=>$output,
+                    'md5'=>md5($output)
+                    )
+                );
+            
+        }
+        echo $output;
     }    
     
     function cms_navigation_menu_nav(){
-        global $sitepress, $sitepress_settings, $wpdb, $post, $cms_nav_ie_ver, $wp_query;
+        global $sitepress, $sitepress_settings, $wpdb, $post, $cms_nav_ie_ver, $wp_query, $current_user;
         
-        $order = $this->settings['page_order']?$this->settings['page_order']:'menu_order';
-        $show_cat_menu = $this->settings['show_cat_menu']?$this->settings['show_cat_menu']:false;
-        $cat_menu_title = $this->settings['cat_menu_title']?icl_t('WPML', 'Categories Menu', $this->settings['cat_menu_title']):__('News', 'sitepress');
+        $cahce_key = $post->ID.'-'.$sitepress->get_current_language().'-ie-'.$cms_nav_ie_ver;
+        $output = $wpdb->get_var("
+                            SELECT data
+                            FROM {$wpdb->prefix}icl_cms_nav_cache
+                            WHERE cache_key='{$cahce_key}'
+                            AND user_ref='{$current_user->ID}'
+                            AND type='nav_menu'");
+        if (!$output || ICL_DISABLE_CACHE) {
         
-        if(0 === strpos('page', get_option('show_on_front'))){
-            $page_on_front = (int)get_option('page_on_front'); 
-            $page_for_posts  = (int)get_option('page_for_posts');
-        }else{
-            $page_on_front = 0;
-            $page_for_posts  = 0;        
-        }
-
-        // exclude some pages                                                                                                            
-        $custom_excluded = $wpdb->get_col("
-            SELECT post_id 
-            FROM {$wpdb->postmeta} pm LEFT JOIN {$wpdb->prefix}icl_translations tr ON pm.post_id = tr.element_id AND element_type='post'
-            WHERE meta_key='_top_nav_excluded' AND meta_value <> '' AND tr.language_code = '{$sitepress->get_current_language()}'
-            ");        
-        $excluded_pages = array_merge(array($page_for_posts), $custom_excluded);  
-        $excluded_pages = join(',', $excluded_pages);
-        
-        if(!$post->ancestors){
-            $post->ancestors = array();
-        }   
-        if($sitepress_settings['existing_content_language_verified']){   // user has initialized 
-            $pages = $wpdb->get_col("
-                SELECT p.ID FROM {$wpdb->posts} p
-                    JOIN {$wpdb->prefix}icl_translations tr ON p.ID = tr.element_id AND element_type='post' 
-                WHERE post_type='page' AND post_status='publish' AND post_parent=0 AND p.ID NOT IN ({$excluded_pages})  AND tr.language_code = '{$sitepress->get_current_language()}'
-                ORDER BY {$order}");   
-        }else{
-            $pages = $wpdb->get_col("
-                SELECT p.ID FROM {$wpdb->posts} p                    
-                WHERE post_type='page' AND post_status='publish' AND post_parent=0 AND p.ID NOT IN ({$excluded_pages})  
-                ORDER BY {$order}");   
-        }
-        if($pages){   
-            ?><div id="menu-wrap"><?php
-            ?><ul id="cms-nav-top-menu"><?php
-            foreach($pages as $p){
-                $sections = array();
-                $subpages = $wpdb->get_results("
-                    SELECT p.ID, meta_value AS section
-                    FROM {$wpdb->posts} p LEFT JOIN {$wpdb->postmeta} m ON p.ID=m.post_id AND (meta_key='_cms_nav_section' OR meta_key IS NULL)
-                    WHERE p.post_parent={$p} AND p.post_status='publish' AND p.ID NOT IN ({$excluded_pages}) ORDER BY {$order}");                
-                foreach((array)$subpages as $s){
-                    $sections[$s->section][] = $s->ID;    
-                }
-                ksort($sections);  
-                    
-                if($p==$post->ID || in_array($p,$post->ancestors)){
-                    $sel = true;
-                }else{
-                    $sel = false;
-                }                        
-                $page_name_html = apply_filters('icl_nav_page_html', $p, 0);
-                if($page_name_html==$p){
-                    $page_name_html = get_the_title($p);
-                }
-                
-                
-                $main_li_classes = array();
-                if($sel){
-                    $main_li_classes[] = 'selected_page';
-                }
-                $incr++;
-                if($incr==1){
-                    $main_li_classes[] = 'icl_first';
-                }elseif($incr==count($pages)){
-                    $main_li_classes[] = 'icl_last';
-                }
-                
-                ?><li<?php if(!empty($main_li_classes)):?> class="<?php echo join(' ' , $main_li_classes)?>"<?php endif?>><a href="<?php echo $p==$post->ID?'#':get_permalink($p); ?>" class="<?php if($subpages):?>trigger<?php endif?>"><?php echo $page_name_html ?><?php if(!isset($cms_nav_ie_ver) || $cms_nav_ie_ver > 6): ?></a><?php endif; ?>
-                    <?php if($subpages):?>
-                        <?php if(isset($cms_nav_ie_ver) && $cms_nav_ie_ver <= 6): ?><table><tr><td><?php endif; ?>
-                        <ul>
-                            <?php foreach($sections as $sec_name=>$sec): ?>
-                                <?php if($sec_name): ?>
-                                <li class="section icl-top-nav-section-<?php echo sanitize_title_with_dashes($sec_name) ?>"><?php echo $sec_name ?></li>
-                                <?php endif; ?>
-                                <?php foreach($sec as $sp):?>                            
-                                <li<?php if($sp==$post->ID):?> class="selected_subpage"<?php endif?>><?php                            
-                                    $subpage_name_html = apply_filters('icl_nav_page_html', $sp, 1);
-                                    if($subpage_name_html==$sp){
-                                        $subpage_name_html = get_the_title($sp);
-                                    }
-                                    if($sp!=$post->ID):?><a href="<?php echo get_permalink($sp); ?>" <?php if(in_array($sp,$post->ancestors)): ?>class="selected"<?php endif;?>><?php endif?><?php echo $subpage_name_html ?><?php if($sp!=$post->ID):?></a><?php endif                             
-                                ?></li>
-                                <?php endforeach; ?>
-                            <?php endforeach; ?>
-                        </ul>
-                        <?php if(isset($cms_nav_ie_ver) && $cms_nav_ie_ver <= 6): ?></td></tr></table><?php endif; ?>
-                    <?php endif; ?>                    
-                    <?php if(isset($cms_nav_ie_ver) && $cms_nav_ie_ver <= 6): ?></a><?php endif; ?>
-                </li>
-                <?php   
+            // save the menu to a cache
+            ob_start();
+            
+            $order = $this->settings['page_order']?$this->settings['page_order']:'menu_order';
+            $show_cat_menu = $this->settings['show_cat_menu']?$this->settings['show_cat_menu']:false;
+            $cat_menu_title = $this->settings['cat_menu_title']?icl_t('WPML', 'Categories Menu', $this->settings['cat_menu_title']):__('News', 'sitepress');
+            
+            if(0 === strpos('page', get_option('show_on_front'))){
+                $page_on_front = (int)get_option('page_on_front'); 
+                $page_for_posts  = (int)get_option('page_for_posts');
+            }else{
+                $page_on_front = 0;
+                $page_for_posts  = 0;        
             }
-            //add categories
-            if($show_cat_menu){                
-                if($page_for_posts){
-                    $blog_url = get_permalink($page_for_posts);                    
-                    $blog_name = apply_filters('icl_nav_page_html', $page_for_posts, 0);
-                    if($blog_name==$page_for_posts){
-                        $blog_name = get_the_title($page_for_posts);
-                    }                    
-                }else{
-                    $blog_url = get_option('home');
-                    $blog_name = $cat_menu_title;                
-                }
-                
-                $cat_menu_selected = '';
-                if(is_single() || is_category() || $wp_query->is_posts_page){
-                    $cat_menu_selected = ' class="selected_page"';
-                }
-                if(is_single() && !is_page()){
-                    $cats = get_the_category();
-                    foreach((array)$cats as $cat){ $post_cats[] = $cat->cat_ID;}
-                }
-                $categories = get_categories('child_of=0');
-                if($categories){
-                    echo '<li'.$cat_menu_selected.'><a class="trigger" href="'.$blog_url.'">'.$blog_name;
-                    if(!isset($cms_nav_ie_ver) || $cms_nav_ie_ver > 6) echo '</a>';
-                    if(isset($cms_nav_ie_ver) && $cms_nav_ie_ver <= 6) echo '<table><tr><td>';
-                    echo '<ul>';
-                    foreach($categories as $cat){
-                        echo '<li';
-                        if(in_array($cat->cat_ID, (array)$post_cats)){ $post_in_this_cat++; }
-                        if($wp_query->query_vars['cat']==$cat->cat_ID || $post_in_this_cat==1 ){
-                            echo ' class="selected_subpage"';
-                        } 
-                        echo  '>';
-                        echo '<a href="'.get_category_link($cat->cat_ID).'">';
-                        echo apply_filters('single_cat_title', $cat->cat_name);
-                        echo '</a>';
-                        echo '</li>';                            
+    
+            // exclude some pages                                                                                                            
+            $custom_excluded = $wpdb->get_col("
+                SELECT post_id 
+                FROM {$wpdb->postmeta} pm LEFT JOIN {$wpdb->prefix}icl_translations tr ON pm.post_id = tr.element_id AND element_type='post'
+                WHERE meta_key='_top_nav_excluded' AND meta_value <> '' AND tr.language_code = '{$sitepress->get_current_language()}'
+                ");        
+            $excluded_pages = array_merge(array($page_for_posts), $custom_excluded);  
+            $excluded_pages = join(',', $excluded_pages);
+            
+            if(!$post->ancestors){
+                $post->ancestors = array();
+            }   
+            if($sitepress_settings['existing_content_language_verified']){   // user has initialized 
+                $pages = $wpdb->get_col("
+                    SELECT p.ID FROM {$wpdb->posts} p
+                        JOIN {$wpdb->prefix}icl_translations tr ON p.ID = tr.element_id AND element_type='post' 
+                    WHERE post_type='page' AND post_status='publish' AND post_parent=0 AND p.ID NOT IN ({$excluded_pages})  AND tr.language_code = '{$sitepress->get_current_language()}'
+                    ORDER BY {$order}");   
+            }else{
+                $pages = $wpdb->get_col("
+                    SELECT p.ID FROM {$wpdb->posts} p                    
+                    WHERE post_type='page' AND post_status='publish' AND post_parent=0 AND p.ID NOT IN ({$excluded_pages})  
+                    ORDER BY {$order}");   
+            }
+            if($pages){   z
+                ?><div id="menu-wrap"><?php
+                ?><ul id="cms-nav-top-menu"><?php
+                foreach($pages as $p){
+                    $sections = array();
+                    $subpages = $wpdb->get_results("
+                        SELECT p.ID, meta_value AS section
+                        FROM {$wpdb->posts} p LEFT JOIN {$wpdb->postmeta} m ON p.ID=m.post_id AND (meta_key='_cms_nav_section' OR meta_key IS NULL)
+                        WHERE p.post_parent={$p} AND p.post_status='publish' AND p.ID NOT IN ({$excluded_pages}) ORDER BY {$order}");                
+                    foreach((array)$subpages as $s){
+                        $sections[$s->section][] = $s->ID;    
                     }
-                    echo '</ul>';
-                    if(isset($cms_nav_ie_ver) && $cms_nav_ie_ver <= 6) echo '</td></tr></table></a>';
-                    echo '</li>';
-                }                                
+                    ksort($sections);  
+                        
+                    if($p==$post->ID || in_array($p,$post->ancestors)){
+                        $sel = true;
+                    }else{
+                        $sel = false;
+                    }                        
+                    $page_name_html = apply_filters('icl_nav_page_html', $p, 0);
+                    if($page_name_html==$p){
+                        $page_name_html = get_the_title($p);
+                    }
+                    
+                    
+                    $main_li_classes = array();
+                    if($sel){
+                        $main_li_classes[] = 'selected_page';
+                    }
+                    $incr++;
+                    if($incr==1){
+                        $main_li_classes[] = 'icl_first';
+                    }elseif($incr==count($pages)){
+                        $main_li_classes[] = 'icl_last';
+                    }
+                    
+                    ?><li<?php if(!empty($main_li_classes)):?> class="<?php echo join(' ' , $main_li_classes)?>"<?php endif?>><a href="<?php echo $p==$post->ID?'#':get_permalink($p); ?>" class="<?php if($subpages):?>trigger<?php endif?>"><?php echo $page_name_html ?><?php if(!isset($cms_nav_ie_ver) || $cms_nav_ie_ver > 6): ?></a><?php endif; ?>
+                        <?php if($subpages):?>
+                            <?php if(isset($cms_nav_ie_ver) && $cms_nav_ie_ver <= 6): ?><table><tr><td><?php endif; ?>
+                            <ul>
+                                <?php foreach($sections as $sec_name=>$sec): ?>
+                                    <?php if($sec_name): ?>
+                                    <li class="section icl-top-nav-section-<?php echo sanitize_title_with_dashes($sec_name) ?>"><?php echo $sec_name ?></li>
+                                    <?php endif; ?>
+                                    <?php foreach($sec as $sp):?>                            
+                                    <li<?php if($sp==$post->ID):?> class="selected_subpage"<?php endif?>><?php                            
+                                        $subpage_name_html = apply_filters('icl_nav_page_html', $sp, 1);
+                                        if($subpage_name_html==$sp){
+                                            $subpage_name_html = get_the_title($sp);
+                                        }
+                                        if($sp!=$post->ID):?><a href="<?php echo get_permalink($sp); ?>" <?php if(in_array($sp,$post->ancestors)): ?>class="selected"<?php endif;?>><?php endif?><?php echo $subpage_name_html ?><?php if($sp!=$post->ID):?></a><?php endif                             
+                                    ?></li>
+                                    <?php endforeach; ?>
+                                <?php endforeach; ?>
+                            </ul>
+                            <?php if(isset($cms_nav_ie_ver) && $cms_nav_ie_ver <= 6): ?></td></tr></table><?php endif; ?>
+                        <?php endif; ?>                    
+                        <?php if(isset($cms_nav_ie_ver) && $cms_nav_ie_ver <= 6): ?></a><?php endif; ?>
+                    </li>
+                    <?php   
+                }
+                //add categories
+                if($show_cat_menu){                
+                    if($page_for_posts){
+                        $blog_url = get_permalink($page_for_posts);                    
+                        $blog_name = apply_filters('icl_nav_page_html', $page_for_posts, 0);
+                        if($blog_name==$page_for_posts){
+                            $blog_name = get_the_title($page_for_posts);
+                        }                    
+                    }else{
+                        $blog_url = get_option('home');
+                        $blog_name = $cat_menu_title;                
+                    }
+                    
+                    $cat_menu_selected = '';
+                    if(is_single() || is_category() || $wp_query->is_posts_page){
+                        $cat_menu_selected = ' class="selected_page"';
+                    }
+                    if(is_single() && !is_page()){
+                        $cats = get_the_category();
+                        foreach((array)$cats as $cat){ $post_cats[] = $cat->cat_ID;}
+                    }
+                    $categories = get_categories('child_of=0');
+                    if($categories){
+                        echo '<li'.$cat_menu_selected.'><a class="trigger" href="'.$blog_url.'">'.$blog_name;
+                        if(!isset($cms_nav_ie_ver) || $cms_nav_ie_ver > 6) echo '</a>';
+                        if(isset($cms_nav_ie_ver) && $cms_nav_ie_ver <= 6) echo '<table><tr><td>';
+                        echo '<ul>';
+                        foreach($categories as $cat){
+                            echo '<li';
+                            if(in_array($cat->cat_ID, (array)$post_cats)){ $post_in_this_cat++; }
+                            if($wp_query->query_vars['cat']==$cat->cat_ID || $post_in_this_cat==1 ){
+                                echo ' class="selected_subpage"';
+                            } 
+                            echo  '>';
+                            echo '<a href="'.get_category_link($cat->cat_ID).'">';
+                            echo apply_filters('single_cat_title', $cat->cat_name);
+                            echo '</a>';
+                            echo '</li>';                            
+                        }
+                        echo '</ul>';
+                        if(isset($cms_nav_ie_ver) && $cms_nav_ie_ver <= 6) echo '</td></tr></table></a>';
+                        echo '</li>';
+                    }                                
+                }
+                ?></ul></div><br class="cms-nav-clearit" /><?php
             }
-            ?></ul></div><br class="cms-nav-clearit" /><?php
+            
+            $output = ob_get_contents();
+            ob_end_clean();
+            
+            $wpdb->insert($wpdb->prefix.'icl_cms_nav_cache', 
+                array(
+                    'cache_key'=>$cahce_key, 
+                    'type'=>'nav_menu', 
+                    'user_ref'=>$current_user->ID, 
+                    'data'=>$output,
+                    'md5'=>md5($output)
+                    )
+                );
+            
         }
+        
+        echo $output;
     }    
     
     function cms_navigation_page_navigation(){
         if(!is_page()) return;
-        global $post, $wpdb;
+        global $post, $wpdb, $current_user, $sitepress;
         
         if($post == null) {
             return;
         }
+
+        $cahce_key = $post->ID.'-'.$sitepress->get_current_language();
+        $output = $wpdb->get_var("
+                            SELECT data
+                            FROM {$wpdb->prefix}icl_cms_nav_cache
+                            WHERE cache_key='{$cahce_key}'
+                            AND user_ref='{$current_user->ID}'
+                            AND type='nav_page'");
+        if (!$output || ICL_DISABLE_CACHE) {
         
-        $order = $this->settings['page_order']?$this->settings['page_order']:'menu_order';
-        $heading_start = $this->settings['heading_start']?$this->settings['heading_start']:'<h4>';
-        $heading_end = $this->settings['heading_end']?$this->settings['heading_end']:'</h4>';
+            // save the menu to a cache
+            ob_start();
             
-        // is home?
-        $is_home = get_post_meta($post->ID,'_cms_nav_minihome',true);        
-        if($is_home || !$post->ancestors){
-            $pid = $post->ID;
-        }else{
-            //get top level page parent or home
-            $parent = $post->ancestors[0];            
-            do{
-                $uppost = $wpdb->get_row("
-                    SELECT p1.ID, p1.post_parent, p2.meta_value, (p2.meta_value IS NOT NULL && p2.meta_value <> '') AS minihome 
-                    FROM {$wpdb->posts} p1
-                        LEFT JOIN {$wpdb->postmeta} p2 ON p1.ID=p2.post_id AND (meta_key='_cms_nav_minihome' OR meta_key IS NULL)
-                        WHERE post_type='page' AND p1.ID={$parent}
-                ");
-                $pid = $uppost->ID;
-                $parent = $uppost->post_parent;
-                $minihome = $uppost->minihome;        
-            }while($parent!=0 && !$minihome);
-        } 
-                  
-        echo $heading_start;
-        if($pid!=$post->ID){ 
-            ?><a href="<?php echo get_permalink($pid); ?>"><?php 
-        } 
-        echo get_the_title($pid);
-        if($pid!=$post->ID){
-            ?></a><?php
-        }
-        echo $heading_end;
-        ?>
-        
-        <?php
-
-        if (empty($pid)) return;
-
-        $sub = $wpdb->get_results("
-                SELECT p1.ID, meta_value AS section FROM {$wpdb->posts} p1 
-                LEFT JOIN {$wpdb->postmeta} p2 ON p1.ID=p2.post_id AND (meta_key='_cms_nav_section' OR meta_key IS NULL)
-                WHERE post_parent='{$pid}' AND post_status='publish' ORDER BY {$order}"); 
-        if(empty($sub))  return;                   
-        foreach($sub as $s){
-            $sections[$s->section][] = $s->ID;    
-        }
-        ksort($sections);    
-        echo '<ul class="cms-nav-sidebar">';
-        foreach($sections as $sec_name=>$sec){
-            ?>            
-                <?php if($sec_name): ?>
-                <li class="cms-nav-sub-section"><?php echo $sec_name ?></li>
-                <?php endif; ?>
-                <?php foreach($sec as $s):?>
-                <li<?php if($post->ID==$s):?> class="selected_page_side"<?php endif;?>><?php
-                    if($post->ID!=$s):?><a href="<?php echo get_permalink($s); ?>"><?php endif?><?php echo get_the_title($s) ?><?php if($post->ID!=$s):?></a><?php endif;                                
-                        if(!get_post_meta($s, '_cms_nav_minihome', 1)){
-                            $this->__cms_navigation_child_pages_recursive($s, $order); 
-                        }                
-                ?></li>
-                <?php endforeach;?>            
+            
+            $order = $this->settings['page_order']?$this->settings['page_order']:'menu_order';
+            $heading_start = $this->settings['heading_start']?$this->settings['heading_start']:'<h4>';
+            $heading_end = $this->settings['heading_end']?$this->settings['heading_end']:'</h4>';
+                
+            // is home?
+            $is_home = get_post_meta($post->ID,'_cms_nav_minihome',true);        
+            if($is_home || !$post->ancestors){
+                $pid = $post->ID;
+            }else{
+                //get top level page parent or home
+                $parent = $post->ancestors[0];            
+                do{
+                    $uppost = $wpdb->get_row("
+                        SELECT p1.ID, p1.post_parent, p2.meta_value, (p2.meta_value IS NOT NULL && p2.meta_value <> '') AS minihome 
+                        FROM {$wpdb->posts} p1
+                            LEFT JOIN {$wpdb->postmeta} p2 ON p1.ID=p2.post_id AND (meta_key='_cms_nav_minihome' OR meta_key IS NULL)
+                            WHERE post_type='page' AND p1.ID={$parent}
+                    ");
+                    $pid = $uppost->ID;
+                    $parent = $uppost->post_parent;
+                    $minihome = $uppost->minihome;        
+                }while($parent!=0 && !$minihome);
+            } 
+                      
+            echo $heading_start;
+            if($pid!=$post->ID){ 
+                ?><a href="<?php echo get_permalink($pid); ?>"><?php 
+            } 
+            echo get_the_title($pid);
+            if($pid!=$post->ID){
+                ?></a><?php
+            }
+            echo $heading_end;
+            ?>
+            
             <?php
+    
+            if (empty($pid)) return;
+    
+            $sub = $wpdb->get_results("
+                    SELECT p1.ID, meta_value AS section FROM {$wpdb->posts} p1 
+                    LEFT JOIN {$wpdb->postmeta} p2 ON p1.ID=p2.post_id AND (meta_key='_cms_nav_section' OR meta_key IS NULL)
+                    WHERE post_parent='{$pid}' AND post_status='publish' ORDER BY {$order}"); 
+            if(empty($sub))  return;                   
+            foreach($sub as $s){
+                $sections[$s->section][] = $s->ID;    
+            }
+            ksort($sections);    
+            echo '<ul class="cms-nav-sidebar">';
+            foreach($sections as $sec_name=>$sec){
+                ?>            
+                    <?php if($sec_name): ?>
+                    <li class="cms-nav-sub-section"><?php echo $sec_name ?></li>
+                    <?php endif; ?>
+                    <?php foreach($sec as $s):?>
+                    <li<?php if($post->ID==$s):?> class="selected_page_side"<?php endif;?>><?php
+                        if($post->ID!=$s):?><a href="<?php echo get_permalink($s); ?>"><?php endif?><?php echo get_the_title($s) ?><?php if($post->ID!=$s):?></a><?php endif;                                
+                            if(!get_post_meta($s, '_cms_nav_minihome', 1)){
+                                $this->__cms_navigation_child_pages_recursive($s, $order); 
+                            }                
+                    ?></li>
+                    <?php endforeach;?>            
+                <?php
+            }
+            echo '</ul>';
+
+            $output = ob_get_contents();
+            ob_end_clean();
+            
+            $wpdb->insert($wpdb->prefix.'icl_cms_nav_cache', 
+                array(
+                    'cache_key'=>$cahce_key, 
+                    'type'=>'nav_page', 
+                    'user_ref'=>$current_user->ID, 
+                    'data'=>$output,
+                    'md5'=>md5($output)
+                    )
+                );
+            
         }
-        echo '</ul>';
+        
+        echo $output;
     }
 
     function __cms_navigation_child_pages_recursive($pid, $order){
@@ -376,7 +465,9 @@ class CMSNavigation{
         <?php endif; 
     }    
     
-    function cms_navigation_update_post_settings($id){        
+    function cms_navigation_update_post_settings($id){
+        global $sitepress, $wpdb;
+        
         if($_POST['post_type']!='page' || $_POST['action']=='inline-save'  || $_POST['autosave']) return;
         $post_id = $_POST['post_ID'];
         
@@ -406,7 +497,13 @@ class CMSNavigation{
             update_post_meta($post_id, '_cms_nav_offsite_url', $_POST['_cms_nav_offsite_url']);
         }else{
             delete_post_meta($post_id, '_cms_nav_offsite_url');
-        }    
+        }
+        
+        // clear the caches
+        $sitepress->icl_cms_nav_offsite_url_cache->clear();
+        $wpdb->query("DELETE FROM {$wpdb->prefix}icl_cms_nav_cache");
+        
+        
         
     }    
     
@@ -513,7 +610,17 @@ class CMSNavigation{
     }
     
     function rewrite_page_link($url, $page_id){
+        global $sitepress;
+        if ($sitepress->icl_cms_nav_offsite_url_cache->has_key($page_id.'_cms_nav_offsite_url')) {
+            // get from the cache.
+            $offsite_url = $sitepress->icl_cms_nav_offsite_url_cache->get($page_id.'_cms_nav_offsite_url');
+            if($offsite_url){
+                $url = $offsite_url;
+            }
+            return $url;
+        }
         $offsite_url = get_post_meta($page_id, '_cms_nav_offsite_url', true);
+        $sitepress->icl_cms_nav_offsite_url_cache->set($page_id.'_cms_nav_offsite_url', $offsite_url);
         if($offsite_url){
             $url = $offsite_url;
         }

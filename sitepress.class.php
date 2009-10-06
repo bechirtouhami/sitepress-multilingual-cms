@@ -179,6 +179,7 @@ class SitePress{
         $this->icl_flag_cache = new icl_cache('flags', true);
         $this->icl_language_name_cache = new icl_cache('language_name', true);
         $this->icl_term_taxonomy_cache = new icl_cache();
+        $this->icl_cms_nav_offsite_url_cache = new icl_cache('cms_nav_offsite_url', true);
              
 
         $this->set_admin_language();

@@ -13,6 +13,7 @@ function icl_plugin_upgrade(){
     icl_cache_clear('locale_cache_class');
     icl_cache_clear('flags_cache_class');
     icl_cache_clear('language_name_cache_class');
+    icl_cache_clear('cms_nav_offsite_url_cache_class');
     
     
     if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '0.9.3', '<')){
