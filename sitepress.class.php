@@ -16,6 +16,7 @@ class SitePress{
         } 
         
         add_action('plugins_loaded', array($this,'init'), 1);
+        add_action('plugins_loaded', array($this,'initialize_cache'), 0);
         
         // Administration menus
         add_action('admin_menu', array($this, 'administration_menu'));
@@ -172,7 +173,7 @@ class SitePress{
         
     }
                                               
-    function init(){ 
+    function initialize_cache(){ 
         require ICL_PLUGIN_PATH . '/inc/cache.php';        
         $this->icl_translations_cache = new icl_cache();
         $this->icl_locale_cache = new icl_cache('locale', true);
@@ -180,7 +181,9 @@ class SitePress{
         $this->icl_language_name_cache = new icl_cache('language_name', true);
         $this->icl_term_taxonomy_cache = new icl_cache();
         $this->icl_cms_nav_offsite_url_cache = new icl_cache('cms_nav_offsite_url', true);
+    }
              
+    function init(){ 
 
         $this->set_admin_language();
         //configure callbacks for plugin menu pages
