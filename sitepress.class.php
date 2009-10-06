@@ -1160,11 +1160,11 @@ class SitePress{
                         if ($details->taxonomy == 'category') {
                             $this->icl_translations_cache->set($details->term_taxonomy_id.'category', $lang_details);
                             // save the term taxonomy
-                            $this->icl_term_taxonomy_cache->set('category'.$details->term_id, $details->term_taxonomy_id);
+                            $this->icl_term_taxonomy_cache->set('category_'.$details->term_id, $details->term_taxonomy_id);
                         } else {
                             $this->icl_translations_cache->set($details->term_taxonomy_id.'tag', $lang_details);
                             // save the term taxonomy
-                            $this->icl_term_taxonomy_cache->set('post_tag'.$details->term_id, $details->term_taxonomy_id);
+                            $this->icl_term_taxonomy_cache->set('post_tag_'.$details->term_id, $details->term_taxonomy_id);
                         }
                     }
                     
