@@ -300,12 +300,8 @@ class SitePress{
         if(is_null($current_user) && function_exists('wp_get_current_user')){
             $current_user = wp_get_current_user();
         }
-        
-        $active_languages = $this->icl_language_name_cache->get('active_languages');
-        if (!$active_languages) {
-            $active_languages = $wpdb->get_col("SELECT code FROM {$wpdb->prefix}icl_languages WHERE active = 1");
-            $this->icl_language_name_cache->set('active_languages', $active_languages);
-        }
+                                   
+        $active_languages = array_keys($this->get_active_languages());
         
         $this->admin_language = $this->get_user_admin_language($current_user->data->ID);
         if($this->admin_language != '' && !in_array($this->admin_language, $active_languages)){
@@ -2521,7 +2517,7 @@ class SitePress{
     }
         
     function get_locale($code) {
-        global $wpdb;
+        global $wpdb;        
         
         if ($this->icl_locale_cache->has_key($code)){
             return $this->icl_locale_cache->get($code);
