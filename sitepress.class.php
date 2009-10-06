@@ -1111,7 +1111,7 @@ class SitePress{
     function get_element_language_details($el_id, $el_type){        
         global $wpdb;
         static $pre_load_done = false;
-        if (!$pre_load_done && !DISABLE_CACHE) {
+        if (!$pre_load_done && !ICL_DISABLE_CACHE) {
             // search previous queries for a group of posts
             foreach ($this->queries as $query){
                 $pos = strstr($query, 'post_id IN (');
@@ -2574,7 +2574,7 @@ class SitePress{
     function pre_option_page_on_front(){
         global $wpdb;
         static $page_on_front_sc = null;
-        if ($page_on_front_sc === null || DISABLE_CACHE) {
+        if ($page_on_front_sc === null || ICL_DISABLE_CACHE) {
             $page_on_front_sc = false;
             $page_on_front = $wpdb->get_var("SELECT option_value FROM {$wpdb->options} WHERE option_name='page_on_front'");
             $trid = $this->get_element_language_details($page_on_front, 'post')->trid;
@@ -2593,7 +2593,7 @@ class SitePress{
     function pre_option_page_for_posts(){
         global $wpdb;
         static $page_for_posts_sc = null;
-        if ($page_for_posts_sc === null || DISABLE_CACHE) {
+        if ($page_for_posts_sc === null || ICL_DISABLE_CACHE) {
 
             $page_for_posts_sc = false;
             $page_for_posts = $wpdb->get_var("SELECT option_value FROM {$wpdb->options} WHERE option_name='page_for_posts'");

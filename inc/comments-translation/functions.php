@@ -826,7 +826,7 @@ class IclCommentsTranslation{
         $details = $sitepress->get_element_language_details($post->ID, 'post');
         $post_lang = $details->language_code;
         
-        if (!$pre_load_done && !DISABLE_CACHE) {
+        if (!$pre_load_done && !ICL_DISABLE_CACHE) {
             // search previous queries for a group of posts
             foreach ($sitepress->queries as $query){
                 $pos = strstr($query, 'post_id IN (');

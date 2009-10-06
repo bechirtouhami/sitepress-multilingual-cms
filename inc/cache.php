@@ -24,7 +24,7 @@ function icl_cache_clear($key){
     icl_cache_set($key, null);
 }
 
-define('DISABLE_CACHE', false);
+define('ICL_DISABLE_CACHE', false);
 
 class icl_cache{
    
@@ -44,21 +44,21 @@ class icl_cache{
     }
     
     function get($key) {
-        if(DISABLE_CACHE){
+        if(ICL_DISABLE_CACHE){
             return null;
         }
         return $this->data[$key];
     }
     
     function has_key($key){
-        if(DISABLE_CACHE){
+        if(ICL_DISABLE_CACHE){
             return false;
         }
         return array_key_exists($key, $this->data);
     }
     
     function set($key, $value) {
-        if(DISABLE_CACHE){
+        if(ICL_DISABLE_CACHE){
             return;
         }
         $this->data[$key] = $value;
