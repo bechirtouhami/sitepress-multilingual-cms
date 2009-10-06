@@ -9,7 +9,7 @@ class SitePress{
     
     function __construct(){
         global $wpdb;
-        
+                       
         $this->settings = get_option('icl_sitepress_settings');                                
         if(false != $this->settings){
             $this->verify_settings();
@@ -158,12 +158,12 @@ class SitePress{
             add_action('show_user_profile', array($this, 'show_user_options'));
             add_action('personal_options_update', array($this, 'save_user_options'));
             
-            if($pagenow == 'edit.php' && !$this->settings['hide_translation_controls_on_posts_lists']){
+            if(($pagenow == 'edit.php' || ($pagenow == 'admin-ajax.php' && $_POST['action']=='inline-save'))  && !$this->settings['hide_translation_controls_on_posts_lists']){
                 add_filter('manage_posts_columns',array($this,'add_posts_management_column'));
                 add_action('manage_posts_custom_column',array($this,'add_content_for_posts_management_column'));            
                 add_action('admin_print_scripts', array($this, '__set_posts_management_column_width'));
             }
-            if($pagenow == 'edit-pages.php' && !$this->settings['hide_translation_controls_on_posts_lists']){
+            if(($pagenow == 'edit-pages.php' || ($pagenow == 'admin-ajax.php' && $_POST['action']=='inline-save'))  && !$this->settings['hide_translation_controls_on_posts_lists']){
                 add_filter('manage_pages_columns',array($this,'add_posts_management_column'));
                 add_action('manage_pages_custom_column',array($this,'add_content_for_posts_management_column'));
                 add_action('admin_print_scripts', array($this, '__set_posts_management_column_width'));
@@ -2843,9 +2843,14 @@ class SitePress{
     
     function add_posts_management_column($columns){
         global $posts, $wpdb, $__management_columns_posts_translations;
-        if(empty($posts)){
+        
+        if($_POST['action']=='inline-save' && $_POST['post_ID']){
+            $p = new stdClass();
+            $p->ID = $_POST['post_ID'];
+            $posts = array($p);
+        }elseif(empty($posts)){
             return $columns;
-        }
+        }         
         if(is_null($__management_columns_posts_translations)){        
             foreach($posts as $p){
                 $post_ids[] = $p->ID;
