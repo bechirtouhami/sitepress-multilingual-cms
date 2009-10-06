@@ -1173,17 +1173,17 @@ class SitePress{
             }
             $pre_load_done = true;
         }
-        $details = $this->icl_translations_cache->get($el_id.$el_type);
+
         if ($this->icl_translations_cache->has_key($el_id.$el_type)) {
-            return $details;            
+            return $this->icl_translations_cache->get($el_id.$el_type);
         }
-        if (!$details){
-            $details = $wpdb->get_row("
-                SELECT trid, language_code, source_language_code 
-                FROM {$wpdb->prefix}icl_translations
-                WHERE element_id='{$el_id}' AND element_type='{$el_type}'");
-            $this->icl_translations_cache->set($el_id.$el_type, $details);
-        }
+
+        $details = $wpdb->get_row("
+            SELECT trid, language_code, source_language_code 
+            FROM {$wpdb->prefix}icl_translations
+            WHERE element_id='{$el_id}' AND element_type='{$el_type}'");
+        $this->icl_translations_cache->set($el_id.$el_type, $details);
+
         return $details;
     }
     
@@ -2065,10 +2065,10 @@ class SitePress{
     
     function category_permalink_filter($p, $cat_id){
         global $wpdb;
-        $term_cat_id = $this->icl_term_taxonomy_cache->get('category'.$cat_id);
+        $term_cat_id = $this->icl_term_taxonomy_cache->get('category_'.$cat_id);
         if (!$term_cat_id) {
             $term_cat_id = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id={$cat_id} AND taxonomy='category'");
-            $this->icl_term_taxonomy_cache->set('category'.$cat_id, $term_cat_id);
+            $this->icl_term_taxonomy_cache->set('category_'.$cat_id, $term_cat_id);
         }
         $cat_id = $term_cat_id;
         
@@ -2084,10 +2084,10 @@ class SitePress{
         if(is_object($tag)){                        
             $tag_id = $tag->term_taxonomy_id;
         }else{
-            $tag_id = $this->icl_term_taxonomy_cache->get('post_tag'.$tag);
+            $tag_id = $this->icl_term_taxonomy_cache->get('post_tag_'.$tag);
             if (!$tag_id) {
                 $tag_id = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id={$tag} AND taxonomy='post_tag'");
-                $this->icl_term_taxonomy_cache->set('post_tag'.$tag, $tag_id);
+                $this->icl_term_taxonomy_cache->set('post_tag_'.$tag, $tag_id);
             }
         }        
         $element_lang_details = $this->get_element_language_details($tag_id,'tag');
@@ -2252,13 +2252,13 @@ class SitePress{
                 $lang_code = $w_active_languages[$k]['language_code'] = $w_active_languages[$k]['code'];
                 unset($w_active_languages[$k]['code']);
 
-                $native_name = $this->get_language_name($lang_code, $lang_code);        
+                $native_name = $this->get_display_language_name($lang_code, $lang_code);        
                 if(!$native_name) $native_name = $w_active_languages[$k]['english_name'];    
                 $w_active_languages[$k]['native_name'] = $native_name;                
                 unset($w_active_languages[$k]['english_name']);
                 
 
-                $translated_name = $this->get_language_name($lang_code, $this->get_current_language());        
+                $translated_name = $this->get_display_language_name($lang_code, $this->get_current_language());        
                 if(!$translated_name) $translated_name = $w_active_languages[$k]['english_name'];    
                 $w_active_languages[$k]['translated_name'] = $translated_name;                
                 unset($w_active_languages[$k]['display_name']);
@@ -2281,7 +2281,7 @@ class SitePress{
             
     }
 
-    function get_language_name($lang_code, $display_code) {
+    function get_display_language_name($lang_code, $display_code) {
         global $wpdb;
         $translated_name = $this->icl_language_name_cache->get($lang_code.$display_code);
         if (!$translated_name) {
@@ -2526,11 +2526,9 @@ class SitePress{
             return $this->icl_locale_cache->get($code);
         }
         
-        $locale = $this->icl_locale_cache->get($code);
-        if (!$locale) {
-            $locale = $wpdb->get_var("SELECT locale FROM {$wpdb->prefix}icl_locale_map WHERE code='{$code}'");
-            $this->icl_locale_cache->set($code, $locale);
-        }
+        $locale = $wpdb->get_var("SELECT locale FROM {$wpdb->prefix}icl_locale_map WHERE code='{$code}'");
+        $this->icl_locale_cache->set($code, $locale);
+
         return $locale;
     }
     
