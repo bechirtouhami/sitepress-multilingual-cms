@@ -2049,7 +2049,7 @@ class SitePress{
                     if(false===strpos($url,'?')){
                         $url_glue = '?';
                     }else{
-                        $url_glue = '&';
+                        $url_glue = '&amp;';
                     }
                     $url .= $url_glue . 'lang=' . $code;
             }
@@ -2751,10 +2751,8 @@ class SitePress{
     
     function filter_queries($sql){                                                                               
         global $wpdb, $pagenow;
-        
         // keep a record of the queries
         $this->queries[] = $sql;
-        
 
         if($pagenow=='categories.php' || $pagenow=='edit-tags.php'){
             if(preg_match('#^SELECT COUNT\(\*\) FROM '.$wpdb->term_taxonomy.' WHERE taxonomy = \'(category|post_tag)\' $#',$sql,$matches)){
