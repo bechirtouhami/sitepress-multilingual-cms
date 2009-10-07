@@ -527,7 +527,11 @@ class SitePress{
             }else{
                 $in_language = $this->get_current_language()?$this->get_current_language():$this->get_default_language();    
             }  
-            $res = $this->icl_language_name_cache->get('in_language_'.$in_language);
+            if (isset($this->icl_language_name_cache)) {
+                $res = $this->icl_language_name_cache->get('in_language_'.$in_language);
+            } else {
+                $res = null;
+            }
             if (!$res) {
                 $res = $wpdb->get_results("
                     SELECT code, english_name, active, lt.name AS display_name 
@@ -536,7 +540,9 @@ class SitePress{
                     WHERE 
                         active=1 AND lt.display_language_code = '{$in_language}' 
                     ORDER BY major DESC, english_name ASC", ARRAY_A);
-                $this->icl_language_name_cache->set('in_language_'.$in_language, $res);
+                if (isset($this->icl_language_name_cache)) {
+                    $this->icl_language_name_cache->set('in_language_'.$in_language, $res);
+                }
             }
             
             $languages = array();
@@ -546,7 +552,11 @@ class SitePress{
                 }        
             } 
 
-            $res = $this->icl_language_name_cache->get('languages_'.$languages);
+            if (isset($this->icl_language_name_cache)) {
+                $res = $this->icl_language_name_cache->get('languages_'.$languages);
+            } else {
+                $res = null;
+            }
             if (!$res) {
             
                 $res = $wpdb->get_results("
@@ -554,7 +564,9 @@ class SitePress{
                     FROM {$wpdb->prefix}icl_languages_translations
                     WHERE language_code IN ('".join("','",array_keys($languages))."') AND language_code = display_language_code
                 ");
-                $this->icl_language_name_cache->set('languages_'.$languages, $res);
+                if (isset($this->icl_language_name_cache)) {
+                    $this->icl_language_name_cache->set('languages_'.$languages, $res);
+                }
             }
             foreach($res as $row){
                 $languages[$row->language_code]['native_name'] = $row->name;     
@@ -619,7 +631,11 @@ class SitePress{
         }else{
             $dcode = $code;
         }
-        $details = $this->icl_language_name_cache->get('language_details_'.$code.$dcode);
+        if (isset($this->icl_language_name_cache)){
+            $details = $this->icl_language_name_cache->get('language_details_'.$code.$dcode);
+        } else {
+            $details = null;
+        }
         if (!$details){
             $details = $wpdb->get_row("
                 SELECT 
@@ -628,7 +644,9 @@ class SitePress{
                     JOIN {$wpdb->prefix}icl_languages_translations lt ON l.code=lt.language_code           
                 WHERE lt.display_language_code = '{$dcode}' AND code='{$code}'
                 ORDER BY major DESC, english_name ASC", ARRAY_A);
-            $this->icl_language_name_cache->set('language_details_'.$code.$dcode, $details);
+            if (isset($this->icl_language_name_cache)){
+                $this->icl_language_name_cache->set('language_details_'.$code.$dcode, $details);
+            }
         }
         
         return $details;
@@ -1125,7 +1143,9 @@ class SitePress{
                         WHERE element_id IN {$group} AND element_type='post'";
                     $ret = $wpdb->get_results($query);        
                     foreach($ret as $details){
-                        $this->icl_translations_cache->set($details->element_id.'post', $details);
+                        if (isset($this->icl_translations_cache)) {
+                            $this->icl_translations_cache->set($details->element_id.'post', $details);
+                        }
                     }
                     
                     // get the taxonomy for the posts for later use
@@ -1157,14 +1177,16 @@ class SitePress{
                         $lang_details->trid = $details->trid;
                         $lang_details->language_code = $details->language_code;
                         $lang_details->source_language_code = $details->source_language_code;
-                        if ($details->taxonomy == 'category') {
-                            $this->icl_translations_cache->set($details->term_taxonomy_id.'category', $lang_details);
-                            // save the term taxonomy
-                            $this->icl_term_taxonomy_cache->set('category_'.$details->term_id, $details->term_taxonomy_id);
-                        } else {
-                            $this->icl_translations_cache->set($details->term_taxonomy_id.'tag', $lang_details);
-                            // save the term taxonomy
-                            $this->icl_term_taxonomy_cache->set('post_tag_'.$details->term_id, $details->term_taxonomy_id);
+                        if (isset($this->icl_translations_cache)) {
+                            if ($details->taxonomy == 'category') {
+                                $this->icl_translations_cache->set($details->term_taxonomy_id.'category', $lang_details);
+                                // save the term taxonomy
+                                $this->icl_term_taxonomy_cache->set('category_'.$details->term_id, $details->term_taxonomy_id);
+                            } else {
+                                $this->icl_translations_cache->set($details->term_taxonomy_id.'tag', $lang_details);
+                                // save the term taxonomy
+                                $this->icl_term_taxonomy_cache->set('post_tag_'.$details->term_id, $details->term_taxonomy_id);
+                            }
                         }
                     }
                     
@@ -1174,7 +1196,7 @@ class SitePress{
             $pre_load_done = true;
         }
 
-        if ($this->icl_translations_cache->has_key($el_id.$el_type)) {
+        if (isset($this->icl_translations_cache) && $this->icl_translations_cache->has_key($el_id.$el_type)) {
             return $this->icl_translations_cache->get($el_id.$el_type);
         }
 
@@ -1182,7 +1204,9 @@ class SitePress{
             SELECT trid, language_code, source_language_code 
             FROM {$wpdb->prefix}icl_translations
             WHERE element_id='{$el_id}' AND element_type='{$el_type}'");
-        $this->icl_translations_cache->set($el_id.$el_type, $details);
+        if (isset($this->icl_translations_cache)) {
+            $this->icl_translations_cache->set($el_id.$el_type, $details);
+        }
 
         return $details;
     }
@@ -2065,10 +2089,16 @@ class SitePress{
     
     function category_permalink_filter($p, $cat_id){
         global $wpdb;
-        $term_cat_id = $this->icl_term_taxonomy_cache->get('category_'.$cat_id);
+        if (isset($this->icl_term_taxonomy_cache)) {
+            $term_cat_id = $this->icl_term_taxonomy_cache->get('category_'.$cat_id);
+        } else {
+            $term_cat_id = null;
+        }
         if (!$term_cat_id) {
             $term_cat_id = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id={$cat_id} AND taxonomy='category'");
-            $this->icl_term_taxonomy_cache->set('category_'.$cat_id, $term_cat_id);
+            if (isset($this->icl_term_taxonomy_cache)) {
+                $this->icl_term_taxonomy_cache->set('category_'.$cat_id, $term_cat_id);
+            }
         }
         $cat_id = $term_cat_id;
         
@@ -2084,10 +2114,16 @@ class SitePress{
         if(is_object($tag)){                        
             $tag_id = $tag->term_taxonomy_id;
         }else{
-            $tag_id = $this->icl_term_taxonomy_cache->get('post_tag_'.$tag);
+            if (isset($this->icl_term_taxonomy_cache)) {
+                $tag_id = $this->icl_term_taxonomy_cache->get('post_tag_'.$tag);
+            } else {
+                $tag_id = null;
+            }
             if (!$tag_id) {
                 $tag_id = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id={$tag} AND taxonomy='post_tag'");
-                $this->icl_term_taxonomy_cache->set('post_tag_'.$tag, $tag_id);
+                if (isset($this->icl_term_taxonomy_cache)) {
+                    $this->icl_term_taxonomy_cache->set('post_tag_'.$tag, $tag_id);
+                }
             }
         }        
         $element_lang_details = $this->get_element_language_details($tag_id,'tag');
@@ -2283,10 +2319,16 @@ class SitePress{
 
     function get_display_language_name($lang_code, $display_code) {
         global $wpdb;
-        $translated_name = $this->icl_language_name_cache->get($lang_code.$display_code);
+        if (isset($this->icl_language_name_cache)) {
+            $translated_name = $this->icl_language_name_cache->get($lang_code.$display_code);
+        } else {
+            $translated_name = null;
+        }
         if (!$translated_name) {
             $translated_name = $wpdb->get_var("SELECT name FROM {$wpdb->prefix}icl_languages_translations WHERE language_code='{$lang_code}' AND display_language_code='{$display_code}'");
-            $this->icl_language_name_cache->set($lang_code.$display_code, $translated_name);
+            if (isset($this->icl_language_name_cache)) {
+                $this->icl_language_name_cache->set($lang_code.$display_code, $translated_name);
+            }
         }
         return $translated_name;
     }
@@ -2294,10 +2336,16 @@ class SitePress{
     function get_flag($lang_code){
         global $wpdb;
         
-        $flag = $this->icl_flag_cache->get($lang_code);
+        if (isset($this->icl_flag_cache)) {
+            $flag = $this->icl_flag_cache->get($lang_code);
+        } else {
+            $flag = null;
+        }
         if (!$flag) {
             $flag = $wpdb->get_row("SELECT flag, from_template FROM {$wpdb->prefix}icl_flags WHERE lang_code='{$lang_code}'");
-            $this->icl_flag_cache->set($lang_code, $flag);
+            if (isset($this->icl_flag_cache)) {
+                $this->icl_flag_cache->set($lang_code, $flag);
+            }
         }
         
         return $flag;
@@ -2522,12 +2570,14 @@ class SitePress{
     function get_locale($code) {
         global $wpdb;        
         
-        if ($this->icl_locale_cache->has_key($code)){
+        if (isset($this->icl_locale_cache) && $this->icl_locale_cache->has_key($code)){
             return $this->icl_locale_cache->get($code);
         }
         
         $locale = $wpdb->get_var("SELECT locale FROM {$wpdb->prefix}icl_locale_map WHERE code='{$code}'");
-        $this->icl_locale_cache->set($code, $locale);
+        if (isset($this->icl_locale_cache)){
+            $this->icl_locale_cache->set($code, $locale);
+        }
 
         return $locale;
     }
