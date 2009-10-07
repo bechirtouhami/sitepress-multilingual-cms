@@ -843,7 +843,7 @@ class IclCommentsTranslation{
                     $query = 
                         "SELECT c.comment_post_ID FROM {$wpdb->comments} c 
                         JOIN {$wpdb->prefix}icl_translations t ON c.comment_ID = t.element_id AND t.element_type='comment'
-                        WHERE c.comment_post_ID IN {$group} AND t.language_code='{$post_lang}'"           ;
+                        WHERE c.comment_post_ID IN {$group} AND c.comment_approved=1 AND t.language_code='{$post_lang}'"           ;
                     $ret = $wpdb->get_results($query);        
                     foreach($ret as $details){
                         $counts[$details->comment_post_ID] = $counts[$details->comment_post_ID] + 1;
@@ -864,7 +864,7 @@ class IclCommentsTranslation{
             $comment_count = $wpdb->get_var("
                 SELECT COUNT(*) FROM {$wpdb->comments} c 
                 JOIN {$wpdb->prefix}icl_translations t ON c.comment_ID = t.element_id AND t.element_type='comment'
-                WHERE c.comment_post_ID={$post->ID} AND t.language_code='{$post_lang}'            
+                WHERE c.comment_post_ID={$post->ID} AND c.comment_approved=1 AND t.language_code='{$post_lang}'            
             ");
             $this->icl_comment_count_cache->set($post->ID.$post_lang, $comment_count);
         }
