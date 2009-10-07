@@ -33,6 +33,8 @@ if(!defined('PHP_EOL')){
     define ('PHP_EOL',"\r\n");
 }
 
+define('CMS_NAV_CACHE_EXPIRE', '1 HOUR');
+
 class CMSNavigation{
     var $settings;
     function __construct(){
@@ -88,7 +90,9 @@ class CMSNavigation{
                             SELECT data
                             FROM {$wpdb->prefix}icl_cms_nav_cache
                             WHERE cache_key='{$cache_key}'
-                            AND type='nav_breadcrumb'");
+                            AND type='nav_breadcrumb'
+                            AND DATE_SUB(NOW(), INTERVAL ".CMS_NAV_CACHE_EXPIRE.") < timestamp");
+                            
         if (!$output || !$this->settings['cache'] || ICL_DISABLE_CACHE) {
         
             // save the menu to a cache
@@ -164,6 +168,10 @@ class CMSNavigation{
             if (!$output){
                 $output = ' ';
             }
+            $wpdb->query("DELETE FROM
+                         {$wpdb->prefix}icl_cms_nav_cache
+                         WHERE cache_key='{$cache_key}'
+                         AND type='nav_breadcrumb'");            
             $wpdb->insert($wpdb->prefix.'icl_cms_nav_cache', 
                 array(
                     'cache_key'=>$cache_key, 
@@ -187,7 +195,8 @@ class CMSNavigation{
                             SELECT data
                             FROM {$wpdb->prefix}icl_cms_nav_cache
                             WHERE cache_key='{$cache_key}'
-                            AND type='nav_menu'");
+                            AND type='nav_menu'
+                            AND DATE_SUB(NOW(), INTERVAL ".CMS_NAV_CACHE_EXPIRE.") < timestamp");
         if (!$output || !$this->settings['cache'] || ICL_DISABLE_CACHE) {
         
             // save the menu to a cache
@@ -340,6 +349,10 @@ class CMSNavigation{
             $output = ob_get_contents();
             ob_end_clean();
             
+            $wpdb->query("DELETE FROM
+                         {$wpdb->prefix}icl_cms_nav_cache
+                         WHERE cache_key='{$cache_key}'
+                         AND type='nav_menu'");            
             $wpdb->insert($wpdb->prefix.'icl_cms_nav_cache', 
                 array(
                     'cache_key'=>$cache_key, 
@@ -366,7 +379,8 @@ class CMSNavigation{
                             SELECT data
                             FROM {$wpdb->prefix}icl_cms_nav_cache
                             WHERE cache_key='{$cache_key}'
-                            AND type='nav_page'");
+                            AND type='nav_page'
+                            AND DATE_SUB(NOW(), INTERVAL ".CMS_NAV_CACHE_EXPIRE.") < timestamp");
         if (!$output || !$this->settings['cache'] || ICL_DISABLE_CACHE) {
         
             // save the menu to a cache
@@ -442,6 +456,10 @@ class CMSNavigation{
             $output = ob_get_contents();
             ob_end_clean();
             
+            $wpdb->query("DELETE FROM
+                         {$wpdb->prefix}icl_cms_nav_cache
+                         WHERE cache_key='{$cache_key}'
+                         AND type='nav_page'");            
             $wpdb->insert($wpdb->prefix.'icl_cms_nav_cache', 
                 array(
                     'cache_key'=>$cache_key, 
