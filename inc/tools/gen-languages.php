@@ -1,6 +1,6 @@
 <?php
 // creates a serialized array from the languages.csv file and stores it into the 'res' folder
-// diabled
+// disabled
 
 return;
 

@@ -1,5 +1,4 @@
 <?php
-
 if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '=') 
     || (isset($_REQUEST['action']) && $_REQUEST['action'] == 'error_scrape') || !isset($wpdb) ) return;
 
@@ -26,7 +25,7 @@ function icl_plugin_upgrade(){
     
     if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '0.9.3', '<')){        
         require_once(ICL_PLUGIN_PATH . '/inc/lang-data.inc');      
-        $wpdb->query("UPDATE {$wpdb->prefix}icl_languages SET english_name='Norwegian Bokmål', code='nb' WHERE english_name='Norwegian'");      
+        $wpdb->query("UPDATE {$wpdb->prefix}icl_languages SET english_name='Norwegian BokmÃ¥l', code='nb' WHERE english_name='Norwegian'");      
         foreach($langs_names['Norwegian Bokm?l']['tr'] as $k=>$display){        
             if(!trim($display)){
                 $display = 'Norwegian Bokm?l';
@@ -98,7 +97,7 @@ function icl_plugin_upgrade(){
         }
         
         //fix norwegian records
-        mysql_query("UPDATE {$wpdb->prefix}icl_languages SET code='nb', english_name='Norwegian Bokmål' WHERE english_name LIKE 'Norwegian Bokm%'");
+        mysql_query("UPDATE {$wpdb->prefix}icl_languages SET code='nb', english_name='Norwegian BokmÃ¥l' WHERE english_name LIKE 'Norwegian Bokm%'");
         mysql_query("UPDATE {$wpdb->prefix}icl_languages_translations SET language_code='nb' WHERE language_code=''");
 
         
@@ -116,7 +115,7 @@ function icl_plugin_upgrade(){
     // version 1.0.2
     if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.0.2', '<')){
         //fix norwegian records    
-        $wpdb->query("UPDATE {$wpdb->prefix}icl_languages SET code='nb', english_name='Norwegian Bokmål' WHERE english_name LIKE 'Norwegian Bokm%'");    
+        $wpdb->query("UPDATE {$wpdb->prefix}icl_languages SET code='nb', english_name='Norwegian BokmÃ¥l' WHERE english_name LIKE 'Norwegian Bokm%'");    
         $wpdb->query("UPDATE {$wpdb->prefix}icl_languages_translations SET language_code='nb' WHERE language_code=''");        
         $wpdb->query("UPDATE {$wpdb->prefix}icl_languages_translations SET display_language_code='nb' WHERE display_language_code=''");        
         
@@ -251,8 +250,11 @@ function icl_plugin_upgrade(){
         $iclsettings = get_option('icl_sitepress_settings');
         $iclsettings['modules']['cms-navigation']['cache'] = 1;
         update_option('icl_sitepress_settings',$iclsettings);
+        $wpdb->update($wpdb->prefix . 'icl_languages_translations', array('name'=>'Čeština'), array('language_code'=>'cs', 'display_language_code'=>'cs'));
         if($mig_debug) fwrite($mig_debug, "Upgraded to 1.3.3 \n");
     }
+    
+    
     
     if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '<')){
         if($mig_debug) fwrite($mig_debug, "Update plugin version in the database \n");
