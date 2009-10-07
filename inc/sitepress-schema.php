@@ -259,9 +259,7 @@ function icl_sitepress_activate(){
             `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
             `cache_key` VARCHAR( 128 ) NOT NULL ,
             `type` VARCHAR( 128 ) NOT NULL ,
-            `user_ref` bigint(20) unsigned NOT NULL,
             `data` TEXT NOT NULL ,
-            `md5` VARCHAR( 32 ) NOT NULL,
             `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
             ) ENGINE=MyISAM {$charset_collate}"; 
        mysql_query($sql);

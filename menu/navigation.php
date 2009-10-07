@@ -4,6 +4,9 @@
     $cms_navigation_settings = $sitepress_settings['modules']['cms-navigation'];
 ?>
 <?php $sitepress->noscript_notice() ?>
+<script type="text/javascript">        
+var icl_ajx_cache_cleared = '<?php echo __('The cache has been cleared.','sitepress') ?>';
+</script>        
 <div class="wrap">
     <div id="icon-options-general" class="icon32"><br /></div>
     <h2><?php echo __('Setup WPML', 'sitepress') ?></h2>    
@@ -39,6 +42,15 @@
             <td>
                 <label for="icl_navigation_heading_start"><?php echo __('Heading start', 'sitepress')?> <input type="text" size="6" id="icl_navigation_heading_start" name="icl_navigation_heading_start" value="<?php echo $cms_navigation_settings['heading_start'] ?>" /></label>
                 <label for="icl_navigation_heading_end"><?php echo __('Heading end', 'sitepress')?> <input type="text" size="6" id="icl_navigation_heading_end" name="icl_navigation_heading_end" value="<?php echo $cms_navigation_settings['heading_end'] ?>" /></label>
+            </td>
+        </tr>        
+        <tr valign="top">
+            <th scope="row"><?php echo __('Caching', 'sitepress')?></th>
+            <td>
+                <label for="icl_navigation_caching"><input type="checkbox" id="icl_navigation_caching" name="icl_navigation_caching" value="1" <?php if($cms_navigation_settings['cache']): ?>checked="checked"<?php endif ?> /> <?php echo __('Cache navigation elements for super fast performance', 'sitepress')?></label>
+                <br />
+                <input id="icl_navigation_caching_clear" class="button" name="icl_navigation_caching_clear" value="<?php echo __('Clear cache now', 'sitepress') ?>" type="button"/>
+                <span class="icl_ajx_response" id="icl_ajx_response_clear_cache"></span>
             </td>
         </tr>        
     </table>

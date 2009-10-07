@@ -63,21 +63,33 @@ class CMSNavigation{
         add_action('plugins_loaded', array($this, 'sidebar_navigation_widget_init'));
         
         add_filter('page_link', array($this, 'rewrite_page_link'), 15, 2);
-        add_action('parse_query', array($this, 'redirect_offsite_urls'));                
+        add_action('parse_query', array($this, 'redirect_offsite_urls'));
+        
+        add_filter('permalink_structure_changed', array($this,'option_permalink_structure'));
+        
         
     } 
+    
+    function option_permalink_structure($data){
+        global $sitepress, $wpdb;
+        
+        // clear the cache.
+        $sitepress->icl_cms_nav_offsite_url_cache->clear();
+        $wpdb->query("TRUNCATE {$wpdb->prefix}icl_cms_nav_cache");
+        
+        return $data;
+    }
     
     function cms_navigation_breadcrumb(){
         global $post, $sitepress, $current_user, $wpdb;
         
-        $cahce_key = $post->ID.'-'.$sitepress->get_current_language();
+        $cache_key = $_SERVER['REQUEST_URI'].'-'.$sitepress->get_current_language();
         $output = $wpdb->get_var("
                             SELECT data
                             FROM {$wpdb->prefix}icl_cms_nav_cache
-                            WHERE cache_key='{$cahce_key}'
-                            AND user_ref='{$current_user->ID}'
+                            WHERE cache_key='{$cache_key}'
                             AND type='nav_breadcrumb'");
-        if (!$output || ICL_DISABLE_CACHE) {
+        if (!$output || !$this->settings['cache'] || ICL_DISABLE_CACHE) {
         
             // save the menu to a cache
             ob_start();
@@ -154,11 +166,9 @@ class CMSNavigation{
             }
             $wpdb->insert($wpdb->prefix.'icl_cms_nav_cache', 
                 array(
-                    'cache_key'=>$cahce_key, 
+                    'cache_key'=>$cache_key, 
                     'type'=>'nav_breadcrumb', 
-                    'user_ref'=>$current_user->ID, 
-                    'data'=>$output,
-                    'md5'=>md5($output)
+                    'data'=>$output
                     )
                 );
             
@@ -169,14 +179,16 @@ class CMSNavigation{
     function cms_navigation_menu_nav(){
         global $sitepress, $sitepress_settings, $wpdb, $post, $cms_nav_ie_ver, $wp_query, $current_user;
         
-        $cahce_key = $post->ID.'-'.$sitepress->get_current_language().'-ie-'.$cms_nav_ie_ver;
+        $cache_key = $_SERVER['REQUEST_URI'].'-'.$sitepress->get_current_language();
+        if (isset($cms_nav_ie_ver)) {
+            $cache_key .= '-ie-'.$cms_nav_ie_ver;
+        }
         $output = $wpdb->get_var("
                             SELECT data
                             FROM {$wpdb->prefix}icl_cms_nav_cache
-                            WHERE cache_key='{$cahce_key}'
-                            AND user_ref='{$current_user->ID}'
+                            WHERE cache_key='{$cache_key}'
                             AND type='nav_menu'");
-        if (!$output || ICL_DISABLE_CACHE) {
+        if (!$output || !$this->settings['cache'] || ICL_DISABLE_CACHE) {
         
             // save the menu to a cache
             ob_start();
@@ -217,7 +229,7 @@ class CMSNavigation{
                     WHERE post_type='page' AND post_status='publish' AND post_parent=0 AND p.ID NOT IN ({$excluded_pages})  
                     ORDER BY {$order}");   
             }
-            if($pages){   z
+            if($pages){   
                 ?><div id="menu-wrap"><?php
                 ?><ul id="cms-nav-top-menu"><?php
                 foreach($pages as $p){
@@ -330,11 +342,9 @@ class CMSNavigation{
             
             $wpdb->insert($wpdb->prefix.'icl_cms_nav_cache', 
                 array(
-                    'cache_key'=>$cahce_key, 
+                    'cache_key'=>$cache_key, 
                     'type'=>'nav_menu', 
-                    'user_ref'=>$current_user->ID, 
-                    'data'=>$output,
-                    'md5'=>md5($output)
+                    'data'=>$output
                     )
                 );
             
@@ -351,14 +361,13 @@ class CMSNavigation{
             return;
         }
 
-        $cahce_key = $post->ID.'-'.$sitepress->get_current_language();
+        $cache_key = $_SERVER['REQUEST_URI'].'-'.$sitepress->get_current_language();
         $output = $wpdb->get_var("
                             SELECT data
                             FROM {$wpdb->prefix}icl_cms_nav_cache
-                            WHERE cache_key='{$cahce_key}'
-                            AND user_ref='{$current_user->ID}'
+                            WHERE cache_key='{$cache_key}'
                             AND type='nav_page'");
-        if (!$output || ICL_DISABLE_CACHE) {
+        if (!$output || !$this->settings['cache'] || ICL_DISABLE_CACHE) {
         
             // save the menu to a cache
             ob_start();
@@ -435,11 +444,9 @@ class CMSNavigation{
             
             $wpdb->insert($wpdb->prefix.'icl_cms_nav_cache', 
                 array(
-                    'cache_key'=>$cahce_key, 
+                    'cache_key'=>$cache_key, 
                     'type'=>'nav_page', 
-                    'user_ref'=>$current_user->ID, 
-                    'data'=>$output,
-                    'md5'=>md5($output)
+                    'data'=>$output
                     )
                 );
             
@@ -501,7 +508,7 @@ class CMSNavigation{
         
         // clear the caches
         $sitepress->icl_cms_nav_offsite_url_cache->clear();
-        $wpdb->query("DELETE FROM {$wpdb->prefix}icl_cms_nav_cache");
+        $wpdb->query("TRUNCATE {$wpdb->prefix}icl_cms_nav_cache");
         
         
         

@@ -231,6 +231,11 @@ function icl_plugin_upgrade(){
         }
     }
     
+    if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.3.3', '<')){
+        $iclsettings = get_option('icl_sitepress_settings');
+        $iclsettings['modules']['cms-navigation']['cache'] = 1;
+        update_option('icl_sitepress_settings',$iclsettings);
+    }
     
     if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '<')){
         update_option('icl_sitepress_version', ICL_SITEPRESS_VERSION);

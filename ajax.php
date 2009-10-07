@@ -347,10 +347,25 @@ switch($_REQUEST['icl_ajx_action']){
         }        
         $iclsettings['modules']['cms-navigation']['heading_start'] = $_POST['icl_navigation_heading_start'];
         $iclsettings['modules']['cms-navigation']['heading_end'] = $_POST['icl_navigation_heading_end'];
+
+        $iclsettings['modules']['cms-navigation']['cache'] = $_POST['icl_navigation_caching'];
+
         $sitepress->save_settings($iclsettings);
+        
+        // clear the cms navigation caches
+        $sitepress->icl_cms_nav_offsite_url_cache->clear();
+        $wpdb->query("TRUNCATE {$wpdb->prefix}icl_cms_nav_cache");
+        
         echo '1|';
         break;
+
+    case 'icl_clear_nav_cache':
+        // clear the cms navigation caches
+        $sitepress->icl_cms_nav_offsite_url_cache->clear();
+        $wpdb->query("TRUNCATE {$wpdb->prefix}icl_cms_nav_cache");
+        echo '1|';
         
+            
     case 'send_translation_request':
         $post_ids = explode(',',$_POST['post_ids']);
         $target_languages = explode('#', $_POST['target_languages']);
