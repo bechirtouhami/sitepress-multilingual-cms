@@ -23,7 +23,10 @@ function emw_intercept_login ($username) {
         $domains = $sitepress_settings['language_domains'];
         if ($domains) {
             $time = floor(time()/10);
-            $languages=icl_get_languages('skip_missing=0');
+            $_languages=icl_get_languages('skip_missing=0');
+            foreach($_languages as $l){
+                $languages[] = $l;
+            }
             $next_domain = $domains[$languages[1]['language_code']];
             $parts = parse_url($next_domain);
             $options['nonce'] = md5($parts['scheme'] . '://' . $parts['host']."-{$username}-{$time}");

@@ -7,16 +7,24 @@ add_action('plugins_loaded', 'icl_plugin_upgrade' , 1);
 
 function icl_plugin_upgrade(){
     global $wpdb, $sitepress_settings, $sitepress;
+
+    if(defined('ICL_DEBUG_MODE') && ICL_DEBUG_MODE){
+        $mig_debug = @fopen(ICL_PLUGIN_PATH . '/upgrade.log' , 'w');
+    }else{
+        $mig_debug = false;
+    }
     
     // clear any caches
-    require ICL_PLUGIN_PATH . '/inc/cache.php';
+    if($mig_debug) fwrite($mig_debug, "Clearing cache \n");
+    require_once ICL_PLUGIN_PATH . '/inc/cache.php';
     icl_cache_clear('locale_cache_class');
     icl_cache_clear('flags_cache_class');
     icl_cache_clear('language_name_cache_class');
     icl_cache_clear('cms_nav_offsite_url_cache_class');
+    if($mig_debug) fwrite($mig_debug, "Cleared cache \n");
     
     
-    if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '0.9.3', '<')){
+    if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '0.9.3', '<')){        
         require_once(ICL_PLUGIN_PATH . '/inc/lang-data.inc');      
         $wpdb->query("UPDATE {$wpdb->prefix}icl_languages SET english_name='Norwegian Bokmål', code='nb' WHERE english_name='Norwegian'");      
         foreach($langs_names['Norwegian Bokm?l']['tr'] as $k=>$display){        
@@ -167,6 +175,7 @@ function icl_plugin_upgrade(){
     }
 
     if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.3.0.1', '<')){
+        if($mig_debug) fwrite($mig_debug, "Upgrading to 1.3.0.1 \n");
         $iclsettings = get_option('icl_sitepress_settings');
         $iclsettings['modules']['cms-navigation']['enabled'] = 1;
         $iclsettings['dont_show_help_admin_notice'] = 1;        
@@ -185,24 +194,29 @@ function icl_plugin_upgrade(){
             SELECT 'comment', comment_ID, {$maxtrid}+comment_ID, t.language_code, NULL 
                 FROM {$wpdb->comments} c JOIN {$wpdb->prefix}icl_translations t ON c.comment_post_id = t.element_id AND t.element_type='post'
             ");            
-        
+        if($mig_debug) fwrite($mig_debug, "Upgraded to 1.3.0.1 \n");
     }
     
     if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.3.0.2', '<')){
+        if($mig_debug) fwrite($mig_debug, "Upgrading to 1.3.0.2 \n");
         $iclsettings = get_option('icl_sitepress_settings');        
         $wpdb->update($wpdb->prefix.'icl_translations', array('language_code'=>$iclsettings['admin_default_language']), array('language_code'=>'', 'element_type'=>'comment', 'source_language_code'=>''));
+        if($mig_debug) fwrite($mig_debug, "Upgraded to 1.3.0.2 \n");
     }
 
     if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.3.1', '<')){
+        if($mig_debug) fwrite($mig_debug, "Upgrading to 1.3.1 \n");
         $iclsettings = get_option('icl_sitepress_settings');
         if ($iclsettings['site_id'] && $iclsettings['access_key']) {            
             $iclsettings['content_translation_setup_complete'] = 1;
             update_option('icl_sitepress_settings',$iclsettings);
         }
+        if($mig_debug) fwrite($mig_debug, "Upgraded to 1.3.1 \n");
     }
 
     
     if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.3.2', '<')){
+        if($mig_debug) fwrite($mig_debug, "Upgrading to 1.3.2 \n");
         $comment_translations = array();
         $res = mysql_query("
             SELECT element_id, language_code, trid
@@ -229,18 +243,26 @@ function icl_plugin_upgrade(){
                 }
             }
         }
+        if($mig_debug) fwrite($mig_debug, "Upgraded to 1.3.2 \n");
     }
     
     if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.3.3', '<')){
+        if($mig_debug) fwrite($mig_debug, "Upgrading to 1.3.3 \n");
         $iclsettings = get_option('icl_sitepress_settings');
         $iclsettings['modules']['cms-navigation']['cache'] = 1;
         update_option('icl_sitepress_settings',$iclsettings);
+        if($mig_debug) fwrite($mig_debug, "Upgraded to 1.3.3 \n");
     }
     
     if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '<')){
+        if($mig_debug) fwrite($mig_debug, "Update plugin version in the database \n");
         update_option('icl_sitepress_version', ICL_SITEPRESS_VERSION);
+        if($mig_debug) fwrite($mig_debug, "Updated plugin version in the database \n");
     }
 
+    if(defined('ICL_DEBUG_MODE') && ICL_DEBUG_MODE && $mig_debug){
+        @fclose($mig_debug);
+    }    
     
 }
 

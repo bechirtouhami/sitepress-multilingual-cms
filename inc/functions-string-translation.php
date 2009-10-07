@@ -400,8 +400,8 @@ function icl_unregister_string($context, $name){
     global $wpdb; 
     $string_id = $wpdb->get_var("SELECT id FROM {$wpdb->prefix}icl_strings WHERE context='".$wpdb->escape($context)."' AND name='".$wpdb->escape($name)."'");       
     if($string_id){
-        $wpdb->query("DELETE {$wpdb->prefix}icl_strings FROM WHERE id=" . $string_id);
-        $wpdb->query("DELETE {$wpdb->prefix}icl_string_translations FROM WHERE string_id=" . $string_id);
+        $wpdb->query("DELETE FROM {$wpdb->prefix}icl_strings FROM WHERE id=" . $string_id);
+        $wpdb->query("DELETE FROM {$wpdb->prefix}icl_string_translations FROM WHERE string_id=" . $string_id);
     }
 }  
 
