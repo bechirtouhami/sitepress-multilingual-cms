@@ -265,7 +265,7 @@ class SitePress{
             foreach($this->active_languages as $k=>$al){
                 if($al['code']==$this->this_lang){                
                     unset($this->active_languages[$k]);
-                    $this->active_languages = array_merge(array($al), $this->active_languages);
+                    $this->active_languages = array_merge(array($k=>$al), $this->active_languages);
                 }
             }
             
@@ -293,8 +293,7 @@ class SitePress{
         if(defined('WPML_LOAD_API_SUPPORT')){
             require ICL_PLUGIN_PATH . '/inc/wpml-api.php';
             
-        }
-        
+        }        
     }
                     
     function set_admin_language(){
@@ -551,7 +550,7 @@ class SitePress{
                     $languages[$r['code']] = $r;
                 }        
             } 
-
+            
             if (isset($this->icl_language_name_cache)) {
                 $res = $this->icl_language_name_cache->get('languages_'.$languages);
             } else {
