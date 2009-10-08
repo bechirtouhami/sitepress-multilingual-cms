@@ -72,9 +72,10 @@ You can see more screenshots and a video tutorial in the [quick intro](http://wp
 * Ability to prevent loading WPML's CSS and JS files.
 * Fixed bugs for .po import/export.
 * Corrected Czech flag.
-* Fixed bug for feeds in other languages that the defaul when using the language as a parameter in the url.
+* Fixed bug for feeds in other languages when using the language as a parameter in the url.
 * Fixed bug for translation column not displaying after doing quick-edit.
-* Fixed bug for comment counts.
+* Fixed bug for comments count (was reporting SPAM comments too).
+* Made multi-domain login optional. To enable, set ICL_USE_MULTIPLE_DOMAIN_LOGIN to true.
 
 = 1.3.2 =
 * Fixes to the comments translation. This will bring back comments that were hidden on translated pages after upgrading from a previous release.
