@@ -616,6 +616,9 @@ class CMSNavigation{
     }    
     
     function cms_navigation_css(){
+        if(defined('ICL_DONT_LOAD_NAVIGATION_CSS') && ICL_DONT_LOAD_NAVIGATION_CSS){
+            return;
+        }
         $path = dirname(substr(__FILE__, strpos(__FILE__,'wp-content')));
         $path = str_replace('\\','/',$path);
         $stylesheet = rtrim(get_option('siteurl'),'/') . '/' . $path . '/res'; 

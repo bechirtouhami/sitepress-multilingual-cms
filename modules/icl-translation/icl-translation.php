@@ -29,7 +29,9 @@ add_filter('xmlrpc_methods','icl_add_custom_xmlrpc_methods');
 
 add_action('icl_initial_language_set', 'icl_initialize_db');
 
-wp_enqueue_style('icl-translation-style', ICL_PLUGIN_URL . '/modules/icl-translation/css/style.css',null,null,'all');
+if(defined('WP_ADMIN')){
+    wp_enqueue_style('icl-translation-style', ICL_PLUGIN_URL . '/modules/icl-translation/css/style.css',null,null,'all');
+}
 
 
 if(isset($_POST['poll']) && $_POST['poll']==1){

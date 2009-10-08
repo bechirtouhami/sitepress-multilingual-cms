@@ -249,7 +249,9 @@ class SitePress{
                         $exp = explode('.', $_SERVER['HTTP_HOST']);
                         $__l = array_search('http' . $s . '://' . $_SERVER['HTTP_HOST'] . $blog_path, $this->settings['language_domains']);
                         $this->this_lang = $__l?$__l:$this->get_default_language(); 
-                        //include ICL_PLUGIN_PATH . '/modules/multiple-domains-login.php';
+                        if(defined('ICL_USE_MULTIPLE_DOMAIN_LOGIN') && ICL_USE_MULTIPLE_DOMAIN_LOGIN){
+                            include ICL_PLUGIN_PATH . '/modules/multiple-domains-login.php';
+                        }                        
                         break;
                     case 3:
                     default:
@@ -813,6 +815,9 @@ class SitePress{
        
     function front_end_js(){
         echo '<script type="text/javascript">var icl_lang = \''.$this->this_lang.'\';var icl_home = \''.$this->language_url().'\';</script>';        
+        if(defined('ICL_DONT_LOAD_LANGUAGES_JS') && ICL_DONT_LOAD_LANGUAGES_JS){
+            return;
+        }
         echo '<script type="text/javascript" src="'. ICL_PLUGIN_URL . '/res/js/sitepress.js"></script>';        
     }
     
@@ -2144,13 +2149,14 @@ class SitePress{
         register_sidebar_widget(__('Language Selector', 'sitepress'), 'language_selector_widget', 'icl_languages_selector');
         
         function icl_lang_sel_nav_css($show = true){            
-            $link_tag = '<link rel="stylesheet" href="'. ICL_PLUGIN_URL . '/res/css/language-selector.css?v=0.2" type="text/css" media="all" />';
+            $link_tag = '<link rel="stylesheet" href="'. ICL_PLUGIN_URL . '/res/css/language-selector.css?v='.ICL_SITEPRESS_VERSION.'" type="text/css" media="all" />';
             if(!$show){
                 return $link_tag;
             }else{
                 echo $link_tag;
             }
         }
+        
         add_action('template_redirect','icl_lang_sel_nav_ob_start');
         add_action('wp_head','icl_lang_sel_nav_ob_end');
         
@@ -2162,6 +2168,9 @@ class SitePress{
         function icl_lang_sel_nav_ob_end(){ ob_end_flush();}
         
         function icl_lang_sel_nav_prepend_css($buf){
+            if(defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') && ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS){
+                return $buf;
+            }
             return preg_replace('#</title>#i','</title>' . PHP_EOL . PHP_EOL . icl_lang_sel_nav_css(false), $buf);
         }    
         
