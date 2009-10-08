@@ -139,8 +139,26 @@ function icl_st_init(){
             //$arr_t = array_map('html_entity_decode', $arr_t);         
         }   
         
+        // see if the strings are already registered and have names
+        // case of adding translation
+        $res = $wpdb->get_results("                                                                                              
+            SELECT value, name 
+            FROM {$wpdb->prefix}icl_strings 
+            WHERE context = '{$_POST['icl_st_domain_name']}' AND value IN ('".join("','", array_map('mysql_real_escape_string', $arr))."')  
+        ");
+        if(!empty($res)){
+            foreach($res as $r){
+                $map[$r->value] = $r->name;
+            }
+        }
+        
         foreach($arr as $k=>$string){
-            $string_id = icl_register_string($_POST['icl_st_domain_name'], md5($string), $string);
+            if(isset($map[$string])){
+                $name = $map[$string];
+            }else{
+                $name = md5($string);
+            }
+            $string_id = icl_register_string($_POST['icl_st_domain_name'], $name, $string);
             if($string_id && isset($_POST['icl_st_po_language'])){
                 if($arr_t[$k] != ""){
                     if($arr_f[$k]){
