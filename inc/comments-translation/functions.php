@@ -51,7 +51,7 @@ class IclCommentsTranslation{
         if(isset($_POST['action']) && $_POST['action']=='editedcomment'){
             add_action('transition_comment_status', array($this, 'transition_comment_status_actions'), 1, 3);
         }
-        add_action('edit_comment', array($this, 'edit_comment_actions'));
+        //add_action('edit_comment', array($this, 'edit_comment_actions'));
         
         add_action('comment_form', array($this, 'comment_form_options'));        
         
@@ -291,7 +291,12 @@ class IclCommentsTranslation{
             SELECT name 
             FROM {$wpdb->prefix}icl_languages_translations 
             WHERE language_code='".$sitepress->get_current_language()."' AND display_language_code='".$this->user_language."'            
-        ");        
+        ");
+        if($sitepress->have_icl_translator($this->user_language, $sitepress->get_current_language())){
+            $disabled = '';
+        }else{            
+            $disabled = ' disabled="disabled"';
+        }        
         ?>
         
         <input type="hidden" name="icl_comment_language" value="<?php echo $sitepress->get_current_language() ?>" />
@@ -299,8 +304,12 @@ class IclCommentsTranslation{
         <?php if($this->enable_replies_translation && $userdata->user_level > 7 && $user_lang_info['code'] != $sitepress->get_current_language()): ?>
         <label style="cursor:pointer">       
         <input type="hidden" name="icl_user_language" value="<?php echo $this->user_language ?>" />
-        <input style="width:15px;" type="checkbox" name="icl_translate_reply" checked="checked" />         
-        <span><?php echo sprintf(__('Translate from %s into %s', 'sitepress'),$user_lang_info['display_name'], $page_lang_info); ?></span>
+        <input style="width:15px;" type="checkbox" name="icl_translate_reply" checked="checked"<?php echo $disabled ?> />         
+        <span><?php echo sprintf(__('Translate from %s into %s', 'sitepress'),$user_lang_info['display_name'], $page_lang_info); ?>
+        <?php if($disabled): ?>
+        <br /><small><?php printf(__('There is no translator for this language pair. <a href="%s">Details</a>.', 'sitepress'), get_option('siteurl') . '/wp-admin/admin.php?page=' . basename(ICL_PLUGIN_PATH) . '/menu/content-translation.php'); ?></small>
+        <?php endif; ?>
+        </span>
         </label>
         <?php endif; ?>  
         <?php 

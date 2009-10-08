@@ -249,7 +249,7 @@ class SitePress{
                         $exp = explode('.', $_SERVER['HTTP_HOST']);
                         $__l = array_search('http' . $s . '://' . $_SERVER['HTTP_HOST'] . $blog_path, $this->settings['language_domains']);
                         $this->this_lang = $__l?$__l:$this->get_default_language(); 
-                        include ICL_PLUGIN_PATH . '/modules/multiple-domains-login.php';
+                        //include ICL_PLUGIN_PATH . '/modules/multiple-domains-login.php';
                         break;
                     case 3:
                     default:

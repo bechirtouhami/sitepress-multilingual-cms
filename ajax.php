@@ -387,7 +387,7 @@ switch($_REQUEST['icl_ajx_action']){
             $last_call = $iclsettings['last_get_translator_status_call'];
             if ($time - $last_call < 24 * 60 * 60) {
                 break;
-            }
+          }
         }
         
         $iclsettings['last_get_translator_status_call'] = time();
