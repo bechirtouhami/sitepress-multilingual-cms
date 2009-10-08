@@ -7,7 +7,7 @@ add_action('plugins_loaded', 'icl_plugin_upgrade' , 1);
 function icl_plugin_upgrade(){
     global $wpdb, $sitepress_settings, $sitepress;
 
-    if(defined('ICL_DEBUG_MODE') && ICL_DEBUG_MODE && is_writable(ICL_PLUGIN_PATH)){
+    if(defined('ICL_DEBUG_MODE') && ICL_DEBUG_MODE && (is_writable(ICL_PLUGIN_PATH) || is_writable(ICL_PLUGIN_PATH . '/upgrade.log'))){
         $mig_debug = @fopen(ICL_PLUGIN_PATH . '/upgrade.log' , 'w');
     }else{
         $mig_debug = false;
