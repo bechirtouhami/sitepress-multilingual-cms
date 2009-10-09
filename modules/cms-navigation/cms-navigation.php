@@ -226,7 +226,7 @@ class CMSNavigation{
             if(!$post->ancestors){
                 $post->ancestors = array();
             }   
-            if($sitepress_settings['existing_content_language_verified']){   // user has initialized 
+            if($sitepress_settings['existing_content_language_verified'] && 'all' != $sitepress->get_current_language()){   // user has initialized 
                 $pages = $wpdb->get_col("
                     SELECT p.ID FROM {$wpdb->posts} p
                         JOIN {$wpdb->prefix}icl_translations tr ON p.ID = tr.element_id AND element_type='post' 

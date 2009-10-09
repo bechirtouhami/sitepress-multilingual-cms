@@ -1,9 +1,15 @@
+<?php 
+global $w_this_lang;
+if($w_this_lang['code']=='all'){
+    $main_language['native_name'] = __('All languages', 'sitepress');
+}
+?>
 <div id="lang_sel">
     <ul>
         <li><a href="#" class="lang_sel_sel icl-<?php echo $w_this_lang['code'] ?>">
             <?php if($this->settings['icl_lso_flags']):?>                
             <img class="iclflag" src="<?php echo $main_language['country_flag_url'] ?>" alt="<?php echo $main_language['language_code'] ?>" width="18" height="12" />                                
-            &nbsp;<?php endif; ?>
+            &nbsp;<?php endif;?>
             <?php echo icl_disp_language($this->settings['icl_lso_native_lang']?$main_language['native_name']:null, $this->settings['icl_lso_display_lang']?$main_language['translated_name']:null) ?>
             <?php if(!isset($ie_ver) || $ie_ver > 6): ?></a><?php endif; ?>
             <?php if(!empty($active_languages)): ?>

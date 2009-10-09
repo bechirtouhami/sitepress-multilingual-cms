@@ -202,6 +202,7 @@ class SitePress{
                 foreach($al as $l){
                     $active_languages[] = $l['code'];
                 }
+                $active_languages[] = 'all';
                 $s = $_SERVER['HTTPS']=='on'?'s':'';
                 $request = 'http' . $s . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                 $home = get_option('home');
@@ -2177,10 +2178,18 @@ class SitePress{
     }
     
     function get_ls_languages($template_args=array()){
-            global $wpdb, $post, $cat, $tag_id;
-            $w_active_languages = $this->get_active_languages();
+            global $wpdb, $post, $cat, $tag_id, $w_this_lang;
+            $w_active_languages = $this->get_active_languages();            
             $this_lang = $this->this_lang;
-            $w_this_lang = $this->get_language_details($this_lang);
+            if($this_lang=='all'){
+                $w_this_lang = array(
+                    'code'=>'all',
+                    'english_name' => 'All languages',
+                    'display_name' => __('All languages', 'sitepress')
+                );                
+            }else{
+                $w_this_lang = $this->get_language_details($this_lang);
+            }
                        
             if(isset($template_args['skip_missing'])){
                 //override default setting
