@@ -204,7 +204,6 @@ class CMSNavigation{
             
             $order = $this->settings['page_order']?$this->settings['page_order']:'menu_order';
             $show_cat_menu = $this->settings['show_cat_menu']?$this->settings['show_cat_menu']:false;
-            $cat_menu_title = $this->settings['cat_menu_title']?icl_t('WPML', 'Categories Menu', $this->settings['cat_menu_title']):__('News', 'sitepress');
             
             if(0 === strpos('page', get_option('show_on_front'))){
                 $page_on_front = (int)get_option('page_on_front'); 
@@ -215,12 +214,15 @@ class CMSNavigation{
             }
     
             // exclude some pages                                                                                                            
-            $custom_excluded = $wpdb->get_col("
+            $excluded_pages = $wpdb->get_col("
                 SELECT post_id 
                 FROM {$wpdb->postmeta} pm LEFT JOIN {$wpdb->prefix}icl_translations tr ON pm.post_id = tr.element_id AND element_type='post'
                 WHERE meta_key='_top_nav_excluded' AND meta_value <> '' AND tr.language_code = '{$sitepress->get_current_language()}'
                 ");        
-            $excluded_pages = array_merge(array($page_for_posts), $custom_excluded);  
+            $excluded_pages[] = 0; //add this so we don't have an empty array
+            if(!$show_cat_menu && $page_for_posts){
+                $excluded_pages[] = $page_for_posts;    
+            }                                       
             $excluded_pages = join(',', $excluded_pages);
             
             if(!$post->ancestors){
@@ -251,8 +253,7 @@ class CMSNavigation{
                         $sections[$s->section][] = $s->ID;    
                     }
                     ksort($sections);  
-                        
-                    if($p==$post->ID || in_array($p,$post->ancestors)){
+                    if($p==$post->ID || in_array($p,(array)$post->ancestors) || ($p == $page_for_posts && is_home())){
                         $sel = true;
                     }else{
                         $sel = false;
@@ -275,7 +276,45 @@ class CMSNavigation{
                     }
                     
                     ?><li<?php if(!empty($main_li_classes)):?> class="<?php echo join(' ' , $main_li_classes)?>"<?php endif?>><a href="<?php echo $p==$post->ID?'#':get_permalink($p); ?>" class="<?php if($subpages):?>trigger<?php endif?>"><?php echo $page_name_html ?><?php if(!isset($cms_nav_ie_ver) || $cms_nav_ie_ver > 6): ?></a><?php endif; ?>
-                        <?php if($subpages):?>
+                        <?php if($page_for_posts == $p && $this->settings['cat_menu_contents'] != 'nothing'): ?>
+                            <?php if(isset($cms_nav_ie_ver) && $cms_nav_ie_ver <= 6): ?><table><tr><td><?php endif; ?>
+                            <ul>
+                            <?php if( $this->settings['cat_menu_contents'] == 'categories'): ?>
+                            <?php 
+                                $cat_menu_selected = '';
+                                if(is_single() || is_category() || $wp_query->is_posts_page){
+                                    $cat_menu_selected = ' class="selected_page"';
+                                }
+                                if(is_single() && !is_page()){
+                                    $cats = get_the_category();
+                                    foreach((array)$cats as $cat){ $post_cats[] = $cat->cat_ID;}
+                                }
+                                $categories = get_categories('child_of=0');
+                                foreach($categories as $cat){
+                                    echo '<li';
+                                    if(in_array($cat->cat_ID, (array)$post_cats)){ $post_in_this_cat++; }
+                                    if($wp_query->query_vars['cat']==$cat->cat_ID || $post_in_this_cat==1 ){
+                                        echo ' class="selected_subpage"';
+                                    } 
+                                    echo  '>';
+                                    echo '<a href="'.get_category_link($cat->cat_ID).'">';
+                                    echo apply_filters('single_cat_title', $cat->cat_name);
+                                    echo '</a>';
+                                    echo '</li>';                            
+                                }
+                            ?>
+                            <?php elseif($this->settings['cat_menu_contents'] == 'posts'): ?>
+                                <?php                                
+                                    $cmsnavq = new WP_Query();
+                                    $cmsnavq->query('suppress_filters=0');
+                                    if ( $cmsnavq->have_posts() ) : while ( $cmsnavq->have_posts() ) : $cmsnavq->the_post(); 
+                                    ?><li<?php if(get_the_ID()==get_query_var('p')):?> class="selected_subpage"<?php endif?>><a href="<?php the_permalink()?>"><?php the_title()?></a></li><?php
+                                    endwhile; endif
+                                ?>
+                            <?php endif ; ?>
+                            </ul>
+                            <?php if(isset($cms_nav_ie_ver) && $cms_nav_ie_ver <= 6): ?></td></tr></table><?php endif; ?>
+                        <?php elseif($subpages):?>
                             <?php if(isset($cms_nav_ie_ver) && $cms_nav_ie_ver <= 6): ?><table><tr><td><?php endif; ?>
                             <ul>
                                 <?php foreach($sections as $sec_name=>$sec): ?>
@@ -288,7 +327,7 @@ class CMSNavigation{
                                         if($subpage_name_html==$sp){
                                             $subpage_name_html = get_the_title($sp);
                                         }
-                                        if($sp!=$post->ID):?><a href="<?php echo get_permalink($sp); ?>" <?php if(in_array($sp,$post->ancestors)): ?>class="selected"<?php endif;?>><?php endif?><?php echo $subpage_name_html ?><?php if($sp!=$post->ID):?></a><?php endif                             
+                                        if($sp!=$post->ID):?><a href="<?php echo get_permalink($sp); ?>" <?php if(in_array($sp,(array)$post->ancestors)): ?>class="selected"<?php endif;?>><?php endif?><?php echo $subpage_name_html ?><?php if($sp!=$post->ID):?></a><?php endif                             
                                     ?></li>
                                     <?php endforeach; ?>
                                 <?php endforeach; ?>
@@ -298,50 +337,6 @@ class CMSNavigation{
                         <?php if(isset($cms_nav_ie_ver) && $cms_nav_ie_ver <= 6): ?></a><?php endif; ?>
                     </li>
                     <?php   
-                }
-                //add categories
-                if($show_cat_menu){                
-                    if($page_for_posts){
-                        $blog_url = get_permalink($page_for_posts);                    
-                        $blog_name = apply_filters('icl_nav_page_html', $page_for_posts, 0);
-                        if($blog_name==$page_for_posts){
-                            $blog_name = get_the_title($page_for_posts);
-                        }                    
-                    }else{
-                        $blog_url = get_option('home');
-                        $blog_name = $cat_menu_title;                
-                    }
-                    
-                    $cat_menu_selected = '';
-                    if(is_single() || is_category() || $wp_query->is_posts_page){
-                        $cat_menu_selected = ' class="selected_page"';
-                    }
-                    if(is_single() && !is_page()){
-                        $cats = get_the_category();
-                        foreach((array)$cats as $cat){ $post_cats[] = $cat->cat_ID;}
-                    }
-                    $categories = get_categories('child_of=0');
-                    if($categories){
-                        echo '<li'.$cat_menu_selected.'><a class="trigger" href="'.$blog_url.'">'.$blog_name;
-                        if(!isset($cms_nav_ie_ver) || $cms_nav_ie_ver > 6) echo '</a>';
-                        if(isset($cms_nav_ie_ver) && $cms_nav_ie_ver <= 6) echo '<table><tr><td>';
-                        echo '<ul>';
-                        foreach($categories as $cat){
-                            echo '<li';
-                            if(in_array($cat->cat_ID, (array)$post_cats)){ $post_in_this_cat++; }
-                            if($wp_query->query_vars['cat']==$cat->cat_ID || $post_in_this_cat==1 ){
-                                echo ' class="selected_subpage"';
-                            } 
-                            echo  '>';
-                            echo '<a href="'.get_category_link($cat->cat_ID).'">';
-                            echo apply_filters('single_cat_title', $cat->cat_name);
-                            echo '</a>';
-                            echo '</li>';                            
-                        }
-                        echo '</ul>';
-                        if(isset($cms_nav_ie_ver) && $cms_nav_ie_ver <= 6) echo '</td></tr></table></a>';
-                        echo '</li>';
-                    }                                
                 }
                 ?></ul></div><br class="cms-nav-clearit" /><?php
             }

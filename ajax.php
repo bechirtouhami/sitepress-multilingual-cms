@@ -341,10 +341,7 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings = $sitepress->get_settings();
         $iclsettings['modules']['cms-navigation']['page_order'] = $_POST['icl_navigation_page_order'];
         $iclsettings['modules']['cms-navigation']['show_cat_menu'] = $_POST['icl_navigation_show_cat_menu'];
-        if($_POST['icl_navigation_cat_menu_title']){
-            $iclsettings['modules']['cms-navigation']['cat_menu_title'] = $_POST['icl_navigation_cat_menu_title'];
-            icl_register_string('WPML', 'Categories Menu', $_POST['icl_navigation_cat_menu_title']);
-        }        
+        $iclsettings['modules']['cms-navigation']['cat_menu_contents'] = $_POST['icl_blog_menu_contents'];
         $iclsettings['modules']['cms-navigation']['heading_start'] = $_POST['icl_navigation_heading_start'];
         $iclsettings['modules']['cms-navigation']['heading_end'] = $_POST['icl_navigation_heading_end'];
 

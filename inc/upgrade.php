@@ -254,6 +254,13 @@ function icl_plugin_upgrade(){
         if($mig_debug) fwrite($mig_debug, "Upgraded to 1.3.3 \n");
     }
     
+    if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.3.4', '<')){
+        if($mig_debug) fwrite($mig_debug, "Upgrading to 1.3.4 \n");
+        $iclsettings = get_option('icl_sitepress_settings');
+        $iclsettings['modules']['cms-navigation']['cat_menu_contents'] = $_POST['icl_blog_menu_contents'];
+        update_option('icl_sitepress_settings',$iclsettings);
+        if($mig_debug) fwrite($mig_debug, "Upgraded to 1.3.4 \n");
+    }
     
     
     if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '<')){
