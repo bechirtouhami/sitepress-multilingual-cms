@@ -37,7 +37,7 @@
         
         <?php
             $benefits = array(
-                __('Profesional translators', 'sitepress'),
+                __('Professional translators', 'sitepress'),
                 __('Easy to use', 'sitepress'),
                 __('Content sent to central server', 'sitepress'),
                 __('Translated content automatically returned', 'sitepress'),
