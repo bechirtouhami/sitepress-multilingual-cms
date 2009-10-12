@@ -29,35 +29,50 @@ var icl_ajx_cache_cleared = '<?php echo __('The cache has been cleared.','sitepr
                 <option value="post_date" <?php if($cms_navigation_settings['page_order']=='post_date'): ?>selected="selected"<?php endif;?>><?php echo __('Creation time', 'sitepress')?></option>
                 </select>
             </td>
-        </tr>
+        </tr>        
         <tr valign="top">
             <th scope="row"><?php echo __('Blog posts menu', 'sitepress')?></th>
             <td>
-                <label for="icl_navigation_show_cat_menu"><input type="checkbox" id="icl_navigation_show_cat_menu" name="icl_navigation_show_cat_menu" value="1" <?php if($cms_navigation_settings['show_cat_menu']): ?>checked="checked"<?php endif ?> /> <?php _e('Show blog posts menu', 'sitepress')?></label>
+                <p><label for="icl_navigation_show_cat_menu"><input type="checkbox" id="icl_navigation_show_cat_menu" name="icl_navigation_show_cat_menu" value="1" <?php if($cms_navigation_settings['show_cat_menu']): ?>checked="checked"<?php endif ?> /> <?php _e('Show blog posts menu', 'sitepress')?></label></p>
+                
                 <div id="icl_cat_menu_contents" <?php if(!$cms_navigation_settings['show_cat_menu']): ?>style="display:none"<?php endif ?>>
-                <?php _e('Select what items to display for the blog menu:', 'sitepress') ?>&nbsp;
-                <label><input type="radio" name="icl_blog_menu_contents" value="categories" <?php if($cms_navigation_settings['cat_menu_contents']=='categories'): ?>checked="checked"<?php endif ?> /><?php _e('Categories', 'sitepress') ?></label>&nbsp;
-                <label><input type="radio" name="icl_blog_menu_contents" value="posts" <?php if($cms_navigation_settings['cat_menu_contents']=='posts'): ?>checked="checked"<?php endif ?> /><?php _e('Recent posts', 'sitepress') ?></label>&nbsp;
-                <label><input type="radio" name="icl_blog_menu_contents" value="nothing" <?php if($cms_navigation_settings['cat_menu_contents']=='nothing'): ?>checked="checked"<?php endif ?> /><?php _e('Nothing', 'sitepress') ?></label>
+                    <?php if('page' != get_option('show_on_front')): ?>
+                    <p>
+                    <label for="icl_navigation_cat_menu_title" <?php if(!$cms_navigation_settings['show_cat_menu']): ?>style="display:none"<?php endif;?>>
+                    <?php echo __('Categories menu title', 'sitepress')?>                
+                    <input type="text" id="icl_navigation_cat_menu_title" name="icl_navigation_cat_menu_title" value="<?php echo $cms_navigation_settings['cat_menu_title']?$cms_navigation_settings['cat_menu_title']:__('News','sitepress'); ?>" /></label>&nbsp;
+                    <label><?php _e('Page order', 'sitepress') ?><input type="text" name="icl_navigation_cat_menu_page_order" value="<?php echo intval($cms_navigation_settings['cat_menu_page_order']); ?>" size="3" /></label></p>                
+                    <?php endif; ?>
+                    <p>
+                    <?php _e('Select what items to display for the blog menu:', 'sitepress') ?>&nbsp;
+                    <label><input type="radio" name="icl_blog_menu_contents" value="categories" <?php if($cms_navigation_settings['cat_menu_contents']=='categories'): ?>checked="checked"<?php endif ?> /><?php _e('Categories', 'sitepress') ?></label>&nbsp;
+                    <label><input type="radio" name="icl_blog_menu_contents" value="posts" <?php if($cms_navigation_settings['cat_menu_contents']=='posts'): ?>checked="checked"<?php endif ?> /><?php _e('Recent posts', 'sitepress') ?></label>&nbsp;
+                    <label><input type="radio" name="icl_blog_menu_contents" value="nothing" <?php if($cms_navigation_settings['cat_menu_contents']=='nothing'): ?>checked="checked"<?php endif ?> /><?php _e('Nothing', 'sitepress') ?></label>
+                    </p>
                 </div>
             </td>
         </tr>
         <tr valign="top">
             <th scope="row"><?php echo __('Sidebar pages menu', 'sitepress')?></th>
-            <td>
+            <td valign="top">
+                <p style="padding-top:0;margin-top:3px;">
                 <label for="icl_navigation_heading_start"><?php echo __('Heading start', 'sitepress')?> <input type="text" size="6" id="icl_navigation_heading_start" name="icl_navigation_heading_start" value="<?php echo $cms_navigation_settings['heading_start'] ?>" /></label>
                 <label for="icl_navigation_heading_end"><?php echo __('Heading end', 'sitepress')?> <input type="text" size="6" id="icl_navigation_heading_end" name="icl_navigation_heading_end" value="<?php echo $cms_navigation_settings['heading_end'] ?>" /></label>
+                </p>
             </td>
-        </tr>        
+        </tr>    
+        <?php if(!defined('ICL_DISABLE_CACHE') || !ICL_DISABLE_CACHE):?>    
         <tr valign="top">
             <th scope="row"><?php echo __('Caching', 'sitepress')?></th>
             <td>
+                <p>
                 <label for="icl_navigation_caching"><input type="checkbox" id="icl_navigation_caching" name="icl_navigation_caching" value="1" <?php if($cms_navigation_settings['cache']): ?>checked="checked"<?php endif ?> /> <?php echo __('Cache navigation elements for super fast performance', 'sitepress')?></label>
-                <br />
+                </p>
                 <input id="icl_navigation_caching_clear" class="button" name="icl_navigation_caching_clear" value="<?php echo __('Clear cache now', 'sitepress') ?>" type="button"/>
                 <span class="icl_ajx_response" id="icl_ajx_response_clear_cache"></span>
             </td>
-        </tr>        
+        </tr>
+        <?php endif; ?>
     </table>
     
     <p class="submit">

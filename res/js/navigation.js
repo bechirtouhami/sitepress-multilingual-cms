@@ -1,9 +1,9 @@
 addLoadEvent(function(){         
     jQuery('#icl_navigation_show_cat_menu').change(function(){
         if(jQuery(this).attr('checked')){
-            jQuery(this).parent().next().fadeIn();
+            jQuery('#icl_cat_menu_contents').fadeIn();
         }else{
-            jQuery(this).parent().next().fadeOut();
+            jQuery('#icl_cat_menu_contents').fadeOut();
         }
     })
     jQuery('#icl_navigation_form').submit(iclSaveForm);
