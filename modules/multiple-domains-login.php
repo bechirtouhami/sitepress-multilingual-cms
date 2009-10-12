@@ -45,7 +45,10 @@ function emw_intercept_logout () {
     global $sitepress_settings;
     $domains = $sitepress_settings['language_domains'];
     if ($domains) {
-        $languages=icl_get_languages('skip_missing=0');
+        $_languages=icl_get_languages('skip_missing=0');
+        foreach($_languages as $l){
+            $languages[] = $l;
+        }
         $next_domain = $domains[$languages[1]['language_code']];
         wp_clear_auth_cookie();
         header ('HTTP/1.1 301 Moved Permanently');
@@ -69,7 +72,10 @@ function emw_check_cross_domain_login () {
                 wp_set_auth_cookie(get_profile('ID', $username), $options['remember'], is_ssl());
                 $domains = $sitepress_settings['language_domains'];
                 if ($domains) {
-                    $languages = icl_get_languages('skip_missing=0');
+                    $_languages=icl_get_languages('skip_missing=0');
+                    foreach($_languages as $l){
+                        $languages[] = $l;
+                    }                    
                     if (isset($languages[$options['language_number']+1])) {
                         $next_domain = $domains[$languages[$options['language_number']+1]['language_code']];
                         $options['nonce'] = md5($next_domain."-{$username}-{$time}");
@@ -98,6 +104,10 @@ function emw_check_cross_domain_login () {
         $domains = $sitepress_settings['language_domains'];
         if ($domains) {
             $languages=icl_get_languages('skip_missing=0');
+            $_languages=icl_get_languages('skip_missing=0');
+            foreach($_languages as $l){
+                $languages[] = $l;
+            }            
             $language_index = $_GET['next_language']+1;            
             if (isset($languages[$language_index]['language_code'])) {
                 $next_domain = $domains[$languages[$language_index]['language_code']];
