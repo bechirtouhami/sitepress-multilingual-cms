@@ -105,7 +105,6 @@ class CMSNavigation{
                 $page_on_front = 0;
                 $page_for_posts  = 0;        
             }
-            
             if($page_on_front!=$post->ID){ 
                 if($page_on_front){
                     ?><a href="<?php echo get_permalink($page_on_front); ?>"><?php echo get_the_title($page_on_front) ?></a> &raquo; <?php
@@ -335,12 +334,15 @@ class CMSNavigation{
                                 }
                             ?>
                             <?php elseif($this->settings['cat_menu_contents'] == 'posts'): ?>
-                                <?php                                
+                                <?php 
+                                    $postbk = $post; // preserve $post                              
                                     $cmsnavq = new WP_Query();
                                     $cmsnavq->query('suppress_filters=0');
                                     if ( $cmsnavq->have_posts() ) : while ( $cmsnavq->have_posts() ) : $cmsnavq->the_post(); 
-                                    ?><li<?php if(get_the_ID()==get_query_var('p')):?> class="selected_subpage"<?php endif?>><a href="<?php the_permalink()?>"><?php the_title()?></a></li><?php
-                                    endwhile; endif
+                                    ?><li<?php if(get_the_ID()==get_query_var('p')):?> class="selected_subpage"<?php endif?>>
+                                        <a href="<?php the_permalink()?>"><?php the_title()?></a></li><?php
+                                    endwhile; endif;
+                                    $post = $postbk; // restore $post
                                 ?>
                             <?php endif ; ?>
                             </ul>

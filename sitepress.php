@@ -25,7 +25,6 @@ Version: 1.3.3
     along with ICanLocalize Translator.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-
 if(defined('ICL_SITEPRESS_VERSION')) return;
 define('ICL_SITEPRESS_VERSION', '1.3.3');
 define('ICL_PLUGIN_PATH', dirname(__FILE__));
