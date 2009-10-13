@@ -94,7 +94,7 @@ class CMSNavigation{
                             AND DATE_SUB(NOW(), INTERVAL ".CMS_NAV_CACHE_EXPIRE.") < timestamp");
                             
         if (!$output || !$this->settings['cache'] || ICL_DISABLE_CACHE) {
-        
+            
             // save the menu to a cache
             ob_start();
         
