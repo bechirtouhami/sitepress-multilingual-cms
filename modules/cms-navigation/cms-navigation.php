@@ -521,6 +521,10 @@ class CMSNavigation{
     function cms_navigation_update_post_settings($id){
         global $sitepress, $wpdb;
         
+        // clear the caches
+        $sitepress->icl_cms_nav_offsite_url_cache->clear();
+        $wpdb->query("TRUNCATE {$wpdb->prefix}icl_cms_nav_cache");
+        
         if($_POST['post_type']!='page' || $_POST['action']=='inline-save'  || $_POST['autosave']) return;
         $post_id = $_POST['post_ID'];
         
@@ -551,12 +555,6 @@ class CMSNavigation{
         }else{
             delete_post_meta($post_id, '_cms_nav_offsite_url');
         }
-        
-        // clear the caches
-        $sitepress->icl_cms_nav_offsite_url_cache->clear();
-        $wpdb->query("TRUNCATE {$wpdb->prefix}icl_cms_nav_cache");
-        
-        
         
     }    
     
