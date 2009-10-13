@@ -1,7 +1,8 @@
 <?php 
 $upgrade_lines =  array(
     '1.3.1' => __('translation controls on posts and pages lists', 'sitepress'),
-    '1.3.3' => __('huge speed improvements and the ability to prevent loading WPML\'s CSS and JS files', 'sitepress')
+    '1.3.3' => __('huge speed improvements and the ability to prevent loading WPML\'s CSS and JS files', 'sitepress'),
+    '1.3.4' => __('you can configure the position and contents of the posts page in the top navigation', 'sitepress')
 );
 
 $short_v = implode('.', array_slice(explode('.', ICL_SITEPRESS_VERSION), 0, 3));
