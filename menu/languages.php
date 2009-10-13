@@ -47,8 +47,8 @@
 
     <?php if($sitepress_settings['setup_complete']): ?>  
     <div class="icl_advanced_switch" style="text-align: right;">
-        <span><?php _e('Basic setup mode', 'sitepress') ?> <a href="#" title="<?php _e("Switch to advanced setup mode", 'sitepress') ?>"><?php _e('(advanced)', 'sitepress')?></a></span>
-        <span style="display:none"><?php _e('Advanced setup mode', 'sitepress') ?> <a href="#" title="<?php _e("Switch to basic setup mode", 'sitepress') ?>"><?php _e('(basic)', 'sitepress')?></a></span>
+        <span><?php _e('Basic setup mode', 'sitepress') ?> <a class="button" href="#" title="<?php _e("Switch to advanced setup mode", 'sitepress') ?>"><?php _e('advanced', 'sitepress')?></a></span>
+        <span style="display:none"><?php _e('Advanced setup mode', 'sitepress') ?> <a class="button" href="#" title="<?php _e("Switch to basic setup mode", 'sitepress') ?>"><?php _e('basic', 'sitepress')?></a></span>
     </div>
     <?php endif; ?>
     
@@ -546,8 +546,8 @@
     
     <?php if($sitepress_settings['setup_complete']): ?>  
     <div class="icl_advanced_switch">
-        <span><?php _e('To customize the language switcher, setup language URLs or choose a different admin language, go to advanced mode.', 'sitepress') ?> <a href="#" title="<?php _e("Switch to advanced setup mode", 'sitepress') ?>"><?php _e('Advanced &raquo;', 'sitepress')?></a></span>
-        <span style="display:none"><?php _e('You are now in advanced setup mode', 'sitepress') ?> <a href="#" title="<?php _e("Switch to basic setup mode.", 'sitepress') ?>"><?php _e('&laquo; Basic', 'sitepress')?></a></span>
+        <span><?php _e('To customize the language switcher, setup language URLs or choose a different admin language, go to advanced mode.', 'sitepress') ?> <a class="button" href="#" title="<?php _e("Switch to advanced setup mode", 'sitepress') ?>"><?php _e('Advanced &raquo;', 'sitepress')?></a></span>
+        <span style="display:none"><?php _e('You are now in advanced setup mode', 'sitepress') ?> <a class="button" href="#" title="<?php _e("Switch to basic setup mode.", 'sitepress') ?>"><?php _e('&laquo; Basic', 'sitepress')?></a></span>
     </div>
     <br />
     <?php endif; ?>
