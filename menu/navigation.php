@@ -36,7 +36,7 @@ var icl_ajx_cache_cleared = '<?php echo __('The cache has been cleared.','sitepr
                 <p><label for="icl_navigation_show_cat_menu"><input type="checkbox" id="icl_navigation_show_cat_menu" name="icl_navigation_show_cat_menu" value="1" <?php if($cms_navigation_settings['show_cat_menu']): ?>checked="checked"<?php endif ?> /> <?php _e('Show blog posts menu', 'sitepress')?></label></p>
                 
                 <div id="icl_cat_menu_contents" <?php if(!$cms_navigation_settings['show_cat_menu']): ?>style="display:none"<?php endif ?>>
-                    <?php if('page' != get_option('show_on_front')): ?>
+                    <?php if('page' != get_option('show_on_front') || !get_option('page_for_posts')): ?>
                     <p>
                     <label for="icl_navigation_cat_menu_title" <?php if(!$cms_navigation_settings['show_cat_menu']): ?>style="display:none"<?php endif;?>>
                     <?php echo __('Categories menu title', 'sitepress')?>                

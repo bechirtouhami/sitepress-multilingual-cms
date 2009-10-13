@@ -68,6 +68,9 @@ class CMSNavigation{
         add_action('parse_query', array($this, 'redirect_offsite_urls'));
         
         add_filter('permalink_structure_changed', array($this,'option_permalink_structure'));
+        add_filter('update_option_show_on_front', array($this,'option_permalink_structure')); //clear cache
+        add_filter('update_option_page_on_front', array($this,'option_permalink_structure')); //clear cache
+        add_filter('update_option_page_for_posts', array($this,'option_permalink_structure')); //clear cache
         
         
     } 
@@ -244,7 +247,7 @@ class CMSNavigation{
             }
             
             
-            if($show_cat_menu && 0 !== strpos('page', get_option('show_on_front'))){
+            if($show_cat_menu && (0 !== strpos('page', get_option('show_on_front')) || !get_option('page_for_posts'))){
                 if($pages){
                     $res = $wpdb->get_results("SELECT ID, menu_order FROM {$wpdb->posts} WHERE ID IN (".join(',', $pages).") ORDER BY menu_order");
                 }
