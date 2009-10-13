@@ -62,10 +62,14 @@ Also, go through the [detailed description](http://wpml.org/support/cannot-activ
 == Screenshots ==
 
 1. Translation controls in posts and pages lists.
-
-You can see more screenshots and a video tutorial in the [quick intro](http://wpml.org/home/press-kit/) page.
+2. Translation controls in edit screen.
 
 == Changelog ==
+
+= 1.3.4 =
+* Changed the posts menu in the top navigation. Now its contents and position can be configured.
+* Fixed a bug which prevented the preview changes from working.
+* Fixed a bug in the language switcher, which sent the home page to the wrong URL.
 
 = 1.3.3 =
 * Huge speed improvements.
@@ -75,7 +79,7 @@ You can see more screenshots and a video tutorial in the [quick intro](http://wp
 * Fixed bug for feeds in other languages when using the language as a parameter in the url.
 * Fixed bug for translation column not displaying after doing quick-edit.
 * Fixed bug for comments count (was reporting SPAM comments too).
-* Made multi-domain login optional. To enable, set ICL_USE_MULTIPLE_DOMAIN_LOGIN to true.
+* Made multi-domain login optional. To enable, set `ICL_USE_MULTIPLE_DOMAIN_LOGIN` to true.
 
 = 1.3.2 =
 * Fixes to the comments translation. This will bring back comments that were hidden on translated pages after upgrading from a previous release.
