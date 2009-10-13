@@ -1494,7 +1494,12 @@ class SitePress{
         global $wpdb, $pagenow;
         
         //exceptions
-        if($pagenow=='upload.php' || $pagenow=='media-upload.php' || is_attachment()){
+        if(isset($_POST['wp-preview']) && $_POST['wp-preview']=='dopreview' || is_preview()){
+            $is_preview = true;
+        }else{
+            $is_preview = false;
+        }
+        if($pagenow=='upload.php' || $pagenow=='media-upload.php' || is_attachment() || $is_preview){
             return $join;    
         }
         
