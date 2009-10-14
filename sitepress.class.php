@@ -1504,13 +1504,13 @@ class SitePress{
         }
         
         if('all' != $this->this_lang){ 
-            $cond = "AND language_code='{$wpdb->escape($this->get_current_language())}'";
+            $cond = " AND language_code='{$wpdb->escape($this->get_current_language())}' ";
             $ljoin = "";
         }else{
             $cond = '';
             $ljoin = "LEFT";
         }
-        $join .= "{$ljoin} JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->posts}.ID = t.element_id 
+        $join .= " {$ljoin} JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->posts}.ID = t.element_id 
                     AND t.element_type='post' {$cond} JOIN {$wpdb->prefix}icl_languages l ON t.language_code=l.code AND l.active=1";        
         return $join;
     }
@@ -1518,7 +1518,7 @@ class SitePress{
     function comment_feed_join($join){
         global $wpdb, $wp_query;        
         $wp_query->query_vars['is_comment_feed'] = true;
-        $join .= "JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->comments}.comment_post_ID = t.element_id 
+        $join .= " JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->comments}.comment_post_ID = t.element_id 
                     AND t.element_type='post' {$cond} AND language_code='{$wpdb->escape($this->this_lang)}'";
         return $join;
     }
@@ -1553,13 +1553,13 @@ class SitePress{
         foreach($active_languages as $lang){
             if($lang['code']== $this->this_lang){
                 $px = '<strong>'; 
-                $sx = ' ('. intval($langs[$lang['code']]) .')</strong>';
+                $sx = ' <span class="count">('. intval($langs[$lang['code']]) .')</span></strong>';
             }elseif(!isset($langs[$lang['code']])){
                 $px = '<span>';
                 $sx = '</span>';
             }else{
                 $px = '<a href="?lang='.$lang['code'].'">';
-                $sx = '</a> ('. $langs[$lang['code']] .')';
+                $sx = '</a> <span class="count">('. intval($langs[$lang['code']]) .')</span>';
             }
             $as[] =  $px . $lang['display_name'] . $sx;
         }
@@ -2973,13 +2973,16 @@ class SitePress{
         foreach($columns as $k=>$v){
             $new_columns[$k] = $v;
             if($k=='title'){
-                $new_columns['translations'] = $colh;
+                $new_columns['icl_translations'] = $colh;
             }
         }
         return $new_columns;
     }
     
-    function add_content_for_posts_management_column(){
+    function add_content_for_posts_management_column($column_name){
+        
+        if($column_name != 'icl_translations') return;
+        
         global $id, $__management_columns_posts_translations, $pagenow;
         $active_languages = $this->get_active_languages();
         foreach($active_languages as $k=>$v){
@@ -3008,7 +3011,7 @@ class SitePress{
     
     function __set_posts_management_column_width(){
         $w = 22 * count($this->get_active_languages());
-        echo '<style>.column-translations{width:'.$w.'px;}.column-translations img{margin:2px;}</style>';
+        echo '<style>.column-icl_translations{width:'.$w.'px;}.column-icl_translations img{margin:2px;}</style>';
     }
     
      
