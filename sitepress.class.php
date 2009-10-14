@@ -174,7 +174,7 @@ class SitePress{
     }
                                               
     function initialize_cache(){ 
-        require ICL_PLUGIN_PATH . '/inc/cache.php';        
+        require_once ICL_PLUGIN_PATH . '/inc/cache.php';        
         $this->icl_translations_cache = new icl_cache();
         $this->icl_locale_cache = new icl_cache('locale', true);
         $this->icl_flag_cache = new icl_cache('flags', true);
