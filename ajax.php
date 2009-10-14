@@ -1,75 +1,79 @@
 <?php
-if (file_exists ('../../../wp-load.php'))
-    include ('../../../wp-load.php');
-else
-    include ('../../../wp-config.php');
+if (!isset($_POST['unit-test'])) {
+    if (file_exists ('../../../wp-load.php'))
+        include ('../../../wp-load.php');
+    else
+        include ('../../../wp-config.php');
 
-@header('Content-Type: ' . get_option('html_type') . '; charset=' . get_option('blog_charset'));
-header("Cache-Control: no-cache, must-revalidate"); 
-header("Expires: Sat, 16 Aug 1980 05:00:00 GMT"); 
+    @header('Content-Type: ' . get_option('html_type') . '; charset=' . get_option('blog_charset'));
+    header("Cache-Control: no-cache, must-revalidate"); 
+    header("Expires: Sat, 16 Aug 1980 05:00:00 GMT"); 
+}
 
 if(!isset($sitepress) && class_exists('SitePress')) $sitepress = new SitePress();
 
-function update_icl_account(){
-    global $sitepress, $wpdb;
-
-    //if the account is configured - update language pairs
-    if($sitepress->icl_account_configured()){
-        $iclsettings = $sitepress->get_settings();
-        
-        $pay_per_use = $iclsettings['translator_choice'] == 1;
-
-        // prepare language pairs
-        
-        $language_pairs = $iclsettings['language_pairs'];
-        $lang_pairs = array();
-        foreach($language_pairs as $k=>$v){
-            $english_fr = $wpdb->get_var("SELECT english_name FROM {$wpdb->prefix}icl_languages WHERE code='{$k}' ");
-            foreach($v as $k=>$v){
-                $incr++;
-                $english_to = $wpdb->get_var("SELECT english_name FROM {$wpdb->prefix}icl_languages WHERE code='{$k}' ");
-                $lpairs['from_language'.$incr] = apply_filters('icl_server_languages_map', $english_fr); 
-                $lpairs['to_language'.$incr] = apply_filters('icl_server_languages_map', $english_to);
-                if ($pay_per_use) {
-                    $lpairs['pay_per_use'.$incr] = 1;
-                } else {
-                    $lpairs['pay_per_use'.$incr] = 0;
-                }
-            }    
+if (!function_exists('update_icl_account')) {
+    function update_icl_account(){
+        global $sitepress, $wpdb;
+    
+        //if the account is configured - update language pairs
+        if($sitepress->icl_account_configured()){
+            $iclsettings = $sitepress->get_settings();
+            
+            $pay_per_use = $iclsettings['translator_choice'] == 1;
+    
+            // prepare language pairs
+            
+            $language_pairs = $iclsettings['language_pairs'];
+            $lang_pairs = array();
+            foreach($language_pairs as $k=>$v){
+                $english_fr = $wpdb->get_var("SELECT english_name FROM {$wpdb->prefix}icl_languages WHERE code='{$k}' ");
+                foreach($v as $k=>$v){
+                    $incr++;
+                    $english_to = $wpdb->get_var("SELECT english_name FROM {$wpdb->prefix}icl_languages WHERE code='{$k}' ");
+                    $lpairs['from_language'.$incr] = apply_filters('icl_server_languages_map', $english_fr); 
+                    $lpairs['to_language'.$incr] = apply_filters('icl_server_languages_map', $english_to);
+                    if ($pay_per_use) {
+                        $lpairs['pay_per_use'.$incr] = 1;
+                    } else {
+                        $lpairs['pay_per_use'.$incr] = 0;
+                    }
+                }    
+            }
+            $data['site_id'] = $iclsettings['site_id'];                    
+            $data['accesskey'] = $iclsettings['access_key'];
+            $data['create_account'] = 0;
+            $data['url'] = get_option('home');
+            $data['title'] = get_option('blogname');
+            $data['description'] = get_option('blogdescription');
+            $data['project_kind'] = $iclsettings['website_kind'];
+            $data['pickup_type'] = $iclsettings['translation_pickup_method'];
+            $data['interview_translators'] = $iclsettings['interview_translators'];
+    
+            $notifications = 0;
+            if ($iclsettings['notify_complete']){
+                $notifications += 1;
+            }
+            if ($iclsettings['alert_delay']){
+                $notifications += 2;
+            }
+            $data['notifications'] = $notifications;
+            
+            $data = array_merge($data, $lpairs);
+            
+            require_once ICL_PLUGIN_PATH . '/lib/Snoopy.class.php';
+            require_once ICL_PLUGIN_PATH . '/lib/xml2array.php';
+            require_once ICL_PLUGIN_PATH . '/lib/icl_api.php';
+            
+            $icl_query = new ICanLocalizeQuery();
+            
+            return $icl_query->updateAccount($data);
+        } else {
+            return 0;
         }
-        $data['site_id'] = $iclsettings['site_id'];                    
-        $data['accesskey'] = $iclsettings['access_key'];
-        $data['create_account'] = 0;
-        $data['url'] = get_option('home');
-        $data['title'] = get_option('blogname');
-        $data['description'] = get_option('blogdescription');
-        $data['project_kind'] = $iclsettings['website_kind'];
-        $data['pickup_type'] = $iclsettings['translation_pickup_method'];
-        $data['interview_translators'] = $iclsettings['interview_translators'];
-
-        $notifications = 0;
-        if ($iclsettings['notify_complete']){
-            $notifications += 1;
-        }
-        if ($iclsettings['alert_delay']){
-            $notifications += 2;
-        }
-        $data['notifications'] = $notifications;
-        
-        $data = array_merge($data, $lpairs);
-        
-        require_once ICL_PLUGIN_PATH . '/lib/Snoopy.class.php';
-        require_once ICL_PLUGIN_PATH . '/lib/xml2array.php';
-        require_once ICL_PLUGIN_PATH . '/lib/icl_api.php';
-        
-        $icl_query = new ICanLocalizeQuery();
-        
-        return $icl_query->updateAccount($data);
-    } else {
-        return 0;
+    
+            
     }
-
-        
 }
 
 switch($_REQUEST['icl_ajx_action']){
@@ -530,6 +534,9 @@ switch($_REQUEST['icl_ajx_action']){
     default:
         echo __('Invalid action','sitepress');                
 }    
-exit;
+
+if (!isset($_POST['unit-test'])) {
+    exit;
+}
   
 ?>
