@@ -221,7 +221,7 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
     foreach($target_languages as $target){
         $target_for_server = apply_filters('icl_server_languages_map', $target); //filter some language names to match the names on the server
         $data = array(
-            'url'=>$post_url, 
+            'url'=>htmlentities($post_url), 
             'contents'=>array(
                 'title' => array(
                     'translate'=>1,
