@@ -530,7 +530,58 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings = $sitepress->get_settings();
         $iclsettings['show_translations_flag'] = intval(!$iclsettings['show_translations_flag']);
         $sitepress->save_settings($iclsettings);    
-        break;        
+        break;
+    case 'icl_messages':
+        $iclsettings = $sitepress->get_settings();
+        $iclq = new ICanLocalizeQuery($iclsettings['site_id'], $iclsettings['access_key']);       
+
+        $output = '';
+
+        if (isset($_POST['refresh']) && $_POST['refresh'] == 1) {
+            $reminders = $iclq->get_reminders(true);
+        } else {
+            $reminders = $iclq->get_reminders();
+        }
+        
+        $count = 0;
+        foreach($reminders as $r) {
+            $message = $r->message;
+            $message = str_replace('[', '<', $message);
+            $message = str_replace(']', '>', $message);
+            $url = $r->url;
+            $anchor_pos = strpos($url, '#');
+            if ($anchor_pos !== false) {
+                $url = substr($url, 0, $anchor_pos);
+            }
+            $output .= $message . ' - <a class="icl_thickbox" href="' . ICL_PLUGIN_URL . "/modules/icl-translation/icl-reminder-popup.php?target=" . ICL_API_ENDPOINT. $url . '&message_id=' . $r->id. '&TB_iframe=true">' . __('View', 'sitepress') . '</a>';
+
+            if ($r->can_delete == '1') {
+                $on_click = 'dismiss_message(' . $r->id . ');';
+                
+                $output .= ' - <a href="#" onclick="'. $on_click . '">Dismiss</a>';
+            }
+            $output .= '<br />';
+            
+            $count += 1;
+            if ($count > 5) {
+                break;
+            }
+            
+        }
+        
+        if ($output != '') {
+            echo '1|'.$output;
+        } else {
+            echo '0|';
+        }
+        break;
+
+    case 'icl_delete_message':
+        $iclsettings = $sitepress->get_settings();
+        $iclq = new ICanLocalizeQuery($iclsettings['site_id'], $iclsettings['access_key']);
+        $iclq->delete_message($_POST['message_id']);
+        break;
+    
     default:
         echo __('Invalid action','sitepress');                
 }    

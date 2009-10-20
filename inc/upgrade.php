@@ -262,6 +262,13 @@ function icl_plugin_upgrade(){
         if($mig_debug) fwrite($mig_debug, "Upgraded to 1.3.4 \n");
     }
     
+    if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.3.5', '<')){
+        $sitepress_settings = get_option('icl_sitepress_settings');
+        if($sitepress_settings['existing_content_language_verified']){
+            include ICL_PLUGIN_PATH . '/modules/icl-translation/db-scheme.php';
+        }
+        
+    }
     
     if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '<')){
         if($mig_debug) fwrite($mig_debug, "Update plugin version in the database \n");

@@ -300,6 +300,112 @@ class ICanLocalizeQuery{
         
     }
     
+    function get_session_id() {
+        global $sitepress;
+        $sitepress_settigs = $sitepress->get_settings();
+        $request_url = ICL_API_ENDPOINT . '/login/login.xml';    
+        $request_url .= '?accesskey=' . $this->access_key;
+        $request_url .= '&wid=' . $this->site_id;
+        $request_url .= '&usertype=Client';
+        if (!isset($sitepress_settigs['icl_account_email'])) {
+            $current_user = wp_get_current_user();
+            $email = $current_user->data->user_email;
+        } else {
+            $email = $sitepress_settigs['icl_account_email'];
+        }
+        $request_url .= '&email=' . $email;
+        
+        $res = $this->_request($request_url, 'GET');        
+        if($res['info']['status']['attr']['err_code']=='0'){
+            return $res['info']['session_num']['value'];
+        }else{
+            return null;
+        }
+      
+    }
+    
+    function get_reminders($refresh = false) {
+        global $wpdb, $sitepress;
+        
+        // see if we need to refresh the reminders from ICanLocalize
+        $icl_settings = $sitepress->get_settings();
+        $last_time = $icl_settings['last_icl_reminder_fetch'];
+        
+        if (!$refresh && ((time() - $last_time) > 60) && $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}icl_reminders w WHERE w.show=1") == 0) {
+            $refresh = true;
+        }
+        
+        if (((time() - $last_time) > 30 * 60) || $refresh) {
+            $session_id = $this->get_session_id();
+    
+            $request_url = ICL_API_ENDPOINT . '/reminders.xml?session='.$session_id;    
+    
+            $res = $this->_request($request_url, 'GET');        
+            if($res['info']['status']['attr']['err_code']=='0'){
+                
+                $wpdb->query("TRUNCATE {$wpdb->prefix}icl_reminders");
+                
+                $reminders_xml = $res['info']['reminders']['reminder'];
+                if($reminders_xml) {
+                    
+                    if (sizeof($reminders_xml) == 1) {
+                        // fix problem when only on item found
+                        $reminders_xml = array($reminders_xml);
+                    }
+                    
+                    foreach($reminders_xml as $r){
+    
+                        $r['attr']['can_delete'] = $r['attr']['can_delete'] == 'true' ? 1 : 0;
+                        $r['attr']['show'] = 1;
+                        
+                        $wpdb->insert($wpdb->prefix.'icl_reminders', $r['attr']);
+                    }
+                }
+                $last_time = time();
+                $sitepress->save_settings(array('last_icl_reminder_fetch' => $last_time,
+                                                'icl_current_session' => $session_id));
+            }
+        }
+            
+        return $wpdb->get_results("SELECT * FROM {$wpdb->prefix}icl_reminders w WHERE w.show=1 ORDER BY id");
+        
+    }
+
+    function get_current_session() {
+        global $sitepress;
+    
+        // see if we need to refresh the reminders from ICanLocalize
+        $icl_settings = $sitepress->get_settings();
+        $last_time = $icl_settings['last_icl_reminder_fetch'];
+        if (time() - $last_time > 30 * 60) {
+            $session_id = $this->get_session_id();
+    
+            $last_time = time();
+            $sitepress->save_settings(array('icl_current_session' => $session_id));
+            return $session_id;
+        } else {
+            return $icl_settings['icl_current_session'];
+        }
+        
+    }
+    
+    function delete_message($message_id) {
+        global $wpdb;
+
+        $wpdb->query("DELETE FROM {$wpdb->prefix}icl_reminders WHERE id={$message_id}");
+
+        $session_id = $this->get_current_session();
+
+        $request_url = ICL_API_ENDPOINT . '/reminders/' . $message_id . '.xml';
+        
+        $data = array('session' => $session_id,
+                      '_method' => 'DELETE');
+
+        $res = $this->_request($request_url, 'POST', $data);
+        
+    }
+    
+    
 }
   
 /**

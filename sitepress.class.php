@@ -292,6 +292,10 @@ class SitePress{
             add_action('admin_notices', array($this, 'upgrade_notice'));
         }
         
+        if ($this->icl_account_configured()) {
+            add_action('admin_notices', array($this, 'icl_reminders'));
+        }
+        
         require ICL_PLUGIN_PATH . '/inc/template-constants.php';        
         if(defined('WPML_LOAD_API_SUPPORT')){
             require ICL_PLUGIN_PATH . '/inc/wpml-api.php';
@@ -812,6 +816,14 @@ class SitePress{
         }elseif('edit-comments.php' == $pagenow || 'index.php' == $pagenow || 'post.php' == $pagenow){
             wp_enqueue_script('sitepress-' . $page_basename, ICL_PLUGIN_URL . '/res/js/comments-translation.js', array(), ICL_SITEPRESS_VERSION);
         }
+        
+        if (is_admin() && $this->icl_account_configured()) {
+            wp_enqueue_script('thickbox');
+            wp_enqueue_script( 'theme-preview' );
+            
+            wp_enqueue_script('sitepress-icl_reminders', ICL_PLUGIN_URL . '/res/js/icl_reminders.js', array(), ICL_SITEPRESS_VERSION);
+        }
+        
     }
        
     function front_end_js(){
@@ -838,7 +850,12 @@ class SitePress{
         wp_enqueue_style('sitepress-style', ICL_PLUGIN_URL . '/res/css/style.css', array(), ICL_SITEPRESS_VERSION);
         if(isset($page_basename) && file_exists(ICL_PLUGIN_PATH . '/res/css/'.$page_basename.'.css')){
             wp_enqueue_style('sitepress-' . $page_basename, ICL_PLUGIN_URL . '/res/css/'.$page_basename.'.css', array(), ICL_SITEPRESS_VERSION);
-        }        
+        }
+        
+        if (is_admin() && $this->icl_account_configured()) {
+            wp_enqueue_style('thickbox');
+        }
+        
     }
     
     function process_forms(){
@@ -933,6 +950,7 @@ class SitePress{
                 }else{                    
                     $iclsettings['site_id'] = $site_id;
                     $iclsettings['access_key'] = $access_key;
+                    $iclsettings['icl_account_email'] = $user['email'];
                     $this->save_settings($iclsettings);
                     if($user['create_account']==1){
                         $_POST['icl_form_success'] = __('An account has been created for you in ICanLocalize - Next steps:', 'sitepress') . '<br />';
@@ -2909,6 +2927,10 @@ class SitePress{
     
     function upgrade_notice(){
         include ICL_PLUGIN_PATH . '/menu/upgrade_notice.php';
+    }
+    
+    function icl_reminders(){
+        include ICL_PLUGIN_PATH . '/menu/icl_reminders.php';
     }
     
     function add_posts_management_column($columns){

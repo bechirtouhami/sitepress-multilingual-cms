@@ -44,4 +44,17 @@
         ) ENGINE=MyISAM {$charset_collate}  
   ";  
    mysql_query($icl_translation_sql);
+   
+  $icl_translation_sql = "
+        CREATE TABLE IF NOT EXISTS `{$wpdb->prefix}icl_reminders` (
+        `id` BIGINT NOT NULL ,
+        `message` TEXT NOT NULL ,
+        `url`  TEXT NOT NULL ,
+        `can_delete` TINYINT NOT NULL ,
+        `show` TINYINT NOT NULL ,
+        PRIMARY KEY ( `id` )
+        ) ENGINE=MyISAM {$charset_collate}  
+  ";  
+   mysql_query($icl_translation_sql);
+   
 ?>
