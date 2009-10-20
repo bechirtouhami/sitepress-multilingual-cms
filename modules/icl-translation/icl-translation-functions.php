@@ -1857,13 +1857,16 @@ function _icl_xmlrpc_add_message_translation($args){
     $site_id        = $args[1];
     $rid            = $args[2];
     $translation    = $args[3];
-    /*
+    
     $signature_check = md5($sitepress_settings['access_key'] . $sitepress_settings['site_id'] . $rid);
     if($signature != $signature_check){
         return 0; // array('err_code'=>1, 'err_str'=> __('Signature mismatch','sitepress'));
     }
-    */
+    
     $res = $wpdb->get_row("SELECT to_language, object_id, object_type FROM {$wpdb->prefix}icl_message_status WHERE rid={$rid}");
+    if(!$res){
+        return 0;
+    }
     
     $to_language = $res->to_language;
     $object_id   = $res->object_id;
@@ -1877,6 +1880,7 @@ function _icl_xmlrpc_add_message_translation($args){
         }
     }                            
     $wpdb->update($wpdb->prefix.'icl_message_status', array('status'=>MESSAGE_TRANSLATION_COMPLETE), array('rid'=>$rid));
+    return 1;
     
 }
 ?>
