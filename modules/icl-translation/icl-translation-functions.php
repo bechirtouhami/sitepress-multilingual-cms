@@ -733,14 +733,15 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
                 }        
             }
         }
-            
+        $original_post_cats = array();    
         foreach(wp_get_object_terms($translation['original_id'] , 'category') as $t){
             $original_post_cats[] = $t->term_taxonomy_id;
-        }    
-        $cat_trids = $wpdb->get_col("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_type='category' AND element_id IN (".join(',',$original_post_cats).")");
-        $cat_tr_tts = $wpdb->get_col("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE element_type='category' AND language_code='{$lang_code}' AND trid IN (".join(',',$cat_trids).")");
-        $translated_cats_ids = $wpdb->get_col("SELECT t.term_id FROM {$wpdb->terms} t JOIN {$wpdb->term_taxonomy} tx ON tx.term_id = t.term_id WHERE tx.taxonomy='category' AND tx.term_taxonomy_id IN (".join(',',$cat_tr_tts).")");
-        
+        }
+        if($original_post_cats){    
+            $cat_trids = $wpdb->get_col("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_type='category' AND element_id IN (".join(',',$original_post_cats).")");
+            $cat_tr_tts = $wpdb->get_col("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE element_type='category' AND language_code='{$lang_code}' AND trid IN (".join(',',$cat_trids).")");
+            $translated_cats_ids = $wpdb->get_col("SELECT t.term_id FROM {$wpdb->terms} t JOIN {$wpdb->term_taxonomy} tx ON tx.term_id = t.term_id WHERE tx.taxonomy='category' AND tx.term_taxonomy_id IN (".join(',',$cat_tr_tts).")");
+        }        
     }elseif($original_post_details->post_type=='page'){
         // handle the page parent and set it to the translated parent if we have one.
         if($original_post_details->post_parent){

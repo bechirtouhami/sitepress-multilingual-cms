@@ -53,8 +53,7 @@ if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQ
         && !in_array(basename(ICL_PLUGIN_PATH).'/'.basename(__FILE__), (array)$_REQUEST['checked']))){
         
     $sitepress = new SitePress();
-    $sitepress_settings = $sitepress->get_settings();
-    
+    $sitepress_settings = $sitepress->get_settings();    
     
     // modules load
     // CMS Navigation

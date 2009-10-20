@@ -151,7 +151,7 @@ function icl_st_init(){
                 $map[$r->value] = $r->name;
             }
         }
-        
+         
         foreach($arr as $k=>$string){
             if(isset($map[$string])){
                 $name = $map[$string];
@@ -261,7 +261,7 @@ function __icl_st_init_register_widget_titles(){
                 $active_widgets[] = $v;
             }
         }
-    }    
+    }                      
     foreach($active_widgets as $aw){        
         $int = preg_match('#-([0-9]+)$#i',$aw, $matches);
         if($int){
@@ -665,7 +665,7 @@ function icl_t_cache_lookup($context, $name){
         $ret_value = false;        
     }elseif(!isset($icl_st_cache[$context][$name])){ //cache MISS
         global $sitepress, $wpdb;        
-        $current_language = $sitepress->get_current_language();
+        $current_language = $sitepress->get_current_language();     
         $default_language = $sitepress->get_default_language();
         $res = $wpdb->get_results("
             SELECT s.name, s.value, t.value AS translation_value, t.status

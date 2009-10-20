@@ -2936,6 +2936,10 @@ class SitePress{
     function add_posts_management_column($columns){
         global $posts, $wpdb, $__management_columns_posts_translations;
         
+        if(count($this->get_active_languages()) <= 1){
+            return $columns;
+        }
+        
         if($_POST['action']=='inline-save' && $_POST['post_ID']){
             $p = new stdClass();
             $p->ID = $_POST['post_ID'];
@@ -2974,7 +2978,7 @@ class SitePress{
         foreach($active_languages as $k=>$v){
             if($v['code']==$this->get_current_language()) continue;
             $langs[] = $v['code'];
-        }
+        }                
         $res = $wpdb->get_results("
             SELECT f.lang_code, f.flag, f.from_template, l.name 
             FROM {$wpdb->prefix}icl_flags f 
@@ -2997,7 +3001,7 @@ class SitePress{
             if($k=='title'){
                 $new_columns['icl_translations'] = $colh;
             }
-        }
+        }  
         return $new_columns;
     }
     
