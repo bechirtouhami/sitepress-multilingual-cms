@@ -354,6 +354,22 @@ class ICanLocalizeQuery{
                 
                 $wpdb->query("TRUNCATE {$wpdb->prefix}icl_reminders");
                 
+                // First add any low funding warning.
+                $website_data = $this->get_website_details();
+                if (isset($website_data['unfunded_cms_requests'])) {
+                    $missing_funds = $website_data['unfunded_cms_requests']['attr']['missing_funds'];
+                    $number_waiting = sizeof($website_data['unfunded_cms_requests']['cms_request']);
+                    
+                    $r['message'] = sprintf(__('You don\'t have enough funds in your ICanLocalize account - [b]Funds required - $%s[/b]', 'sitepress'), $missing_funds);
+                    $r['id'] = -1;
+                    $r['can_delete'] = 1;
+                    $r['show'] = 1;
+                    $r['url'] = '/finance';
+                    $wpdb->insert($wpdb->prefix.'icl_reminders', $r);
+                    
+                }
+                
+                // Now add the reminders.
                 $reminders_xml = $res['info']['reminders']['reminder'];
                 if($reminders_xml) {
                     
@@ -403,15 +419,16 @@ class ICanLocalizeQuery{
 
         $wpdb->query("DELETE FROM {$wpdb->prefix}icl_reminders WHERE id={$message_id}");
 
-        $session_id = $this->get_current_session();
-
-        $request_url = ICL_API_ENDPOINT . '/reminders/' . $message_id . '.xml';
-        
-        $data = array('session' => $session_id,
-                      '_method' => 'DELETE');
-
-        $res = $this->_request($request_url, 'POST', $data);
-        
+        if (int($message_id) >= 0) {
+            $session_id = $this->get_current_session();
+    
+            $request_url = ICL_API_ENDPOINT . '/reminders/' . $message_id . '.xml';
+            
+            $data = array('session' => $session_id,
+                          '_method' => 'DELETE');
+    
+            $res = $this->_request($request_url, 'POST', $data);
+        }        
     }
     
     
