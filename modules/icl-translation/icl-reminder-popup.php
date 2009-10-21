@@ -11,7 +11,7 @@
     $iclq = new ICanLocalizeQuery($iclsettings['site_id'], $iclsettings['access_key']);       
 
     $target = $_GET['target'];
-    $session_id = $iclq->get_current_session();
+    $session_id = $iclq->get_current_session(true);
     
     $admin_lang = $sitepress->get_admin_language();
     
