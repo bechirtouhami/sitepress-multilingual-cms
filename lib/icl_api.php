@@ -335,12 +335,21 @@ class ICanLocalizeQuery{
             $refresh = true;
         }
         
-        if (((time() - $last_time) > 30 * 60) || $refresh) {
-            $session_id = $this->get_session_id();
+        if (((time() - $last_time) > 10 * 60) || $refresh) {
+            $session_id = $this->get_current_session();
     
             $request_url = ICL_API_ENDPOINT . '/reminders.xml?session='.$session_id;    
     
             $res = $this->_request($request_url, 'GET');        
+            if($res['info']['status']['attr']['err_code']=='3'){
+                // not logged in get a new session_id
+                $session_id = $this->get_session_id();
+        
+                $request_url = ICL_API_ENDPOINT . '/reminders.xml?session='.$session_id;    
+        
+                $res = $this->_request($request_url, 'GET');
+            }
+                
             if($res['info']['status']['attr']['err_code']=='0'){
                 
                 $wpdb->query("TRUNCATE {$wpdb->prefix}icl_reminders");
@@ -371,13 +380,13 @@ class ICanLocalizeQuery{
         
     }
 
-    function get_current_session() {
+    function get_current_session($refresh = false) {
         global $sitepress;
     
         // see if we need to refresh the reminders from ICanLocalize
         $icl_settings = $sitepress->get_settings();
         $last_time = $icl_settings['last_icl_reminder_fetch'];
-        if (time() - $last_time > 30 * 60) {
+        if ($refresh && (time() - $last_time > 30 * 60)) {
             $session_id = $this->get_session_id();
     
             $last_time = time();
