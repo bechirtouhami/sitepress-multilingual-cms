@@ -147,8 +147,10 @@ jQuery(document).ready(function(){
     });
     
 
-    icl_tb_init('a.icl_thickbox');
-    icl_tb_set_size('a.icl_thickbox');
+    if (typeof(icl_tb_init) != 'undefined') {
+        icl_tb_init('a.icl_thickbox');
+        icl_tb_set_size('a.icl_thickbox');
+    }
     
 });
 
