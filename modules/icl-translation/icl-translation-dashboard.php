@@ -132,7 +132,7 @@
     <?php endif; ?>
 
     <?php if($sitepress->icl_account_configured()): ?>
-    <p><?php printf(__("To see the status of pending translations or to cancel translation requests, go to the <a href=\"%s\">project page</a> in ICanLocalize.",'sitepress'),(ICL_API_ENDPOINT.'/websites/'.$sitepress_settings['site_id'].'/cms_requests')) ?></p>
+    <p><?php printf(__("To see the status of pending translations or to cancel translation requests, go to the <a href=\"%s\" class='icl_thickbox'>project page</a> in ICanLocalize.",'sitepress'),(ICL_PLUGIN_URL . "/modules/icl-translation/icl-reminder-popup.php?target=" . ICL_API_ENDPOINT.'/websites/'.$sitepress_settings['site_id'].'/cms_requests')) ?></p>
     <?php endif; ?>
 
     <table class="widefat fixed" id="icl-translation-dashboard" cellspacing="0">
@@ -260,7 +260,7 @@
         <p>
             <?php echo sprintf(__('Your balance with ICanLocalize is %s. Visit your %sICanLocalize finance%s page to deposit additional funds.','sitepress'),
                                   '$'.$sitepress_settings['icl_balance'],
-                                  '<a href="'.ICL_API_ENDPOINT.ICL_FINANCE_LINK.'">',
+                                  '<a class="icl_thickbox" href="'.ICL_PLUGIN_URL . "/modules/icl-translation/icl-reminder-popup.php?target=" .ICL_API_ENDPOINT.ICL_FINANCE_LINK.'">',
                                   '</a>',
                                   'sitepress')?>
         </p>
