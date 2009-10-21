@@ -300,7 +300,10 @@ class SitePress{
         if(defined('WPML_LOAD_API_SUPPORT')){
             require ICL_PLUGIN_PATH . '/inc/wpml-api.php';
             
-        }        
+        } 
+        if($this->settings['promote_wpml']){
+            add_action('wp_footer', array($this, 'display_wpml_footer'),20);
+        }       
     }
                     
     function set_admin_language(){
@@ -3043,6 +3046,9 @@ class SitePress{
         echo '<style>.column-icl_translations{width:'.$w.'px;}.column-icl_translations img{margin:2px;}</style>';
     }
     
+    function display_wpml_footer(){
+        printf(__('%s is running multilingual thanks to <a href="%s">WPML</a>', 'sitepress'), get_bloginfo('blogname'), 'http://wpml.org');
+    }
      
 }
 ?>

@@ -544,6 +544,12 @@
         </div>
     <?php endif; ?>
     
+    <form name="icl_promote_form">
+    <p>
+        <label><input type="checkbox" name="icl_promote" <?php if($sitepress_settings['promote_wpml']) echo 'checked="checked"' ?> value="1" /> <?php _e('Tell the world your site is running multilingual with WPML (places a message in your site’s footer)'); ?></label>
+    </p>
+    </form>
+    
     <?php if($sitepress_settings['setup_complete']): ?>  
     <div class="icl_advanced_switch">
         <span><?php _e('To customize the language switcher, setup language URLs or choose a different admin language, go to advanced mode.', 'sitepress') ?> <a class="button" href="#" title="<?php _e("Switch to advanced setup mode", 'sitepress') ?>"><?php _e('Advanced &raquo;', 'sitepress')?></a></span>

@@ -581,7 +581,10 @@ switch($_REQUEST['icl_ajx_action']){
         $iclq = new ICanLocalizeQuery($iclsettings['site_id'], $iclsettings['access_key']);
         $iclq->delete_message($_POST['message_id']);
         break;
-    
+    case 'icl_promote':
+        $iclsettings['promote_wpml'] = $_POST['icl_promote']=='true'?1:0;
+        $sitepress->save_settings($iclsettings);
+        break;        
     default:
         echo __('Invalid action','sitepress');                
 }    
