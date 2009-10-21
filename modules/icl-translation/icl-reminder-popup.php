@@ -14,7 +14,13 @@
     $session_id = $iclq->get_current_session();
     
     $admin_lang = $sitepress->get_admin_language();
-    $target .= "?session=" . $session_id . "&lc=" . $admin_lang . "&compact=1";
+    
+    if (strpos($target, '?') === false) {
+        $target .= '?';
+    } else {
+        $target .= '&';
+    }
+    $target .= "session=" . $session_id . "&lc=" . $admin_lang . "&compact=1";
     
 
     $on_click = 'parent.dismiss_message(' . $_GET['message_id'] . ');';
