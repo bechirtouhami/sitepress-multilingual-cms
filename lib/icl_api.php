@@ -307,6 +307,7 @@ class ICanLocalizeQuery{
         $request_url .= '?accesskey=' . $this->access_key;
         $request_url .= '&wid=' . $this->site_id;
         $request_url .= '&usertype=Client';
+        $request_url .= '&compact=1';
         if (!isset($sitepress_settigs['icl_account_email'])) {
             $current_user = wp_get_current_user();
             $email = $current_user->data->user_email;

@@ -20,7 +20,7 @@
     } else {
         $target .= '&';
     }
-    $target .= "session=" . $session_id . "&lc=" . $admin_lang . "&compact=1";
+    $target .= "session=" . $session_id . "&lc=" . $admin_lang;
     
 
     $on_click = 'parent.dismiss_message(' . $_GET['message_id'] . ');';
