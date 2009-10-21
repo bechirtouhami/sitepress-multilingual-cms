@@ -36,7 +36,7 @@
         
         <?php
             $benefits = array(
-                array(__('Accurate and fluent translations', 'sitepress'), __('Professional translators, writing in their own languages will translate your site.','sitepress')),
+                array(__('Accurate and fluent translations', 'sitepress'), __('Professional translators, writing in their native languages will translate your site.','sitepress')),
                 array(__('Effortless','sitepress'),__('You write in your language and WPML will build all the translations.','sitepress')),
                 array(__('Affordable','sitepress'),__("Pay only for what needs to be translated. When you update contents, you pay only for what's changed.",'sitepress'))
             );
@@ -69,7 +69,7 @@
             </p>
         <?php endif; ?>        
         
-        <span id="icl_toggle_ct_confirm_message" style="display:none"><?php echo __('Professional translations is not set up yet. Are you sure you want to cancel?','sitepress'); ?></span>        
+        <span id="icl_toggle_ct_confirm_message" style="display:none"><?php echo __('Are you sure you want to disable professional translation?','sitepress'); ?></span>        
         
         <?php if(!$sitepress_settings['content_translation_setup_complete']): /* setup wizard */ ?>
         <?php 
