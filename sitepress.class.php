@@ -898,6 +898,7 @@ class SitePress{
                 $user['url'] = get_option('home');
                 $user['title'] = get_option('blogname');
                 $user['description'] = get_option('blogdescription');
+                $user['is_verified'] = 1;
                 
                if($user['create_account'] && defined('ICL_AFFILIATE_ID') && defined('ICL_AFFILIATE_KEY')){
                     $user['affiliate_id'] = ICL_AFFILIATE_ID;
