@@ -3047,7 +3047,9 @@ class SitePress{
     }
     
     function display_wpml_footer(){
+        echo '<div id="wpml_credit_footer">';
         printf(__('%s is running multilingual thanks to <a href="%s">WPML</a>', 'sitepress'), get_bloginfo('blogname'), 'http://wpml.org');
+        echo '</div>';
     }
      
 }
