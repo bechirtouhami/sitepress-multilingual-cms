@@ -30,35 +30,27 @@
     <?php if(!$sitepress->get_icl_translation_enabled() ): ?>
         <img src="<?php echo ICL_PLUGIN_URL?>/res/img/web_logo_large.png" style="float: right; border: 1pt solid #C0C0C0; margin: 16px 10px 10px 10px;" alt="ICanLocalize" />
         <p style="line-height:1.5"><?php echo __('<a href="http://www.icanlocalize.com">ICanLocalize</a> can provide professional translation for your site\'s contents.', 'sitepress'); ?></p>
-        <p><input id="icl_enable_content_translation" type="button" class="button-primary" value="<?php echo __('Enable professional translation','sitepress') ?>" /></p>
-        <p style="line-height:1.5"><?php printf(__('When enabled, you can use the <a href="%s">Translation Dashboard</a> to send posts and pages for translation. The entire process is completely effortless. The plugin will send the documents that need translation and then create the translated contents, ready to be published.', 'sitepress'), 'tools.php?page='.basename(ICL_PLUGIN_PATH).'/modules/icl-translation/icl-translation-dashboard.php');?></p>
+        <p style="line-height:1.5"><?php _e('The entire process is completely effortless. WPML will send the documents that need translation and then create the translated contents, ready to be published.', 'sitepress');?></p>
         
-        <p style="line-height:1.5"><?php echo __('Benefits:', 'sitepress'); ?></p>
+        <!-- p style="line-height:1.5">< ?php echo __('Benefits:', 'sitepress'); ? ></p -->
         
         <?php
             $benefits = array(
-                __('Professional translators', 'sitepress'),
-                __('Easy to use', 'sitepress'),
-                __('Content sent to central server', 'sitepress'),
-                __('Translated content automatically returned', 'sitepress'),
-                __('Menus sent for translation', 'sitepress'),
-                __('Translated menus automatically created', 'sitepress'),
-                __('Easy communication with translators', 'sitepress'),
-                __('All translations details are managed for you', 'sitepress'),
-                __('Simple theme localization', 'sitepress'),
-                __('Simple string localization', 'sitepress'),
-                __('Low price', 'sitepress'),
+                array(__('Accurate and fluent translations', 'sitepress'), __('Professional translators, writing in their own languages will translate your site.','sitepress')),
+                array(__('Effortless','sitepress'),__('You write in your language and WPML will build all the translations.','sitepress')),
+                array(__('Affordable','sitepress'),__("Pay only for what needs to be translated. When you update contents, you pay only for what's changed.",'sitepress'))
             );
         ?>
         <ul>
             <?php foreach($benefits as $item): ?>
-                <li class='icl_benefits'><?php echo $item ?></li>
+                <li class='icl_benefits'><b><?php echo $item[0] ?></b><br /><span class="icl_benefit_more"><?php echo $item[1] ?></span></li>
             <?php endforeach; ?>
         </ul>
-        <br clear='all' />
-        <p style="line-height:1.5"><?php echo __('All translations are done by professional translators, writing in their native languages. You\'ll be able to chat with your translator and instruct what kind of writing style you prefer and which keywords should be emphasized for search engine optimization.', 'sitepress'); ?></p>
-        <p style="line-height:1.5"><b><?php printf(__('Pricing for translation by ICanLocalize is a low %s USD per word between any language pair.', 'sitepress'), '0.07'); ?></b></p>
-        <!-- p><b>Don't worry</b>, you wont need to pay anything until you decide to use ICanLocalize for your translations!</p -->
+        <br />
+        <p style="line-height:1.5"><?php printf(__('Pricing for professional translation is <b>%s USD per word</b> between any language pair.', 'sitepress'), '0.07'); ?></p>
+        <br /><p><input id="icl_enable_content_translation" type="button" class="button-primary" value="<?php echo __('Enable professional translation','sitepress') ?>" /> &nbsp; | &nbsp;
+        <?php printf(__('<a href="%s">Cost estimate</a>', 'sitepress'), 'tools.php?page='.basename(ICL_PLUGIN_PATH).'/modules/icl-translation/icl-translation-dashboard.php');?> &nbsp; | &nbsp;
+        <a href="http://wpml.org/?page_id=1169" target="_blank"><?php _e('More information','sitepress'); ?></a></p>
         <br />
     <?php else: ?>
         <?php if($sitepress->icl_account_configured() ): ?>

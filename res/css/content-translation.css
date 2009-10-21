@@ -24,10 +24,8 @@
 .icl_benefits {
     background-image: url(../img/yes.png);
     background-repeat: no-repeat;
-    background-position: 20px;
-    padding-left:40px;
-    float:left;
-    width:45%;
+    background-position: 25px 3px;
+    padding-left:50px;
 }
 
 #icl_setup_wizard .icl_setup_wizard_step{
