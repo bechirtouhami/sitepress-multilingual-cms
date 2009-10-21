@@ -32,6 +32,8 @@ function show_messages() {
 function icl_tb_init(domChunk) {
     // copied from thickbox.js
     // add code so we can detect closure of popup
+
+    jQuery(domChunk).unbind('click');
     
     jQuery(domChunk).click(function(){
     var t = this.title || this.name || "ICanLocalize Reminder";
