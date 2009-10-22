@@ -1242,17 +1242,26 @@ class SitePress{
     
     function save_post_actions($pidd){
         global $wpdb;        
-        if($_POST['autosave'] || $_POST['skip_sitepress_actions'] || (isset($_POST['post_ID']) && $_POST['post_ID']!=$pidd) || $_POST['post_type']=='revision') return;
+        
+        if($_POST['autosave'] || $_POST['skip_sitepress_actions'] || 
+            (isset($_POST['post_ID']) && $_POST['post_ID']!=$pidd) || $_POST['post_type']=='revision')
+        {
+            return;
+        }
+        
         if($_POST['action']=='post-quickpress-publish'){
             $post_id = $pidd;            
             $language_code = $this->get_default_language();
-        }else{
+        }if(isset($_GET['bulk_edit'])){
+            $post_id = $wpdb->get_var("SELECT post_parent FROM {$wpdb->posts} WHERE ID={$pidd}");
+        }
+        else{
             $post_id = $_POST['post_ID']?$_POST['post_ID']:$pidd; //latter case for XML-RPC publishing
             $language_code = $_POST['icl_post_language']?$_POST['icl_post_language']:$this->get_default_language(); //latter case for XML-RPC publishing
         } 
-        if($_POST['action']=='inline-save'){
-            $res = $wpdb->get_row("SELECT trid, language_code FROM {$wpdb->prefix}icl_translations WHERE element_id={$post_id} AND element_type='post'"); 
-            $trid = $res->trid;
+        
+        if($_POST['action']=='inline-save' || isset($_GET['bulk_edit'])){
+            $res = $wpdb->get_row("SELECT trid, language_code FROM {$wpdb->prefix}icl_translations WHERE element_id={$post_id} AND element_type='post'");            $trid = $res->trid;
             $language_code = $res->language_code;
         }else{
             $trid = $_POST['icl_trid'];
