@@ -2514,9 +2514,10 @@ class SitePress{
             foreach($name as $k=>$v){
                 $name[$k] = $this->the_category_name_filter($v);
             }
+            return $name;
         }        
         if(false === strpos($name, '@')) return $name;        
-        if(false !== strpos($name, '<a')){
+        if(false !== strpos($name, '<a')){                                                          
             $int = preg_match_all('|<a([^>]+)>([^<]+)</a>|i',$name,$matches);
             if($int && count($matches[0]) > 1){
                 $originals = $filtered = array();
