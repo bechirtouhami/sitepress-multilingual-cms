@@ -558,7 +558,7 @@ switch($_REQUEST['icl_ajx_action']){
             if ($anchor_pos !== false) {
                 $url = substr($url, 0, $anchor_pos);
             }
-            $output .= $message . ' - <a class="icl_thickbox" href="' . ICL_PLUGIN_URL . "/modules/icl-translation/icl-reminder-popup.php?target=" . ICL_API_ENDPOINT. $url . '&message_id=' . $r->id. '&TB_iframe=true">' . __('View', 'sitepress') . '</a>';
+            $output .= $message . ' - ' . $sitepress->create_icl_popup_link(ICL_API_ENDPOINT. $url . '&message_id=' . $r->id. '&TB_iframe=true') . __('View', 'sitepress') . '</a>';
 
             if ($r->can_delete == '1') {
                 $on_click = 'dismiss_message(' . $r->id . ');';

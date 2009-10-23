@@ -344,7 +344,7 @@ $available_contexts = array_unique($available_contexts);
             <p>
                 <?php echo sprintf(__('Your balance with ICanLocalize is %s. Visit your %sICanLocalize finance%s page to deposit additional funds.', 'sitepress'),
                                       '$'.$sitepress_settings['icl_balance'],
-                                      '<a href="'.ICL_API_ENDPOINT.ICL_FINANCE_LINK.'">',
+                                      $sitepress->create_icl_popup_link(ICL_API_ENDPOINT.ICL_FINANCE_LINK, 'ICanLocalize'),
                                       '</a>',
                                       'sitepress')?>
             </p>

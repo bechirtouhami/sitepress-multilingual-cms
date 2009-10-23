@@ -1,4 +1,7 @@
 <?php
+
+    // NOTE: this is also used for other popup links to ICanLocalize
+
     if (file_exists ('../../../../../wp-load.php'))
         include ('../../../../../wp-load.php');
     else

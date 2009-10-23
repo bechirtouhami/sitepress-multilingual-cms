@@ -207,8 +207,8 @@ function toogleTranslationDetails(){
     }, function(){        
         last_col.find('img').fadeOut('fast',function(){jQuery(this).remove()});
         jQuery(this).slideDown();
-        icl_tb_init('a.icl_thickbox_insert');
-        icl_tb_set_size('a.icl_thickbox_insert');
+        icl_tb_init('a.icl_thickbox');
+        icl_tb_set_size('a.icl_thickbox');
         
     });    
 }
