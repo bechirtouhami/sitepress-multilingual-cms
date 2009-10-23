@@ -107,7 +107,7 @@ jQuery(document).ready(function(){
     jQuery('a.translation_details_but').click(toogleTranslationDetails);
     
     var cache = '&cache=1';
-    if (location.href.indexOf("icl-translation-dashboard.php") != -1) {
+    if (location.href.indexOf("icl-translation-dashboard.php") != -1 || location.href.indexOf("content-translation.php") != -1) {
         cache = '';
     }
     

@@ -671,6 +671,47 @@ class SitePress{
         return $code['code'];
     }
 
+    function get_language_status_text($from_lang, $to_lang) {
+        $lang_status = $this->settings['icl_lang_status'];
+        
+        $response = '';
+        foreach ($lang_status as $lang) {
+            if ($from_lang == $lang['from'] && $to_lang == $lang['to']) {
+                if (isset($lang['available_translators'])) {
+                    if (!$lang['available_translators']) {
+                        // No translators available on icanlocalize for this language pair.
+                        $response = sprintf(__('- (No translators available - please %scontact ICanLocalize%s)', 'sitepress'),
+                                            '<a class="icl_thickbox" href="'.ICL_PLUGIN_URL . "/modules/icl-translation/icl-reminder-popup.php?target=" .ICL_API_ENDPOINT. '/support/new' .'">',
+                                            '</a>');
+                        
+                    } else if (!$lang['applications']) {
+                        // No translators have applied for this language pair.
+                        $response = sprintf(__('- (Waiting for translators to apply)', 'sitepress'));
+                    } else if (!$lang['have_translators']) {
+                        // translators have applied but none selected yet
+                        $response = sprintf(__('- (%s translators applied - %schoose your translator%s)', 'sitepress'),
+                                            $lang['applications'],
+                                            '<a class="icl_thickbox" href="'.ICL_PLUGIN_URL . "/modules/icl-translation/icl-reminder-popup.php?target=" .ICL_API_ENDPOINT. '/websites/' . $this->settings['site_id'] . '/website_translation_offers/' .  $lang['id'] .'">',
+                                            '</a>');
+                    } else {
+                        // there are translators ready to translate
+                        $response = sprintf(__('- (Translator selected - %scommunicate with your translator%s)', 'sitepress'),
+                                            '<a class="icl_thickbox" href="'.ICL_PLUGIN_URL . "/modules/icl-translation/icl-reminder-popup.php?target=" .ICL_API_ENDPOINT. '/websites/' . $this->settings['site_id'] . '/website_translation_offers/' .  $lang['id'] . '/website_translation_contracts/' . $lang['contract_id']. '">',
+                                            '</a>');
+                    }
+
+                    return $response;
+                    
+                }
+            break;
+            }
+                                       
+        }
+
+        // no status found        
+        return '';
+    }
+    
     function get_default_language(){        
         return $this->settings['default_language'];
     }

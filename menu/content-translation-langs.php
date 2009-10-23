@@ -29,7 +29,11 @@
                         <td>
                             <?php if($sitepress_settings['content_translation_languages_setup']): ?>        
                                 <form id="icl_language_pairs_form" name="icl_language_pairs_form" action="">
-                                <?php $enable_default = false;?>
+                                <?php
+                                    $enable_default = false;
+                                    $lang_to_style = 'float:left;list-style:none;width:100%;';
+                                ?>
+                            <?php else: $lang_to_style = 'float:left;list-style:none;width:30%;';?>
                             <?php endif; ?>
 
                                 <?php $show_enabled_first = array(true, false) ?>
@@ -58,9 +62,9 @@
                                                 <?php printf(__('Translate from %s to these languages','sitepress'), $lang['display_name']) ?></label>
                                                 <ul id="icl_tr_pair_sub_<?php echo $lang['code'] ?>" <?php if(!$enabled): ?>style="display:none"<?php endif?>>
                                                 <?php foreach($active_languages as $langto): if($lang['code']==$langto['code']) continue; ?>        
-                                                    <li style="float:left;list-style:none;width:30%;">
+                                                    <li style="<?php echo $lang_to_style?>">
                                                         <label><input class="icl_tr_to" type="checkbox" name="icl_lng_to_<?php echo $lang['code']?>_<?php echo $langto['code']?>" id="icl_lng_from_<?php echo $lang['code']?>_<?php echo $langto['code']?>" <?php if($sitepress->get_icl_translation_enabled($lang['code'],$langto['code'])): ?>checked="checked"<?php endif?> />
-                                                        <?php echo $langto['display_name'] ?></label>
+                                                        <?php echo $langto['display_name'] . ' ' . $sitepress->get_language_status_text($lang['code'], $langto['code']) ?></label>
                                                     </li>    
                                                 <?php endforeach; ?>
                                                 </ul>

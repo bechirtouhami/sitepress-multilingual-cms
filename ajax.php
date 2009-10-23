@@ -415,7 +415,12 @@ switch($_REQUEST['icl_ajx_action']){
             foreach($translation_languages as $lang){
                 $target[] = array('from' => $sitepress->get_language_code(apply_filters('icl_server_languages_map', $lang['attr']['from_language_name'], true)),
                                   'to' => $sitepress->get_language_code(apply_filters('icl_server_languages_map', $lang['attr']['to_language_name'], true)),
-                                  'have_translators' => $lang['attr']['have_translators']);
+                                  'have_translators' => $lang['attr']['have_translators'],
+                                  'available_translators' => $lang['attr']['available_translators'],
+                                  'applications' => $lang['attr']['applications'],
+                                  'contract_id' => $lang['attr']['contract_id'],
+                                  'id' => $lang['attr']['id'],
+                                  );
             }
             $iclsettings['icl_lang_status'] = $target;
         }
