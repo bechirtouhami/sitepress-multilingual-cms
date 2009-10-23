@@ -60,13 +60,17 @@ function icl_tb_init(domChunk) {
 
 
 function icl_tb_set_size(domChunk) {
-    var pagesize = tb_getPageSize();
-    jQuery(domChunk).each(function() {
-        var url = jQuery(this).attr('href');
-        url += '&width=' + (pagesize[0] - 150);
-        url += '&height=' + (pagesize[1] - 150);
-        jQuery(this).attr('href', url);
-    });
+    if (typeof(tb_getPageSize) != 'undefined') {
+
+        var pagesize = tb_getPageSize();
+        jQuery(domChunk).each(function() {
+            var url = jQuery(this).attr('href');
+            url += '&width=' + (pagesize[0] - 150);
+            url += '&height=' + (pagesize[1] - 150);
+            url += '&tb_avail=1'; // indicate that thickbox is available.
+            jQuery(this).attr('href', url);
+        });
+    }
 }
 
 function dismiss_message(message_id) {
