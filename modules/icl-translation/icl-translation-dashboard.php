@@ -241,9 +241,9 @@
         <?php foreach($active_languages as $lang): if($selected_language==$lang['code']) continue; ?>
             <?php if($language_pairs and isset($language_pairs[$selected_language][$lang['code']])): ?>
                 <?php if(isset($target_status[$lang['code']]) and $target_status[$lang['code']] == 1): ?>
-                    <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" checked="checked" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name']); ?></label></li>
+                    <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" checked="checked" />&nbsp;<?php printf(__('Translate to %s %s','sitepress'), $lang['display_name'], $sitepress->get_language_status_text($selected_language, $lang['code'])); ?></label></li>
                 <?php else:  ?>
-                    <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" disabled="disabled" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name'])?><span id="icl-tr-not-avail-to-<?php echo $lang['code']?>"><?php echo __(' - Waiting for translator', 'sitepress'); ?></span></label></li>
+                    <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" disabled="disabled" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name'])?><span id="icl-tr-not-avail-to-<?php echo $lang['code']?>"><?php echo $sitepress->get_language_status_text($selected_language, $lang['code']); ?></span></label></li>
                 <?php endif; ?>
             <?php else:  ?>
                 <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" disabled="disabled" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name'] . __(' - This language has not been selected for translation by ICanLocalize', 'sitepress')); ?></label></li>

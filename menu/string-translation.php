@@ -323,9 +323,9 @@ $available_contexts = array_unique($available_contexts);
                 <?php foreach($active_languages as $lang): if($sitepress->get_current_language()==$lang['code']) continue; ?>
                     <?php if($sitepress_settings['language_pairs'] && isset($sitepress_settings['language_pairs'][$sitepress->get_current_language()][$lang['code']])): ?>
                         <?php if(isset($target_status[$lang['code']]) && $target_status[$lang['code']] == 1): $_one_lang_enabled = true;?>
-                            <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" checked="checked" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name']); ?></label></li>
+                            <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" checked="checked" />&nbsp;<?php printf(__('Translate to %s %s','sitepress'), $lang['display_name'], $sitepress->get_language_status_text($sitepress->get_current_language(), $lang['code'])); ?></label></li>
                         <?php else:  ?>
-                            <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" disabled="disabled" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name'] . __(' - Waiting for translator', 'sitepress')); ?></label></li>
+                            <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" disabled="disabled" />&nbsp;<?php printf(__('Translate to %s %s','sitepress'), $lang['display_name'], $sitepress->get_language_status_text($sitepress->get_current_language(), $lang['code'])); ?></label></li>
                         <?php endif; ?>
                     <?php else:  ?>
                         <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" disabled="disabled" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name'] . __(' - This language has not been selected for translation by ICanLocalize', 'sitepress')); ?></label></li>
