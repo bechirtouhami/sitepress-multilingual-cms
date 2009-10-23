@@ -43,7 +43,7 @@ function icl_tb_init(domChunk) {
     
     do_message_refresh = true;
     jQuery('#TB_window').bind('unload', function(){
-        if (do_message_refresh) {
+        if (t == "ICanLocalize Reminder" && do_message_refresh) {
             
             // do_message_refresh will only be true if we close the popup.
             // if the dismiss link is clicked then do_message_refresh is set to false before closing the popup.
