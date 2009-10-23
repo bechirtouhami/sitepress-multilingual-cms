@@ -498,7 +498,7 @@ class AbsoluteLinksPlugin{
         $parts = parse_url($home);        
         $abshome = $parts['scheme'] .'://' . $parts['host'];
         $path = ltrim($parts['path'],'/');    
-        $cont = preg_replace_callback('#<a([^>]+)?href="(('.$abshome.')?/'.$path.'/?\?(p|page_id|cat_ID)=([0-9]+))"([^>]+)?>#i',
+        $cont = preg_replace_callback('@<a([^>]+)?href="(('.$abshome.')?/'.$path.'/?\?(p|page_id|cat_ID)=([0-9]+))(#?[^"]*)"([^>]+)?>@i',
             array($this,'show_permalinks_cb'),$cont);            
         return $cont;
     }
@@ -508,8 +508,9 @@ class AbsoluteLinksPlugin{
             $_func = 'get_category_link';
         }else{
             $_func = 'get_permalink';
-        }        
-        return '<a'.$matches[1]. 'href="'.$_func($matches[5]).'"' . $matches[3] . '>';
+        }  
+        $fragment = $matches[6];
+        return '<a'.$matches[1]. 'href="'.$_func($matches[5]) . $fragment . '"' . $matches[3] . '>';
     }
     
     function get_broken_links(){
