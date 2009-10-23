@@ -263,11 +263,15 @@ function icl_plugin_upgrade(){
     }
     
     if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.3.5', '<')){
-        $sitepress_settings = get_option('icl_sitepress_settings');
-        if($sitepress_settings['existing_content_language_verified']){
+        $iclsettings = get_option('icl_sitepress_settings');
+        if($iclsettings['existing_content_language_verified']){
             include ICL_PLUGIN_PATH . '/modules/icl-translation/db-scheme.php';
         }
-        
+        if(!$iclsettings['setup_complete'] && 1 < $wpdb->get_var("SELECT COUNT(id) FROM {$wpdb->prefix}icl_languages WHERE active=1")){
+            $iclsettings['setup_complete'] = 1;        
+            $iclsettings['setup_wizard_step'] = 0;                    
+            update_option('icl_sitepress_settings',$iclsettings);
+        }
     }
     
     if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '<')){
