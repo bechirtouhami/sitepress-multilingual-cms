@@ -517,7 +517,7 @@ class IclCommentsTranslation{
     function comment_feed_join($join){                
         global $wpdb, $sitepress;
         $lang = $this->enable_comments_translation ? $this->user_language : $sitepress->get_current_language();
-        $join .= " JOIN {$wpdb->prefix}icl_translations tc ON wp_comments.comment_ID = tc.element_id AND tc.element_type='comment' AND tc.language_code='{$lang}'";
+        $join .= " JOIN {$wpdb->prefix}icl_translations tc ON {$wpdb->comments}.comment_ID = tc.element_id AND tc.element_type='comment' AND tc.language_code='{$lang}'";
         return $join;
     }
     
