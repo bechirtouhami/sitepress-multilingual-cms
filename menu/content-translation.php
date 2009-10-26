@@ -60,11 +60,6 @@
             <p style="line-height:1.5">
             <?php printf(__('To send documents to translation, use the <a href="%s">Translation dashboard</a>.' , 'sitepress'), 'tools.php?page='.basename(ICL_PLUGIN_PATH).'/modules/icl-translation/icl-translation-dashboard.php'); ?>
             </p>
-        <?php else: ?>
-            <p style="line-height:1.5">
-            <?php _e('To enable professional translation by <a href="http://www.icanlocalize.com">ICanLocalize</a> please complete this setup screen.', 'sitepress'); ?></p>            
-            <p style="line-height:1.5">
-            <?php _e('Creating an account in ICanLocalize is free. You will only need to pay when sending posts and pages for translation.', 'sitepress'); ?></p>            
         <?php endif; ?>
         <?php if($sitepress_settings['content_translation_setup_complete']): ?>
             <p style="line-height:1.5">
@@ -86,6 +81,7 @@
         ?>
         <div id="icl_setup_wizard_wrap">
             <h3><?php _e('Before you can start using Professional translation, it needs to be set up', 'sitepress') ?></h3>
+            <br style="clear:both;" />
             <div id="icl_setup_wizard_2">
                 <div class="icl_setup_wizard_step"><strong><?php _e('1. Translation Languages', 'sitepress')?></strong></div>
                 <div class="icl_setup_wizard_step"><strong><?php _e('2. ICanLocalize account setup', 'sitepress')?></strong></div>            

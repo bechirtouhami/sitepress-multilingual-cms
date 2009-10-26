@@ -15,6 +15,7 @@
                             <?php if(!$sitepress->icl_account_configured()): ?>
                             
                                 <h3 id="icl_create_account_form"><?php echo __('Configure your ICanLocalize account', 'sitepress') ?></h3>             
+
                                 <?php if(isset($_POST['icl_form_errors']) || ($icl_account_ready_errors && !$sitepress->icl_account_configured() )):  ?>
                                 <div class="icl_form_errors">
                                     <?php echo $_POST['icl_form_errors'] ?>
@@ -31,6 +32,9 @@
                             
                                 <form id="icl_create_account" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>#icl_create_account_form" <?php if($_POST['icl_acct_option2']):?>style="display:none"<?php endif?>>
                                 <?php wp_nonce_field('icl_create_account', 'icl_create_account_nonce') ?>    
+
+                                <p style="line-height:1.5"><?php _e('Creating an account in ICanLocalize is free. You will only need to pay when sending posts and pages for translation.', 'sitepress'); ?></p>
+                                
                                 <table class="form-table icl-account-setup">
                                     <tbody>
                                     <tr class="form-field">

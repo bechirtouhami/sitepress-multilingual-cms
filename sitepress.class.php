@@ -714,10 +714,18 @@ class SitePress{
                 if ($from_lang == $lang['from'] && $to_lang == $lang['to']) {
                     if (isset($lang['available_translators'])) {
                         if (!$lang['available_translators']) {
-                            // No translators available on icanlocalize for this language pair.
-                            $response = sprintf(__('- (No translators available - please %scontact ICanLocalize%s)', 'sitepress'),
-                                                $this->create_icl_popup_link(ICL_API_ENDPOINT. '/support/new', 'ICanLocalize'),
-                                                '</a>');
+                            // BRUCE: Replace this with a check for a support ticket for the website
+                            // replace the 0 in the support ticket ID with its real ID
+                            if (true) {
+                                // No translators available on icanlocalize for this language pair.
+                                $response = sprintf(__('- (No translators available - please %sprovide more information about your site%s)', 'sitepress'),
+                                                    $this->create_icl_popup_link(ICL_API_ENDPOINT. '/websites/' . $this->settings['site_id'] . '/explain', 'ICanLocalize'),
+                                                    '</a>');
+                            } else {
+                                $response = sprintf(__('- (No translators available - %scheck progress%s)', 'sitepress'),
+                                                    $this->create_icl_popup_link(ICL_API_ENDPOINT. '/support/' . 0, 'ICanLocalize'),
+                                                    '</a>');
+                            }
                             
                         } else if (!$lang['applications']) {
                             // No translators have applied for this language pair.
