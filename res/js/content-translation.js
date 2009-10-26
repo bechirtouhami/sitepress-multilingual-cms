@@ -100,7 +100,16 @@ function saveLanguagePairs(){
         success: function(msg){
             spl = msg.split('|');
             if(spl[0]=='1'){
-                fadeInAjxResp('#icl_ajx_response',icl_ajx_saved + spl[1]);                                         
+                lang_result = spl[1].split("\n");
+                for (lang_status in lang_result) {
+                    parts = lang_result[lang_status].split('~');
+                    from_lang = parts[0];
+                    to_lang = parts[1];
+                    status = parts[2];
+                    jQuery('#icl_lng_from_status_' + from_lang + '_' + to_lang).html(status);
+                    
+                }
+                fadeInAjxResp('#icl_ajx_response',icl_ajx_saved);                                         
             }else{                        
                 fadeInAjxResp('#icl_ajx_response',icl_ajx_error + spl[1],true);
             }  
