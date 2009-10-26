@@ -993,14 +993,28 @@ function icl_poll_for_translations(){
     }    
 }
 
+function _icl_translation_void_error_handler($errno, $errstr, $errfile, $errline){
+    return false;
+}
 
 function icl_add_custom_xmlrpc_methods($methods){
-    $methods['icanlocalize.set_translation_status'] = 'setTranslationStatus';
-    $methods['icanlocalize.list_posts'] = '_icl_list_posts';
-    $methods['icanlocalize.translate_post'] = '_icl_remote_control_translate_post';
-    $methods['icanlocalize.test_xmlrpc'] = '_icl_test_xmlrpc';
-    $methods['icanlocalize.cancel_translation'] = '_icl_xmlrpc_cancel_translation';
-    $methods['icanlocalize.notify_comment_translation'] =  '_icl_xmlrpc_add_message_translation';
+    $icl_methods['icanlocalize.set_translation_status'] = 'setTranslationStatus';
+    $icl_methods['icanlocalize.list_posts'] = '_icl_list_posts';
+    $icl_methods['icanlocalize.translate_post'] = '_icl_remote_control_translate_post';
+    $icl_methods['icanlocalize.test_xmlrpc'] = '_icl_test_xmlrpc';
+    $icl_methods['icanlocalize.cancel_translation'] = '_icl_xmlrpc_cancel_translation';
+    $icl_methods['icanlocalize.notify_comment_translation'] =  '_icl_xmlrpc_add_message_translation';    
+    
+    $methods = $methods + $icl_methods;    
+    if(defined('XMLRPC_REQUEST') && XMLRPC_REQUEST){
+        preg_match('#<methodName>([^<]+)</methodName>#i', $GLOBALS['HTTP_RAW_POST_DATA'], $matches);
+        $method = $matches[1];            
+        if(in_array($method, array_keys($icl_methods))){  
+            ini_set('display_errors', '0');        
+            $old_error_handler = set_error_handler("_icl_translation_void_error_handler",E_ALL);
+        }
+    }
+    
     return $methods;
 }
 

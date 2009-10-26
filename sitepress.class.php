@@ -17,7 +17,7 @@ class SitePress{
         
         add_action('plugins_loaded', array($this,'init'), 1);
         add_action('plugins_loaded', array($this,'initialize_cache'), 0);
-        
+                
         // Administration menus
         add_action('admin_menu', array($this, 'administration_menu'));
         

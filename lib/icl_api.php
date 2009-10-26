@@ -58,6 +58,7 @@ class ICanLocalizeQuery{
         //reset errors displaying settings
         $_display_errors = ini_get('display_errors');
         ini_set('display_errors', '0');        
+        
         $request = str_replace(" ", "%20", $request);
         $c = new IcanSnoopy();
         if (!@is_readable($c->curl_path) || !@is_executable($c->curl_path)){
