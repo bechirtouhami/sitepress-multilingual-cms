@@ -8,28 +8,26 @@
                     <tr>
                         <td>
 
-                            <h3 id="icl_create_account_form"><?php echo __('Configure your ICanLocalize account', 'sitepress') ?></h3>             
-                            <?php if(isset($_POST['icl_form_errors']) || ($icl_account_ready_errors && !$sitepress->icl_account_configured() )):  ?>
-                            <div class="icl_form_errors">
-                                <?php echo $_POST['icl_form_errors'] ?>
-                                <?php if($icl_account_ready_errors):  ?>
-                                <?php echo __('Before you create an ICanLocalize account you need to fix these:', 'sitepress'); ?>
-                                <ul>
-                                <?php foreach($icl_account_ready_errors as $err):?>        
-                                <li><?php echo $err ?></li>    
-                                <?php endforeach ?>
-                                </ul>   
-                                <?php endif; ?>
-                            </div>
-                            
-                            
-                            <?php endif; ?>
-                            
                             <?php if(isset($_POST['icl_form_success'])):?>
                             <p class="icl_form_success"><?php echo $_POST['icl_form_success'] ?></p>
                             <?php endif; ?>  
                               
                             <?php if(!$sitepress->icl_account_configured()): ?>
+                            
+                                <h3 id="icl_create_account_form"><?php echo __('Configure your ICanLocalize account', 'sitepress') ?></h3>             
+                                <?php if(isset($_POST['icl_form_errors']) || ($icl_account_ready_errors && !$sitepress->icl_account_configured() )):  ?>
+                                <div class="icl_form_errors">
+                                    <?php echo $_POST['icl_form_errors'] ?>
+                                    <?php if($icl_account_ready_errors):  ?>
+                                    <?php echo __('Before you create an ICanLocalize account you need to fix these:', 'sitepress'); ?>
+                                    <ul>
+                                    <?php foreach($icl_account_ready_errors as $err):?>        
+                                    <li><?php echo $err ?></li>    
+                                    <?php endforeach ?>
+                                    </ul>   
+                                    <?php endif; ?>
+                                </div>
+                                <?php endif; ?>
                             
                                 <form id="icl_create_account" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>#icl_create_account_form" <?php if($_POST['icl_acct_option2']):?>style="display:none"<?php endif?>>
                                 <?php wp_nonce_field('icl_create_account', 'icl_create_account_nonce') ?>    
@@ -109,12 +107,6 @@
                                 
                             <?php else: // if account configured ?>   
 
-                                <p><?php
-                                    echo sprintf(__("For help with your site's translation, use the %ssupport center%s", 'sitepress'),
-                                            $sitepress->create_icl_popup_link(ICL_API_ENDPOINT. '/support/new', 'support center'),
-                                            '</a>');
-                                ?>
-                                </p>                
                                 <form id="icl_create_account" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>#icl_create_account_form" <?php if($_POST['icl_acct_option2']):?>style="display:none"<?php endif?>>
                                 <?php wp_nonce_field('icl_view_website_access_data','icl_view_website_access_data_nonce') ?>    
                                 <p class="submit">
@@ -146,6 +138,12 @@
                                 </p>
                                 </form>    
                 
+                                <p><img src="<?php echo ICL_PLUGIN_URL ?>/res/img/question-green.png" width="29" height="29" alt="need help" style="vertical-align:middle; margin-right: 3px;" />
+                                <?php echo sprintf(__("For help with your site's translation, use the %ssupport center%s.", 'sitepress'),
+                                            $sitepress->create_icl_popup_link(ICL_API_ENDPOINT. '/support/', 'support center'),
+                                            '</a>');
+                                ?></p>
+                                
                             <?php endif; ?>
          
                         </td>
