@@ -542,7 +542,7 @@
     
     <form name="icl_promote_form">
     <p>
-        <label><input type="checkbox" name="icl_promote" <?php if($sitepress_settings['promote_wpml']) echo 'checked="checked"' ?> value="1" /> <?php _e('Tell the world your site is running multilingual with WPML (places a message in your site’s footer)'); ?></label>
+        <label><input type="checkbox" name="icl_promote" <?php if($sitepress_settings['promote_wpml']) echo 'checked="checked"' ?> value="1" /> <?php _e("Tell the world your site is running multilingual with WPML (places a message in your site's footer)", 'sitepress'); ?></label>
     </p>
     </form>
     

@@ -488,7 +488,7 @@ class IclCommentsTranslation{
                     
                     if(!$machine_translation){
                         $nonce = wp_create_nonce('machine-translation-failed'.$new_comment_id);
-                        $comment_new->comment_content = '<i>' . sprintf(__('Machine translation failed. <a%s>retry</a>'), ' onclick="icl_retry_mtr(this)" id="icl_retry_mtr_'.$comment_new->comment_ID.'_'.$nonce.'" href="#"') . '</i>';
+                        $comment_new->comment_content = '<i>' . sprintf(__('Machine translation failed. <a%s>retry</a>','sitepress'), ' onclick="icl_retry_mtr(this)" id="icl_retry_mtr_'.$comment_new->comment_ID.'_'.$nonce.'" href="#"') . '</i>';
                         $wpdb->update($wpdb->comments, array('comment_content'=>$comment_new->comment_content), array('comment_ID'=>$new_comment_id));
                     } 
                                                                           
@@ -605,7 +605,7 @@ class IclCommentsTranslation{
                             
                             if(!$machine_translation){
                                 $nonce = wp_create_nonce('machine-translation-failed'.$new_comment_id);
-                                $comment_new->comment_content = '<i>' . sprintf(__('Machine translation failed. <a%s>retry</a>'), ' onclick="icl_retry_mtr(this)" id="icl_retry_mtr_'.$comment_new->comment_ID.'_'.$nonce.'" href="#"') . '</i>';
+                                $comment_new->comment_content = '<i>' . sprintf(__('Machine translation failed. <a%s>retry</a>','sitepress'), ' onclick="icl_retry_mtr(this)" id="icl_retry_mtr_'.$comment_new->comment_ID.'_'.$nonce.'" href="#"') . '</i>';
                                 $wpdb->update($wpdb->comments, array('comment_content'=>$comment_new->comment_content), array('comment_ID'=>$new_comment_id));
                             } 
                             
@@ -669,6 +669,7 @@ class IclCommentsTranslation{
                 }
             }
         }else{
+            $_POST['comment_post_ID'] = intval($_POST['comment_post_ID']);
             $lang = $wpdb->get_var("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE element_type='post' AND element_id={$_POST['comment_post_ID']}");
             if(!$lang){
                 $lang = $this->user_language; // just in case

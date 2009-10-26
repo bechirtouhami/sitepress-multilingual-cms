@@ -3136,11 +3136,11 @@ class SitePress{
             
             if($__management_columns_posts_translations[$id][$v['code']]){
                 $img = 'edit_translation.png';
-                $alt = sprintf(__('Edit the %s translation'), $v['display_name']);                
+                $alt = sprintf(__('Edit the %s translation','sitepress'), $v['display_name']);                
                 $link = $post_type . '.php?action=edit&amp;post='.$__management_columns_posts_translations[$id][$v['code']]->element_id.'&amp;lang='.$v['code'];
             }else{
                 $img = 'add_translation.png';
-                $alt = sprintf(__('Add translation to %s'), $v['display_name']);
+                $alt = sprintf(__('Add translation to %s','sitepress'), $v['display_name']);
                 $src_lang = $this->get_current_language() == 'all' ? $this->get_default_language() : $this->get_current_language();
                 $link = $post_type . '-new.php?trid=' . $__management_columns_posts_translations[$id][$this->get_current_language()]->trid.'&amp;lang='.$v['code'].'&amp;source_lang=' . $src_lang;
             }
