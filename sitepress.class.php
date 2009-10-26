@@ -303,7 +303,7 @@ class SitePress{
         } 
         if($this->settings['promote_wpml']){
             add_action('wp_footer', array($this, 'display_wpml_footer'),20);
-        }       
+        }  
     }
                     
     function set_admin_language(){
@@ -822,7 +822,7 @@ class SitePress{
         var icl_ajx_error = '<?php echo __('Error: data not saved','sitepress') ?>';
         var icl_default_mark = '<?php echo __('default','sitepress') ?>';     
         var icl_this_lang = '<?php echo $this->this_lang ?>';   
-        var icl_ajxloaderimg = '<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif';
+        var icl_ajxloaderimg_src = '<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif';
         var icl_cat_adder_msg = '<?php echo __('To add categories that already exist in other languages go to the <a href="categories.php">category management page</a>','sitepress')?>';
         </script>        
         <?php

@@ -3,7 +3,7 @@ jQuery(document).ready(function(){
     
     jQuery('.icl_original_comment_link').live('click', iclShowOriginalComment);
     var icl_preload_ajx_img = new Image(16,16);
-    icl_preload_ajx_img.src = icl_ajxloaderimg;
+    icl_preload_ajx_img.src = icl_ajxloaderimg_src;
 });
 
 var icl_anchor_original_text = 0;

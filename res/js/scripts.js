@@ -27,8 +27,8 @@ function fadeInAjxResp(spot, msg, err){
 function fadeOutAjxResp(spot){
     jQuery(spot).fadeOut();
 }
-var icl_ajxloaderimg_src = icl_ajxloaderimg;
-icl_ajxloaderimg = '<img src="'+icl_ajxloaderimg+'" alt="loading" width="16" height="16" />';
+
+var icl_ajxloaderimg = '<img src="'+icl_ajxloaderimg_src+'" alt="loading" width="16" height="16" />';
 
 var iclHaltSave = false; // use this for multiple 'submit events'
 var iclSaveForm_success_cb = new Array();

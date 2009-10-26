@@ -252,12 +252,6 @@
                                         $icl_folder_url_disabled = false;
                                     }else{
                                         $icl_folder_url_disabled = true;
-                                        /*
-                                        if($sitepress_settings['language_negotiation_type']==1){
-                                            $sitepress_settings['language_negotiation_type']=3;
-                                            $sitepress->save_settings($sitepress_settings);
-                                        } 
-                                        */                       
                                     }                    
                                     ?>
                                     <li>
