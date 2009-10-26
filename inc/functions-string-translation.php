@@ -872,7 +872,7 @@ function icl_st_generate_po_file($strings, $potonly = false){
     
     foreach($strings as $s){
         $po .= PHP_EOL;        
-        if(!$potonly && isset($s['translations'][key($s['translations'])]['value'])){
+        if(!$potonly && isset($s['translations']) && isset($s['translations'][key($s['translations'])]['value'])){
             $translation = $s['translations'][key($s['translations'])]['value'];
             if($translation != '' && $s['translations'][key($s['translations'])]['status'] != ICL_STRING_TRANSLATION_COMPLETE){
                 $po .= '#, fuzzy' . PHP_EOL;
