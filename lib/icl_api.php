@@ -392,6 +392,16 @@ class ICanLocalizeQuery{
                                                 'icl_current_session' => $session_id));
             }
         }
+
+        // check if low funding is still valid
+        if ($wpdb->get_var("SELECT id FROM {$wpdb->prefix}icl_reminders WHERE id=-1") == -1) {
+        
+            $website_data = $this->get_website_details();
+            if (!isset($website_data['unfunded_cms_requests'])) {
+                $wpdb->query("DELETE FROM {$wpdb->prefix}icl_reminders WHERE id=-1");
+            }
+        }
+
             
         return $wpdb->get_results("SELECT * FROM {$wpdb->prefix}icl_reminders w WHERE w.show=1 ORDER BY id");
         
