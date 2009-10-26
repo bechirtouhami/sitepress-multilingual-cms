@@ -108,7 +108,13 @@
                                 </form>    
                                 
                             <?php else: // if account configured ?>   
-                
+
+                                <p><?php
+                                    echo sprintf(__("For help with your site's translation, use the %ssupport center%s", 'sitepress'),
+                                            $sitepress->create_icl_popup_link(ICL_API_ENDPOINT. '/support/new', 'support center'),
+                                            '</a>');
+                                ?>
+                                </p>                
                                 <form id="icl_create_account" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>#icl_create_account_form" <?php if($_POST['icl_acct_option2']):?>style="display:none"<?php endif?>>
                                 <?php wp_nonce_field('icl_view_website_access_data','icl_view_website_access_data_nonce') ?>    
                                 <p class="submit">
