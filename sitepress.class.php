@@ -671,11 +671,45 @@ class SitePress{
         return $code['code'];
     }
 
+    function get_icl_translator_status(&$iclsettings){
+        
+        // check what languages we have translators for.
+        require_once ICL_PLUGIN_PATH . '/lib/Snoopy.class.php';
+        require_once ICL_PLUGIN_PATH . '/lib/xml2array.php';
+        require_once ICL_PLUGIN_PATH . '/lib/icl_api.php';
+        
+        $icl_query = new ICanLocalizeQuery($iclsettings['site_id'], $iclsettings['access_key']);
+        $res = $icl_query->get_website_details();
+        
+        if(isset($res['translation_languages']['translation_language'])){
+            $translation_languages = $res['translation_languages']['translation_language'];
+            if(!isset($translation_languages[0])){
+                $target = $translation_languages;
+                $translation_languages = array(0 => $target);
+            }
+            foreach($translation_languages as $lang){
+                $target[] = array('from' => $this->get_language_code(apply_filters('icl_server_languages_map', $lang['attr']['from_language_name'], true)),
+                                  'to' => $this->get_language_code(apply_filters('icl_server_languages_map', $lang['attr']['to_language_name'], true)),
+                                  'have_translators' => $lang['attr']['have_translators'],
+                                  'available_translators' => $lang['attr']['available_translators'],
+                                  'applications' => $lang['attr']['applications'],
+                                  'contract_id' => $lang['attr']['contract_id'],
+                                  'id' => $lang['attr']['id'],
+                                  );
+            }
+            $iclsettings['icl_lang_status'] = $target;
+        }
+        
+        if(isset($res['client']['attr'])){
+            $iclsettings['icl_balance'] = $res['client']['attr']['balance'];
+        }
+    }
+
     function get_language_status_text($from_lang, $to_lang) {
         $lang_status = $this->settings['icl_lang_status'];
         
         $response = '';
-        if ($this->icl_account_configured()) {
+        if ($lang_status && $this->icl_account_configured()) {
             foreach ($lang_status as $lang) {
                 if ($from_lang == $lang['from'] && $to_lang == $lang['to']) {
                     if (isset($lang['available_translators'])) {
@@ -939,7 +973,8 @@ class SitePress{
         if( (isset($_POST['icl_create_account_nonce']) && $_POST['icl_create_account_nonce']==wp_create_nonce('icl_create_account')) || (isset($_POST['icl_configure_account_nonce']) && $_POST['icl_configure_account_nonce']==wp_create_nonce('icl_configure_account'))){
             if (isset($_POST['icl_content_trans_setup_back_2'])) {
                 // back button in wizard mode.
-                $this->settings['content_translation_setup_wizard_step'] = 2;
+                $this->settings['content_translation_languages_setup'] = 0;
+                $this->settings['content_translation_setup_wizard_step'] = 1;
                 $this->save_settings();
                 
             } else {
@@ -1015,7 +1050,9 @@ class SitePress{
                         
                     }else{
                         $_POST['icl_form_success'] = __('Project added','sitepress');
-                    }                
+                    }
+                    $this->get_icl_translator_status($iclsettings);
+                    $this->save_settings($iclsettings);
                 }
 
                 if ((isset($_POST['icl_content_trans_setup_finish']) || isset($_POST['icl_content_trans_setup_finish_enter'])) && !isset($_POST['icl_form_errors'])) {
@@ -1064,7 +1101,7 @@ class SitePress{
             $this->save_language_pairs();
 
             $this->settings['content_translation_languages_setup'] = 1;
-            $this->settings['content_translation_setup_wizard_step'] = 2;
+            $this->settings['content_translation_setup_wizard_step'] = 3;
             $this->save_settings();
             
         }elseif(isset($_POST['icl_more_options_wizardnounce']) && $_POST['icl_more_options_wizardnounce'] == wp_create_nonce('icl_more_options_wizard')) {

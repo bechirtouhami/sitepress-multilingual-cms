@@ -32,6 +32,13 @@
     width:33%;
     float:left;
 }
+
+
+#icl_setup_wizard_2 .icl_setup_wizard_step{
+    width:50%;
+    float:left;
+}
+
 #icl_setup_wizard_progress{
     height:10px;
     background-color: #ccc;

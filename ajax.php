@@ -12,43 +12,6 @@ if (!isset($_POST['unit-test'])) {
 
 if(!isset($sitepress) && class_exists('SitePress')) $sitepress = new SitePress();
 
-if (!function_exists('get_icl_translator_status')) {
-    function get_icl_translator_status(&$iclsettings){
-        global $sitepress;
-        
-        // check what languages we have translators for.
-        require_once ICL_PLUGIN_PATH . '/lib/Snoopy.class.php';
-        require_once ICL_PLUGIN_PATH . '/lib/xml2array.php';
-        require_once ICL_PLUGIN_PATH . '/lib/icl_api.php';
-        
-        $icl_query = new ICanLocalizeQuery($iclsettings['site_id'], $iclsettings['access_key']);
-        $res = $icl_query->get_website_details();
-        
-        if(isset($res['translation_languages']['translation_language'])){
-            $translation_languages = $res['translation_languages']['translation_language'];
-            if(!isset($translation_languages[0])){
-                $target = $translation_languages;
-                $translation_languages = array(0 => $target);
-            }
-            foreach($translation_languages as $lang){
-                $target[] = array('from' => $sitepress->get_language_code(apply_filters('icl_server_languages_map', $lang['attr']['from_language_name'], true)),
-                                  'to' => $sitepress->get_language_code(apply_filters('icl_server_languages_map', $lang['attr']['to_language_name'], true)),
-                                  'have_translators' => $lang['attr']['have_translators'],
-                                  'available_translators' => $lang['attr']['available_translators'],
-                                  'applications' => $lang['attr']['applications'],
-                                  'contract_id' => $lang['attr']['contract_id'],
-                                  'id' => $lang['attr']['id'],
-                                  );
-            }
-            $iclsettings['icl_lang_status'] = $target;
-        }
-        
-        if(isset($res['client']['attr'])){
-            $iclsettings['icl_balance'] = $res['client']['attr']['balance'];
-        }
-    }
-}
-
 if (!function_exists('update_icl_account')) {
     function update_icl_account(){
         global $sitepress, $wpdb;
@@ -218,7 +181,7 @@ switch($_REQUEST['icl_ajx_action']){
         // success, return status of language pairs from the website
         
         $iclsettings = $sitepress->get_settings();
-        get_icl_translator_status($iclsettings);
+        $sitepress->get_icl_translator_status($iclsettings);
         $sitepress->save_settings($iclsettings);
 
         $langs = $iclsettings['language_pairs'];
@@ -455,7 +418,7 @@ switch($_REQUEST['icl_ajx_action']){
         
         $iclsettings['last_get_translator_status_call'] = time();
         
-        get_icl_translator_status($iclsettings);
+        $sitepress->get_icl_translator_status($iclsettings);
         
         $sitepress->save_settings($iclsettings);
         

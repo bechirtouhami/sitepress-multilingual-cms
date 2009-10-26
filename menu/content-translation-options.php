@@ -22,6 +22,7 @@
                                 <form name="icl_more_options" id="icl_more_options" action="">
                             <?php endif; ?>
                 
+                            <div style="display:none">
                             <h3><?php echo __('How to choose translators?','sitepress') ?></h3>
                             <div class="icl_form_errors" style="display:none;margin-bottom:1px;"><?php echo __('Please select the kind of website','sitepress')?></div>
                             <ul>                
@@ -58,7 +59,11 @@
                                 </div>
                             </ul>
                             
-                            <br /><p><a href="#icl-ct-advanced-options"><span><?php _e('Show advanced options &raquo;','sitepress') ?></span><span style="display:none;"><?php _e('&laquo; Hide advanced options','sitepress') ?></span></a></p>
+                            <br />
+                            </div>
+                                
+                                
+                            <p><a href="#icl-ct-advanced-options"><span><?php _e('Show advanced options &raquo;','sitepress') ?></span><span style="display:none;"><?php _e('&laquo; Hide advanced options','sitepress') ?></span></a></p>
                             <div id="icl-content-translation-advanced-options">
                 
                             <div style="display: none;"><h3><?php echo __('Translation delivery','sitepress') ?></h3>    
@@ -131,13 +136,14 @@
                                     <i><?php _e("This feature is intended for blog networks. It allows controlling the translation process remotely via XML-RPC calls without going through the WordPress admin pages.<br />If you are running a single site, you don't need to enable this.", 'sitepress') ?></i><br />
                                 </li>
                             </ul>
-                            </div> <? // div id="icl-content-translation-advanced-options ?>
-                                        
                             <?php if($sitepress_settings['content_translation_setup_complete']): ?>        
-                                <input class="button" name="create account" value="<?php echo __('Save', 'sitepress') ?>" type="submit" />
+                                <input id="icl_translation_options_save" class="button" name="create account" value="<?php echo __('Save', 'sitepress') ?>" type="submit" />
                                 <span class="icl_ajx_response" id="icl_ajx_response2"></span>    
                                 </form>
                             <?php endif; ?>
+
+                            </div> <? // div id="icl-content-translation-advanced-options ?>
+                                        
             
                         </td>
                     </tr>

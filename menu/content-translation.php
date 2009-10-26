@@ -78,15 +78,14 @@
             }elseif($sitepress_settings['content_translation_setup_wizard_step'] == 2){
                 $sw_width = 45;
             }else{
-                $sw_width = 84;
+                $sw_width = 64;
             }
         ?>
         <div id="icl_setup_wizard_wrap">
             <h3><?php _e('Before you can start using Professional translation, it needs to be set up', 'sitepress') ?></h3>
-            <div id="icl_setup_wizard">
+            <div id="icl_setup_wizard_2">
                 <div class="icl_setup_wizard_step"><strong><?php _e('1. Translation Languages', 'sitepress')?></strong></div>
-                <div class="icl_setup_wizard_step"><strong><?php _e('2. Choose translators', 'sitepress')?></strong></div>
-                <div class="icl_setup_wizard_step"><strong><?php _e('3. ICanLocalize account setup', 'sitepress')?></strong></div>            
+                <div class="icl_setup_wizard_step"><strong><?php _e('2. ICanLocalize account setup', 'sitepress')?></strong></div>            
             </div>        
             <br clear="all" />
             <div id="icl_setup_wizard_progress"><div id="icl_setup_wizard_progress_bar" style="width:<?php echo $sw_width ?>%">&nbsp;</div></div>
