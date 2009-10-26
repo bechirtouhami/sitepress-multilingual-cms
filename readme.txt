@@ -3,7 +3,7 @@ Contributors: ICanLocalize
 Donate link: http://wpml.org/home/want-to-help/
 Tags: CMS, navigation, menus, menu, dropdown, css, sidebar, pages, i18n, translation, localization, language, multilingual, WPML
 Requires at least: 2.6
-Tested up to: 2.8.4
+Tested up to: 2.8.5
 Stable tag: 1.3.4
 
 Allows building complete multilingual sites with WordPress.
@@ -65,6 +65,16 @@ Also, go through the [detailed description](http://wpml.org/support/cannot-activ
 2. Translation controls in edit screen.
 
 == Changelog ==
+
+= 1.3.5 =
+* Improved the professional translation flow and streamlined it for easy usage.
+* Avoids failing due to PHP errors in other plugins (caused various compatibility issues).
+* Fixed a bug that prevented Sticky Links from working for links with anchors.
+* Fixed bug for comments feed.
+* Fix bug which caused Bulk Editing to change languages.
+* After install, defaults to languages per directories if it's working on the server.
+* Add language 'all', that allows listing contents in all languages (good for feeds).
+* Turned the 'advanced' / 'basic' selection to a button.
 
 = 1.3.4 =
 * Changed the posts menu in the top navigation. Now its contents and position can be configured.
