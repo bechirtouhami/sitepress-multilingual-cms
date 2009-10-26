@@ -1102,6 +1102,10 @@ class SitePress{
 
             $this->settings['content_translation_languages_setup'] = 1;
             $this->settings['content_translation_setup_wizard_step'] = 3;
+            
+            $this->settings['website_kind'] = 2;
+            $this->settings['interview_translators'] = 1;
+            
             $this->save_settings();
             
         }elseif(isset($_POST['icl_more_options_wizardnounce']) && $_POST['icl_more_options_wizardnounce'] == wp_create_nonce('icl_more_options_wizard')) {
