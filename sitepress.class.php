@@ -703,6 +703,8 @@ class SitePress{
         if(isset($res['client']['attr'])){
             $iclsettings['icl_balance'] = $res['client']['attr']['balance'];
         }
+        
+        $iclsettings['icl_support_ticket_id'] = $res['attr']['support_ticket_id'];
     }
 
     function get_language_status_text($from_lang, $to_lang) {
@@ -714,16 +716,14 @@ class SitePress{
                 if ($from_lang == $lang['from'] && $to_lang == $lang['to']) {
                     if (isset($lang['available_translators'])) {
                         if (!$lang['available_translators']) {
-                            // BRUCE: Replace this with a check for a support ticket for the website
-                            // replace the 0 in the support ticket ID with its real ID
-                            if (true) {
+                            if ($this->settings['icl_support_ticket_id'] == '') {
                                 // No translators available on icanlocalize for this language pair.
                                 $response = sprintf(__('- (No translators available - please %sprovide more information about your site%s)', 'sitepress'),
                                                     $this->create_icl_popup_link(ICL_API_ENDPOINT. '/websites/' . $this->settings['site_id'] . '/explain', 'ICanLocalize'),
                                                     '</a>');
                             } else {
                                 $response = sprintf(__('- (No translators available - %scheck progress%s)', 'sitepress'),
-                                                    $this->create_icl_popup_link(ICL_API_ENDPOINT. '/support/' . 0, 'ICanLocalize'),
+                                                    $this->create_icl_popup_link(ICL_API_ENDPOINT. '/support/show/' . $this->settings['icl_support_ticket_id'], 'ICanLocalize'),
                                                     '</a>');
                             }
                             
