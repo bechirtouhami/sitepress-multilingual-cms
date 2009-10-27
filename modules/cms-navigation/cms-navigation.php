@@ -251,12 +251,14 @@ class CMSNavigation{
                 if($pages){
                     $res = $wpdb->get_results("SELECT ID, menu_order FROM {$wpdb->posts} WHERE ID IN (".join(',', $pages).") ORDER BY menu_order");
                 }
-                foreach($res as $row){
-                    $orders[$row->ID] = $row->menu_order;
-                }            
+                if($res){
+                    foreach($res as $row){
+                        $orders[$row->ID] = $row->menu_order;
+                    }            
+                }
                 $blog_special_page_inserted = false;
                 foreach($pages as $k=>$p){
-                    if(!$blog_special_page_inserted && ($orders[$p] > $this->settings['cat_menu_page_order'])){                    
+                    if(!$blog_special_page_inserted && (isset($orders[$p]) && $orders[$p] > $this->settings['cat_menu_page_order'])){                    
                         $incpages[] = 0;
                         $blog_special_page_inserted = true;
                     }  
