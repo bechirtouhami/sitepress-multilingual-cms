@@ -308,6 +308,7 @@ $available_contexts = array_unique($available_contexts);
             <input type="hidden" name="icl_st_action" value="preview" />
             <input type="hidden" name="strings" value="" />
             <input type="hidden" name="langs" value="" />            
+            <input type="hidden" name="icl-tr-from" value="<?php echo $sitepress->get_current_language()?>" />
             <ul id="icl-tr-opt">
                 <?php
                     $icl_lang_status = $sitepress_settings['icl_lang_status'];
@@ -325,7 +326,7 @@ $available_contexts = array_unique($available_contexts);
                         <?php if(isset($target_status[$lang['code']]) && $target_status[$lang['code']] == 1): $_one_lang_enabled = true;?>
                             <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" checked="checked" />&nbsp;<?php printf(__('Translate to %s %s','sitepress'), $lang['display_name'], $sitepress->get_language_status_text($sitepress->get_current_language(), $lang['code'])); ?></label></li>
                         <?php else:  ?>
-                            <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" disabled="disabled" />&nbsp;<?php printf(__('Translate to %s %s','sitepress'), $lang['display_name'], $sitepress->get_language_status_text($sitepress->get_current_language(), $lang['code'])); ?></label></li>
+                            <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" disabled="disabled" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name'], $lang['code']); ?><span class="icl-tr-not-avail-to" id="icl-tr-not-avail-to-<?php echo $lang['code']?>"><?php echo $sitepress->get_language_status_text($sitepress->get_current_language(), $lang['code']); ?></span></label></li>
                         <?php endif; ?>
                     <?php else:  ?>
                         <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" disabled="disabled" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name'] . __(' - This language has not been selected for translation by ICanLocalize', 'sitepress')); ?></label></li>

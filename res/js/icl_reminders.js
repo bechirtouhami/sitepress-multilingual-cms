@@ -51,6 +51,12 @@ function icl_tb_init(domChunk) {
             jQuery('#icl_reminder_list').html('Refreshing messages  ' + icl_ajxloaderimg);
             show_messages();
             }
+        
+        if(a.indexOf('after=refresh_langs') != -1) {
+        
+            icl_refresh_translator_not_available_links();
+        }
+        
         });
     
     this.blur();

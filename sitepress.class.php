@@ -719,11 +719,11 @@ class SitePress{
                             if ($this->settings['icl_support_ticket_id'] == '') {
                                 // No translators available on icanlocalize for this language pair.
                                 $response = sprintf(__('- (No translators available - please %sprovide more information about your site%s)', 'sitepress'),
-                                                    $this->create_icl_popup_link(ICL_API_ENDPOINT. '/websites/' . $this->settings['site_id'] . '/explain', 'ICanLocalize'),
+                                                    $this->create_icl_popup_link(ICL_API_ENDPOINT. '/websites/' . $this->settings['site_id'] . '/explain?after=refresh_langs', 'ICanLocalize'),
                                                     '</a>');
                             } else {
                                 $response = sprintf(__('- (No translators available - %scheck progress%s)', 'sitepress'),
-                                                    $this->create_icl_popup_link(ICL_API_ENDPOINT. '/support/show/' . $this->settings['icl_support_ticket_id'], 'ICanLocalize'),
+                                                    $this->create_icl_popup_link(ICL_API_ENDPOINT. '/support/show/' . $this->settings['icl_support_ticket_id'] . '?after=refresh_langs', 'ICanLocalize'),
                                                     '</a>');
                             }
                             

@@ -212,3 +212,56 @@ function toogleTranslationDetails(){
         
     });    
 }
+
+function icl_refresh_translator_not_available_links() {
+    
+    // the links can be in
+    // 1) translation dashboard
+    // 2) string translation
+    // 3) Pro translation
+    
+    var from_lang = jQuery('input[name="filter[lang]"]:checked').attr('value');
+    if(from_lang == undefined){
+        from_lang = jQuery('input[name="icl-tr-from"]').attr('value');
+    }
+    from_lang = '&from_lang=' + from_lang;
+    
+    cache = '';
+    jQuery('.icl-tr-not-avail-to').each(function(){
+        if(jQuery(this).html().indexOf('/explain') == -1 &&
+                jQuery(this).html().indexOf('/support/show') == -1) {
+            return;
+        }
+
+        id = this.id;
+
+        if (id.indexOf('icl_lng_from_status_') != -1) {
+            langs = id.substring(20).split('_');
+            from_lang = langs[0];
+            from_lang = '&from_lang=' + from_lang;
+            to_lang = langs[1];
+            to_lang = '&to_lang=' + to_lang;
+        } else {
+            to_lang = id.substring(20);
+            to_lang = '&to_lang=' + to_lang;
+        }
+        jQuery.ajax({
+            type: "POST",
+            url: icl_ajx_url,
+            data: "icl_ajx_action=get_language_status_text"+cache+from_lang+to_lang,
+            success: function(msg){
+                spl = msg.split('|');
+                if(spl[0]=='1'){
+                    jQuery('#' + id).html(spl[1]);
+                    icl_tb_init('a.icl_thickbox');
+                    icl_tb_set_size('a.icl_thickbox');
+                }
+            }
+        });
+        
+        cache = '&cache=1';
+    });
+}
+
+        
+        

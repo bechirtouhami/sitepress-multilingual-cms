@@ -64,8 +64,9 @@
                                                 <?php foreach($active_languages as $langto): if($lang['code']==$langto['code']) continue; ?>        
                                                     <li style="<?php echo $lang_to_style?>">
                                                         <label><input class="icl_tr_to" type="checkbox" name="icl_lng_to_<?php echo $lang['code']?>_<?php echo $langto['code']?>" id="icl_lng_from_<?php echo $lang['code']?>_<?php echo $langto['code']?>" <?php if($sitepress->get_icl_translation_enabled($lang['code'],$langto['code'])): ?>checked="checked"<?php endif?> />
-                                                            <span id="icl_lng_from_status_<?php echo $lang['code']?>_<?php echo $langto['code']?>">
-                                                                <?php echo $langto['display_name'] . ' ' . $sitepress->get_language_status_text($lang['code'], $langto['code']) ?>
+                                                            <?php echo $langto['display_name'] . ' '?>
+                                                            <span class="icl-tr-not-avail-to" id="icl_lng_from_status_<?php echo $lang['code']?>_<?php echo $langto['code']?>">
+                                                                <?php echo $sitepress->get_language_status_text($lang['code'], $langto['code']) ?>
                                                             </span>
                                                         </label>
                                                     </li>    

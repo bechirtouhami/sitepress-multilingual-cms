@@ -192,8 +192,7 @@ switch($_REQUEST['icl_ajx_action']){
         foreach ($langs as $from_lang => $targets) {
             foreach($targets as $to_lang => $to_status) {
                 if ($to_status) {
-                    $lang_name = $active_languages[$to_lang]['display_name'];
-                    $result .= $from_lang . '~' . $to_lang . '~' . $lang_name . ' ' .$sitepress->get_language_status_text($from_lang, $to_lang) . "\n";
+                    $result .= $from_lang . '~' . $to_lang . '~' . $sitepress->get_language_status_text($from_lang, $to_lang) . "\n";
                 }
             }
         }
@@ -423,6 +422,21 @@ switch($_REQUEST['icl_ajx_action']){
         $sitepress->save_settings($iclsettings);
         
         echo json_encode($iclsettings['icl_lang_status']);
+        break;
+    
+    case 'get_language_status_text':
+    
+        if(!$sitepress->icl_account_configured()) break;
+
+        $iclsettings = $sitepress->get_settings();
+        
+        if(!isset($_POST['cache'])) {
+            $iclsettings = $sitepress->get_settings();
+            $sitepress->get_icl_translator_status($iclsettings);
+            $sitepress->save_settings($iclsettings);
+        }
+            
+        echo '1|' . $sitepress->get_language_status_text($_POST['from_lang'], $_POST['to_lang']);
         break;
     
     case 'set_post_to_date':
