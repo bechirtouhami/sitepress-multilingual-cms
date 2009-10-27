@@ -1050,11 +1050,12 @@ class SitePress{
                     $iclsettings['icl_account_email'] = $user['email'];
                     $this->save_settings($iclsettings);
                     if($user['create_account']==1){
-                        $_POST['icl_form_success'] = __('An account has been created for you in ICanLocalize - Next step:', 'sitepress') . '<br />';
-                        $_POST['icl_form_success'] .= '<ul>';
-                        //$_POST['icl_form_success'] .= '<li>' . __('Confirm your email address – a confirmation email was just sent to you from <b>notify@icanlocalize.com</b>. Go to your inbox and click on the confirmation link in that email.', 'sitepress') . '</li>';
+                        $_POST['icl_form_success'] = __('Professional translation for your site is set up. Next steps:', 'sitepress') . '<br />';
+                        $_POST['icl_form_success'] .= '<ol>';
+                        $_POST['icl_form_success'] .= '<li>' . __('Interview and choose translators.', 'sitepress') . '</li>';
                         $_POST['icl_form_success'] .= '<li>' . sprintf(__('Use the <a href="%s">Translation Dashboard</a> to send documents to translation.', 'sitepress'), 'tools.php?page='.basename(ICL_PLUGIN_PATH).'/modules/icl-translation/icl-translation-dashboard.php') . '</li>';
-                        $_POST['icl_form_success'] .= '</ul>';
+                        $_POST['icl_form_success'] .= '<li>' . __('Deposit payment for the translation.', 'sitepress') . '</li>';
+                        $_POST['icl_form_success'] .= '</ol>';
                         
                     }else{
                         $_POST['icl_form_success'] = __('Project added','sitepress');
