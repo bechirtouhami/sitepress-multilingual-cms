@@ -17,7 +17,6 @@
     
     $sitepress_settings = $sitepress->get_settings();    
     $icl_account_ready_errors = $sitepress->icl_account_reqs();
-        
 ?>
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap">
