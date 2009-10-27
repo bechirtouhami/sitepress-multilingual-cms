@@ -358,8 +358,6 @@ $available_contexts = array_unique($available_contexts);
             <p><?php _e('To translate yourself, click on the <b>Translation</b> link next to each strings.','sitepress') ?></p>
             <?php if ( current_user_can('manage_options') ): ?>
             <p><?php printf(__('To send these strings to translation by ICanLocalize you first need to set up <a href="%s">professional translation</a>.' , 'sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php'); ?></p>
-            <?php else: ?>
-            <p><?php _e('To send these strings to translation by ICanLocalize you first need to set up professional translation.' , 'sitepress'); ?></p>  
             <?php endif; ?>
             </div>
     
