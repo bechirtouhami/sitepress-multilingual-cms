@@ -436,7 +436,7 @@ switch($_REQUEST['icl_ajx_action']){
             $sitepress->save_settings($iclsettings);
         }
             
-        echo '1|' . $sitepress->get_language_status_text($_POST['from_lang'], $_POST['to_lang']);
+        echo '1|' . $_POST['id'] . '|' . $sitepress->get_language_status_text($_POST['from_lang'], $_POST['to_lang']);
         break;
     
     case 'set_post_to_date':

@@ -227,6 +227,11 @@ function icl_refresh_translator_not_available_links() {
     from_lang = '&from_lang=' + from_lang;
     
     cache = '';
+    count = 0;
+    jQuery('.icl-tr-not-avail-to').each(function(){
+        count += 1;
+    });
+    
     jQuery('.icl-tr-not-avail-to').each(function(){
         if(jQuery(this).html().indexOf('/explain') == -1 &&
                 jQuery(this).html().indexOf('/support/show') == -1) {
@@ -248,19 +253,25 @@ function icl_refresh_translator_not_available_links() {
         jQuery.ajax({
             type: "POST",
             url: icl_ajx_url,
-            data: "icl_ajx_action=get_language_status_text"+cache+from_lang+to_lang,
+            data: "icl_ajx_action=get_language_status_text"+cache+from_lang+to_lang+'&id='+id,
             success: function(msg){
                 spl = msg.split('|');
                 if(spl[0]=='1'){
-                    jQuery('#' + id).html(spl[1]);
-                    icl_tb_init('a.icl_thickbox');
-                    icl_tb_set_size('a.icl_thickbox');
+                    item_id = spl[1];
+                    jQuery('#' + item_id).html(spl[2]);
+                    count -= 1;
+                    if (count == 0) {
+                        icl_tb_init('a.icl_thickbox');
+                        icl_tb_set_size('a.icl_thickbox');
+                    }
                 }
             }
         });
         
-        cache = '&cache=1';
+        //cache = '&cache=1';
     });
+
+    
 }
 
         
