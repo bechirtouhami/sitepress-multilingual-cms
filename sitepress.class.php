@@ -2005,15 +2005,18 @@ class SitePress{
                 $term_lang = $this->get_default_language();
             }
         }
+
+        $el_type = $wpdb->get_var("SELECT taxonomy FROM {$wpdb->term_taxonomy} WHERE term_taxonomy_id={$tt_id}");
         
         // case of adding a tag via post save
         if($_POST['action']=='editpost'){
             $term_lang = $_POST['icl_post_language'];        
         }elseif($_POST['action']=='post-quickpress-publish'){
             $term_lang = $this->get_default_language();
+        }elseif($_POST['action']=='inline-save-tax'){
+            $lang_details = $this->get_element_language_details($tt_id, $el_type);
+            $term_lang = $lang_details->language_code;
         }
-        
-        $el_type = $wpdb->get_var("SELECT taxonomy FROM {$wpdb->term_taxonomy} WHERE term_taxonomy_id={$tt_id}");
 
         // has trid only when it's a translation of another tag             
         $trid = isset($_POST['icl_trid']) && (isset($_POST['icl_tag_language']) || isset($_POST['icl_category_language']))?$_POST['icl_trid']:null;        
@@ -2031,7 +2034,6 @@ class SitePress{
         if(!isset($term_lang)){
             $term_lang = $_POST['icl_'.$el_type.'_language'];        
         }        
-        
         if(isset($_POST['action']) && $_POST['action']=='inline-save-tax'){
             $trid = $this->get_element_trid($tt_id,$el_type);
         }
