@@ -73,9 +73,9 @@ class CMSNavigation{
         add_filter('update_option_page_for_posts', array($this,'clear_cache')); 
         
         add_action('delete_post', array($this, 'clear_cache'));
-        add_action('delete_term', array($this, 'clear_cache'));
-        add_action('create_term', array($this, 'clear_cache'));
-        add_action('edited_term', array($this, 'clear_cache'));
+        add_action('delete_category', array($this, 'clear_cache'));
+        add_action('create_category', array($this, 'clear_cache'));
+        add_action('edited_category', array($this, 'clear_cache'));
         
     } 
     
