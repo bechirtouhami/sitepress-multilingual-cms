@@ -67,15 +67,19 @@ class CMSNavigation{
         add_filter('page_link', array($this, 'rewrite_page_link'), 15, 2);
         add_action('parse_query', array($this, 'redirect_offsite_urls'));
         
-        add_filter('permalink_structure_changed', array($this,'option_permalink_structure'));
-        add_filter('update_option_show_on_front', array($this,'option_permalink_structure')); //clear cache
-        add_filter('update_option_page_on_front', array($this,'option_permalink_structure')); //clear cache
-        add_filter('update_option_page_for_posts', array($this,'option_permalink_structure')); //clear cache
+        add_filter('permalink_structure_changed', array($this,'clear_cache'));
+        add_filter('update_option_show_on_front', array($this,'clear_cache')); 
+        add_filter('update_option_page_on_front', array($this,'clear_cache')); 
+        add_filter('update_option_page_for_posts', array($this,'clear_cache')); 
         
+        add_action('delete_post', array($this, 'clear_cache'));
+        add_action('delete_term', array($this, 'clear_cache'));
+        add_action('create_term', array($this, 'clear_cache'));
+        add_action('edited_term', array($this, 'clear_cache'));
         
     } 
     
-    function option_permalink_structure($data){
+    function clear_cache($data){
         global $sitepress, $wpdb;
         
         // clear the cache.
@@ -84,7 +88,7 @@ class CMSNavigation{
         
         return $data;
     }
-    
+        
     function cms_navigation_breadcrumb(){
         global $post, $sitepress, $current_user, $wpdb;
         
