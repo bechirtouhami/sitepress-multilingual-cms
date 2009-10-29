@@ -313,24 +313,22 @@ class SitePress{
             $current_user = wp_get_current_user();
         }
                                    
-        $active_languages = array_keys($this->get_active_languages());
+        $active_languages = array_keys($wpdb->get_col("SELECT code FROM {$wpdb->prefix}icl_languages WHERE active=1"));   //don't use method get_active_language()
         
         $this->admin_language = $this->get_user_admin_language($current_user->data->ID);
         if($this->admin_language != '' && !in_array($this->admin_language, $active_languages)){
             delete_usermeta($current_user->data->ID,'icl_admin_language');
         }
         if(!in_array($this->settings['admin_default_language'], $active_languages)){
-            $this->settings['admin_default_language'] = $this->get_default_language();
+            $this->settings['admin_default_language'] = '_default_';
             $this->save_settings();
         }
         
         if(!$this->admin_language){
             $this->admin_language = $this->settings['admin_default_language'];
         }
-        if(!$this->admin_language){
+        if(!$this->admin_language || $this->settings['admin_default_language'] == '_default_'){
             $this->admin_language = $this->get_default_language();
-            $this->settings['admin_default_language'];
-            $this->save_settings();
         }
     }
     
@@ -345,6 +343,7 @@ class SitePress{
         }
         return $lang;
     }
+    
     function administration_menu(){
         add_action('admin_print_scripts', array($this,'js_scripts_setup'));
         add_action('admin_print_styles', array($this,'css_setup'));
@@ -528,14 +527,14 @@ class SitePress{
     }
     
     function get_active_languages($refresh = false){
-        global $wpdb;        
+        global $wpdb;   
         if($refresh || !$this->active_languages){
-            $this->admin_language;
             if(defined('WP_ADMIN') && $this->admin_language){
                 $in_language = $this->admin_language;
             }else{
                 $in_language = $this->get_current_language()?$this->get_current_language():$this->get_default_language();    
             }  
+            //var_dump(defined('WP_ADMIN'),$this->admin_language);
             if (isset($this->icl_language_name_cache)) {
                 $res = $this->icl_language_name_cache->get('in_language_'.$in_language);
             } else {
@@ -3004,6 +3003,9 @@ class SitePress{
         $active_languages = $this->get_active_languages();
         $default_language = $this->get_default_language();
         $user_language = get_usermeta($current_user->data->ID,'icl_admin_language',true);
+        if($this->settings['admin_default_language'] == '_default_'){
+            $this->settings['admin_default_language'] = $default_language;
+        }
         $lang_details = $this->get_language_details($this->settings['admin_default_language']);
         $admin_default_language = $lang_details['display_name'];
         ?>
@@ -3015,7 +3017,7 @@ class SitePress{
                     <th><?php _e('Select your language:', 'sitepress') ?></th>
                     <td>                        
                         <select name="icl_user_admin_language">
-                        <option value=""<?php if($user_language==$this->settings['admin_default_language']) echo ' selected="selected"'?>><?php printf(__('Default language (currently %s)','sitepress'), $admin_default_language );?>&nbsp;</option>
+                        <option value=""<?php if($user_language==$this->settings['admin_default_language']) echo ' selected="selected"'?>><?php printf(__('Default admin language (currently %s)','sitepress'), $admin_default_language );?>&nbsp;</option>
                         <?php foreach($active_languages as $al):?>
                         <option value="<?php echo $al['code'] ?>"<?php if($user_language==$al['code']) echo ' selected="selected"'?>><?php echo $al['display_name']; if($this->admin_language != $al['code']) echo ' ('. $al['native_name'] .')'; ?>&nbsp;</option>
                         <?php endforeach; ?>

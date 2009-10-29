@@ -485,7 +485,9 @@
                                 <p>
                                     <label>
                                         <?php _e('Default admin language: ', 'sitepress'); ?>
+                                        <?php $default_language = $sitepress->get_language_details($sitepress->get_default_language()); ?>                                        
                                         <select name="icl_admin_default_language">
+                                        <option value="_default_"><?php printf(__('Default language (currently %s)', 'sitepress'),  $default_language['display_name']); ?></option>
                                         <?php foreach($active_languages as $al):?>
                                         <option value="<?php echo $al['code'] ?>"<?php if($sitepress_settings['admin_default_language']==$al['code']) echo ' selected="selected"'?>><?php echo $al['display_name']; if($sitepress->get_admin_language() != $al['code']) echo ' ('. $al['native_name'] .')' ?>&nbsp;</option>
                                         <?php endforeach; ?>
@@ -539,6 +541,27 @@
 
         </div>
     <?php endif; ?>
+        
+    <?php 
+    /*
+    function get_current_language(){
+        echo 'CR';
+    }    
+    add_action('icl_languages_options_after', 'get_current_language');
+    
+    <?php if(0 && isset($wp_filter['icl_languages_options_after'])): ?>
+    <form name="icl_custom_language_options">
+    <?php do_action('icl_languages_options_after'); ?>
+    <p>
+        <input class="button" name="save" value="<?php echo __('Apply','sitepress') ?>" type="submit" />
+        <span class="icl_ajx_response" id="icl_ajx_response_clo"></span>
+    </p>
+    </form>    
+    <?php endif; ?>
+    */
+    ?>
+    
+    <?php if($sitepress_settings['setup_complete']): ?>  
     
     <form name="icl_promote_form">
     <p>
@@ -546,7 +569,6 @@
     </p>
     </form>
     
-    <?php if($sitepress_settings['setup_complete']): ?>  
     <div class="icl_advanced_switch">
         <span><?php _e('To customize the language switcher, setup language URLs or choose a different admin language, go to advanced mode.', 'sitepress') ?> <a class="button" href="#" title="<?php _e("Switch to advanced setup mode", 'sitepress') ?>"><?php _e('Advanced &raquo;', 'sitepress')?></a></span>
         <span style="display:none"><?php _e('You are now in advanced setup mode', 'sitepress') ?> <a class="button" href="#" title="<?php _e("Switch to basic setup mode.", 'sitepress') ?>"><?php _e('&laquo; Basic', 'sitepress')?></a></span>
