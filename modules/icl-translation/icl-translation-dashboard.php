@@ -57,7 +57,15 @@
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap">
     <div id="icon-options-general" class="icon32" style="background: transparent url(<?php echo ICL_PLUGIN_URL; ?>/res/img/icon.png) no-repeat;"><br /></div>
-    <h2><?php echo __('Translation Dashboard', 'sitepress') ?></h2>        
+    <h2><?php echo __('Translation Dashboard', 'sitepress') ?></h2>
+
+    <?php if ($_GET['message'] == 'icl_message_error'): ?>    
+        <div class="icl_form_errors"><?php echo __('Error sending some documents to translation')?></div>
+    <?php endif;?>
+    <?php if ($_GET['message'] == 'icl_message_1'): ?>    
+        <div class="icl_form_success"><?php echo __('All documents sent to translation', 'sitepress')?></div>
+    <?php endif;?>
+         
     
     <?php if(!$sitepress->icl_account_configured() || !$sitepress->get_icl_translation_enabled()): ?>
     <div class="icl_yellow_box">
@@ -255,6 +263,7 @@
         </li>
     </ul>
     <span id="icl_message_1" style="display:none"><?php echo __('All documents sent to translation', 'sitepress')?></span>
+    <span id="icl_message_error" style="display:none"><?php echo __('Error sending some documents to translation', 'sitepress')?></span>
     <span id="icl_message_2" style="display:none"><?php echo __('Translation in progress', 'sitepress')?></span>
     <?php if(isset($sitepress_settings['icl_balance'])): ?>
         <p>

@@ -73,18 +73,25 @@ jQuery(document).ready(function(){
             dataType: 'json',
             data: "icl_ajx_action=send_translation_request&post_ids="+post_ids+'&type=post&target_languages='+target_languages.join('#'),
             success: function(msg){
+                var all_ok = true;
                 for(i in msg){
                     p = msg[i];    
                     if(p.status > 0){
                         jQuery('#icl-tr-status-'+p.post_id).html(jQuery('#icl_message_2').html());
                     }else{
                         jQuery('#icl-tr-status-'+p.post_id).html(tmpback[p.post_id]);
+                        all_ok = false;
                     }
                     jQuery('#icl-tr-status-'+p.post_id).fadeIn();
                 }
                 jQuery('#icl-tr-sel-doc').removeAttr('disabled');    
-                jQuery('#icl_ajx_response').html(jQuery('#icl_message_1').html());
-                location.href = location.href;
+                if (all_ok) {
+                    message = 'icl_message_1';
+                } else {
+                    message = 'icl_message_error';
+                }
+                jQuery('#icl_ajx_response').html(jQuery('#'+message).html());
+                location.href = location.href + "&message="+message;
             }
         });
     });
