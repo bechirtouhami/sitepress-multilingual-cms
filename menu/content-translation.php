@@ -20,7 +20,7 @@
 ?>
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap">
-    <div id="icon-options-general" class="icon32<?php if($sitepress_settings['advanced']) echo ' icon32_adv'?>"><br /></div>
+    <div id="icon-options-general" class="icon32<?php if(!$sitepress_settings['basic_menu']) echo ' icon32_adv'?>"><br /></div>
     <h2><?php _e('Professional Translation', 'sitepress') ?></h2>    
         
     <?php include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php' ?>
