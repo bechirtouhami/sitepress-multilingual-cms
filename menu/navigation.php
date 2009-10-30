@@ -8,8 +8,10 @@
 var icl_ajx_cache_cleared = '<?php echo __('The cache has been cleared.','sitepress') ?>';
 </script>        
 <div class="wrap">
-    <div id="icon-options-general" class="icon32"><br /></div>
+    <div id="icon-options-general" class="icon32<?php if($sitepress_settings['advanced']) echo ' icon32_adv'?>"><br /></div>
     <h2><?php echo __('Setup WPML', 'sitepress') ?></h2>    
+    
+    <?php include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php' ?>
     
     <h3><?php echo __('Navigation', 'sitepress') ?></h3>    
     

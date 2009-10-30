@@ -32,8 +32,11 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
 }
 ?>
 <div class="wrap">
-    <div id="icon-options-general" class="icon32" style="background: transparent url(<?php echo ICL_PLUGIN_URL; ?>/res/img/icon.png) no-repeat;"><br /></div>
+    <div id="icon-options-general" class="icon32 icon32_adv" style="background: transparent url(<?php echo ICL_PLUGIN_URL; ?>/res/img/icon_adv.png) no-repeat;"><br /></div>
     <h2><?php echo __('Troubleshooting', 'sitepress') ?></h2>    
+    
+    <?php include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php' ?>
+    
     <?php
     foreach($icl_tables as $icl_table){
         echo '<a href="#'.$icl_table.'_anch">'.$icl_table.'</a> | ';

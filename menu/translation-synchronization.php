@@ -10,8 +10,10 @@
 ?>
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap">
-    <div id="icon-options-general" class="icon32"><br /></div>
+    <div id="icon-options-general" class="icon32 icon32_adv"><br /></div>
     <h2><?php echo __('Translation synchronization', 'sitepress') ?></h2>    
+    
+    <?php include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php' ?>
     
     <div id="icl_plugin_texts_wrapper" class="metabox-holder">
     <div class="postbox-container">

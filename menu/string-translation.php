@@ -33,8 +33,10 @@ if(is_array($sitepress_settings['st']['theme_localization_domains'])){
 $available_contexts = array_unique($available_contexts);
 ?>
 <div class="wrap">
-    <div id="icon-options-general" class="icon32"><br /></div>
+    <div id="icon-options-general" class="icon32 icon32_adv"><br /></div>
     <h2><?php echo __('String translation', 'sitepress') ?></h2>    
+    
+    <?php include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php' ?>
     
     <?php if(isset($icl_st_po_strings) && !empty($icl_st_po_strings)): ?>
     

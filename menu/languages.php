@@ -42,15 +42,10 @@
 ?>
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap">
-    <div id="icon-options-general" class="icon32"><br /></div>
+    <div id="icon-options-general" class="icon32<?php if($sitepress_settings['advanced']) echo ' icon32_adv'?>" ><br /></div>
     <h2><?php echo __('Setup WPML', 'sitepress') ?></h2>    
-
-    <?php if($sitepress_settings['setup_complete']): ?>  
-    <div class="icl_advanced_switch" style="text-align: right;">
-        <span><?php _e('Basic setup mode', 'sitepress') ?> <a class="button" href="#" title="<?php _e("Switch to advanced setup mode", 'sitepress') ?>"><?php _e('advanced', 'sitepress')?></a></span>
-        <span style="display:none"><?php _e('Advanced setup mode', 'sitepress') ?> <a class="button" href="#" title="<?php _e("Switch to basic setup mode", 'sitepress') ?>"><?php _e('basic', 'sitepress')?></a></span>
-    </div>
-    <?php endif; ?>
+    
+    <?php include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php' ?>
     
     <?php if(!$sitepress_settings['setup_complete']): /* setup wizard */ ?>
     <?php 
@@ -562,18 +557,11 @@
     ?>
     
     <?php if($sitepress_settings['setup_complete']): ?>  
-    
     <form name="icl_promote_form">
     <p>
         <label><input type="checkbox" name="icl_promote" <?php if($sitepress_settings['promote_wpml']) echo 'checked="checked"' ?> value="1" /> <?php _e("Tell the world your site is running multilingual with WPML (places a message in your site's footer)", 'sitepress'); ?></label>
     </p>
     </form>
-    
-    <div class="icl_advanced_switch">
-        <span><?php _e('To customize the language switcher, setup language URLs or choose a different admin language, go to advanced mode.', 'sitepress') ?> <a class="button" href="#" title="<?php _e("Switch to advanced setup mode", 'sitepress') ?>"><?php _e('Advanced &raquo;', 'sitepress')?></a></span>
-        <span style="display:none"><?php _e('You are now in advanced setup mode', 'sitepress') ?> <a class="button" href="#" title="<?php _e("Switch to basic setup mode.", 'sitepress') ?>"><?php _e('&laquo; Basic', 'sitepress')?></a></span>
-    </div>
-    <br />
     <?php endif; ?>
     
     <div id="icl_translate_help_collapsed" <?php if(!$sitepress_settings['dont_show_translate_help']) echo 'style="display:none"' ?>>
@@ -586,8 +574,7 @@
     <input id="icl_dismiss_translate_help" type="button" class="button secondary" value="<?php _e('Hide this message', 'sitepress');?>" />
     </div> 
     <br />   
-    
-    
+       
     <?php do_action('icl_menu_footer'); ?>
     
 </div>

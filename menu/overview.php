@@ -25,8 +25,10 @@ if($sitepress_settings['existing_content_language_verified']){
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap">
     
-        <div id="icon-options-general" class="icon32"><br /></div>
+        <div id="icon-options-general" class="icon32 icon32_adv"><br /></div>
         <h2><?php echo __('WPML Overview', 'sitepress') ?></h2>    
+        
+        <?php include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php' ?>
         
         <p><?php printf(__('WPML makes it possible to run full multilingual websites with WordPress. You are using <b>WPML %s</b>.', 'sitepress'), ICL_SITEPRESS_VERSION)?></p>
         

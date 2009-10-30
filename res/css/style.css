@@ -57,13 +57,14 @@
 }
 .icl_advanced_switch{
     margin-bottom:5px;
+    font-size:85%;
+    text-align:right;
 }
 .icl_advanced_switch a{
     text-decoration: none;
-    font-size: 70%;
 }
 .icl_advanced_feature{
-    display:none;
+    /*display:none;*/
 }
 
 #icl_translations_table{    
@@ -74,4 +75,16 @@
     font-size: 11px;
     padding:5px;
     background-color: #fcfcfc;
+}
+
+.icl_golden_button{
+    background-image:none;
+    background-color:#9a841e;
+    color:#fff;
+    text-shadow:0 1px 0 #000000;
+}
+
+.icl_golden_button:hover{
+    color:#fff;
+    border-color: #000;
 }
