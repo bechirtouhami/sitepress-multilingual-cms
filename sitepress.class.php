@@ -626,6 +626,15 @@ class SitePress{
         if(!empty($arr)){
             foreach($arr as $code){
                 $tmp[] = "'" . mysql_real_escape_string(trim($code)) . "'";
+                // set the locale
+                $default_locale = $wpdb->get_var("SELECT default_locale FROM {$wpdb->prefix}icl_languages WHERE code='{$code}'");
+                if($default_locale){
+                    if($wpdb->get_var("SELECT code FROM {$wpdb->prefix}icl_locale_map WHERE code='{$code}'")){
+                        $wpdb->update($wpdb->prefix.'icl_locale_map', array('locale'=>$default_locale), array('code'=>$code));
+                    }else{
+                        $wpdb->insert($wpdb->prefix.'icl_locale_map', array('code'=>$code, 'locale'=>$default_locale));
+                    }
+                }
             }
             $codes = '(' . join(',',$tmp) . ')';
             $wpdb->update($wpdb->prefix.'icl_languages', array('active'=>0), array('active'=>'1'));
