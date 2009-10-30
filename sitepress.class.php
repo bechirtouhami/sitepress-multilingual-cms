@@ -289,7 +289,7 @@ class SitePress{
         }
 
         if(empty($this->settings['dont_show_help_admin_notice'])){
-            if(basename($_GET['page'])=='overview.php'){
+            if(basename($_GET['page'])=='languages.php'){
                 $this->settings['dont_show_help_admin_notice'] = true;
                 $this->save_settings();                
             }elseif(count($this->get_active_languages()) < 2){
@@ -399,8 +399,10 @@ class SitePress{
             add_menu_page(__('WPML','sitepress'), __('WPML','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/languages.php',null, ICL_PLUGIN_URL . '/res/img/icon16.png');    
             add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Languages','sitepress'), __('Languages','sitepress'), 
                         'manage_options', basename(ICL_PLUGIN_PATH).'/menu/languages.php');             
-            add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Pro translation','sitepress'), __('Pro translation','sitepress'), 
+            if(1 < count($this->get_active_languages())){                        
+                add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Pro translation','sitepress'), __('Pro translation','sitepress'), 
                         'manage_options', basename(ICL_PLUGIN_PATH).'/menu/content-translation.php');                                                     
+            }
 
         }else{
             
@@ -3128,10 +3130,10 @@ class SitePress{
         }        
     }
     
-    function help_admin_notice(){
+    function help_admin_notice(){                                   
         echo '<br clear="all" /><div id="message" class="updated message fade" style="clear:both;margin-top:5px;"><p>';
         echo '<a title="'.__('Stop showing this message', 'sitepress').'" id="icl_dismiss_help" href="#" style="float:right">'.__('Dismiss', 'sitepress').'</a>';
-        printf(__('Please go to <a href="%s">WPML’s configuration</a> to setup languages or CMS navigation.', 'sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/overview.php');
+        printf(__('Please go to <a href="%s">WPML’s configuration</a> to setup languages or CMS navigation.', 'sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/languages.php');
         echo '</p></div>';
     }
     

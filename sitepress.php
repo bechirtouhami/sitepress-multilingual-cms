@@ -59,7 +59,7 @@ if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQ
         
     $sitepress = new SitePress();
     $sitepress_settings = $sitepress->get_settings();    
-    
+        
     // modules load
     // CMS Navigation
     if(isset($_GET['enable-cms-navigation'])){
