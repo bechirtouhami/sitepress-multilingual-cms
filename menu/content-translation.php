@@ -21,14 +21,16 @@
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap">
     <div id="icon-options-general" class="icon32<?php if($sitepress_settings['advanced']) echo ' icon32_adv'?>"><br /></div>
-    <?php if($sitepress->get_icl_translation_enabled() ): ?>
-        <img src="<?php echo ICL_PLUGIN_URL?>/res/img/web_logo_large.png" style="float: right; border: 1pt solid #C0C0C0; margin: 16px 10px 10px 10px;" alt="ICanLocalize" />
-    <?php endif; ?>
     <h2><?php _e('Professional Translation', 'sitepress') ?></h2>    
         
     <?php include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php' ?>
+
+    <?php if($sitepress->get_icl_translation_enabled() ): ?>
+        <img src="<?php echo ICL_PLUGIN_URL?>/res/img/web_logo_large.png" align="right" style="clear:both;float: right; border: 1pt solid #C0C0C0; margin: 16px 10px 10px 10px;" alt="ICanLocalize" />
+    <?php endif; ?>
+    
         
-    <?php if(!$sitepress->get_icl_translation_enabled() ): ?>
+    <?php if(!$sitepress->get_icl_translation_enabled() ): ?>        
         <img src="<?php echo ICL_PLUGIN_URL?>/res/img/web_logo_large.png" style="float: right; border: 1pt solid #C0C0C0; margin: 16px 10px 10px 10px;" alt="ICanLocalize" />
         <p style="line-height:1.5"><?php echo __('<a href="http://www.icanlocalize.com">ICanLocalize</a> can provide professional translation for your site\'s contents.', 'sitepress'); ?></p>
         <p style="line-height:1.5"><?php _e('The entire process is completely effortless. WPML will send the documents that need translation and then create the translated contents, ready to be published.', 'sitepress');?></p>
