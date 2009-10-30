@@ -461,7 +461,7 @@ class SitePress{
     function verify_settings(){
         
         $default_settings = array(
-            'basic_menu' => 1,
+            'basic_menu' => 0,
             'interview_translators' => 1,
             'existing_content_language_verified' => 0,
             'language_negotiation_type' => 3,
