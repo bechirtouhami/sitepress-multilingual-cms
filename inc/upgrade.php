@@ -274,6 +274,19 @@ function icl_plugin_upgrade(){
         }
     }
     
+    if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.3.6', '<')){
+        require_once(ICL_PLUGIN_PATH . '/inc/lang-data.inc');
+        $cols = $wpdb->get_col("SHOW COLUMNS FROM {$wpdb->prefix}icl_languages");
+        if(!in_array('default_locate', $cols)){
+            mysql_query("ALTER TABLE {$wpdb->prefix}icl_languages ADD COLUMN default_locale VARCHAR(8)");
+        } 
+        foreach($lang_locales as $code=>$default_locale){
+            $wpdb->update($wpdb->prefix.'icl_languages', array('default_locale'=>$default_locale), array('code'=>$code));
+        }
+        
+        
+    }
+    
     if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '<')){
         if($mig_debug) fwrite($mig_debug, "Update plugin version in the database \n");
         update_option('icl_sitepress_version', ICL_SITEPRESS_VERSION);

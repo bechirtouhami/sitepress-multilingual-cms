@@ -27,6 +27,7 @@ function icl_sitepress_activate(){
             `english_name` VARCHAR( 128 ) NOT NULL ,            
             `major` TINYINT NOT NULL DEFAULT '0', 
             `active` TINYINT NOT NULL ,
+            `default_locale` VARCHAR( 8 ),
             UNIQUE KEY `code` (`code`),
             UNIQUE KEY `english_name` (`english_name`)
         ) ENGINE=MyISAM {$charset_collate}"; 
@@ -35,7 +36,8 @@ function icl_sitepress_activate(){
         //$langs_names is defined in ICL_PLUGIN_PATH . '/inc/lang-data.inc'
         foreach($langs_names as $key=>$val){
             if(strpos($key,'Norwegian Bokm')===0){ $key = 'Norwegian Bokmål'; $lang_codes[$key] = 'nb';} // exception for norwegian
-            @$wpdb->insert($wpdb->prefix . 'icl_languages', array('english_name'=>$key, 'code'=>$lang_codes[$key], 'major'=>$val['major'], 'active'=>0));
+            $default_locale = isset($lang_locales[$key]) ? $lang_locales[$key] : '';
+            @$wpdb->insert($wpdb->prefix . 'icl_languages', array('english_name'=>$key, 'code'=>$lang_codes[$key], 'major'=>$val['major'], 'active'=>0, 'default_locale'=>$default_locale));
         }        
     }
 
