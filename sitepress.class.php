@@ -318,6 +318,7 @@ class SitePress{
         $this->admin_language = $this->get_user_admin_language($current_user->data->ID);
         
         /* debug routine */
+        /*
         if(defined('ICL_DEBUG_DEVELOPMENT') && ICL_DEBUG_DEVELOPMENT){
             if($this->admin_language){
                 echo "Language defined in user profile: " . $this->admin_language . '<br />';
@@ -325,6 +326,7 @@ class SitePress{
                 echo "No language defined in user profile<br />";
             }    
         }
+        */
         /* debug routine */
         
         if($this->admin_language != '' && !in_array($this->admin_language, $active_languages)){
@@ -335,9 +337,11 @@ class SitePress{
             $this->save_settings();
             
             /* debug routine */
+            /*
             if(defined('ICL_DEBUG_DEVELOPMENT') && ICL_DEBUG_DEVELOPMENT){
                 echo "Initialize default admin language (_default_ = ".$this->get_default_language().")<br />";
             }
+            */
             /* debug routine */
             
         }
@@ -345,17 +349,21 @@ class SitePress{
         if(!$this->admin_language){
             $this->admin_language = $this->settings['admin_default_language'];
             /* debug routine */
+            /*
             if(defined('ICL_DEBUG_DEVELOPMENT') && ICL_DEBUG_DEVELOPMENT){
                 echo "Set admin language to: " . $this->admin_language . "<br />";
             }
+            */
             /* debug routine */            
         }
         if($this->admin_language == '_default_'){
             $this->admin_language = $this->get_default_language();
             /* debug routine */
+            /*
             if(defined('ICL_DEBUG_DEVELOPMENT') && ICL_DEBUG_DEVELOPMENT){
                 echo "Set admin language to: " . $this->admin_language . "<br />";
             }
+            */
             /* debug routine */            
         }
     }
