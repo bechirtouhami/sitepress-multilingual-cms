@@ -15,11 +15,14 @@ class SitePress{
             $this->verify_settings();
         } 
         
-        if(isset($_GET['icl_action']) && $_GET['icl_action']=='advanced' && wp_create_nonce('icl_enable_advanced_mode')==$_GET['nonce']){
-            $this->enable_advanced_mode();
-        }
-        if(isset($_GET['icl_action']) && $_GET['icl_action']=='basic' && wp_create_nonce('icl_enable_basic_mode')==$_GET['nonce']){
-            $this->enable_basic_mode();
+        if(isset($_GET['icl_action'])){
+            require_once ABSPATH . WPINC . '/pluggable.php';
+            if($_GET['icl_action']=='advanced' && wp_create_nonce('icl_enable_advanced_mode')==$_GET['nonce']){
+                $this->enable_advanced_mode();
+            }
+            if($_GET['icl_action']=='basic' && wp_create_nonce('icl_enable_basic_mode')==$_GET['nonce']){
+                $this->enable_basic_mode();
+            }
         }
         
         add_action('plugins_loaded', array($this,'init'), 1);
