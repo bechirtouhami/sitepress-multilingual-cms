@@ -327,7 +327,7 @@ class SitePress{
         if(!$this->admin_language){
             $this->admin_language = $this->settings['admin_default_language'];
         }
-        if(!$this->admin_language || $this->settings['admin_default_language'] == '_default_'){
+        if($this->admin_language == '_default_'){
             $this->admin_language = $this->get_default_language();
         }
     }
