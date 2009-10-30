@@ -2735,7 +2735,7 @@ class SitePress{
         if (isset($this->icl_locale_cache)){
             $this->icl_locale_cache->set($code, $locale);
         }
-
+        
         return $locale;
     }
     
@@ -3034,6 +3034,7 @@ class SitePress{
         $user_id = $_POST['user_id'];
         if($user_id){
             update_usermeta($user_id,'icl_admin_language',$_POST['icl_user_admin_language']);        
+            $this->icl_locale_cache->clear();
         }        
     }
     

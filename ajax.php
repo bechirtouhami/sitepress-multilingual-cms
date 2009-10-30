@@ -296,6 +296,7 @@ switch($_REQUEST['icl_ajx_action']){
     case 'icl_admin_language_options':
         $iclsettings['admin_default_language'] = $_POST['icl_admin_default_language'];
         $sitepress->save_settings($iclsettings);
+        $sitepress->icl_locale_cache->clear();
         echo 1; 
         break;    
     case 'icl_lang_more_options':
