@@ -316,19 +316,47 @@ class SitePress{
         $active_languages = array_keys($wpdb->get_col("SELECT code FROM {$wpdb->prefix}icl_languages WHERE active=1"));   //don't use method get_active_language()
         
         $this->admin_language = $this->get_user_admin_language($current_user->data->ID);
+        
+        /* debug routine */
+        if(defined('ICL_DEBUG_DEVELOPMENT') && ICL_DEBUG_DEVELOPMENT){
+            if($this->admin_language){
+                echo "Language defined in user profile: " . $this->admin_language . '<br />';
+            }else{
+                echo "No language defined in user profile<br />";
+            }    
+        }
+        /* debug routine */
+        
         if($this->admin_language != '' && !in_array($this->admin_language, $active_languages)){
             delete_usermeta($current_user->data->ID,'icl_admin_language');
         }
         if(!in_array($this->settings['admin_default_language'], $active_languages)){
             $this->settings['admin_default_language'] = '_default_';
             $this->save_settings();
+            
+            /* debug routine */
+            if(defined('ICL_DEBUG_DEVELOPMENT') && ICL_DEBUG_DEVELOPMENT){
+                echo "Initialize default admin language (_default_ = ".$this->get_default_language().")<br />";
+            }
+            /* debug routine */
+            
         }
         
         if(!$this->admin_language){
             $this->admin_language = $this->settings['admin_default_language'];
+            /* debug routine */
+            if(defined('ICL_DEBUG_DEVELOPMENT') && ICL_DEBUG_DEVELOPMENT){
+                echo "Set admin language to: " . $this->admin_language . "<br />";
+            }
+            /* debug routine */            
         }
         if($this->admin_language == '_default_'){
             $this->admin_language = $this->get_default_language();
+            /* debug routine */
+            if(defined('ICL_DEBUG_DEVELOPMENT') && ICL_DEBUG_DEVELOPMENT){
+                echo "Set admin language to: " . $this->admin_language . "<br />";
+            }
+            /* debug routine */            
         }
     }
     
