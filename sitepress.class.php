@@ -2040,9 +2040,9 @@ class SitePress{
                         <td style="padding: 0px;line-height:normal;"><?php echo $lang['display_name'] ?></td>
                         <?php
                             if ($type == 'tag') {
-                                $add_link = "edit-tags.php?trid=" . $trid . "&lang=" . $lang['code'] . "&source_lang=" . $selected_language;
+                                $add_link = "edit-tags.php?trid=" . $trid . "&amp;lang=" . $lang['code'] . "&amp;source_lang=" . $selected_language;
                             } else {
-                                $add_link = "categories.php?trid=" . $trid . "&lang=" . $lang['code'] . "&source_lang=" . $selected_language;
+                                $add_link = "categories.php?trid=" . $trid . "&amp;lang=" . $lang['code'] . "&amp;source_lang=" . $selected_language;
                             }
                         ?>
                         <td style="padding: 0px;line-height:normal;"><a href="<?php echo $add_link ?>"><?php echo __('add','sitepress') ?></a></td>
@@ -2836,7 +2836,6 @@ class SitePress{
         if (isset($this->icl_locale_cache)){
             $this->icl_locale_cache->set($code, $locale);
         }
-        
         return $locale;
     }
     
@@ -2925,9 +2924,9 @@ class SitePress{
             $missing_home = array();               
             foreach($this->active_languages as $lang){
              if(!isset($page_home_translations[$lang['code']])){
-                 $missing_home[] = '<a href="page-new.php?trid='.$page_home_trid.'&lang='.$lang['code'].'" title="'.__('add translation', 'sitepress').'">' . $lang['display_name'] . '</a>';
+                 $missing_home[] = '<a href="page-new.php?trid='.$page_home_trid.'&amp;lang='.$lang['code'].'" title="'.__('add translation', 'sitepress').'">' . $lang['display_name'] . '</a>';
              }elseif($page_home_translations[$lang['code']]->post_status != 'publish'){
-                 $missing_home[] = '<a href="page.php?action=edit&post='.$page_home_translations[$lang['code']]->element_id.'&lang='.$lang['code'].'" title="'.__('Not published - edit page', 'sitepress').'">' . $lang['display_name'] . '</a>';                 
+                 $missing_home[] = '<a href="page.php?action=edit&amp;post='.$page_home_translations[$lang['code']]->element_id.'&amp;lang='.$lang['code'].'" title="'.__('Not published - edit page', 'sitepress').'">' . $lang['display_name'] . '</a>';                 
              }
             }
             if(!empty($missing_home)){
@@ -2945,16 +2944,16 @@ class SitePress{
             $missing_posts = array();               
             foreach($this->active_languages as $lang){
              if(!isset($page_posts_translations[$lang['code']])){
-                 $missing_posts[] = '<a href="page-new.php?trid='.$page_posts_trid.'&lang='.$lang['code'].'" title="'.__('add translation', 'sitepress').'">' . $lang['display_name'] . '</a>';
+                 $missing_posts[] = '<a href="page-new.php?trid='.$page_posts_trid.'&amp;lang='.$lang['code'].'" title="'.__('add translation', 'sitepress').'">' . $lang['display_name'] . '</a>';
              }elseif($page_posts_translations[$lang['code']]->post_status != 'publish'){
-                 $missing_posts[] = '<a href="page.php?action=edit&post='.$page_posts_translations[$lang['code']]->element_id.'&lang='.$lang['code'].'" title="'.__('Not published - edit page', 'sitepress').'">' . $lang['display_name'] . '</a>';                 
+                 $missing_posts[] = '<a href="page.php?action=edit&amp;post='.$page_posts_translations[$lang['code']]->element_id.'&amp;lang='.$lang['code'].'" title="'.__('Not published - edit page', 'sitepress').'">' . $lang['display_name'] . '</a>';                 
              }
             }
             if(!empty($missing_posts)){
              $warn_posts  = '<div class="icl_form_errors" style="font-weight:bold">';
              $warn_posts .= sprintf(__('Your blog page does not exist or its translation is not published in %s', 'sitepress'), join(', ', $missing_posts));
              $warn_posts .= '<br />';
-             $warn_posts .= '<a href="page.php?action=edit&post='.$page_for_posts.'">' . __('Edit this page to add translations', 'sitepress') . '</a>';
+             $warn_posts .= '<a href="page.php?action=edit&amp;post='.$page_for_posts.'">' . __('Edit this page to add translations', 'sitepress') . '</a>';
              $warn_posts .= '</div>';
             }         
         }    
@@ -2980,7 +2979,7 @@ class SitePress{
             $details = $this->get_element_language_details($id, 'post');
             $lang = $details->language_code;
             if($lang != $this->get_default_language()){
-                $link .= '&lang=' . $lang;
+                $link .= '&amp;lang=' . $lang;
             }        
         }
         return $link;

@@ -9,7 +9,7 @@
         <?php
         return;
     }
-    require_once ICL_PLUGIN_PATH . '/sitepress.php'; 
+    //require_once ICL_PLUGIN_PATH . '/sitepress.php'; 
     if(!$sitepress_settings['existing_content_language_verified']){
         // try to determine the blog language
         $blog_current_lang = 0;            
@@ -28,7 +28,7 @@
         $languages = $sitepress->get_languages($blog_current_lang);            
     }else{
         $active_languages = $sitepress->get_active_languages();            
-        $languages = $sitepress->get_languages();            
+        $languages = $sitepress->get_languages($sitepress->get_admin_language());            
         $sitepress_settings = $sitepress->get_settings();
         foreach($active_languages as $lang){
             if($lang['code'] != $sitepress->get_default_language()){
