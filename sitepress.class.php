@@ -1460,8 +1460,9 @@ class SitePress{
             $language_code = $_POST['icl_post_language']?$_POST['icl_post_language']:$this->get_default_language(); //latter case for XML-RPC publishing
         } 
         
-        if($_POST['action']=='inline-save' || isset($_GET['bulk_edit'])){
-            $res = $wpdb->get_row("SELECT trid, language_code FROM {$wpdb->prefix}icl_translations WHERE element_id={$post_id} AND element_type='post'");            $trid = $res->trid;
+        if($_POST['action']=='inline-save' || isset($_GET['bulk_edit']) || isset($_GET['doing_wp_cron'])){
+            $res = $wpdb->get_row("SELECT trid, language_code FROM {$wpdb->prefix}icl_translations WHERE element_id={$post_id} AND element_type='post'");
+            $trid = $res->trid;
             $language_code = $res->language_code;
         }else{
             $trid = $_POST['icl_trid'];
