@@ -17,9 +17,9 @@ add_action('icl_update_active_languages', 'icl_update_string_status_all');
 add_action('update_option_blogname', 'icl_st_update_blogname_actions',5,2);
 add_action('update_option_blogdescription', 'icl_st_update_blogdescription_actions',5,2);
 
-function icl_st_init(){
+function icl_st_init(){                       
     global $sitepress_settings, $sitepress, $wpdb, $icl_st_err_str;
-    if ( get_magic_quotes_gpc() ){
+    if ( get_magic_quotes_gpc() && $_GET['page'] == ICL_PLUGIN_FOLDER . '/menu/string-translation.php'){
         $_POST = stripslashes_deep( $_POST );         
     }
                          
