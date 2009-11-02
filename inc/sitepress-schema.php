@@ -323,14 +323,14 @@ if(isset($_GET['activate'])){
             echo __('WPML cannot create the database tables! Make sure that your mysql user has the CREATE privilege', 'sitepress');
             echo '</strong></li></ul></div>';        
             $active_plugins = get_option('active_plugins');
-            $icl_sitepress_idx = array_search('sitepress-multilingual-cms/sitepress.php', $active_plugins);
+            $icl_sitepress_idx = array_search(ICL_PLUGIN_FOLDER . '/sitepress.php', $active_plugins);
             if(false !== $icl_sitepress_idx){
                 unset($active_plugins[$icl_sitepress_idx]);
                 update_option('active_plugins', $active_plugins);
                 unset($_GET['activate']);
                 $recently_activated = get_option('recently_activated');
-                if(!isset($recently_activated['sitepress-multilingual-cms/sitepress.php'])){
-                    $recently_activated['sitepress-multilingual-cms/sitepress.php'] = time();
+                if(!isset($recently_activated[ICL_PLUGIN_FOLDER.'/sitepress.php'])){
+                    $recently_activated[ICL_PLUGIN_FOLDER.'/sitepress.php'] = time();
                     update_option('recently_activated', $recently_activated);
                 }
             }                

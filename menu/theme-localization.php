@@ -44,7 +44,7 @@ $theme_localization_stats = get_theme_localization_stats();
     <th scope="col"><?php echo __('Locale file name', 'sitepress') ?></th>        
     <th scope="col"><?php printf(__('MO file in %s', 'sitepress'), LANGDIR) ?></th>        
     <?php if($sitepress_settings['theme_localization_type']==2):?>
-    <th scope="col"><?php printf(__('MO file in %s', 'sitepress'), '/wp-contents/themes/' . get_option('template')) ?></th>        
+    <th scope="col"><?php printf(__('MO file in %s', 'sitepress'), '/wp-content/themes/' . get_option('template')) ?></th>        
     <?php endif; ?>
     </tr>        
     </thead>        
@@ -55,7 +55,7 @@ $theme_localization_stats = get_theme_localization_stats();
     <th scope="col"><?php echo __('Locale file name', 'sitepress') ?></th>        
     <th scope="col"><?php printf(__('MO file in %s', 'sitepress'), LANGDIR) ?></th>        
     <?php if($sitepress_settings['theme_localization_type']==2):?>
-    <th scope="col"><?php printf(__('MO file in %s', 'sitepress'), '/wp-contents/themes/' . get_option('template')) ?></th>        
+    <th scope="col"><?php printf(__('MO file in %s', 'sitepress'), '/wp-content/themes/' . get_option('template')) ?></th>        
     <?php endif; ?>
     </tr>        
     </tfoot>

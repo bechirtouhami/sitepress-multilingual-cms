@@ -29,7 +29,12 @@ Version: 1.3.6dev
 if(defined('ICL_SITEPRESS_VERSION')) return;
 define('ICL_SITEPRESS_VERSION', '1.4.0');
 define('ICL_PLUGIN_PATH', dirname(__FILE__));
-define('ICL_PLUGIN_URL', rtrim(get_option('siteurl'),'/') . '/wp-content/' . basename(dirname(dirname(__FILE__))) . '/' . basename(dirname(__FILE__)) );
+define('ICL_PLUGIN_FOLDER', basename(ICL_PLUGIN_PATH));
+if(function_exists('plugins_url')){
+    define('ICL_PLUGIN_URL', plugins_url() . '/' . ICL_PLUGIN_FOLDER );
+}else{
+    define('ICL_PLUGIN_URL', rtrim(get_option('siteurl'),'/') . '/wp-content/' . basename(dirname(dirname(__FILE__))) . '/' . basename(dirname(__FILE__)) );
+}
 
 if(defined('WP_ADMIN')){
     require ICL_PLUGIN_PATH . '/inc/php-version-check.php';
