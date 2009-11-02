@@ -11,7 +11,10 @@ $icl_tables = array(
     $wpdb->prefix . 'icl_plugins_texts',
     $wpdb->prefix . 'icl_strings',
     $wpdb->prefix . 'icl_string_translations',
-    $wpdb->prefix . 'icl_string_status'
+    $wpdb->prefix . 'icl_string_status',
+    $wpdb->prefix . 'icl_cms_nav_cache',
+    $wpdb->prefix . 'icl_message_status',
+    $wpdb->prefix . 'icl_reminders'
 );
 
 if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_create_nonce('icl_reset_all'))){
@@ -21,7 +24,8 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
         }
         delete_option('icl_sitepress_settings');
         delete_option('icl_sitepress_version');
-        delete_option('WPLANG');        
+        delete_option('_icl_cache');
+        delete_option('WPLANG');                
         deactivate_plugins(basename(ICL_PLUGIN_PATH) . '/sitepress.php');
         $ra = get_option('recently_activated');
         $ra[basename(ICL_PLUGIN_PATH) . '/sitepress.php'] = time();

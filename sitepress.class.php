@@ -856,6 +856,15 @@ class SitePress{
         $iclsettings['default_language'] = $code;
         $this->save_settings($iclsettings);
         
+        // set the locale in the icl_locale_map (if it's not set)
+        if(!$wpdb->get_var("SELECT code FROM {$wpdb->prefix}icl_locale_map WHERE code='{$code}'")){
+            $default_locale = $wpdb->get_var("SELECT default_locale FROM {$wpdb->prefix}icl_languages WHERE code='{$code}'");
+            if($default_locale){
+                $wpdb->insert($wpdb->prefix.'icl_locale_map', array('code'=>$code, 'locale'=>$default_locale));
+                
+            }
+        }
+        
         // change WP locale
         $locale = $this->get_locale($code);
         if($locale){
