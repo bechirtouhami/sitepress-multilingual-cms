@@ -30,7 +30,7 @@ if(defined('ICL_SITEPRESS_VERSION')) return;
 define('ICL_SITEPRESS_VERSION', '1.4.0');
 define('ICL_PLUGIN_PATH', dirname(__FILE__));
 define('ICL_PLUGIN_FOLDER', basename(ICL_PLUGIN_PATH));
-$_siteurl = get_option('siteurl');
+
 if(php_sapi_name() != 'cgi-fcgi' && preg_match( '/^Microsoft-IIS\//', $_SERVER['SERVER_SOFTWARE'] ) && isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']!='off'
     || isset($_SERVER['HTTPS'])){
     if(0 === strpos(get_option('siteurl'),'https://')){

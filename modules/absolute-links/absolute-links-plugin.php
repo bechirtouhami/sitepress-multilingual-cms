@@ -47,6 +47,11 @@ class AbsoluteLinksPlugin{
         $path = dirname(substr(__FILE__, strpos(__FILE__,'wp-content')));
         $path = str_replace('\\','/',$path);
         $this->plugin_url = rtrim(get_option('siteurl'),'/') .'/' . $path;
+
+        if(0 === strpos(ICL_PLUGIN_URL,'https://')){
+            $this->plugin_url = str_replace('http://', 'https://', $this->plugin_url);
+        }        
+        
         
     }
     
