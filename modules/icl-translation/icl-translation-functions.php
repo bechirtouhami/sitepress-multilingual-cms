@@ -561,7 +561,7 @@ function icl_translation_get_documents($lang,
 function icl_translation_delete_post($post_id){
     global $wpdb;
     $wpdb->query("DELETE FROM {$wpdb->prefix}icl_node WHERE nid=".$post_id);
-    $rid = $wpdb->get_var("SELECT rid FORM {$wpdb->prefix}icl_content_status WHERE nid=".$post_id);
+    $rid = $wpdb->get_var("SELECT rid FROM {$wpdb->prefix}icl_content_status WHERE nid=".$post_id);
     $wpdb->query("DELETE FROM {$wpdb->prefix}icl_content_status WHERE nid=".$post_id);
     if($rid){
         $wpdb->query("DELETE FROM {$wpdb->prefix}icl_core_status WHERE rid=".$rid);
