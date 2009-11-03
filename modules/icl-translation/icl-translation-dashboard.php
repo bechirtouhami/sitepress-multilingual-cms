@@ -57,7 +57,7 @@
 <?php $sitepress->noscript_notice() ?>
 
     <?php if ($_GET['message'] == 'icl_message_error'): ?>    
-        <div class="icl_form_errors"><?php echo __('Error sending some documents to translation')?></div>
+        <div class="icl_form_errors"><?php echo __('Error sending some documents to translation', 'sitepress')?></div>
     <?php endif;?>
     <?php if ($_GET['message'] == 'icl_message_1'): ?>    
         <div class="icl_form_success"><?php echo __('All documents sent to translation', 'sitepress')?></div>
