@@ -55,9 +55,6 @@
     );       
 ?>
 <?php $sitepress->noscript_notice() ?>
-<div class="wrap">
-    <div id="icon-options-general" class="icon32" style="background: transparent url(<?php echo ICL_PLUGIN_URL; ?>/res/img/icon<?php if(!$sitepress_settings['basic_menu']) echo '_adv'?>.png) no-repeat;"><br /></div>
-    <h2><?php echo __('Translation Dashboard', 'sitepress') ?></h2>
 
     <?php if ($_GET['message'] == 'icl_message_error'): ?>    
         <div class="icl_form_errors"><?php echo __('Error sending some documents to translation')?></div>
@@ -71,12 +68,12 @@
     <div class="icl_yellow_box">
     <p><?php _e('To calculate the cost of translation, select the pages and posts from the table below. The total cost for translation appears at the bottom of the table.','sitepress') ?></p>
 
-    <p><?php printf(__('To send documents to translation, you first need to set up <a href="%s">professional translation</a>.' , 'sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php'); ?></p>
+    <p><?php printf(__('To send documents to translation, you first need to set up professional translation.' , 'sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php'); ?></p>
     </div>
     <?php endif; ?>    
     
     <?php if(isset($_GET['post_id'])): ?>
-    <a href="admin.php?page=<?php echo $_GET['page']?>"><?php echo __('Show all documents', 'sitepress')?></a> / <a href="post.php?action=edit&post=<?php echo $_GET['post_id'] ?>"><?php printf(__("Back to editing '%s'", 'sitepress'),$documents[$_GET['post_id']]->post_title); ?></a>
+    <a href="admin.php?page=<?php echo $_GET['page']?>"><?php echo __('Show all documents', 'sitepress')?></a> / <a href="post.php?action=edit&amp;post=<?php echo $_GET['post_id'] ?>"><?php printf(__("Back to editing '%s'", 'sitepress'),$documents[$_GET['post_id']]->post_title); ?></a>
     <script type="text/javascript">
     jQuery(document).ready(function(){
             jQuery('#icl-estimated-words-count').html('<?php echo count(explode(' ', $documents[$_GET['post_id']]->post_content)) ?>');
@@ -85,7 +82,7 @@
     });
     </script>
     <?php else: ?>
-    <form method="post" name="translation-dashboard-filter" action="tools.php?page=<?php echo basename(ICL_PLUGIN_PATH); ?>/modules/icl-translation/icl-translation-dashboard.php">
+    <form method="post" name="translation-dashboard-filter" action="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/content-translation.php">
     <table class="form-table">
         <tr valign="top">
             <th scope="row"><strong><?php echo __('Show documents in:', 'sitepress') ?></strong></th>
@@ -288,4 +285,3 @@
         </form>
     <?php endif; ?>
     
-</div>

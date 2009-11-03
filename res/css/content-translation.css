@@ -54,4 +54,12 @@
 }
 
 
-
+.icl_cost_estimate_toggle, .icl_account_setup_toggle{
+    margin-bottom: 5px;
+}
+#icl_cost_estimate, #icl_account_setup{
+    display: none;
+    border: 1px solid #8cceea;
+    background-color: #eff8fc;
+    padding:10px;
+}

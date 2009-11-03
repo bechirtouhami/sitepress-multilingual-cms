@@ -25,13 +25,10 @@
         
     <?php include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php' ?>
 
-    <?php if($sitepress->get_icl_translation_enabled() ): ?>
-        <img src="<?php echo ICL_PLUGIN_URL?>/res/img/web_logo_large.png" align="right" style="clear:both;float: right; border: 1pt solid #C0C0C0; margin: 16px 10px 10px 10px;" alt="ICanLocalize" />
-    <?php endif; ?>
-    
-        
     <?php if(!$sitepress->get_icl_translation_enabled() ): ?>        
-        <img src="<?php echo ICL_PLUGIN_URL?>/res/img/web_logo_large.png" style="float: right; border: 1pt solid #C0C0C0; margin: 16px 10px 10px 10px;" alt="ICanLocalize" />
+    
+        <img src="<?php echo ICL_PLUGIN_URL?>/res/img/web_logo_large.png" align="right" style="clear:both;float: right; border: 1pt solid #C0C0C0; margin: 16px 10px 10px 10px;" alt="ICanLocalize" />        
+    
         <p style="line-height:1.5"><?php echo __('<a href="http://www.icanlocalize.com">ICanLocalize</a> can provide professional translation for your site\'s contents.', 'sitepress'); ?></p>
         <p style="line-height:1.5"><?php _e('The entire process is completely effortless. WPML will send the documents that need translation and then create the translated contents, ready to be published.', 'sitepress');?></p>
         
@@ -52,82 +49,105 @@
         <br />
         <p style="line-height:1.5"><?php printf(__('Pricing for professional translation is <b>%s USD per word</b> between any language pair.', 'sitepress'), '0.07'); ?></p>
         <br /><p><input id="icl_enable_content_translation" type="button" class="button-primary" value="<?php echo __('Enable professional translation','sitepress') ?>" /> &nbsp; | &nbsp;
-        <?php printf(__('<a href="%s">Cost estimate</a>', 'sitepress'), 'tools.php?page='.basename(ICL_PLUGIN_PATH).'/modules/icl-translation/icl-translation-dashboard.php');?> &nbsp; | &nbsp;
+        <?php printf(__('<a href="%s" class="icl_cost_estimate_toggle">Cost estimate</a>', 'sitepress'), '#');?> &nbsp; | &nbsp;
         <a href="http://wpml.org/?page_id=1169" target="_blank"><?php _e('More information','sitepress'); ?></a></p>
         <br />
+        
+        <div id="icl_cost_estimate" <?php if(isset($_POST['translation_dashboard_filter'])):?>style="display:block"<?php endif;?> >
+        <?php include ICL_PLUGIN_PATH . '/modules/icl-translation/icl-translation-dashboard.php' ?>
+         <p class="alignright">   
+         <input type="button" class="icl_cost_estimate_toggle button-primary" value="<?php _e('Close', 'sitepress')?>" />   
+         </p>
+         <div class="clear"></div>
+         
+        </div>
+        <?php if(isset($_POST['translation_dashboard_filter'])):?>
+        <script type="text/javascript">document.getElementById('icl_cost_estimate').scrollIntoView(true);</script>
+        <?php endif;?>
+        
     <?php else: ?>
         <?php if($sitepress->icl_account_configured() ): ?>
+        
+            <input type="button" class="icl_account_setup_toggle button-primary" value="<?php _e('Configure ICanLocalize Account', 'sitepress') ?>"/>
+            <div id="icl_account_setup">
+        
+            <?php endif; ?>
+            
             <?php if(defined('ICL_DEBUG_DEVELOPMENT') && ICL_DEBUG_DEVELOPMENT): ?>
-            <a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/content-translation.php&amp;debug_action=reset_pro_translation_configuration&amp;nonce=<?php echo wp_create_nonce('reset_pro_translation_configuration')?>" class="button">Reset pro translation configuration</a>
+            <a style="float:right;" href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/content-translation.php&amp;debug_action=reset_pro_translation_configuration&amp;nonce=<?php echo wp_create_nonce('reset_pro_translation_configuration')?>" class="button">Reset pro translation configuration</a>
             <?php endif; ?>
-            <p style="line-height:1.5">
-            <?php printf(__('To send documents to translation, use the <a href="%s">Translation dashboard</a>.' , 'sitepress'), 'tools.php?page='.basename(ICL_PLUGIN_PATH).'/modules/icl-translation/icl-translation-dashboard.php'); ?>
-            </p>
-        <?php endif; ?>
-        <?php if($sitepress_settings['content_translation_setup_complete']): ?>
-            <p style="line-height:1.5">
-            <input id="icl_disable_content_translation" type="button" class="button-secondary" value="<?php echo __('Disable professional translation','sitepress') ?>" />
-            </p>
-        <?php endif; ?>        
-        
-        <span id="icl_toggle_ct_confirm_message" style="display:none"><?php echo __('Are you sure you want to disable professional translation?','sitepress'); ?></span>        
-        
-        <?php if(!$sitepress_settings['content_translation_setup_complete']): /* setup wizard */ ?>
-        <?php 
-            if(!$sitepress_settings['content_translation_languages_setup']){
-                $sw_width = 10;
-            }elseif($sitepress_settings['content_translation_setup_wizard_step'] == 2){
-                $sw_width = 45;
-            }else{
-                $sw_width = 64;
-            }
-        ?>
-        <div id="icl_setup_wizard_wrap">
-            <h3><?php _e('Before you can start using Professional translation, it needs to be set up', 'sitepress') ?></h3>
-            <br style="clear:both;" />
-            <div id="icl_setup_wizard_2">
-                <div class="icl_setup_wizard_step"><strong><?php _e('1. Translation Languages', 'sitepress')?></strong></div>
-                <div class="icl_setup_wizard_step"><strong><?php _e('2. ICanLocalize account setup', 'sitepress')?></strong></div>            
-            </div>        
-            <br clear="all" />
-            <div id="icl_setup_wizard_progress"><div id="icl_setup_wizard_progress_bar" style="width:<?php echo $sw_width ?>%">&nbsp;</div></div>
-        </div>
-        <br />
-        <?php endif; /* setup wizard */ ?>
-        
-        
-        
-        
-        <?php if(count($active_languages) > 1): ?>
-
+            
+            <?php if($sitepress_settings['content_translation_setup_complete']): ?>
+                <p style="line-height:1.5">
+                <input id="icl_disable_content_translation" type="button" class="button-secondary" value="<?php echo __('Disable professional translation','sitepress') ?>" />
+                </p>
+            <?php endif; ?>        
+            
+            <span id="icl_toggle_ct_confirm_message" style="display:none"><?php echo __('Are you sure you want to disable professional translation?','sitepress'); ?></span>        
+            
             <?php if(!$sitepress_settings['content_translation_setup_complete']): /* setup wizard */ ?>
-                <?php if(!$sitepress_settings['content_translation_languages_setup']): ?>
-                    <?php include ICL_PLUGIN_PATH . '/menu/content-translation-langs.php';?>
-                <?php elseif($sitepress_settings['content_translation_setup_wizard_step'] == 2): ?>
-                    <?php include ICL_PLUGIN_PATH . '/menu/content-translation-options.php';?>
-                <?php else: ?>
-                    <?php include ICL_PLUGIN_PATH . '/menu/content-translation-icl-account.php';?>
-                <?php endif;?>
+            <?php 
+                if(!$sitepress_settings['content_translation_languages_setup']){
+                    $sw_width = 10;
+                }elseif($sitepress_settings['content_translation_setup_wizard_step'] == 2){
+                    $sw_width = 45;
+                }else{
+                    $sw_width = 64;
+                }
+            ?>
+            <div id="icl_setup_wizard_wrap">
+                <h3><?php _e('Before you can start using Professional translation, it needs to be set up', 'sitepress') ?></h3>
+                <br style="clear:both;" />
+                <div id="icl_setup_wizard_2">
+                    <div class="icl_setup_wizard_step"><strong><?php _e('1. Translation Languages', 'sitepress')?></strong></div>
+                    <div class="icl_setup_wizard_step"><strong><?php _e('2. ICanLocalize account setup', 'sitepress')?></strong></div>            
+                </div>        
+                <br clear="all" />
+                <div id="icl_setup_wizard_progress"><div id="icl_setup_wizard_progress_bar" style="width:<?php echo $sw_width ?>%">&nbsp;</div></div>
+            </div>
+            <br />
+            <?php endif; /* setup wizard */ ?>
+            
+            
+            
+            
+            <?php if(count($active_languages) > 1): ?>
 
-            <?php else: ?>
-            
-                <?php /* Not using the setup wizard */?>
-                <?php include ICL_PLUGIN_PATH . '/menu/content-translation-langs.php';?>
-            
-                <br clear="all" />
+                <?php if(!$sitepress_settings['content_translation_setup_complete']): /* setup wizard */ ?>
+                    <?php if(!$sitepress_settings['content_translation_languages_setup']): ?>
+                        <?php include ICL_PLUGIN_PATH . '/menu/content-translation-langs.php';?>
+                    <?php elseif($sitepress_settings['content_translation_setup_wizard_step'] == 2): ?>
+                        <?php include ICL_PLUGIN_PATH . '/menu/content-translation-options.php';?>
+                    <?php else: ?>
+                        <?php include ICL_PLUGIN_PATH . '/menu/content-translation-icl-account.php';?>
+                    <?php endif;?>
+
+                <?php else: ?>
                 
-                <?php include ICL_PLUGIN_PATH . '/menu/content-translation-options.php';?>
-    
-                <br clear="all" />
+                    <?php /* Not using the setup wizard */?>
+                    <?php include ICL_PLUGIN_PATH . '/menu/content-translation-langs.php';?>
                 
-                <?php include ICL_PLUGIN_PATH . '/menu/content-translation-icl-account.php';?>
+                    <br clear="all" />
+                    
+                    <?php include ICL_PLUGIN_PATH . '/menu/content-translation-options.php';?>
+        
+                    <br clear="all" />
+                    
+                    <?php include ICL_PLUGIN_PATH . '/menu/content-translation-icl-account.php';?>
+                <?php endif; ?>
+                
+            <?php else:?>
+                <p class='icl_form_errors'><?php echo __('After you configure more languages for your blog, the translation options will show here', 'sitepress'); ?></p>
+            <?php endif; ?>            
+            
+            </div>
+            
+            <br />         
+            
+            <?php if($sitepress_settings['content_translation_setup_complete']): ?>
+            <?php include ICL_PLUGIN_PATH . '/modules/icl-translation/icl-translation-dashboard.php' ?>
             <?php endif; ?>
             
-        <?php else:?>
-            <p class='icl_form_errors'><?php echo __('After you configure more languages for your blog, the translation options will show here', 'sitepress'); ?></p>
-        <?php endif; ?>
-           
-        <br />         
     <?php endif; // if Professional translation enabled ?>
          
     <?php do_action('icl_menu_footer'); ?>

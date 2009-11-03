@@ -367,7 +367,7 @@ class SitePress{
             */
             /* debug routine */            
         }
-        if($this->admin_language == '_default_'){
+        if($this->admin_language == '_default_' && $this->get_default_language()){
             $this->admin_language = $this->get_default_language();
             /* debug routine */
             /*
@@ -856,15 +856,6 @@ class SitePress{
         $iclsettings['default_language'] = $code;
         $this->save_settings($iclsettings);
         
-        // set the locale in the icl_locale_map (if it's not set)
-        if(!$wpdb->get_var("SELECT code FROM {$wpdb->prefix}icl_locale_map WHERE code='{$code}'")){
-            $default_locale = $wpdb->get_var("SELECT default_locale FROM {$wpdb->prefix}icl_languages WHERE code='{$code}'");
-            if($default_locale){
-                $wpdb->insert($wpdb->prefix.'icl_locale_map', array('code'=>$code, 'locale'=>$default_locale));
-                
-            }
-        }
-        
         // change WP locale
         $locale = $this->get_locale($code);
         if($locale){
@@ -1183,6 +1174,17 @@ class SitePress{
             $this->settings['existing_content_language_verified'] = 1;
             $this->settings['setup_wizard_step'] = 2;
             $this->settings['default_language'] = $_POST['icl_initial_language_code'];            
+            $this->settings['admin_default_language'] = $this->admin_language = $_POST['icl_initial_language_code'];            
+            
+            // set the locale in the icl_locale_map (if it's not set)
+            if(!$wpdb->get_var("SELECT code FROM {$wpdb->prefix}icl_locale_map WHERE code='{$_POST['icl_initial_language_code']}'")){
+                $default_locale = $wpdb->get_var("SELECT default_locale FROM {$wpdb->prefix}icl_languages WHERE code='{$_POST['icl_initial_language_code']}'");
+                if($default_locale){
+                    $wpdb->insert($wpdb->prefix.'icl_locale_map', array('code'=>$_POST['icl_initial_language_code'], 'locale'=>$default_locale));
+                    
+                }
+            }
+            
             $this->save_settings();                                
             global $sitepress_settings;
             $sitepress_settings = $this->settings;

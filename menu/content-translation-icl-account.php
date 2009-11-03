@@ -154,3 +154,8 @@
                     </tr>
                 </tbody>
             </table>
+
+             <p class="alignright">   
+             <input type="button" class="icl_account_setup_toggle button-primary" value="<?php _e('Close', 'sitepress')?>" />   
+             </p>
+             <div class="clear"></div>

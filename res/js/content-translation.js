@@ -27,6 +27,10 @@ addLoadEvent(function(){
         iclShowNextButtonStep1();
     }
     
+    jQuery('.icl_cost_estimate_toggle').click(function(){jQuery('#icl_cost_estimate').slideToggle()});
+    jQuery('.icl_account_setup_toggle').click(function(){jQuery('#icl_account_setup').slideToggle()});
+    
+    
 });
 
 function iclSaveMoreOptions() {
@@ -128,7 +132,7 @@ function iclToggleContentTranslation(){
         url: icl_ajx_url,
         data: "icl_ajx_action=toggle_content_translation&new_val="+val,
         success: function(msg){
-            location.href=location.href;
+            location.href = location.href.replace(/#.*/,'');
         }
     });         
 }
