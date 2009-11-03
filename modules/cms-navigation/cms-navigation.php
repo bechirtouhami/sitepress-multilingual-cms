@@ -479,7 +479,7 @@ class CMSNavigation{
                     <li class="cms-nav-sub-section"><?php echo $sec_name ?></li>
                     <?php endif; ?>
                     <?php foreach($sec as $s):?>
-                    <li class="<?php if($post->ID==$s):?>selected_page_side <?php endif;?>icl_level_1"><?php
+                    <li class="<?php if($post->ID==$s):?>selected_page_side <?php endif;?>icl-level-1"><?php
                         if($post->ID!=$s):?><a href="<?php echo get_permalink($s); ?>"><?php endif?><?php echo get_the_title($s) ?><?php if($post->ID!=$s):?></a><?php endif;                                
                             if(!get_post_meta($s, '_cms_nav_minihome', 1)){
                                 $this->__cms_navigation_child_pages_recursive($s, $order); 
@@ -518,7 +518,7 @@ class CMSNavigation{
             WHERE post_parent={$pid} AND post_type='page' AND post_status='publish' ORDER BY {$order}");        
          if($subpages): ?><ul>
             <?php foreach($subpages as $s): 
-            ?><li class="<?php if($post->ID==$s->ID):?>selected <?php endif;?>icl_level_<?php echo $level ?>"><?php
+            ?><li class="<?php if($post->ID==$s->ID):?>selected <?php endif;?>icl-level-<?php echo $level ?>"><?php
                 if($post->ID!=$s->ID):?><a href="<?php echo get_permalink($s->ID)?>"><?php endif;?><?php echo get_the_title($s->ID) ?><?php if($post->ID!=$s->ID):?></a><?php endif;
                 if(!$s->minihome) $this->__cms_navigation_child_pages_recursive($s->ID, $order, $level+1); 
             ?></li>
