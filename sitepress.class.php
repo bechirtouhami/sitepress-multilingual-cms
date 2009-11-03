@@ -1144,7 +1144,6 @@ class SitePress{
                         $_POST['icl_form_success'] = __('Professional translation for your site is set up. Next steps:', 'sitepress') . '<br />';
                         $_POST['icl_form_success'] .= '<ol>';
                         $_POST['icl_form_success'] .= '<li>' . __('Interview and choose translators.', 'sitepress') . '</li>';
-                        $_POST['icl_form_success'] .= '<li>' . sprintf(__('Use the <a href="%s">Translation Dashboard</a> to send documents to translation.', 'sitepress'), 'tools.php?page='.basename(ICL_PLUGIN_PATH).'/modules/icl-translation/icl-translation-dashboard.php') . '</li>';
                         $_POST['icl_form_success'] .= '<li>' . __('Deposit payment for the translation.', 'sitepress') . '</li>';
                         $_POST['icl_form_success'] .= '</ol>';
                         

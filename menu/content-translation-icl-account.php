@@ -7,10 +7,6 @@
                 <tbody>
                     <tr>
                         <td>
-
-                            <?php if(isset($_POST['icl_form_success'])):?>
-                            <p class="icl_form_success"><?php echo $_POST['icl_form_success'] ?></p>
-                            <?php endif; ?>  
                               
                             <?php if(!$sitepress->icl_account_configured()): ?>
                             

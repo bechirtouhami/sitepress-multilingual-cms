@@ -68,6 +68,10 @@
     <?php else: ?>
         <?php if($sitepress->icl_account_configured() ): ?>
         
+            <?php if(isset($_POST['icl_form_success'])):?>
+            <p class="icl_form_success"><?php echo $_POST['icl_form_success'] ?></p>
+            <?php endif; ?>  
+        
             <input type="button" class="icl_account_setup_toggle button-primary" value="<?php _e('Configure ICanLocalize Account', 'sitepress') ?>"/>
             <div id="icl_account_setup">
         
