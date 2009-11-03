@@ -284,7 +284,13 @@ function icl_plugin_upgrade(){
             $wpdb->update($wpdb->prefix.'icl_languages', array('default_locale'=>$default_locale), array('code'=>$code));
         }
         
-        
+        $res = $wpdb->get_results("SHOW INDEX FROM {$wpdb->prefix}icl_translations");
+        foreach($res as $row){
+            if($row->Column_name=='element_type' && $row->Sub_part==1){
+                $wpdb->query("ALTER TABLE {$wpdb->prefix}icl_translations DROP KEY `el_type_id`");
+                $wpdb->query("ALTER TABLE {$wpdb->prefix}icl_translations ADD UNIQUE KEY `el_type_id` (`element_type`, `element_id`)");
+            }
+        }
     }
     
     if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '<')){
