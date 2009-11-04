@@ -28,7 +28,7 @@ addLoadEvent(function(){
     }
     
     jQuery('.icl_cost_estimate_toggle').click(function(){jQuery('#icl_cost_estimate').slideToggle()});
-    jQuery('.icl_account_setup_toggle').click(function(){jQuery('#icl_account_setup').slideToggle()});
+    jQuery('.icl_account_setup_toggle').click(function(){jQuery('#icl_account_setup').slideToggle();jQuery('.icl_account_setup_toggle_main').toggle();});
     
     
 });
