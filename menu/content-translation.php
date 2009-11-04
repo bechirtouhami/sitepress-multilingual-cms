@@ -17,11 +17,52 @@
     
     $sitepress_settings = $sitepress->get_settings();    
     $icl_account_ready_errors = $sitepress->icl_account_reqs();
+    
+    $icl_lang_status = $sitepress_settings['icl_lang_status'];
+    $active_pairs = array();
+    foreach($icl_lang_status as $ls){
+        if(isset($ls['from']) && $ls['have_translators']==1){
+            $active_pairs[$ls['from'].'#'.$ls['to']] = 1;
+        }
+    }
+    $inactive_pairs = array();
+    foreach($sitepress_settings['language_pairs'] as $lang_from => $lang_to_arr){
+        foreach($lang_to_arr as $lang_to => $v){
+            if(!isset($active_pairs[$lang_from.'#'.$lang_to])){
+                $fr = $sitepress->get_language_details($lang_from);
+                $to = $sitepress->get_language_details($lang_to);
+                $inactive_pairs[$fr['display_name'].'#'.$to['display_name']] = 1;
+            }
+        }
+    }
+    //echo '<pre>';
+    //print_r($active_pairs);
+    //print_r($inactive_pairs);
+    //print_r($sitepress_settings['language_pairs']);
+    ///print_r($icl_lang_status);
+    //echo '</pre>';
+    
 ?>
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap">
     <div id="icon-options-general" class="icon32<?php if(!$sitepress_settings['basic_menu']) echo ' icon32_adv'?>"><br /></div>
     <h2><?php _e('Professional Translation', 'sitepress') ?></h2>    
+     
+    <?php if(!empty($inactive_pairs)): ?>
+        <div class="icl_yellow_box">    
+        <?php if(count($inactive_pairs) > 1) :?>
+        <?php _e('No translators assigned to these languages:', 'sitepress'); ?>    
+        <?php else: ?>
+        <?php _e('No translators assigned to this language:', 'sitepress'); ?>    
+        <?php endif; ?>        
+        <ul style="list-style:disc;margin-left:20px;">
+        <?php foreach($inactive_pairs as $il=>$v): ?>
+            <?php $exp = explode('#', $il); ?>
+            <li><?php printf(__('from %s to %s', 'sitepress'), '<strong>' . $exp[0] . '</strong>', '<strong>' . $exp[1] . '</strong>'); ?></li>
+        <?php endforeach; ?>
+        </ul>
+    <?php endif; ?>
+    </div>
         
     <?php include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php' ?>
 
