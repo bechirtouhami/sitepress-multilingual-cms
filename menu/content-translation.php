@@ -163,7 +163,8 @@
         <?php endif; ?>
             
     <?php endif; // if Professional translation enabled ?>
-         
+                                                                               
+    <?php if($sitepress_settings['content_translation_setup_complete']) remove_action('icl_menu_footer', array($sitepress, 'menu_footer')) ?>                                                                               
     <?php do_action('icl_menu_footer'); ?>
     
 </div>
