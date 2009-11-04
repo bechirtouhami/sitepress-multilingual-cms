@@ -6,3 +6,6 @@
     padding-top:2px !important;
     padding-bottom:2px !important;
 }
+.form-table td, .form-table th{
+    border-bottom:none;
+}

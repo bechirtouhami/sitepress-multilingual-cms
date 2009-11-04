@@ -83,10 +83,15 @@
     </script>
     <?php else: ?>
     <form method="post" name="translation-dashboard-filter" action="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/content-translation.php">
-    <table class="form-table">
+    <table class="form-table widefat fixed" style="width:auto">
+        <thead>
+        <tr>
+            <th scope="col" colspan="3"><strong><?php _e('Select which documents to display','sitepress')?></strong></th>
+        </tr>
+        </thead>        
         <tr valign="top">
             <th scope="row"><strong><?php echo __('Show documents in:', 'sitepress') ?></strong></th>
-            <td>
+            <td colspan="2">
                 <?php foreach($active_languages as $lang): ?>
                     <label><input type="radio" name="filter[lang]" value="<?php echo $lang['code'] ?>" <?php if($selected_language==$lang['code']): ?>checked="checked"<?php endif;?>/><?php echo $lang['display_name'] ?></label>&nbsp;&nbsp;
                 <?php endforeach; ?>
@@ -111,7 +116,7 @@
         </tr>
         <tr valign="top">
             <th scope="row"><strong><?php echo __('Filter furter by:', 'sitepress') ?></strong>    </th>
-            <td colspan="2">
+            <td>
                 <label><input type="checkbox" name="filter[status_on]" <?php if(isset($icl_translation_filter['status_on'])):?>checked="checked"<?php endif?> />&nbsp;
                     Status:</label> 
                     <select name="filter[status]">
