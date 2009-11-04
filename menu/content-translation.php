@@ -84,7 +84,7 @@
         <?php if($sitepress->icl_account_configured() ): // wrap the two opening div tags into checking whether the ICL account is configured ?>        
         <h3><?php _e('Professional translation setup', 'sitepress')?></h3>
         <div class="icl_cyan_box">
-            <input type="button" class="icl_account_setup_toggle button-primary icl_account_setup_toggle_main" value="<?php _e('Professional translation setup', 'sitepress') ?>"/>
+            <input type="button" class="icl_account_setup_toggle button-primary icl_account_setup_toggle_main" value="<?php _e('Configure professional translation', 'sitepress') ?>"/>
             
             <div id="icl_account_setup">
         <?php endif; // wrap the two opening div tags into checking whether the ICL account is configured?>    
