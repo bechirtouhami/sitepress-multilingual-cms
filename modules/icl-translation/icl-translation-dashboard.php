@@ -136,10 +136,6 @@
     <br />
     <?php endif; ?>
 
-    <?php if($sitepress->icl_account_configured()): ?>
-    <p><?php printf(__("To see the status of pending translations or to cancel translation requests, go to the %sproject page</a> in ICanLocalize.",'sitepress'), $sitepress->create_icl_popup_link(ICL_API_ENDPOINT.'/websites/'.$sitepress_settings['site_id'].'/cms_requests', 'ICanLocalize')) ?></p>
-    <?php endif; ?>
-
     <table class="widefat fixed" id="icl-translation-dashboard" cellspacing="0">
         <thead>
         <tr>
@@ -262,15 +258,6 @@
     <span id="icl_message_1" style="display:none"><?php echo __('All documents sent to translation', 'sitepress')?></span>
     <span id="icl_message_error" style="display:none"><?php echo __('Error sending some documents to translation', 'sitepress')?></span>
     <span id="icl_message_2" style="display:none"><?php echo __('Translation in progress', 'sitepress')?></span>
-    <?php if(isset($sitepress_settings['icl_balance'])): ?>
-        <p>
-            <?php echo sprintf(__('Your balance with ICanLocalize is %s. Visit your %sICanLocalize finance%s page to deposit additional funds.','sitepress'),
-                                  '$'.$sitepress_settings['icl_balance'],
-                                  $sitepress->create_icl_popup_link(ICL_API_ENDPOINT.ICL_FINANCE_LINK, 'ICanLocalize'),
-                                  '</a>',
-                                  'sitepress')?>
-        </p>
-    <?php endif; ?>
 
     <?php if ($sitepress_settings['translation_pickup_method'] == 1): ?>
         <h3><?php echo __('Get translations from ICanLocalize', 'sitepress') ?></h3>
