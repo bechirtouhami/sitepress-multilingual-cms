@@ -138,11 +138,6 @@
                                 </p>
                                 </form>    
                 
-                                <p><img src="<?php echo ICL_PLUGIN_URL ?>/res/img/question-green.png" width="29" height="29" alt="need help" style="vertical-align:middle; margin-right: 3px;" />
-                                <?php echo sprintf(__("For help with your site's translation, use the %ssupport center%s.", 'sitepress'),
-                                            $sitepress->create_icl_popup_link(ICL_API_ENDPOINT. '/support/', 'support center'),
-                                            '</a>');
-                                ?></p>
                                 
                             <?php endif; ?>
          

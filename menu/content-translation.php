@@ -76,7 +76,8 @@
                         '$'.$sitepress_settings['icl_balance'],$sitepress->create_icl_popup_link(ICL_API_ENDPOINT.ICL_FINANCE_LINK, 'ICanLocalize'),'</a>','sitepress')?></p>
                 <?php endif; ?>
                 <p><?php printf(__("To see the status of pending translations or to cancel translation requests, go to the %sproject page</a> in ICanLocalize.",'sitepress'), $sitepress->create_icl_popup_link(ICL_API_ENDPOINT.'/websites/'.$sitepress_settings['site_id'].'/cms_requests', 'ICanLocalize')) ?></p>
-                <p><?php echo sprintf(__("For help with your site's translation, use the %ssupport center%s.", 'sitepress'),
+                <p><img src="<?php echo ICL_PLUGIN_URL ?>/res/img/question-green.png" width="29" height="29" alt="need help" style="vertical-align:middle; margin-right: 3px;" />
+                    <?php echo sprintf(__("For help with your site's translation, use the %ssupport center%s.", 'sitepress'),
                     $sitepress->create_icl_popup_link(ICL_API_ENDPOINT. '/support/', 'support center'), '</a>'); ?></p>
             </div>
         <?php endif; ?>    
