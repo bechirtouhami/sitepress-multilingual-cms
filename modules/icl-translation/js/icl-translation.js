@@ -4,7 +4,7 @@ jQuery(document).ready(function(){
             if(jQuery(this).attr('checked')){
                 jQuery('#icl-translation-dashboard :checkbox').attr('checked','checked');    
                 iclUpdateTranslationEstimate(parseInt(jQuery('#icl-cw-total').html()), true);
-                jQuery('#icl-tr-sel-doc').removeAttr('disabled');    
+                if(jQuery('#icl-tr-opt :checkbox :checked').length > 0) jQuery('#icl-tr-sel-doc').removeAttr('disabled');    
             }else{
                 jQuery('#icl-translation-dashboard :checkbox').removeAttr('checked');  
                 iclUpdateTranslationEstimate(0, true);  

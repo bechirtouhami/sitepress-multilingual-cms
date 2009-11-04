@@ -28,7 +28,16 @@ addLoadEvent(function(){
     }
     
     jQuery('.icl_cost_estimate_toggle').click(function(){jQuery('#icl_cost_estimate').slideToggle()});
-    jQuery('.icl_account_setup_toggle').click(function(){jQuery('#icl_account_setup').slideToggle();jQuery('.icl_account_setup_toggle_main').toggle();});
+    jQuery('.icl_account_setup_toggle').click(function(){
+        if(jQuery('#icl_languages_translators_stats').is(':visible')){
+            jQuery('#icl_languages_translators_stats').hide();
+        }else{
+            jQuery('#icl_languages_translators_stats').html(icl_ajxloaderimg).fadeIn();
+            jQuery('#icl_languages_translators_stats').load(location.href + ' #icl_languages_translators_stats > *');
+        }
+        jQuery('#icl_account_setup').slideToggle();
+        jQuery('.icl_account_setup_toggle_main').toggle();
+    });
     
     
 });

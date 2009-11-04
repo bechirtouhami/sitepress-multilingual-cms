@@ -34,37 +34,35 @@
                 $inactive_pairs[$fr['display_name'].'#'.$to['display_name']] = 1;
             }
         }
-    }
-    //echo '<pre>';
-    //print_r($active_pairs);
-    //print_r($inactive_pairs);
-    //print_r($sitepress_settings['language_pairs']);
-    ///print_r($icl_lang_status);
-    //echo '</pre>';
-    
+    }    
 ?>
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap">
     <div id="icon-options-general" class="icon32<?php if(!$sitepress_settings['basic_menu']) echo ' icon32_adv'?>"><br /></div>
     <h2><?php _e('Professional Translation', 'sitepress') ?></h2>    
-     
+
+    <?php include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php' ?>     
+    
+    <div class="icl_yellow_box" id="icl_languages_translators_stats">    
     <?php if(!empty($inactive_pairs)): ?>
-        <div class="icl_yellow_box">    
+        <p>
         <?php if(count($inactive_pairs) > 1) :?>
         <?php _e('No translators assigned to these languages:', 'sitepress'); ?>    
         <?php else: ?>
         <?php _e('No translators assigned to this language:', 'sitepress'); ?>    
         <?php endif; ?>        
+        </p>
         <ul style="list-style:disc;margin-left:20px;">
         <?php foreach($inactive_pairs as $il=>$v): ?>
             <?php $exp = explode('#', $il); ?>
-            <li><?php printf(__('from %s to %s', 'sitepress'), '<strong>' . $exp[0] . '</strong>', '<strong>' . $exp[1] . '</strong>'); ?></li>
+            <li><?php printf(__('From %s to %s', 'sitepress'), '<strong>' . $exp[0] . '</strong>', '<strong>' . $exp[1] . '</strong>'); ?></li>
         <?php endforeach; ?>
         </ul>
+        <p><?php _e('You will only be able to send translations to languages for which translators have been assigned.', 'sitepress'); ?></p>
+    <?php else: ?>
+        <p><?php _e('Translators are assigned to all translation languages.', 'sitepress'); ?></p>
     <?php endif; ?>
     </div>
-        
-    <?php include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php' ?>
 
     <?php if(!$sitepress->get_icl_translation_enabled() ): ?>        
     

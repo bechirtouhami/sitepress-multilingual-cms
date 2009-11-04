@@ -51,6 +51,10 @@
     padding: 1em; 
     margin: 0em;
 }
+.icl_yellow_box p{
+    line-height:normal;    
+    margin:0 0 5px 0;
+}
 
 #icl-content-translation-advanced-options{
     display:none;
