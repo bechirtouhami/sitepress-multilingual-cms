@@ -116,7 +116,7 @@ class CMSNavigation{
                 if($page_on_front){
                     ?><a href="<?php echo get_permalink($page_on_front); ?>"><?php echo get_the_title($page_on_front) ?></a> &raquo; <?php
                 }elseif(!is_home() || (is_home() && !$page_on_front && $page_for_posts)){
-                    ?><a href="<?php echo $sitepress->language_url() ?>"><?php echo __('Home', 'sitepress') ?></a> &raquo; <?php
+                    ?><a href="<?php echo $sitepress->language_url() ?>"><?php _e('Home') ?></a> &raquo; <?php
                 }
             }
             
