@@ -1,4 +1,5 @@
 <?php
+
 if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '=') 
     || (isset($_REQUEST['action']) && $_REQUEST['action'] == 'error_scrape') || !isset($wpdb) ) return;
 
@@ -12,6 +13,8 @@ function icl_plugin_upgrade(){
     }else{
         $mig_debug = false;
     }
+    
+    $iclsettings = get_option('icl_sitepress_settings');
     
     // clear any caches
     if($mig_debug) fwrite($mig_debug, "Clearing cache \n");
@@ -61,7 +64,6 @@ function icl_plugin_upgrade(){
     }
 
     if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '0.9.9', '<')){
-        $iclsettings = get_option('icl_sitepress_settings');
         $iclsettings['icl_lso_flags'] = 0;
         $iclsettings['icl_lso_native_lang'] = 1;
         $iclsettings['icl_lso_display_lang'] = 1;    
@@ -166,7 +168,6 @@ function icl_plugin_upgrade(){
     }
 
     if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.2.0', '<')){
-        $iclsettings = get_option('icl_sitepress_settings');
         if($iclsettings['icl_interview_translators'] == 0){
             $iclsettings['icl_interview_translators'] = 1;    
             update_option('icl_sitepress_settings',$iclsettings);
@@ -175,7 +176,6 @@ function icl_plugin_upgrade(){
 
     if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.3.0.1', '<')){
         if($mig_debug) fwrite($mig_debug, "Upgrading to 1.3.0.1 \n");
-        $iclsettings = get_option('icl_sitepress_settings');
         $iclsettings['modules']['cms-navigation']['enabled'] = 1;
         $iclsettings['dont_show_help_admin_notice'] = 1;        
         $iclsettings['setup_complete'] = 1;        
@@ -198,7 +198,6 @@ function icl_plugin_upgrade(){
     
     if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.3.0.2', '<')){
         if($mig_debug) fwrite($mig_debug, "Upgrading to 1.3.0.2 \n");
-        $iclsettings = get_option('icl_sitepress_settings');        
         $wpdb->update($wpdb->prefix.'icl_translations', array('language_code'=>$iclsettings['admin_default_language']), array('language_code'=>'', 'element_type'=>'comment', 'source_language_code'=>''));
         if($mig_debug) fwrite($mig_debug, "Upgraded to 1.3.0.2 \n");
     }
@@ -247,7 +246,6 @@ function icl_plugin_upgrade(){
     
     if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.3.3', '<')){
         if($mig_debug) fwrite($mig_debug, "Upgrading to 1.3.3 \n");
-        $iclsettings = get_option('icl_sitepress_settings');
         $iclsettings['modules']['cms-navigation']['cache'] = 1;
         update_option('icl_sitepress_settings',$iclsettings);
         $wpdb->update($wpdb->prefix . 'icl_languages_translations', array('name'=>'Čeština'), array('language_code'=>'cs', 'display_language_code'=>'cs'));
@@ -263,7 +261,6 @@ function icl_plugin_upgrade(){
     }
     
     if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.3.5', '<')){
-        $iclsettings = get_option('icl_sitepress_settings');
         if($iclsettings['existing_content_language_verified']){
             include ICL_PLUGIN_PATH . '/modules/icl-translation/db-scheme.php';
         }
@@ -275,6 +272,7 @@ function icl_plugin_upgrade(){
     }
     
     if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.4.0', '<')){
+        if($mig_debug) fwrite($mig_debug, "Upgrading to 1.4.0 \n");
         require_once(ICL_PLUGIN_PATH . '/inc/lang-data.inc');
         $cols = $wpdb->get_col("SHOW COLUMNS FROM {$wpdb->prefix}icl_languages");
         if(!in_array('default_locate', $cols)){
@@ -283,14 +281,37 @@ function icl_plugin_upgrade(){
         foreach($lang_locales as $code=>$default_locale){
             $wpdb->update($wpdb->prefix.'icl_languages', array('default_locale'=>$default_locale), array('code'=>$code));
         }
-        
         $res = $wpdb->get_results("SHOW INDEX FROM {$wpdb->prefix}icl_translations");
         foreach($res as $row){
             if($row->Column_name=='element_type' && $row->Sub_part==1){
-                $wpdb->query("ALTER TABLE {$wpdb->prefix}icl_translations DROP KEY `el_type_id`");
-                $wpdb->query("ALTER TABLE {$wpdb->prefix}icl_translations ADD UNIQUE KEY `el_type_id` (`element_type`, `element_id`)");
+                mysql_query("ALTER TABLE {$wpdb->prefix}icl_translations DROP KEY `el_type_id`");
+                mysql_query("ALTER TABLE {$wpdb->prefix}icl_translations ADD UNIQUE KEY `el_type_id` (`element_type`, `element_id`)");
+
+                $lang = $iclsettings['default_language'];
+                mysql_query("TRUNCATE TABLE {$wpdb->prefix}icl_translations");
+                mysql_query("
+                    INSERT INTO {$wpdb->prefix}icl_translations(element_type, element_id, trid, language_code, source_language_code)
+                    SELECT 'post', ID, ID, '{$lang}', NULL FROM {$wpdb->posts} WHERE post_type IN ('post','page')
+                    ");
+                $maxtrid = 1 + $wpdb->get_var("SELECT MAX(trid) FROM {$wpdb->prefix}icl_translations");        
+                mysql_query("
+                    INSERT INTO {$wpdb->prefix}icl_translations(element_type, element_id, trid, language_code, source_language_code)
+                    SELECT 'category', term_taxonomy_id, {$maxtrid}+term_taxonomy_id, '{$lang}', NULL FROM {$wpdb->term_taxonomy}
+                    ");
+                $maxtrid = 1 + $wpdb->get_var("SELECT MAX(trid) FROM {$wpdb->prefix}icl_translations");
+                mysql_query("
+                    INSERT INTO {$wpdb->prefix}icl_translations(element_type, element_id, trid, language_code, source_language_code)
+                    SELECT 'tag', term_taxonomy_id, {$maxtrid}+term_taxonomy_id, '{$lang}', NULL FROM {$wpdb->term_taxonomy}
+                    ");
+                $maxtrid = 1 + $wpdb->get_var("SELECT MAX(trid) FROM {$wpdb->prefix}icl_translations");
+                mysql_query("
+                    INSERT INTO {$wpdb->prefix}icl_translations(element_type, element_id, trid, language_code, source_language_code)
+                    SELECT 'comment', comment_ID, {$maxtrid}+comment_ID, '{$lang}', NULL FROM {$wpdb->comments}
+                    ");            
+                break;    
             }
         }
+        if($mig_debug) fwrite($mig_debug, "Upgraded to 1.4.0 \n");
     }
     
     if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '<')){

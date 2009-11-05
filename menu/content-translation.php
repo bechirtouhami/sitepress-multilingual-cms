@@ -43,11 +43,6 @@
         }    
     }
 ?>
-<pre>
-<?php 
-    //print_r($icl_lang_status);
-?>
-</pre>
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap">
     <div id="icon-options-general" class="icon32<?php if(!$sitepress_settings['basic_menu']) echo ' icon32_adv'?>"><br /></div>
@@ -94,10 +89,15 @@
     <?php else: // if(!$sitepress->get_icl_translation_enabled() ): ?>
     
         <?php if($sitepress->icl_account_configured() ): ?>
-        
+                    
             <?php if(isset($_POST['icl_form_success'])):?>
             <p class="icl_form_success"><?php echo $_POST['icl_form_success'] ?></p>
             <?php endif; ?>  
+        
+            <?php if($sitepress_settings['content_translation_setup_complete'] && empty($inactive_pairs)): ?>
+                <h3><?php _e('Translation management', 'sitepress')?></h3>
+                <?php include ICL_PLUGIN_PATH . '/modules/icl-translation/icl-translation-dashboard.php'; ?>
+            <?php endif; ?>
         
             <h3><?php _e('ICanLocalize account status', 'sitepress')?> </h3>
             <div class="icl_cyan_box">
@@ -224,7 +224,7 @@
         
         <br />         
         
-        <?php if($sitepress_settings['content_translation_setup_complete']): ?>
+        <?php if($sitepress_settings['content_translation_setup_complete'] && !empty($inactive_pairs)): ?>
             <h3><?php _e('Translation management', 'sitepress')?></h3>
             <?php include ICL_PLUGIN_PATH . '/modules/icl-translation/icl-translation-dashboard.php'; ?>
         <?php endif; ?>

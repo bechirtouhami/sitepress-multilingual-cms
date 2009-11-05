@@ -233,7 +233,6 @@
     </div>
     
     <?php if($sitepress->get_icl_translation_enabled() && !empty($active_pairs)): ?>
-        <h3><?php echo __('Translation Options', 'sitepress') ?></h3>
         <ul id="icl-tr-opt">
             <?php                            
                 if (isset($icl_lang_status)){
@@ -253,7 +252,7 @@
             <?php endforeach; ?>    
             <li>
                 <input  <?php if(!isset($_GET['post_id'])): ?>disabled="disabled"<?php endif; ?> type="submit" class="button-primary" id="icl-tr-sel-doc" value="<?php echo __('Translate selected documents', 'sitepress') ?>" />
-                <span class="icl_ajx_response" id="icl_ajx_response"><?php echo __('Sending translation requests. Please wait!', 'sitepress') ?>&nbsp;<img src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" alt="" /></span>
+                <span class="icl_ajx_response" id="icl_ajx_response_td"><?php echo __('Sending translation requests. Please wait!', 'sitepress') ?>&nbsp;<img src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" alt="" /></span>
             </li>
         </ul>
         <span id="icl_message_1" style="display:none"><?php echo __('All documents sent to translation', 'sitepress')?></span>

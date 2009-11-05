@@ -55,7 +55,7 @@ jQuery(document).ready(function(){
                 target_languages.push(jQuery(this).val());
             }
         });
-        jQuery('#icl_ajx_response').fadeIn();        
+        jQuery('#icl_ajx_response_td').fadeIn();        
         jQuery('#icl-tr-sel-doc').attr('disabled','disabled');    
         var post_ids = new Array();
         var tmpback = new Array();
@@ -90,7 +90,7 @@ jQuery(document).ready(function(){
                 } else {
                     message = 'icl_message_error';
                 }
-                jQuery('#icl_ajx_response').html(jQuery('#'+message).html());
+                jQuery('#icl_ajx_response_td').html(jQuery('#'+message).html());
                 location.href = location.href + "&message="+message;
             }
         });
