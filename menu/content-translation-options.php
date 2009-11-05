@@ -135,15 +135,13 @@
                                 </li>
                             </ul>
 
-                            </div> <? // div id="icl-content-translation-advanced-options ?>
-
                             <?php if($sitepress_settings['content_translation_setup_complete']): ?>        
                                 <input id="icl_translation_options_save" class="button" name="create account" value="<?php echo __('Save', 'sitepress') ?>" type="submit" />
                                 <span class="icl_ajx_response" id="icl_ajx_response2"></span>    
                                 </form>
                             <?php endif; ?>
 
-                                        
+                            </div> <? // div id="icl-content-translation-advanced-options ?>
             
                         </td>
                     </tr>

@@ -99,9 +99,9 @@
                 <?php include ICL_PLUGIN_PATH . '/modules/icl-translation/icl-translation-dashboard.php'; ?>
             <?php endif; ?>
         
-            <h3><?php _e('ICanLocalize account status', 'sitepress')?> </h3>
             <div class="icl_cyan_box">
-                <?php if(isset($sitepress_settings['icl_balance'])): ?>
+                <h3><?php _e('ICanLocalize account status', 'sitepress')?></h3>
+		<?php if(isset($sitepress_settings['icl_balance'])): ?>
                     <p><img src="<?php echo ICL_PLUGIN_URL ?>/res/img/dollar1.png" width="16" height="16" alt="balance" 
                         style="vertical-align:middle; margin-right: 3px;" />
                         <?php echo sprintf(__('Your balance with ICanLocalize is %s. Visit your %sICanLocalize finance%s page to deposit additional funds.',
@@ -125,9 +125,8 @@
         
         <?php if($sitepress->icl_account_configured() ): // wrap the two opening div tags into checking whether the ICL account is configured ?>        
         
-        <h3><?php _e('Professional translation setup', 'sitepress')?></h3>
         <div class="icl_cyan_box">
-        
+     	    <h3><?php _e('Professional translation setup', 'sitepress')?></h3>
             <div id="icl_languages_translators_stats">    
             <?php if(!empty($inactive_pairs)): ?>
                 <p>
