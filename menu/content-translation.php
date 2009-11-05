@@ -98,13 +98,24 @@
             <h3><?php _e('ICanLocalize account status', 'sitepress')?> </h3>
             <div class="icl_cyan_box">
                 <?php if(isset($sitepress_settings['icl_balance'])): ?>
-                    <p><?php echo sprintf(__('Your balance with ICanLocalize is %s. Visit your %sICanLocalize finance%s page to deposit additional funds.','sitepress'),
-                        '$'.$sitepress_settings['icl_balance'],$sitepress->create_icl_popup_link(ICL_API_ENDPOINT.ICL_FINANCE_LINK, 'ICanLocalize'),'</a>','sitepress')?></p>
+                    <p><img src="<?php echo ICL_PLUGIN_URL ?>/res/img/dollar1.png" width="16" height="16" alt="balance" 
+                        style="vertical-align:middle; margin-right: 3px;" />
+                        <?php echo sprintf(__('Your balance with ICanLocalize is %s. Visit your %sICanLocalize finance%s page to deposit additional funds.',
+                            'sitepress'), '$' . $sitepress_settings['icl_balance'], 
+                            $sitepress->create_icl_popup_link(ICL_API_ENDPOINT.ICL_FINANCE_LINK, 'ICanLocalize'),'</a>','sitepress')?>
+                    </p>
                 <?php endif; ?>
-                <p><?php printf(__("To see the status of pending translations or to cancel translation requests, go to the %sproject page</a> in ICanLocalize.",'sitepress'), $sitepress->create_icl_popup_link(ICL_API_ENDPOINT.'/websites/'.$sitepress_settings['site_id'].'/cms_requests', 'ICanLocalize')) ?></p>
-                <p><img src="<?php echo ICL_PLUGIN_URL ?>/res/img/question-green.png" width="29" height="29" alt="need help" style="vertical-align:middle; margin-right: 3px;" />
-                    <?php echo sprintf(__("For help with your site's translation, use the %ssupport center%s.", 'sitepress'),
-                    $sitepress->create_icl_popup_link(ICL_API_ENDPOINT. '/support/', 'support center'), '</a>'); ?></p>
+                    <p><img src="<?php echo ICL_PLUGIN_URL ?>/res/img/documents.png" width="16" height="16" alt="documents" 
+                        style="vertical-align:middle; margin-right: 3px;" />
+                        <?php printf(__("To see the status of pending translations or to cancel translation requests, go to the %sproject page</a> in ICanLocalize.",'sitepress'), 
+                        $sitepress->create_icl_popup_link(ICL_API_ENDPOINT.'/websites/'.$sitepress_settings['site_id'].'/cms_requests', 'ICanLocalize')) ?>
+                    </p>
+                    <p>
+                        <img src="<?php echo ICL_PLUGIN_URL ?>/res/img/question1.png" width="16" height="16" alt="need help" 
+                            style="vertical-align:middle; margin-right: 3px;" />
+                        <?php echo sprintf(__("For help with your site's translation, use the %ssupport center%s.", 'sitepress'),
+                        $sitepress->create_icl_popup_link(ICL_API_ENDPOINT. '/support/', 'support center'), '</a>'); ?>
+                    </p>
             </div>
         <?php endif; ?>    
         
@@ -122,10 +133,11 @@
                 <?php _e('No translators assigned to this language:', 'sitepress'); ?>    
                 <?php endif; ?>        
                 </p>
-                <ul style="list-style:disc;margin-left:20px;">
+                <ul>
                 <?php foreach($inactive_pairs as $il=>$v): ?>
                     <?php $codes = explode('#', $il); $names = explode('#',$v); ?>
-                    <li><?php printf(__('From %s to %s', 'sitepress'), '<strong>' . $names[0] . '</strong>', '<strong>' . $names[1] . '</strong>'); ?>
+                    <li><img src="<?php echo ICL_PLUGIN_URL ?>/res/img/alert.png" width="16" height="16" alt="alert" 
+                            style="vertical-align:top; margin-right: 6px;" /><?php printf(__('From %s to %s', 'sitepress'), '<strong>' . $names[0] . '</strong>', '<strong>' . $names[1] . '</strong>'); ?>
                      <?php echo $sitepress->get_language_status_text($codes[0],$codes[1]) ?></li>
                 <?php endforeach; ?>
                 </ul>
