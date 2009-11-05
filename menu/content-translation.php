@@ -20,9 +20,12 @@
     
     $icl_lang_status = $sitepress_settings['icl_lang_status'];
     $active_pairs = array();
+    $pending_pairs = array();
     foreach($icl_lang_status as $ls){
-        if(isset($ls['from']) && $ls['have_translators']==1){
+        if(isset($ls['from']) && $ls['have_translators'] == 1){
             $active_pairs[$ls['from'].'#'.$ls['to']] = 1;
+        }elseif(isset($ls['from']) && $ls['applications'] > 0){
+            $pending_pairs[$ls['from'].'#'.$ls['to']] = $ls['applications'];
         }
     }
     $inactive_pairs = array();
@@ -31,38 +34,22 @@
             if(!isset($active_pairs[$lang_from.'#'.$lang_to])){
                 $fr = $sitepress->get_language_details($lang_from);
                 $to = $sitepress->get_language_details($lang_to);
-                $inactive_pairs[$fr['display_name'].'#'.$to['display_name']] = 1;
+                $inactive_pairs[$lang_from.'#'.$lang_to] = $fr['display_name'].'#'.$to['display_name'];
             }
         }
     }    
 ?>
+<pre>
+<?php 
+    //print_r($icl_lang_status);
+?>
+</pre>
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap">
     <div id="icon-options-general" class="icon32<?php if(!$sitepress_settings['basic_menu']) echo ' icon32_adv'?>"><br /></div>
     <h2><?php _e('Professional Translation', 'sitepress') ?></h2>    
 
     <?php include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php' ?>     
-    
-    <div class="icl_yellow_box" id="icl_languages_translators_stats">    
-    <?php if(!empty($inactive_pairs)): ?>
-        <p>
-        <?php if(count($inactive_pairs) > 1) :?>
-        <?php _e('No translators assigned to these languages:', 'sitepress'); ?>    
-        <?php else: ?>
-        <?php _e('No translators assigned to this language:', 'sitepress'); ?>    
-        <?php endif; ?>        
-        </p>
-        <ul style="list-style:disc;margin-left:20px;">
-        <?php foreach($inactive_pairs as $il=>$v): ?>
-            <?php $exp = explode('#', $il); ?>
-            <li><?php printf(__('From %s to %s', 'sitepress'), '<strong>' . $exp[0] . '</strong>', '<strong>' . $exp[1] . '</strong>'); ?></li>
-        <?php endforeach; ?>
-        </ul>
-        <p><?php _e('You will only be able to send translations to languages for which translators have been assigned.', 'sitepress'); ?></p>
-    <?php else: ?>
-        <p><?php _e('Translators are assigned to all translation languages.', 'sitepress'); ?></p>
-    <?php endif; ?>
-    </div>
 
     <?php if(!$sitepress->get_icl_translation_enabled() ): ?>        
     
@@ -122,8 +109,32 @@
         <?php endif; ?>    
         
         <?php if($sitepress->icl_account_configured() ): // wrap the two opening div tags into checking whether the ICL account is configured ?>        
+        
         <h3><?php _e('Professional translation setup', 'sitepress')?></h3>
         <div class="icl_cyan_box">
+        
+            <div id="icl_languages_translators_stats">    
+            <?php if(!empty($inactive_pairs)): ?>
+                <p>
+                <?php if(count($inactive_pairs) > 1) :?>
+                <?php _e('No translators assigned to these languages:', 'sitepress'); ?>    
+                <?php else: ?>
+                <?php _e('No translators assigned to this language:', 'sitepress'); ?>    
+                <?php endif; ?>        
+                </p>
+                <ul style="list-style:disc;margin-left:20px;">
+                <?php foreach($inactive_pairs as $il=>$v): ?>
+                    <?php $codes = explode('#', $il); $names = explode('#',$v); ?>
+                    <li><?php printf(__('From %s to %s', 'sitepress'), '<strong>' . $names[0] . '</strong>', '<strong>' . $names[1] . '</strong>'); ?>
+                     <?php echo $sitepress->get_language_status_text($codes[0],$codes[1]) ?></li>
+                <?php endforeach; ?>
+                </ul>
+                <p><?php _e('You will only be able to send translations to languages for which translators have been assigned.', 'sitepress'); ?></p>
+            <?php else: ?>
+                <p><?php _e('Translators are assigned to all translation languages.', 'sitepress'); ?></p>
+            <?php endif; ?>
+            </div>
+        
             <input type="button" class="icl_account_setup_toggle button-primary icl_account_setup_toggle_main" value="<?php _e('Configure professional translation', 'sitepress') ?>"/>
             
             <div id="icl_account_setup">

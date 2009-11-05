@@ -27,13 +27,19 @@ addLoadEvent(function(){
         iclShowNextButtonStep1();
     }
     
+    var icl_language_pairs_updated = false;
+    jQuery('#icl_save_language_pairs').click(function(){icl_language_pairs_updated = true});    
     jQuery('.icl_cost_estimate_toggle').click(function(){jQuery('#icl_cost_estimate').slideToggle()});
     jQuery('.icl_account_setup_toggle').click(function(){
         if(jQuery('#icl_languages_translators_stats').is(':visible')){
-            jQuery('#icl_languages_translators_stats').hide();
+            jQuery('#icl_languages_translators_stats').slideUp();
         }else{
-            jQuery('#icl_languages_translators_stats').html(icl_ajxloaderimg).fadeIn();
-            jQuery('#icl_languages_translators_stats').load(location.href + ' #icl_languages_translators_stats > *');
+            if(icl_language_pairs_updated){
+                jQuery('#icl_languages_translators_stats').html('<div align="right">'+icl_ajxloaderimg+"</div>").fadeIn();
+                jQuery('#icl_languages_translators_stats').load(location.href + ' #icl_languages_translators_stats > *');
+            }else{
+                jQuery('#icl_languages_translators_stats').slideDown();
+            }
         }
         jQuery('#icl_account_setup').slideToggle();
         jQuery('.icl_account_setup_toggle_main').toggle();
