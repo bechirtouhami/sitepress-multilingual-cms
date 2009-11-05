@@ -71,7 +71,7 @@
         <br />
         <p style="line-height:1.5"><?php printf(__('Pricing for professional translation is <b>%s USD per word</b> between any language pair.', 'sitepress'), '0.07'); ?></p>
         <br /><p><input id="icl_enable_content_translation" type="button" class="button-primary" value="<?php echo __('Enable professional translation','sitepress') ?>" /> &nbsp; | &nbsp;
-        <?php printf(__('<a href="%s" class="icl_cost_estimate_toggle">Cost estimate</a>', 'sitepress'), '#');?> &nbsp; | &nbsp;
+        <a href="#" class="icl_cost_estimate_toggle"><?php _e('Cost estimate', 'sitepress');?></a> &nbsp; | &nbsp;
         <a href="http://wpml.org/?page_id=1169" target="_blank"><?php _e('More information','sitepress'); ?></a></p>
         <br />
         
