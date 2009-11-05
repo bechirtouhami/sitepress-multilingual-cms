@@ -796,8 +796,7 @@ class SitePress{
     }
 
     function get_language_status_text($from_lang, $to_lang) {
-        $lang_status = $this->settings['icl_lang_status'];
-        
+        $lang_status = $this->settings['icl_lang_status'];        
         $response = '';
         if ($lang_status && $this->icl_account_configured()) {
             foreach ($lang_status as $lang) {

@@ -36,10 +36,13 @@ addLoadEvent(function(){
         }else{
             if(icl_language_pairs_updated){
                 jQuery('#icl_languages_translators_stats').html('<div align="left" style="margin-bottom:5px;">'+icl_ajxloaderimg+"</div>").fadeIn();
+                location.href = location.href.replace(/#(.*)$/g,'');    
+                /*                
                 jQuery('#icl_languages_translators_stats').load(location.href + ' #icl_languages_translators_stats > *', {}, function(){
                         icl_tb_init('a.icl_thickbox');
                         icl_tb_set_size('a.icl_thickbox');
                 });
+                */
             }else{
                 jQuery('#icl_languages_translators_stats').slideDown();
             }
@@ -211,6 +214,11 @@ function iclQuickSaveWebsiteKind(){
     });
     return false;     
 }
+
+
+//jQuery('#TB_window').live('unload', function(){
+//    location.href=location.href.replace(/#(.+)$/,'');    
+//});
 
 
 
