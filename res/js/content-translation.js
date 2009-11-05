@@ -35,8 +35,11 @@ addLoadEvent(function(){
             jQuery('#icl_languages_translators_stats').slideUp();
         }else{
             if(icl_language_pairs_updated){
-                jQuery('#icl_languages_translators_stats').html('<div align="right">'+icl_ajxloaderimg+"</div>").fadeIn();
-                jQuery('#icl_languages_translators_stats').load(location.href + ' #icl_languages_translators_stats > *');
+                jQuery('#icl_languages_translators_stats').html('<div align="left" style="margin-bottom:5px;">'+icl_ajxloaderimg+"</div>").fadeIn();
+                jQuery('#icl_languages_translators_stats').load(location.href + ' #icl_languages_translators_stats > *', {}, function(){
+                        icl_tb_init('a.icl_thickbox');
+                        icl_tb_set_size('a.icl_thickbox');
+                });
             }else{
                 jQuery('#icl_languages_translators_stats').slideDown();
             }
