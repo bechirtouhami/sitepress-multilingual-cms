@@ -232,7 +232,7 @@
     <?php } ?>
     </div>
     
-    <?php if($icl_lang_status = $sitepress_settings['icl_lang_status']): ?>
+    <?php if($sitepress->get_icl_translation_enabled() && !empty($active_pairs)): ?>
         <h3><?php echo __('Translation Options', 'sitepress') ?></h3>
         <ul id="icl-tr-opt">
             <?php                            
@@ -248,11 +248,7 @@
                 <?php if($language_pairs and isset($language_pairs[$selected_language][$lang['code']])): ?>
                     <?php if(isset($target_status[$lang['code']]) and $target_status[$lang['code']] == 1): ?>
                         <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" checked="checked" />&nbsp;<?php printf(__('Translate to %s %s','sitepress'), $lang['display_name'], $sitepress->get_language_status_text($selected_language, $lang['code'])); ?></label></li>
-                    <?php else:  ?>
-                        <!--<li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" disabled="disabled" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name'])?> <span class="icl-tr-not-avail-to" id="icl-tr-not-avail-to-<?php echo $lang['code']?>"><?php echo $sitepress->get_language_status_text($selected_language, $lang['code']); ?></span></label></li>-->
                     <?php endif; ?>
-                <?php else:  ?>
-                    <!--<li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" disabled="disabled" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name'] . __(' - This language has not been selected for translation by ICanLocalize', 'sitepress')); ?></label></li>-->
                 <?php endif; ?>
             <?php endforeach; ?>    
             <li>
@@ -263,18 +259,6 @@
         <span id="icl_message_1" style="display:none"><?php echo __('All documents sent to translation', 'sitepress')?></span>
         <span id="icl_message_error" style="display:none"><?php echo __('Error sending some documents to translation', 'sitepress')?></span>
         <span id="icl_message_2" style="display:none"><?php echo __('Translation in progress', 'sitepress')?></span>
+    <?php elseif($sitepress->get_icl_translation_enabled()): ?>
+        <p><i><?php _e('You cannot send documents to translation because no translator has been assigned to this project yet.', 'sitepress')?></i></p>    
     <?php endif; ?>
-
-    <?php if ($sitepress_settings['translation_pickup_method'] == 1): ?>
-        <h3><?php echo __('Get translations from ICanLocalize', 'sitepress') ?></h3>
-        <p>
-            <?php echo __('This site needs to fetch translations from the ICanLocalize server. This will be done automatically by scheduled translation updates. To check for translation updates now, click on the button below.', 'sitepress');?>
-        </p>
-        <br /><br />
-        <form name="get_translations" action="<?php echo $_SERVER['REQUEST_URI'] ?>" method="post">
-        <input type="text" name="page" value="<?php echo basename(ICL_PLUGIN_PATH); ?>/modules/icl-translation/icl-translation-dashboard" style="display:none" />
-        <input type="text" name="poll" value="1" style="display:none" />
-        <input type="submit" class="button-primary" id="icl-get_translations" value="<?php echo __('Get translations from ICanLocalize', 'sitepress')?>" />
-        </form>
-    <?php endif; ?>
-    

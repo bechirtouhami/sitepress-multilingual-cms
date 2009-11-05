@@ -18,26 +18,30 @@
     $sitepress_settings = $sitepress->get_settings();    
     $icl_account_ready_errors = $sitepress->icl_account_reqs();
     
-    $icl_lang_status = $sitepress_settings['icl_lang_status'];
-    $active_pairs = array();
-    $pending_pairs = array();
-    foreach($icl_lang_status as $ls){
-        if(isset($ls['from']) && $ls['have_translators'] == 1){
-            $active_pairs[$ls['from'].'#'.$ls['to']] = 1;
-        }elseif(isset($ls['from']) && $ls['applications'] > 0){
-            $pending_pairs[$ls['from'].'#'.$ls['to']] = $ls['applications'];
-        }
-    }
-    $inactive_pairs = array();
-    foreach($sitepress_settings['language_pairs'] as $lang_from => $lang_to_arr){
-        foreach($lang_to_arr as $lang_to => $v){
-            if(!isset($active_pairs[$lang_from.'#'.$lang_to])){
-                $fr = $sitepress->get_language_details($lang_from);
-                $to = $sitepress->get_language_details($lang_to);
-                $inactive_pairs[$lang_from.'#'.$lang_to] = $fr['display_name'].'#'.$to['display_name'];
+    if( $sitepress->get_icl_translation_enabled() && $sitepress_settings['content_translation_setup_complete']){
+        $icl_lang_status = $sitepress_settings['icl_lang_status'];
+        $active_pairs = array();
+        $pending_pairs = array();
+        if(is_array($icl_lang_status))
+        foreach($icl_lang_status as $ls){
+            if(isset($ls['from']) && $ls['have_translators'] == 1){
+                $active_pairs[$ls['from'].'#'.$ls['to']] = 1;
+            }elseif(isset($ls['from']) && $ls['applications'] > 0){
+                $pending_pairs[$ls['from'].'#'.$ls['to']] = $ls['applications'];
             }
         }
-    }    
+        $inactive_pairs = array();
+        if(is_array($sitepress_settings['language_pairs']))
+        foreach($sitepress_settings['language_pairs'] as $lang_from => $lang_to_arr){
+            foreach($lang_to_arr as $lang_to => $v){
+                if(!isset($active_pairs[$lang_from.'#'.$lang_to])){
+                    $fr = $sitepress->get_language_details($lang_from);
+                    $to = $sitepress->get_language_details($lang_to);
+                    $inactive_pairs[$lang_from.'#'.$lang_to] = $fr['display_name'].'#'.$to['display_name'];
+                }
+            }
+        }    
+    }
 ?>
 <pre>
 <?php 
