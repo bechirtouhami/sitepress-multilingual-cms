@@ -2313,7 +2313,11 @@ class SitePress{
                     if(false===strpos($url,'?')){
                         $url_glue = '?';
                     }else{
-                        $url_glue = '&';
+                        if(isset($_POST['comment'])){ // will be used for a redirect
+                            $url_glue = '&';
+                        }else{
+                            $url_glue = '&amp;';
+                        }                                                
                     }
                     $url .= $url_glue . 'lang=' . $code;
             }
