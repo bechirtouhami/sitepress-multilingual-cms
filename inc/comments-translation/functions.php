@@ -506,7 +506,7 @@ class IclCommentsTranslation{
             }
             
         }
-        return $comments;
+        return array_values($comments);
     }
     
     function use_comments_array_filter(){
