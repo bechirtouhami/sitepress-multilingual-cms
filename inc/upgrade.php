@@ -312,6 +312,17 @@ function icl_plugin_upgrade(){
                             $wpdb->update($wpdb->prefix.'icl_translations', array('language_code'=>$row->post_language), array('element_id'=>$row->comment_ID, 'element_type'=>'comment'));
                         }
                     }
+                    
+                    if(!isset($comment_translations[$row->comment_ID]['language_code'])){
+                        $nexttrid = 1+$wpdb->get_var("SELECT MAX(trid) FROM {$wpdb->prefix}icl_translations");
+                        $wpdb->insert($wpdb->prefix.'icl_translations', array(
+                            'element_type'  => 'comment',
+                            'element_id'    => $row->comment_ID,
+                            'trid'          => $nexttrid,
+                            'language_code' => $iclsettings['default_language']   
+                        ));
+                    }
+                    
                 }
                 
                 break;    
