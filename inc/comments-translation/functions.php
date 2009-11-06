@@ -23,10 +23,11 @@ class IclCommentsTranslation{
             $this->user_language = $sitepress->get_user_admin_language($current_user->data->ID);
             if(!$this->user_language){
                 $this->user_language = $sitepress_settings['admin_default_language'];
+                if($this->user_language == '_default_') $this->user_language = $sitepress->get_default_language();
             }            
         }else{
             $this->is_visitor = true;
-            $this->user_language = $sitepress->get_current_language();
+            $this->user_language = $sitepress->get_current_language();            
         }
         
         if(defined('WP_ADMIN')){
