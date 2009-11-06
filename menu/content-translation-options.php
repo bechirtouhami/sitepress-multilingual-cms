@@ -164,14 +164,14 @@
                                         <i><?php _e("This feature is intended for blog networks. It allows controlling the translation process remotely via XML-RPC calls without going through the WordPress admin pages.<br />If you are running a single site, you don't need to enable this.", 'sitepress') ?></i><br />
                                     </li>
                                 </ul>
-
-                                <?php if($sitepress_settings['content_translation_setup_complete']): ?>        
-                                    <input id="icl_translation_options_save" class="button" name="create account" value="<?php echo __('Save', 'sitepress') ?>" type="submit" />
-                                    <span class="icl_ajx_response" id="icl_ajx_response2"></span>    
-                                    </form>
-                                <?php endif; ?>
-
+                                
                             </div> <?php // div id="icl-content-translation-advanced-options ?>
+                            
+                            <?php if($sitepress_settings['content_translation_setup_complete']): ?>        
+                                <input id="icl_translation_options_save" class="button" name="create account" value="<?php echo __('Save', 'sitepress') ?>" type="submit" />
+                                <span class="icl_ajx_response" id="icl_ajx_response2"></span>    
+                                </form>
+                            <?php endif; ?>
                           
                         </td>
                     </tr>
