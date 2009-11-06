@@ -286,28 +286,34 @@ function icl_plugin_upgrade(){
             if($row->Column_name=='element_type' && $row->Sub_part==1){
                 mysql_query("ALTER TABLE {$wpdb->prefix}icl_translations DROP KEY `el_type_id`");
                 mysql_query("ALTER TABLE {$wpdb->prefix}icl_translations ADD UNIQUE KEY `el_type_id` (`element_type`, `element_id`)");
-
-                $lang = $iclsettings['default_language'];
-                mysql_query("TRUNCATE TABLE {$wpdb->prefix}icl_translations");
-                mysql_query("
-                    INSERT INTO {$wpdb->prefix}icl_translations(element_type, element_id, trid, language_code, source_language_code)
-                    SELECT 'post', ID, ID, '{$lang}', NULL FROM {$wpdb->posts} WHERE post_type IN ('post','page')
+                
+                $comment_translations = array();
+                $res = mysql_query("
+                    SELECT element_id, language_code, trid
+                        FROM {$wpdb->prefix}icl_translations WHERE element_type='comment'
                     ");
-                $maxtrid = 1 + $wpdb->get_var("SELECT MAX(trid) FROM {$wpdb->prefix}icl_translations");        
-                mysql_query("
-                    INSERT INTO {$wpdb->prefix}icl_translations(element_type, element_id, trid, language_code, source_language_code)
-                    SELECT 'category', term_taxonomy_id, {$maxtrid}+term_taxonomy_id, '{$lang}', NULL FROM {$wpdb->term_taxonomy}
+                while($row = mysql_fetch_assoc($res)){
+                    $comment_translations[$row['element_id']] = $row;
+                }
+                
+                $res = mysql_query("
+                    SELECT c.comment_ID, t.language_code AS post_language
+                        FROM {$wpdb->comments} c 
+                            JOIN {$wpdb->prefix}icl_translations t ON  c.comment_post_ID = t.element_id AND t.element_type='post'                    
                     ");
-                $maxtrid = 1 + $wpdb->get_var("SELECT MAX(trid) FROM {$wpdb->prefix}icl_translations");
-                mysql_query("
-                    INSERT INTO {$wpdb->prefix}icl_translations(element_type, element_id, trid, language_code, source_language_code)
-                    SELECT 'tag', term_taxonomy_id, {$maxtrid}+term_taxonomy_id, '{$lang}', NULL FROM {$wpdb->term_taxonomy}
-                    ");
-                $maxtrid = 1 + $wpdb->get_var("SELECT MAX(trid) FROM {$wpdb->prefix}icl_translations");
-                mysql_query("
-                    INSERT INTO {$wpdb->prefix}icl_translations(element_type, element_id, trid, language_code, source_language_code)
-                    SELECT 'comment', comment_ID, {$maxtrid}+comment_ID, '{$lang}', NULL FROM {$wpdb->comments}
-                    ");            
+                while($row = mysql_fetch_object($res)){
+                    if($row->post_language != $comment_translations[$row->comment_ID]['language_code']){
+                        //check whether we have a comment in this comment's trid that's in the post language
+                        if(!$wpdb->get_var("
+                            SELECT translation_id 
+                            FROM {$wpdb->prefix}icl_translations 
+                            WHERE trid={$comment_translations[$row->comment_ID]['trid']} AND element_id<>{$row->comment_ID}
+                            ")){
+                            $wpdb->update($wpdb->prefix.'icl_translations', array('language_code'=>$row->post_language), array('element_id'=>$row->comment_ID, 'element_type'=>'comment'));
+                        }
+                    }
+                }
+                
                 break;    
             }
         }
