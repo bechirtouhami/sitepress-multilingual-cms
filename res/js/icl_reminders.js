@@ -4,7 +4,11 @@ jQuery(document).ready(function(){
         jQuery('#icl_reminder_message').insertAfter('.icl_advanced_switch');
     }
     
+    if (location.href.indexOf('&icl_refresh_langs') != -1) {
+        do_message_refresh = true;
+    }
     show_messages();    
+    do_message_refresh = false;
 });
 
 var do_message_refresh = false;
