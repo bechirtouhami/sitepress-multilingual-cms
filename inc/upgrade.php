@@ -271,8 +271,8 @@ function icl_plugin_upgrade(){
         }
     }
     
-    if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.4.0', '<')){
-        if($mig_debug) fwrite($mig_debug, "Upgrading to 1.4.0 \n");
+    if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.4.0.1', '<')){
+        if($mig_debug) fwrite($mig_debug, "Upgrading to 1.4.0.1 \n");
         include(ICL_PLUGIN_PATH . '/inc/lang-data.inc');
         $cols = $wpdb->get_col("SHOW COLUMNS FROM {$wpdb->prefix}icl_languages");
         if(!in_array('default_locate', $cols)){
@@ -328,7 +328,7 @@ function icl_plugin_upgrade(){
                 break;    
             }
         }
-        if($mig_debug) fwrite($mig_debug, "Upgraded to 1.4.0 \n");
+        if($mig_debug) fwrite($mig_debug, "Upgraded to 1.4.0.1 \n");
     }
     
     if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '<')){

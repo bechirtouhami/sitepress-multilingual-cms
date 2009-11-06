@@ -2313,7 +2313,7 @@ class SitePress{
                     if(false===strpos($url,'?')){
                         $url_glue = '?';
                     }else{
-                        $url_glue = '&amp;';
+                        $url_glue = '&';
                     }
                     $url .= $url_glue . 'lang=' . $code;
             }
