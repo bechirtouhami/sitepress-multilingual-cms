@@ -843,6 +843,22 @@ class SitePress{
         // no status found        
         return '';
     }
+
+    function are_waiting_for_translators($from_lang) {
+        $lang_status = $this->settings['icl_lang_status'];        
+        if ($lang_status && $this->icl_account_configured()) {
+            foreach ($lang_status as $lang) {
+                if ($from_lang == $lang['from']) {
+                    if (isset($lang['available_translators'])) {
+                        if ($lang['available_translators'] && !$lang['applications']) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
     
     function get_default_language(){        
         return $this->settings['default_language'];
