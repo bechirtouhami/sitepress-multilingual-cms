@@ -278,7 +278,6 @@ function icl_plugin_upgrade(){
         if(!in_array('default_locate', $cols)){
             mysql_query("ALTER TABLE {$wpdb->prefix}icl_languages ADD COLUMN default_locale VARCHAR(8)");
         } 
-        global $lang_locales;
         foreach($lang_locales as $code=>$default_locale){
             $wpdb->update($wpdb->prefix.'icl_languages', array('default_locale'=>$default_locale), array('code'=>$code));
         }
