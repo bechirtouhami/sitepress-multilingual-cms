@@ -168,14 +168,7 @@
                 <?php if(defined('ICL_DEBUG_DEVELOPMENT') && ICL_DEBUG_DEVELOPMENT): ?>
                 <a style="float:right;" href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/content-translation.php&amp;debug_action=reset_pro_translation_configuration&amp;nonce=<?php echo wp_create_nonce('reset_pro_translation_configuration')?>" class="button">Reset pro translation configuration</a>
                 <?php endif; ?>
-        
-                <?php if($sitepress_settings['content_translation_setup_complete']): ?>
-                    <p style="line-height:1.5">
-                    <input id="icl_disable_content_translation" type="button" class="button-secondary" value="<?php echo __('Disable professional translation','sitepress') ?>" />
-                    </p>
-                <?php endif; ?>        
-                <span id="icl_toggle_ct_confirm_message" style="display:none"><?php echo __('Are you sure you want to disable professional translation?','sitepress'); ?></span>        
-        
+                
                 <?php 
                     if(!$sitepress_settings['content_translation_setup_complete']): /* setup wizard */ 
                         if(!$sitepress_settings['content_translation_languages_setup']){
