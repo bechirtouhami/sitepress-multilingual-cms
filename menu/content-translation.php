@@ -112,9 +112,11 @@
 		<?php if(isset($sitepress_settings['icl_balance'])): ?>
                     <p><img src="<?php echo ICL_PLUGIN_URL ?>/res/img/dollar1.png" width="16" height="16" alt="balance" 
                         style="vertical-align:middle; margin-right: 3px;" />
+					   <span <?php if($sitepress_settings['icl_balance'] < 0): echo('style="font-weight: bold; color: #FF0000;"'); endif;?>>
                         <?php echo sprintf(__('Your balance with ICanLocalize is %s. Visit your %sICanLocalize finance%s page to deposit additional funds.',
                             'sitepress'), '$' . $sitepress_settings['icl_balance'], 
                             $sitepress->create_icl_popup_link(ICL_API_ENDPOINT.ICL_FINANCE_LINK, 'ICanLocalize'),'</a>','sitepress')?>
+						</span>
                     </p>
                 <?php endif; ?>
                     <p><img src="<?php echo ICL_PLUGIN_URL ?>/res/img/documents.png" width="16" height="16" alt="documents" 
