@@ -279,8 +279,20 @@ class CMSNavigation{
                 ?><div id="menu-wrap"><?php
                 ?><ul id="cms-nav-top-menu"><?php
                 foreach($pages as $p){
+                    $incr++;
                     if($p===0){
-                        ?><li><a href="<?php echo get_option('home') ?>" class="<?php if($this->settings['cat_menu_contents'] != 'nothing'):?>trigger<?php endif?>"><?php echo $cat_menu_title ?><?php if(!isset($cms_nav_ie_ver) || $cms_nav_ie_ver > 6): ?></a><?php endif; ?><?php
+                        
+                        if($incr==1){
+                            $smain_li_classes[] = 'icl_first';
+                        }elseif($incr==count($pages)){
+                            $smain_li_classes[] = 'icl_last';
+                        }
+                        if((is_category() && $this->settings['cat_menu_contents'] == 'categories') || 
+                            (is_single() && $this->settings['cat_menu_contents'] == 'posts')){
+                            $smain_li_classes[] = 'selected_page';
+                        }                        
+                        
+                        ?><li<?php if(!empty($smain_li_classes)):?> class="<?php echo join(' ' , $smain_li_classes)?>"<?php endif?>><a href="<?php echo get_option('home') ?>" class="<?php if($this->settings['cat_menu_contents'] != 'nothing'):?>trigger<?php endif?>"><?php echo $cat_menu_title ?><?php if(!isset($cms_nav_ie_ver) || $cms_nav_ie_ver > 6): ?></a><?php endif; ?><?php
                     }else{
                         $sections = array();
                         $subpages = $wpdb->get_results("
@@ -305,8 +317,7 @@ class CMSNavigation{
                         $main_li_classes = array();
                         if($sel){
                             $main_li_classes[] = 'selected_page';
-                        }
-                        $incr++;
+                        }                        
                         if($incr==1){
                             $main_li_classes[] = 'icl_first';
                         }elseif($incr==count($pages)){
