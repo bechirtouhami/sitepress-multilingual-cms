@@ -66,6 +66,12 @@ Also, go through the [detailed description](http://wpml.org/support/cannot-activ
 
 == Changelog ==
 
+= 1.4.0 =
+* WPML now has two distinct modes - Basic and Advanced. Basic mode just for multilingual contents and Advanced for all the rest.
+* Professional translation management is unified to one screen. No more Tools->Translation dashboard.
+* Communication with translators is all done from within WordPress.
+* Many [bugs fixed](http://wpml.org/2009/11/wpml-1-4-0-preview/).
+
 = 1.3.5 =
 * Improved the professional translation flow and streamlined it for easy usage.
 * Avoids failing due to PHP errors in other plugins (caused various compatibility issues).
