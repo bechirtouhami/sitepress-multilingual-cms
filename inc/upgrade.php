@@ -273,7 +273,7 @@ function icl_plugin_upgrade(){
     
     if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.4.0', '<')){
         if($mig_debug) fwrite($mig_debug, "Upgrading to 1.4.0 \n");
-        require_once(ICL_PLUGIN_PATH . '/inc/lang-data.inc');
+        include(ICL_PLUGIN_PATH . '/inc/lang-data.inc');
         $cols = $wpdb->get_col("SHOW COLUMNS FROM {$wpdb->prefix}icl_languages");
         if(!in_array('default_locate', $cols)){
             mysql_query("ALTER TABLE {$wpdb->prefix}icl_languages ADD COLUMN default_locale VARCHAR(8)");
