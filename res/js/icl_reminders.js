@@ -1,4 +1,9 @@
 jQuery(document).ready(function(){
+    // put the reminders after the "advanced switch" if it exists.
+    if (jQuery('.icl_advanced_switch').length > 0) {
+        jQuery('#icl_reminder_message').insertAfter('.icl_advanced_switch');
+    }
+    
     show_messages();    
 });
 
@@ -43,20 +48,32 @@ function icl_tb_init(domChunk) {
     
     do_message_refresh = true;
     jQuery('#TB_window').bind('unload', function(){
-        if (t == "ICanLocalize Reminder" && do_message_refresh) {
-            
-            // do_message_refresh will only be true if we close the popup.
-            // if the dismiss link is clicked then do_message_refresh is set to false before closing the popup.
-            
-            jQuery('#icl_reminder_list').html('Refreshing messages  ' + icl_ajxloaderimg);
-            show_messages();
+        url = location.href;
+        if (url.indexOf('content-translation.php') != -1) {
+        
+            url = url.replace(/&icl_refresh_langs=1/g, '');
+            url = url.replace(/&show_config=1/g, '');
+            url = url.replace(/#.*/,'');
+            if(jQuery('#icl_account_setup').is(':visible')) {
+                location.href = url + "&icl_refresh_langs=1&show_config=1"
+            } else {
+                location.href = url + "&icl_refresh_langs=1"
             }
-        
-        if(a.indexOf('after=refresh_langs') != -1) {
-        
-            icl_refresh_translator_not_available_links();
-        }
-        
+        } else {           
+            if (t == "ICanLocalize Reminder" && do_message_refresh) {
+                
+                // do_message_refresh will only be true if we close the popup.
+                // if the dismiss link is clicked then do_message_refresh is set to false before closing the popup.
+                
+                jQuery('#icl_reminder_list').html('Refreshing messages  ' + icl_ajxloaderimg);
+                show_messages();
+                }
+            
+            if(a.indexOf('after=refresh_langs') != -1) {
+            
+                icl_refresh_translator_not_available_links();
+            }
+        }        
         });
     
     this.blur();

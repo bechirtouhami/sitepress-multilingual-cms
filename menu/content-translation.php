@@ -1,5 +1,13 @@
 <?php     
-    require_once ICL_PLUGIN_PATH . '/sitepress.php';         
+    require_once ICL_PLUGIN_PATH . '/sitepress.php';
+
+    if (isset($_GET['icl_refresh_langs'])) {
+        $iclsettings = $sitepress->get_settings();
+        $iclsettings['last_get_translator_status_call'] = time();
+        $sitepress->get_icl_translator_status($iclsettings);
+        $sitepress->save_settings($iclsettings);
+    }
+    
     $active_languages = $sitepress->get_active_languages();
     $default_language = $sitepress->get_default_language();
     // put the default language first.

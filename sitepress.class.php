@@ -759,15 +759,17 @@ class SitePress{
         return $code['code'];
     }
 
-    function get_icl_translator_status(&$iclsettings){
+    function get_icl_translator_status(&$iclsettings, $res = NULL){
         
-        // check what languages we have translators for.
-        require_once ICL_PLUGIN_PATH . '/lib/Snoopy.class.php';
-        require_once ICL_PLUGIN_PATH . '/lib/xml2array.php';
-        require_once ICL_PLUGIN_PATH . '/lib/icl_api.php';
-        
-        $icl_query = new ICanLocalizeQuery($iclsettings['site_id'], $iclsettings['access_key']);
-        $res = $icl_query->get_website_details();
+        if ($res == NULL) {
+            // check what languages we have translators for.
+            require_once ICL_PLUGIN_PATH . '/lib/Snoopy.class.php';
+            require_once ICL_PLUGIN_PATH . '/lib/xml2array.php';
+            require_once ICL_PLUGIN_PATH . '/lib/icl_api.php';
+            
+            $icl_query = new ICanLocalizeQuery($iclsettings['site_id'], $iclsettings['access_key']);
+            $res = $icl_query->get_website_details();
+        }
         
         if(isset($res['translation_languages']['translation_language'])){
             $translation_languages = $res['translation_languages']['translation_language'];

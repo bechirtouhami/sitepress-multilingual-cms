@@ -1,3 +1,5 @@
+var icl_language_pairs_updated = false;
+
 addLoadEvent(function(){         
     jQuery('.icl_language_pairs .icl_tr_from').change(toggleTranslationPairsSub);
     jQuery('.icl_language_pairs .icl_tr_from').change(iclShowNextButtonStep1);
@@ -27,32 +29,39 @@ addLoadEvent(function(){
         iclShowNextButtonStep1();
     }
     
-    var icl_language_pairs_updated = false;
     jQuery('#icl_save_language_pairs').click(function(){icl_language_pairs_updated = true});    
     jQuery('.icl_cost_estimate_toggle').click(function(){jQuery('#icl_cost_estimate').slideToggle()});
-    jQuery('.icl_account_setup_toggle').click(function(){
-        if(jQuery('#icl_languages_translators_stats').is(':visible')){
-            jQuery('#icl_languages_translators_stats').slideUp();
-        }else{
-            if(icl_language_pairs_updated){
-                jQuery('#icl_languages_translators_stats').html('<div align="left" style="margin-bottom:5px;">'+icl_ajxloaderimg+"</div>").fadeIn();
-                location.href = location.href.replace(/#(.*)$/g,'');    
-                /*                
-                jQuery('#icl_languages_translators_stats').load(location.href + ' #icl_languages_translators_stats > *', {}, function(){
-                        icl_tb_init('a.icl_thickbox');
-                        icl_tb_set_size('a.icl_thickbox');
-                });
-                */
-            }else{
-                jQuery('#icl_languages_translators_stats').slideDown();
-            }
-        }
-        jQuery('#icl_account_setup').slideToggle();
-        jQuery('.icl_account_setup_toggle_main').toggle();
-    });
+    jQuery('.icl_account_setup_toggle').click(icl_toggle_account_setup);
+    
+    if (location.href.indexOf("show_config=1") != -1) {
+        icl_toggle_account_setup();
+        location.href = location.href + '#icl_account_setup';
+    }
+
     
     
 });
+
+function icl_toggle_account_setup(){
+    if(jQuery('#icl_languages_translators_stats').is(':visible')){
+        jQuery('#icl_languages_translators_stats').slideUp();
+    }else{
+        if(icl_language_pairs_updated){
+            jQuery('#icl_languages_translators_stats').html('<div align="left" style="margin-bottom:5px;">'+icl_ajxloaderimg+"</div>").fadeIn();
+            location.href = location.href.replace(/#(.*)$/g,'');    
+            /*                
+            jQuery('#icl_languages_translators_stats').load(location.href + ' #icl_languages_translators_stats > *', {}, function(){
+                    icl_tb_init('a.icl_thickbox');
+                    icl_tb_set_size('a.icl_thickbox');
+            });
+            */
+        }else{
+            jQuery('#icl_languages_translators_stats').slideDown();
+        }
+    }
+    jQuery('#icl_account_setup').slideToggle();
+    jQuery('.icl_account_setup_toggle_main').toggle();
+};
 
 function iclSaveMoreOptions() {
     jQuery('input[name="icl_translator_choice"]:checked').each(function(){
@@ -125,16 +134,13 @@ function saveLanguagePairs(){
         success: function(msg){
             spl = msg.split('|');
             if(spl[0]=='1'){
-                lang_result = spl[1].split("\n");
-                for (lang_status in lang_result) {
-                    parts = lang_result[lang_status].split('~');
-                    from_lang = parts[0];
-                    to_lang = parts[1];
-                    status = parts[2];
-                    jQuery('#icl_lng_from_status_' + from_lang + '_' + to_lang).html(status);
-                    
-                }
-                fadeInAjxResp('#icl_ajx_response',icl_ajx_saved);                                         
+                url = location.href;
+                url = url.replace(/&icl_refresh_langs=1/g, '');
+                url = url.replace(/&show_config=1/g, '');
+                url = url.replace(/#.*/,'');
+                url += "&icl_refresh_langs=1&show_config=1";
+
+                location.href = url;
             }else{                        
                 fadeInAjxResp('#icl_ajx_response',icl_ajx_error + spl[1],true);
             }  

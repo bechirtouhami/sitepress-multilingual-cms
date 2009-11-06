@@ -368,8 +368,10 @@ class ICanLocalizeQuery{
                     $r['show'] = 1;
                     $r['url'] = '/finance';
                     $wpdb->insert($wpdb->prefix.'icl_reminders', $r);
-                    
                 }
+                // save the translator status
+                $sitepress->get_icl_translator_status($icl_settings, $website_data);
+                $sitepress->save_settings($iclsettings);
                 
                 // Now add the reminders.
                 $reminders_xml = $res['info']['reminders']['reminder'];
@@ -446,7 +448,8 @@ class ICanLocalizeQuery{
                 $res = $this->_request($request_url, 'POST', $data);
             }
 
-            if($res['info']['result']['value']=='Reminder deleted'){
+            if($res['info']['result']['value']=='Reminder deleted' ||
+                    $res['info']['result']['value']=='Reminder not found'){
                 // successfully deleted on the server.
                 $wpdb->query("DELETE FROM {$wpdb->prefix}icl_reminders WHERE id={$message_id}");
             }
