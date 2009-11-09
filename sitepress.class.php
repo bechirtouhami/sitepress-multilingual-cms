@@ -25,6 +25,10 @@ class SitePress{
             }
         }
         
+        if(isset($_REQUEST['icl_ajx_action'])){
+            add_action('init', array($this, 'ajax_setup'));
+        }
+        
         add_action('plugins_loaded', array($this,'init'), 1);
         add_action('plugins_loaded', array($this,'initialize_cache'), 0);
                 
@@ -315,6 +319,10 @@ class SitePress{
             add_action('wp_footer', array($this, 'display_wpml_footer'),20);
         }  
         
+    }
+    
+    function ajax_setup(){
+        require ICL_PLUGIN_PATH . '/ajax.php';
     }
                     
     function set_admin_language(){
@@ -930,7 +938,7 @@ class SitePress{
         }
         ?>
         <script type="text/javascript">        
-        var icl_ajx_url = '<?php echo ICL_PLUGIN_URL ?>/ajax.php';
+        var icl_ajx_url = '<?php echo rtrim(get_option('siteurl'),'/') . '/wp-admin/' ?>admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/languages.php';
         var icl_ajx_saved = '<?php echo __('Data saved','sitepress') ?>';
         var icl_ajx_error = '<?php echo __('Error: data not saved','sitepress') ?>';
         var icl_default_mark = '<?php echo __('default','sitepress') ?>';     
