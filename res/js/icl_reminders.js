@@ -2,6 +2,9 @@ jQuery(document).ready(function(){
     // put the reminders after the "advanced switch" if it exists.
     if (jQuery('.icl_advanced_switch').length > 0) {
         jQuery('#icl_reminder_message').insertAfter('.icl_advanced_switch');
+        if (jQuery('#icl_update_message').length > 0) {
+            jQuery('#icl_update_message').insertAfter('.icl_advanced_switch');
+        }
     }
     
     if (location.href.indexOf('&icl_refresh_langs') != -1) {

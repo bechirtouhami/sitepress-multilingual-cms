@@ -12,7 +12,7 @@ if(!isset($upgrade_lines[$short_v])) return;
 
 ?>
 <br clear="all" />
-<div id="message" class="updated message fade" style="clear:both;margin-top:5px;">
+<div id="icl_update_message" class="updated message fade" style="clear:both;margin-top:5px;">
     <p><?php printf(__('New in WPML %s: <b>%s</b>', 'sitepress'), $short_v, $upgrade_lines[$short_v]); ?></p>
     <p>
         <a href="http://wpml.org/home/wpml-news/"><?php _e('Learn more', 'sitepress')?></a>&nbsp;|&nbsp;
