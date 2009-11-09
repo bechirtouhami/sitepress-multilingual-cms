@@ -26,7 +26,7 @@
                                 </div>
                                 <?php endif; ?>
                             
-                                <form id="icl_create_account" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>#icl_create_account_form" <?php if($_POST['icl_acct_option2']):?>style="display:none"<?php endif?>>
+                                <form id="icl_create_account" method="post" action="<?php echo urlencode($_SERVER['REQUEST_URI']) ?>#icl_create_account_form" <?php if($_POST['icl_acct_option2']):?>style="display:none"<?php endif?>>
                                 <?php wp_nonce_field('icl_create_account', 'icl_create_account_nonce') ?>    
 
                                 <p style="line-height:1.5"><?php _e('Creating an account in ICanLocalize is free. You will only need to pay when sending posts and pages for translation.', 'sitepress'); ?></p>
@@ -69,7 +69,7 @@
                                 <?php endif; ?>
                                 </form> 
                 
-                                <form id="icl_configure_account" action="<?php echo $_SERVER['REQUEST_URI'] ?>#icl_create_account_form" method="post" <?php if(!$_POST['icl_acct_option2']):?>style="display:none"<?php endif?>>
+                                <form id="icl_configure_account" action="<?php echo urlencode($_SERVER['REQUEST_URI']) ?>#icl_create_account_form" method="post" <?php if(!$_POST['icl_acct_option2']):?>style="display:none"<?php endif?>>
                                 <?php wp_nonce_field('icl_configure_account','icl_configure_account_nonce') ?>    
                                 <table class="form-table icl-account-setup">
                                     <tbody>
@@ -107,7 +107,7 @@
                                 
                             <?php else: // if account configured ?>   
 
-                                <form id="icl_create_account" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>#icl_create_account_form" <?php if($_POST['icl_acct_option2']):?>style="display:none"<?php endif?>>
+                                <form id="icl_create_account" method="post" action="<?php echo urlencode($_SERVER['REQUEST_URI']) ?>#icl_create_account_form" <?php if($_POST['icl_acct_option2']):?>style="display:none"<?php endif?>>
                                 <?php wp_nonce_field('icl_view_website_access_data','icl_view_website_access_data_nonce') ?>    
                                 <p class="submit">
                                     <?php echo __('Your ICanLocalize account is configured.', 'sitepress')?>
@@ -115,7 +115,7 @@
                                 </p>
                                 </form> 
                 
-                                <form id="icl_configure_account" action="<?php echo $_SERVER['REQUEST_URI'] ?>#icl_create_account_form" method="post" <?php if(!$_POST['icl_acct_option2']):?>style="display:none"<?php endif?>>
+                                <form id="icl_configure_account" action="<?php echo urlencode($_SERVER['REQUEST_URI']) ?>#icl_create_account_form" method="post" <?php if(!$_POST['icl_acct_option2']):?>style="display:none"<?php endif?>>
                                 <?php wp_nonce_field('icl_change_website_access_data','icl_change_website_access_data_nonce') ?>
                                 <?php echo __('Your ICanLocalize account access settings:', 'sitepress')?>
                                 <table class="form-table icl-account-setup">
