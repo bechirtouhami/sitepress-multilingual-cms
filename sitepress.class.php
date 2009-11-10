@@ -1557,6 +1557,10 @@ class SitePress{
                 array('element_id'=>$ttid, 'element_type'=>'category'));
         }
         
+        if(isset($_POST['icl_tn_note'])){
+            update_post_meta($post_id, '_icl_translator_note', $_POST['icl_tn_note']);
+        }
+        
         require_once ICL_PLUGIN_PATH . '/inc/cache.php';        
         icl_cache_clear($_POST['post_type'].'s_per_language');
     }

@@ -538,6 +538,11 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings['promote_wpml'] = $_POST['icl_promote']=='true'?1:0;
         $sitepress->save_settings($iclsettings);
         break;        
+    
+    case 'save_translator_note':
+        update_post_meta($_POST['post_id'], '_icl_translator_note', $_POST['note']);
+        break;
+    
     default:
         echo __('Invalid action','sitepress');                
 }    

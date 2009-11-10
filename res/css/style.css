@@ -92,3 +92,30 @@
     color:#fff;
     border-color: #000;
 }
+
+#icl_post_add_notes h4{
+    background: url(../../res/img/notes.png) no-repeat;
+    padding: 5px 0 5px 20px;    
+    margin:10px 0px 0px 0px;
+}
+#icl_post_add_notes h4 a{
+    text-decoration: none;    
+}
+#icl_post_add_notes textarea, .icl_post_note textarea{
+    width:100%;   
+    font-size: 90%; 
+}
+#icl_post_note{
+    display: none;
+}
+#icl_tn_not_saved{
+    display: none;
+    color:#900;
+    text-align: center;
+}
+.icl_post_note{
+    display: none;
+}
+.icl_tn_progress{
+    display: none;
+}

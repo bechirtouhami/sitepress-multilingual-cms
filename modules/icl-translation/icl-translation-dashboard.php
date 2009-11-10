@@ -146,6 +146,7 @@
         <tr>
             <th scope="col" class="manage-column column-cb check-column"><input type="checkbox" <?php if(isset($_GET['post_id'])) echo 'checked="checked"'?>/></th>
             <th scope="col"><?php echo __('Title', 'sitepress') ?></th>
+            <th scope="col" class="manage-column column-date"><?php echo __('Note', 'sitepress') ?></th>
             <th scope="col" class="manage-column column-date"><?php echo __('Type', 'sitepress') ?></th>
             <th scope="col" class="manage-column column-date"><?php echo __('Status', 'sitepress') ?></th>        
             <th scope="col" class="manage-column column-date"><?php echo __('Translation', 'sitepress') ?></th>        
@@ -155,6 +156,7 @@
         <tr>
             <th scope="col" class="manage-column column-cb check-column"><input type="checkbox" <?php if(isset($_GET['post_id'])) echo 'checked="checked"'?>/></th>
             <th scope="col"><?php echo __('Title', 'sitepress') ?></th>
+            <th scope="col" class="manage-column column-date"><?php echo __('Note', 'sitepress') ?></th>
             <th scope="col" class="manage-column column-date"><?php echo __('Type', 'sitepress') ?></th>
             <th scope="col" class="manage-column column-date"><?php echo __('Status', 'sitepress') ?></th>        
             <th scope="col" class="manage-column column-date"><?php echo __('Translation', 'sitepress') ?></th>        
@@ -193,7 +195,35 @@
                     ?>
                     <span id="icl-cw-<?php echo $doc->post_id ?>" style="display:none"><?php echo $wc; $wctotal+=$wc; ?></span>
                     <span class="icl-tr-details"></span>
-                    </td>
+                    <div class="icl_post_note" id="icl_post_note_<?php echo $doc->post_id ?>">
+                        <?php 
+                            if($wpdb->get_var("SELECT source_language_code FROM {$wpdb->prefix}icl_translations WHERE element_type='post' AND element_id={$doc->post_id}")){
+                                $_is_translation = true;
+                            }else{
+                                $_is_translation = false;
+                                $note = get_post_meta($doc->post_id, '_icl_translator_note', true); 
+                                if($note){
+                                    $note_text = __('Edit note for the translators', 'sitepress');
+                                }else{
+                                    $note_text = __('Add note for the translators', 'sitepress');
+                                }
+                            }
+                        ?>
+                        <?php _e('Note for the translators', 'sitepress')?> 
+                        <textarea rows="5"><?php echo $note ?></textarea> 
+                        <input id="icl_tn_clear" type="button" class="button" value="<?php _e('Clear', 'sitepress')?>" <?php if(!$note): ?>disabled="disabled"<?php endif; ?> />        
+                        <image class="icl_tn_progress" src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" width="16" height="16" />
+                        <input type="hidden" value="<?php echo $doc->post_id ?>" />
+                        <input type="button" class="icl_tn_save button-primary alignright" value="<?php _e('Save', 'sitepress')?>" />
+                    </div>
+                </td>
+                <td scope="col" class="icl_tn_link" id="icl_tn_link_<?php echo $doc->post_id ?>">
+                    <?php if($_is_translation):?>
+                    &nbsp;
+                    <?php else: ?>
+                    <a title="<?php echo $note_text ?>" href="#"><img a href="#" src="<?php echo ICL_PLUGIN_URL ?>/res/img/notes.png" width="16" height="16"></a>
+                    <?php endif; ?>
+                </td>
                 <td scope="col"><?php echo $icl_post_types[$doc->post_type]; ?></td>
                 <td scope="col"><?php echo $icl_post_statuses[$doc->post_status]; ?></td>
                 <td scope="col" id="icl-tr-status-<?php echo $doc->post_id ?>">

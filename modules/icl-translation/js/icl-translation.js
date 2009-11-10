@@ -159,6 +159,40 @@ jQuery(document).ready(function(){
         icl_tb_set_size('a.icl_thickbox');
     }
     
+    
+    jQuery('.icl_tn_link').click(function(){
+        jQuery('.icl_post_note:visible').slideUp();
+        thisl = jQuery(this);
+        spl = thisl.attr('id').split('_');
+        doc_id = spl[3];
+        if(jQuery('#icl_post_note_'+doc_id).css('display') != 'none'){
+            jQuery('#icl_post_note_'+doc_id).slideUp();
+        }else{
+            jQuery('#icl_post_note_'+doc_id).slideDown();
+            jQuery('#icl_post_note_'+doc_id+' textarea').focus();
+        }
+        return false;
+    });
+    
+    jQuery('.icl_post_note textarea').keyup(iclTnClearButtonState);
+    
+    jQuery('.icl_tn_save').click(function(){
+        thisa = jQuery(this);
+        thisa.siblings().attr('disabled','disabled');
+        jQuery('.icl_tn_progress').fadeIn();
+        jQuery.ajax({
+                type: "POST",
+                url: icl_ajx_url,
+                data: "icl_ajx_action=save_translator_note&note="+thisa.prev().prev().prev().prev().val()+'&post_id='+thisa.prev().val(),
+                success: function(msg){
+                    jQuery('.icl_tn_progress').fadeOut();
+                    thisa.siblings().removeAttr('disabled');
+                    thisa.parent().slideUp();
+                }
+        });    
+        
+    })
+    
 });
 
 function iclUpdateTranslationEstimate(n, set){

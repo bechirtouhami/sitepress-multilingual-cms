@@ -8,7 +8,26 @@ jQuery(document).ready(function(){
     jQuery('#icl_dismiss_help').click(iclDismissHelp);
     jQuery('#icl_dismiss_upgrade_notice').click(iclDismissUpgradeNotice);
     jQuery('a.icl_toggle_show_translations').click(iclToggleShowTranslations);
+    
+    icl_tn_initial_value   = jQuery('#icl_post_note textarea').val();
+    jQuery('#icl_post_add_notes h4 a').click(iclTnOpenNoteBox);
+    jQuery('#icl_post_note textarea').keyup(iclTnClearButtonState);
+    jQuery('#icl_tn_clear').click(function(){jQuery('#icl_post_note textarea').val(''); jQuery(this).attr('disabled','disabled')});
+    jQuery('#icl_tn_save').click(iclTnCloseNoteBox);
+    
 });
+
+var icl_tn_initial_value   = '';
+
+window.onbeforeunload = function() { 
+    if(icl_tn_initial_value != jQuery('#icl_post_note textarea').val()){
+        return jQuery('#icl_tn_cancel_confirm').val();
+    }
+}
+
+
+
+
 
 function fadeInAjxResp(spot, msg, err){
     if(err != undefined){
@@ -161,4 +180,26 @@ function iclToggleShowTranslations(){
             data: "icl_ajx_action=toggle_show_translations"
     });        
     return false;
+}
+
+function iclTnOpenNoteBox(){
+    jQuery('#icl_post_add_notes #icl_post_note').slideDown();
+    jQuery('#icl_post_note textarea').focus();
+    return false;
+}
+function iclTnClearButtonState(){
+    if(jQuery.trim(jQuery(this).val())){
+        jQuery('#icl_tn_clear').removeAttr('disabled');
+    }else{
+        jQuery('#icl_tn_clear').attr('disabled', 'disabled');
+    }  
+}
+function iclTnCloseNoteBox(){
+    jQuery('#icl_post_add_notes #icl_post_note').slideUp('fast', function(){
+        if(icl_tn_initial_value != jQuery('#icl_post_note textarea').val()){
+            jQuery('#icl_tn_not_saved').fadeIn();
+        }else{
+            jQuery('#icl_tn_not_saved').fadeOut();
+        }
+    });
 }

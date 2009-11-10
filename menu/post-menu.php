@@ -163,4 +163,22 @@
     </span>
 <?php endif; ?>
 
+<?php if($this->get_icl_translation_enabled() 
+        && !$wpdb->get_var("SELECT source_language_code FROM {$wpdb->prefix}icl_translations WHERE element_type='post' AND element_id={$post->ID}") 
+        && !isset($_GET['source_lang'])):?>
+<?php 
+    $note = trim(get_post_meta($post->ID, '_icl_translator_note', true));
+?>
+<div id="icl_post_add_notes">
+    <h4><a href="#"><?php _e('Note for the translators', 'sitepress')?></a></h4>
+    <div id="icl_post_note">
+        <textarea name="icl_tn_note" rows="5"><?php echo $note ?></textarea> 
+        <input id="icl_tn_clear" type="button" class="button" value="<?php _e('Clear', 'sitepress')?>" <?php if(!$note): ?>disabled="disabled"<?php endif; ?> />        
+        <input id="icl_tn_save"  type="button" class="button-primary alignright" value="<?php _e('Close', 'sitepress')?>" />
+        <input id="icl_tn_cancel_confirm" type="hidden" value="<?php _e('Your changes to the note for the translators are not saved.', 'sitepress') ?>" />
+    </div>
+    <div id="icl_tn_not_saved"><?php _e('Note not saved yet', 'sitepress'); ?></div>
+</div>    
+<?php endif; ?>
+
 <?php do_action('icl_post_languages_options_after') ?>

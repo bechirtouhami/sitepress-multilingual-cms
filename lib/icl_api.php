@@ -161,7 +161,7 @@ class ICanLocalizeQuery{
         return $xml;
     }
       
-    function send_request($xml, $title, $to_languages, $orig_language, $permlink){
+    function send_request($xml, $title, $to_languages, $orig_language, $permlink, $note=""){
         $request_url = ICL_API_ENDPOINT . '/websites/'. $this->site_id . '/cms_requests.xml';
         
         $parameters['accesskey'] = $this->access_key;
@@ -177,6 +177,8 @@ class ICanLocalizeQuery{
         if($permlink){
             $parameters['permlink'] = $permlink;          
         }
+        
+        $parameters['note'] = htmlspecialchars($note);          
         
         //$parameters['list_type'] = 'post';          
         //$parameters['list_id'] = $timestamp;          
