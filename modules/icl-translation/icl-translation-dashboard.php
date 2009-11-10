@@ -146,7 +146,8 @@
         <tr>
             <th scope="col" class="manage-column column-cb check-column"><input type="checkbox" <?php if(isset($_GET['post_id'])) echo 'checked="checked"'?>/></th>
             <th scope="col"><?php echo __('Title', 'sitepress') ?></th>
-            <th scope="col" class="manage-column column-date"><?php echo __('Note', 'sitepress') ?></th>
+            <th scope="col" class="manage-column column-date">
+                <img title="<?php _e('Note for translators', 'sitepress') ?>" src="<?php echo ICL_PLUGIN_URL ?>/res/img/notes.png" alt="note" width="16" height="16"></th>
             <th scope="col" class="manage-column column-date"><?php echo __('Type', 'sitepress') ?></th>
             <th scope="col" class="manage-column column-date"><?php echo __('Status', 'sitepress') ?></th>        
             <th scope="col" class="manage-column column-date"><?php echo __('Translation', 'sitepress') ?></th>        
@@ -156,7 +157,8 @@
         <tr>
             <th scope="col" class="manage-column column-cb check-column"><input type="checkbox" <?php if(isset($_GET['post_id'])) echo 'checked="checked"'?>/></th>
             <th scope="col"><?php echo __('Title', 'sitepress') ?></th>
-            <th scope="col" class="manage-column column-date"><?php echo __('Note', 'sitepress') ?></th>
+            <th scope="col" class="manage-column column-date">
+                <img title="<?php _e('Note for translators', 'sitepress') ?>" src="<?php echo ICL_PLUGIN_URL ?>/res/img/notes.png" alt="note" width="16" height="16"></th>
             <th scope="col" class="manage-column column-date"><?php echo __('Type', 'sitepress') ?></th>
             <th scope="col" class="manage-column column-date"><?php echo __('Status', 'sitepress') ?></th>        
             <th scope="col" class="manage-column column-date"><?php echo __('Translation', 'sitepress') ?></th>        
@@ -204,24 +206,31 @@
                                 $note = get_post_meta($doc->post_id, '_icl_translator_note', true); 
                                 if($note){
                                     $note_text = __('Edit note for the translators', 'sitepress');
+                                    $note_icon = 'add_translation.png';
                                 }else{
                                     $note_text = __('Add note for the translators', 'sitepress');
+                                    $note_icon = 'edit_translation.png';
                                 }
                             }
                         ?>
                         <?php _e('Note for the translators', 'sitepress')?> 
                         <textarea rows="5"><?php echo $note ?></textarea> 
-                        <input id="icl_tn_clear" type="button" class="button" value="<?php _e('Clear', 'sitepress')?>" <?php if(!$note): ?>disabled="disabled"<?php endif; ?> />        
-                        <image class="icl_tn_progress" src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" width="16" height="16" />
-                        <input type="hidden" value="<?php echo $doc->post_id ?>" />
-                        <input type="button" class="icl_tn_save button-primary alignright" value="<?php _e('Save', 'sitepress')?>" />
+                        <table width="100%"><tr>
+                        <td style="border-bottom:none">
+                            <input id="icl_tn_clear" type="button" class="button" 
+                                value="<?php _e('Clear', 'sitepress')?>" <?php if(!$note): ?>disabled="disabled"<?php endif; ?> />        
+                            <image class="icl_tn_progress" src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" width="16" height="16" />
+                            <input type="hidden" value="<?php echo $doc->post_id ?>" />
+                        </td>
+                        <td align="right" style="border-bottom:none"><input type="button" class="icl_tn_save button-primary" value="<?php _e('Save', 'sitepress')?>" /></td>
+                        </tr></table>
                     </div>
                 </td>
                 <td scope="col" class="icl_tn_link" id="icl_tn_link_<?php echo $doc->post_id ?>">
                     <?php if($_is_translation):?>
                     &nbsp;
                     <?php else: ?>
-                    <a title="<?php echo $note_text ?>" href="#"><img a href="#" src="<?php echo ICL_PLUGIN_URL ?>/res/img/notes.png" width="16" height="16"></a>
+                    <a title="<?php echo $note_text ?>" href="#"><img src="<?php echo ICL_PLUGIN_URL ?>/res/img/<?php echo $note_icon ?>" width="16" height="16"></a>
                     <?php endif; ?>
                 </td>
                 <td scope="col"><?php echo $icl_post_types[$doc->post_type]; ?></td>
