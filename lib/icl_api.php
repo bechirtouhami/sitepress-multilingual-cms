@@ -178,7 +178,7 @@ class ICanLocalizeQuery{
             $parameters['permlink'] = $permlink;          
         }
         
-        $parameters['note'] = htmlspecialchars($note);          
+        $parameters['note'] = $note;          
         
         //$parameters['list_type'] = 'post';          
         //$parameters['list_id'] = $timestamp;          
