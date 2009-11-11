@@ -219,7 +219,6 @@
                         <td style="border-bottom:none">
                             <input type="button" class="icl_tn_clear button" 
                                 value="<?php _e('Clear', 'sitepress')?>" <?php if(!$note): ?>disabled="disabled"<?php endif; ?> />        
-                            <image class="icl_tn_progress" src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" width="16" height="16" />
                             <input class="icl_tn_post_id" type="hidden" value="<?php echo $doc->post_id ?>" />
                         </td>
                         <td align="right" style="border-bottom:none"><input type="button" class="icl_tn_save button-primary" value="<?php _e('Save', 'sitepress')?>" /></td>
