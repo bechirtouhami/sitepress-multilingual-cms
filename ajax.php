@@ -317,6 +317,8 @@ switch($_REQUEST['icl_ajx_action']){
 
         $iclsettings['modules']['cms-navigation']['cache'] = $_POST['icl_navigation_caching'];
 
+        $iclsettings['modules']['cms-navigation']['breadcrumbs_separator'] = $_POST['icl_breadcrumbs_separator'];
+        
         $sitepress->save_settings($iclsettings);
         
         // clear the cms navigation caches

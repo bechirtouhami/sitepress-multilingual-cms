@@ -73,8 +73,16 @@ var icl_ajx_cache_cleared = '<?php echo __('The cache has been cleared.','sitepr
                 <input id="icl_navigation_caching_clear" class="button" name="icl_navigation_caching_clear" value="<?php echo __('Clear cache now', 'sitepress') ?>" type="button"/>
                 <span class="icl_ajx_response" id="icl_ajx_response_clear_cache"></span>
             </td>
-        </tr>
+        </tr>     
         <?php endif; ?>
+        
+        <tr valign="top">
+            <th scope="row"><?php echo __('Breadcrumbs separator', 'sitepress')?></th>
+            <td valign="top">
+                <input type="text" name="icl_breadcrumbs_separator" value="<?php echo strip_tags($cms_navigation_settings['breadcrumbs_separator']) ?>" size="6" />
+            </td>
+        </tr>    
+        
     </table>
     
     <p class="submit">
@@ -106,7 +114,7 @@ var icl_ajx_cache_cleared = '<?php echo __('The cache has been cleared.','sitepr
         <tr>
             <td scope="col" nowrap="nowrap"><?php echo __('Breadcrumbs trails', 'sitepress') ?></td>          
             <td scope="col"><?php echo __('Lists the path back to the home page', 'sitepress') ?></td>          
-            <td scope="col" nowrap="nowrap"><code>&lt;?php  do_action('icl_navigation_breadcrumb'); ?&gt;</code></td>          
+            <td scope="col" nowrap="nowrap"><code>&lt;?php  do_action('icl_navigation_breadcrumb', ['separator']); ?&gt;</code></td>          
             <td scope="col"><?php printf(__('%s or %s, %s, %s, %s and %s', 'sitepress'), 'header.php', 'single.php', 'page.php', 'archive.php', 'tag.php', 'search.php');?></td>          
         </tr>
         <tr>

@@ -92,6 +92,18 @@ class CMSNavigation{
     function cms_navigation_breadcrumb(){
         global $post, $sitepress, $current_user, $wpdb;
         
+        if(func_num_args()){
+            $args = func_get_args();
+            $separator = $args[0];
+        }
+        
+        if(!is_null($separator) && $separator != $this->settings['breadcrumbs_separator']){
+            $iclsettings['modules']['cms-navigation'] = $this->settings;
+            $iclsettings['modules']['cms-navigation']['breadcrumbs_separator'] = strip_tags($separator);
+            $sitepress->save_settings($iclsettings);
+            $this->settings['breadcrumbs_separator'] = $iclsettings['modules']['cms-navigation']['breadcrumbs_separator'];
+        }
+        
         $cache_key = $_SERVER['REQUEST_URI'].'-'.$sitepress->get_current_language();
         $output = $wpdb->get_var("
                             SELECT data
@@ -114,14 +126,17 @@ class CMSNavigation{
             }
             if($page_on_front!=$post->ID){ 
                 if($page_on_front){
-                    ?><a href="<?php echo get_permalink($page_on_front); ?>"><?php echo get_the_title($page_on_front) ?></a> &raquo; <?php
+                    ?><a href="<?php echo get_permalink($page_on_front); ?>"><?php echo get_the_title($page_on_front) ?></a><?php 
+                        echo $this->settings['breadcrumbs_separator'];
                 }elseif(!is_home() || (is_home() && !$page_on_front && $page_for_posts)){
-                    ?><a href="<?php echo $sitepress->language_url() ?>"><?php _e('Home') ?></a> &raquo; <?php
+                    ?><a href="<?php echo $sitepress->language_url() ?>"><?php _e('Home') ?></a><?php 
+                        echo $this->settings['breadcrumbs_separator'];
                 }
             }
             
             if(!is_page() && !is_home() && $page_for_posts){
-                ?><a href="<?php echo get_permalink($page_for_posts); ?>"><?php echo get_the_title($page_for_posts) ?></a> &raquo; <?php
+                ?><a href="<?php echo get_permalink($page_for_posts); ?>"><?php echo get_the_title($page_for_posts) ?></a><?php 
+                    echo $this->settings['breadcrumbs_separator'];
             }
             
             if(is_home() && $page_for_posts){
@@ -133,8 +148,8 @@ class CMSNavigation{
                     foreach($ancestors as $anc){
                         if($page_on_front==$anc) {continue;}
                         ?>
-                        <a href="<?php echo get_permalink($anc); ?>"><?php echo get_the_title($anc) ?></a> &raquo; 
-                        <?php
+                        <a href="<?php echo get_permalink($anc); ?>"><?php echo get_the_title($anc) ?></a><?php 
+                            echo $this->settings['breadcrumbs_separator']; 
                     }            
                 }    
                 echo get_the_title();
@@ -143,7 +158,7 @@ class CMSNavigation{
                 the_post();
                 $cat = get_the_category($id);
                 $cat = $cat[0]->cat_ID;                
-                $parents = get_category_parents($cat, TRUE, ' &raquo; ');
+                $parents = get_category_parents($cat, TRUE, $this->settings['breadcrumbs_separator']);
                 if(is_string($parents)){
                     echo $parents;
                 }
@@ -152,7 +167,7 @@ class CMSNavigation{
             }elseif (is_category()) {
                 $cat = get_term(intval( get_query_var('cat')), 'category', OBJECT, 'display');
                 if($cat->category_parent){
-                    echo get_category_parents($cat->category_parent, TRUE, ' &raquo; ');                 
+                    echo get_category_parents($cat->category_parent, TRUE, $this->settings['breadcrumbs_separator']);                 
                 }
                 single_cat_title();
             }elseif(is_tag()){
