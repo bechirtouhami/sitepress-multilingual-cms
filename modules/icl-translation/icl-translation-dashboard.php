@@ -206,10 +206,10 @@
                                 $note = get_post_meta($doc->post_id, '_icl_translator_note', true); 
                                 if($note){
                                     $note_text = __('Edit note for the translators', 'sitepress');
-                                    $note_icon = 'add_translation.png';
+                                    $note_icon = 'edit_translation.png';
                                 }else{
                                     $note_text = __('Add note for the translators', 'sitepress');
-                                    $note_icon = 'edit_translation.png';
+                                    $note_icon = 'add_translation.png';
                                 }
                             }
                         ?>
@@ -217,10 +217,10 @@
                         <textarea rows="5"><?php echo $note ?></textarea> 
                         <table width="100%"><tr>
                         <td style="border-bottom:none">
-                            <input id="icl_tn_clear" type="button" class="button" 
+                            <input type="button" class="icl_tn_clear button" 
                                 value="<?php _e('Clear', 'sitepress')?>" <?php if(!$note): ?>disabled="disabled"<?php endif; ?> />        
                             <image class="icl_tn_progress" src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" width="16" height="16" />
-                            <input type="hidden" value="<?php echo $doc->post_id ?>" />
+                            <input class="icl_tn_post_id" type="hidden" value="<?php echo $doc->post_id ?>" />
                         </td>
                         <td align="right" style="border-bottom:none"><input type="button" class="icl_tn_save button-primary" value="<?php _e('Save', 'sitepress')?>" /></td>
                         </tr></table>

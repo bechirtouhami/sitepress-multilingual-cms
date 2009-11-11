@@ -174,20 +174,29 @@ jQuery(document).ready(function(){
         return false;
     });
     
-    jQuery('.icl_post_note textarea').keyup(iclTnClearButtonState);
-    
+    jQuery('.icl_post_note textarea').keyup(function(){
+        if(jQuery.trim(jQuery(this).val())){
+            jQuery('.icl_tn_clear').removeAttr('disabled');
+        }else{
+            jQuery('.icl_tn_clear').attr('disabled', 'disabled');
+        }  
+    });
+    jQuery('.icl_tn_clear').click(function(){
+        jQuery(this).closest('table').prev().val('');
+        jQuery(this).attr('disabled','disabled');
+    })
     jQuery('.icl_tn_save').click(function(){
         thisa = jQuery(this);
-        thisa.siblings().attr('disabled','disabled');
+        thisa.closest('table').find('input').attr('disabled','disabled');
         jQuery('.icl_tn_progress').fadeIn();
         jQuery.ajax({
                 type: "POST",
-                url: icl_ajx_url,
-                data: "icl_ajx_action=save_translator_note&note="+thisa.prev().prev().prev().prev().val()+'&post_id='+thisa.prev().val(),
+                url: icl_ajx_url,        
+                data: "icl_ajx_action=save_translator_note&note="+thisa.closest('table').prev().val()+'&post_id='+thisa.closest('table').find('.icl_tn_post_id').val(),
                 success: function(msg){
                     jQuery('.icl_tn_progress').fadeOut();
-                    thisa.siblings().removeAttr('disabled');
-                    thisa.parent().slideUp();
+                    thisa.closest('table').find('input').removeAttr('disabled');
+                    thisa.closest('table').parent().slideUp();
                 }
         });    
         
