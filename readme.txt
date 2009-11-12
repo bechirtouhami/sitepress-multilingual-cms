@@ -66,6 +66,13 @@ Also, go through the [detailed description](http://wpml.org/support/cannot-activ
 
 == Changelog ==
 
+= 1.4.1 =
+* Users can add notes for translation on posts and pages.
+* Added an optional argument for specifying the breadcrumbs trail separator.
+* Reporting 404 errors if translations don't exist for a URL.
+* Fixed a bug which caused WPML to use HTTPS on certain Windows servers.
+* Improved the way WPML imports the ajax.php files for more advanced WordPress installations.
+
 = 1.4.0 =
 * WPML now has two distinct modes - Basic and Advanced. Basic mode just for multilingual contents and Advanced for all the rest.
 * Professional translation management is unified to one screen. No more Tools->Translation dashboard.
