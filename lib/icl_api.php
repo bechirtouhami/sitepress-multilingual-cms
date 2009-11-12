@@ -178,7 +178,12 @@ class ICanLocalizeQuery{
             $parameters['permlink'] = $permlink;          
         }
         
-        $parameters['note'] = $note;          
+        $parameters['note'] = $note;
+        
+        // add a unique key so that so that the server can return an
+        // existing cms_request_id if we are sending the same info
+        
+        $parameters['key'] = md5($xml);
         
         //$parameters['list_type'] = 'post';          
         //$parameters['list_id'] = $timestamp;          
