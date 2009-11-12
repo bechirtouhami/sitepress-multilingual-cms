@@ -80,7 +80,7 @@ var icl_ajx_cache_cleared = '<?php echo __('The cache has been cleared.','sitepr
                 <label for="icl_navigation_caching"><input type="checkbox" id="icl_navigation_caching" name="icl_navigation_caching" value="1" <?php if($cms_navigation_settings['cache']): ?>checked="checked"<?php endif ?> /> <?php echo __('Cache navigation elements for super fast performance', 'sitepress')?></label>
                 </p>
                 <input id="icl_navigation_caching_clear" class="button" name="icl_navigation_caching_clear" value="<?php echo __('Clear cache now', 'sitepress') ?>" type="button"/>
-                <span class="icl_ajx_response" id="icl_ajx_response_clear_cache"></span>
+                <span id="icl_ajx_response_clear_cache"></span>
             </td>
         </tr>     
         <?php endif; ?>
