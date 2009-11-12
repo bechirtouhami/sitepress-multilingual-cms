@@ -97,11 +97,8 @@ class CMSNavigation{
             $separator = $args[0];
         }
         
-        if(!is_null($separator) && $separator != $this->settings['breadcrumbs_separator']){
-            $iclsettings['modules']['cms-navigation'] = $this->settings;
-            $iclsettings['modules']['cms-navigation']['breadcrumbs_separator'] = strip_tags($separator);
-            $sitepress->save_settings($iclsettings);
-            $this->settings['breadcrumbs_separator'] = $iclsettings['modules']['cms-navigation']['breadcrumbs_separator'];
+        if(!empty($separator) && $separator != $this->settings['breadcrumbs_separator']){
+            $this->settings['breadcrumbs_separator'] = strip_tags($separator);
         }
         
         $cache_key = $_SERVER['REQUEST_URI'].'-'.$sitepress->get_current_language();
