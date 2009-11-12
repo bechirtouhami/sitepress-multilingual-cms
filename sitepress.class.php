@@ -489,7 +489,7 @@ class SitePress{
             'alert_delay' => 0,
             'modules' => array(
                 'absolute-links' => array('enabled'=>0),
-                'cms-navigation'=>array('enabled'=>0, 'breadcrumbs_separator'=>' &amp; ')
+                'cms-navigation'=>array('enabled'=>0, 'breadcrumbs_separator'=>' &raquo; ')
                 )
         ); 
         
