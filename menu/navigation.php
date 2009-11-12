@@ -63,7 +63,16 @@ var icl_ajx_cache_cleared = '<?php echo __('The cache has been cleared.','sitepr
                 </p>
             </td>
         </tr>    
+        
+        <tr valign="top">
+            <th scope="row"><?php echo __('Breadcrumbs separator', 'sitepress')?></th>
+            <td valign="top">
+                <input type="text" name="icl_breadcrumbs_separator" value="<?php echo strip_tags($cms_navigation_settings['breadcrumbs_separator']) ?>" size="6" />
+            </td>
+        </tr>            
+        
         <?php if(!defined('ICL_DISABLE_CACHE') || !ICL_DISABLE_CACHE):?>    
+        <tr><td colspan="2"><hr /></td></tr>
         <tr valign="top">
             <th scope="row"><?php echo __('Caching', 'sitepress')?></th>
             <td>
@@ -75,13 +84,6 @@ var icl_ajx_cache_cleared = '<?php echo __('The cache has been cleared.','sitepr
             </td>
         </tr>     
         <?php endif; ?>
-        
-        <tr valign="top">
-            <th scope="row"><?php echo __('Breadcrumbs separator', 'sitepress')?></th>
-            <td valign="top">
-                <input type="text" name="icl_breadcrumbs_separator" value="<?php echo strip_tags($cms_navigation_settings['breadcrumbs_separator']) ?>" size="6" />
-            </td>
-        </tr>    
         
     </table>
     

@@ -98,7 +98,7 @@ class CMSNavigation{
         }
         
         if(!empty($separator) && $separator != $this->settings['breadcrumbs_separator']){
-            $this->settings['breadcrumbs_separator'] = strip_tags($separator);
+            $this->settings['breadcrumbs_separator'] = $separator;
         }
         
         $cache_key = $_SERVER['REQUEST_URI'].'-'.$sitepress->get_current_language();
