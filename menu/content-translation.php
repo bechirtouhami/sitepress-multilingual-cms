@@ -107,30 +107,7 @@
                 <?php include ICL_PLUGIN_PATH . '/modules/icl-translation/icl-translation-dashboard.php'; ?>
             <?php endif; ?>
         
-            <div class="icl_cyan_box">
-                <h3><?php _e('ICanLocalize account status', 'sitepress')?></h3>
-		<?php if(isset($sitepress_settings['icl_balance'])): ?>
-                    <p><img src="<?php echo ICL_PLUGIN_URL ?>/res/img/dollar1.png" width="16" height="16" alt="balance" 
-                        style="vertical-align:middle; margin-right: 3px;" />
-					   <span <?php if($sitepress_settings['icl_balance'] < 0): echo('style="font-weight: bold; color: #FF0000;"'); endif;?>>
-                        <?php echo sprintf(__('Your balance with ICanLocalize is %s. Visit your %sICanLocalize finance%s page to deposit additional funds.',
-                            'sitepress'), '$' . $sitepress_settings['icl_balance'], 
-                            $sitepress->create_icl_popup_link(ICL_API_ENDPOINT.ICL_FINANCE_LINK, 'ICanLocalize'),'</a>','sitepress')?>
-						</span>
-                    </p>
-                <?php endif; ?>
-                    <p><img src="<?php echo ICL_PLUGIN_URL ?>/res/img/documents.png" width="16" height="16" alt="documents" 
-                        style="vertical-align:middle; margin-right: 3px;" />
-                        <?php printf(__("To see the status of pending translations or to cancel translation requests, go to the %sproject page</a> in ICanLocalize.",'sitepress'), 
-                        $sitepress->create_icl_popup_link(ICL_API_ENDPOINT.'/websites/'.$sitepress_settings['site_id'].'/cms_requests', 'ICanLocalize')) ?>
-                    </p>
-                    <p>
-                        <img src="<?php echo ICL_PLUGIN_URL ?>/res/img/question1.png" width="16" height="16" alt="need help" 
-                            style="vertical-align:middle; margin-right: 3px;" />
-                        <?php echo sprintf(__("For help with your site's translation, use the %ssupport center%s.", 'sitepress'),
-                        $sitepress->create_icl_popup_link(ICL_API_ENDPOINT. '/support/', 'support center'), '</a>'); ?>
-                    </p>
-            </div>
+
         <?php endif; ?>    
         
         <?php if($sitepress->icl_account_configured() ): // wrap the two opening div tags into checking whether the ICL account is configured ?>        
@@ -224,13 +201,39 @@
         </div> <?php // <div class="icl_cyan_box"> ?>
         <?php endif; // wrap the two closing div tags into checking whether the ICL account is configured ?>    
         
-        <br />         
-        
         <?php if($sitepress_settings['content_translation_setup_complete'] && !empty($inactive_pairs)): ?>
+            <br />
             <h3><?php _e('Translation management', 'sitepress')?></h3>
             <?php include ICL_PLUGIN_PATH . '/modules/icl-translation/icl-translation-dashboard.php'; ?>
         <?php endif; ?>
-            
+        
+        <?php if($sitepress_settings['content_translation_setup_complete']): ?>                                       
+            <div class="icl_cyan_box">
+                <h3><?php _e('ICanLocalize account status', 'sitepress')?></h3>
+        <?php if(isset($sitepress_settings['icl_balance'])): ?>
+                    <p><img src="<?php echo ICL_PLUGIN_URL ?>/res/img/dollar1.png" width="16" height="16" alt="balance" 
+                        style="vertical-align:middle; margin-right: 3px;" />
+                       <span <?php if($sitepress_settings['icl_balance'] < 0): echo('style="font-weight: bold; color: #FF0000;"'); endif;?>>
+                        <?php echo sprintf(__('Your balance with ICanLocalize is %s. Visit your %sICanLocalize finance%s page to deposit additional funds.',
+                            'sitepress'), '$' . $sitepress_settings['icl_balance'], 
+                            $sitepress->create_icl_popup_link(ICL_API_ENDPOINT.ICL_FINANCE_LINK, 'ICanLocalize'),'</a>','sitepress')?>
+                        </span>
+                    </p>
+                <?php endif; ?>
+                    <p><img src="<?php echo ICL_PLUGIN_URL ?>/res/img/documents.png" width="16" height="16" alt="documents" 
+                        style="vertical-align:middle; margin-right: 3px;" />
+                        <?php printf(__("To see the status of pending translations or to cancel translation requests, go to the %sproject page</a> in ICanLocalize.",'sitepress'), 
+                        $sitepress->create_icl_popup_link(ICL_API_ENDPOINT.'/websites/'.$sitepress_settings['site_id'].'/cms_requests', 'ICanLocalize')) ?>
+                    </p>
+                    <p>
+                        <img src="<?php echo ICL_PLUGIN_URL ?>/res/img/question1.png" width="16" height="16" alt="need help" 
+                            style="vertical-align:middle; margin-right: 3px;" />
+                        <?php echo sprintf(__("For help with your site's translation, use the %ssupport center%s.", 'sitepress'),
+                        $sitepress->create_icl_popup_link(ICL_API_ENDPOINT. '/support/', 'support center'), '</a>'); ?>
+                    </p>
+            </div>
+        <?php endif; ?>
+                    
     <?php endif; // if Professional translation enabled ?>
                                                                                
     <?php if($sitepress_settings['content_translation_setup_complete']) remove_action('icl_menu_footer', array($sitepress, 'menu_footer')) ?>                                                                               
