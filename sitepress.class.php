@@ -3318,6 +3318,15 @@ class SitePress{
                     $lang_details = $this->get_element_language_details($page_id, 'post');
                     update_post_meta($page_id, '_wpml_language', $lang_details->language_code);
                     update_post_meta($page_id, '_wpml_trid', $lang_details->trid);
+                    $active_languages = $this->get_active_languages();
+                    $res = $this->get_element_translations($lang_details->trid);
+                    $translations = array();
+                    foreach($active_languages as $k=>$v){
+                        if($page_id != $res[$k]->element_id){
+                            $translations[$k] = isset($res[$k]->element_id) ? $res[$k]->element_id : 0;
+                        }
+                    }
+                    update_post_meta($page_id, '_wpml_translations', json_encode($translations));
                 }
                 break;
             case 'metaWeblog.getPost':
@@ -3326,6 +3335,15 @@ class SitePress{
                     $lang_details = $this->get_element_language_details($page_id, 'post');
                     update_post_meta($page_id, '_wpml_language', $lang_details->language_code);
                     update_post_meta($page_id, '_wpml_trid', $lang_details->trid);
+                    $active_languages = $this->get_active_languages();
+                    $res = $this->get_element_translations($lang_details->trid);
+                    $translations = array();
+                    foreach($active_languages as $k=>$v){
+                        if($page_id != $res[$k]->element_id){
+                            $translations[$k] = isset($res[$k]->element_id) ? $res[$k]->element_id : 0;
+                        }
+                    }
+                    update_post_meta($page_id, '_wpml_translations', json_encode($translations));
                 }
                 break;   
             case 'metaWeblog.getRecentPosts':
@@ -3336,6 +3354,15 @@ class SitePress{
                         $lang_details = $this->get_element_language_details($p->ID, 'post');
                         update_post_meta($p->ID, '_wpml_language', $lang_details->language_code);
                         update_post_meta($p->ID, '_wpml_trid', $lang_details->trid);
+                        $active_languages = $this->get_active_languages();
+                        $res = $this->get_element_translations($lang_details->trid);
+                        $translations = array();
+                        foreach($active_languages as $k=>$v){
+                            if($p->ID != $res[$k]->element_id){
+                                $translations[$k] = isset($res[$k]->element_id) ? $res[$k]->element_id : 0;
+                            }
+                        }
+                        update_post_meta($p->ID, '_wpml_translations', json_encode($translations));
                     }
                 }
                 break;         
