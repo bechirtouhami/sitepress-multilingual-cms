@@ -315,9 +315,15 @@ class SitePress{
             require ICL_PLUGIN_PATH . '/inc/wpml-api.php';
             
         } 
+        
         if($this->settings['promote_wpml']){
             add_action('wp_footer', array($this, 'display_wpml_footer'),20);
         }  
+        
+        if(defined('XMLRPC_REQUEST') && XMLRPC_REQUEST){
+            add_action('xmlrpc_call', array($this, 'xmlrpc_call_actions'));
+            add_filter('xmlrpc_methods',array($this, 'xmlrpc_methods'));
+        }
         
     }
     
@@ -335,55 +341,20 @@ class SitePress{
         $active_languages = array_keys($wpdb->get_col("SELECT code FROM {$wpdb->prefix}icl_languages WHERE active=1"));   //don't use method get_active_language()
         
         $this->admin_language = $this->get_user_admin_language($current_user->data->ID);
-        
-        /* debug routine */
-        /*
-        if(defined('ICL_DEBUG_DEVELOPMENT') && ICL_DEBUG_DEVELOPMENT){
-            if($this->admin_language){
-                echo "Language defined in user profile: " . $this->admin_language . '<br />';
-            }else{
-                echo "No language defined in user profile<br />";
-            }    
-        }
-        */
-        /* debug routine */
-        
+                
         if($this->admin_language != '' && !in_array($this->admin_language, $active_languages)){
             delete_usermeta($current_user->data->ID,'icl_admin_language');
         }        
         if(!in_array($this->settings['admin_default_language'], $active_languages) || is_null($this->settings['admin_default_language'])){
             $this->settings['admin_default_language'] = '_default_';
             $this->save_settings();
-            
-            /* debug routine */
-            /*
-            if(defined('ICL_DEBUG_DEVELOPMENT') && ICL_DEBUG_DEVELOPMENT){
-                echo "Initialize default admin language (_default_ = ".$this->get_default_language().")<br />";
-            }
-            */
-            /* debug routine */
-            
         }
         
         if(!$this->admin_language){
             $this->admin_language = $this->settings['admin_default_language'];
-            /* debug routine */
-            /*
-            if(defined('ICL_DEBUG_DEVELOPMENT') && ICL_DEBUG_DEVELOPMENT){
-                echo "Set admin language to: " . $this->admin_language . "<br />";
-            }
-            */
-            /* debug routine */            
         }
         if($this->admin_language == '_default_' && $this->get_default_language()){
             $this->admin_language = $this->get_default_language();
-            /* debug routine */
-            /*
-            if(defined('ICL_DEBUG_DEVELOPMENT') && ICL_DEBUG_DEVELOPMENT){
-                echo "Set admin language to: " . $this->admin_language . "<br />";
-            }
-            */
-            /* debug routine */            
         }
     }
     
@@ -613,7 +584,6 @@ class SitePress{
             }else{
                 $in_language = $this->get_current_language()?$this->get_current_language():$this->get_default_language();    
             }  
-            //var_dump(defined('WP_ADMIN'),$this->admin_language);
             if (isset($this->icl_language_name_cache)) {
                 $res = $this->icl_language_name_cache->get('in_language_'.$in_language);
             } else {
@@ -1478,7 +1448,7 @@ class SitePress{
         if($_POST['action']=='post-quickpress-publish'){
             $post_id = $pidd;            
             $language_code = $this->get_default_language();
-        }if(isset($_GET['bulk_edit'])){
+        }elseif(isset($_GET['bulk_edit'])){
             $post_id = $wpdb->get_var("SELECT post_parent FROM {$wpdb->posts} WHERE ID={$pidd}");
         }
         else{
@@ -3309,6 +3279,112 @@ class SitePress{
     function enable_basic_mode(){
         $this->settings['basic_menu'] = 1;
         $this->save_settings();
+    }
+    
+    function xmlrpc_methods($methods){
+        $methods['icanlocalize.get_languages_list'] = array($this, 'xmlrpc_get_languages_list');
+        return $methods;
+    }
+    
+    function xmlrpc_call_actions($action){
+        global $HTTP_RAW_POST_DATA, $wpdb;
+        $params = xml2array($HTTP_RAW_POST_DATA);
+        switch($action){
+            case 'wp.getPage':    
+            case 'blogger.getPost': // yet this doesn't return custom fields
+                if(isset($params['methodCall']['params']['param'][1]['value']['int']['value'])){
+                    $page_id = $params['methodCall']['params']['param'][1]['value']['int']['value'];
+                    $lang_details = $this->get_element_language_details($page_id, 'post');
+                    update_post_meta($page_id, '_wpml_language', $lang_details->language_code);
+                    update_post_meta($page_id, '_wpml_trid', $lang_details->trid);
+                }
+                break;
+            case 'metaWeblog.getPost':
+                if(isset($params['methodCall']['params']['param'][0]['value']['int']['value'])){
+                    $page_id = $params['methodCall']['params']['param'][0]['value']['int']['value'];
+                    $lang_details = $this->get_element_language_details($page_id, 'post');
+                    update_post_meta($page_id, '_wpml_language', $lang_details->language_code);
+                    update_post_meta($page_id, '_wpml_trid', $lang_details->trid);
+                }
+                break;   
+            case 'metaWeblog.getRecentPosts':
+                $num_posts = intval($params['methodCall']['params']['param'][3]['value']['int']['value']);
+                if($num_posts){
+                    $posts = get_posts('suppress_filters=false&numberposts='.$num_posts);
+                    foreach($posts as $p){
+                        $lang_details = $this->get_element_language_details($p->ID, 'post');
+                        update_post_meta($p->ID, '_wpml_language', $lang_details->language_code);
+                        update_post_meta($p->ID, '_wpml_trid', $lang_details->trid);
+                    }
+                }
+                break;         
+            
+            case 'metaWeblog.newPost':
+                $custom_fields = $params['methodCall']['params']['param'][3]['value']['struct']['member'][3]['value']['array']['data']['value'];
+                if(is_array($custom_fields)){                    
+                    foreach($custom_fields as $cf){
+                        if($cf['struct']['member'][0]['value']['string']['value'] == '_wpml_language'){
+                            $icl_post_language = $cf['struct']['member'][1]['value']['string']['value'];
+                        }elseif($cf['struct']['member'][0]['value']['string']['value'] == '_wpml_trid'){
+                            $icl_trid = $cf['struct']['member'][1]['value']['string']['value'];
+                        }
+                    }
+                    if($icl_trid && $icl_post_language && 
+                        !$wpdb->get_var("SELECT translation_id FROM {$wpdb->prefix}icl_translations WHERE element_type='post' 
+                            AND trid={$icl_trid} AND language_code='{$icl_post_language}'")){
+                        $_POST['icl_post_language'] = $icl_post_language;
+                        $_POST['icl_trid']          = $icl_trid;
+                    }else{
+                        $IXR_Error = new IXR_Error( 401, __('A translation for this post already exists', 'sitepress') );    
+                        echo $IXR_Error->getXml();
+                        exit(1);
+                    }
+                }
+                break;
+            case 'metaWeblog.editPost':
+                $post_id = $params['methodCall']['params']['param'][0]['value']['int']['value'];
+                if(!$post_id){
+                    break;
+                }                
+                $custom_fields = $params['methodCall']['params']['param'][3]['value']['struct']['member'][3]['value']['array']['data']['value'];
+                if(is_array($custom_fields)){                    
+                    foreach($custom_fields as $cf){
+                        if($cf['struct']['member'][0]['value']['string']['value'] == '_wpml_language'){
+                            $icl_post_language = $cf['struct']['member'][1]['value']['string']['value'];
+                        }elseif($cf['struct']['member'][0]['value']['string']['value'] == '_wpml_trid'){
+                            $icl_trid = $cf['struct']['member'][1]['value']['string']['value'];
+                        }
+                    }
+                    
+                    $epost_id = $wpdb->get_var("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE element_type='post' 
+                        AND trid={$icl_trid} AND language_code='{$icl_post_language}'");                    
+                    if($icl_trid && $icl_post_language && (!$epost_id || $epost_id == $post_id)){
+                        $_POST['icl_post_language'] = $icl_post_language;
+                        $_POST['icl_trid']          = $icl_trid;                        
+                    }else{
+                        $IXR_Error = new IXR_Error( 401, __('A translation in this language already exists', 'sitepress') );    
+                        echo $IXR_Error->getXml();
+                        exit(1);
+                    }
+                }
+                break;
+        }
+    }
+    
+    function xmlrpc_get_languages_list($lang){
+        global $wpdb;                                                                          
+        if(!is_null($lang)){
+            if(!$wpdb->get_var("SELECT code FROM {$wpdb->prefix}icl_languages WHERE code='".mysql_real_escape_string($lang)."'")){
+                $IXR_Error = new IXR_Error( 401, __('Invalid language code', 'sitepress') );    
+                echo $IXR_Error->getXml();
+                exit(1);
+            }
+            $this->admin_language = $lang;
+        }                 
+        define('WP_ADMIN', true); // hack - allow to force display language
+        $active_languages = $this->get_active_languages(true);
+        return $active_languages;
+        
     }
      
 }
