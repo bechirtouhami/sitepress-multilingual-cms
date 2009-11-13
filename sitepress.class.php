@@ -982,13 +982,22 @@ class SitePress{
             <?php
         }elseif('page-new.php' == $pagenow){
             if(isset($_GET['trid'])){
-                $menu_order = $wpdb->get_var("
-                    SELECT menu_order FROM {$wpdb->prefix}icl_translations t
+                $res = $wpdb->get_row("
+                    SELECT p.ID, p.menu_order FROM {$wpdb->prefix}icl_translations t
                     JOIN {$wpdb->posts} p ON t.element_id = p.ID
                     WHERE t.trid='{$_GET['trid']}' AND p.post_type='page' AND t.element_type='post'
-                ");                    
-                if($menu_order){
-                    ?><script type="text/javascript">addLoadEvent(function(){jQuery('#menu_order').val(<?php echo $menu_order ?>);});</script><?php
+                "); 
+                $menu_order = $res->menu_order;                   
+                $page_template = get_post_meta($res->ID, '_wp_page_template', true);
+                if($menu_order || $page_template){
+                    ?><script type="text/javascript">addLoadEvent(function(){ <?php 
+                    if($menu_order){ ?>
+                        jQuery('#menu_order').val(<?php echo $menu_order ?>);
+                    <?php }
+                    if($page_template && 'default' != $page_template){ ?>
+                        jQuery('#page_template').val('<?php echo $page_template ?>');
+                    <?php }
+                    ?>});</script><?php
                 }                
             }
         }elseif('edit-comments.php' == $pagenow || 'index.php' == $pagenow || 'post.php' == $pagenow){
@@ -1492,6 +1501,18 @@ class SitePress{
                 }
             }
         }
+        
+        // synchronize the page template
+        if($trid && $_POST['post_type']=='page'){
+            $translated_pages = $wpdb->get_col("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid='{$trid}' AND element_id<>{$post_id}");
+            if(!empty($translated_pages)){
+                foreach($translated_pages as $tp){
+                    if($tp != $post_id){
+                        update_post_meta($tp, '_wp_page_template', $_POST['page_template']);
+                    }
+                }
+            }            
+        }        
         
         require_once ICL_PLUGIN_PATH . '/inc/plugins-texts-functions.php';
         if(function_exists('icl_pt_sync_pugins_texts')){

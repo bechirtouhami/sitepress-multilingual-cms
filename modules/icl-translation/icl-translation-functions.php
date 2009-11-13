@@ -821,6 +821,11 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
         update_post_meta($new_post_id, $ccf, $val);
     }    
     
+    // sync _wp_page_template
+    $_wp_page_template = get_post_meta($translation['original_id'], '_wp_page_template', true);
+    update_post_meta($new_post_id, '_wp_page_template', $_wp_page_template);
+    
+    
     // set the translated custom fields if we have some.
     $custom_fields = icl_get_posts_translatable_fields();
     foreach($custom_fields as $id => $cf){
