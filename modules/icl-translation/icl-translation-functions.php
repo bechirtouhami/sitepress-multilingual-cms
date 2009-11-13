@@ -927,7 +927,7 @@ function icl_fix_translated_parent($original_id, $translated_id, $lang_code){
 }
 
 function icl_process_translated_document($request_id, $language){
-    global $sitepress_settings, $wpdb;
+    global $sitepress_settings, $wpdb, $sitepress;
     
     $ret = false;
     $iclq = new ICanLocalizeQuery($sitepress_settings['site_id'], $sitepress_settings['access_key']);       
@@ -938,6 +938,10 @@ function icl_process_translated_document($request_id, $language){
             $ret = icl_translation_add_string_translation($trid, $translation, apply_filters('icl_server_languages_map', $language, true), $request_id); //the 'reverse' language filter
         } else {
             $ret = icl_add_post_translation($trid, $translation, apply_filters('icl_server_languages_map', $language, true), $request_id); //the 'reverse' language filter
+            if ($ret){
+                $translations = $sitepress->get_element_translations($trid);
+                $iclq->report_back_permalink($request_id, $language, $translations[$sitepress->get_language_code($language)]);
+            }
         }
         if($ret){
             $iclq->cms_update_request_status($request_id, CMS_TARGET_LANGUAGE_DONE, $language);
