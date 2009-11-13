@@ -525,7 +525,13 @@ switch($_REQUEST['icl_ajx_action']){
         }
         
         if ($output != '') {
-            echo '1|'.$output;
+            $reminder_count = sizeof($reminders);
+            if ($reminder_count == 1){
+                $reminder_text = __('Show 1 reminder', 'sitepress');
+            } else {
+                $reminder_text = sprintf(__('Show %d reminders', 'sitepress'), $reminder_count);
+            }
+            echo $reminder_text.'|'.$output;
         } else {
             echo '0|';
         }
@@ -535,6 +541,10 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings = $sitepress->get_settings();
         $iclq = new ICanLocalizeQuery($iclsettings['site_id'], $iclsettings['access_key']);
         $iclq->delete_message($_POST['message_id']);
+        break;
+    case 'icl_show_reminders':
+        $iclsettings['icl_show_reminders'] = $_POST['state']=='show'?1:0;
+        $sitepress->save_settings($iclsettings);
         break;
     case 'icl_promote':
         $iclsettings['promote_wpml'] = $_POST['icl_promote']=='true'?1:0;
