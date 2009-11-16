@@ -915,6 +915,19 @@ class SitePress{
         var icl_this_lang = '<?php echo $this->this_lang ?>';   
         var icl_ajxloaderimg_src = '<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif';
         var icl_cat_adder_msg = '<?php echo __('To add categories that already exist in other languages go to the <a href="categories.php">category management page</a>','sitepress')?>';
+        <?php if(!$this->settings['ajx_health_checked']): ?>
+        addLoadEvent(function(){
+            jQuery.ajax({type: "POST",url: icl_ajx_url,data: "icl_ajx_action=health_check", error: function(msg){
+                    if(jQuery('#icl_initial_language').length){
+                        jQuery('#icl_initial_language input').attr('disabled', 'disabled');
+                    }
+                    jQuery('.wrap').prepend('<div class="error"><p><?php 
+                        echo str_replace("'","\\'",sprintf(__("WPML can't run normally. There is an installation or server configuration problem. %sShow details%s",                            'sitepress'), 
+                        '<a href="#" onclick="jQuery(this).parent().next().slideToggle()">', '</a>'));
+                    ?></p><p style="display:none"><?php _e('AJAX Error:', 'sitepress')?> ' + msg.statusText + ' ['+msg.status+']<br />URL:'+ icl_ajx_url +'</p></div>');
+            }});
+        });
+        <?php endif; ?>
         </script>         
         <?php
         wp_enqueue_script('sitepress-scripts', ICL_PLUGIN_URL . '/res/js/scripts.js', array(), ICL_SITEPRESS_VERSION);

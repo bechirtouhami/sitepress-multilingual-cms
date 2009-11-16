@@ -18,6 +18,12 @@ if (!isset($_POST['unit-test'])) {
 }
 
 switch($_REQUEST['icl_ajx_action']){
+    case 'health_check':
+        // force error
+        // header('Status: 500'); echo 'Boooo!';        
+        $iclsettings['ajx_health_checked'] = 1;
+        $this->save_settings($iclsettings);
+        break;
     case 'set_active_languages':
         $resp = array();
         $old_active_languages_count = count($sitepress->get_active_languages($lang_codes));
