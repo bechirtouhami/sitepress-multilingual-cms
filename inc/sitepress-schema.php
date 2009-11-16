@@ -275,13 +275,18 @@ function icl_sitepress_activate(){
    add_option('icl_sitepress_version', ICL_SITEPRESS_VERSION, '', true);
 
     
-    if(!get_option('icl_sitepress_settings')){
+    $iclsettings = get_option('icl_sitepress_settings');
+    if($iclsettings === false ){
         $short_v = implode('.', array_slice(explode('.', ICL_SITEPRESS_VERSION), 0, 3));
         $settings = array(
             'hide_upgrade_notice' => $short_v,
             'basic_menu'          => 1  
         );
         add_option('icl_sitepress_settings', $settings, '', true);        
+    }else{
+        // reset ajx_health_flag
+        $iclsettings['ajx_health_checked'] = 0;
+        update_option('icl_sitepress_settings',$iclsettings);
     }  
        
     // clean the icl_translations table 
@@ -300,7 +305,7 @@ function icl_sitepress_activate(){
     if(defined('ICL_DEBUG_MODE') && ICL_DEBUG_MODE){
         require_once ICL_PLUGIN_PATH . '/inc/functions.php';
         icl_display_errors_stack(true);
-    }                                                              
+    } 
 }
 
 function icl_sitepress_deactivate(){

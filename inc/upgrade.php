@@ -19,7 +19,7 @@ function icl_plugin_upgrade(){
     // upgrade actions 
     // 1. reset ajx_health_flag
     $iclsettings['ajx_health_checked'] = 0;
-    $this->save_settings($iclsettings);    
+    update_option('icl_sitepress_settings',$iclsettings);
     
     // clear any caches
     if($mig_debug) fwrite($mig_debug, "Clearing cache \n");
