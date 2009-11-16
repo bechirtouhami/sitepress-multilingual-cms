@@ -10,6 +10,9 @@ function icl_cache_get($key){
 
 function icl_cache_set($key, $value=null){
     $icl_cache = get_option('_icl_cache');
+    if(false === $icl_cache){
+        delete_option('_icl_cache');
+    }
     if(!is_null($value)){
         $icl_cache[$key] = $value;    
     }else{
@@ -21,7 +24,7 @@ function icl_cache_set($key, $value=null){
 }
 
 function icl_cache_clear($key){
-    icl_cache_set($key, null);
+    delete_option('_icl_cache');
 }
 
 define('ICL_DISABLE_CACHE', false);
