@@ -588,6 +588,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     
     _icl_content_fix_image_paths_in_body($translation);
     _icl_content_fix_relative_link_paths_in_body($translation);
+    _icl_content_decode_shortcodes($translation);
     
     if($original_post_details->post_type=='post'){
         
@@ -1235,6 +1236,32 @@ function icl_decode_translation_status_id($status){
     }
     
     return $st;
+}
+
+/*
+ Decode any html encoding in shortcodes
+ http://codex.wordpress.org/Shortcode_API
+*/
+ 
+function _icl_content_decode_shortcodes(&$translation) {
+    $body = $translation['body'];
+    
+    global $shortcode_tags;
+    if (isset($shortcode_tags)) {
+        $tagnames = array_keys($shortcode_tags);
+	$tagregexp = join( '|', array_map('preg_quote', $tagnames) );
+
+        $regexp = '/\[('.$tagregexp.')\b(.*?)\]/s';
+        
+        if (preg_match_all($regexp, $body, $matches, PREG_SET_ORDER)) {
+            foreach ($matches as $match) {
+                $body = str_replace($match[0], '[' . $match[1] . html_entity_decode($match[2]) . ']', $body);
+            }
+        }
+        
+    }
+    
+    $translation['body'] = $body;
 }
 
 function _icl_content_fix_image_paths_in_body(&$translation) {
