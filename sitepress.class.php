@@ -987,6 +987,22 @@ class SitePress{
                         break;
                     }
                 }
+                if(isset($_GET['trid'])){
+                    $res = $wpdb->get_row("SELECT comment_status, ping_status FROM {$wpdb->prefix}icl_translations t 
+                    JOIN {$wpdb->posts} p ON t.element_id = p.ID WHERE t.trid='".intval($_GET['trid'])."'"); ?>
+                    <script type="text/javascript">addLoadEvent(function(){
+                    <?php if($res->comment_status == 'open'): ?>
+                    jQuery('#comment_status').attr('checked','checked');
+                    <?php else: ?>
+                    jQuery('#comment_status').removeAttr('checked');
+                    <?php endif; ?>
+                    <?php if($res->ping_status == 'open'): ?>
+                    jQuery('#ping_status').attr('checked','checked');
+                    <?php else: ?>
+                    jQuery('#ping_status').removeAttr('checked');
+                    <?php endif; ?>                    
+                    });</script><?php 
+                }
                 //get menu_order for page
                 
             }
@@ -1522,6 +1538,20 @@ class SitePress{
                 foreach($translated_pages as $tp){
                     if($tp != $post_id){
                         update_post_meta($tp, '_wp_page_template', $_POST['page_template']);
+                    }
+                }
+            }            
+        }        
+
+        // synchronize comment and ping status
+        if($trid && $_POST['post_type']=='post'){
+            $comment_status = $_POST['comment_status']; 
+            $ping_status = $_POST['ping_status']; 
+            $translated_posts = $wpdb->get_col("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid='{$trid}' AND element_id<>{$post_id}");
+            if(!empty($translated_posts)){
+                foreach($translated_posts as $tp){
+                    if($tp != $post_id){
+                        $wpdb->update($wpdb->posts, array('comment_status'=>$comment_status, 'ping_status'=>$ping_status), array('ID'=>$tp));
                     }
                 }
             }            
