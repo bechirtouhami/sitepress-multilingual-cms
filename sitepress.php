@@ -57,6 +57,7 @@ require ICL_PLUGIN_PATH . '/inc/functions.php';
 require ICL_PLUGIN_PATH . '/inc/hacks.php';
 require ICL_PLUGIN_PATH . '/inc/upgrade.php';
 require ICL_PLUGIN_PATH . '/inc/functions-string-translation.php';
+require ICL_PLUGIN_PATH . '/inc/functions-packages.php';
 
 if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQUEST['action']!='activate-selected') 
     || (($_REQUEST['plugin'] != basename(ICL_PLUGIN_PATH).'/'.basename(__FILE__)) 
@@ -64,7 +65,7 @@ if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQ
         
     $sitepress = new SitePress();
     $sitepress_settings = $sitepress->get_settings();    
-        
+    
     // modules load
     // CMS Navigation
     if(isset($_GET['enable-cms-navigation'])){

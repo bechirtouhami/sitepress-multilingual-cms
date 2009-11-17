@@ -182,6 +182,11 @@ class SitePress{
                 add_action('manage_pages_custom_column',array($this,'add_content_for_posts_management_column'));
                 add_action('admin_print_scripts', array($this, '__set_posts_management_column_width'));
             }
+                        
+            add_action('icl_extra_options_' . $_GET['page'], 'icl_extras_render_forms');
+            if(isset($_POST['icl_extras_submit'])){
+                add_action('init', 'icl_extras_process_forms');
+            }
             
         } //end if the initial language is set - existing_content_language_verified
         

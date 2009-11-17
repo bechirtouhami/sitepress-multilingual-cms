@@ -536,25 +536,8 @@
 
         </div>
     <?php endif; ?>
-        
-    <?php 
-    /*
-    function get_current_language(){
-        echo 'CR';
-    }    
-    add_action('icl_languages_options_after', 'get_current_language');
     
-    <?php if(0 && isset($wp_filter['icl_languages_options_after'])): ?>
-    <form name="icl_custom_language_options">
-    <?php do_action('icl_languages_options_after'); ?>
-    <p>
-        <input class="button" name="save" value="<?php echo __('Apply','sitepress') ?>" type="submit" />
-        <span class="icl_ajx_response" id="icl_ajx_response_clo"></span>
-    </p>
-    </form>    
-    <?php endif; ?>
-    */
-    ?>
+    <?php do_action('icl_extra_options_' . $_GET['page']); ?>        
     
     <?php if($sitepress_settings['setup_complete']): ?>  
     <form name="icl_promote_form">
