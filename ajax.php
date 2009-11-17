@@ -430,7 +430,7 @@ switch($_REQUEST['icl_ajx_action']){
         echo '1|'.$icl_tl_type;
         break;
     case 'icl_tl_rescan':
-        $scan_stats = icl_st_scan_theme_files();
+        $scan_stats = icl_st_scan_theme_files();                
         echo '1|'.$scan_stats;
         break;
     
