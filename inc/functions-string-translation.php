@@ -113,10 +113,16 @@ function icl_st_init(){
                         $translation = "";
                     }
                     
+                    $string_exists = $wpdb->get_var("
+                        SELECT id FROM {$wpdb->prefix}icl_strings 
+                        WHERE context='".$wpdb->escape($_POST['icl_st_i_context_new']?$_POST['icl_st_i_context_new']:$_POST['icl_st_i_context'])."' 
+                        AND name='".md5($string)."'");
+                    
                     $icl_st_po_strings[] = array(     
                         'string' => $string,
                         'translation' => $translation,
-                        'fuzzy' => $fuzzy
+                        'fuzzy' => $fuzzy,
+                        'exists' => $string_exists
                     );
                     $k++;                        
                     
@@ -170,8 +176,7 @@ function icl_st_init(){
                     icl_update_string_status($string_id);
                 }                
             }            
-        }
-        
+        }        
     }
     
     //handle po export

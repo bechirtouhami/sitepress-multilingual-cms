@@ -40,7 +40,7 @@ $available_contexts = array_unique($available_contexts);
     
     <?php if(isset($icl_st_po_strings) && !empty($icl_st_po_strings)): ?>
     
-        <p><?php printf(__('These are the strings that we found in your .po file. Please carefully review them. Then, click on the \'add\' or \'cancel\' buttons at the <a href="%s">bottom of this screen</a>. You can exclude individual strings by clearing the check boxes next to them.', 'sitepress'), '#add_po_strings_confirm'); ?></p>
+        <p><?php printf(__('These are the strings that we found in your .po file. Please carefully review them. Then, click on the \'add\' or \'cancel\' buttons at the <a href="%s">bottom of this screen</a>. You can exclude individual strings by clearing the check boxes next to them.', 'sitepress'), '#add_po_strings_confirm'); ?></p>        
         <form method="post" action="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH) ?>/menu/string-translation.php">
         <?php if(isset($_POST['icl_st_po_translations'])): ?>
         <input type="hidden" name="icl_st_po_language" value="<?php echo $_POST['icl_st_po_language'] ?>" />
@@ -63,7 +63,8 @@ $available_contexts = array_unique($available_contexts);
             <tbody>
                 <?php $k = -1; foreach($icl_st_po_strings as $str): $k++; ?>
                     <tr>
-                        <td><input class="icl_st_row_cb" type="checkbox" name="icl_strings_selected[]" checked="checked" value="<?php echo $k ?>" /></td>
+                        <td><input class="icl_st_row_cb" type="checkbox" name="icl_strings_selected[]" 
+                            <?php if($str['exists']): ?>checked="checked"<?php endif;?> value="<?php echo $k ?>" /></td>
                         <td>
                             <input type="text" name="icl_strings[]" value="<?php echo htmlspecialchars($str['string']) ?>" readonly="readonly" style="width:100%;" size="100" />
                             <?php if(isset($_POST['icl_st_po_translations'])):?>
