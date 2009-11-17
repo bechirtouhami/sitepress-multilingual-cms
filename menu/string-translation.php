@@ -64,7 +64,7 @@ $available_contexts = array_unique($available_contexts);
                 <?php $k = -1; foreach($icl_st_po_strings as $str): $k++; ?>
                     <tr>
                         <td><input class="icl_st_row_cb" type="checkbox" name="icl_strings_selected[]" 
-                            <?php if($str['exists']): ?>checked="checked"<?php endif;?> value="<?php echo $k ?>" /></td>
+                            <?php if($str['exists'] || !isset($_POST['icl_st_po_translations'])): ?>checked="checked"<?php endif;?> value="<?php echo $k ?>" /></td>
                         <td>
                             <input type="text" name="icl_strings[]" value="<?php echo htmlspecialchars($str['string']) ?>" readonly="readonly" style="width:100%;" size="100" />
                             <?php if(isset($_POST['icl_st_po_translations'])):?>
