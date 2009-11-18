@@ -342,7 +342,7 @@ class SitePress{
         if(is_null($current_user) && function_exists('wp_get_current_user')){
             $u = wp_get_current_user();
             if($u->ID > 0){
-                $current_user = wp_get_current_user();
+                $current_user = $u;
             }
         }
                                    
