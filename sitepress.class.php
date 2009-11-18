@@ -1534,11 +1534,21 @@ class SitePress{
             $translations = $this->get_element_translations($trid);
             foreach($translations as $target_lang => $target_details){
                 if($target_lang != $language_code){
-                    $this->fix_translated_parent($post_id, $target_details->element_id, $target_lang);
+                    $this->fix_translated_parent($post_id, $target_details->element_id, $target_lang, $language_code);
+                    
+                    // restore child-parent relationships
+                    $children = $wpdb->get_col("SELECT ID FROM {$wpdb->posts} WHERE post_parent={$target_details->element_id} AND post_type='page'");
+                    foreach($children as $ch){
+                        $ch_trid = $this->get_element_trid($ch);
+                        $ch_translations = $this->get_element_translations($ch_trid);
+                        if(isset($ch_translations[$language_code])){
+                            $wpdb->update($wpdb->posts, array('post_parent'=>$post_id), array('ID'=>$ch_translations[$language_code]->element_id));
+                        }
+                    }                    
                 }
             }
-        }
-        
+        }        
+                
         // synchronize the page template
         if($trid && $_POST['post_type']=='page'){
             $translated_pages = $wpdb->get_col("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid='{$trid}' AND element_id<>{$post_id}");
@@ -1607,13 +1617,17 @@ class SitePress{
         icl_cache_clear($_POST['post_type'].'s_per_language');
     }
     
-    function fix_translated_parent($original_id, $translated_id, $lang_code){
+    function fix_translated_parent($original_id, $translated_id, $lang_code, $language_code){
         global $wpdb;
 
         $original_parent = $wpdb->get_var("SELECT post_parent FROM {$wpdb->posts} WHERE ID = {$original_id} AND post_type = 'page'");
         if (!is_null($original_parent)){
-            if($original_parent==='0'){
-                $wpdb->query("UPDATE {$wpdb->posts} SET post_parent='0' WHERE ID = ".$translated_id);
+            if($original_parent === '0'){
+                $parent_of_translated_id = $wpdb->get_var("SELECT post_parent FROM {$wpdb->posts} WHERE ID = {$translated_id} AND post_type = 'page'");
+                $translations = $this->get_element_translations($this->get_element_trid($parent_of_translated_id));
+                if(isset($translations[$language_code])){
+                    $wpdb->query("UPDATE {$wpdb->posts} SET post_parent='0' WHERE ID = ".$translated_id);
+                }
             }else{
                 $trid = $this->get_element_trid($original_parent);
                 if($trid){
