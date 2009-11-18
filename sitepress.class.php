@@ -340,7 +340,10 @@ class SitePress{
         global $wpdb, $current_user;
         
         if(is_null($current_user) && function_exists('wp_get_current_user')){
-            $current_user = wp_get_current_user();
+            $u = wp_get_current_user();
+            if($u->ID > 0){
+                $current_user = wp_get_current_user();
+            }
         }
                                    
         $active_languages = array_keys($wpdb->get_col("SELECT code FROM {$wpdb->prefix}icl_languages WHERE active=1"));   //don't use method get_active_language()
