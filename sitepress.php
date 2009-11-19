@@ -57,7 +57,10 @@ require ICL_PLUGIN_PATH . '/inc/functions.php';
 require ICL_PLUGIN_PATH . '/inc/hacks.php';
 require ICL_PLUGIN_PATH . '/inc/upgrade.php';
 require ICL_PLUGIN_PATH . '/inc/functions-string-translation.php';
-require ICL_PLUGIN_PATH . '/inc/functions-packages.php';
+require ICL_PLUGIN_PATH . '/inc/compatibility-packages/functions-packages.php';
+require ICL_PLUGIN_PATH . '/inc/compatibility-packages/wpml-package.class.php';
+require ICL_PLUGIN_PATH . '/inc/compatibility-packages/init-packages.php';
+
 
 if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQUEST['action']!='activate-selected') 
     || (($_REQUEST['plugin'] != basename(ICL_PLUGIN_PATH).'/'.basename(__FILE__)) 

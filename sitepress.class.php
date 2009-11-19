@@ -183,10 +183,10 @@ class SitePress{
                 add_action('admin_print_scripts', array($this, '__set_posts_management_column_width'));
             }
                         
-            add_action('icl_extra_options_' . $_GET['page'], 'icl_extras_render_forms');
-            if(isset($_POST['icl_extras_submit'])){
-                add_action('init', 'icl_extras_process_forms');
-            }
+            //add_action('icl_extra_options_' . $_GET['page'], 'icl_extras_render_forms');
+            //if(isset($_POST['icl_extras_submit'])){
+            //    add_action('init', 'icl_extras_process_forms');
+            //}            
             
         } //end if the initial language is set - existing_content_language_verified
         
@@ -424,6 +424,9 @@ class SitePress{
                 add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Troubleshooting','sitepress'), __('Troubleshooting','sitepress'), 
                             'manage_options', basename(ICL_PLUGIN_PATH).'/menu/troubleshooting.php'); 
             }            
+            
+            add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Compatibility packages','sitepress'), __('Compatibility packages','sitepress'), 
+                            'manage_options', basename(ICL_PLUGIN_PATH).'/menu/compatibility-packages.php');             
             
         }
     }
