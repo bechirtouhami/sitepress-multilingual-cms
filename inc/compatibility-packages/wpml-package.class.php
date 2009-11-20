@@ -50,11 +50,13 @@ abstract class WPML_Package{
             'extra_attributes' => $extra_attributes
         );
         
-        // add the default value to the database
-        if($default_value){
-            
+        // add the default value to the database        
+        if($default_value && !isset($this->settings[$option_name])){
+            global $sitepress;
+            $this->settings[$option_name] = $default_value;
+            $iclsettings['packages'][$this->type][$this->name] = $this->settings;
+            $sitepress->save_settings($iclsettings);
         }
-        
         
     }
         
@@ -73,25 +75,88 @@ abstract class WPML_Package{
             'extra_attributes' => $extra_attributes
         );
         
+        // add the default value to the database        
+        if($default_value && !isset($this->settings[$option_name])){
+            global $sitepress;
+            $this->settings[$option_name] = $default_value;
+            $iclsettings['packages'][$this->type][$this->name] = $this->settings;
+            $sitepress->save_settings($iclsettings);
+        }
         
     }
     
-    function add_option_textarea(){
+    function add_option_textarea($wpml_page, $option_label, $option_name, $group_name = ICL_EXTRAS_DEFAULT_GROUP_NAME, $default_value='', $extra_attributes = array()){
+        global $WPML_Packages;
+        if(!$group_name){
+            $group_name = ICL_EXTRAS_DEFAULT_GROUP_NAME;
+        }
+                                
+        $WPML_Packages->packages_options[$wpml_page][$group_name][$this->name][] = array(
+            'package_type' => $this->type,
+            'option_type' => 'textarea',
+            'option_label' => $option_label,
+            'option_name' => $option_name,
+            'default_value' => $default_value,
+            'extra_attributes' => $extra_attributes
+        );
         
-        // TBD
-        
+        // add the default value to the database        
+        if($default_value && !isset($this->settings[$option_name])){
+            global $sitepress;
+            $this->settings[$option_name] = $default_value;
+            $iclsettings['packages'][$this->type][$this->name] = $this->settings;
+            $sitepress->save_settings($iclsettings);
+        }
     }
     
-    function add_option_radio(){
+    function add_option_radio($wpml_page, $option_label, $option_name, $option_options, $group_name = ICL_EXTRAS_DEFAULT_GROUP_NAME, $default_value='', $extra_attributes = array()){
+        global $WPML_Packages;
+        if(!$group_name){
+            $group_name = ICL_EXTRAS_DEFAULT_GROUP_NAME;
+        }
+                                
+        $WPML_Packages->packages_options[$wpml_page][$group_name][$this->name][] = array(
+            'package_type' => $this->type,
+            'option_type' => 'radio',
+            'option_label' => $option_label,
+            'option_name' => $option_name,
+            'option_options' => $option_options,
+            'default_value' => $default_value,
+            'extra_attributes' => $extra_attributes
+        );
         
-        // TBD
-        
+        // add the default value to the database        
+        if($default_value && !isset($this->settings[$option_name])){
+            global $sitepress;
+            $this->settings[$option_name] = $default_value;
+            $iclsettings['packages'][$this->type][$this->name] = $this->settings;
+            $sitepress->save_settings($iclsettings);
+        }
     }
 
-    function add_option_select(){
+    function add_option_select($wpml_page, $option_label, $option_name, $option_options, $group_name = ICL_EXTRAS_DEFAULT_GROUP_NAME, $default_value='', $extra_attributes = array()){
+        global $WPML_Packages;
+        if(!$group_name){
+            $group_name = ICL_EXTRAS_DEFAULT_GROUP_NAME;
+        }
+                                
+        $WPML_Packages->packages_options[$wpml_page][$group_name][$this->name][] = array(
+            'package_type' => $this->type,
+            'option_type' => 'select',
+            'option_label' => $option_label,
+            'option_name' => $option_name,
+            'option_options' => $option_options,
+            'default_value' => $default_value,
+            'extra_attributes' => $extra_attributes
+        );
         
-        // TBD
-        
+        // add the default value to the database        
+        if($default_value && !isset($this->settings[$option_name])){
+            global $sitepress;
+            $this->settings[$option_name] = $default_value;
+            $iclsettings['packages'][$this->type][$this->name] = $this->settings;
+            $sitepress->save_settings($iclsettings);
+        }
     }
     
         

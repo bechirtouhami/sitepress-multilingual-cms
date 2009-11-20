@@ -212,6 +212,76 @@ class WPML_Packages{
         echo '<input type="text" id="icl_extras_'.$package_name.'_'.$option_name.'" name="icl_extras['.$package_type.']['.$package_name.']['.$option_name.']" value="'.$value.'"' . $ea . ' />';
     }    
     
+    private function _icl_extras_render_textarea($package_type, $package_name, $option_name, $default_value = '', $extra_attributes = array()){
+        global $sitepress_settings;
+
+        if(isset($sitepress_settings['packages'][$package_type][$package_name][$option_name])){
+            $value = $sitepress_settings['packages'][$package_type][$package_name][$option_name];
+        }else{
+            $value = $default_value;
+        }    
+
+        $ea = '';
+        if(!empty($extra_attributes)){
+            foreach($extra_attributes as $k=>$v){
+                $ea .= ' ' . $k . '="' . $v . '"';
+            }        
+        }
+        echo '<textarea id="icl_extras_'.$package_name.'_'.$option_name.'" name="icl_extras['.$package_type.']['.$package_name.']['.$option_name.']" ' . $ea . '>'.$value.'</textarea>';
+    }
+    
+    private function _icl_extras_render_select($package_type, $package_name, $option_name, $option_options, $default_value = '', $extra_attributes = array()){
+        global $sitepress_settings;
+
+        if(isset($sitepress_settings['packages'][$package_type][$package_name][$option_name])){
+            $value = $sitepress_settings['packages'][$package_type][$package_name][$option_name];
+        }else{
+            $value = $default_value;
+        }    
+
+        $ea = '';
+        if(!empty($extra_attributes)){
+            foreach($extra_attributes as $k=>$v){
+                $ea .= ' ' . $k . '="' . $v . '"';
+            }        
+        }
+        echo '<select type="text" id="icl_extras_'.$package_name.'_'.$option_name.'" name="icl_extras['.$package_type.']['.$package_name.']['.$option_name.']"' . $ea . '>';
+        foreach($option_options as $value=>$name){
+            if($default_value && $default_value==$value){
+                $selected = ' selected="selected"';
+            }else{
+                $selected = '';
+            }
+            echo '<option value="'.$value.'"'.$selected.'>' . $name . '</option>';
+        }
+        echo '</select>';
+    }        
+    
+    private function _icl_extras_render_radio($package_type, $package_name, $option_name, $option_values, $default_value = '', $extra_attributes = array()){
+        global $sitepress_settings;
+        
+        if(isset($sitepress_settings['packages'][$package_type][$package_name][$option_name])){
+            $value = $sitepress_settings['packages'][$package_type][$package_name][$option_name];
+        }else{
+            $value = $default_value;
+        }    
+
+        $ea = '';
+        if(!empty($extra_attributes)){
+            foreach($extra_attributes as $k=>$v){
+                $ea .= ' ' . $k . '="' . $v . '"';
+            }        
+        }
+        foreach($option_values as $value=>$name){
+            if($default_value && $default_value==$value){
+                $checked = ' checked="checked"';
+            }else{
+                $checked = '';
+            }
+            echo '<label><input type="radio" id="icl_extras_'.$package_name.'_'.$option_name.'" name="icl_extras['.$package_type.']['.$package_name.']['.$option_name.']" value="'.$value.'"' .$checked . $ea . ' />' . $name . '</label>&nbsp;&nbsp;&nbsp;';
+        }
+    }        
+    
     function render_forms(){
         $page = $_GET['page'];
         if(isset($this->packages_options[$page])){
@@ -240,6 +310,16 @@ class WPML_Packages{
                             case 'text':
                                 $this->_icl_extras_render_text($o['package_type'], $package_name, $o['option_name'], $o['default_value'], $o['extra_attributes']);                        
                                 break;                                
+                            case 'textarea':
+                                $this->_icl_extras_render_textarea($o['package_type'], $package_name, $o['option_name'], $o['default_value'], $o['extra_attributes']);                        
+                                break;                                
+                            case 'select':
+                                $this->_icl_extras_render_select($o['package_type'], $package_name, $o['option_name'], $o['option_options'], $o['default_value'], $o['extra_attributes']);                        
+                                break;                                
+                            case 'radio':
+                                $this->_icl_extras_render_radio($o['package_type'], $package_name, $o['option_name'], $o['option_options'], $o['default_value'], $o['extra_attributes']);                        
+                                break;                                
+                                
                         }
                         echo '</td>';
                         echo '</tr>';
