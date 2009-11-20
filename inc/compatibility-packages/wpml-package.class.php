@@ -35,13 +35,13 @@ abstract class WPML_Package{
     
     
     function add_option_checkbox($wpml_page, $option_label, $option_name, $group_name = ICL_EXTRAS_DEFAULT_GROUP_NAME, $default_value='', $extra_attributes = array()){
-        global $ICL_Packages;
+        global $WPML_Packages;
         if(!$group_name){
             $group_name = ICL_EXTRAS_DEFAULT_GROUP_NAME;
         }
                                 
         
-        $ICL_Packages->packages_options[$wpml_page][$group_name][$this->name][] = array(
+        $WPML_Packages->packages_options[$wpml_page][$group_name][$this->name][] = array(
             'package_type' => $this->type,
             'option_type' => 'checkbox',
             'option_label' => $option_label,
@@ -50,15 +50,21 @@ abstract class WPML_Package{
             'extra_attributes' => $extra_attributes
         );
         
+        // add the default value to the database
+        if($default_value){
+            
+        }
+        
+        
     }
         
     function add_option_text($wpml_page, $option_label, $option_name, $group_name = ICL_EXTRAS_DEFAULT_GROUP_NAME, $default_value='', $extra_attributes = array()){
-        global $ICL_Packages;
+        global $WPML_Packages;
         if(!$group_name){
             $group_name = ICL_EXTRAS_DEFAULT_GROUP_NAME;
         }
                                 
-        $ICL_Packages->packages_options[$wpml_page][$group_name][$this->name][] = array(
+        $WPML_Packages->packages_options[$wpml_page][$group_name][$this->name][] = array(
             'package_type' => $this->type,
             'option_type' => 'text',
             'option_label' => $option_label,
