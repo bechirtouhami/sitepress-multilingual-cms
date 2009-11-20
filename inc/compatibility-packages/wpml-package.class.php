@@ -5,21 +5,26 @@ abstract class WPML_Package{
     var $data;
     var $settings;
     var $type;
+    var $package_path;
+    var $package_url;
     
     
     function __construct(){
+        global $WPML_Packages;
+        
         $trace=debug_backtrace();
-        $this->name = basename(dirname($trace[0]['file']));
+        $this->package_path = dirname($trace[0]['file']);
+        $this->name = basename($this->package_path);
         $this->type = basename(dirname(dirname($trace[0]['file'])));
+        $this->package_url = get_option('home') . str_replace('\\','/',str_replace(trim(ABSPATH,'/'), '', $this->package_path));
+        
+        $_packages = $WPML_Packages->get_packages();
+        $this->data = $_packages[$this->type][$this->name];
         
         global $sitepress_settings;
         if(empty($sitepress_settings)){
             $sitepress_settings = get_option('icl_sitepress_settings'); // fail safe
         }
-        
-        //echo '<pre>';
-        //var_dump($sitepress_settings['packages']);
-        //echo '</pre>';
         
         if(isset($sitepress_settings['packages'][$this->type][$this->name])){
             $this->settings = $sitepress_settings['packages'][$this->type][$this->name];    
@@ -159,6 +164,21 @@ abstract class WPML_Package{
         }
     }
     
+    // $file is relative to the package root folder
+    function load_js($file){
+        add_action('wp_head', array($this, '_echo_js'), 30);        
+    }
+     function _echo_js($file){
+        echo '<script type="text/javascript" src="'.$this->package_url . '/' . $file.'?v='. $this->data['Version'] .'"></script>'."\n";
+    }
+    
+    // $file is relative to the package root folder
+    function load_css($file){
+        add_action('wp_head', array($this, '_echo_css'), 30);
+    }
+     function _echo_css($file){
+        echo '<link rel="stylesheet" type="text/css" href="'.$this->package_url . '/' . $file.'?v='. $this->data['Version'] .'" />'."\n";
+    }
         
 }
   
