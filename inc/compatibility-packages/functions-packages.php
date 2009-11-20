@@ -3,7 +3,7 @@
 define('ICL_EXTRAS_DEFAULT_GROUP_NAME', __('Extra options', 'sitepress'));
 define('ICL_EXTRAS_PACKAGES_BASE_PATH', ICL_PLUGIN_PATH . '/compatibility-packages');
 
-class ICL_Packages{
+class WPML_Packages{
     
     private $packages;
     private $packages_enabled;
@@ -12,6 +12,13 @@ class ICL_Packages{
     function __construct(){
         $this->_read_theme_packages();
         $this->_read_plugin_packages();
+        
+        add_action('plugins_loaded', array($this,'load_packages'));
+        add_action('icl_extra_options_' . $_GET['page'], array($this,'render_forms'));
+        
+        if(isset($_POST['icl_extras_submit'])){
+            add_action('init', array($this,'process_forms'));
+        }            
         
         if(isset($_POST['icl_packages'])){
                 add_action('init', array($this, 'update_enabled_packages'));

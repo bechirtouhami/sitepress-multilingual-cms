@@ -6,8 +6,8 @@ Description: Sample package description #2
 Theme: default
 Theme version: 1.0
 Plugin: sitepress-multilingual-cms/sitepress.php
-Plugin version: 1.0
-Author: Mihai G
+Plugin version: 1.4
+Author: WPML
 Author URI: http://www.onthegosystems.com
 Version: 1.0
 */

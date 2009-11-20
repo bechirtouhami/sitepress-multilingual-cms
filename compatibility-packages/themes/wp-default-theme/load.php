@@ -2,10 +2,10 @@
 /*
 Package Name: Extra options for the Default theme (demo)
 Package URI: http://wpml.org/
-Description: This is a demo package that would illustrate how these packages should be buillt. GNU Licence blah blah.. It applies to the WP default theme.
+Description: This is a demo package that would illustrate how these packages should be buillt. It applies to the WP default theme.
 Theme: default
-Theme version: 1.0
-Author: Mihai G
+Theme version: 1.6
+Author: WPML
 Author URI: http://www.onthegosystems.com
 Version: 1.0
 */
@@ -74,7 +74,7 @@ class WP_Default_theme_compatibility  extends WPML_Package{
     function footer_language_selector(){
         $languages = icl_get_languages('skip_missing='.intval($this->settings['footer_skip_languages']));
         if(!empty($languages)){
-            echo '<div id="'.$div_id.'"><ul>';
+            echo '<div id="icl_footer_languages"><ul>';
             foreach($languages as $l){
                 echo '<li>';
                 if(!$l['active']) echo '<a href="'.$l['url'].'">';
