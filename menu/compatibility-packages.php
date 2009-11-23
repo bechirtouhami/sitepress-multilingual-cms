@@ -1,5 +1,5 @@
 <?php 
-$icl_enabled_packages = $ICL_Packages->get_enabled_packages();
+$icl_enabled_packages = $WPML_Packages->get_enabled_packages();
 ?>
 <div class="wrap">
     <div id="icon-options-general" class="icon32" style="background: transparent url(<?php echo ICL_PLUGIN_URL ?>/res/img/icon<?php if(!$sitepress_settings['basic_menu']) echo '_adv'?>.png) no-repeat"><br /></div>
