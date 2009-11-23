@@ -1827,7 +1827,7 @@ class SitePress{
         }
         
         if('all' != $this->this_lang){ 
-            $cond = " AND language_code='{$wpdb->escape($this->get_current_language())}' ";
+            $cond = " AND t.language_code='{$wpdb->escape($this->get_current_language())}' ";
             $ljoin = "";
         }else{
             $cond = '';
@@ -1842,7 +1842,7 @@ class SitePress{
         global $wpdb, $wp_query;        
         $wp_query->query_vars['is_comment_feed'] = true;
         $join .= " JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->comments}.comment_post_ID = t.element_id 
-                    AND t.element_type='post' {$cond} AND language_code='{$wpdb->escape($this->this_lang)}'";
+                    AND t.element_type='post' {$cond} AND t.language_code='{$wpdb->escape($this->this_lang)}'";
         return $join;
     }
     
