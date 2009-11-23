@@ -1,7 +1,8 @@
 <?php
-  
+                 
 define('ICL_EXTRAS_DEFAULT_GROUP_NAME', __('Extra options', 'sitepress'));
 define('ICL_EXTRAS_PACKAGES_BASE_PATH', ICL_PLUGIN_PATH . '/compatibility-packages');
+define('ICL_EXTRAS_EXTERNAL_PACKAGE_FOLDER', 'wpml-compatibility-packages');
 
 class WPML_Packages{
     
@@ -114,6 +115,11 @@ class WPML_Packages{
         }catch (Exception $e){ echo $e->getMessage(); }
     }
 
+    function _read_custom_packages(){
+        // read package from the current theme
+        //  
+    }
+    
     function get_packages(){
         return $this->packages;        
     }
