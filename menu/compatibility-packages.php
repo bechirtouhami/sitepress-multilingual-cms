@@ -8,7 +8,7 @@ $icl_enabled_packages = $WPML_Packages->get_enabled_packages();
     <?php include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php' ?>
     
     <h3><?php echo __('Compatibility packages', 'sitepress') ?></h3>    
-    <?php foreach($ICL_Packages->get_packages() as $package_type => $packages): ?>
+    <?php foreach($WPML_Packages->get_packages() as $package_type => $packages): ?>
     <h4><?php echo ucfirst($package_type) ?></h4>
     
     <form action="" method="post">
