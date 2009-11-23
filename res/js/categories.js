@@ -44,7 +44,7 @@ jQuery(document).ready(function(){
 /*
  jQuery(function($) {
 	var addAfter3 = function( r, settings ) {
-            JQuery('#icon-edit').remove();
+            jQuery('#icon-edit').remove();
 	}
         
 	$('#the-list').wpList( { addAfter: addAfter3} );

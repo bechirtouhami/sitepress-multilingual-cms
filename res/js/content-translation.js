@@ -197,7 +197,7 @@ function iclToggleMoreLanguages(){
 }
 
 function iclValidateWebsiteKind(){
-    if (JQuery('form[name="icl_more_options"]').length > 0 ) {
+    if (jQuery('form[name="icl_more_options"]').length > 0 ) {
         
         jQuery('form[name="icl_more_options"] ul:first').css('border','none').css('padding','0');
         jQuery('form[name="icl_more_options"] .icl_form_errors').fadeOut();
