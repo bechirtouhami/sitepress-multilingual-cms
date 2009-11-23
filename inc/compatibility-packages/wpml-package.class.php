@@ -164,6 +164,30 @@ abstract class WPML_Package{
         }
     }
     
+    function add_options($wpml_page, $options_array, $group_name = ICL_EXTRAS_DEFAULT_GROUP_NAME){
+        if(is_array($options_array) && !empty($options_array)){
+            foreach($options_array as $option_name => $option){
+                switch($option['option_type']){
+                    case 'checkbox':
+                        $this->add_option_checkbox($wpml_page, $option['option_label'], $option_name, $group_name, $option['default_value'], $option['extra_attributes']);
+                        break;
+                    case 'text':
+                        $this->add_option_text($wpml_page, $option['option_label'], $option_name, $group_name, $option['default_value'], $option['extra_attributes']);
+                        break;
+                    case 'textarea':
+                        $this->add_option_textarea($wpml_page, $option['option_label'], $option_name, $group_name, $option['default_value'], $option['extra_attributes']);
+                        break;
+                    case 'radio':
+                        $this->add_option_radio($wpml_page, $option['option_label'], $option_name, $option['values'], $group_name, $option['default_value'], $option['extra_attributes']);
+                        break;
+                    case 'select':
+                        $this->add_option_select($wpml_page, $option['option_label'], $option_name, $option['values'], $group_name, $option['default_value'], $option['extra_attributes']);
+                        break;
+                }
+            }
+        }            
+    }
+    
     // $file is relative to the package root folder
     function load_js($file){
         add_action('wp_head', array($this, '_echo_js'), 30);        

@@ -13,6 +13,7 @@ class WPML_Packages{
     function __construct(){
         $this->_read_theme_packages();
         $this->_read_plugin_packages();
+        $this->_read_external_packages();
         
         add_action('plugins_loaded', array($this,'load_packages'));
         add_action('icl_extra_options_' . $_GET['page'], array($this,'render_forms'));
@@ -89,6 +90,7 @@ class WPML_Packages{
                             }
                         }
                         
+                        $package_data['path'] = $folder . '/' . $f ;
                         $packages[$f] = $package_data;
                                                          
                     }
@@ -115,9 +117,38 @@ class WPML_Packages{
         }catch (Exception $e){ echo $e->getMessage(); }
     }
 
-    function _read_custom_packages(){
+    function _read_external_packages(){
         // read package from the current theme
-        //  
+        if(get_template_directory() != get_stylesheet_directory()){
+            $folder = get_stylesheet_directory() . '/' . ICL_EXTRAS_EXTERNAL_PACKAGE_FOLDER;        
+            if(@file_exists($folder) && is_dir($folder)){
+                $packages = $this->scan($folder);
+                if(is_array($packages) && !empty($packages)){
+                    $this->packages['themes'] = array_merge($this->packages['themes'] , $packages);
+                }
+            }
+        }
+        $folder = get_template_directory() . '/' . ICL_EXTRAS_EXTERNAL_PACKAGE_FOLDER;        
+        if(@file_exists($folder) && is_dir($folder)){
+            $packages = $this->scan($folder);
+            if(is_array($packages) && !empty($packages)){
+                $this->packages['themes'] = array_merge($this->packages['themes'] , $packages);
+            }
+        }
+        
+        $plugins = get_option('active_plugins');
+        if(is_array($plugins) && !empty($plugins)){
+            foreach($plugins as $plugin){
+                $exp = explode('/', $plugin);                
+                $plugin_folder = WP_PLUGIN_DIR . '/' . $exp[0] . '/' . ICL_EXTRAS_EXTERNAL_PACKAGE_FOLDER;
+                if(@file_exists($plugin_folder) && is_dir($plugin_folder)){
+                    $packages = $this->scan($plugin_folder);
+                    if(is_array($packages) && !empty($packages)){
+                        $this->packages['plugins'] = array_merge($this->packages['plugins'] , $packages);
+                    }
+                }
+            }
+        }
     }
     
     function get_packages(){
@@ -126,7 +157,18 @@ class WPML_Packages{
 
     function load_package($type, $name){
         try{
-            @include ICL_EXTRAS_PACKAGES_BASE_PATH . '/' . $type . '/' . $name . '/load.php';
+            $bootstrap = $this->packages[$type][$name]['path'] . '/load.php';
+            if(@file_exists($bootstrap)){
+                @include $bootstrap;
+            }else{
+                global $sitepress;
+                $enabled = $this->get_enabled_packages();        
+                unset($enabled[$type][$name]);
+                $this->packages_enabled[$type][$name] = 0;
+                $iclsettings['packages_enabled'] = $this->packages_enabled;
+                $sitepress->save_settings($iclsettings);
+            }
+            
         }catch(Exception $e){
             echo $e->getMessage();
         }            
