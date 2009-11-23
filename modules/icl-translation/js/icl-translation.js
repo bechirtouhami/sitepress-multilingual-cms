@@ -1,4 +1,5 @@
 jQuery(document).ready(function(){
+    jQuery('#icl_configure_account, #icl_create_account').submit(iclConfigureAccount);
     jQuery('#icl-translation-dashboard th :checkbox').click(
         function(){
             if(jQuery(this).attr('checked')){
@@ -327,6 +328,45 @@ function icl_refresh_translator_not_available_links() {
     });
 
     
+}
+
+
+function iclConfigureAccount(){
+    formdata = jQuery(this).serialize();
+    var thisf = jQuery(this);
+    iclShowProgressBar(thisf, function(){        
+        thisf.contents().find("input").removeAttr('disabled');
+        jQuery('.icl_progress').html('ERROR: Connection timeout!').css('color','red');    
+        window.stop();
+    });
+    thisf.contents().find("input").attr('disabled', 'disabled');
+    jQuery.post(thisf.attr('action'), formdata, 
+        function(msg){           
+            matches = msg.replace(/\r?\n/ig,'').match(/<body([^>]*)>(.*)<\/body>/i);
+            jQuery('.icl_progress').stop();
+            jQuery('body').html(matches[2]);
+        }
+    )
+    return false;
+}
+
+var _icl_progress_text_save = false;
+var _icl_progress_width = false;
+function iclShowProgressBar(form, callback){    
+    
+    progress = form.find('.icl_progress');
+    if(_icl_progress_text_save){        
+        progress.html(_icl_progress_text_save).css('color','white').css('width',_icl_progress_width);
+        progress.css('width');
+    }
+    if(jQuery('.icl_progress').html() != 'ERROR: Connection timeout!'){
+        _icl_progress_text_save = progress.html();
+        _icl_progress_width = progress.css('width');
+    }
+    progress.fadeIn();
+    progress.animate({        
+        width:'99.5%'
+    }, 15000, callback); 
 }
 
         
