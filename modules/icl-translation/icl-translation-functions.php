@@ -880,7 +880,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
             ON
                 n.nid = t.element_id
             WHERE
-                n.links_fixed = 0 AND t.language_code = '{$lang_code}'";
+                n.links_fixed = 0 AND t.element_type = 'post' AND t.language_code = '{$lang_code}'";
                 
     $needs_fixing = $wpdb->get_results($sql);
     foreach($needs_fixing as $id){
