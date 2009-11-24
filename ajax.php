@@ -7,14 +7,14 @@ $sitepress = $this;
 
 
 if (!isset($_POST['unit-test'])) {
-    //if (file_exists ('../../../wp-load.php'))
-    //    include ('../../../wp-load.php');
-    //else
-    //    include ('../../../wp-config.php');
-
     @header('Content-Type: ' . get_option('html_type') . '; charset=' . get_option('blog_charset'));
     header("Cache-Control: no-cache, must-revalidate"); 
     header("Expires: Sat, 16 Aug 1980 05:00:00 GMT"); 
+}else{
+    if (file_exists ('../../../wp-load.php'))
+        include ('../../../wp-load.php');
+    else
+        include ('../../../wp-config.php');
 }
 
 switch($_REQUEST['icl_ajx_action']){
