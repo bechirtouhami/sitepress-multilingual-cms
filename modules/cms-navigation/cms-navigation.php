@@ -90,7 +90,7 @@ class CMSNavigation{
     }
         
     function cms_navigation_breadcrumb(){
-        global $post, $sitepress, $current_user, $wpdb;
+        global $post, $sitepress, $current_user, $wpdb, $sitepress_settings;
         
         if(func_num_args()){
             $args = func_get_args();
@@ -123,7 +123,11 @@ class CMSNavigation{
             }
             if($page_on_front!=$post->ID){ 
                 if($page_on_front){
-                    ?><a href="<?php echo get_permalink($page_on_front); ?>"><?php echo get_the_title($page_on_front) ?></a><?php 
+                    $permalink = get_permalink($page_on_front);
+                    if($sitepress_settings['language_negotiation_type'] != 3){
+                        $permalink = trailingslashit($permalink);
+                    }                    
+                    ?><a href="<?php echo $permalink ; ?>"><?php echo get_the_title($page_on_front) ?></a><?php 
                         echo $this->settings['breadcrumbs_separator'];
                 }elseif(!is_home() || (is_home() && !$page_on_front && $page_for_posts)){
                     ?><a href="<?php echo $sitepress->language_url() ?>"><?php _e('Home') ?></a><?php 
