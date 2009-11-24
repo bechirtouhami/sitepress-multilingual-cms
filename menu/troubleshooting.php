@@ -14,7 +14,7 @@ $icl_tables = array(
     $wpdb->prefix . 'icl_string_status',
     $wpdb->prefix . 'icl_cms_nav_cache',
     $wpdb->prefix . 'icl_message_status',
-    $wpdb->prefix . 'icl_reminders'
+    $wpdb->prefix . 'icl_reminders',
 );
 
 if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_create_nonce('icl_reset_all'))){
@@ -48,11 +48,30 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
     echo '<a href="#wpml-settings">'.__('WPML Settings', 'sitepress').'</a>';
     
     foreach($icl_tables as $icl_table){
-        echo '<h3  id="'.$icl_table.'_anch" onclick="jQuery(\'#'.$icl_table.'\').toggle(); jQuery(\'#'.$icl_table.'_arrow_up\').toggle(); jQuery(\'#'.$icl_table.'_arrow_dn\').toggle();" style="cursor:pointer">'.$icl_table.'&nbsp;&nbsp;<span id="'.$icl_table.'_arrow_up">&uarr;</span><span style="display:none" id="'.$icl_table.'_arrow_dn">&darr;</span></h3>';
-        echo '<span id="'.$icl_table.'">';
+        echo '<h3  id="'.$icl_table.'_anch" onclick="jQuery(\'#'.$icl_table.'\').toggle(); jQuery(\'#'.$icl_table.'_arrow_up\').toggle(); jQuery(\'#'.$icl_table.'_arrow_dn\').toggle();" style="cursor:pointer">'.$icl_table.'&nbsp;&nbsp;<span id="'.$icl_table.'_arrow_up" style="display:none">&uarr;</span><span id="'.$icl_table.'_arrow_dn">&darr;</span></h3>';        
         if($wpdb->get_var("SHOW TABLES LIKE '{$icl_table}'") != $icl_table){
             echo '<p class="error">'.__('Not found!', 'sitepress').'</p>';
         }else{
+            $results = $wpdb->get_results("DESCRIBE {$icl_table}", ARRAY_A);
+            $keys = array_keys($results[0]);
+            ?>
+            <table class="widefat">
+                <thead>
+                    <tr>
+                    <?php foreach($keys as $k): ?><th width="<?php echo floor(100/count($keys)) ?>%"><?php echo $k ?></th><?php endforeach; ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach($results as $r):?>
+                    <tr>
+                        <?php foreach($keys as $k): ?><td><?php echo $r[$k] ?></td><?php endforeach; ?>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            <tbody>
+            </table>
+            <?php
+            echo '<span id="'.$icl_table.'" style="display:none">';    
             $results = $wpdb->get_results("SELECT * FROM {$icl_table}", ARRAY_A);
             echo '<textarea style="font-size:10px;width:100%" wrap="off" rows="8">';
             $inc = 0;
@@ -67,8 +86,9 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
                 echo implode(",", $res) . PHP_EOL;
             }
             echo '</textarea>';
+            echo '</span>';        
         }        
-        echo '</span>';        
+        
     }
     
     function __custom_csv_escape($s){
