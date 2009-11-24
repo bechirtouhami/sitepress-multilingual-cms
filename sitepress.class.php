@@ -147,7 +147,7 @@ class SitePress{
             add_filter('getarchives_join', array($this,'getarchives_join'));
             add_filter('getarchives_where', array($this,'getarchives_where'));
             add_filter('pre_option_home', array($this,'pre_option_home'));            
-            
+                        
             // language negotiation
             add_action('query_vars', array($this,'query_vars'));
             
@@ -183,10 +183,6 @@ class SitePress{
                 add_action('admin_print_scripts', array($this, '__set_posts_management_column_width'));
             }
                         
-            //add_action('icl_extra_options_' . $_GET['page'], 'icl_extras_render_forms');
-            //if(isset($_POST['icl_extras_submit'])){
-            //    add_action('init', 'icl_extras_process_forms');
-            //}            
             
         } //end if the initial language is set - existing_content_language_verified
         
@@ -2403,8 +2399,7 @@ class SitePress{
             $url = trailingslashit($this->convert_url($abshome, $code));  
         }else{
             $url = $this->convert_url($abshome, $code);
-        }
-        
+        }        
         return $url;
     }
     
@@ -2868,7 +2863,7 @@ class SitePress{
         }
         return $ret;
     }
-    
+            
     function query_vars($public_query_vars){
         $public_query_vars[] = 'lang';
         global $wp_query;        
