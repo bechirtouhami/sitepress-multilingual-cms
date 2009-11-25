@@ -12,9 +12,9 @@ if (!isset($_POST['unit-test'])) {
     header("Expires: Sat, 16 Aug 1980 05:00:00 GMT"); 
 }else{
     if (file_exists ('../../../wp-load.php'))
-        include ('../../../wp-load.php');
+        @include ('../../../wp-load.php');
     else
-        include ('../../../wp-config.php');
+        @include ('../../../wp-config.php');
 }
 
 switch($_REQUEST['icl_ajx_action']){
