@@ -28,7 +28,7 @@ class WPML_Packages{
         
     }
     
-    function scan($folder){
+    function scan($folder, $external = false){
         global $icl_extra_packages;
         $packages = array();
         $dh = opendir($folder);    
@@ -46,11 +46,11 @@ class WPML_Packages{
                     preg_match( '|Package Name:(.*)$|mi', $package_info, $name );
                     preg_match( '|Package URI:(.*)$|mi', $package_info, $uri );
                     preg_match( '|Version:(.*)|i', $package_info, $version );
-                    if($packages_type == 'themes'){
+                    if($packages_type == 'themes' || $external){
                         preg_match( '|Theme:(.*)|i', $package_info, $theme );
                         preg_match( '|Theme version:(.*)|i', $package_info, $theme_version );
                     }
-                    if($packages_type == 'plugins'){
+                    if($packages_type == 'plugins' || $external){
                         preg_match( '|Plugin:(.*)|i', $package_info, $plugin );
                         preg_match( '|Plugin version:(.*)|i', $package_info, $plugin_version );
                     }                    
@@ -69,21 +69,33 @@ class WPML_Packages{
                         'Name' => $name, 'URI' => $uri, 'Description' => $description, 
                         'Author' => $author_name, 'AuthorURI' => $author_uri, 'Version' => $version
                         );
-                        if($packages_type == 'themes'){
+                        if($packages_type == 'themes' || $external){
                             $package_data['Theme'] = $theme;
                             $package_data['ThemeVersion'] = $theme_version;
                         }  
-                        if($packages_type == 'plugins'){
+                        if($packages_type == 'plugins' || $external){
                             $package_data['Plugin'] = $plugin;
                             $package_data['PluginVersion'] = $plugin_version;                            
                         }  
                         $package_data['id'] = $theme;
                         
+                        //var_dump($external);
+                        //print_r($package_data);
+                        
                         // add the package only if the theme is active
+                        if($external && $package_data['Plugin'] && !in_array($package_data['Plugin'], get_option('active_plugins'))){
+                            continue;
+                        }
+                        if($external && $package_data['Theme']){                            
+                            if(($package_data['Theme'] != basename(get_template_directory())) && ($package_data['Theme'] != basename(get_stylesheet_directory()))){
+                                continue;
+                            }                                
+                        }
+                        
                         if($packages_type == 'themes'){
                             if($package_data['Theme'] != basename(get_template_directory()) && $package_data['Theme'] != basename(get_stylesheet_directory())){
                                 continue;
-                            }    
+                            }                                
                         }elseif($packages_type == 'plugins'){
                             if(!in_array($package_data['Plugin'], get_option('active_plugins'))){
                                 continue;
@@ -118,11 +130,12 @@ class WPML_Packages{
     }
 
     function _read_external_packages(){
+        $external = true;
         // read package from the current theme
         if(get_template_directory() != get_stylesheet_directory()){
             $folder = get_stylesheet_directory() . '/' . ICL_EXTRAS_EXTERNAL_PACKAGE_FOLDER;        
             if(@file_exists($folder) && is_dir($folder)){
-                $packages = $this->scan($folder);
+                $packages = $this->scan($folder, $external);
                 if(is_array($packages) && !empty($packages)){
                     $this->packages['themes'] = array_merge($this->packages['themes'] , $packages);
                 }
@@ -130,7 +143,7 @@ class WPML_Packages{
         }
         $folder = get_template_directory() . '/' . ICL_EXTRAS_EXTERNAL_PACKAGE_FOLDER;        
         if(@file_exists($folder) && is_dir($folder)){
-            $packages = $this->scan($folder);
+            $packages = $this->scan($folder, $external);
             if(is_array($packages) && !empty($packages)){
                 $this->packages['themes'] = array_merge($this->packages['themes'] , $packages);
             }
@@ -142,7 +155,7 @@ class WPML_Packages{
                 $exp = explode('/', $plugin);                
                 $plugin_folder = WP_PLUGIN_DIR . '/' . $exp[0] . '/' . ICL_EXTRAS_EXTERNAL_PACKAGE_FOLDER;
                 if(@file_exists($plugin_folder) && is_dir($plugin_folder)){
-                    $packages = $this->scan($plugin_folder);
+                    $packages = $this->scan($plugin_folder, $external);
                     if(is_array($packages) && !empty($packages)){
                         $this->packages['plugins'] = array_merge($this->packages['plugins'] , $packages);
                     }
@@ -178,14 +191,14 @@ class WPML_Packages{
         $enabled = $this->get_enabled_packages();        
         foreach($this->packages as $type => $packages){
             foreach($packages as $package => $package_data){
-                // auto-enable
+                // auto-enable                
                 if(!isset($enabled[$type][$package])){
                     global $sitepress;
                     $enabled[$type][$package] = 1;
                     $this->packages_enabled[$type][$package] = 1;
                     $iclsettings['packages_enabled'] = $this->packages_enabled;
                     $sitepress->save_settings($iclsettings);
-                }
+                }                
                 if($enabled[$type][$package]){
                     $this->load_package($type, $package);                        
                 }                
