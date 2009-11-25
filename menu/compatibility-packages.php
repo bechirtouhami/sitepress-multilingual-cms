@@ -17,6 +17,8 @@ $icl_enabled_packages = $WPML_Packages->get_enabled_packages();
         <?php _e('Packages list updated', 'sitepress'); ?>
         </div>
         <?php endif; ?>        
+        
+        <?php if(!empty($packages)): ?>
         <table id="icl_packages_<?php echo $package_type ?>" class="widefat">
             <thead>
                 <tr>
@@ -34,7 +36,6 @@ $icl_enabled_packages = $WPML_Packages->get_enabled_packages();
                 </tr>
             </thead>
             <tbody>
-            <?php if(!empty($packages)): ?>
                 <?php $incr = 0; ?>
                 <?php foreach($packages as $package_id => $package):?>
                 <?php 
@@ -61,12 +62,7 @@ $icl_enabled_packages = $WPML_Packages->get_enabled_packages();
                     <?php endif; ?>
                     <td><?php if($package['AuthorURI']) echo '<a href="'.$package['AuthorURI'].'">'; echo $package['Author']; if($package['AuthorURI']) echo '</a>';?></td>                                    
                 </tr>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <tr>
-                    <td colspan="5" align="center"><?php _e('No packages found', 'sitepress'); ?></td>  
-                </tr>
-            <?php endif; ?>
+                <?php endforeach; ?>            
             </tbody>
             <tfoot>
                 <tr>
@@ -85,6 +81,9 @@ $icl_enabled_packages = $WPML_Packages->get_enabled_packages();
                 </tr>
             </tfoot>        
         </table>
+        <?php else: ?>
+            <div style="text-align:center"><?php _e('No packages found', 'sitepress'); ?></div>  
+        <?php endif; ?>
         
         <?php if(!empty($packages)): ?>
         <p class="submit alignright"><input type="submit" value="<?php _e('Update', 'sitepress'); ?>" /></p>

@@ -348,16 +348,17 @@ class WPML_Packages{
         if(isset($this->packages_options[$page])){
             $frm_idx = 0;
             foreach($this->packages_options[$page] as $group_name => $options){        
+                echo '<a name="icl-extras-'.$frm_idx.'"></a>';
                 $this->_render_form_title($group_name);
-                echo '<form name="icl_extras_form_'.$frm_idx.'" method="post" action="admin.php?page='.$page.'&amp;updated=true#icl-extras-'.$frm_idx.'">';
-                echo '<input type="hidden" name="icl_extras_frm_idx" value="'.$frm_idx.'" />';
-                echo '<input type="hidden" name="icl_extras_group" value="'.$group_name.'" />';
                 if(isset($_GET['updated']) && $_GET['updated']==$frm_idx){
                     echo '<div class="icl_form_success">';
                     echo __('Options saved', 'sitepress');
                     echo '</div>';
-                }
-                echo '<table class="form-table" id="icl-extras-'.$frm_idx.'">';
+                }                                
+                echo '<form name="icl_extras_form_'.$frm_idx.'" method="post" action="admin.php?page='.$page.'&amp;updated=true#icl-extras-'.$frm_idx.'">';
+                echo '<input type="hidden" name="icl_extras_frm_idx" value="'.$frm_idx.'" />';
+                echo '<input type="hidden" name="icl_extras_group" value="'.$group_name.'" />';
+                echo '<table class="form-table">';
                 echo '<tbody>';
                 foreach($options as $package_name => $package){
                     foreach($package as $o){
