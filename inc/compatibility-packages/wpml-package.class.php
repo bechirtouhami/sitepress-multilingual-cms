@@ -7,6 +7,7 @@ abstract class WPML_Package{
     var $type;
     var $package_path;
     var $package_url;
+    private $_resources = array();
     
     
     function __construct(){
@@ -31,6 +32,9 @@ abstract class WPML_Package{
         }else{
             $this->settings = array();    
         }
+        
+        add_action('wp_head', array($this, '_echo_js'), 30);
+        add_action('wp_head', array($this, '_echo_css'), 30);
         
     }
     
@@ -190,18 +194,28 @@ abstract class WPML_Package{
     
     // $file is relative to the package root folder
     function load_js($file){
-        add_action('wp_head', array($this, '_echo_js'), 30);        
+        $this->_resources['js'][] = $file;
     }
-     function _echo_js($file){
-        echo '<script type="text/javascript" src="'.$this->package_url . '/' . $file.'?v='. $this->data['Version'] .'"></script>'."\n";
+    
+    function _echo_js($file){
+        if(!empty($this->_resources['js']) && is_array($this->_resources['js'])){
+            foreach($this->_resources['css'] as $file){
+                echo '<script type="text/javascript" src="'.$this->package_url . '/' . $file.'?v='. $this->data['Version'] .'"></script>'."\n";
+            }
+        }    
     }
     
     // $file is relative to the package root folder
     function load_css($file){
-        add_action('wp_head', array($this, '_echo_css'), 30);
+        $this->_resources['css'][] = $file;         
     }
-     function _echo_css($file){
-        echo '<link rel="stylesheet" type="text/css" href="'.$this->package_url . '/' . $file.'?v='. $this->data['Version'] .'" />'."\n";
+    
+    function _echo_css($file){        
+        if(!empty($this->_resources['css']) && is_array($this->_resources['css'])){
+            foreach($this->_resources['css'] as $file){
+                echo '<link rel="stylesheet" type="text/css" href="'.$this->package_url . '/' . $file.'?v='. $this->data['Version'] .'" />'."\n";
+            }
+        }            
     }
     
     

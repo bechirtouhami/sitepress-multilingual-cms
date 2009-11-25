@@ -48,14 +48,14 @@ class Hybrid_theme_compatibility  extends WPML_Package{
 		if($this->settings['header_language_selector']){
             add_action('hybrid_before_header',array(&$this,'language_selector_header'));
 			if($this->settings['header_load_css']) {
-				$this->load_css($this->package_url.'/css/selector-header.css');
+				$this->load_css('css/selector-header.css');
 			}
         }
 		
         if($this->settings['footer_language_selector']){
             add_action('hybrid_after_footer',array(&$this,'language_selector_footer'));
 			if($this->settings['footer_load_css']) {
-				$this->load_css($this->package_url.'/css/selector-footer.css');
+				$this->load_css('css/selector-footer.css');
 			}
         }
         
