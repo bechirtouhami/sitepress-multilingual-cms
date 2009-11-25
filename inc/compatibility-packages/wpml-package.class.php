@@ -203,6 +203,68 @@ abstract class WPML_Package{
      function _echo_css($file){
         echo '<link rel="stylesheet" type="text/css" href="'.$this->package_url . '/' . $file.'?v='. $this->data['Version'] .'" />'."\n";
     }
+    
+    
+    // Theme packages functions. - start (added SJ)
+    // Used to filter menu.
+    function filter_home_link($menu) {
+        return str_replace('href="'.get_option('home').'"','href="'.icl_get_home_url().'"',$menu);
+    }
+
+    function language_selector_header() {
+        do_action('icl_language_selector');
+    }
+
+    function language_selector_footer() {
+        $languages = icl_get_languages('skip_missing='.intval($this->settings['footer_skip_languages']));
+        if(!empty($languages)){
+            global $sitepress_settings;
+            echo '
+                <div id="icl_lang_selector_footer">
+                    <ul>
+                    ';
+                foreach($languages as $l){
+                    echo '<li>';
+                    if(!$l['active']) echo '<a href="'.$l['url'].'">';
+                    echo '<img src="'.$l['country_flag_url'].'" alt="'.$l['language_code'].'" width="18" height="12" />&nbsp;';
+                    if(!$l['active']) echo '</a>';
+                     if(!$l['active']) echo '<a href="'.$l['url'].'">';
+                    echo icl_disp_language( $sitepress_settings['icl_lso_native_lang'] ? $l['native_name'] : null, $sitepress_settings['icl_lso_display_lang'] ? $l['translated_name'] : null );
+                    if(!$l['active']) echo '</a>';
+                    echo '</li>
+                    ';
+                }
+            echo '
+                    </ul>
+                </div>';
+            }
+    }
+
+    function add_post_available($content){
+        $out = '';
+        if(is_singular()){
+            $languages = icl_get_languages('skip_missing='.intval($this->settings['post_available_skip_languages']));
+            if(1 < count($languages)){            
+                $out .= $this->settings['post_available_text'];
+                $out .= $this->settings['post_available_before'] ? $this->settings['post_available_before'] : ''; 
+                foreach($languages as $l){
+                    if(!$l['active']) $langs[] = '<a href="'.$l['url'].'">'.$l['translated_name'].'</a>';
+                }
+                $out .= join(', ', $langs);
+                $out .= $this->settings['post_available_after'] ? $this->settings['post_available_after'] : '';
+            }    
+        }
+         if ( $this->settings['post_available_position'] == 'top')
+            return '<p>' . $out . '</p>' . $content;
+        else return $content . '<p>' . $out . '</p>';
+    }
+
+        // This function should check if sidebar switcher is enabled
+    function check_widget(){
+    
+    }
+    // Theme packages functions. - end (added SJ)
+        
         
 }
   
