@@ -40,6 +40,11 @@
     <a id="icl_reminder_dismiss" href="#" onclick="<?php echo $on_click?>">Dismiss</a>
     <br />
     <br />
+    <iframe src="<?php echo $target;?>" style="width:99%; height:80%">
+
+<?php else: ?>
+    
+    <iframe src="<?php echo $target;?>" style="width:99%; height:90%">
+    
 <?php endif; ?>
 
-<iframe src="<?php echo $target;?>" style="width:99%; height:90%">
