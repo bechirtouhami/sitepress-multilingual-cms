@@ -90,6 +90,7 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
         return false;
     }
     
+    icl_translation_save_md5($post_id); // make sure the md5 is up to date.
     $post_md5 = $wpdb->get_var("SELECT md5 FROM {$wpdb->prefix}icl_node WHERE nid=" . $post_id);
     
     $source_lang = $sitepress->get_language_for_element($post_id);
@@ -206,6 +207,7 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
         }
     }
     $timestamp = date('Y-m-d H:i:s');
+    
     $md5 = icl_translation_calculate_md5($post_id);    
     
     // send off to each language/s as a separate cms_request
