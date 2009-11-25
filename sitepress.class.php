@@ -52,6 +52,7 @@ class SitePress{
             add_action('delete_post', array($this,'delete_post_actions'));        
             
             add_filter('posts_join', array($this,'posts_join_filter'));
+            add_filter('posts_where', array($this,'posts_where_filter'));
             add_filter('comment_feed_join', array($this,'comment_feed_join'));
             
             $this->queries = array();
@@ -785,8 +786,8 @@ class SitePress{
     function get_language_status_text($from_lang, $to_lang) {
         $lang_status = $this->settings['icl_lang_status'];        
         $response = '';
-        if ($lang_status && $this->icl_account_configured()) {
-            foreach ($lang_status as $lang) {
+        if ($lang_status && $this->icl_account_configured() && isset($this->settings['language_pairs'][$from_lang][$to_lang])) {
+            foreach ($lang_status as $lang) {                
                 if ($from_lang == $lang['from'] && $to_lang == $lang['to']) {
                     if (isset($lang['available_translators'])) {
                         if (!$lang['available_translators']) {
@@ -1823,15 +1824,41 @@ class SitePress{
         }
         
         if('all' != $this->this_lang){ 
-            $cond = " AND t.language_code='{$wpdb->escape($this->get_current_language())}' ";
+            //$cond = " AND t.language_code='{$wpdb->escape($this->get_current_language())}'";
             $ljoin = "";
         }else{
-            $cond = '';
+            //$cond = '';
             $ljoin = "LEFT";
         }
+        //$join .= " {$ljoin} JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->posts}.ID = t.element_id 
+        //            AND t.element_type='post' {$cond} JOIN {$wpdb->prefix}icl_languages l ON t.language_code=l.code AND l.active=1";        
         $join .= " {$ljoin} JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->posts}.ID = t.element_id 
-                    AND t.element_type='post' {$cond} JOIN {$wpdb->prefix}icl_languages l ON t.language_code=l.code AND l.active=1";        
+                    AND t.element_type='post' {$cond} JOIN {$wpdb->prefix}icl_languages l ON t.language_code=l.code AND l.active=1";                
         return $join;
+    }
+    
+    function posts_where_filter($where){
+        global $wpdb;
+
+        //exceptions
+        if(isset($_POST['wp-preview']) && $_POST['wp-preview']=='dopreview' || is_preview()){
+            $is_preview = true;
+        }else{
+            $is_preview = false;
+        }
+        if($pagenow=='upload.php' || $pagenow=='media-upload.php' || is_attachment() || $is_preview){
+            return $where;    
+        }
+        
+        if('all' != $this->this_lang){ 
+            $cond = " AND t.language_code='{$wpdb->escape($this->get_current_language())}'";
+        }else{
+            $cond = '';
+        }
+        
+        $where .= $cond;
+        
+        return $where;
     }
 
     function comment_feed_join($join){
