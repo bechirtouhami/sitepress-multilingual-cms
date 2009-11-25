@@ -3,18 +3,12 @@
 //
 
 global $wpdb;
-$sitepress = $this;
 
 
 if (!isset($_POST['unit-test'])) {
     @header('Content-Type: ' . get_option('html_type') . '; charset=' . get_option('blog_charset'));
     header("Cache-Control: no-cache, must-revalidate"); 
     header("Expires: Sat, 16 Aug 1980 05:00:00 GMT"); 
-}else{
-    if (file_exists ('../../../wp-load.php'))
-        @include ('../../../wp-load.php');
-    else
-        @include ('../../../wp-config.php');
 }
 
 switch($_REQUEST['icl_ajx_action']){
@@ -26,18 +20,18 @@ switch($_REQUEST['icl_ajx_action']){
         break;
     case 'set_active_languages':
         $resp = array();
-        $old_active_languages_count = count($sitepress->get_active_languages($lang_codes));
+        $old_active_languages_count = count($this->get_active_languages($lang_codes));
         $lang_codes = explode(',',$_POST['langs']);
-        if($sitepress->set_active_languages($lang_codes)){                    
+        if($this->set_active_languages($lang_codes)){                    
             $resp[0] = 1;
-            $active_langs = $sitepress->get_active_languages();
+            $active_langs = $this->get_active_languages();
             $iclresponse ='';
-            $default_categories = $sitepress->get_default_categories();            
+            $default_categories = $this->get_default_categories();            
             $default_category_main = $wpdb->get_var("SELECT name FROM {$wpdb->terms} t JOIN {$wpdb->term_taxonomy} tx ON t.term_id=tx.term_id
-                WHERE term_taxonomy_id='{$default_categories[$sitepress->get_default_language()]}' AND taxonomy='category'");            
-            $default_category_trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id={$default_categories[$sitepress->get_default_language()]} AND element_type='category'");
+                WHERE term_taxonomy_id='{$default_categories[$this->get_default_language()]}' AND taxonomy='category'");            
+            $default_category_trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id={$default_categories[$this->get_default_language()]} AND element_type='category'");
             foreach($active_langs as $lang){
-                $is_default = ($sitepress->get_default_language()==$lang['code']);
+                $is_default = ($this->get_default_language()==$lang['code']);
                 $iclresponse .= '<li ';
                 if($is_default) $iclresponse .= 'class="default_language"';
                 $iclresponse .= '><label><input type="radio" name="default_language" value="' . $lang['code'] .'" ';
@@ -63,10 +57,10 @@ switch($_REQUEST['icl_ajx_action']){
                    }
                    $default_categories[$lang['code']] = $term_taxonomy_id;                   
                    $wpdb->query("INSERT INTO {$wpdb->prefix}icl_translations(element_id,element_type,trid,language_code,source_language_code) 
-                    VALUES('{$term_taxonomy_id}','category','{$default_category_trid}','{$lang['code']}','{$sitepress->get_default_language()}')");
+                    VALUES('{$term_taxonomy_id}','category','{$default_category_trid}','{$lang['code']}','{$this->get_default_language()}')");
                 }
             } 
-            $sitepress->set_default_categories($default_categories) ;                        
+            $this->set_default_categories($default_categories) ;                        
             $iclresponse .= $default_blog_category;
             $resp[1] = $iclresponse;
             // response 1 - blog got more than 2 languages; -1 blog reduced to 1 language; 0 - no change            
@@ -91,7 +85,7 @@ switch($_REQUEST['icl_ajx_action']){
             }  
             if(count($active_langs) > 1){
                 $iclsettings['dont_show_help_admin_notice'] = true;
-                $sitepress->save_settings($iclsettings);
+                $this->save_settings($iclsettings);
             }
         }else{
             $resp[0] = 0;
@@ -99,15 +93,15 @@ switch($_REQUEST['icl_ajx_action']){
         
         if(!$iclsettings['setup_complete']){
             $iclsettings['setup_wizard_step'] = 3;
-            $sitepress->save_settings($iclsettings);
+            $this->save_settings($iclsettings);
         }
         
         echo join('|',$resp);
         do_action('icl_update_active_languages');
         break;
     case 'set_default_language':
-        $previous_default = $sitepress->get_default_language();
-        if($response = $sitepress->set_default_language($_POST['lang'])){
+        $previous_default = $this->get_default_language();
+        if($response = $this->set_default_language($_POST['lang'])){
             echo '1|'.$previous_default.'|';
         }else{
             echo'0||' ;
@@ -117,7 +111,7 @@ switch($_REQUEST['icl_ajx_action']){
         }
         break;
     case 'save_language_pairs':                
-        $sitepress->save_language_pairs();
+        $this->save_language_pairs();
         
         $ret = update_icl_account();
         if($ret){
@@ -127,19 +121,19 @@ switch($_REQUEST['icl_ajx_action']){
         
         // success, return status of language pairs from the website
         
-        $iclsettings = $sitepress->get_settings();
-        $sitepress->get_icl_translator_status($iclsettings);
-        $sitepress->save_settings($iclsettings);
+        $iclsettings = $this->get_settings();
+        $this->get_icl_translator_status($iclsettings);
+        $this->save_settings($iclsettings);
 
         $langs = $iclsettings['language_pairs'];
         
-        $active_languages = $sitepress->get_active_languages();
+        $active_languages = $this->get_active_languages();
         
         $result = '';
         foreach ($langs as $from_lang => $targets) {
             foreach($targets as $to_lang => $to_status) {
                 if ($to_status) {
-                    $result .= $from_lang . '~' . $to_lang . '~' . $sitepress->get_language_status_text($from_lang, $to_lang) . "\n";
+                    $result .= $from_lang . '~' . $to_lang . '~' . $this->get_language_status_text($from_lang, $to_lang) . "\n";
                 }
             }
         }
@@ -148,7 +142,7 @@ switch($_REQUEST['icl_ajx_action']){
     case 'toggle_content_translation':
         $iclsettings['enable_icl_translations'] = $_POST['new_val'];
         if ($iclsettings['enable_icl_translations'] == 0) {
-            $settings = $sitepress->get_settings();
+            $settings = $this->get_settings();
             
             if (!$settings['content_translation_setup_complete']) {
                 // the wizard wasn't complete so set back to step 1.
@@ -157,11 +151,11 @@ switch($_REQUEST['icl_ajx_action']){
             }
         }
         
-        $sitepress->save_settings($iclsettings);
+        $this->save_settings($iclsettings);
         echo '1';
         break;
     case 'icl_more_options':
-        $sitepress->update_icl_more_options();
+        $this->update_icl_more_options();
 
         $ret = update_icl_account();
         if($ret){
@@ -177,7 +171,7 @@ switch($_REQUEST['icl_ajx_action']){
        break;
     case 'icl_save_website_kind':
         $iclsettings['website_kind'] = $_POST['icl_website_kind'];
-        $sitepress->save_settings($iclsettings);
+        $this->save_settings($iclsettings);
         echo '1';
         break;               
     case 'icl_plugins_texts':
@@ -189,7 +183,7 @@ switch($_REQUEST['icl_ajx_action']){
         if($_POST['language_domains']){
             $iclsettings['language_domains'] = $_POST['language_domains'];
         }        
-        $sitepress->save_settings($iclsettings);
+        $this->save_settings($iclsettings);
         echo 1;
         break;
     case 'icl_save_language_switcher_options':
@@ -221,11 +215,11 @@ switch($_REQUEST['icl_ajx_action']){
         if(!$iclsettings['setup_complete']){
             $iclsettings['setup_wizard_step'] = 0;
             $iclsettings['setup_complete'] = 1;
-            $active_languages = $sitepress->get_active_languages();
-            $default_language = $sitepress->get_default_language();
+            $active_languages = $this->get_active_languages();
+            $default_language = $this->get_default_language();
             foreach($active_languages as $al){
                 if($al != $default_language){
-                    if($sitepress->_validate_language_per_directory($al)){
+                    if($this->_validate_language_per_directory($al)){
                         $iclsettings['language_negotiation_type'] = 1;
                     }            
                     break;
@@ -236,31 +230,31 @@ switch($_REQUEST['icl_ajx_action']){
             echo '0|';
             echo __('At least one of the language switcher style options needs to be checked', 'sitepress');    
         }else{
-            $sitepress->save_settings($iclsettings);    
+            $this->save_settings($iclsettings);    
             echo 1;
         }                
         break;
     case 'icl_admin_language_options':
         $iclsettings['admin_default_language'] = $_POST['icl_admin_default_language'];
-        $sitepress->save_settings($iclsettings);
-        $sitepress->icl_locale_cache->clear();
+        $this->save_settings($iclsettings);
+        $this->icl_locale_cache->clear();
         echo 1; 
         break;    
     case 'icl_lang_more_options':
         $iclsettings['hide_translation_controls_on_posts_lists'] = !$_POST['icl_translation_controls_on_posts_lists'];
-        $sitepress->save_settings($iclsettings);
+        $this->save_settings($iclsettings);
         echo 1; 
         break;        
     case 'icl_page_sync_options':
         $iclsettings['sync_page_ordering'] = intval($_POST['icl_sync_page_ordering']);        
         $iclsettings['sync_page_parent'] = intval($_POST['icl_sync_page_parent']);            
-        $sitepress->save_settings($iclsettings);
+        $this->save_settings($iclsettings);
         echo 1; 
         break;        
     case 'language_domains':
-        $active_languages = $sitepress->get_active_languages();
-        $default_language = $sitepress->get_default_language();
-        $iclsettings = $sitepress->get_settings();
+        $active_languages = $this->get_active_languages();
+        $default_language = $this->get_default_language();
+        $iclsettings = $this->get_settings();
         $language_domains = $iclsettings['language_domains'];        
         echo '<table class="language_domains">';
         foreach($active_languages as $lang){
@@ -309,7 +303,7 @@ switch($_REQUEST['icl_ajx_action']){
         }                
         break;
     case 'icl_navigation_form':   
-        $iclsettings = $sitepress->get_settings();
+        $iclsettings = $this->get_settings();
         $iclsettings['modules']['cms-navigation']['page_order'] = $_POST['icl_navigation_page_order'];
         $iclsettings['modules']['cms-navigation']['show_cat_menu'] = $_POST['icl_navigation_show_cat_menu'];
         if($_POST['icl_navigation_cat_menu_title']){
@@ -325,10 +319,10 @@ switch($_REQUEST['icl_ajx_action']){
 
         $iclsettings['modules']['cms-navigation']['breadcrumbs_separator'] = stripslashes($_POST['icl_breadcrumbs_separator']);
         
-        $sitepress->save_settings($iclsettings);
+        $this->save_settings($iclsettings);
         
         // clear the cms navigation caches
-        $sitepress->icl_cms_nav_offsite_url_cache->clear();
+        $this->icl_cms_nav_offsite_url_cache->clear();
         $wpdb->query("TRUNCATE {$wpdb->prefix}icl_cms_nav_cache");
         
         echo '1|';
@@ -336,7 +330,7 @@ switch($_REQUEST['icl_ajx_action']){
 
     case 'icl_clear_nav_cache':
         // clear the cms navigation caches
-        $sitepress->icl_cms_nav_offsite_url_cache->clear();
+        $this->icl_cms_nav_offsite_url_cache->clear();
         $wpdb->query("TRUNCATE {$wpdb->prefix}icl_cms_nav_cache");
         echo '1|';
         
@@ -354,9 +348,9 @@ switch($_REQUEST['icl_ajx_action']){
         echo json_encode($resp);
         break;
     case 'get_translator_status':
-        if(!$sitepress->icl_account_configured()) break;
+        if(!$this->icl_account_configured()) break;
 
-        $iclsettings = $sitepress->get_settings();
+        $iclsettings = $this->get_settings();
         
         if(isset($_POST['cache'])) {
             $last_call = $iclsettings['last_get_translator_status_call'];
@@ -367,26 +361,26 @@ switch($_REQUEST['icl_ajx_action']){
         
         $iclsettings['last_get_translator_status_call'] = time();
         
-        $sitepress->get_icl_translator_status($iclsettings);
+        $this->get_icl_translator_status($iclsettings);
         
-        $sitepress->save_settings($iclsettings);
+        $this->save_settings($iclsettings);
         
         echo json_encode($iclsettings['icl_lang_status']);
         break;
     
     case 'get_language_status_text':
     
-        if(!$sitepress->icl_account_configured()) break;
+        if(!$this->icl_account_configured()) break;
 
-        $iclsettings = $sitepress->get_settings();
+        $iclsettings = $this->get_settings();
         
         if(!isset($_POST['cache'])) {
-            $iclsettings = $sitepress->get_settings();
-            $sitepress->get_icl_translator_status($iclsettings);
-            $sitepress->save_settings($iclsettings);
+            $iclsettings = $this->get_settings();
+            $this->get_icl_translator_status($iclsettings);
+            $this->save_settings($iclsettings);
         }
             
-        echo '1|' . $_POST['id'] . '|' . $sitepress->get_language_status_text($_POST['from_lang'], $_POST['to_lang']);
+        echo '1|' . $_POST['id'] . '|' . $this->get_language_status_text($_POST['from_lang'], $_POST['to_lang']);
         break;
     
     case 'set_post_to_date':
@@ -426,7 +420,7 @@ switch($_REQUEST['icl_ajx_action']){
         if($icl_tl_type==1){            
             icl_st_scan_theme_files();
         }
-        $sitepress->save_settings($iclsettings);
+        $this->save_settings($iclsettings);
         echo '1|'.$icl_tl_type;
         break;
     case 'icl_tl_rescan':
@@ -452,7 +446,7 @@ switch($_REQUEST['icl_ajx_action']){
         break;
     case 'get_original_comment':
         $comment_id = $_POST['comment_id'];
-        $trid = $sitepress->get_element_trid($comment_id, 'comment');
+        $trid = $this->get_element_trid($comment_id, 'comment');
         $res = $wpdb->get_row("SELECT element_id, language_code FROM {$wpdb->prefix}icl_translations WHERE trid='{$trid}' AND element_type='comment' AND element_id <> {$comment_id} ");
         $original_cid = $res->element_id;
         $comment = $wpdb->get_row("SELECT * FROM {$wpdb->comments} WHERE comment_ID={$original_cid}");
@@ -467,33 +461,33 @@ switch($_REQUEST['icl_ajx_action']){
         break;
     case 'dismiss_help':
         $iclsettings['dont_show_help_admin_notice'] = true;
-        $sitepress->save_settings($iclsettings);
+        $this->save_settings($iclsettings);
         break;
     case 'dismiss_upgrade_notice':
         $iclsettings['hide_upgrade_notice'] = implode('.', array_slice(explode('.', ICL_SITEPRESS_VERSION), 0, 3));
-        $sitepress->save_settings($iclsettings);
+        $this->save_settings($iclsettings);
         break;
     case 'dismiss_translate_help':
         $iclsettings['dont_show_translate_help'] = true;
-        $sitepress->save_settings($iclsettings);
+        $this->save_settings($iclsettings);
         break;        
     case 'setup_got_to_step1':
         $iclsettings['existing_content_language_verified'] = 0;
         $iclsettings['setup_wizard_step'] = 1;
         $wpdb->query("TRUNCATE TABLE {$wpdb->prefix}icl_translations");
-        $sitepress->save_settings($iclsettings);
+        $this->save_settings($iclsettings);
         break;
     case 'setup_got_to_step2':
         $iclsettings['setup_wizard_step'] = 2;
-        $sitepress->save_settings($iclsettings);
+        $this->save_settings($iclsettings);
         break;
     case 'toggle_show_translations':
-        $iclsettings = $sitepress->get_settings();
+        $iclsettings = $this->get_settings();
         $iclsettings['show_translations_flag'] = intval(!$iclsettings['show_translations_flag']);
-        $sitepress->save_settings($iclsettings);    
+        $this->save_settings($iclsettings);    
         break;
     case 'icl_messages':
-        $iclsettings = $sitepress->get_settings();
+        $iclsettings = $this->get_settings();
         $iclq = new ICanLocalizeQuery($iclsettings['site_id'], $iclsettings['access_key']);       
 
         $output = '';
@@ -514,7 +508,7 @@ switch($_REQUEST['icl_ajx_action']){
             if ($anchor_pos !== false) {
                 $url = substr($url, 0, $anchor_pos);
             }
-            $output .= $message . ' - ' . $sitepress->create_icl_popup_link(ICL_API_ENDPOINT. $url . '&message_id=' . $r->id. '&TB_iframe=true') . __('View', 'sitepress') . '</a>';
+            $output .= $message . ' - ' . $this->create_icl_popup_link(ICL_API_ENDPOINT. $url . '&message_id=' . $r->id. '&TB_iframe=true') . __('View', 'sitepress') . '</a>';
 
             if ($r->can_delete == '1') {
                 $on_click = 'dismiss_message(' . $r->id . ');';
@@ -544,17 +538,17 @@ switch($_REQUEST['icl_ajx_action']){
         break;
 
     case 'icl_delete_message':
-        $iclsettings = $sitepress->get_settings();
+        $iclsettings = $this->get_settings();
         $iclq = new ICanLocalizeQuery($iclsettings['site_id'], $iclsettings['access_key']);
         $iclq->delete_message($_POST['message_id']);
         break;
     case 'icl_show_reminders':
         $iclsettings['icl_show_reminders'] = $_POST['state']=='show'?1:0;
-        $sitepress->save_settings($iclsettings);
+        $this->save_settings($iclsettings);
         break;
     case 'icl_promote':
         $iclsettings['promote_wpml'] = $_POST['icl_promote']=='true'?1:0;
-        $sitepress->save_settings($iclsettings);
+        $this->save_settings($iclsettings);
         break;        
     
     case 'save_translator_note':
