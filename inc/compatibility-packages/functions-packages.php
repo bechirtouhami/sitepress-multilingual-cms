@@ -11,9 +11,10 @@ class WPML_Packages{
     var $packages_options;
 
     function __construct(){
+        $this->_read_external_packages_themes();
         $this->_read_theme_packages();
         $this->_read_plugin_packages();
-        $this->_read_external_packages();
+        $this->_read_external_packages_plugins();
         
         add_action('plugins_loaded', array($this,'load_packages'));
         add_action('icl_extra_options_' . $_GET['page'], array($this,'render_forms'));
@@ -129,7 +130,7 @@ class WPML_Packages{
         }catch (Exception $e){ echo $e->getMessage(); }
     }
 
-    function _read_external_packages(){
+    function _read_external_packages_themes(){
         $external = true;
         // read package from the current theme
         if(get_template_directory() != get_stylesheet_directory()){
@@ -148,7 +149,9 @@ class WPML_Packages{
                 $this->packages['themes'] = array_merge($this->packages['themes'] , $packages);
             }
         }
-        
+    }
+    
+    function _read_external_packages_plugins(){
         $plugins = get_option('active_plugins');
         if(is_array($plugins) && !empty($plugins)){
             foreach($plugins as $plugin){
@@ -161,7 +164,7 @@ class WPML_Packages{
                     }
                 }
             }
-        }
+        }        
     }
     
     function get_packages(){
