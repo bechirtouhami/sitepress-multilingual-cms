@@ -14,7 +14,7 @@ class SitePress{
         if(false != $this->settings){
             $this->verify_settings();
         } 
-        
+
         if(isset($_GET['icl_action'])){
             require_once ABSPATH . WPINC . '/pluggable.php';
             if($_GET['icl_action']=='advanced' && wp_create_nonce('icl_enable_advanced_mode')==$_GET['nonce']){
@@ -191,7 +191,11 @@ class SitePress{
                 add_action('manage_pages_custom_column',array($this,'add_content_for_posts_management_column'));
                 add_action('admin_print_scripts', array($this, '__set_posts_management_column_width'));
             }
-                        
+              
+            if($_GET['page'] == ICL_PLUGIN_FOLDER . '/menu/languages.php'){
+                add_action('admin_head', 'icl_lang_sel_nav_css', 1, 1, true);
+            }            
+            
             
         } //end if the initial language is set - existing_content_language_verified
         
@@ -2570,9 +2574,9 @@ class SitePress{
         }        
         register_sidebar_widget(__('Language Selector', 'sitepress'), 'language_selector_widget', 'icl_languages_selector');
         
-        function icl_lang_sel_nav_css($show = true){            
+        function icl_lang_sel_nav_css($show = true){              
             $link_tag = '<link rel="stylesheet" href="'. ICL_PLUGIN_URL . '/res/css/language-selector.css?v='.ICL_SITEPRESS_VERSION.'" type="text/css" media="all" />';
-            if(!$show){
+            if(!$show && (!isset($_GET['page']) || $_GET['page'] != ICL_PLUGIN_FOLDER . '/menu/languages.php')){
                 return $link_tag;
             }else{
                 echo $link_tag;
@@ -2600,7 +2604,7 @@ class SitePress{
     
     function get_ls_languages($template_args=array()){
             global $wpdb, $post, $cat, $tag_id, $w_this_lang;
-            $w_active_languages = $this->get_active_languages();            
+            $w_active_languages = $this->get_active_languages();                        
             $this_lang = $this->this_lang;
             if($this_lang=='all'){
                 $w_this_lang = array(
@@ -2704,10 +2708,11 @@ class SitePress{
                 }elseif(is_search()){
                     $url_glue = strpos($this->language_url($lang['code']),'?')===false ? '?' : '&';
                     $lang['translated_url'] = $this->language_url($lang['code']) . $url_glue . 's=' . $_GET['s'];                                        
-                }else{                    
+                }else{ 
+                    global $icl_language_switcher_preview;                   
                     if($icl_lso_link_empty || is_home() || is_404() 
                         || ('page' == get_option('show_on_front') && ($this->wp_query->queried_object_id == get_option('page_on_front') || $this->wp_query->queried_object_id == get_option('page_for_posts')))
-                        ){
+                        || $icl_language_switcher_preview){
                         $lang['translated_url'] = $this->language_url($lang['code']);
                         $skip_lang = false;
                     }else{

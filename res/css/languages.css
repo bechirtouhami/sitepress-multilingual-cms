@@ -82,3 +82,7 @@ a#toggle-theme-localization{
 #icl_more_languages_wrap .widefat h4{
     margin:15px 0 5px 0;
 }
+
+#icl_lang_sel_preview_wrap{
+    height:30px;
+}

@@ -384,10 +384,10 @@
                                             <?php endforeach;?>
                                             <option value="" <?php if(!$sb && $sitepress_settings['setup_complete']) echo 'selected="SELECTED"' ?> ><?php _e('--none--', 'sitepress'); ?></option>
                                             </select>
-                                            
-                                            
+                                                                                        
                                             <p class="icl_advanced_feature"><?php printf(__('The drop-down language switcher can be added to your theme by inserting this PHP code: %s or as a widget','sitepress'),
                                             '<code class="php">&lt;?php do_action(\'icl_language_selector\'); ?&gt;</code>'); ?>.</p>
+                                                                                        
                                             <p class="icl_advanced_feature"><?php echo __('You can also create custom language switchers, such as a list of languages or country flags.','sitepress'); ?>
                                             <a href="http://wpml.org/home/getting-started-guide/language-setup/custom-language-switcher/"><?php echo __('Custom language switcher creation guide','sitepress')?></a>.
                                             </p>
@@ -411,7 +411,19 @@
                                             </ul>
                                         </li>                    
                                         <li class="icl_advanced_feature">
+                                        
                                             <h4><?php echo __('Language switcher style', 'sitepress')?></h4>
+                                                                                        
+                                            <div id="icl_lang_sel_preview_wrap">                                            
+                                            <span id="icl_lang_sel_preview">                                            
+                                            <?php 
+                                                global $icl_language_switcher_preview;
+                                                $icl_language_switcher_preview = true;                                                
+                                                $sitepress->language_selector(); 
+                                            ?>                                                                          
+                                            </span>                                                                     
+                                            </div>
+                                            
                                             <ul>
                                                 <li>
                                                     <label>
@@ -432,6 +444,25 @@
                                                 </label>                    
                                                 </li>                            
                                             </ul>
+                                            
+                                            <a href="#" onclick="jQuery(this).next().slideToggle();return false;"><?php _e('more')?></a>                                            
+                                            <table id="icl_lang_preview_config" style="display:none">
+                                                <tr>
+                                                    <td><?php _e('Background color', 'sitepress')?></td>
+                                                    <td><input type="text" size="6" name="icl_lang_sel_config[background]" value="" /></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><?php _e('Font color', 'sitepress')?></td>
+                                                    <td><input type="text" size="6" name="icl_lang_sel_config[font-color]" value="" /></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><?php _e('Border', 'sitepress')?></td>
+                                                    <td><input type="text" size="6" name="icl_lang_sel_config[border]" value="" onclick="iclUpdateLangSelPreview()" /></td>
+                                                </tr>
+                                                
+                                            </table>
+                                            
+                                            
                                         </li>
                                     </ul>
                                     <?php if($sitepress_settings['setup_complete']): ?>             
@@ -515,6 +546,7 @@
                     <tbody>
                         <tr>
                             <td>
+                                <h4><?php _e('Translation controls', 'sitepress')?></h4>
                                 <form id="icl_lang_more_options" name="icl_lang_more_options" action="">        
                                 <p>
                                     <label>
@@ -530,8 +562,8 @@
                         </tr>
                         <tr>
                             <td>
-                                <form id="icl_blog_posts" name="icl_blog_posts" action="">        
                                 <h4><?php _e('Blog posts to display', 'sitepress')?></h4>
+                                <form id="icl_blog_posts" name="icl_blog_posts" action="">                                        
                                 <p>
                                     <label>
                                         <input type="radio" name="icl_untranslated_blog_posts" <?php if(!$sitepress_settings['show_untranslated_blog_posts']) echo 'checked="checked"' ?> value="0" /> <?php _e('Only translated posts.','sitepress'); ?>

@@ -27,6 +27,9 @@ addLoadEvent(function(){
     jQuery('form[name="icl_promote_form"] input[name="icl_promote"]').change(function(){
         jQuery.post(icl_ajx_url, 'icl_ajx_action=icl_promote&icl_promote='+jQuery(this).attr('checked'));
     });    
+
+    jQuery('#icl_lang_preview_config input').change(iclUpdateLangSelQuickPreview);    
+    
 });
 function editingDefaultLanguage(){
     jQuery('#icl_change_default_button').hide();
@@ -235,4 +238,25 @@ function iclSetupStep2(){
             }
     });    
     return false;
+}
+
+function iclUpdateLangSelPreview(){
+    jQuery('#icl_lang_sel_preview_wrap').html(icl_ajxloaderimg);
+    jQuery('#icl_lang_sel_preview_wrap').load(location.href + ' #icl_lang_sel_preview');
+}
+
+function iclUpdateLangSelQuickPreview(){
+    name = jQuery(this).attr('name');
+    value = jQuery(this).val();
+    switch(name){
+        case 'icl_lang_sel_config[background]':
+            jQuery('#lang_sel a').css('background-color', value);
+            break;
+        case 'icl_lang_sel_config[font-color]':
+            jQuery('#lang_sel a').css('color', value);
+            break;
+        case 'icl_lang_sel_config[border]':
+            break;
+            
+    }
 }
