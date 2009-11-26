@@ -1,22 +1,17 @@
 <?php
+// included from Sitepress::reminder_popups
+//
 
     // NOTE: this is also used for other popup links to ICanLocalize
 
-    if (file_exists ('../../../../../wp-load.php'))
-        include ('../../../../../wp-load.php');
-    else
-        include ('../../../../../wp-config.php');
-
-
-    global $sitepress, $wpdb;
+    global $wpdb;
     
-    $iclsettings = $sitepress->get_settings();
-    $iclq = new ICanLocalizeQuery($iclsettings['site_id'], $iclsettings['access_key']);       
+    $iclq = new ICanLocalizeQuery($this->settings['site_id'], $this->settings['access_key']);       
 
     $target = $_GET['target'];
     $session_id = $iclq->get_current_session(true);
     
-    $admin_lang = $sitepress->get_admin_language();
+    $admin_lang = $this->get_admin_language();
     
     if (strpos($target, '?') === false) {
         $target .= '?';

@@ -528,6 +528,28 @@
                                 </form>
                             </td>
                         </tr>
+                        <tr>
+                            <td>
+                                <form id="icl_blog_posts" name="icl_blog_posts" action="">        
+                                <h4><?php _e('Blog posts to display', 'sitepress')?></h4>
+                                <p>
+                                    <label>
+                                        <input type="radio" name="icl_untranslated_blog_posts" <?php if(!$sitepress_settings['show_untranslated_blog_posts']) echo 'checked="checked"' ?> value="0" /> <?php _e('Only translated posts.','sitepress'); ?>
+                                    </label>
+                                </p>
+                                <p>
+                                    <label>
+                                        <input type="radio" name="icl_untranslated_blog_posts" <?php if($sitepress_settings['show_untranslated_blog_posts']) echo 'checked="checked"' ?> value="1" /> <?php _e('All posts (display translation if it exists or posts in default language otherwise).','sitepress'); ?>
+                                    </label>
+                                </p>                                
+                                <p>
+                                    <input class="button" name="save" value="<?php echo __('Apply','sitepress') ?>" type="submit" />
+                                    <span class="icl_ajx_response" id="icl_ajx_response_bp"></span>
+                                </p>
+                                </form>
+                            </td>
+                        </tr>
+                        
                     </tbody>
                 </table>
                 <br />

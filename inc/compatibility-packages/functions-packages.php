@@ -138,7 +138,7 @@ class WPML_Packages{
             if(@file_exists($folder) && is_dir($folder)){
                 $packages = $this->scan($folder, $external);
                 if(is_array($packages) && !empty($packages)){
-                    $this->packages['themes'] = array_merge($this->packages['themes'] , $packages);
+                    $this->packages['themes'] = array_merge((array)$this->packages['themes'] , $packages);
                 }
             }
         }
@@ -146,7 +146,7 @@ class WPML_Packages{
         if(@file_exists($folder) && is_dir($folder)){
             $packages = $this->scan($folder, $external);
             if(is_array($packages) && !empty($packages)){
-                $this->packages['themes'] = array_merge($this->packages['themes'] , $packages);
+                $this->packages['themes'] = array_merge((array)$this->packages['themes'] , $packages);
             }
         }
     }
@@ -160,7 +160,7 @@ class WPML_Packages{
                 if(@file_exists($plugin_folder) && is_dir($plugin_folder)){
                     $packages = $this->scan($plugin_folder, $external);
                     if(is_array($packages) && !empty($packages)){
-                        $this->packages['plugins'] = array_merge($this->packages['plugins'] , $packages);
+                        $this->packages['plugins'] = array_merge((array)$this->packages['plugins'] , $packages);
                     }
                 }
             }

@@ -244,7 +244,12 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings['hide_translation_controls_on_posts_lists'] = !$_POST['icl_translation_controls_on_posts_lists'];
         $this->save_settings($iclsettings);
         echo 1; 
-        break;        
+        break;
+    case 'icl_blog_posts':
+        $iclsettings['show_untranslated_blog_posts'] = $_POST['icl_untranslated_blog_posts'];
+        $this->save_settings($iclsettings);
+        echo 1; 
+        break;                
     case 'icl_page_sync_options':
         $iclsettings['sync_page_ordering'] = intval($_POST['icl_sync_page_ordering']);        
         $iclsettings['sync_page_parent'] = intval($_POST['icl_sync_page_parent']);            

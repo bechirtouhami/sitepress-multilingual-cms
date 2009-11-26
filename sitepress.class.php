@@ -22,7 +22,10 @@ class SitePress{
             }
             if($_GET['icl_action']=='basic' && wp_create_nonce('icl_enable_basic_mode')==$_GET['nonce']){
                 $this->enable_basic_mode();
-            }
+            }                                              
+            if($_GET['icl_action']=='reminder_popup'){
+                add_action('init', array($this, 'reminders_popup'));
+            }            
         }
         
         if(isset($_REQUEST['icl_ajx_action'])){
@@ -54,6 +57,11 @@ class SitePress{
             add_filter('posts_join', array($this,'posts_join_filter'));
             add_filter('posts_where', array($this,'posts_where_filter'));
             add_filter('comment_feed_join', array($this,'comment_feed_join'));
+            
+            // show untranslated posts
+            if(!is_admin() && $this->settings['show_untranslated_blog_posts'] && $this->get_current_language() != $this->get_default_language()){
+                add_filter('the_posts', array($this, 'the_posts'));
+            }
             
             $this->queries = array();
             
@@ -187,6 +195,58 @@ class SitePress{
             
         } //end if the initial language is set - existing_content_language_verified
         
+    }
+    
+    function the_posts($posts){        
+        if($posts == $wp_query->posts){
+            return $posts;
+        }
+        
+        $this_lang = $this->this_lang;
+        $this->this_lang = $this->get_default_language();
+        
+        remove_filter('the_posts', array($this, 'the_posts'));
+        $my_query = new WP_Query('suppress_filters=0');
+        add_filter('the_posts', array($this, 'the_posts'));
+        
+        $this->this_lang = $this_lang;
+        
+        //print_r($posts);
+        
+        foreach($posts as $post){
+            $trans_posts[$post->ID] = $post;
+        }
+        
+        //print_r($trans_posts);
+        
+        //print_r($my_query->posts);
+        
+        foreach($my_query->posts as $k=>$post){ // loop translated posts
+            $trid = $this->get_element_trid($post->ID);
+            $translations = $this->get_element_translations($trid);
+            if(isset($translations[$this->get_current_language()])){
+                //echo $k;
+                //print_r($translations[$this->get_current_language()]->element_id);
+                //print_r($trans_posts);
+                
+                $my_query->posts[$k] = $trans_posts[$translations[$this->get_current_language()]->element_id];
+                //print_r($my_query->posts);
+                //die();
+            }else{
+                $my_query->posts[$k]->original_language = true;
+            }
+            //print_r($translations);
+        }
+        
+        //print_r($my_query);
+        
+        //print_r($my_query->posts);
+        
+        $posts = $my_query->posts;
+        
+        //print_r($posts);
+        
+        return $posts;
     }
                                               
     function initialize_cache(){ 
@@ -900,11 +960,16 @@ class SitePress{
         return $this->settings['site_id'] && $this->settings['access_key'];
     }
 
+    function reminders_popup(){
+        include ICL_PLUGIN_PATH . '/modules/icl-translation/icl-reminder-popup.php';
+        exit;
+    }
+    
     function create_icl_popup_link($link, $title = null) {
         if ($title) {
-            return '<a class="icl_thickbox" title="' . $title . '" href="'.ICL_PLUGIN_URL . "/modules/icl-translation/icl-reminder-popup.php?target=" . $link .'">';
+            return '<a class="icl_thickbox" title="' . $title . '" href="admin.php?page='.ICL_PLUGIN_FOLDER . "/menu/languages.php&icl_action=reminder_popup&target=" . $link .'">';
         } else {
-            return '<a class="icl_thickbox" href="'.ICL_PLUGIN_URL . "/modules/icl-translation/icl-reminder-popup.php?target=" . $link .'">';
+            return '<a class="icl_thickbox" href="admin.php?page='.ICL_PLUGIN_FOLDER . "/menu/languages&icl_action=reminder_popup&target=" . $link .'">';
         }
     }
     
