@@ -245,18 +245,95 @@ function iclUpdateLangSelPreview(){
     jQuery('#icl_lang_sel_preview_wrap').load(location.href + ' #icl_lang_sel_preview');
 }
 
+var icl_lp_font_current_normal = false;
+var icl_lp_font_current_hover = false;
+var icl_lp_background_current_normal = false;
+var icl_lp_background_current_hover = false;
+var icl_lp_font_other_normal = false;
+var icl_lp_font_other_hover = false;
+var icl_lp_background_other_normal = false;
+var icl_lp_background_other_hover = false;
+var icl_lp_border = false;
+
 function iclUpdateLangSelQuickPreview(){
     name = jQuery(this).attr('name');
     value = jQuery(this).val();
     switch(name){
-        case 'icl_lang_sel_config[background]':
-            jQuery('#lang_sel a').css('background-color', value);
+        case 'icl_lang_sel_config[font-current-normal]':
+            icl_lp_font_current_normal = value;
             break;
-        case 'icl_lang_sel_config[font-color]':
-            jQuery('#lang_sel a').css('color', value);
+        case 'icl_lang_sel_config[font-current-hover]':
+            icl_lp_font_current_hover = value;
+            break;                
+        case 'icl_lang_sel_config[background-current-normal]':
+            icl_lp_background_current_normal = value;
             break;
+        case 'icl_lang_sel_config[background-current-hover]':
+            icl_lp_background_current_hover = value;
+            break;                
+        case 'icl_lang_sel_config[font-other-normal]':
+            icl_lp_font_other_normal = value;
+            break;
+        case 'icl_lang_sel_config[font-other-hover]':
+            icl_lp_font_other_hover = value;
+            break;                
+        case 'icl_lang_sel_config[background-other-normal]':
+            icl_lp_background_other_normal = value;
+            break;
+        case 'icl_lang_sel_config[background-other-hover]':
+            icl_lp_background_other_hover = value;
+            break;                
         case 'icl_lang_sel_config[border]':
-            break;
-            
+            icl_lp_border = value;
+            break;            
     }
+    iclRenderLangPreview();
+}
+
+function iclRenderLangPreview(){
+
+    if(icl_lp_font_current_normal){
+        jQuery('#lang_sel a:first').css('color', icl_lp_font_current_normal) ; 
+    }    
+    if(icl_lp_font_current_hover){
+        jQuery('#lang_sel a:first').hover(
+            function(){jQuery(this).css('color', icl_lp_font_current_hover)},
+            function(){jQuery(this).css('color', icl_lp_font_current_normal)}
+            );
+    }
+
+    if(icl_lp_background_current_normal){
+        jQuery('#lang_sel a:first').css('background-color', icl_lp_background_current_normal) ; 
+    }    
+    if(icl_lp_background_current_hover){
+        jQuery('#lang_sel a:first').hover(
+            function(){jQuery(this).css('background-color', icl_lp_background_current_hover)},
+            function(){jQuery(this).css('background-color', icl_lp_background_current_normal)}
+            );
+    }
+    
+    if(icl_lp_font_other_normal){
+        jQuery('#lang_sel li ul a').css('cssText', 'color:'+icl_lp_font_other_normal+' !important') ; 
+    }    
+    if(icl_lp_font_other_hover){
+        jQuery('#lang_sel li ul a').hover(
+            function(){jQuery(this).css('cssText', 'color:'+icl_lp_font_other_hover+' !important')},
+            function(){jQuery(this).css('cssText', 'color:'+icl_lp_font_other_normal+' !important')}
+            );
+    }
+
+    if(icl_lp_background_other_normal){
+        jQuery('#lang_sel li ul a').css('background-color', icl_lp_background_other_normal) ; 
+    }    
+    if(icl_lp_background_other_hover){
+        jQuery('#lang_sel li ul a').hover(
+            function(){jQuery(this).css('background-color', icl_lp_background_other_hover)},
+            function(){jQuery(this).css('background-color', icl_lp_background_other_normal)}
+            );
+    }
+    
+    if(icl_lp_border){
+        jQuery('#lang_sel a').css('border-color', icl_lp_border);
+    }
+    
 }

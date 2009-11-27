@@ -446,19 +446,42 @@
                                             </ul>
                                             
                                             <a href="#" onclick="jQuery(this).next().slideToggle();return false;"><?php _e('more')?></a>                                            
-                                            <table id="icl_lang_preview_config" style="display:none">
+                                            <table id="icl_lang_preview_config" style="display:none;width:auto;">
+                                                <thead>
                                                 <tr>
-                                                    <td><?php _e('Background color', 'sitepress')?></td>
-                                                    <td><input type="text" size="6" name="icl_lang_sel_config[background]" value="" /></td>
+                                                    <th>&nbsp;</th>
+                                                    <th><?php _e('Normal', 'sitepress')?></th>
+                                                    <th><?php _e('Hover', 'sitepress')?></th>
+                                                </tr>
+                                                </thead>
+                                                
+                                                <tbody>                                                
+                                                <tr>
+                                                    <td><?php _e('Current language font color', 'sitepress')?></td>
+                                                    <td><input type="text" size="6" name="icl_lang_sel_config[font-current-normal]" value="" /></td>
+                                                    <td><input type="text" size="6" name="icl_lang_sel_config[font-current-hover]" value="" /></td>
+                                                </tr>                                                
+                                                <tr>
+                                                    <td><?php _e('Current language background color', 'sitepress')?></td>
+                                                    <td><input type="text" size="6" name="icl_lang_sel_config[background-current-normal]" value="" /></td>
+                                                    <td><input type="text" size="6" name="icl_lang_sel_config[background-current-hover]" value="" /></td>
                                                 </tr>
                                                 <tr>
-                                                    <td><?php _e('Font color', 'sitepress')?></td>
-                                                    <td><input type="text" size="6" name="icl_lang_sel_config[font-color]" value="" /></td>
-                                                </tr>
+                                                    <td><?php _e('Other languages font color', 'sitepress')?></td>
+                                                    <td><input type="text" size="6" name="icl_lang_sel_config[font-other-normal]" value="" /></td>
+                                                    <td><input type="text" size="6" name="icl_lang_sel_config[font-other-hover]" value="" /></td>
+                                                </tr>                                                
+                                                <tr>
+                                                    <td><?php _e('Other languages background color', 'sitepress')?></td>
+                                                    <td><input type="text" size="6" name="icl_lang_sel_config[background-other-normal]" value="" /></td>
+                                                    <td><input type="text" size="6" name="icl_lang_sel_config[background-other-hover]" value="" /></td>
+                                                </tr>                                                
                                                 <tr>
                                                     <td><?php _e('Border', 'sitepress')?></td>
-                                                    <td><input type="text" size="6" name="icl_lang_sel_config[border]" value="" onclick="iclUpdateLangSelPreview()" /></td>
+                                                    <td><input type="text" size="6" name="icl_lang_sel_config[border]" value="" /></td>
+                                                    <td>&nbsp;</td>
                                                 </tr>
+                                                </tbody>                                                
                                                 
                                             </table>
                                             
