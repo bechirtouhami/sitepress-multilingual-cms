@@ -202,53 +202,52 @@ class SitePress{
     }
     
     function the_posts($posts){        
-        if($posts == $wp_query->posts){
+        global $wpdb, $wp_query;
+        
+        //exceptions
+        if($wp_query->is_singular){
             return $posts;
         }
         
+        // get the posts in the default language instead        
         $this_lang = $this->this_lang;
-        $this->this_lang = $this->get_default_language();
-        
-        remove_filter('the_posts', array($this, 'the_posts'));
-        $my_query = new WP_Query('suppress_filters=0');
+        $this->this_lang = $this->get_default_language();        
+        remove_filter('the_posts', array($this, 'the_posts')); 
+        $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+        $my_query = new WP_Query('suppress_filters=0&paged=' . $paged);
         add_filter('the_posts', array($this, 'the_posts'));
-        
         $this->this_lang = $this_lang;
         
-        //print_r($posts);
-        
+        // create a map of the translated posts        
         foreach($posts as $post){
             $trans_posts[$post->ID] = $post;
-        }
+        }        
         
-        //print_r($trans_posts);
-        
-        //print_r($my_query->posts);
-        
-        foreach($my_query->posts as $k=>$post){ // loop translated posts
+        // loop original posts
+        foreach($my_query->posts as $k=>$post){ // loop posts in the default language
             $trid = $this->get_element_trid($post->ID);
-            $translations = $this->get_element_translations($trid);
-            if(isset($translations[$this->get_current_language()])){
-                //echo $k;
-                //print_r($translations[$this->get_current_language()]->element_id);
-                //print_r($trans_posts);
-                
-                $my_query->posts[$k] = $trans_posts[$translations[$this->get_current_language()]->element_id];
-                //print_r($my_query->posts);
-                //die();
+            $translations = $this->get_element_translations($trid); // get translations
+            
+            if(isset($translations[$this->get_current_language()])){ // if there is a translation in the current language
+                if(isset($trans_posts[$translations[$this->get_current_language()]->element_id])){  //check the map of translated posts
+                    $my_query->posts[$k] = $trans_posts[$translations[$this->get_current_language()]->element_id];
+                }else{  // check if the translated post exists in the database still                                                                                                                
+                    $_post = $wpdb->get_row($wpdb->prepare("SELECT * FROM $wpdb->posts WHERE ID = %d AND post_status='publish' LIMIT 1", $translations[$this->get_current_language()]->element_id));                    
+                    if(!empty($_post)){
+                        $_post = sanitize_post($_post);
+                        $my_query->posts[$k] = $_post;
+                        
+                    }else{
+                        $my_query->posts[$k]->original_language = true;
+                    }                
+                } 
             }else{
                 $my_query->posts[$k]->original_language = true;
             }
-            //print_r($translations);
+            
         }
-        
-        //print_r($my_query);
-        
-        //print_r($my_query->posts);
-        
+        $wp_query->max_num_pages = $my_query->max_num_pages;
         $posts = $my_query->posts;
-        
-        //print_r($posts);
         
         return $posts;
     }
