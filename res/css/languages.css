@@ -85,4 +85,8 @@ a#toggle-theme-localization{
 
 #icl_lang_sel_preview_wrap{
     height:30px;
+    float:right;
+    width:300px;
+    border: 1px solid #ccc;
+    padding:0 15px;
 }

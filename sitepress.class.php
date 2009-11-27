@@ -192,7 +192,7 @@ class SitePress{
                 add_action('admin_print_scripts', array($this, '__set_posts_management_column_width'));
             }
               
-            global $language_switcher_defaults;
+            global $language_switcher_defaults, $language_switcher_defaults_alt;
             $language_switcher_defaults = array(
                 'font-current-normal' => '#ffffff',
                 'font-current-hover' => '#000000',
@@ -204,6 +204,40 @@ class SitePress{
                 'background-other-hover' => '#cccccc',
                 'border' => '#000000'
             );
+            $language_switcher_defaults_alt['White'] = array(
+                'font-current-normal' => '#ff0000',
+                'font-current-hover' => '#000000',
+                'background-current-normal' => '#0099cc',
+                'background-current-hover' => '#0099cc',
+                'font-other-normal' => '#000000',
+                'font-other-hover' => '#000000',
+                'background-other-normal' => '#eeeeee',
+                'background-other-hover' => '#cccccc',
+                'border' => '#000000'            
+            );
+            $language_switcher_defaults_alt['Gray'] = array(
+                'font-current-normal' => '#00ff00',
+                'font-current-hover' => '#000000',
+                'background-current-normal' => '#0099cc',
+                'background-current-hover' => '#0099cc',
+                'font-other-normal' => '#000000',
+                'font-other-hover' => '#000000',
+                'background-other-normal' => '#eeeeee',
+                'background-other-hover' => '#cccccc',
+                'border' => '#000000'            
+            );
+            $language_switcher_defaults_alt['Blue'] = array(
+                'font-current-normal' => '#0000ff',
+                'font-current-hover' => '#000000',
+                'background-current-normal' => '#0099cc',
+                'background-current-hover' => '#0099cc',
+                'font-other-normal' => '#000000',
+                'font-other-hover' => '#000000',
+                'background-other-normal' => '#eeeeee',
+                'background-other-hover' => '#cccccc',
+                'border' => '#000000'            
+            );
+            
             if(is_admin() && $_GET['page'] == ICL_PLUGIN_FOLDER . '/menu/languages.php'){
                 add_action('admin_head', 'icl_lang_sel_nav_css', 1, 1, true);
                 add_action('admin_head', array($this, 'custom_language_switcher_style'));

@@ -40,7 +40,7 @@
         $inactive_content = $sitepress->get_inactive_content();        
     }  
     
-global $language_switcher_defaults;      
+global $language_switcher_defaults, $language_switcher_defaults_alt;      
 ?>
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap">
@@ -416,8 +416,9 @@ global $language_switcher_defaults;
                                         
                                             <h4><?php echo __('Language switcher style', 'sitepress')?></h4>
                                                                                         
-                                            <div id="icl_lang_sel_preview_wrap">                                            
+                                            <div id="icl_lang_sel_preview_wrap" style="height:<?php echo 30 * count($sitepress->get_active_languages())?>px">                                            
                                             <span id="icl_lang_sel_preview">                                            
+                                            <h4><?php _e('Language switcher preview', 'sitepress')?></h4>
                                             <?php 
                                                 global $icl_language_switcher_preview;
                                                 $icl_language_switcher_preview = true;                                                
@@ -446,17 +447,16 @@ global $language_switcher_defaults;
                                                 </label>                    
                                                 </li>                            
                                             </ul>
+
+                                            <?php foreach($language_switcher_defaults_alt as $key=>$val): ?>
+                                                <?php foreach($language_switcher_defaults as $k=>$v): ?>                                                
+                                                <input type="hidden" id="icl_lang_sel_config_alt_<?php echo $key ?>_<?php echo $k ?>" value="<?php echo $language_switcher_defaults_alt[$key][$k] ?>" />
+                                                <?php endforeach; ?>
+                                            <?php endforeach; ?>                                            
                                             
-                                            <a href="#" onclick="jQuery(this).next().slideToggle();return false;"><?php _e('more')?></a>                                            
-                                            <!--
-                                            <div>
-                                                <?php _e('Color scheme:', 'sitepress')?>
-                                                <select name="icl_lang_sel_color_scheme">
-                                                    <option><?php _e('White', 'sitepress') ?>&nbsp;</option>
-                                                    <option><?php _e('Gray', 'sitepress') ?>&nbsp;</option>
-                                                    <option><?php _e('Blue', 'sitepress') ?>&nbsp;</option>
-                                                </select>-->
-                                                <table id="icl_lang_preview_config" style="display:none;width:auto;">
+                                            <a href="#" onclick="jQuery(this).next().slideToggle();return false;"><?php _e('Edit the language switcher colors', 'sitepress')?></a>                                            
+                                            <div style="display:none">                                            
+                                                <table id="icl_lang_preview_config" style="width:auto;">
                                                     <thead>
                                                     <tr>
                                                         <th>&nbsp;</th>
@@ -539,7 +539,16 @@ global $language_switcher_defaults;
                                                     </tbody>                                                
                                                     
                                                 </table>
-                                            <!--</div>-->
+
+                                                <?php _e('Presets:', 'sitepress')?>
+                                                <select id="icl_lang_sel_color_scheme" name="icl_lang_sel_color_scheme">
+                                                    <option value=""><?php _e('--select--', 'sitepress') ?>&nbsp;</option>
+                                                    <option value="Gray"><?php _e('Gray', 'sitepress') ?>&nbsp;</option>
+                                                    <option value="White"><?php _e('White', 'sitepress') ?>&nbsp;</option>                                                    
+                                                    <option value="Blue"><?php _e('Blue', 'sitepress') ?>&nbsp;</option>
+                                                </select>
+                                                <span style="display:none"><?php _e("Are you sure? The customization you may have made will be overriden once you click 'Apply'", 'sitepress')?></span>
+                                            </div>   
                                             
                                         </li>
                                     </ul>
