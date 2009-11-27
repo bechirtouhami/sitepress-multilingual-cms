@@ -38,7 +38,9 @@
         }
         $default_language = $sitepress->get_language_details($sitepress->get_default_language());        
         $inactive_content = $sitepress->get_inactive_content();        
-    }    
+    }  
+    
+global $language_switcher_defaults;      
 ?>
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap">
@@ -446,45 +448,98 @@
                                             </ul>
                                             
                                             <a href="#" onclick="jQuery(this).next().slideToggle();return false;"><?php _e('more')?></a>                                            
-                                            <table id="icl_lang_preview_config" style="display:none;width:auto;">
-                                                <thead>
-                                                <tr>
-                                                    <th>&nbsp;</th>
-                                                    <th><?php _e('Normal', 'sitepress')?></th>
-                                                    <th><?php _e('Hover', 'sitepress')?></th>
-                                                </tr>
-                                                </thead>
-                                                
-                                                <tbody>                                                
-                                                <tr>
-                                                    <td><?php _e('Current language font color', 'sitepress')?></td>
-                                                    <td><input type="text" size="6" name="icl_lang_sel_config[font-current-normal]" value="" /></td>
-                                                    <td><input type="text" size="6" name="icl_lang_sel_config[font-current-hover]" value="" /></td>
-                                                </tr>                                                
-                                                <tr>
-                                                    <td><?php _e('Current language background color', 'sitepress')?></td>
-                                                    <td><input type="text" size="6" name="icl_lang_sel_config[background-current-normal]" value="" /></td>
-                                                    <td><input type="text" size="6" name="icl_lang_sel_config[background-current-hover]" value="" /></td>
-                                                </tr>
-                                                <tr>
-                                                    <td><?php _e('Other languages font color', 'sitepress')?></td>
-                                                    <td><input type="text" size="6" name="icl_lang_sel_config[font-other-normal]" value="" /></td>
-                                                    <td><input type="text" size="6" name="icl_lang_sel_config[font-other-hover]" value="" /></td>
-                                                </tr>                                                
-                                                <tr>
-                                                    <td><?php _e('Other languages background color', 'sitepress')?></td>
-                                                    <td><input type="text" size="6" name="icl_lang_sel_config[background-other-normal]" value="" /></td>
-                                                    <td><input type="text" size="6" name="icl_lang_sel_config[background-other-hover]" value="" /></td>
-                                                </tr>                                                
-                                                <tr>
-                                                    <td><?php _e('Border', 'sitepress')?></td>
-                                                    <td><input type="text" size="6" name="icl_lang_sel_config[border]" value="" /></td>
-                                                    <td>&nbsp;</td>
-                                                </tr>
-                                                </tbody>                                                
-                                                
-                                            </table>
-                                            
+                                            <!--
+                                            <div>
+                                                <?php _e('Color scheme:', 'sitepress')?>
+                                                <select name="icl_lang_sel_color_scheme">
+                                                    <option><?php _e('White', 'sitepress') ?>&nbsp;</option>
+                                                    <option><?php _e('Gray', 'sitepress') ?>&nbsp;</option>
+                                                    <option><?php _e('Blue', 'sitepress') ?>&nbsp;</option>
+                                                </select>-->
+                                                <table id="icl_lang_preview_config" style="display:none;width:auto;">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>&nbsp;</th>
+                                                        <th><?php _e('Normal', 'sitepress')?></th>
+                                                        <th><?php _e('Hover', 'sitepress')?></th>
+                                                    </tr>
+                                                    </thead>
+                                                    
+                                                    <tbody>                                                
+                                                    <tr>
+                                                        <td><?php _e('Current language font color', 'sitepress')?></td>
+                                                        <td><input type="text" size="7" name="icl_lang_sel_config[font-current-normal]" value="<?php 
+                                                            if(isset($sitepress_settings['icl_lang_sel_config']['font-current-normal'])) 
+                                                                echo $sitepress_settings['icl_lang_sel_config']['font-current-normal']; 
+                                                            else 
+                                                                echo $language_switcher_defaults['font-current-normal'] ;
+                                                            ?>" /></td>
+                                                        <td><input type="text" size="7" name="icl_lang_sel_config[font-current-hover]" value="<?php 
+                                                            if(isset($sitepress_settings['icl_lang_sel_config']['font-current-hover'])) 
+                                                                echo $sitepress_settings['icl_lang_sel_config']['font-current-hover']; 
+                                                            else 
+                                                                echo $language_switcher_defaults['font-current-hover'] ;
+                                                            ?>" /></td>
+                                                    </tr>                                                
+                                                    <tr>
+                                                        <td><?php _e('Current language background color', 'sitepress')?></td>
+                                                        <td><input type="text" size="7" name="icl_lang_sel_config[background-current-normal]" value="<?php 
+                                                            if(isset($sitepress_settings['icl_lang_sel_config']['background-current-normal'])) 
+                                                                echo $sitepress_settings['icl_lang_sel_config']['background-current-normal']; 
+                                                            else 
+                                                                echo $language_switcher_defaults['background-current-normal'] ;
+                                                            ?>" /></td>
+                                                        <td><input type="text" size="7" name="icl_lang_sel_config[background-current-hover]" value="<?php 
+                                                            if(isset($sitepress_settings['icl_lang_sel_config']['background-current-hover'])) 
+                                                                echo $sitepress_settings['icl_lang_sel_config']['background-current-hover']; 
+                                                            else 
+                                                                echo $language_switcher_defaults['background-current-hover'] ;
+                                                            ?>" /></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><?php _e('Other languages font color', 'sitepress')?></td>
+                                                        <td><input type="text" size="7" name="icl_lang_sel_config[font-other-normal]" value="<?php 
+                                                            if(isset($sitepress_settings['icl_lang_sel_config']['font-other-normal'])) 
+                                                                echo $sitepress_settings['icl_lang_sel_config']['font-other-normal']; 
+                                                            else 
+                                                                echo $language_switcher_defaults['font-other-normal'] ;
+                                                            ?>" /></td>
+                                                        <td><input type="text" size="7" name="icl_lang_sel_config[font-other-hover]" value="<?php 
+                                                            if(isset($sitepress_settings['icl_lang_sel_config']['font-other-hover'])) 
+                                                                echo $sitepress_settings['icl_lang_sel_config']['font-other-hover']; 
+                                                            else 
+                                                                echo $language_switcher_defaults['font-other-hover'] ;
+                                                            ?>" /></td>
+                                                    </tr>                                                
+                                                    <tr>
+                                                        <td><?php _e('Other languages background color', 'sitepress')?></td>
+                                                        <td><input type="text" size="7" name="icl_lang_sel_config[background-other-normal]" value="<?php 
+                                                            if(isset($sitepress_settings['icl_lang_sel_config']['background-other-normal'])) 
+                                                                echo $sitepress_settings['icl_lang_sel_config']['background-other-normal']; 
+                                                            else 
+                                                                echo $language_switcher_defaults['background-other-normal'] ;
+                                                            ?>" /></td>
+                                                        <td><input type="text" size="7" name="icl_lang_sel_config[background-other-hover]" value="<?php 
+                                                            if(isset($sitepress_settings['icl_lang_sel_config']['background-other-hover'])) 
+                                                                echo $sitepress_settings['icl_lang_sel_config']['background-other-hover']; 
+                                                            else 
+                                                                echo $language_switcher_defaults['background-other-hover'] ;
+                                                            ?>" /></td>
+                                                    </tr>                                                
+                                                    <tr>
+                                                        <td><?php _e('Border', 'sitepress')?></td>
+                                                        <td><input type="text" size="7" name="icl_lang_sel_config[border]" value="<?php 
+                                                            if(isset($sitepress_settings['icl_lang_sel_config']['border'])) 
+                                                                echo $sitepress_settings['icl_lang_sel_config']['border']; 
+                                                            else 
+                                                                echo $language_switcher_defaults['border'] ;
+                                                            ?>" /></td>
+                                                        <td>&nbsp;</td>
+                                                    </tr>
+                                                    </tbody>                                                
+                                                    
+                                                </table>
+                                            <!--</div>-->
                                             
                                         </li>
                                     </ul>
