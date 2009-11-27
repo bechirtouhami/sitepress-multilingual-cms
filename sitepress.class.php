@@ -258,7 +258,7 @@ class SitePress{
         global $wpdb, $wp_query;
         
         //exceptions
-        if($wp_query->is_singular || $posts[0]['post_type'] == 'page'){
+        if($wp_query->is_singular || $posts[0]->post_type == 'page'){
             return $posts;
         }
         
