@@ -29,85 +29,38 @@ class WP_Default_theme_compatibility  extends WPML_Package{
     function __construct(){
         parent::__construct();
         
-        // set the page where we want these options to be displayed on
-        $wpage = ICL_PLUGIN_FOLDER . '/menu/languages.php';        
-           
-        // add the options
-        // we're adding them in two groups just to show how we can use options groups   
-        // once they're added WPML will take care of rencering them and add them to the database when they're saved
-        // access them then through the 'settings' property of this class which is populated automatically
-        //
-        // TODO - options need to be saved to the database by the user to become effective (maybe we should check wehther they exist in the database once we're adding them here)
-        // 
-        $this->add_option_checkbox($wpage, __("Show 'this post is also available' at the bottom of the post.", 'sitepress'), 'post_languages', __('Default theme - Language selector options'), 'checked');        
-        $this->add_option_checkbox($wpage, __('Site footer horizontal language selector'), 'footer_language_selector', __('Default theme - Language selector options'), 'checked');
-        $this->add_option_checkbox($wpage, __('Skip missing languages for the footer languages', 'sitepress'), 'footer_skip_languages', __('Default theme - More options'), 'checked');
-        $this->add_option_checkbox($wpage, __("Skip missing languages for the 'this post is also available'", 'sitepress'), 'post_available_skip_languages', __('Default theme - More options'), 'checked');
-        $this->add_option_text($wpage, __("'this post is also available' text.", 'sitepress'), 'post_available_text', __('Default theme - Language selector options'), __('This post is also available in: ', 'sitepress'), array('size'=>40));
-        $this->add_option_text($wpage, __("'this post is also available' before.", 'sitepress'), 'post_available_before', __('Default theme - Language selector options'), '', array('size'=>5));
-        $this->add_option_text($wpage, __("'this post is also available' after.", 'sitepress'), 'post_available_after', __('Default theme - Language selector options'), '', array('size'=>5));
-        
-        // the package logic starts here
-        
-        // if the user has enabled this option do what it's suppose to do        
-        // in this case display the language picker at the bottom of the page
+        $wpage = ICL_PLUGIN_FOLDER . '/menu/languages.php';
+		$title = 'Default - ';
+		
+			// Footer switcher
+        $this->add_option_checkbox($wpage, __('Site footer horizontal language selector','sitepress'), 'footer_language_selector', $title . __('Language selector options','sitepress'), 'checked');
+        $this->add_option_checkbox($wpage, __('Skip missing languages for the footer languages', 'sitepress'), 'footer_skip_languages', $title . __('More options'), 'checked');
+		$this->add_option_checkbox($wpage, __('Load CSS for footer language selector', 'sitepress'), 'footer_load_css', $title . __('More options'), 'checked');
+		
+		
+			// This post is available
+		$this->add_option_checkbox($wpage, __("Show 'this post is also available'", 'sitepress'), 'post_languages', $title . __('Language selector options'), 'checked');
+        $this->add_option_checkbox($wpage, __("Skip missing languages for the 'this post is also available'", 'sitepress'), 'post_available_skip_languages', $title . __('More options'), 'checked');
+        $this->add_option_text($wpage, __("'this post is also available' text.", 'sitepress'), 'post_available_text', $title . __('Language selector options'), __('This post is also available in: ', 'sitepress'), array('size'=>40));
+		$this->add_option_select($wpage, __("'this post is also available' position:", 'sitepress'), 'post_available_position', array( 'top' => __('Above post', 'sitepress'), 'bottom' => __('Bellow post', 'sitepress') ),  $title . __('Language selector options','sitepress'), 'bottom');
+		
         if($this->settings['footer_language_selector']){
-            add_action('wp_footer', array($this, 'footer_language_selector'));
+            add_action('wp_footer',array(&$this,'language_selector_footer'));
+			if($this->settings['footer_load_css']) {
+				$this->load_css('css/selector-footer.css');
+			}
         }
         
-        // if the user has enabled this option do what it's suppose to do    
-        // in this case display the language picker after the posts     
         if($this->settings['post_languages']){
             add_filter('the_content', array($this, 'add_post_available'));
         }
-        
-    }    
+		add_filter('wp_page_menu',array(&$this,'filter_home_link'));
+    }
     
     // do call the destructor of the parent class
     function __destruct(){
         parent::__destruct();
-    }    
-    
-    // More stuff goes down here
-    
-    // the function for displaying the language selector at the bottom
-    function footer_language_selector(){
-        $languages = icl_get_languages('skip_missing='.intval($this->settings['footer_skip_languages']));
-        if(!empty($languages)){
-            echo '<div id="icl_footer_languages"><ul>';
-            foreach($languages as $l){
-                echo '<li>';
-                if(!$l['active']) echo '<a href="'.$l['url'].'">';
-                echo '<img src="'.$l['country_flag_url'].'" alt="'.$l['language_code'].'" width="18" height="12" />';
-                if(!$l['active']) echo '</a>';
-                if(!$l['active']) echo '<a href="'.$l['url'].'">';
-                echo $l['native_name'];
-                if(!$l['active']) echo ' ('.$l['translated_name'].')';
-                if(!$l['active']) echo '</a>';
-                echo '</li>';
-            }
-            echo '</ul></div>';
-        }
     }
-    
-    // the function for displaying the language selector after the post content
-    function add_post_available($content){
-        $out = '';
-        if(is_singular()){
-            $languages = icl_get_languages('skip_missing='.intval($this->settings['post_available_skip_languages']));
-            if(1 < count($languages)){            
-                $out .= $this->settings['post_available_text'];
-                $out .= $this->settings['post_available_before'] ? $this->settings['post_available_before'] : ''; 
-                foreach($languages as $l){
-                    if(!$l['active']) $langs[] = '<a href="'.$l['url'].'">'.$l['translated_name'].'</a>';
-                }
-                $out .= join(', ', $langs);
-                $out .= $this->settings['post_available_after'] ? $this->settings['post_available_after'] : '';
-            }    
-        }
-        return $content . '<p>' . $out . '</p>';
-    }
-    
 }
 
 

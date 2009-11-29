@@ -8,6 +8,7 @@ abstract class WPML_Package{
     var $package_path;
     var $package_url;
     private $_resources = array();
+	var $textdomain;
     
     
     function __construct(){
@@ -35,7 +36,9 @@ abstract class WPML_Package{
         
         add_action('wp_head', array($this, '_echo_js'), 30);
         add_action('wp_head', array($this, '_echo_css'), 30);
-        
+		
+		$this->textdomain = 'packages-'.$this->type.'-'.$this->name;
+		load_plugin_textdomain( $this->textdomain, false, ICL_PLUGIN_FOLDER . '/compatibility-packages/' . $this->type . '/' . $this->name . '/languages/');
     }
     
     function __destruct(){
@@ -240,7 +243,7 @@ abstract class WPML_Package{
                 foreach($languages as $l){
                     echo '<li>';
                     if(!$l['active']) echo '<a href="'.$l['url'].'">';
-                    echo '<img src="'.$l['country_flag_url'].'" alt="'.$l['language_code'].'" width="18" height="12" />&nbsp;';
+                    if ($sitepress_settings['icl_lso_flags']) echo '<img src="'.$l['country_flag_url'].'" alt="'.$l['language_code'].'" width="18" height="12" />&nbsp;';
                     if(!$l['active']) echo '</a>';
                      if(!$l['active']) echo '<a href="'.$l['url'].'">';
                     echo icl_disp_language( $sitepress_settings['icl_lso_native_lang'] ? $l['native_name'] : null, $sitepress_settings['icl_lso_display_lang'] ? $l['translated_name'] : null );
@@ -274,8 +277,10 @@ abstract class WPML_Package{
     }
 
         // This function should check if sidebar switcher is enabled
-    function check_widget(){
-    
+    function check_sidebar_language_selector_widget(){
+		if(is_admin()) return;
+    	global $wp_registered_widgets;
+		if(isset($wp_registered_widgets['language-selector'])) unregister_sidebar_widget('language-selector');
     }
     // Theme packages functions. - end (added SJ)
         
