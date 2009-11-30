@@ -243,7 +243,7 @@ abstract class WPML_Package{
                 foreach($languages as $l){
                     echo '<li>';
                     if(!$l['active']) echo '<a href="'.$l['url'].'">';
-                    if ($sitepress_settings['icl_lso_flags']) echo '<img src="'.$l['country_flag_url'].'" alt="'.$l['language_code'].'" width="18" height="12" />&nbsp;';
+                    if ($sitepress_settings['icl_lso_flags']) echo '<img src="'.$l['country_flag_url'].'" alt="'.$l['language_code'].'" />&nbsp;';
                     if(!$l['active']) echo '</a>';
                      if(!$l['active']) echo '<a href="'.$l['url'].'">';
                     echo icl_disp_language( $sitepress_settings['icl_lso_native_lang'] ? $l['native_name'] : null, $sitepress_settings['icl_lso_display_lang'] ? $l['translated_name'] : null );

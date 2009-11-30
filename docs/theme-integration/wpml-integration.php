@@ -80,7 +80,7 @@ function wpml_languages_list($skip_missing=0, $div_id = "footer_language_list"){
             foreach($languages as $l){
                 echo '<li>';
                 if(!$l['active']) echo '<a href="'.$l['url'].'">';
-                echo '<img src="'.$l['country_flag_url'].'" alt="'.$l['language_code'].'" width="18" height="12" />';
+                echo '<img src="'.$l['country_flag_url'].'" alt="'.$l['language_code'].'" />';
                 if(!$l['active']) echo '</a>';
                 if(!$l['active']) echo '<a href="'.$l['url'].'">';
                 echo $l['native_name'];

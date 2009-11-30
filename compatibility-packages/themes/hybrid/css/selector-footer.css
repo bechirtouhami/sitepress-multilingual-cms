@@ -24,6 +24,8 @@
   /*margin-right:5px;*/
   position: relative;
   top: 1px;
+  width: 18px;
+  height: 12px;
 }
 
 #icl_lang_selector_footer ul li {
