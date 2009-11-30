@@ -32,7 +32,7 @@
         $pending_pairs = array();
         if(is_array($icl_lang_status))
         foreach($icl_lang_status as $ls){
-            if(isset($ls['from']) && $ls['have_translators'] == 1){
+            if(isset($ls['from']) && ($ls['have_translators'] == 1 || ($ls['applications'] == 0 && $ls['available_translators'] == 1))){
                 $active_pairs[$ls['from'].'#'.$ls['to']] = 1;
             }elseif(isset($ls['from']) && $ls['applications'] > 0){
                 $pending_pairs[$ls['from'].'#'.$ls['to']] = $ls['applications'];

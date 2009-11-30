@@ -922,7 +922,8 @@ class SitePress{
                             
                         } else if (!$lang['applications']) {
                             // No translators have applied for this language pair.
-                            $response = sprintf(__('- (Waiting for translators to apply)', 'sitepress'));
+                            //$response = sprintf(__('- (Waiting for translators to apply)', 'sitepress'));
+                            $response = sprintf(__('- (Translators available)', 'sitepress')); 
                         } else if (!$lang['have_translators']) {
                             // translators have applied but none selected yet
                             $response = sprintf(__('- (%s translators applied - %schoose your translator%s)', 'sitepress'),

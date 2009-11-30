@@ -276,7 +276,7 @@
                 if (isset($icl_lang_status)){
                     foreach($icl_lang_status as $lang){
                         if($lang['from'] == $selected_language) {
-                            $target_status[$lang['to']] = $lang['have_translators'];
+                            $target_status[$lang['to']] = $lang['available_translators'];
                         }
                     }
                 }
