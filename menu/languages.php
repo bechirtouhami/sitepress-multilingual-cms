@@ -415,8 +415,10 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                                         <li class="icl_advanced_feature">
                                         
                                             <h4><?php echo __('Language switcher style', 'sitepress')?></h4>
-                                                                                        
-                                            <div id="icl_lang_sel_preview_wrap" style="height:<?php echo 30 * count($sitepress->get_active_languages())?>px">                                            
+                                    
+                                                                             
+                                            <?php if(!defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') || !ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS): ?>                                            
+                                            <div id="icl_lang_sel_preview_wrap" style="height:<?php echo 35 * count($sitepress->get_active_languages())?>px">                                            
                                             <span id="icl_lang_sel_preview">                                            
                                             <h4><?php _e('Language switcher preview', 'sitepress')?></h4>
                                             <?php 
@@ -426,6 +428,7 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                                             ?>                                                                          
                                             </span>                                                                     
                                             </div>
+                                            <?php endif; ?>
                                             
                                             <ul>
                                                 <li>
@@ -454,6 +457,8 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                                                 <?php endforeach; ?>
                                             <?php endforeach; ?>                                            
                                             
+                            
+                                            <?php if(!defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') || !ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS): ?>
                                             <a href="#" onclick="jQuery(this).next().slideToggle();return false;"><?php _e('Edit the language switcher colors', 'sitepress')?></a>                                            
                                             <div style="display:none">                                            
                                                 <table id="icl_lang_preview_config" style="width:auto;">
@@ -549,6 +554,9 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                                                 </select>
                                                 <span style="display:none"><?php _e("Are you sure? The customization you may have made will be overriden once you click 'Apply'", 'sitepress')?></span>
                                             </div>   
+                                            <?php else: ?>
+                                            <em><?php printf(__("%s is defined in your theme. The language switcher can only be customized using the theme's CSS.", 'sitepress'), 'ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') ?></em>
+                                            <?php endif; ?>
                                             
                                         </li>
                                     </ul>

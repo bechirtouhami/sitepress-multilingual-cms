@@ -238,11 +238,13 @@ class SitePress{
                 'border' => '#000000'            
             );
             
-            if(is_admin() && $_GET['page'] == ICL_PLUGIN_FOLDER . '/menu/languages.php'){
+            if(is_admin() && $_GET['page'] == ICL_PLUGIN_FOLDER . '/menu/languages.php' 
+                && (!defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') || !ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS)){
                 add_action('admin_head', 'icl_lang_sel_nav_css', 1, 1, true);
                 add_action('admin_head', array($this, 'custom_language_switcher_style'));
             }            
-            if(!is_admin()){
+            if(!is_admin()
+                && (!defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') || !ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS)){
                 add_action('wp_head', array($this, 'custom_language_switcher_style'));
             }
             
