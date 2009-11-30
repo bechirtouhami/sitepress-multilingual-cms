@@ -38,7 +38,7 @@ class Hybrid_theme_compatibility  extends WPML_Package{
 			// This post is available
 		$this->add_option_checkbox($wpage, __("Show 'this post is also available'", 'sitepress'), 'post_languages', $title . __('Language selector options'), 'checked');
         $this->add_option_checkbox($wpage, __("Skip missing languages for the 'this post is also available'", 'sitepress'), 'post_available_skip_languages', $title . __('More options'), 'checked');
-        $this->add_option_text($wpage, __("'this post is also available' text.", 'sitepress'), 'post_available_text', $title . __('Language selector options'), __('This post is also available in: ', 'sitepress'), array('size'=>40));
+        $this->add_option_text($wpage, __("'this post is also available' text.", 'sitepress'), 'post_available_text', $title . __('Language selector options'), 'This post is also available in: %s', array('size'=>40));
 		$this->add_option_select($wpage, __("'this post is also available' position:", 'sitepress'), 'post_available_position', array( 'top' => __('Above post', 'sitepress'), 'bottom' => __('Bellow post', 'sitepress') ),  $title . __('Language selector options','sitepress'), 'bottom');
        /* $this->add_option_text($wpage, __("'this post is also available' before.", 'sitepress'), 'post_available_before', $title . __('Language selector options'), '', array('size'=>5));
         $this->add_option_text($wpage, __("'this post is also available' after.", 'sitepress'), 'post_available_after', $title . __('Language selector options'), '', array('size'=>5));*/
@@ -66,16 +66,17 @@ class Hybrid_theme_compatibility  extends WPML_Package{
 		add_filter('hybrid_site_title',array(&$this,'filter_home_link'));
 		add_filter('wp_page_menu',array(&$this,'filter_home_link'));
 		
+		icl_register_string( 'theme '.$this->name, "'this post is also available' text", $this->settings['post_available_text'] );
 		$settings = get_option('hybrid_theme_settings');
 		if ( $settings && !empty($settings['footer_insert']) ) {
-			icl_register_string( 'theme Hybrid', 'Footer text', $settings['footer_insert'] );
+			icl_register_string( 'theme '.$this->name, 'Footer text', $settings['footer_insert'] );
 			add_action('wp_head',array(&$this,'translate_footer_text'));
 		}
     }
 
 	function translate_footer_text() {
 		global $hybrid_settings;
-		$hybrid_settings['footer_insert'] = icl_t('theme Hybrid','Footer text',$hybrid_settings['footer_insert']);
+		$hybrid_settings['footer_insert'] = icl_t('theme '.$this->name,'Footer text',$hybrid_settings['footer_insert']);
 	}
 
     function __destruct(){

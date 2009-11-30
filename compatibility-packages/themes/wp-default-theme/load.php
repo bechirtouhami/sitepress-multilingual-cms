@@ -41,7 +41,7 @@ class WP_Default_theme_compatibility  extends WPML_Package{
 			// This post is available
 		$this->add_option_checkbox($wpage, __("Show 'this post is also available'", 'sitepress'), 'post_languages', $title . __('Language selector options'), 'checked');
         $this->add_option_checkbox($wpage, __("Skip missing languages for the 'this post is also available'", 'sitepress'), 'post_available_skip_languages', $title . __('More options'), 'checked');
-        $this->add_option_text($wpage, __("'this post is also available' text.", 'sitepress'), 'post_available_text', $title . __('Language selector options'), __('This post is also available in: ', 'sitepress'), array('size'=>40));
+        $this->add_option_text($wpage, __("'this post is also available' text.", 'sitepress'), 'post_available_text', $title . __('Language selector options'), 'This post is also available in: %s', array('size'=>40));
 		$this->add_option_select($wpage, __("'this post is also available' position:", 'sitepress'), 'post_available_position', array( 'top' => __('Above post', 'sitepress'), 'bottom' => __('Bellow post', 'sitepress') ),  $title . __('Language selector options','sitepress'), 'bottom');
 		
         if($this->settings['footer_language_selector']){
@@ -51,6 +51,7 @@ class WP_Default_theme_compatibility  extends WPML_Package{
 			}
         }
         
+		icl_register_string( 'theme '.$this->name, "'this post is also available' text", $this->settings['post_available_text'] );
         if($this->settings['post_languages']){
             add_filter('the_content', array($this, 'add_post_available'));
         }

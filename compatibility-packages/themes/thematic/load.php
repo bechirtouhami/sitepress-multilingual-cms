@@ -33,7 +33,7 @@ class Thematic_theme_compatibility  extends WPML_Package{
 			// This post is available
 		$this->add_option_checkbox($wpage, __("Show 'this post is also available'", 'sitepress'), 'post_languages', $title . __('Language selector options'), 'checked');
         $this->add_option_checkbox($wpage, __("Skip missing languages for the 'this post is also available'", 'sitepress'), 'post_available_skip_languages', $title . __('More options'), 'checked');
-        $this->add_option_text($wpage, __("'this post is also available' text.", 'sitepress'), 'post_available_text', $title . __('Language selector options'), __('This post is also available in: ', 'sitepress'), array('size'=>40));
+        $this->add_option_text($wpage, __("'this post is also available' text.", 'sitepress'), 'post_available_text', $title . __('Language selector options'), 'This post is also available in: %s', array('size'=>40));
 		$this->add_option_select($wpage, __("'this post is also available' position:", 'sitepress'), 'post_available_position', array( 'top' => __('Above post', 'sitepress'), 'bottom' => __('Bellow post', 'sitepress') ),  $title . __('Language selector options','sitepress'), 'bottom');
        /* $this->add_option_text($wpage, __("'this post is also available' before.", 'sitepress'), 'post_available_before', $title . __('Language selector options'), '', array('size'=>5));
         $this->add_option_text($wpage, __("'this post is also available' after.", 'sitepress'), 'post_available_after', $title . __('Language selector options'), '', array('size'=>5));*/
@@ -61,9 +61,10 @@ class Thematic_theme_compatibility  extends WPML_Package{
 		add_filter('wp_page_menu',array(&$this,'filter_home_link'));
 		add_action('thematic_header',array(&$this,'remove_thematic_blogtitle'),0);
 		
+		icl_register_string( 'theme '.$this->name, "'this post is also available' text", $this->settings['post_available_text'] );
 		$footer_text = get_option('thm_footertext',true);
-		if ($settings) {
-			icl_register_string( 'theme Thematic', 'Footer text', $footer_text );
+		if ($footer_text) {
+			icl_register_string( 'theme '.$this->name, 'Footer text', $footer_text );
 			add_filter('thematic_footertext',array(&$this,'translate_footer_text'));
 		}
 	}
@@ -80,7 +81,7 @@ class Thematic_theme_compatibility  extends WPML_Package{
 	}
 
 	function translate_footer_text($str) {
-		return icl_t('theme Thematic','Footer text',$str);
+		return icl_t('theme '.$this->name,'Footer text',$str);
 	}
 
     // do call the destructor of the parent class

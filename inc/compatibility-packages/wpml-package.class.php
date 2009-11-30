@@ -261,15 +261,15 @@ abstract class WPML_Package{
         $out = '';
         if(is_singular()){
             $languages = icl_get_languages('skip_missing='.intval($this->settings['post_available_skip_languages']));
-            if(1 < count($languages)){            
-                $out .= $this->settings['post_available_text'];
+            if(1 < count($languages)){
                 $out .= $this->settings['post_available_before'] ? $this->settings['post_available_before'] : ''; 
                 foreach($languages as $l){
                     if(!$l['active']) $langs[] = '<a href="'.$l['url'].'">'.$l['translated_name'].'</a>';
                 }
                 $out .= join(', ', $langs);
                 $out .= $this->settings['post_available_after'] ? $this->settings['post_available_after'] : '';
-            }    
+				$out = sprintf(icl_t('theme '.$this->name, "'this post is also available' text", $this->settings['post_available_text']),$out);
+            }
         }
          if ( $this->settings['post_available_position'] == 'top')
             return '<p>' . $out . '</p>' . $content;

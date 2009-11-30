@@ -318,10 +318,12 @@ function icl_sitepress_deactivate(){
     */
 } 
 
+// Changed to use lowercased wpdb prefix. Some users have table name in uppercase.
+// http://bugs.mysql.com/bug.php?id=39894
 if(isset($_GET['activate'])){
     if(!isset($wpdb)) global $wpdb;
-    $table_name = $wpdb->prefix.'icl_languages';
-    if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
+    $table_name = strtolower($wpdb->prefix.'icl_languages');
+    if(strtolower($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'")) != $table_name){
         add_action('admin_notices', 'icl_cant_create_table');
         function icl_cant_create_table(){
             echo '<div class="error"><ul><li><strong>';
@@ -340,7 +342,7 @@ if(isset($_GET['activate'])){
                 }
             }                
         }
-    }   
+    }
 }
 
 ?>

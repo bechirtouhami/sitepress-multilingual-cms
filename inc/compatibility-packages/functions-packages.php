@@ -310,13 +310,13 @@ class WPML_Packages{
             }        
         }
         echo '<select type="text" id="icl_extras_'.$package_name.'_'.$option_name.'" name="icl_extras['.$package_type.']['.$package_name.']['.$option_name.']"' . $ea . '>';
-        foreach($option_options as $value=>$name){
-            if($default_value && $default_value==$value){
+        foreach($option_options as $opt_value=>$name){
+            if($value==$opt_value){
                 $selected = ' selected="selected"';
             }else{
                 $selected = '';
             }
-            echo '<option value="'.$value.'"'.$selected.'>' . $name . '</option>';
+            echo '<option value="'.$opt_value.'"'.$selected.'>' . $name . '</option>';
         }
         echo '</select>';
     }        
