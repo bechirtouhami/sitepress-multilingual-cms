@@ -35,14 +35,16 @@
             if(isset($ls['from']) && ($ls['have_translators'] == 1 || ($ls['applications'] == 0 && $ls['available_translators'] == 1))){
                 $active_pairs[$ls['from'].'#'.$ls['to']] = 1;
             }elseif(isset($ls['from']) && $ls['applications'] > 0){
-                $pending_pairs[$ls['from'].'#'.$ls['to']] = $ls['applications'];
+                $fr = $sitepress->get_language_details($ls['from']);
+                $to = $sitepress->get_language_details($ls['to']);
+                $pending_pairs[$ls['from'].'#'.$ls['to']] =$fr['display_name'].'#'.$to['display_name'];
             }
         }
         $inactive_pairs = array();
         if(is_array($sitepress_settings['language_pairs']))
         foreach($sitepress_settings['language_pairs'] as $lang_from => $lang_to_arr){
             foreach($lang_to_arr as $lang_to => $v){
-                if(!isset($active_pairs[$lang_from.'#'.$lang_to])){
+                if(!isset($active_pairs[$lang_from.'#'.$lang_to]) && !isset($pending_pairs[$lang_from.'#'.$lang_to])){
                     $fr = $sitepress->get_language_details($lang_from);
                     $to = $sitepress->get_language_details($lang_to);
                     $inactive_pairs[$lang_from.'#'.$lang_to] = $fr['display_name'].'#'.$to['display_name'];
@@ -102,7 +104,7 @@
             <p class="icl_form_success"><?php echo $_POST['icl_form_success'] ?></p>
             <?php endif; ?>  
         
-            <?php if($sitepress_settings['content_translation_setup_complete'] && empty($inactive_pairs)): ?>
+            <?php if($sitepress_settings['content_translation_setup_complete'] && empty($inactive_pairs) && empty($pending_pairs)): ?>
                 <h3><?php _e('Translation management', 'sitepress')?></h3>
                 <?php include ICL_PLUGIN_PATH . '/modules/icl-translation/icl-translation-dashboard.php'; ?>
             <?php endif; ?>
@@ -115,6 +117,19 @@
         <div class="icl_cyan_box">
      	    <h3><?php _e('Professional translation setup', 'sitepress')?></h3>
             <div id="icl_languages_translators_stats">    
+            <?php if(!empty($pending_pairs)): ?>
+                <p>
+                <?php _e('Choose your translators:', 'sitepress'); ?>    
+                </p>
+                <ul>
+                <?php foreach($pending_pairs as $il=>$v): ?>
+                    <?php $codes = explode('#', $il); $names = explode('#',$v); ?>
+                    <li>&nbsp;&nbsp;<img src="<?php echo ICL_PLUGIN_URL ?>/res/img/alert.png" width="16" height="16" alt="alert" 
+                            style="vertical-align:top; margin-right: 6px;" /><?php printf(__('From %s to %s', 'sitepress'), '<strong>' . $names[0] . '</strong>', '<strong>' . $names[1] . '</strong>'); ?>
+                     <?php echo $sitepress->get_language_status_text($codes[0],$codes[1]) ?></li>
+                <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
             <?php if(!empty($inactive_pairs)): ?>
                 <p>
                 <?php if(count($inactive_pairs) > 1) :?>
@@ -126,14 +141,14 @@
                 <ul>
                 <?php foreach($inactive_pairs as $il=>$v): ?>
                     <?php $codes = explode('#', $il); $names = explode('#',$v); ?>
-                    <li><img src="<?php echo ICL_PLUGIN_URL ?>/res/img/alert.png" width="16" height="16" alt="alert" 
+                    <li>&nbsp;&nbsp;<img src="<?php echo ICL_PLUGIN_URL ?>/res/img/alert.png" width="16" height="16" alt="alert" 
                             style="vertical-align:top; margin-right: 6px;" /><?php printf(__('From %s to %s', 'sitepress'), '<strong>' . $names[0] . '</strong>', '<strong>' . $names[1] . '</strong>'); ?>
                      <?php echo $sitepress->get_language_status_text($codes[0],$codes[1]) ?></li>
                 <?php endforeach; ?>
                 </ul>
-                <p><?php _e('You will only be able to send translations to languages for which translators have been assigned.', 'sitepress'); ?></p>
-            <?php else: ?>
-                <p><?php _e('Translators are assigned to all translation languages.', 'sitepress'); ?></p>
+                <p><?php _e('You will only be able to send translations to languages for which translators are available.', 'sitepress'); ?></p>
+            <?php elseif(empty($pending_pairs)): ?>
+                <p><?php _e('Translators are available for all translation languages.', 'sitepress'); ?></p>
             <?php endif; ?>
             </div>
         
@@ -201,7 +216,7 @@
         </div> <?php // <div class="icl_cyan_box"> ?>
         <?php endif; // wrap the two closing div tags into checking whether the ICL account is configured ?>    
         
-        <?php if($sitepress_settings['content_translation_setup_complete'] && !empty($inactive_pairs)): ?>
+        <?php if($sitepress_settings['content_translation_setup_complete'] && (!empty($inactive_pairs) || !empty($pending_pairs))): ?>
             <br />
             <h3><?php _e('Translation management', 'sitepress')?></h3>
             <?php include ICL_PLUGIN_PATH . '/modules/icl-translation/icl-translation-dashboard.php'; ?>
