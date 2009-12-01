@@ -250,7 +250,11 @@
         <?php endif; ?>
                     
     <?php endif; // if Professional translation enabled ?>
-                                                                               
+
+    <span id="icl_toggle_ct_confirm_message" style="display:none"><?php
+        echo __('Are you sure you want to disable professional translation?','sitepress'); 
+    ?></span>        
+             
     <?php if($sitepress_settings['content_translation_setup_complete']) remove_action('icl_menu_footer', array($sitepress, 'menu_footer')) ?>                                                       
     <?php do_action('icl_extra_options_' . $_GET['page']); ?>        
                             

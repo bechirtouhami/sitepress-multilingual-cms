@@ -158,11 +158,9 @@
             <?php if($sitepress_settings['content_translation_setup_complete']): ?>
                 <p><input id="icl_disable_content_translation" type="button" class="button-secondary" 
                     value="<?php echo __('Disable professional translation','sitepress') ?>" /></p>
-                <span id="icl_toggle_ct_confirm_message" style="display:none"><?php
-                     echo __('Are you sure you want to disable professional translation?','sitepress'); 
-                ?></span>        
             <?php endif; ?>        
-             
+
              <div class="clear"></div>
                           
              <?php endif; ?>
+             
