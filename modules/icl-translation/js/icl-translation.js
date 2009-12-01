@@ -366,7 +366,7 @@ function iclShowProgressBar(form, callback){
     progress.fadeIn();
     progress.animate({        
         width:'99.5%'
-    }, 15000, callback); 
+    }, 25000, callback); 
 }
 
         
