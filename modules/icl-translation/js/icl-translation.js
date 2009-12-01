@@ -1,5 +1,5 @@
 jQuery(document).ready(function(){
-    jQuery('#icl_configure_account, #icl_create_account').submit(iclConfigureAccount);
+    //jQuery('#icl_configure_account, #icl_create_account').submit(iclConfigureAccount);
     jQuery('#icl-translation-dashboard th :checkbox').click(
         function(){
             if(jQuery(this).attr('checked')){
