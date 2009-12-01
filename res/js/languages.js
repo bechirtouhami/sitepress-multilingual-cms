@@ -300,7 +300,6 @@ function iclUpdateLangSelQuickPreview(){
 function iclRenderLangPreview(){
 
     if(icl_lp_font_current_normal){
-        alert(icl_lp_font_current_normal);
         jQuery('#lang_sel a:first').css('cssText', 'color:' +  icl_lp_font_current_normal + ' !important') ; 
     }    
     if(icl_lp_font_current_hover){

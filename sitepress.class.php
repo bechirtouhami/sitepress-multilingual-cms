@@ -2667,6 +2667,7 @@ class SitePress{
                 break;
             }
         }
+        
         if($add){
             echo "\n<style type=\"text/css\">";
             foreach($this->settings['icl_lang_sel_config'] as $k=>$v){
