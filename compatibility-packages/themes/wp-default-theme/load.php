@@ -33,16 +33,63 @@ class WP_Default_theme_compatibility  extends WPML_Package{
 		$title = 'Default - ';
 		
 			// Footer switcher
-        $this->add_option_checkbox($wpage, __('Add a language selector to the site\'s footer','sitepress'), 'footer_language_selector', $title . __('Language selector options','sitepress'), 'checked');
-        $this->add_option_checkbox($wpage, __('Only include languages with translation in the footer', 'sitepress'), 'footer_skip_languages', $title . __('More options'), 'checked');
-		$this->add_option_checkbox($wpage, __('Load CSS for footer language selector', 'sitepress'), 'footer_load_css', $title . __('More options'), 'checked');
+		
+        $this->add_option_checkbox(
+			$wpage,
+			__('Add a language selector to the site\'s footer','sitepress'),
+			'footer_language_selector',
+			$title . __('Language selector options','sitepress'),
+			'checked'
+				);
+		
+        $this->add_option_checkbox(
+			$wpage,
+			__('Only include languages with translation in the footer', 'sitepress'),
+			'footer_skip_languages',
+			$title . __('More options')
+				);
+		
+		$this->add_option_checkbox(
+			$wpage,
+			__('Load CSS for footer language selector', 'sitepress'),
+			'footer_load_css',
+			$title . __('More options'),
+			'checked'
+				);
 		
 		
 			// This post is available
-		$this->add_option_checkbox($wpage, __("Show alternative languages for posts and pages", 'sitepress'), 'post_languages', $title . __('Language selector options'), 'checked');
-        $this->add_option_checkbox($wpage, __("REMOVE ME: Skip missing languages for the 'this post is also available'", 'sitepress'), 'post_available_skip_languages', $title . __('More options'), 'checked');
-        $this->add_option_text($wpage, __("Text for alternative languages display", 'sitepress'), 'post_available_text', $title . __('Language selector options'), 'This post is also available in: %s', array('size'=>40));
-		$this->add_option_select($wpage, __("Position to display alternative languages", 'sitepress'), 'post_available_position', array( 'top' => __('Above post', 'sitepress'), 'bottom' => __('Bellow post', 'sitepress') ),  $title . __('Language selector options','sitepress'), 'bottom');
+		
+		$this->add_option_checkbox(
+			$wpage,
+			__('Show alternative languages for posts and pages', 'sitepress'),
+			'post_languages',
+			$title . __('Language selector options'),
+			'checked'
+				);
+		
+        $this->add_option_text(
+			$wpage,
+			__('Text for alternative languages display', 'sitepress'),
+			'post_available_text',
+			$title . __('Language selector options','sitepress'),
+			'This post is also available in: %s',
+			array('size'=>40)
+				);
+		
+		$this->add_option_select(
+			$wpage,
+			__('Position to display alternative languages', 'sitepress'),
+			'post_available_position',
+			array( 'top' => __('Above post', 'sitepress'),
+			'bottom' => __('Bellow post', 'sitepress') ),
+			$title . __('Language selector options','sitepress'),
+			'bottom'
+				);
+		
+		
+		
+		
 		
         if($this->settings['footer_language_selector']){
             add_action('wp_footer',array(&$this,'language_selector_footer'));
@@ -50,11 +97,12 @@ class WP_Default_theme_compatibility  extends WPML_Package{
 				$this->load_css('css/selector-footer.css');
 			}
         }
-        
-		icl_register_string( 'theme '.$this->name, "Text for alternative languages for posts", $this->settings['post_available_text'] );
+		
         if($this->settings['post_languages']){
             add_filter('the_content', array($this, 'add_post_available'));
         }
+		
+		icl_register_string( 'theme '.$this->name, 'Text for alternative languages for posts', $this->settings['post_available_text'] );
 		add_filter('wp_page_menu',array(&$this,'filter_home_link'));
     }
     

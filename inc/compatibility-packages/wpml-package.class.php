@@ -233,7 +233,10 @@ abstract class WPML_Package{
     }
 
     function language_selector_footer() {
-        $languages = icl_get_languages('skip_missing='.intval($this->settings['footer_skip_languages']));
+		if($this->settings['footer_skip_languages'] == 'checked')
+			$this->settings['footer_skip_languages'] = 1;
+		$skip = is_singular() ? intval($this->settings['footer_skip_languages']) : 0;
+        $languages = icl_get_languages('skip_missing='.$skip);
         if(!empty($languages)){
             global $sitepress_settings;
             echo '
@@ -260,7 +263,7 @@ abstract class WPML_Package{
     function add_post_available($content){
         $out = '';
         if(is_singular()){
-            $languages = icl_get_languages('skip_missing='.intval($this->settings['post_available_skip_languages']));
+            $languages = icl_get_languages('skip_missing=true');
             if(1 < count($languages)){
                 $out .= $this->settings['post_available_before'] ? $this->settings['post_available_before'] : ''; 
                 foreach($languages as $l){
@@ -268,7 +271,7 @@ abstract class WPML_Package{
                 }
                 $out .= join(', ', $langs);
                 $out .= $this->settings['post_available_after'] ? $this->settings['post_available_after'] : '';
-				$out = sprintf(icl_t('theme '.$this->name, "'this post is also available' text", $this->settings['post_available_text']),$out);
+				$out = sprintf(icl_t('theme '.$this->name, 'Text for alternative languages for posts', $this->settings['post_available_text']),$out);
             }
         }
          if ( $this->settings['post_available_position'] == 'top')
