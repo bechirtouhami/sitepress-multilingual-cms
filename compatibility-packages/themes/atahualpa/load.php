@@ -143,7 +143,7 @@ class Atahualpa_theme_compatibility  extends WPML_Package{
 	}
 
 	function register_strings(){
-		icl_register_string( 'theme '.$this->name, "'this post is also available' text", $this->settings['post_available_text'] );
+		icl_register_string( 'theme '.$this->name, 'Text for alternative languages for posts', $this->settings['post_available_text'] );
 		global $bfa_ata;
 		foreach ($this->translatable_strings as $string) {
 			icl_register_string( 'theme '.$this->name, $this->make_title($string), $bfa_ata[$string] );
