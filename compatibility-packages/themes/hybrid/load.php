@@ -134,6 +134,8 @@ class Hybrid_theme_compatibility  extends WPML_Package{
 			icl_register_string( 'theme '.$this->name, 'Footer text', $settings['footer_insert'] );
 			add_action('wp_head',array(&$this,'translate_footer_text'));
 		}
+		
+		$this->load_css('css/compatibility-package.css');
     }
 
 	function translate_footer_text() {
