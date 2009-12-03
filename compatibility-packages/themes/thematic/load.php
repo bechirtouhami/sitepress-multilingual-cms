@@ -123,7 +123,7 @@ class Thematic_theme_compatibility  extends WPML_Package{
 		add_filter('wp_page_menu',array(&$this,'filter_home_link'));
 		add_action('thematic_header',array(&$this,'remove_thematic_blogtitle'),0);
 		
-		icl_register_string( 'theme '.$this->name, "'this post is also available' text", $this->settings['post_available_text'] );
+		icl_register_string( 'theme '.$this->name, 'Text for alternative languages for posts', $this->settings['post_available_text'] );
 		$footer_text = get_option('thm_footertext',true);
 		if ($footer_text) {
 			icl_register_string( 'theme '.$this->name, 'Footer text', $footer_text );
