@@ -128,7 +128,7 @@ class Hybrid_theme_compatibility  extends WPML_Package{
 		add_filter('hybrid_site_title',array(&$this,'filter_home_link'));
 		add_filter('wp_page_menu',array(&$this,'filter_home_link'));
 		
-		icl_register_string( 'theme '.$this->name, "'this post is also available' text", $this->settings['post_available_text'] );
+		icl_register_string( 'theme '.$this->name, 'Text for alternative languages for posts', $this->settings['post_available_text'] );
 		$settings = get_option('hybrid_theme_settings');
 		if ( $settings && !empty($settings['footer_insert']) ) {
 			icl_register_string( 'theme '.$this->name, 'Footer text', $settings['footer_insert'] );
