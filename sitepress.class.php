@@ -3770,7 +3770,7 @@ class SitePress{
         
         $output = '
         <div class="icl_sidebar">
-            <h3>' . __('Setup actions', 'sitepress') . '</h3>
+            <h3>' . __('Setup check list', 'sitepress') . '</h3>
             <ul>';
             
         foreach($steps as $index => $step) {
