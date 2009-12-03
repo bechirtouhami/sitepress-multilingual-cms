@@ -32,6 +32,8 @@ addLoadEvent(function(){
     jQuery('#icl_save_language_switcher_options :checkbox[name="icl_lso_flags"]').change(iclUpdateLangSelQuickPreview);
     jQuery('#icl_lang_sel_color_scheme').change(iclUpdateLangSelColorScheme);
     
+    //jQuery('#icl_lang_preview_config input').change(iclUpdateLangSelPreview);    
+    
 });
 function editingDefaultLanguage(){
     jQuery('#icl_change_default_button').hide();
@@ -298,53 +300,69 @@ function iclUpdateLangSelQuickPreview(){
 }
 
 function iclRenderLangPreview(){
-
-    if(icl_lp_font_current_normal){
-        jQuery('#lang_sel a:first').css('cssText', 'color:' +  icl_lp_font_current_normal + ' !important') ; 
+    
+    if(icl_lp_font_current_normal){                                                                          
+        jQuery('#lang_sel a:first').css('color',icl_lp_font_current_normal) ; 
     }    
     if(icl_lp_font_current_hover){
-        jQuery('#lang_sel a:first').unbind('hover');
-        jQuery('#lang_sel a:first').hover(
-            function(){jQuery(this).css('cssText', 'color:'+icl_lp_font_current_hover+' !important')},
-            function(){jQuery(this).css('cssText', 'color:'+icl_lp_font_current_normal+ ' !important')}
-            );
-    }
-
-    if(icl_lp_background_current_normal){
-        jQuery('#lang_sel a:first').css('cssText', 'background-color:' + icl_lp_background_current_normal + ' !important'); 
-    }    
-    if(icl_lp_background_current_hover){
-        jQuery('#lang_sel a:first').unbind('hover');
-        jQuery('#lang_sel a:first').hover(
-            function(){jQuery(this).css('cssText', 'background-color:', icl_lp_background_current_hover + ' !important')},
-            function(){jQuery(this).css('cssText', 'background-color:', icl_lp_background_current_normal + ' !important')}
+        jQuery('#lang_sel a:first, #lang_sel a.lang_sel_sel').unbind('hover');
+        jQuery('#lang_sel a:first, #lang_sel a.lang_sel_sel').hover(
+            function(){jQuery(this).css('color',icl_lp_font_current_hover)},
+            function(){
+                jQuery(this).css('color',icl_lp_font_current_normal);
+                jQuery('#lang_sel a.lang_sel_sel').css('color','');
+                }
             );
     }
     
+    if(icl_lp_background_current_normal){
+        jQuery('#lang_sel a:first').css('background-color', icl_lp_background_current_normal); 
+        
+        jQuery('#lang_sel a:first').unbind('hover');
+        jQuery('#lang_sel a:first').hover(
+            function(){jQuery(this).css('background-color', '')},
+            function(){jQuery(this).css('background-color', icl_lp_background_current_normal)}
+            );
+        
+    }
+    
+    if(icl_lp_background_current_hover){                                                          
+        jQuery('#lang_sel a:first').unbind('hover');
+        jQuery('#lang_sel a:first').hover(
+            function(){jQuery(this).css('background-color', icl_lp_background_current_hover)},
+            function(){jQuery(this).css('background-color', icl_lp_background_current_normal)}
+            );
+    }
+                                                                                                               
     if(icl_lp_font_other_normal){
-        jQuery('#lang_sel li ul a').css('cssText', 'color:'+icl_lp_font_other_normal+' !important') ; 
+        jQuery('#lang_sel li ul a').css('color', icl_lp_font_other_normal); 
     }    
     if(icl_lp_font_other_hover){
         jQuery('#lang_sel li ul a').unbind('hover');
         jQuery('#lang_sel li ul a').hover(
-            function(){jQuery(this).css('cssText', 'color:'+icl_lp_font_other_hover+' !important')},
-            function(){jQuery(this).css('cssText', 'color:'+icl_lp_font_other_normal+' !important')}
+            function(){jQuery(this).css('color',icl_lp_font_other_hover)},
+            function(){jQuery(this).css('color',icl_lp_font_other_normal)}
             );
     }
 
     if(icl_lp_background_other_normal){
-        jQuery('#lang_sel li ul a').css('cssText','background-color:'+icl_lp_background_other_normal+' !important') ; 
+        jQuery('#lang_sel li ul a').css('background-color', icl_lp_background_other_normal) ; 
+        jQuery('#lang_sel li ul a').unbind('hover');
+        jQuery('#lang_sel li ul a').hover(
+            function(){jQuery(this).css('background-color', '')},
+            function(){jQuery(this).css('background-color', icl_lp_background_other_normal)}
+            );        
     }    
     if(icl_lp_background_other_hover){
         jQuery('#lang_sel li ul a').unbind('hover');
         jQuery('#lang_sel li ul a').hover(
-            function(){jQuery(this).css('cssText', 'background-color:', icl_lp_background_other_hover + ' !important')},
-            function(){jQuery(this).css('cssText', 'background-color:', icl_lp_background_other_normal + ' !important')}
+            function(){jQuery(this).css('background-color', icl_lp_background_other_hover)},
+            function(){jQuery(this).css('background-color', icl_lp_background_other_normal)}
             );
     }
     
     if(icl_lp_border){
-        jQuery('#lang_sel a').css('cssText', 'border-color:'+icl_lp_border+' !important');
+        jQuery('#lang_sel a').css('border-color', icl_lp_border);
     }
     
     if(icl_lp_flag){
@@ -363,7 +381,6 @@ function iclUpdateLangSelColorScheme(){
             value = jQuery('#icl_lang_sel_config_alt_'+scheme+'_'+thisn).val();
             jQuery(this).val(value);
                         
-            
             switch(jQuery(this).attr('name')){
                 case 'icl_lang_sel_config[font-current-normal]':
                     icl_lp_font_current_normal = value;

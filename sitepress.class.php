@@ -205,15 +205,15 @@ class SitePress{
                 'border' => '#000000'
             );
             $language_switcher_defaults_alt['White'] = array(
-                'font-current-normal' => '#ff0000',
+                'font-current-normal' => '#5000ff',
                 'font-current-hover' => '#000000',
-                'background-current-normal' => '#0099cc',
-                'background-current-hover' => '#0099cc',
-                'font-other-normal' => '#000000',
+                'background-current-normal' => '#eeeeee',
+                'background-current-hover' => '#ffffff',
+                'font-other-normal' => '#555555',
                 'font-other-hover' => '#000000',
                 'background-other-normal' => '#eeeeee',
                 'background-other-hover' => '#cccccc',
-                'border' => '#000000'            
+                'border' => '#555555'            
             );
             $language_switcher_defaults_alt['Gray'] = array(
                 'font-current-normal' => '#00ff00',
@@ -242,6 +242,9 @@ class SitePress{
                 && (!defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') || !ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS)){
                 add_action('admin_head', 'icl_lang_sel_nav_css', 1, 1, true);
                 add_action('admin_head', array($this, 'custom_language_switcher_style'));
+                //if(isset($_GET['icl_action']) && $_GET['icl_action']=='icl_lang_sel_preview'){
+                //    $this->settings['icl_lang_sel_config'] = $_GET['icl_lang_sel_config'];
+                //}
             }            
             if(!is_admin()
                 && (!defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') || !ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS)){
@@ -2665,46 +2668,45 @@ class SitePress{
                 break;
             }
         }
-        
         if($add){
             echo "\n<style type=\"text/css\">";
             foreach($this->settings['icl_lang_sel_config'] as $k=>$v){
                 switch($k){
                     case 'font-current-normal': 
                         if($v != $language_switcher_defaults[$k])
-                            echo '#lang_sel a{color:'.$v.' !important;}'; 
+                            echo '#lang_sel a, #lang_sel a.lang_sel_sel{color:'.$v.';}'; 
                         break;
                     case 'font-current-hover': 
                         if($v != $language_switcher_defaults[$k])
-                            echo '#lang_sel a:hover{color:'.$v.' !important;}';
+                            echo '#lang_sel a:hover, #lang_sel a.lang_sel_sel:hover{color:'.$v.';}';
                         break;
                     case 'background-current-normal': 
                         if($v != $language_switcher_defaults[$k])
-                            echo '#lang_sel a:first{background-color:'.$v.' !important;}'; 
+                            echo '#lang_sel a:first{background-color:'.$v.';}'; 
                         break;
                     case 'background-current-hover': 
                         if($v != $language_switcher_defaults[$k])
-                            echo '#lang_sel a:first:hover{background-color:'.$v.' !important;}'; 
+                            echo '#lang_sel a:first:hover{background-color:'.$v.';}'; 
                         break;
                     case 'font-other-normal':
                         if($v != $language_switcher_defaults[$k])
-                            echo '#lang_sel li ul a{color:'.$v.' !important;}'; 
+                            echo '#lang_sel li ul a{color:'.$v.';}'; 
                         break;
                     case 'font-other-hover': 
                         if($v != $language_switcher_defaults[$k])
-                            echo '#lang_sel li ul a:hover{color:'.$v.' !important;}'; 
+                            echo '#lang_sel li ul a:hover{color:'.$v.';}'; 
                         break;
                     case 'background-other-normal': 
                         if($v != $language_switcher_defaults[$k])
-                            echo '#lang_sel li ul a{background-color:'.$v.' !important;;}'; 
+                            echo '#lang_sel li ul a{background-color:'.$v.';}'; 
                         break;
                     case 'background-other-hover': 
                         if($v != $language_switcher_defaults[$k])
-                            echo '#lang_sel li ul a:hover{background-color:'.$v.' !important;;}'; 
+                            echo '#lang_sel li ul a:hover{background-color:'.$v.';}'; 
                         break;
                     case 'border': 
                         if($v != $language_switcher_defaults[$k])
-                            echo '#lang_sel a{border-color:'.$v.' !important;;}';
+                            echo '#lang_sel a{border-color:'.$v.';}';
                         break;
                     
                 }
