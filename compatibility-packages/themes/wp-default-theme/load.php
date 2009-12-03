@@ -104,6 +104,8 @@ class WP_Default_theme_compatibility  extends WPML_Package{
 		
 		icl_register_string( 'theme '.$this->name, 'Text for alternative languages for posts', $this->settings['post_available_text'] );
 		add_filter('wp_page_menu',array(&$this,'filter_home_link'));
+		
+		$this->load_css('css/compatibility-package.css');
     }
     
     // do call the destructor of the parent class
