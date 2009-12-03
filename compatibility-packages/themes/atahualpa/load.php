@@ -136,6 +136,8 @@ class Atahualpa_theme_compatibility  extends WPML_Package{
         if($this->settings['post_languages']){
             add_filter('the_content', array($this, 'add_post_available'));
         }
+		
+		$this->load_css('css/compatibility-package.css');
     }
 
 	function make_title($string){
