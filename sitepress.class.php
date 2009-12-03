@@ -3758,13 +3758,6 @@ class SitePress{
                         __('Deposit payment', 'sitepress'),
                         __('Translations will be returned to your site', 'sitepress'));
 
-        $anchors = array('account',
-                         'send_docs',
-                         'waiting_trans',
-                         'choose_trans',
-                         'deposit',
-                         'return_trans');
-        
         $current_step = $this->get_current_action_step();
         if ($current_step >= sizeof($steps)) {
             // everything is already setup.
@@ -3781,7 +3774,7 @@ class SitePress{
             <ul>';
             
         foreach($steps as $index => $step) {
-            $step_data = '<a href="http://wpml.org/?page_id=1169#' . $anchors[$index] . '">' . $step . '</a>';
+            $step_data = $step;
             
             if ($index < $current_step || ($index == 4 && $this->settings['icl_balance'] > 0)) {
                 $attr = ' class="icl_tick"';
