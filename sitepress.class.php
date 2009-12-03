@@ -1306,11 +1306,7 @@ class SitePress{
                     $iclsettings['icl_account_email'] = $user['email'];
                     $this->save_settings($iclsettings);
                     if($user['create_account']==1){
-                        $_POST['icl_form_success'] = __('Professional translation for your site is set up. Next steps:', 'sitepress') . '<br />';
-                        $_POST['icl_form_success'] .= '<ol>';
-                        $_POST['icl_form_success'] .= '<li>' . __('Interview and choose translators.', 'sitepress') . '</li>';
-                        $_POST['icl_form_success'] .= '<li>' . __('Deposit payment for the translation.', 'sitepress') . '</li>';
-                        $_POST['icl_form_success'] .= '</ol>';
+                        $_POST['icl_form_success'] = __('A project on ICanLocalize has been created.', 'sitepress') . '<br />';
                         
                     }else{
                         $_POST['icl_form_success'] = __('Project added','sitepress');
@@ -3709,6 +3705,105 @@ class SitePress{
         return $active_languages;
         
     }
-     
+    
+    function get_current_action_step() {
+        global $wpdb;
+        
+        if (!$this->icl_account_configured()) {
+            return 0;
+        }
+
+        $cms_count = $wpdb->get_var("SELECT COUNT(rid) FROM {$wpdb->prefix}icl_core_status WHERE status=3");
+        if($cms_count > 0) {
+            return 6;
+        }
+        
+        $cms_count = $wpdb->get_var("SELECT COUNT(rid) FROM {$wpdb->prefix}icl_core_status WHERE 1");
+        if($cms_count == 0) {
+            // No documents sent yet
+            return 1;
+        }
+        
+        $icl_lang_status = $this->settings['icl_lang_status'];
+        
+        $waiting_for_translators = true;
+        foreach ($icl_lang_status as $lang) {
+            if ($lang['have_translators'] == 0 && $lang['applications'] > 0) {
+                return 3;
+            }
+            if ($lang['have_translators'] > 0 || $lang['applications'] > 0) {
+                $waiting_for_translators = false;
+            }
+        }
+
+        if ($waiting_for_translators) {
+            return 2;
+        }
+
+        $balance = $this->settings['icl_balance'];
+        if ($balance < 0) {
+            return 4;
+        }
+
+        
+        return 5;
+        
+    }
+    
+    function show_action_list() {
+        $steps = array(__('Set up a project in ICanLocalize', 'sitepress'),
+                        __('Send documents for translation', 'sitepress'),
+                        __('Waiting for translators', 'sitepress'),
+                        __('Choose your translators', 'sitepress'),
+                        __('Deposit payment', 'sitepress'),
+                        __('Translations will be returned to your site', 'sitepress'));
+
+        $anchors = array('account',
+                         'send_docs',
+                         'waiting_trans',
+                         'choose_trans',
+                         'deposit',
+                         'return_trans');
+        
+        $current_step = $this->get_current_action_step();
+        if ($current_step >= sizeof($steps)) {
+            // everything is already setup.
+            if ($this->settings['last_action_step_shown']) {
+                return '';
+            } else {
+                $this->save_settings(array('last_action_step_shown' => 1));
+            }
+        }
+        
+        $output = '
+        <div class="icl_sidebar">
+            <h3>' . __('Setup actions', 'sitepress') . '</h3>
+            <ul>';
+            
+        foreach($steps as $index => $step) {
+            $step_data = '<a href="http://wpml.org/?page_id=1169#' . $anchors[$index] . '">' . $step . '</a>';
+            
+            if ($index < $current_step || ($index == 4 && $this->settings['icl_balance'] > 0)) {
+                $attr = ' class="icl_tick"';
+            } else {
+                $attr = ' class="icl_next_step"';
+            }
+            
+            if ($index == $current_step) {
+                $output .= '<li class="icl_info"><b>' . $step_data . '</b></li>';
+            } else {
+                $output .= '<li' . $attr. '>' . $step_data . '</li>';
+            }
+            $output .= "\n";
+        }
+                
+        $output .= '
+            </ul>
+            
+            <a href="http://wpml.org/?page_id=1169">' . __('More info', 'sitepress') . '</a>
+        </div>';
+        
+        return $output;
+    }
 }
 ?>

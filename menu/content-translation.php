@@ -60,14 +60,7 @@
 
     <?php include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php' ?>     
 
-    <div class="icl_sidebar">
-        <ul>
-            <li>testing</li>
-            <li>testing</li>
-            <li>testing</li>
-        </ul>
-    </div>
-    
+    <?php echo $sitepress->show_action_list() ?>
 
     <?php if(!$sitepress->get_icl_translation_enabled() ): ?>        
     
