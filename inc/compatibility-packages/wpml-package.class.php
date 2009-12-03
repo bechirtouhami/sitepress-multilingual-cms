@@ -271,12 +271,12 @@ abstract class WPML_Package{
                 }
                 $out .= join(', ', $langs);
                 $out .= $this->settings['post_available_after'] ? $this->settings['post_available_after'] : '';
-				$out = sprintf(icl_t('theme '.$this->name, 'Text for alternative languages for posts', $this->settings['post_available_text']),$out);
+				$out = '<p>' . sprintf(icl_t('theme '.$this->name, 'Text for alternative languages for posts', $this->settings['post_available_text']),$out) . '</p>';
             }
         }
          if ( $this->settings['post_available_position'] == 'top')
-            return '<p>' . $out . '</p>' . $content;
-        else return $content . '<p>' . $out . '</p>';
+            return $out . $content;
+        else return $content . $out;
     }
 
         // This function should check if sidebar switcher is enabled
