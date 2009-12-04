@@ -29,19 +29,16 @@ function show_help_links() {
 
 function display_side_bar_if_required() {
 
-    content_width = jQuery('#icl_wrap').outerWidth();
-    
+    sidebar_width = 207;
     if(jQuery('#icl_sidebar_full').css('display')=='none') {
         jQuery('#icl_sidebar').css({'width': '25px'});
+        sidebar_width = 25;
     } else {
         jQuery('#icl_sidebar').css({'width': '207px'});
     }
     
-    sidebar_width = jQuery('#icl_sidebar').outerWidth();
-    
-    new_width = content_width - sidebar_width - 10;
-    new_width = '' + new_width + 'px';
-    jQuery('#icl_pro_content').css({'width': new_width});
+    margin_right = '' + (sidebar_width + 30) + 'px'
+    jQuery('#icl_pro_content').css({'margin-right': margin_right});
     jQuery('#icl_sidebar').fadeIn();
     
 }

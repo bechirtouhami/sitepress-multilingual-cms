@@ -3785,10 +3785,7 @@ class SitePress{
         }
                 
         $output .= '
-            </ul>
-            
-            <a href="http://wpml.org/?page_id=1169">' . __('More info', 'sitepress') . '</a>';
-        
+            </ul>';
         
         return $output;
     }
