@@ -573,12 +573,27 @@ switch($_REQUEST['icl_ajx_action']){
                     $title = $resource['attr']['title'];
                     $url = $resource['attr']['url'];
                     $icon = $resource['attr']['icon'];
+                    $icon_width = $resource['attr']['icon_width'];
+                    $icon_height = $resource['attr']['icon_height'];
                 } else {
                     $title = $resource['title'];
                     $url = $resource['url'];
                     $icon = $resource['icon'];
+                    $icon_width = $resource['icon_width'];
+                    $icon_height = $resource['icon_height'];
                 }
-                $output .= '<li><a href="' . $url . '">' . $title . '</a></li>';
+                $output .= '<li>';
+                if ($icon) {
+                    $output .= '<img src="' . $icon . '"';
+                    if ($icon_width) {
+                        $output .= ' width="' . $icon_width . '"';
+                    }
+                    if ($icon_height) {
+                        $output .= ' height="' . $icon_height . '"';
+                    }
+                    $output .= '>&nbsp;&nbsp;';
+                }
+                $output .= '<a href="' . $url . '">' . $title . '</a></li>';
             
             }
             $output .= '</ul>';
