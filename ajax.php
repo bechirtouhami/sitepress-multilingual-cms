@@ -584,14 +584,14 @@ switch($_REQUEST['icl_ajx_action']){
                 }
                 $output .= '<li>';
                 if ($icon) {
-                    $output .= '<img src="' . $icon . '"';
+                    $output .= '<img style="vertical-align: bottom; padding-right: 5px;" src="' . $icon . '"';
                     if ($icon_width) {
                         $output .= ' width="' . $icon_width . '"';
                     }
                     if ($icon_height) {
                         $output .= ' height="' . $icon_height . '"';
                     }
-                    $output .= '>&nbsp;&nbsp;';
+                    $output .= '>';
                 }
                 $output .= '<a href="' . $url . '">' . $title . '</a></li>';
             

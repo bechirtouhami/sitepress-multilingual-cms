@@ -3811,7 +3811,7 @@ class SitePress{
             $output .= $action_list;
         }
         
-        $output .= '<h3>' . __('Help links', 'sitepress') . '</h3>';
+        $output .= '<h3>' . __('Help', 'sitepress') . '</h3>';
         $output .= '<div id="icl_help_links"></div>';
         $output .= '</div>';
         if ($show_minimized) {
@@ -3819,7 +3819,7 @@ class SitePress{
         } else {
             $output .= '<div id="icl_sidebar_hide_div" style="display:none">';
         }
-        $output .= '<a id="icl_sidebar_show" href="#"><img src="' . ICL_PLUGIN_URL . '/res/img/question-green.png' . '"></a>';
+        $output .= '<a id="icl_sidebar_show" href="#"><img width="16" height="16" src="' . ICL_PLUGIN_URL . '/res/img/question1.png' . '" alt="'.__('Get help','sitepress').'" title="'.__('Get help','sitepress').'" /></a>';
         $output .= '</div>';
         $output .= '</div>';
         

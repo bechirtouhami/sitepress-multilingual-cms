@@ -60,8 +60,9 @@
 
     <?php include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php' ?>     
 
-    <?php echo $sitepress->show_pro_sidebar() ?>
-    <div id="icl_pro_content">
+    <table style="width:100%; border: none;"><tr>
+    <td style="vertical-align:top;">
+        <div id="icl_pro_content">
         
     <?php if(!$sitepress->get_icl_translation_enabled() ): ?>        
     
@@ -84,8 +85,7 @@
         <br />
         <p style="line-height:1.5"><?php printf(__('Pricing for professional translation is <b>%s USD per word</b> between any language pair.', 'sitepress'), '0.07'); ?></p>
         <br /><p><input id="icl_enable_content_translation" type="button" class="button-primary" value="<?php echo __('Enable professional translation','sitepress') ?>" /> &nbsp; | &nbsp;
-        <a href="#" class="icl_cost_estimate_toggle"><?php _e('Cost estimate', 'sitepress');?></a> &nbsp; | &nbsp;
-        <a href="http://wpml.org/?page_id=1169" target="_blank"><?php _e('More information','sitepress'); ?></a></p>
+        <a href="#" class="icl_cost_estimate_toggle"><?php _e('Cost estimate', 'sitepress');?></a></p>
         <br />
         
         <div id="icl_cost_estimate" class="icl_cyan_box" <?php if(isset($_POST['translation_dashboard_filter'])):?>style="display:block"<?php endif;?> >
@@ -260,6 +260,9 @@
              
     </div>    
 
+    </td><td style="vertical-align:top; padding: 21px 0 0 10px;">
+        <?php echo $sitepress->show_pro_sidebar() ?>
+    </td></tr></table>
     <?php if($sitepress_settings['content_translation_setup_complete']) remove_action('icl_menu_footer', array($sitepress, 'menu_footer')) ?>                                                       
     <?php do_action('icl_extra_options_' . $_GET['page']); ?>        
                             

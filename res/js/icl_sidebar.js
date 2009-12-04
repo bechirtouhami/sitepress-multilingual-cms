@@ -29,16 +29,12 @@ function show_help_links() {
 
 function display_side_bar_if_required() {
 
-    sidebar_width = 207;
     if(jQuery('#icl_sidebar_full').css('display')=='none') {
-        jQuery('#icl_sidebar').css({'width': '25px'});
-        sidebar_width = 25;
+        jQuery('#icl_sidebar').css({'width': '16px'});
     } else {
         jQuery('#icl_sidebar').css({'width': '207px'});
     }
     
-    margin_right = '' + (sidebar_width + 30) + 'px'
-    jQuery('#icl_pro_content').css({'margin-right': margin_right});
     jQuery('#icl_sidebar').fadeIn();
     
 }
