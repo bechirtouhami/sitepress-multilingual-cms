@@ -310,7 +310,7 @@ function iclRenderLangPreview(){
             function(){jQuery(this).css('color',icl_lp_font_current_hover)},
             function(){
                 jQuery(this).css('color',icl_lp_font_current_normal);
-                jQuery('#lang_sel a.lang_sel_sel').css('color','');
+                jQuery('#lang_sel a.lang_sel_sel').css('color',icl_lp_font_current_normal);
                 }
             );
     }
@@ -375,7 +375,7 @@ function iclRenderLangPreview(){
 
 function iclUpdateLangSelColorScheme(){
     scheme = jQuery(this).val();
-    if(confirm(jQuery(this).next().html())){
+    if(scheme && confirm(jQuery(this).next().html())){
         jQuery('#icl_lang_preview_config input[type="text"]').each(function(){
             thisn = jQuery(this).attr('name').replace('icl_lang_sel_config[','').replace(']','');
             value = jQuery('#icl_lang_sel_config_alt_'+scheme+'_'+thisn).val();

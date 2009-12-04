@@ -194,49 +194,39 @@ class SitePress{
               
             global $language_switcher_defaults, $language_switcher_defaults_alt;
             $language_switcher_defaults = array(
-                'font-current-normal' => '#ffffff',
-                'font-current-hover' => '#000000',
-                'background-current-normal' => '#0099cc',
-                'background-current-hover' => '#0099cc',
-                'font-other-normal' => '#000000',
-                'font-other-hover' => '#000000',
-                'background-other-normal' => '#eeeeee',
-                'background-other-hover' => '#cccccc',
-                'border' => '#000000'
+                'font-current-normal' => ICL_LANG_SEL_DEFAULT_FONT_CURRENT_NORMAL,
+                'font-current-hover' => ICL_LANG_SEL_DEFAULT_FONT_CURRENT_HOVER,
+                'background-current-normal' => ICL_LANG_SEL_DEFAULT_BACKGROUND_CURRENT_NORMAL,
+                'background-current-hover' => ICL_LANG_SEL_DEFAULT_BACKGROUND_CURRENT_HOVER,
+                'font-other-normal' => ICL_LANG_SEL_DEFAULT_FONT_OTHER_NORMAL,
+                'font-other-hover' => ICL_LANG_SEL_DEFAULT_FONT_OTHER_HOVER,
+                'background-other-normal' => ICL_LANG_SEL_DEFAULT_BACKGROUND_OTHER_NORMAL,
+                'background-other-hover' => ICL_LANG_SEL_DEFAULT_BACKGROUND_OTHER_HOVER,
+                'border' => ICL_LANG_SEL_DEFAULT_BORDER            
             );
             $language_switcher_defaults_alt['White'] = array(
-                'font-current-normal' => '#5000ff',
-                'font-current-hover' => '#000000',
-                'background-current-normal' => '#eeeeee',
-                'background-current-hover' => '#ffffff',
-                'font-other-normal' => '#555555',
-                'font-other-hover' => '#000000',
-                'background-other-normal' => '#eeeeee',
-                'background-other-hover' => '#cccccc',
-                'border' => '#555555'            
+                'font-current-normal' => ICL_LANG_SEL_WHITE_FONT_CURRENT_NORMAL,
+                'font-current-hover' => ICL_LANG_SEL_WHITE_FONT_CURRENT_HOVER,
+                'background-current-normal' => ICL_LANG_SEL_WHITE_BACKGROUND_CURRENT_NORMAL,
+                'background-current-hover' => ICL_LANG_SEL_WHITE_BACKGROUND_CURRENT_HOVER,
+                'font-other-normal' => ICL_LANG_SEL_WHITE_FONT_OTHER_NORMAL,
+                'font-other-hover' => ICL_LANG_SEL_WHITE_FONT_OTHER_HOVER,
+                'background-other-normal' => ICL_LANG_SEL_WHITE_BACKGROUND_OTHER_NORMAL,
+                'background-other-hover' => ICL_LANG_SEL_WHITE_BACKGROUND_OTHER_HOVER,
+                'border' => ICL_LANG_SEL_WHITE_BORDER            
             );
             $language_switcher_defaults_alt['Gray'] = array(
-                'font-current-normal' => '#00ff00',
-                'font-current-hover' => '#000000',
-                'background-current-normal' => '#0099cc',
-                'background-current-hover' => '#0099cc',
-                'font-other-normal' => '#000000',
-                'font-other-hover' => '#000000',
-                'background-other-normal' => '#eeeeee',
-                'background-other-hover' => '#cccccc',
-                'border' => '#000000'            
+                'font-current-normal' => ICL_LANG_SEL_GRAY_FONT_CURRENT_NORMAL,
+                'font-current-hover' => ICL_LANG_SEL_GRAY_FONT_CURRENT_HOVER,
+                'background-current-normal' => ICL_LANG_SEL_GRAY_BACKGROUND_CURRENT_NORMAL,
+                'background-current-hover' => ICL_LANG_SEL_GRAY_BACKGROUND_CURRENT_HOVER,
+                'font-other-normal' => ICL_LANG_SEL_GRAY_FONT_OTHER_NORMAL,
+                'font-other-hover' => ICL_LANG_SEL_GRAY_FONT_OTHER_HOVER,
+                'background-other-normal' => ICL_LANG_SEL_GRAY_BACKGROUND_OTHER_NORMAL,
+                'background-other-hover' => ICL_LANG_SEL_GRAY_BACKGROUND_OTHER_HOVER,
+                'border' => ICL_LANG_SEL_GRAY_BORDER            
             );
-            $language_switcher_defaults_alt['Blue'] = array(
-                'font-current-normal' => '#0000ff',
-                'font-current-hover' => '#000000',
-                'background-current-normal' => '#0099cc',
-                'background-current-hover' => '#0099cc',
-                'font-other-normal' => '#000000',
-                'font-other-hover' => '#000000',
-                'background-other-normal' => '#eeeeee',
-                'background-other-hover' => '#cccccc',
-                'border' => '#000000'            
-            );
+            $language_switcher_defaults_alt['Blue'] = $language_switcher_defaults;
             
             if(is_admin() && $_GET['page'] == ICL_PLUGIN_FOLDER . '/menu/languages.php' 
                 && (!defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') || !ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS)){
@@ -2682,15 +2672,15 @@ class SitePress{
                         break;
                     case 'background-current-normal': 
                         if($v != $language_switcher_defaults[$k])
-                            echo '#lang_sel a:first{background-color:'.$v.';}'; 
+                            echo '#lang_sel a, #lang_sel a:visited{background-color:'.$v.';}'; 
                         break;
                     case 'background-current-hover': 
                         if($v != $language_switcher_defaults[$k])
-                            echo '#lang_sel a:first:hover{background-color:'.$v.';}'; 
+                            echo '#lang_sel a.lang_sel_sel:hover{background-color:'.$v.';}'; 
                         break;
                     case 'font-other-normal':
                         if($v != $language_switcher_defaults[$k])
-                            echo '#lang_sel li ul a{color:'.$v.';}'; 
+                            echo '#lang_sel li ul a, #lang_sel li ul a:visited{color:'.$v.';}'; 
                         break;
                     case 'font-other-hover': 
                         if($v != $language_switcher_defaults[$k])
@@ -2698,7 +2688,7 @@ class SitePress{
                         break;
                     case 'background-other-normal': 
                         if($v != $language_switcher_defaults[$k])
-                            echo '#lang_sel li ul a{background-color:'.$v.';}'; 
+                            echo '#lang_sel li ul a, #lang_sel li ul a:visited{background-color:'.$v.';}'; 
                         break;
                     case 'background-other-hover': 
                         if($v != $language_switcher_defaults[$k])
