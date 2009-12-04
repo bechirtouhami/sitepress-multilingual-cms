@@ -3717,7 +3717,7 @@ class SitePress{
 
         $cms_count = $wpdb->get_var("SELECT COUNT(rid) FROM {$wpdb->prefix}icl_core_status WHERE status=3");
         if($cms_count > 0) {
-            return 6;
+            return 5;
         }
         
         $cms_count = $wpdb->get_var("SELECT COUNT(rid) FROM {$wpdb->prefix}icl_core_status WHERE 1");
@@ -3731,7 +3731,7 @@ class SitePress{
         $waiting_for_translators = true;
         foreach ($icl_lang_status as $lang) {
             if ($lang['have_translators'] == 0 && $lang['applications'] > 0) {
-                return 3;
+                return 2;
             }
             if ($lang['have_translators'] > 0 || $lang['applications'] > 0) {
                 $waiting_for_translators = false;
@@ -3744,18 +3744,17 @@ class SitePress{
 
         $balance = $this->settings['icl_balance'];
         if ($balance < 0) {
-            return 4;
+            return 3;
         }
 
         
-        return 5;
+        return 4;
         
     }
     
     function show_action_list() {
         $steps = array(__('Set up a project in ICanLocalize', 'sitepress'),
                         __('Send documents for translation', 'sitepress'),
-                        __('Waiting for translators', 'sitepress'),
                         __('Choose your translators', 'sitepress'),
                         __('Deposit payment', 'sitepress'),
                         __('Translations will be returned to your site', 'sitepress'));
