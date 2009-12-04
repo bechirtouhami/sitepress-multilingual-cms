@@ -481,6 +481,14 @@ class ICanLocalizeQuery{
         
     }
     
+    function get_help_links() {
+        $request_url = 'http://wpml.org/wpml-resource-maps/pro-translation.xml';
+
+        $res = $this->_request($request_url, 'GET');
+        
+        return $res;
+    }
+    
     
     
 }

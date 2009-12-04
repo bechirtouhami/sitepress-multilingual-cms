@@ -54,14 +54,15 @@
     }
 ?>
 <?php $sitepress->noscript_notice() ?>
-<div class="wrap">
+<div class="wrap" id="icl_wrap" style="float:left;width:98%;">
     <div id="icon-options-general" class="icon32<?php if(!$sitepress_settings['basic_menu']) echo ' icon32_adv'?>"><br /></div>
     <h2><?php _e('Professional Translation', 'sitepress') ?></h2>    
 
     <?php include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php' ?>     
 
-    <?php echo $sitepress->show_action_list() ?>
-
+    <?php echo $sitepress->show_pro_sidebar() ?>
+    <div id="icl_pro_content">
+        
     <?php if(!$sitepress->get_icl_translation_enabled() ): ?>        
     
         <img src="<?php echo ICL_PLUGIN_URL?>/res/img/web_logo_large.png" align="right" style="clear:both;float: right; border: 1pt solid #C0C0C0; margin: 16px 10px 10px 10px;" alt="ICanLocalize" />        
@@ -257,9 +258,12 @@
         echo __('Are you sure you want to disable professional translation?','sitepress'); 
     ?></span>        
              
+    </div>    
+
     <?php if($sitepress_settings['content_translation_setup_complete']) remove_action('icl_menu_footer', array($sitepress, 'menu_footer')) ?>                                                       
     <?php do_action('icl_extra_options_' . $_GET['page']); ?>        
                             
     <?php do_action('icl_menu_footer'); ?>
-    
+
 </div>
+

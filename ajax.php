@@ -556,6 +556,43 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings['icl_show_reminders'] = $_POST['state']=='show'?1:0;
         $this->save_settings($iclsettings);
         break;
+    
+    case 'icl_help_links':
+        $iclsettings = $this->get_settings();
+        $iclq = new ICanLocalizeQuery($iclsettings['site_id'], $iclsettings['access_key']);
+        $links = $iclq->get_help_links();
+        $lang = $iclsettings['admin_default_language'];
+        if (!isset($links['resources'][$lang])) {
+            $lang = 'en';
+        }
+        
+        if (isset($links['resources'][$lang])) {
+            $output = '<ul>';
+            foreach( $links['resources'][$lang]['resource'] as $resource) {
+                if (isset($resource['attr'])) {
+                    $title = $resource['attr']['title'];
+                    $url = $resource['attr']['url'];
+                    $icon = $resource['attr']['icon'];
+                } else {
+                    $title = $resource['title'];
+                    $url = $resource['url'];
+                    $icon = $resource['icon'];
+                }
+                $output .= '<li><a href="' . $url . '">' . $title . '</a></li>';
+            
+            }
+            $output .= '</ul>';
+            echo '1|' . $output;
+        } else {
+            echo '0|';
+        }
+        break;
+
+    case 'icl_show_sidebar':
+        $iclsettings['icl_sidebar_minimized'] = $_POST['state']=='hide'?1:0;
+        $this->save_settings($iclsettings);
+        break;
+    
     case 'icl_promote':
         $iclsettings['promote_wpml'] = $_POST['icl_promote']=='true'?1:0;
         $this->save_settings($iclsettings);

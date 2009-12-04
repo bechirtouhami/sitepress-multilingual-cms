@@ -1164,6 +1164,10 @@ class SitePress{
             
             wp_enqueue_script('sitepress-icl_reminders', ICL_PLUGIN_URL . '/res/js/icl_reminders.js', array(), ICL_SITEPRESS_VERSION);
         }
+
+        if('content-translation' == $page_basename) {        
+            wp_enqueue_script('icl-sidebar-scripts', ICL_PLUGIN_URL . '/res/js/icl_sidebar.js', array(), '0.1');
+        }
         
     }
        
@@ -3760,9 +3764,8 @@ class SitePress{
         }
         
         $output = '
-        <div class="icl_sidebar">
             <h3>' . __('Setup check list', 'sitepress') . '</h3>
-            <ul>';
+            <ul id="icl_check_list">';
             
         foreach($steps as $index => $step) {
             $step_data = $step;
@@ -3784,10 +3787,47 @@ class SitePress{
         $output .= '
             </ul>
             
-            <a href="http://wpml.org/?page_id=1169">' . __('More info', 'sitepress') . '</a>
-        </div>';
+            <a href="http://wpml.org/?page_id=1169">' . __('More info', 'sitepress') . '</a>';
+        
         
         return $output;
+    }
+    
+    function show_pro_sidebar() {
+        $output = '<div id="icl_sidebar" class="icl_sidebar" style="display:none">';
+        
+        $action_list = $this->show_action_list();
+        $show_minimized = $this->settings['icl_sidebar_minimized'];
+        if ($action_list != '') {
+            $show_minimized = false;
+        }
+
+        if ($show_minimized) {
+            $output .= '<div id="icl_sidebar_full" style="display:none">';
+        } else {
+            $output .= '<div id="icl_sidebar_full"">';
+        }
+
+        if ($action_list == '') {
+            $output .= '<a id="icl_sidebar_hide" href="#">hide</a>';
+        } else {
+            $output .= $action_list;
+        }
+        
+        $output .= '<h3>' . __('Help links', 'sitepress') . '</h3>';
+        $output .= '<div id="icl_help_links"></div>';
+        $output .= '</div>';
+        if ($show_minimized) {
+            $output .= '<div id="icl_sidebar_hide_div">';
+        } else {
+            $output .= '<div id="icl_sidebar_hide_div" style="display:none">';
+        }
+        $output .= '<a id="icl_sidebar_show" href="#"><img src="' . ICL_PLUGIN_URL . '/res/img/question-green.png' . '"></a>';
+        $output .= '</div>';
+        $output .= '</div>';
+        
+        return $output;
+        
     }
 }
 ?>
