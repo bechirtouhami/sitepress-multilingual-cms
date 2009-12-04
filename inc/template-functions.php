@@ -16,14 +16,18 @@ function icl_get_languages($a=''){
     return $langs;
 } 
 
-function icl_disp_language($native_name, $translated_name){
+function icl_disp_language($native_name, $translated_name, $lang_native_hidden = false, $lang_translated_hidden = false){
     if(!$native_name && !$translated_name){
         $ret = '';
     }elseif($native_name && $translated_name){
-        if($native_name != $translated_name){
-            $ret = $native_name . ' (' . $translated_name . ')';
+        $hidden1 = $hidden2 = $hidden3 = ''; 
+        if($lang_native_hidden){$hidden1 = 'style="display:none;"';}
+        if($lang_translated_hidden){$hidden2 = 'style="display:none;"';}        
+        if($lang_native_hidden && $lang_translated_hidden){ $hidden3 = 'style="display:none;"';}
+        if($native_name != $translated_name){            
+            $ret = '<span '.$hidden1.' class="icl_lang_sel_native">'.$native_name . '</span> <span '.$hidden2.' class="icl_lang_sel_translated"><span '.$hidden1.' class="icl_lang_sel_native">(</span>' . $translated_name . '<span '.$hidden1.' class="icl_lang_sel_native">)</span></span>';
         }else{
-            $ret = $native_name;
+            $ret = '<span '.$hidden3.' class="icl_lang_sel_current">' . $native_name . '</span>';
         }
     }elseif($native_name){
         $ret = $native_name;

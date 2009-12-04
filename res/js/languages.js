@@ -29,7 +29,54 @@ addLoadEvent(function(){
     });    
 
     jQuery('#icl_lang_preview_config input').keyup(iclUpdateLangSelQuickPreview);    
-    jQuery('#icl_save_language_switcher_options :checkbox[name="icl_lso_flags"]').change(iclUpdateLangSelQuickPreview);
+    jQuery('#icl_save_language_switcher_options :checkbox[name="icl_lso_flags"]').change(function(){
+        if(jQuery(this).attr('checked')){
+            jQuery('#lang_sel .iclflag').show();
+        }else{
+            if(jQuery('#icl_save_language_switcher_options :checkbox[name="icl_lso_display_lang"]').attr('checked')
+                || jQuery('#icl_save_language_switcher_options :checkbox[name="icl_lso_native_lang"]').attr('checked')){
+                jQuery('#lang_sel .iclflag').hide();
+            }else{
+                jQuery(this).attr('checked','checked');
+                return false;
+            }
+        }
+    });
+    
+    jQuery('#icl_save_language_switcher_options :checkbox[name="icl_lso_native_lang"]').change(function(){
+        if(jQuery(this).attr('checked')){
+            jQuery('.icl_lang_sel_native').show();
+        }else{
+            if(jQuery('#icl_save_language_switcher_options :checkbox[name="icl_lso_display_lang"]').attr('checked')
+                || jQuery('#icl_save_language_switcher_options :checkbox[name="icl_lso_flags"]').attr('checked')){
+                jQuery('.icl_lang_sel_native').hide();
+                if(!jQuery('#icl_save_language_switcher_options :checkbox[name="icl_lso_display_lang"]').attr('checked')){
+                    jQuery('.icl_lang_sel_current').hide();
+                }
+            }else{
+                jQuery(this).attr('checked','checked');
+                return false;
+            }
+        }
+    });
+
+    jQuery('#icl_save_language_switcher_options :checkbox[name="icl_lso_display_lang"]').change(function(){
+        if(jQuery(this).attr('checked')){
+            jQuery('.icl_lang_sel_translated').show();
+        }else{
+            if(jQuery('#icl_save_language_switcher_options :checkbox[name="icl_lso_native_lang"]').attr('checked')
+                || jQuery('#icl_save_language_switcher_options :checkbox[name="icl_lso_flags"]').attr('checked')){
+                jQuery('.icl_lang_sel_translated').hide();
+                if(!jQuery('#icl_save_language_switcher_options :checkbox[name="icl_lso_native_lang"]').attr('checked')){
+                    jQuery('.icl_lang_sel_current').hide();
+                }                
+            }else{
+                jQuery(this).attr('checked','checked');
+                return false;
+            }
+        }
+    });
+    
     jQuery('#icl_lang_sel_color_scheme').change(iclUpdateLangSelColorScheme);
     
     //jQuery('#icl_lang_preview_config input').change(iclUpdateLangSelPreview);    
