@@ -68,7 +68,7 @@
                     <?php endif; ?>            
                     <!--<input type="hidden" name="icl_ajx_action" value="icl_plugins_texts" />-->
                     <input type="hidden" name="icl_pt_file_upload" value="<?php echo $_SERVER['REQUEST_URI'] ?>" />
-                    <p><?php echo __('If your plugin does not appear in this table, you can upload a CSV file that describes its texts.', 'sitepress') ?> <a href="http://wpml.org/wordpress-translation/translating-custom-fields/"><?php echo __('Read more', 'sitepress') ?></a></p>
+                    <p><?php echo __('If your plugin does not appear in this table, you can upload a CSV file that describes its texts.', 'sitepress') ?> <a href="http://wpml.org/?page_id=2065"><?php echo __('Read more', 'sitepress') ?></a></p>
                     <p>
                         <?php echo __('CSV plugin description', 'sitepress') ?>
                         <input class="button" type="file" name="plugins_texts_csv" />             

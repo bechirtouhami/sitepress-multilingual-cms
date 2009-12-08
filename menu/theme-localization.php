@@ -25,7 +25,7 @@ $theme_localization_stats = get_theme_localization_stats();
     <p>
         <input class="button" name="save" value="<?php echo __('Save','sitepress') ?>" type="submit" />        
     </p>
-    <img src="<?php echo ICL_PLUGIN_URL ?>/res/img/question-green.png" width="29" height="29" alt="need help" align="left" /><p style="margin-top:14px;">&nbsp;<a href="http://wpml.org/home/getting-started-guide/theme-localization/"><?php _e('Theme localization instructions', 'sitepress')?> &raquo;</a></p>
+    <img src="<?php echo ICL_PLUGIN_URL ?>/res/img/question-green.png" width="29" height="29" alt="need help" align="left" /><p style="margin-top:14px;">&nbsp;<a href="http://wpml.org/?page_id=2717"><?php _e('Theme localization instructions', 'sitepress')?> &raquo;</a></p>
     </form>
     
     <?php if($sitepress_settings['theme_localization_type'] > 0):?>

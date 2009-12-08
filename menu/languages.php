@@ -270,7 +270,7 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                                             <li>URL rewriting is not enabled in your web server.</li>
                                             <li>The web server cannot write to the .htaccess file</li>
                                             </ul>
-                                            <a href="http://wpml.org/support/cannot-activate-language-directories/">How to fix</a>
+                                            <a href="http://wpml.org/?page_id=1010">How to fix</a>
                                             ', 'sitepress')?>                            
                                             <p>
                                                 <?php printf(__('When WPML accesses <a target="_blank" href="%s">%s</a> it gets:', 'sitepress'), $__url = get_option('home').'/' . $sample_lang['code'] .'/?____icl_validate_domain=1', $__url); ?>
@@ -391,7 +391,7 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                                             '<code class="php">&lt;?php do_action(\'icl_language_selector\'); ?&gt;</code>'); ?>.</p>
                                                                                         
                                             <p class="icl_advanced_feature"><?php echo __('You can also create custom language switchers, such as a list of languages or country flags.','sitepress'); ?>
-                                            <a href="http://wpml.org/home/getting-started-guide/language-setup/custom-language-switcher/"><?php echo __('Custom language switcher creation guide','sitepress')?></a>.
+                                            <a href="http://wpml.org/?page_id=989"><?php echo __('Custom language switcher creation guide','sitepress')?></a>.
                                             </p>
                                         </li>                                   
                                         <li class="icl_advanced_feature">
