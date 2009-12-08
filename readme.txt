@@ -1,6 +1,6 @@
 === WPML Multilingual CMS ===
 Contributors: ICanLocalize
-Donate link: http://wpml.org/home/want-to-help/
+Donate link: http://wpml.org/?page_id=2312
 Tags: CMS, navigation, menus, menu, dropdown, css, sidebar, pages, i18n, translation, localization, language, multilingual, WPML
 Requires at least: 2.6
 Tested up to: 2.8.5
@@ -66,8 +66,10 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 
 == Changelog ==
 
-= 1.4.1 =
-* Added compatibility packages for AIOSEOP, Thematic, Hybrid and the default WordPress theme.
+= 1.5.0 =
+* Added compatibility packages for Thematic, Hybrid and the default WordPress theme.
+* Blog posts can be displayed in the default language if translations are missing.
+* Language switcher can be customized to match the appearance of the site without editing CSS.
 * Users can add notes for translation on posts and pages.
 * Added an optional argument for specifying the breadcrumbs trail separator.
 * Reporting 404 errors if translations don't exist for a URL.
