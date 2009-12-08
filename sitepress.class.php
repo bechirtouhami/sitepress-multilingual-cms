@@ -121,7 +121,7 @@ class SitePress{
             add_action('restrict_manage_posts', array($this, 'restrict_manage_posts'));
             add_action('admin_print_scripts-edit-pages.php', array($this,'restrict_manage_pages'));
             
-            add_filter('get_edit_post_link', array($this, 'get_edit_post_link'), 1, 2);
+            add_filter('get_edit_post_link', array($this, 'get_edit_post_link'), 1, 3);
         
         
             // short circuit get default category
@@ -3267,12 +3267,18 @@ class SitePress{
         <?php
     }
     
-    function get_edit_post_link($link, $id){
+    function get_edit_post_link($link, $id, $context = 'display'){
+		
+		if ( 'display' == $context )
+			$and = '&amp;';
+		else
+			$and = '&';
+		
         if($id){
             $details = $this->get_element_language_details($id, 'post');
             $lang = $details->language_code;
             if($lang != $this->get_default_language()){
-                $link .= '&lang=' . $lang;
+                $link .= $and . 'lang=' . $lang;
             }        
         }
         return $link;
