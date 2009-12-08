@@ -3272,7 +3272,7 @@ class SitePress{
             $details = $this->get_element_language_details($id, 'post');
             $lang = $details->language_code;
             if($lang != $this->get_default_language()){
-                $link .= '&amp;lang=' . $lang;
+                $link .= '&lang=' . $lang;
             }        
         }
         return $link;
