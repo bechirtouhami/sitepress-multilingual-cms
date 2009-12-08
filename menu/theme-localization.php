@@ -70,7 +70,7 @@ $theme_localization_stats = get_theme_localization_stats();
     <td>
         <?php if(is_readable(ABSPATH . LANGDIR . '/' . $locales[$lang['code']] . '.mo')): ?>
         <span class="icl_valid_text"><?php echo __('File exists.', 'sitepress') ?></span>                
-        <?php elseif($lang['code'] != $sitepress->get_default_language() ): ?>
+		<?php elseif($lang['code'] != 'en' ): ?>
         <span class="icl_error_text"><?php echo __('File not found!', 'sitepress') ?></span>
         <?php endif; ?>
     </td>
@@ -78,7 +78,7 @@ $theme_localization_stats = get_theme_localization_stats();
     <td>
         <?php if(is_readable(TEMPLATEPATH . '/' . $locales[$lang['code']] . '.mo')): ?>
         <span class="icl_valid_text"><?php echo __('File exists.', 'sitepress') ?></span>                
-        <?php elseif($lang['code'] != $sitepress->get_default_language() ): ?>
+        <?php elseif($lang['code'] != 'en' ): ?>
         <span class="icl_error_text"><?php echo __('File not found!', 'sitepress') ?></span>
         <?php endif; ?>        
     </td>              
