@@ -49,7 +49,7 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
     
     foreach($icl_tables as $icl_table){
         echo '<h3  id="'.$icl_table.'_anch" onclick="jQuery(\'#'.$icl_table.'\').toggle(); jQuery(\'#'.$icl_table.'_arrow_up\').toggle(); jQuery(\'#'.$icl_table.'_arrow_dn\').toggle();" style="cursor:pointer">'.$icl_table.'&nbsp;&nbsp;<span id="'.$icl_table.'_arrow_up" style="display:none">&uarr;</span><span id="'.$icl_table.'_arrow_dn">&darr;</span></h3>';        
-        if($wpdb->get_var("SHOW TABLES LIKE '{$icl_table}'") != $icl_table){
+        if(strtolower($wpdb->get_var("SHOW TABLES LIKE '{$icl_table}'")) != strtolower($icl_table)){
             echo '<p class="error">'.__('Not found!', 'sitepress').'</p>';
         }else{
             $results = $wpdb->get_results("DESCRIBE {$icl_table}", ARRAY_A);
