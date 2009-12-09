@@ -460,7 +460,7 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                             
                                             <?php if(!defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') || !ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS): ?>
                                             <a href="#" onclick="jQuery(this).next().slideToggle();return false;"><?php _e('Edit the language switcher colors', 'sitepress')?></a>                                            
-                                            <div style="display:none">                                            
+                                            <div style="display:none">                                          
                                                 <table id="icl_lang_preview_config" style="width:auto;">
                                                     <thead>
                                                     <tr>
@@ -469,76 +469,75 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                                                         <th><?php _e('Hover', 'sitepress')?></th>
                                                     </tr>
                                                     </thead>
-                                                    
-                                                    <tbody>                                                
+								                    <tbody>                                                
                                                     <tr>
                                                         <td><?php _e('Current language font color', 'sitepress')?></td>
-                                                        <td><input type="text" size="7" name="icl_lang_sel_config[font-current-normal]" value="<?php 
+                                                        <td><input type="text" size="7" id="icl-lang-sel-config-font-current-normal" name="icl_lang_sel_config[font-current-normal]" value="<?php 
                                                             if(isset($sitepress_settings['icl_lang_sel_config']['font-current-normal'])) 
                                                                 echo $sitepress_settings['icl_lang_sel_config']['font-current-normal']; 
                                                             else 
                                                                 echo $language_switcher_defaults['font-current-normal'] ;
-                                                            ?>" /></td>
-                                                        <td><input type="text" size="7" name="icl_lang_sel_config[font-current-hover]" value="<?php 
+                                                            ?>" /><img src="<?php echo ICL_PLUGIN_URL; ?>/res/img/icon_color_picker.png" id="icl-font-current-normal-picker" alt="" border="0" style="float:right;cursor:pointer;" class="pick-show" onclick="icl_cp_target='icl-lang-sel-config-font-current-normal';cp.show('icl-font-current-normal-picker');return false;" /></td>
+                                                        <td><input type="text" size="7" id="icl-lang-sel-config-font-current-hover" name="icl_lang_sel_config[font-current-hover]" value="<?php 
                                                             if(isset($sitepress_settings['icl_lang_sel_config']['font-current-hover'])) 
                                                                 echo $sitepress_settings['icl_lang_sel_config']['font-current-hover']; 
                                                             else 
                                                                 echo $language_switcher_defaults['font-current-hover'] ;
-                                                            ?>" /></td>
+                                                            ?>" /><img src="<?php echo ICL_PLUGIN_URL; ?>/res/img/icon_color_picker.png" id="icl-font-current-hover-picker" alt="" border="0" style="float:right;cursor:pointer;" class="pick-show" onclick="icl_cp_target='icl-lang-sel-config-font-current-hover';cp.show('icl-font-current-hover-picker');return false;" /></td>
                                                     </tr>                                                
                                                     <tr>
                                                         <td><?php _e('Current language background color', 'sitepress')?></td>
-                                                        <td><input type="text" size="7" name="icl_lang_sel_config[background-current-normal]" value="<?php 
+                                                        <td><input type="text" size="7" id="icl-lang-sel-config-background-current-normal" name="icl_lang_sel_config[background-current-normal]" value="<?php 
                                                             if(isset($sitepress_settings['icl_lang_sel_config']['background-current-normal'])) 
                                                                 echo $sitepress_settings['icl_lang_sel_config']['background-current-normal']; 
                                                             else 
                                                                 echo $language_switcher_defaults['background-current-normal'] ;
-                                                            ?>" /></td>
-                                                        <td><input type="text" size="7" name="icl_lang_sel_config[background-current-hover]" value="<?php 
+                                                            ?>" /><img src="<?php echo ICL_PLUGIN_URL; ?>/res/img/icon_color_picker.png" id="icl-background-current-normal-picker" alt="" border="0" style="float:right;cursor:pointer;" class="pick-show" onclick="icl_cp_target='icl-lang-sel-config-background-current-normal';cp.show('icl-background-current-normal-picker');return false;" /></td>
+                                                        <td><input type="text" size="7" id="icl-lang-sel-config-background-current-hover" name="icl_lang_sel_config[background-current-hover]" value="<?php 
                                                             if(isset($sitepress_settings['icl_lang_sel_config']['background-current-hover'])) 
                                                                 echo $sitepress_settings['icl_lang_sel_config']['background-current-hover']; 
                                                             else 
                                                                 echo $language_switcher_defaults['background-current-hover'] ;
-                                                            ?>" /></td>
+                                                            ?>" /><img src="<?php echo ICL_PLUGIN_URL; ?>/res/img/icon_color_picker.png" id="icl-background-current-hover-picker" alt="" border="0" style="float:right;cursor:pointer;" class="pick-show" onclick="icl_cp_target='icl-lang-sel-config-background-current-hover';cp.show('icl-background-current-hover-picker');return false;" /></td>
                                                     </tr>
                                                     <tr>
                                                         <td><?php _e('Other languages font color', 'sitepress')?></td>
-                                                        <td><input type="text" size="7" name="icl_lang_sel_config[font-other-normal]" value="<?php 
+                                                        <td><input type="text" size="7" id="icl-lang-sel-config-font-other-normal" name="icl_lang_sel_config[font-other-normal]" value="<?php 
                                                             if(isset($sitepress_settings['icl_lang_sel_config']['font-other-normal'])) 
                                                                 echo $sitepress_settings['icl_lang_sel_config']['font-other-normal']; 
                                                             else 
                                                                 echo $language_switcher_defaults['font-other-normal'] ;
-                                                            ?>" /></td>
-                                                        <td><input type="text" size="7" name="icl_lang_sel_config[font-other-hover]" value="<?php 
+                                                            ?>" /><img src="<?php echo ICL_PLUGIN_URL; ?>/res/img/icon_color_picker.png" id="icl-font-other-normal-picker" alt="" border="0" style="float:right;cursor:pointer;" class="pick-show" onclick="icl_cp_target='icl-lang-sel-config-font-other-normal';cp.show('icl-font-other-normal-picker');return false;" /></td>
+                                                        <td><input type="text" size="7" id="icl-lang-sel-config-font-other-hover" name="icl_lang_sel_config[font-other-hover]" value="<?php 
                                                             if(isset($sitepress_settings['icl_lang_sel_config']['font-other-hover'])) 
                                                                 echo $sitepress_settings['icl_lang_sel_config']['font-other-hover']; 
                                                             else 
                                                                 echo $language_switcher_defaults['font-other-hover'] ;
-                                                            ?>" /></td>
+                                                            ?>" /><img src="<?php echo ICL_PLUGIN_URL; ?>/res/img/icon_color_picker.png" id="icl-font-other-hover-picker" alt="" border="0" style="float:right;cursor:pointer;" class="pick-show" onclick="icl_cp_target='icl-lang-sel-config-font-other-hover';cp.show('icl-font-other-hover-picker');return false;" /></td>
                                                     </tr>                                                
                                                     <tr>
                                                         <td><?php _e('Other languages background color', 'sitepress')?></td>
-                                                        <td><input type="text" size="7" name="icl_lang_sel_config[background-other-normal]" value="<?php 
+                                                        <td><input type="text" size="7" id="icl-lang-sel-config-background-other-normal" name="icl_lang_sel_config[background-other-normal]" value="<?php 
                                                             if(isset($sitepress_settings['icl_lang_sel_config']['background-other-normal'])) 
                                                                 echo $sitepress_settings['icl_lang_sel_config']['background-other-normal']; 
                                                             else 
                                                                 echo $language_switcher_defaults['background-other-normal'] ;
-                                                            ?>" /></td>
-                                                        <td><input type="text" size="7" name="icl_lang_sel_config[background-other-hover]" value="<?php 
+                                                            ?>" /><img src="<?php echo ICL_PLUGIN_URL; ?>/res/img/icon_color_picker.png" id="icl-background-other-normal-picker" alt="" border="0" style="float:right;cursor:pointer;" class="pick-show" onclick="icl_cp_target='icl-lang-sel-config-background-other-normal';cp.show('icl-background-other-normal-picker');return false;" /></td>
+                                                        <td><input type="text" size="7" id="icl-lang-sel-config-background-other-hover" name="icl_lang_sel_config[background-other-hover]" value="<?php 
                                                             if(isset($sitepress_settings['icl_lang_sel_config']['background-other-hover'])) 
                                                                 echo $sitepress_settings['icl_lang_sel_config']['background-other-hover']; 
                                                             else 
                                                                 echo $language_switcher_defaults['background-other-hover'] ;
-                                                            ?>" /></td>
+                                                            ?>" /><img src="<?php echo ICL_PLUGIN_URL; ?>/res/img/icon_color_picker.png" id="icl-background-other-hover-picker" alt="" border="0" style="float:right;cursor:pointer;" class="pick-show" onclick="icl_cp_target='icl-lang-sel-config-background-other-hover';cp.show('icl-background-other-hover-picker');return false;" /></td>
                                                     </tr>                                                
                                                     <tr>
                                                         <td><?php _e('Border', 'sitepress')?></td>
-                                                        <td><input type="text" size="7" name="icl_lang_sel_config[border]" value="<?php 
+                                                        <td><input type="text" size="7" id="icl-lang-sel-config-border" name="icl_lang_sel_config[border]" value="<?php 
                                                             if(isset($sitepress_settings['icl_lang_sel_config']['border'])) 
                                                                 echo $sitepress_settings['icl_lang_sel_config']['border']; 
                                                             else 
                                                                 echo $language_switcher_defaults['border'] ;
-                                                            ?>" /></td>
+                                                            ?>" /><img src="<?php echo ICL_PLUGIN_URL; ?>/res/img/icon_color_picker.png" id="icl-border-picker" alt="" border="0" style="float:right;cursor:pointer;" class="pick-show" onclick="icl_cp_target='icl-lang-sel-config-border';cp.show('icl-border-picker');return false;" /></td>
                                                         <td>&nbsp;</td>
                                                     </tr>
                                                     </tbody>                                                
@@ -708,5 +707,35 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
     <br />   
        
     <?php do_action('icl_menu_footer'); ?>
+	
+	
+	<!--<script type="text/javascript" src="<?php bloginfo('url'); ?>/<?php echo WPINC; ?>/js/colorpicker.js"></script>-->
+	<!--<script type="text/javascript" src="../wp-includes/js/colorpicker.js"></script>-->
+	<script type='text/javascript'>
+	// <![CDATA[
+		//var cp = new ColorPicker();
+		/*function pickColor(color) {
+			jQuery('#'+icl_cp_target).val(color);
+			jQuery('#'+icl_cp_target).trigger('keyup');
+		}*/
+		
+jQuery(document).ready( function($) {	
+		// align color picker
+	/*$(".pick-show").click(function () {
+		var set = jQuery(this).offset();
+   		$("#colorPickerDiv").css({"top":set.top+25,"left":set.left});
+	});*/
+	//jQuery('#icl_lang_preview_config input').each(iclUpdateLangSelQuickPreview);
+});
+	// ]]>
+	</script>
+	<!--<style>
+	#colorPickerDiv a, #colorPickerDiv a:hover {
+		padding: 1px;
+		text-decoration: none;
+		border-bottom: 0px;
+	}
+	</style>-->
+	<script type='text/javascript'></script>
     
 </div>
