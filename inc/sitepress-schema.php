@@ -322,7 +322,7 @@ function icl_sitepress_deactivate(){
 // http://bugs.mysql.com/bug.php?id=39894
 if(isset($_GET['activate'])){
     if(!isset($wpdb)) global $wpdb;
-    $table_name = strtolower($wpdb->prefix.'icl_languages');
+    $table_name = strtolower($wpdb->prefix).'icl_languages';
     if(strtolower($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'")) != $table_name){
         add_action('admin_notices', 'icl_cant_create_table');
         function icl_cant_create_table(){
