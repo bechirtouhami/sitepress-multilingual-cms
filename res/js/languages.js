@@ -23,6 +23,14 @@ addLoadEvent(function(){
             jQuery('#icl_setup_next_1').attr('disabled', 'disabled');
         }
     });
+	
+	// Switcher selector config initial values (otherwise missing - preview is wrong)
+	jQuery('#icl_lang_preview_config input').each(iclUpdateLangSelQuickPreview);
+	// Picker align
+	jQuery(".pick-show").click(function () {
+		var set = jQuery(this).offset();
+   		jQuery("#colorPickerDiv").css({"top":set.top+25,"left":set.left});
+	});
     jQuery('#icl_translate_help_collapsed').click(function(){jQuery(this).hide();jQuery('#icl_translate_help').fadeIn()});
     jQuery('form[name="icl_promote_form"] input[name="icl_promote"]').change(function(){
         jQuery.post(icl_ajx_url, 'icl_ajx_action=icl_promote&icl_promote='+jQuery(this).attr('checked'));
@@ -464,3 +472,11 @@ function iclUpdateLangSelColorScheme(){
         
     }
 }
+
+	// Picker f
+var cp = new ColorPicker();
+function pickColor(color) {
+			jQuery('#'+icl_cp_target).val(color);
+			jQuery('#'+icl_cp_target).trigger('keyup');
+		}
+cp.writeDiv();
