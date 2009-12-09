@@ -1657,6 +1657,7 @@ class SitePress{
                     
                     // restore child-parent relationships
                     $children = $wpdb->get_col("SELECT ID FROM {$wpdb->posts} WHERE post_parent={$target_details->element_id} AND post_type='page'");
+                    
                     foreach($children as $ch){
                         $ch_trid = $this->get_element_trid($ch);
                         $ch_translations = $this->get_element_translations($ch_trid);
@@ -1740,6 +1741,7 @@ class SitePress{
         global $wpdb;
 
         $original_parent = $wpdb->get_var("SELECT post_parent FROM {$wpdb->posts} WHERE ID = {$original_id} AND post_type = 'page'");
+        
         if (!is_null($original_parent)){
             if($original_parent === '0'){
                 $parent_of_translated_id = $wpdb->get_var("SELECT post_parent FROM {$wpdb->posts} WHERE ID = {$translated_id} AND post_type = 'page'");
@@ -1749,6 +1751,7 @@ class SitePress{
                 }
             }else{
                 $trid = $this->get_element_trid($original_parent);
+                                
                 if($trid){
                     $translations = $this->get_element_translations($trid);
                     if (isset($translations[$lang_code])){
@@ -2526,7 +2529,7 @@ class SitePress{
                     if(false===strpos($url,'?')){
                         $url_glue = '?';
                     }else{
-                        if(isset($_POST['comment'])){ // will be used for a redirect
+                        if(isset($_POST['comment'])|| 1){ // will be used for a redirect
                             $url_glue = '&';
                         }else{
                             $url_glue = '&amp;';
