@@ -39,7 +39,7 @@ function icl_disp_language($native_name, $translated_name, $lang_native_hidden =
     
 }
 
-function icl_link_to_element($element_id, $element_type='post', $link_text='', $optional_parameters=array(), $anchor=''){
+function icl_link_to_element($element_id, $element_type='post', $link_text='', $optional_parameters=array(), $anchor='', $echoit = true){
     global $sitepress, $wpdb;
     
     if($element_type=='tag' || $element_type=='post_tag'){
@@ -101,8 +101,12 @@ function icl_link_to_element($element_id, $element_type='post', $link_text='', $
         $link .= $title;
     }
     $link .= '</a>';
-        
-    echo $link;            
+    
+    if($echoit){
+        echo $link;            
+    }else{
+        return $link;
+    }    
 }
 
 function icl_object_id($element_id, $element_type='post', $return_original_if_missing=false, $ulanguage_code=null){

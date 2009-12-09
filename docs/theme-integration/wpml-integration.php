@@ -42,8 +42,8 @@ function wpml_content_languages($args=''){
 
 // LINKS TO SPECIFIC ELEMENTS
 // USAGE
-// args: $element_id, $element_type='post', $link_text='', $optional_parameters=array(), $anchor=''
-function wpml_link_to_element($element_id, $element_type='post', $link_text='', $optional_parameters=array(), $anchor=''){
+// args: $element_id, $element_type='post', $link_text='', $optional_parameters=array(), $anchor='', $echoit = true
+function wpml_link_to_element($element_id, $element_type='post', $link_text='', $optional_parameters=array(), $anchor='', $echoit = true){
     if(!function_exists('icl_link_to_element')){    
         switch($element_type){
             case 'post':
@@ -64,9 +64,13 @@ function wpml_link_to_element($element_id, $element_type='post', $link_text='', 
                 $ret = '<a href="'.get_tag_link($element_id).'">' . get_the_category_by_ID($element_id) . '</a>';
             default: $ret = '';           
         }
-        return $ret;
+        if($echoit){
+            echo $ret;
+        }else{
+            return $ret;
+        }        
     }else{
-        return icl_link_to_element($element_id, $element_type='post', $link_text='', $optional_parameters=array(), $anchor='');
+        return icl_link_to_element($element_id, $element_type, $link_text, $optional_parameters, $anchor, $echoit);
     }        
 }
 

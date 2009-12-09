@@ -44,7 +44,11 @@ class CMSNavigation{
     function CMSNavigation(){
         
         global $cms_nav_ie_ver, $sitepress;
-        if(!isset($sitepress)) $sitepress = new SitePress();
+        if(!isset($sitepress)){
+            $sitepress = new SitePress();
+            $sitepress->initialize_cache();
+        }
+        
         $sitepress_settings = $sitepress->get_settings();        
         $this->settings = $sitepress_settings['modules']['cms-navigation'];
         
