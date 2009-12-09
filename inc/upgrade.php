@@ -336,8 +336,8 @@ function icl_plugin_upgrade(){
         if($mig_debug) fwrite($mig_debug, "Upgraded to 1.4.0.1 \n");
     }
 
-    if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.4.2', '<')){
-        if($mig_debug) fwrite($mig_debug, "Upgrading to 1.4.2 \n");
+    if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.5', '<')){
+        if($mig_debug) fwrite($mig_debug, "Upgrading to 1.5 \n");
         if(!isset($iclsettings['icl_lang_sel_config'])){
             $iclsettings['icl_lang_sel_config'] = array(
                     'font-current-normal' => ICL_LANG_SEL_DEFAULT_FONT_CURRENT_NORMAL,
@@ -353,7 +353,7 @@ function icl_plugin_upgrade(){
             update_option('icl_sitepress_settings',$iclsettings);
         }
         
-        if($mig_debug) fwrite($mig_debug, "Upgraded to 1.4.2 \n");
+        if($mig_debug) fwrite($mig_debug, "Upgraded to 1.5 \n");
     }
     
     if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '<')){

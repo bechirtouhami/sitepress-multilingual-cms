@@ -1166,7 +1166,7 @@ class SitePress{
         }
 
         if('content-translation' == $page_basename) {        
-            wp_enqueue_script('icl-sidebar-scripts', ICL_PLUGIN_URL . '/res/js/icl_sidebar.js', array(), '0.1');
+            wp_enqueue_script('icl-sidebar-scripts', ICL_PLUGIN_URL . '/res/js/icl_sidebar.js', array(), ICL_SITEPRESS_VERSION);
         }
         
     }
