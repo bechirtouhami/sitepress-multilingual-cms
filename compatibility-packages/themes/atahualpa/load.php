@@ -73,14 +73,14 @@ class Atahualpa_theme_compatibility  extends WPML_Package{
 			$wpage,
 			__('Only include languages with translation in the footer', 'sitepress'),
 			'footer_skip_languages',
-			$title . __('More options')
+			$title . __('More options', 'sitepress')
 				);
 		
 		$this->add_option_checkbox(
 			$wpage,
 			__('Load CSS for footer language selector', 'sitepress'),
 			'footer_load_css',
-			$title . __('More options'),
+			$title . __('More options', 'sitepress'),
 			'checked'
 				);
 		
@@ -91,7 +91,7 @@ class Atahualpa_theme_compatibility  extends WPML_Package{
 			$wpage,
 			__('Show alternative languages for posts and pages', 'sitepress'),
 			'post_languages',
-			$title . __('Language selector options'),
+			$title . __('Language selector options', 'sitepress'),
 			'checked'
 				);
 		
@@ -115,7 +115,7 @@ class Atahualpa_theme_compatibility  extends WPML_Package{
 				);
         
 			// Widget switcher CSS
-		$this->add_option_checkbox($wpage, __('Load CSS for language selector widget', 'sitepress'), 'widget_load_css', $title . __('More options'), 'checked');
+		$this->add_option_checkbox($wpage, __('Load CSS for language selector widget', 'sitepress'), 'widget_load_css', $title . __('More options', 'sitepress'), 'checked');
 		
 		
 		
