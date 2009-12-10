@@ -9,8 +9,8 @@ jQuery(document).ready(function(){
     
     jQuery('#icl_reminder_show').click(icl_show_hide_reminders);
 
-    jQuery('#icl_reminder_message').css({'margin-bottom' : '0px'});
-    jQuery('#icl_reminder_message').css({'padding-bottom' : '0px'});
+    jQuery('#icl_reminder_message').css({'margin-bottom' : '5px'});
+    jQuery('#icl_reminder_message').css({'padding-bottom' : '2px'});
     jQuery('#icl_reminder_message h4').css({'margin-bottom' : '0px'});
     jQuery('#icl_reminder_message h4').css({'margin-top' : '0px'});
     
