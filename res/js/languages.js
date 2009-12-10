@@ -27,7 +27,6 @@ addLoadEvent(function(){
 	             
     icl_lp_flag = jQuery('.iclflag:visible').length > 0;         
     
-	// Switcher selector config initial values (otherwise missing - preview is wrong)
 	jQuery('#icl_lang_preview_config input').each(iclUpdateLangSelQuickPreview);
 	// Picker align
 	jQuery(".pick-show").click(function () {
@@ -44,7 +43,7 @@ addLoadEvent(function(){
         if(jQuery(this).attr('checked')){
             jQuery('#lang_sel .iclflag').show();
         }else{
-			jQuery('#lang_sel .iclflag').hide();
+			jQuery('#lang_sel .iclflag').hide();			
             /*if(jQuery('#icl_save_language_switcher_options :checkbox[name="icl_lso_display_lang"]').attr('checked')
                 || jQuery('#icl_save_language_switcher_options :checkbox[name="icl_lso_native_lang"]').attr('checked')){
                 jQuery('#lang_sel .iclflag').hide();
