@@ -9,7 +9,6 @@
         <?php
         return;
     }
-    //require_once ICL_PLUGIN_PATH . '/sitepress.php'; 
     if(!$sitepress_settings['existing_content_language_verified']){
         // try to determine the blog language
         $blog_current_lang = 0;            

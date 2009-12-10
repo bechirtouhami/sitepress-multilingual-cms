@@ -193,17 +193,6 @@ class SitePress{
             }
               
             global $language_switcher_defaults, $language_switcher_defaults_alt;
-            $language_switcher_defaults = array(
-                'font-current-normal' => ICL_LANG_SEL_DEFAULT_FONT_CURRENT_NORMAL,
-                'font-current-hover' => ICL_LANG_SEL_DEFAULT_FONT_CURRENT_HOVER,
-                'background-current-normal' => ICL_LANG_SEL_DEFAULT_BACKGROUND_CURRENT_NORMAL,
-                'background-current-hover' => ICL_LANG_SEL_DEFAULT_BACKGROUND_CURRENT_HOVER,
-                'font-other-normal' => ICL_LANG_SEL_DEFAULT_FONT_OTHER_NORMAL,
-                'font-other-hover' => ICL_LANG_SEL_DEFAULT_FONT_OTHER_HOVER,
-                'background-other-normal' => ICL_LANG_SEL_DEFAULT_BACKGROUND_OTHER_NORMAL,
-                'background-other-hover' => ICL_LANG_SEL_DEFAULT_BACKGROUND_OTHER_HOVER,
-                'border' => ICL_LANG_SEL_DEFAULT_BORDER            
-            );
             $language_switcher_defaults_alt['White'] = array(
                 'font-current-normal' => ICL_LANG_SEL_WHITE_FONT_CURRENT_NORMAL,
                 'font-current-hover' => ICL_LANG_SEL_WHITE_FONT_CURRENT_HOVER,
@@ -226,7 +215,18 @@ class SitePress{
                 'background-other-hover' => ICL_LANG_SEL_GRAY_BACKGROUND_OTHER_HOVER,
                 'border' => ICL_LANG_SEL_GRAY_BORDER            
             );
-            $language_switcher_defaults_alt['Blue'] = $language_switcher_defaults;
+            $language_switcher_defaults_alt['Blue'] = array(
+                'font-current-normal' => ICL_LANG_SEL_BLUE_FONT_CURRENT_NORMAL,
+                'font-current-hover' => ICL_LANG_SEL_BLUE_FONT_CURRENT_HOVER,
+                'background-current-normal' => ICL_LANG_SEL_BLUE_BACKGROUND_CURRENT_NORMAL,
+                'background-current-hover' => ICL_LANG_SEL_BLUE_BACKGROUND_CURRENT_HOVER,
+                'font-other-normal' => ICL_LANG_SEL_BLUE_FONT_OTHER_NORMAL,
+                'font-other-hover' => ICL_LANG_SEL_BLUE_FONT_OTHER_HOVER,
+                'background-other-normal' => ICL_LANG_SEL_BLUE_BACKGROUND_OTHER_NORMAL,
+                'background-other-hover' => ICL_LANG_SEL_BLUE_BACKGROUND_OTHER_HOVER,
+                'border' => ICL_LANG_SEL_BLUE_BORDER            
+            );            
+            $language_switcher_defaults = $language_switcher_defaults_alt['White'];
             
             if(is_admin() && $_GET['page'] == ICL_PLUGIN_FOLDER . '/menu/languages.php' 
                 && (!defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') || !ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS)){

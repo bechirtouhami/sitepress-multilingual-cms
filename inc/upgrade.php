@@ -340,15 +340,15 @@ function icl_plugin_upgrade(){
         if($mig_debug) fwrite($mig_debug, "Upgrading to 1.5 \n");
         if(!isset($iclsettings['icl_lang_sel_config'])){
             $iclsettings['icl_lang_sel_config'] = array(
-                    'font-current-normal' => ICL_LANG_SEL_DEFAULT_FONT_CURRENT_NORMAL,
-                    'font-current-hover' => ICL_LANG_SEL_DEFAULT_FONT_CURRENT_HOVER,
-                    'background-current-normal' => ICL_LANG_SEL_DEFAULT_BACKGROUND_CURRENT_NORMAL,
-                    'background-current-hover' => ICL_LANG_SEL_DEFAULT_BACKGROUND_CURRENT_HOVER,
-                    'font-other-normal' => ICL_LANG_SEL_DEFAULT_FONT_OTHER_NORMAL,
-                    'font-other-hover' => ICL_LANG_SEL_DEFAULT_FONT_OTHER_HOVER,
-                    'background-other-normal' => ICL_LANG_SEL_DEFAULT_BACKGROUND_OTHER_NORMAL,
-                    'background-other-hover' => ICL_LANG_SEL_DEFAULT_BACKGROUND_OTHER_HOVER,
-                    'border' => ICL_LANG_SEL_DEFAULT_BORDER            
+                    'font-current-normal' => ICL_LANG_SEL_BLUE_FONT_CURRENT_NORMAL,
+                    'font-current-hover' => ICL_LANG_SEL_BLUE_FONT_CURRENT_HOVER,
+                    'background-current-normal' => ICL_LANG_SEL_BLUE_BACKGROUND_CURRENT_NORMAL,
+                    'background-current-hover' => ICL_LANG_SEL_BLUE_BACKGROUND_CURRENT_HOVER,
+                    'font-other-normal' => ICL_LANG_SEL_BLUE_FONT_OTHER_NORMAL,
+                    'font-other-hover' => ICL_LANG_SEL_BLUE_FONT_OTHER_HOVER,
+                    'background-other-normal' => ICL_LANG_SEL_BLUE_BACKGROUND_OTHER_NORMAL,
+                    'background-other-hover' => ICL_LANG_SEL_BLUE_BACKGROUND_OTHER_HOVER,
+                    'border' => ICL_LANG_SEL_BLUE_BORDER            
             );
             update_option('icl_sitepress_settings',$iclsettings);
         }

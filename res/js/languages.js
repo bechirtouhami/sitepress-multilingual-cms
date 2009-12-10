@@ -16,6 +16,7 @@ addLoadEvent(function(){
     jQuery('#icl_setup_back_1').click(iclSetupStep1);
     jQuery('#icl_setup_back_2').click(iclSetupStep2);
     jQuery('#icl_setup_next_1').click(saveLanguageSelection);
+    
     jQuery('#icl_avail_languages_picker li input:checkbox').click(function(){             
         if(jQuery('#icl_avail_languages_picker li input:checkbox:checked').length > 1){
             jQuery('#icl_setup_next_1').removeAttr('disabled');
@@ -23,7 +24,9 @@ addLoadEvent(function(){
             jQuery('#icl_setup_next_1').attr('disabled', 'disabled');
         }
     });
-	
+	             
+    icl_lp_flag = jQuery('.iclflag:visible').length > 0;         
+    
 	// Switcher selector config initial values (otherwise missing - preview is wrong)
 	jQuery('#icl_lang_preview_config input').each(iclUpdateLangSelQuickPreview);
 	// Picker align
@@ -35,7 +38,7 @@ addLoadEvent(function(){
     jQuery('form[name="icl_promote_form"] input[name="icl_promote"]').change(function(){
         jQuery.post(icl_ajx_url, 'icl_ajx_action=icl_promote&icl_promote='+jQuery(this).attr('checked'));
     });    
-
+    
     jQuery('#icl_lang_preview_config input').keyup(iclUpdateLangSelQuickPreview);    
     jQuery('#icl_save_language_switcher_options :checkbox[name="icl_lso_flags"]').change(function(){
         if(jQuery(this).attr('checked')){
@@ -313,7 +316,8 @@ var icl_lp_font_other_hover = false;
 var icl_lp_background_other_normal = false;
 var icl_lp_background_other_hover = false;
 var icl_lp_border = false;
-var icl_lp_flag = true;
+var icl_lp_flag = false;
+
 
 function iclUpdateLangSelQuickPreview(){
     name = jQuery(this).attr('name');
