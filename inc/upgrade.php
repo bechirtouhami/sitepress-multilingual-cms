@@ -350,8 +350,10 @@ function icl_plugin_upgrade(){
                     'background-other-hover' => ICL_LANG_SEL_BLUE_BACKGROUND_OTHER_HOVER,
                     'border' => ICL_LANG_SEL_BLUE_BORDER            
             );
-            update_option('icl_sitepress_settings',$iclsettings);
         }
+        
+        $iclsettings['upgrade_flags']['1.5'] = true;
+        update_option('icl_sitepress_settings',$iclsettings);            
         
         if($mig_debug) fwrite($mig_debug, "Upgraded to 1.5 \n");
     }

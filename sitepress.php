@@ -49,6 +49,8 @@ require ICL_PLUGIN_PATH . '/inc/constants.inc';
 if(defined('ICL_DEBUG_DEVELOPMENT') && ICL_DEBUG_DEVELOPMENT){
     include ICL_PLUGIN_PATH . '/inc/hacks/debug-actions.php';
 }     
+
+
 require ICL_PLUGIN_PATH . '/inc/sitepress-schema.php';
 require ICL_PLUGIN_PATH . '/inc/template-functions.php';
 require ICL_PLUGIN_PATH . '/inc/icl-recent-comments-widget.php';

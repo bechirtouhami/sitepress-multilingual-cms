@@ -190,18 +190,19 @@ class WPML_Packages{
         }            
     }
     
-    function load_packages(){
+    function load_packages(){        
+        global $sitepress_settings;                
         $enabled = $this->get_enabled_packages();        
         foreach($this->packages as $type => $packages){
             foreach($packages as $package => $package_data){
-                // auto-enable                
-                if(!isset($enabled[$type][$package])){
+                // auto-enable   
+                if(!isset($enabled[$type][$package]) && !isset($sitepress_settings['upgrade_flags']['1.5'])){
                     global $sitepress;
                     $enabled[$type][$package] = 1;
                     $this->packages_enabled[$type][$package] = 1;
                     $iclsettings['packages_enabled'] = $this->packages_enabled;
                     $sitepress->save_settings($iclsettings);
-                }                
+                } 
                 if($enabled[$type][$package]){
                     $this->load_package($type, $package);                        
                 }                
