@@ -45,7 +45,6 @@ addLoadEvent(function(){
             jQuery('#lang_sel .iclflag').show();
         }else{
 			jQuery('#lang_sel .iclflag').hide();
-			// Srdjan commented this: I couldn't see why shoulf flag depend on other settings
             /*if(jQuery('#icl_save_language_switcher_options :checkbox[name="icl_lso_display_lang"]').attr('checked')
                 || jQuery('#icl_save_language_switcher_options :checkbox[name="icl_lso_native_lang"]').attr('checked')){
                 jQuery('#lang_sel .iclflag').hide();

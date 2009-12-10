@@ -707,35 +707,5 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
     <br />   
        
     <?php do_action('icl_menu_footer'); ?>
-	
-	
-	<!--<script type="text/javascript" src="<?php bloginfo('url'); ?>/<?php echo WPINC; ?>/js/colorpicker.js"></script>-->
-	<!--<script type="text/javascript" src="../wp-includes/js/colorpicker.js"></script>-->
-	<script type='text/javascript'>
-	// <![CDATA[
-		//var cp = new ColorPicker();
-		/*function pickColor(color) {
-			jQuery('#'+icl_cp_target).val(color);
-			jQuery('#'+icl_cp_target).trigger('keyup');
-		}*/
-		
-jQuery(document).ready( function($) {	
-		// align color picker
-	/*$(".pick-show").click(function () {
-		var set = jQuery(this).offset();
-   		$("#colorPickerDiv").css({"top":set.top+25,"left":set.left});
-	});*/
-	//jQuery('#icl_lang_preview_config input').each(iclUpdateLangSelQuickPreview);
-});
-	// ]]>
-	</script>
-	<!--<style>
-	#colorPickerDiv a, #colorPickerDiv a:hover {
-		padding: 1px;
-		text-decoration: none;
-		border-bottom: 0px;
-	}
-	</style>-->
-	<script type='text/javascript'></script>
     
 </div>
