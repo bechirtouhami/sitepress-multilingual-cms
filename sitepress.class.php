@@ -1957,7 +1957,7 @@ class SitePress{
         //$join .= " {$ljoin} JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->posts}.ID = t.element_id 
         //            AND t.element_type='post' {$cond} JOIN {$wpdb->prefix}icl_languages l ON t.language_code=l.code AND l.active=1";        
         $join .= " {$ljoin} JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->posts}.ID = t.element_id 
-                    AND t.element_type='post' {$cond} JOIN {$wpdb->prefix}icl_languages l ON t.language_code=l.code AND l.active=1";                
+                    AND t.element_type='post' {$cond} JOIN {$wpdb->prefix}icl_languages l ON t.lanGuage_code=l.code AND l.active=1";                
         return $join;
     }
     
