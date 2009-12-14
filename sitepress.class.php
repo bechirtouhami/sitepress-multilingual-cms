@@ -228,16 +228,11 @@ class SitePress{
             );            
             $language_switcher_defaults = $language_switcher_defaults_alt['White'];
             
-            if(is_admin() && $_GET['page'] == ICL_PLUGIN_FOLDER . '/menu/languages.php' 
-                && (!defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') || !ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS)){
+            if(is_admin() && $_GET['page'] == ICL_PLUGIN_FOLDER . '/menu/languages.php'){
                 add_action('admin_head', 'icl_lang_sel_nav_css', 1, 1, true);
                 add_action('admin_head', array($this, 'custom_language_switcher_style'));
-                //if(isset($_GET['icl_action']) && $_GET['icl_action']=='icl_lang_sel_preview'){
-                //    $this->settings['icl_lang_sel_config'] = $_GET['icl_lang_sel_config'];
-                //}
             }            
-            if(!is_admin()
-                && (!defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') || !ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS)){
+            if(!is_admin()){
                 add_action('wp_head', array($this, 'custom_language_switcher_style'));
             }
             
@@ -1957,12 +1952,12 @@ class SitePress{
         //$join .= " {$ljoin} JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->posts}.ID = t.element_id 
         //            AND t.element_type='post' {$cond} JOIN {$wpdb->prefix}icl_languages l ON t.language_code=l.code AND l.active=1";        
         $join .= " {$ljoin} JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->posts}.ID = t.element_id 
-                    AND t.element_type='post' {$cond} JOIN {$wpdb->prefix}icl_languages l ON t.lanGuage_code=l.code AND l.active=1";                
+                    AND t.element_type='post' {$cond} JOIN {$wpdb->prefix}icl_languages l ON t.language_code=l.code AND l.active=1";                
         return $join;
     }
     
     function posts_where_filter($where){
-        global $wpdb;
+        global $wpdb, $pagenow;
 
         //exceptions
         if(isset($_POST['wp-preview']) && $_POST['wp-preview']=='dopreview' || is_preview()){
@@ -2630,6 +2625,11 @@ class SitePress{
         register_sidebar_widget(__('Language Selector', 'sitepress'), 'language_selector_widget', 'icl_languages_selector');
         
         function icl_lang_sel_nav_css($show = true){              
+            
+            if(defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') && ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS){
+                return '';                
+            }
+            
             $link_tag = '<link rel="stylesheet" href="'. ICL_PLUGIN_URL . '/res/css/language-selector.css?v='.ICL_SITEPRESS_VERSION.'" type="text/css" media="all" />';
             if(!$show && (!isset($_GET['page']) || $_GET['page'] != ICL_PLUGIN_FOLDER . '/menu/languages.php')){
                 return $link_tag;
@@ -2658,6 +2658,10 @@ class SitePress{
     }
     
     function custom_language_switcher_style(){
+        if(defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') && ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS){
+            return;
+        }
+        
         global $language_switcher_defaults;    
         $add = false;
         foreach($language_switcher_defaults as $key=>$d){
