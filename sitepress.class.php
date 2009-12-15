@@ -3181,7 +3181,7 @@ class SitePress{
     function pre_option_page_on_front(){
         global $wpdb;
         static $page_on_front_sc = array();
-        if ($page_on_front_sc[$this->this_lang] === null || ICL_DISABLE_CACHE) {
+        if (@$page_on_front_sc[$this->this_lang] === null || ICL_DISABLE_CACHE) {
             $page_on_front_sc[$this->this_lang] = false;
             $page_on_front = $wpdb->get_var("SELECT option_value FROM {$wpdb->options} WHERE option_name='page_on_front'");
             $trid = $this->get_element_language_details($page_on_front, 'post')->trid;
@@ -3200,7 +3200,7 @@ class SitePress{
     function pre_option_page_for_posts(){
         global $wpdb;
         static $page_for_posts_sc = array();
-        if ($page_for_posts_sc[$this->this_lang] === null || ICL_DISABLE_CACHE) {
+        if (@$page_for_posts_sc[$this->this_lang] === null || ICL_DISABLE_CACHE) {
             $page_for_posts_sc[$this->this_lang] = false;
             $page_for_posts = $wpdb->get_var("SELECT option_value FROM {$wpdb->options} WHERE option_name='page_for_posts'");
             $trid = $this->get_element_language_details($page_for_posts, 'post')->trid;
