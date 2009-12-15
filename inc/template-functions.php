@@ -115,7 +115,7 @@ function icl_object_id($element_id, $element_type='post', $return_original_if_mi
     if($element_id <= 0){
         return $element_id;
     } 
-    $element_types = array('post', 'post_tag', 'category');
+    $element_types = array('post', 'post_tag', 'category', 'page');
     if(!in_array($element_type, $element_types)){
         trigger_error(__('Invalid object kind','sitepress'), E_USER_WARNING);
         return null;
