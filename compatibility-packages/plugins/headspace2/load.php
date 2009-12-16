@@ -14,7 +14,6 @@ class WP_Headspace2_SEO_compatibility  extends WPML_Package{
     
     function __construct(){
         parent::__construct();
-        print_r($this->settings);
         if(!isset($this->settings['translation_sync_file_loaded']) || !$this->settings['translation_sync_file_loaded']){
             global $wpdb;
             $fh = fopen($this->package_path . '/res/hs_custom_fields.csv', 'rb');
@@ -35,8 +34,7 @@ class WP_Headspace2_SEO_compatibility  extends WPML_Package{
             if($wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}icl_plugins_texts WHERE plugin_name='".$this->data['Plugin']."'")){
                 $this->settings['translation_sync_file_loaded'] = true;
                 $this->save_settings();
-            }            
-            
+            }                        
         }
         
     }

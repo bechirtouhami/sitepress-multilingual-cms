@@ -46,7 +46,7 @@ class WPML_Packages{
 
                     preg_match( '|Package Name:(.*)$|mi', $package_info, $name );
                     preg_match( '|Package URI:(.*)$|mi', $package_info, $uri );
-                    preg_match( '|Version:(.*)|i', $package_info, $version );
+                    preg_match( '|\n[\s]*Version:(.*)|i', $package_info, $version );
                     if($packages_type == 'themes' || $external){
                         preg_match( '|Theme:(.*)|i', $package_info, $theme );
                         preg_match( '|Theme version:(.*)|i', $package_info, $theme_version );
@@ -73,16 +73,14 @@ class WPML_Packages{
                         if($packages_type == 'themes' || $external){
                             $package_data['Theme'] = $theme;
                             $package_data['ThemeVersion'] = $theme_version;
+                            $package_data['id'] = $theme;
                         }  
                         if($packages_type == 'plugins' || $external){
                             $package_data['Plugin'] = $plugin;
                             $package_data['PluginVersion'] = $plugin_version;                            
+                            $package_data['id'] = str_replace(array('/','.php'),array('-',''),$plugin);
                         }  
-                        $package_data['id'] = $theme;
-                        
-                        //var_dump($external);
-                        //print_r($package_data);
-                        
+                                                
                         // add the package only if the theme is active
                         if($external && $package_data['Plugin'] && !in_array($package_data['Plugin'], get_option('active_plugins'))){
                             continue;
@@ -109,7 +107,7 @@ class WPML_Packages{
                     }
                 }
             }
-            closedir($dh);
+            closedir($dh);            
         }else{
             throw new Exception(sprintf('Can\'t open folder %s',$folder));
         }
