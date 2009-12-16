@@ -73,6 +73,7 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 * Fixed Ukranian flag
 * Added support for PHP setups without json_decode
 * Added compatibility package for Headspace2 SEO plugin
+* Fixed bug in the 'icl_object_id' template function
 
 
 = 1.5.0 =
