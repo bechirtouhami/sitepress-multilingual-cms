@@ -45,6 +45,11 @@ abstract class WPML_Package{
         
     }
     
+    function save_settings(){
+        global $sitepress;
+        $iclsettings['packages'][$this->type][$this->name] = $this->settings;
+        $sitepress->save_settings($iclsettings);
+    }
     
     function add_option_checkbox($wpml_page, $option_label, $option_name, $group_name = ICL_EXTRAS_DEFAULT_GROUP_NAME, $default_value='', $extra_attributes = array()){
         global $WPML_Packages;
@@ -279,7 +284,7 @@ abstract class WPML_Package{
         else return $content . $out;
     }
 
-        // This function should check if sidebar switcher is enabled
+    // This function should check if sidebar switcher is enabled
     function check_sidebar_language_selector_widget(){
 		if(is_admin()) return;
     	global $wp_registered_widgets;
