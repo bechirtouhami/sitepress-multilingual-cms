@@ -66,6 +66,15 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 
 == Changelog ==
 
+= 1.5.1 =
+* Fixed broken link to media library
+* Fixed language selector appeareance for people using ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS
+* Tested WP 2.9 compatibility
+* Fixed Ukranian flag
+* Added support for PHP setups without json_decode
+* Added compatibility package for Headspace2 SEO plugin
+
+
 = 1.5.0 =
 * Added compatibility packages for Thematic, Hybrid and the default WordPress theme.
 * Blog posts can be displayed in the default language if translations are missing.
