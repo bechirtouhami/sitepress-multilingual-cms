@@ -3,8 +3,8 @@ Contributors: ICanLocalize
 Donate link: http://wpml.org/?page_id=2312
 Tags: CMS, navigation, menus, menu, dropdown, css, sidebar, pages, i18n, translation, localization, language, multilingual, WPML
 Requires at least: 2.6
-Tested up to: 2.9.0 beta 2
-Stable tag: 1.5.0
+Tested up to: 2.9.0
+Stable tag: 1.5.1
 
 Allows building complete multilingual sites with WordPress.
 
@@ -68,7 +68,7 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 
 = 1.5.1 =
 * Fixed broken link to media library
-* Fixed language selector appeareance for people using ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS
+* Fixed language selector appearance for people using ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS
 * Tested WP 2.9 compatibility
 * Fixed Ukranian flag
 * Added support for PHP setups without json_decode

@@ -5,7 +5,9 @@ $upgrade_lines =  array(
     '1.3.4' => __('you can configure the position and contents of the posts page in the top navigation', 'sitepress'),
     '1.3.5' => __('many bugs fixed and an easy way to show your love for WPML', 'sitepress'),
     '1.4.0' => __('simplified operation for basic usage and for getting professional translation', 'sitepress'),
-    '1.5.0' => __('theme compatibility packages, design for language switcher and language fall-back for posts', 'sitepress')
+    '1.5.0' => __('theme compatibility packages, design for language switcher and language fall-back for posts', 'sitepress'),
+    '1.5.1' => __('bugs fixed and new support for Headspace2 SEO plugin', 'sitepress')
+    
 );
 
 $short_v = implode('.', array_slice(explode('.', ICL_SITEPRESS_VERSION), 0, 3));
