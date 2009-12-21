@@ -102,7 +102,7 @@ class WP_Default_theme_compatibility  extends WPML_Package{
             add_filter('the_content', array($this, 'add_post_available'));
         }
 		
-		icl_register_string( 'theme '.$this->name, 'Text for alternative languages for posts', $this->settings['post_available_text'] );
+		icl_register_string( 'theme '.$this->name, __('Text for alternative languages for posts','sitepress'), $this->settings['post_available_text'] );
 		add_filter('wp_page_menu',array(&$this,'filter_home_link'));
 		
 		$this->load_css('css/compatibility-package.css');
