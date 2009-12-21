@@ -101,6 +101,8 @@ if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQ
     
     require ICL_PLUGIN_PATH . '/inc/compatibility-packages/init-packages.php';
     
+    icl_st_scan_plugin_files(WP_PLUGIN_DIR . '/sitepress-multilingual-cms');
+    
 }
 
  

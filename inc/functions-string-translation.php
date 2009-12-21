@@ -669,8 +669,12 @@ function icl_t_cache_lookup($context, $name){
     if(isset($icl_st_cache[$context]) && empty($icl_st_cache[$context])){  // cache semi-hit - string is not in the db
         $ret_value = false;        
     }elseif(!isset($icl_st_cache[$context][$name])){ //cache MISS
-        global $sitepress, $wpdb;        
-        $current_language = $sitepress->get_current_language();     
+        global $sitepress, $wpdb, $current_user;        
+        if($current_user->ID){
+            $current_language = $sitepress->get_admin_language();     
+        }else{
+            $current_language = $sitepress->get_current_language();     
+        }        
         $default_language = $sitepress->get_default_language();
         $res = $wpdb->get_results("
             SELECT s.name, s.value, t.value AS translation_value, t.status
@@ -820,6 +824,81 @@ function __icl_st_scan_theme_files_store_results($string, $domain){
     
 }
 
+
+
+function icl_st_scan_plugin_files($plugin, $recursion = 0){
+    require_once ICL_PLUGIN_PATH . '/inc/potx.inc';
+    static $recursion, $scanned_files = array();
+    static $scan_stats = false;
+    global $icl_scan_plugin_found_domains, $sitepress, $sitepress_settings;
+    
+    if(is_file($plugin) && !$recursion){ // case of one-file plugins
+        $scan_stats = sprintf(__('Scanning file: %s', 'sitepress'), $plugin);
+        _potx_process_file($plugin, 0, '__icl_st_scan_plugin_files_store_results','_potx_save_version', POTX_API_7);            
+    }else{
+        $dh = opendir($plugin);    
+        while(false !== ($file = readdir($dh))){
+            if(0 === strpos($file, '.')) continue;
+            if(is_dir($plugin . "/" . $file)){
+                $recursion++;
+                $scan_stats .= str_repeat("\t",$recursion-1) . sprintf(__('Opening folder: %s', 'sitepress'), $dir . "/" . $file) . PHP_EOL;
+                icl_st_scan_plugin_files($plugin . "/" . $file, $recursion);            
+                $recursion--;
+            }elseif(preg_match('#(\.php|\.inc)$#i', $file)){     
+                $scan_stats .=  str_repeat("\t",$recursion) . sprintf(__('Scanning file: %s', 'sitepress'), $dir . "/" . $file) . PHP_EOL;
+                $scanned_files[] = $dir . "/" . $file;
+                _potx_process_file($plugin . "/" . $file, 0, '__icl_st_scan_plugin_files_store_results','_potx_save_version', POTX_API_7);
+            }else{
+                $scan_stats .=  str_repeat("\t",$recursion) . sprintf(__('Skipping file: %s', 'sitepress'), $dir . "/" . $file) . PHP_EOL;    
+            }
+        }        
+    }
+    
+    
+    if(!$recursion){
+        global $__icl_registered_strings;
+        $scan_stats .= __('Done scanning files', 'sitepress') . PHP_EOL;                    
+        
+        if(is_array($icl_scan_plugin_found_domains)){
+            $existing_domains = $sitepress_settings['st']['plugins_localization_domains'];
+            if(is_array($existing_domains)){
+                $sitepress_settings['st']['plugins_localization_domains'] = array_unique(array_merge(array_keys($icl_scan_plugin_found_domains), $existing_domains));
+            }else{
+                $sitepress_settings['st']['plugins_localization_domains'] = array_keys($icl_scan_plugin_found_domains);
+            }
+            $sitepress->save_settings($sitepress_settings);
+        }
+                
+        return $scan_stats;
+    }    
+    
+}
+
+function __icl_st_scan_plugin_files_store_results($string, $domain){
+    global $icl_scan_plugin_found_domains;
+    
+    $string = stripslashes($string);
+        
+    if(!isset($icl_scan_plugin_found_domains[$domain])){
+        $icl_scan_plugin_found_domains[$domain] = true;
+    }
+    
+    global $__icl_registered_strings;
+    if(!isset($__icl_registered_strings)){
+        $__icl_registered_strings = array();
+    }
+    
+    if(!isset($__icl_registered_strings[$domain.'||'.$string])){
+        if(!$domain){
+            icl_register_string('plugins', md5($string), $string);
+        }else{
+            icl_register_string('plugin ' . $domain, md5($string), $string);
+        }        
+        $__icl_registered_strings[$domain.'||'.$string] = true;
+    }                
+    
+}
+
 function get_theme_localization_stats(){
     global $sitepress_settings, $wpdb;
     $stats = false;
@@ -849,6 +928,37 @@ function get_theme_localization_stats(){
         }
     }
    return $stats; 
+}
+
+function get_plugin_localization_stats(){
+    global $sitepress_settings, $wpdb;
+    $stats = false;
+    if(is_array($sitepress_settings['st']['plugins_localization_domains'])){    
+        foreach($sitepress_settings['st']['plugins_localization_domains'] as $domain){
+            $domains[] = $domain ? 'plugin ' . $domain : 'theme';
+        }
+        $results = $wpdb->get_results("
+            SELECT context, status, COUNT(id) AS c 
+            FROM {$wpdb->prefix}icl_strings
+            WHERE context IN ('".join("','",$domains)."')
+            GROUP BY context, status            
+        ");
+        foreach($results as $r){
+            if(!isset($stats[$r->context]['complete'])){
+                $stats[$r->context]['complete'] = 0;
+            }
+            if(!isset($stats[$r->context]['incomplete'])){
+                $stats[$r->context]['incomplete'] = 0;
+            }            
+            if($r->status == ICL_STRING_TRANSLATION_COMPLETE){
+                $stats[$r->context]['complete'] = $r->c; 
+            }else{
+                $stats[$r->context]['incomplete'] += $r->c; 
+            }
+            
+        }
+    }
+   return $stats;     
 }
 
 function icl_st_generate_po_file($strings, $potonly = false){

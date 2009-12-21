@@ -2,6 +2,8 @@ addLoadEvent(function(){
     jQuery('#icl_theme_localization').submit(iclSaveThemeLocalization);
     jQuery('#icl_theme_localization_type').submit(iclSaveThemeLocalizationType);
     jQuery('#icl_tl_rescan').click(iclThemeLocalizationRescan);
+    
+    jQuery('.check-column :checkbox').change(iclCheckColumn);
 });
 
 function iclSaveThemeLocalization(){
@@ -54,4 +56,12 @@ function iclThemeLocalizationRescan(){
         }
     });    
     return false;
+}
+
+function iclCheckColumn(){
+    if(jQuery(this).attr('checked')){
+        jQuery('#icl_strings_in_plugins :checkbox').attr('checked','checked');
+    }else{
+        jQuery('#icl_strings_in_plugins :checkbox').removeAttr('checked');
+    }    
 }
