@@ -151,6 +151,11 @@ class WPML_Packages{
     
     function _read_external_packages_plugins(){
         $plugins = get_option('active_plugins');
+        
+        if (function_exists('get_site_option')){
+            $plugins = array_merge($plugins, array_keys(get_site_option('active_sitewide_plugins',array())));
+        }
+        
         if(is_array($plugins) && !empty($plugins)){
             foreach($plugins as $plugin){
                 $exp = explode('/', $plugin);                
