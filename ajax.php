@@ -617,6 +617,14 @@ switch($_REQUEST['icl_ajx_action']){
         update_post_meta($_POST['post_id'], '_icl_translator_note', $_POST['note']);
         break;
     
+    case 'icl_st_more_options':
+        foreach($_POST['icl_st'] as $k=>$v){
+            $iclsettings['st'][$k] = $v;
+        }
+        $this->save_settings($iclsettings);
+        echo 1;
+        break;
+        
     default:
         echo __('Invalid action','sitepress');                
 }    

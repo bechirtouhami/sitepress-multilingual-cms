@@ -31,6 +31,8 @@ jQuery(document).ready(function(){
         }
     })
     
+    jQuery('#icl_st_more_options').submit(iclSaveForm);
+    
 });
 
 function icl_st_toggler(){

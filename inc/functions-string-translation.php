@@ -3,6 +3,11 @@ define('ICL_STRING_TRANSLATION_NOT_TRANSLATED', 0);
 define('ICL_STRING_TRANSLATION_COMPLETE', 1);
 define('ICL_STRING_TRANSLATION_NEEDS_UPDATE', 2);
 define('ICL_STRING_TRANSLATION_PARTIAL', 3);
+
+define('ICL_STRING_TRANSLATION_STRING_TRACKING_TYPE_SOURCE', 0);
+define('ICL_STRING_TRANSLATION_STRING_TRACKING_TYPE_PAGE', 1);
+define('ICL_STRING_TRANSLATION_STRING_TRACKING_THRESHOLD', 5);
+
 $icl_st_string_translation_statuses = array(
     ICL_STRING_TRANSLATION_COMPLETE => __('Translation complete','sitepress'),
     ICL_STRING_TRANSLATION_PARTIAL => __('Partial translation','sitepress'),
@@ -17,8 +22,19 @@ add_action('icl_update_active_languages', 'icl_update_string_status_all');
 add_action('update_option_blogname', 'icl_st_update_blogname_actions',5,2);
 add_action('update_option_blogdescription', 'icl_st_update_blogdescription_actions',5,2);
 
+wp_enqueue_style('thickbox');
+wp_enqueue_script('jquery');
+wp_enqueue_script('thickbox');
+
+
 function icl_st_init(){                       
     global $sitepress_settings, $sitepress, $wpdb, $icl_st_err_str;
+    
+    if(isset($_GET['icl_action']) && $_GET['icl_action'] == 'view_string_in_page'){
+        icl_st_string_in_page($_GET['string_id']);
+        exit;
+    }
+    
     if ( get_magic_quotes_gpc() && $_GET['page'] == ICL_PLUGIN_FOLDER . '/menu/string-translation.php'){
         $_POST = stripslashes_deep( $_POST );         
     }
@@ -589,11 +605,37 @@ function icl_sw_filters_widget_text($val){
 function icl_sw_filters_gettext($translation, $text, $domain){
     global $sitepress_settings;
     $has_translation = 0;
-    $context = ($domain != 'default') ? 'theme ' . $domain : 'theme';
+    
+    $dbt = debug_backtrace();
+    $dbt4 = str_replace('\\','/',$dbt[4]['file']);
+    $wp_plugin_dir = str_replace('\\','/',WP_PLUGIN_DIR);
+    if(0 === strpos($dbt4, $wp_plugin_dir)){        
+        if(dirname($dbt4) == $wp_plugin_dir){
+            $plugin_folder = basename(str_replace($wp_plugin_dir, '', $dbt4));    
+        }else{
+            $plugin_folder = basename(dirname(str_replace($wp_plugin_dir, '', $dbt4)));    
+            
+        }
+        $context = 'plugin ' . $plugin_folder;
+    }else{
+        $context = ($domain != 'default') ? 'theme ' . $domain : 'theme';
+    }
+    
+    if($sitepress_settings['st']['track_strings']){
+        icl_st_track_string($text, $context);
+    }   
+    
     $ret_translation = icl_t($context, md5($text), $text, $has_translation);
     if(false === $has_translation){
         $ret_translation = $translation;   
     }
+    
+    if(isset($_GET['icl_string_track_value']) && isset($_GET['icl_string_track_context']) 
+        && stripslashes($_GET['icl_string_track_context']) == $context && stripslashes($_GET['icl_string_track_value']) == $text){
+            $ret_translation = '<span style="background-color:#ff0">' . $ret_translation . '</span>';
+            
+    }
+    
     return $ret_translation;
 }
 
@@ -669,13 +711,10 @@ function icl_t_cache_lookup($context, $name){
     if(isset($icl_st_cache[$context]) && empty($icl_st_cache[$context])){  // cache semi-hit - string is not in the db
         $ret_value = false;        
     }elseif(!isset($icl_st_cache[$context][$name])){ //cache MISS
-        global $sitepress, $wpdb, $current_user;        
-        if($current_user->ID){
-            $current_language = $sitepress->get_admin_language();     
-        }else{
-            $current_language = $sitepress->get_current_language();     
-        }        
+        global $sitepress, $wpdb;        
+        $current_language = $sitepress->get_current_language();     
         $default_language = $sitepress->get_default_language();
+        
         $res = $wpdb->get_results("
             SELECT s.name, s.value, t.value AS translation_value, t.status
             FROM  {$wpdb->prefix}icl_strings s
@@ -999,6 +1038,59 @@ function icl_st_generate_po_file($strings, $potonly = false){
     
     return $po;
 }
+
+function icl_st_track_string($text, $context){
+    global $wpdb;
+    // get string id
+    $string_id = $wpdb->get_var("SELECT id FROM {$wpdb->prefix}icl_strings WHERE context='".$wpdb->escape($context)."' AND value='".$wpdb->escape($text)."'");
+    if($string_id){
+        // get existing records
+        $string_records_count = $wpdb->get_var("SELECT COUNT(id) FROM {$wpdb->prefix}icl_string_positions WHERE string_id = '{$string_id}'");
+        if(ICL_STRING_TRANSLATION_STRING_TRACKING_THRESHOLD > $string_records_count){
+            // get page url
+            $https = $_SERVER['HTTPS'] == 'on' ? 's':'';
+            $url = 'http' . $https . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+            echo $wpdb->get_var("SELECT id FROM {$wpdb->prefix}icl_string_positions 
+                                WHERE id='{$string_id}' AND position_in_page='{$url}' AND kind='".ICL_STRING_TRANSLATION_STRING_TRACKING_TYPE_PAGE."'");
+                                echo mysql_error();
+            if(!$wpdb->get_var("SELECT id FROM {$wpdb->prefix}icl_string_positions 
+                                WHERE id='{$string_id}' AND position_in_page='{$url}' AND kind='".ICL_STRING_TRANSLATION_STRING_TRACKING_TYPE_PAGE."'")){
+                $wpdb->insert($wpdb->prefix . 'icl_string_positions', array(
+                    'string_id' => $string_id,
+                    'kind' => ICL_STRING_TRANSLATION_STRING_TRACKING_TYPE_PAGE,
+                    'position_in_page' => $url
+                ));
+            }
+        }
+    }
+}
+
+function icl_st_string_in_page($string_id){
+    global $wpdb;
+    // get urls    
+    $urls = $wpdb->get_col("SELECT position_in_page FROM {$wpdb->prefix}icl_string_positions WHERE string_id = '{$string_id}'");
+    if(!empty($urls)){
+        $string = $wpdb->get_row("SELECT context, value FROM {$wpdb->prefix}icl_strings WHERE id='{$string_id}'");
+        for($i = 0; $i < count($urls); $i++){
+            $c = $i+1;
+            if(strpos($urls[$i], '?') !== false){
+                $urls[$i] .= '&icl_string_track_value=' . urlencode($string->value);
+            }else{
+                $urls[$i] .= '?icl_string_track_value=' . urlencode($string->value);
+            }            
+            $urls[$i] .= '&icl_string_track_context=' . urlencode($string->context);
+            echo '<a href="#" onclick="jQuery(\'#icl_string_track_frame_wrap iframe\').attr(\'src\',\''.$urls[$i].'\')">'.$c.'</a>&nbsp;&nbsp;';
+        }
+        echo '<div id="icl_string_track_frame_wrap">';
+        echo '<iframe src="'.$urls[0].'" width="800" height="600" frameborder="0" marginheight="0" marginwidth="0"></iframe>';
+        echo '</div>';
+        
+    }else{
+        _e('No records found', 'sitepress');
+    }
+}
+
+
 
 function icl_st_debug($str){
     trigger_error($str, E_USER_WARNING);

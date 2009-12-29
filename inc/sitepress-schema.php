@@ -231,6 +231,19 @@ function icl_sitepress_activate(){
             ) ENGINE=MyISAM {$charset_collate}"; 
         mysql_query($sql);
     }
+
+    $table_name = $wpdb->prefix.'icl_string_positions';
+    if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
+        $sql = "
+             CREATE TABLE `{$table_name}` (
+            `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+            `string_id` BIGINT NOT NULL ,
+            `kind` TINYINT,
+            `position_in_page` VARCHAR( 255 ) NOT NULL,
+            INDEX ( `string_id` )
+            ) ENGINE=MyISAM {$charset_collate}"; 
+        mysql_query($sql);
+    }    
        
     // message status table
     $table_name = $wpdb->prefix.'icl_message_status';

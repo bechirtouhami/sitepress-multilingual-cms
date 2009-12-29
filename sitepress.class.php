@@ -256,8 +256,17 @@ class SitePress{
         $this_lang = $this->this_lang;
         $this->this_lang = $this->get_default_language();        
         remove_filter('the_posts', array($this, 'the_posts')); 
-        $paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
-        $my_query = new WP_Query('suppress_filters=0&paged=' . $paged);
+        //$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+        $qs = 'suppress_filters=0';
+        foreach($wp_query->query_vars as $k=>$v){
+            if(!empty($v)){
+                if(is_array($v)){
+                    $v = join(',', $v);
+                }
+                $qs .= '&' . $k . '=' . $v;  
+            }
+        }
+        $my_query = new WP_Query($qs);
         add_filter('the_posts', array($this, 'the_posts'));
         $this->this_lang = $this_lang;
         

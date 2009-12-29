@@ -194,6 +194,7 @@ $available_contexts = array_unique($available_contexts);
                     <td width="70%">                                        
                         <div class="icl-st-original" style="float:left;">                    
                         <?php echo htmlspecialchars($icl_string['value']); ?>                    
+                        (<a class="thickbox" href="admin.php?page=sitepress-multilingual-cms%2Fmenu%2Fstring-translation.php&icl_action=view_string_in_page&string_id=<?php echo $string_id ?>&width=810&height=600"><?php _e('view in page', 'sitepress')?></a>)
                         </div>                    
                         <div style="float:right;">
                             <a href="#icl-st-toggle-translations"><?php echo __('translations','sitepress') ?></a>
@@ -236,7 +237,7 @@ $available_contexts = array_unique($available_contexts);
                                 </form>
                                 <?php endforeach;?>
                         </div>
-                    </td>
+                    </td>  
                     <td nowrap="nowrap" id="icl_st_string_status_<?php echo $string_id ?>">
                     <?php
                         $icl_status = icl_translation_get_string_translation_status($string_id);
@@ -397,7 +398,22 @@ $available_contexts = array_unique($available_contexts);
                                     <input class="button-secondary" type="submit" name="iclt_st_sw_save" value="<?php echo __('Save options and rescan strings', 'sitepress')?>" />
                                     <span class="icl_ajx_response" style="display:inline"><?php if(isset($_GET['updated']) && $_GET['updated']=='true') echo __('Settings saved', 'sitepress') ?></span>
                                     </p>
-                                </form>                                
+                                </form> 
+                                
+                                <form id="icl_st_more_options" name="icl_st_more_options" action="">
+                                    <p class="icl_form_errors" style="display:none"></p>
+                                    <ul>
+                                        <li><label><input type="checkbox" name="icl_st[track_strings]" value="1" <?php 
+                                            if($sitepress_settings['st']['track_strings']): ?>checked="checked"<?php endif ?> /> 
+                                        <?php _e('Track where strings appear on the site', 'sitepress'); ?></label>
+                                        </li>
+                                    </ul>
+                                    <p>
+                                    <input class="button-secondary" type="submit" name="iclt_st_save" value="<?php _e('Apply', 'sitepress')?>" />
+                                    <span class="icl_ajx_response" id="icl_ajx_response2" style="display:inline"></span>
+                                    </p>
+                                </form>
+                                                               
                             </div>           
                         </div>
                     </div>
