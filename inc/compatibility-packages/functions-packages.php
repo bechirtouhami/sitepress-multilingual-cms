@@ -96,7 +96,11 @@ class WPML_Packages{
                                 continue;
                             }                                
                         }elseif($packages_type == 'plugins'){
-                            if(!in_array($package_data['Plugin'], get_option('active_plugins'))){
+                            $plugins = get_option('active_plugins');
+                            if (function_exists('get_site_option')){
+                                $plugins = array_merge($plugins, array_keys(get_site_option('active_sitewide_plugins',array())));
+                            }
+                            if(!in_array($package_data['Plugin'], $plugins)){
                                 continue;
                             }
                         }
