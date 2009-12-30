@@ -261,7 +261,15 @@ class SitePress{
         foreach($wp_query->query_vars as $k=>$v){
             if(!empty($v)){
                 if(is_array($v)){
+                    if($k == 'category__in'){
+                        foreach($v as $kc=>$c){
+                            $v[$kc] = icl_object_id($c,'category', true, $this->get_current_language());
+                        }                        
+                    }                
                     $v = join(',', $v);
+                }
+                if($k == 'cat'){
+                    $v = icl_object_id($v,'category', true, $this->get_current_language());
                 }
                 $qs .= '&' . $k . '=' . $v;  
             }
@@ -3580,6 +3588,7 @@ class SitePress{
     function display_wpml_footer(){
         echo '<p id="wpml_credit_footer">';
         printf(__('%s is running multilingual thanks to <a href="%s">WPML</a>', 'sitepress'), get_bloginfo('blogname'), 'http://wpml.org');
+        //printf(__('%s is running multilingual thanks to <a href="%s">WPML</a>', 'sitepress'), get_bloginfo('blogname'), 'http://wpml.org');
         echo '</p>';
     }
     

@@ -194,7 +194,7 @@ $available_contexts = array_unique($available_contexts);
                     <td width="70%">                                        
                         <div class="icl-st-original" style="float:left;">                    
                         <?php echo htmlspecialchars($icl_string['value']); ?>                    
-                        (<a class="thickbox" href="admin.php?page=sitepress-multilingual-cms%2Fmenu%2Fstring-translation.php&icl_action=view_string_in_page&string_id=<?php echo $string_id ?>&width=810&height=600"><?php _e('view in page', 'sitepress')?></a>)
+                        (<a class="thickbox" href="admin.php?page=sitepress-multilingual-cms%2Fmenu%2Fstring-translation.php&icl_action=view_string_in_page&string_id=<?php echo $string_id ?>&width=810&height=600"><?php _e('view in page', 'sitepress')?></a> | <a class="thickbox" href="admin.php?page=sitepress-multilingual-cms%2Fmenu%2Fstring-translation.php&icl_action=view_string_in_source&string_id=<?php echo $string_id ?>&width=810&height=600"><?php _e('view source', 'sitepress')?></a>)
                         </div>                    
                         <div style="float:right;">
                             <a href="#icl-st-toggle-translations"><?php echo __('translations','sitepress') ?></a>

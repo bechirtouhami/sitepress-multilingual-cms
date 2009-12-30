@@ -437,6 +437,18 @@ switch($_REQUEST['icl_ajx_action']){
         $scan_stats = icl_st_scan_theme_files();                
         echo '1|'.$scan_stats;
         break;
+    case 'icl_tl_rescan_p':
+        set_time_limit(0);
+        $scan_stats = '';
+        foreach($_POST['plugin'] as $plugin){
+            if(false !== strpos($plugin, '/')){
+                $plugin = dirname($plugin);
+            }
+            $plugin_path = WP_PLUGIN_DIR . '/' . $plugin;
+            $scan_stats .= icl_st_scan_plugin_files($plugin_path);                
+        }
+        echo '1|' . $scan_stats;
+        break;
     
     case 'save_ct_user_pref':
         $users = $wpdb->get_col("SELECT id FROM {$wpdb->users}");

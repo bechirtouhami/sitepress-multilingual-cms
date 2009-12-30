@@ -34,6 +34,11 @@ function icl_st_init(){
         icl_st_string_in_page($_GET['string_id']);
         exit;
     }
+
+    if(isset($_GET['icl_action']) && $_GET['icl_action'] == 'view_string_in_source'){
+        icl_st_string_in_source($_GET['string_id']);
+        exit;
+    }
     
     if ( get_magic_quotes_gpc() && $_GET['page'] == ICL_PLUGIN_FOLDER . '/menu/string-translation.php'){
         $_POST = stripslashes_deep( $_POST );         
@@ -439,8 +444,8 @@ function icl_unregister_string($context, $name){
     global $wpdb; 
     $string_id = $wpdb->get_var("SELECT id FROM {$wpdb->prefix}icl_strings WHERE context='".$wpdb->escape($context)."' AND name='".$wpdb->escape($name)."'");       
     if($string_id){
-        $wpdb->query("DELETE FROM {$wpdb->prefix}icl_strings FROM WHERE id=" . $string_id);
-        $wpdb->query("DELETE FROM {$wpdb->prefix}icl_string_translations FROM WHERE string_id=" . $string_id);
+        $wpdb->query("DELETE FROM {$wpdb->prefix}icl_strings WHERE id=" . $string_id);
+        $wpdb->query("DELETE FROM {$wpdb->prefix}icl_string_translations WHERE string_id=" . $string_id);
     }
 }  
 
@@ -622,7 +627,7 @@ function icl_sw_filters_gettext($translation, $text, $domain){
     }
     
     if($sitepress_settings['st']['track_strings']){
-        icl_st_track_string($text, $context);
+        icl_st_track_string($text, $context, ICL_STRING_TRANSLATION_STRING_TRACKING_TYPE_PAGE);
     }   
     
     $ret_translation = icl_t($context, md5($text), $text, $has_translation);
@@ -916,12 +921,17 @@ function icl_st_scan_plugin_files($plugin, $recursion = 0){
         */
         
         unset($icl_st_p_scan_plugin_id);        
+        $scan_stats = '<textarea style="width:100%;height:150px;font-size:10px;">' . $scan_stats . "\n" .
+                       count($scanned_files) . ' scanned files' . "\n" .    
+                       sprintf(__('WPML found %s strings. They were added to the string translation table.','sitepress'),count($__icl_registered_strings)) . "\n" .
+                       '</textarea>';
+        
         return $scan_stats;
     }    
     
 }
 
-function __icl_st_scan_plugin_files_store_results($string, $domain){
+function __icl_st_scan_plugin_files_store_results($string, $domain, $file, $line){
     global $icl_scan_plugin_found_domains, $icl_st_p_scan_plugin_id;
     
     $string = stripslashes($string);
@@ -942,7 +952,10 @@ function __icl_st_scan_plugin_files_store_results($string, $domain){
             icl_register_string('plugin ' . $icl_st_p_scan_plugin_id, md5($string), $string);
         }        
         $__icl_registered_strings[$icl_st_p_scan_plugin_id.'||'.$string] = true;
-    }                
+    }  
+    
+    // store position in source
+    icl_st_track_string($string, 'plugin ' . $icl_st_p_scan_plugin_id, ICL_STRING_TRANSLATION_STRING_TRACKING_TYPE_SOURCE, $file, $line);              
     
 }
 
@@ -1039,28 +1052,33 @@ function icl_st_generate_po_file($strings, $potonly = false){
     return $po;
 }
 
-function icl_st_track_string($text, $context){
+function icl_st_track_string($text, $context, $kind = ICL_STRING_TRANSLATION_STRING_TRACKING_TYPE_PAGE, $file = null, $line = null){
     global $wpdb;
     // get string id
     $string_id = $wpdb->get_var("SELECT id FROM {$wpdb->prefix}icl_strings WHERE context='".$wpdb->escape($context)."' AND value='".$wpdb->escape($text)."'");
     if($string_id){
         // get existing records
-        $string_records_count = $wpdb->get_var("SELECT COUNT(id) FROM {$wpdb->prefix}icl_string_positions WHERE string_id = '{$string_id}'");
-        if(ICL_STRING_TRANSLATION_STRING_TRACKING_THRESHOLD > $string_records_count){
-            // get page url
-            $https = $_SERVER['HTTPS'] == 'on' ? 's':'';
-            $url = 'http' . $https . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-            echo $wpdb->get_var("SELECT id FROM {$wpdb->prefix}icl_string_positions 
-                                WHERE id='{$string_id}' AND position_in_page='{$url}' AND kind='".ICL_STRING_TRANSLATION_STRING_TRACKING_TYPE_PAGE."'");
-                                echo mysql_error();
+        $string_records_count = $wpdb->get_var("SELECT COUNT(id) 
+                                        FROM {$wpdb->prefix}icl_string_positions 
+                                        WHERE string_id = '{$string_id}' AND kind = " . $kind);
+        if(ICL_STRING_TRANSLATION_STRING_TRACKING_THRESHOLD > $string_records_count){        
+            if($kind == ICL_STRING_TRANSLATION_STRING_TRACKING_TYPE_PAGE){
+                // get page url
+                $https = $_SERVER['HTTPS'] == 'on' ? 's':'';
+                $position = 'http' . $https . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+            }else{
+                $position = $file . '::' . $line;
+            }
+            
             if(!$wpdb->get_var("SELECT id FROM {$wpdb->prefix}icl_string_positions 
-                                WHERE id='{$string_id}' AND position_in_page='{$url}' AND kind='".ICL_STRING_TRANSLATION_STRING_TRACKING_TYPE_PAGE."'")){
+                                WHERE string_id='{$string_id}' AND position_in_page='{$position}' AND kind='".$kind."'")){
                 $wpdb->insert($wpdb->prefix . 'icl_string_positions', array(
                     'string_id' => $string_id,
-                    'kind' => ICL_STRING_TRANSLATION_STRING_TRACKING_TYPE_PAGE,
-                    'position_in_page' => $url
-                ));
+                    'kind' => $kind,
+                    'position_in_page' => $position
+                ));                    
             }
+            
         }
     }
 }
@@ -1068,7 +1086,9 @@ function icl_st_track_string($text, $context){
 function icl_st_string_in_page($string_id){
     global $wpdb;
     // get urls    
-    $urls = $wpdb->get_col("SELECT position_in_page FROM {$wpdb->prefix}icl_string_positions WHERE string_id = '{$string_id}'");
+    $urls = $wpdb->get_col("SELECT position_in_page 
+                            FROM {$wpdb->prefix}icl_string_positions 
+                            WHERE string_id = '{$string_id}' AND kind = ". ICL_STRING_TRANSLATION_STRING_TRACKING_TYPE_PAGE);
     if(!empty($urls)){
         $string = $wpdb->get_row("SELECT context, value FROM {$wpdb->prefix}icl_strings WHERE id='{$string_id}'");
         for($i = 0; $i < count($urls); $i++){
@@ -1088,6 +1108,45 @@ function icl_st_string_in_page($string_id){
     }else{
         _e('No records found', 'sitepress');
     }
+}
+
+function icl_st_string_in_source($string_id){
+    global $wpdb;
+    // get positions    
+    $files = $wpdb->get_col("SELECT position_in_page 
+                            FROM {$wpdb->prefix}icl_string_positions 
+                            WHERE string_id = '{$string_id}' AND kind = ". ICL_STRING_TRANSLATION_STRING_TRACKING_TYPE_SOURCE);
+    if(!empty($files)){
+        $string = $wpdb->get_row("SELECT context, value FROM {$wpdb->prefix}icl_strings WHERE id='{$string_id}'");        
+        for($i = 0; $i < count($files); $i++){            
+            $c = $i+1;
+            echo '<a href="#" 
+                onclick="jQuery(\'.icl_string_track_source\').fadeOut(function(){jQuery(\'#icl_string_track_source_'.$i.'\').fadeIn()})">'.$c.'</a>&nbsp;&nbsp;';
+        }
+        for($i = 0; $i < count($files); $i++){            
+            $exp = explode('::', $files[$i]);
+            $file = $exp[0];
+            $line = $exp[1];
+            echo '<div class="icl_string_track_source" id="icl_string_track_source_'.$i.'"';
+            if($i > 0){
+                echo 'style="display:none"';
+            }
+            echo '>';
+            echo '<strong>' . $file . "</strong>\n";
+            echo '<pre style="width:800px;height:575px;font-size:10px;line-height:10px;font-family:Arial;background-color:#fefefe;border:1px solid #eee">';        
+            $content = htmlspecialchars(file_get_contents($file));
+            $exp = explode(PHP_EOL, $content);
+            $exp[$line-1] = '<div style="background-color:#ff0">' . $exp[$line-1] . '</div>';
+            $content = implode(PHP_EOL, $exp);
+            echo $content;
+            echo '</pre>';
+            echo '</div>';
+            
+        }
+        
+    }else{
+        _e('No records found', 'sitepress');
+    }    
 }
 
 

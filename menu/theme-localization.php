@@ -175,90 +175,94 @@ $plugin_localization_stats = get_plugin_localization_stats();
         <h3><?php _e('Strings in the plugins', 'sitepress'); ?></h3>
         <?php 
         $plugins = get_plugins();
-        /*
-        echo '<pre>';
-        print_r($plugins);
-        echo '</pre>';
-        */
         $active_plugins = get_option('active_plugins'); 
         ?>
         
-        <table id="icl_strings_in_plugins" class="widefat" cellspacing="0">
-            <thead>
-                <tr>
-                    <th scope="col" class="column-cb check-column"><input type="checkbox" value="<?php echo $file ?>" name="plugin[]" /></th>
-                    <th scope="col"><?php echo __('Plugin', 'sitepress') ?></th>
-                    <th scope="col"><?php echo __('Active', 'sitepress') ?></th>
-                    <th scope="col"><?php echo __('Translation status', 'sitepress') ?><div style="float:right"><?php echo __('Count', 'sitepress') ?></div></th>
-                    <th scope="col">&nbsp;</th>
-                    <th scope="col">&nbsp;</th>
-                </tr>
-            </thead>  
-            <tfoot>
-                <tr>
-                    <th scope="col" class="column-cb check-column"><input type="checkbox" value="<?php echo $file ?>" name="plugin[]" /></th>
-                    <th scope="col"><?php echo __('Plugin', 'sitepress') ?></th>
-                    <th scope="col"><?php echo __('Active', 'sitepress') ?></th>
-                    <th scope="col"><?php echo __('Translation status', 'sitepress') ?><div style="float:right"><?php echo __('Count', 'sitepress') ?></div></th>
-                    <th scope="col">&nbsp;</th>
-                    <th scope="col">&nbsp;</th>
-                </tr>
-            </tfoot>                              
-            <tbody>
-                <?php foreach($plugins as $file=>$plugin): ?>
-                <?php   
-                    $plugin_id = (false !== strpos($file, '/')) ? dirname($file) : $file;
-                    $plugin_id = 'plugin ' . $plugin_id;
-                    if(isset($plugin_localization_stats[$plugin_id]['complete'])){
-                        $_tmpcomp = $plugin_localization_stats[$plugin_id]['complete'];
-                        $_tmpinco = $plugin_localization_stats[$plugin_id]['incomplete'];
-                        $_tmptotal = $_tmpcomp + $_tmpinco;
-                        $_tmplink = true;
-                    }else{
-                        $_tmpcomp = $_tmpinco = $_tmptotal =  __('n/a', 'sitepress');
-                        $_tmplink = false;
-                    }
-                    
-                ?>
-                <tr scope="col">
-                    <td><input type="checkbox" value="<?php echo $file ?>" name="plugin[]" /></td>
-                    <td><?php echo $plugin['Name'] ?></td>
-                    <td align="center"><?php echo in_array($file, $active_plugins) ? __('Yes', 'sitepress') :  __('No', 'sitepress'); ?></td>
-                    <td>
-                        <table width="100%" cellspacing="0">
-                            <tr>
-                                <td><?php echo __('Fully translated', 'sitepress') ?></td>                    
-                                <td align="right"><?php echo $_tmpcomp ?></td>
-                            </tr>
-                            <tr>
-                                <td><?php echo __('Not translated or needs update', 'sitepress') ?></td>
-                                <td align="right"><?php echo $_tmpinco  ?></td>
-                            </tr>
-                            <tr scope="col">
-                                <td style="border:none"><strong><?php echo __('Total', 'sitepress') ?></strong></td>
-                                <td style="border:none" align="right"><strong><?php echo $_tmptotal; ?></strong></td>
-                            </tr>            
-                        </table>
-                    </td>
-                    <td align="right" style="padding-top:10px;">
-                        <?php if($_tmplink): ?>
-                            <a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH) ?>/menu/string-translation.php&amp;context=<?php echo $plugin_id ?>" class="button-secondary"><?php echo __("View all the plugin's texts",'sitepress')?></a>
-                            <a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH) ?>/menu/string-translation.php&amp;context=<?php echo $plugin_id ?>&amp;status=0" class="button-primary"><?php echo __("View strings that need translation",'sitepress')?></a>
-                        <?php else: ?>
-                            <p><i><?php _e('Select and use the button below to scan for strings', 'sitepress')?></i></p>
-                        <?php endif; ?>
-                    </td>                     
-                </tr>
-                <?php endforeach  ?>
-            </tbody>
-        </table>        
         
         
-        <p>
-        <input id="icl_tl_rescan_p" type="button" class="button-primary" value="<?php echo __("Scan the selected plugins for strings",'sitepress')?>" />
-        <img class="icl_ajx_loader_p" src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" style="display:none;" alt="" />
-        </p>
+        <form id="icl_tl_rescan_p" action="">
+            <div id="icl_strings_in_plugins_wrap">
+                <table id="icl_strings_in_plugins" class="widefat" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="column-cb check-column"><input type="checkbox" /></th>
+                            <th scope="col"><?php echo __('Plugin', 'sitepress') ?></th>
+                            <th scope="col"><?php echo __('Active', 'sitepress') ?></th>
+                            <th scope="col"><?php echo __('Translation status', 'sitepress') ?><div style="float:right"><?php echo __('Count', 'sitepress') ?></div></th>
+                            <th scope="col">&nbsp;</th>
+                            <th scope="col">&nbsp;</th>
+                        </tr>
+                    </thead>  
+                    <tfoot>
+                        <tr>
+                            <th scope="col" class="column-cb check-column"><input type="checkbox" /></th>
+                            <th scope="col"><?php echo __('Plugin', 'sitepress') ?></th>
+                            <th scope="col"><?php echo __('Active', 'sitepress') ?></th>
+                            <th scope="col"><?php echo __('Translation status', 'sitepress') ?><div style="float:right"><?php echo __('Count', 'sitepress') ?></div></th>
+                            <th scope="col">&nbsp;</th>
+                            <th scope="col">&nbsp;</th>
+                        </tr>
+                    </tfoot>                              
+                    <tbody>
+                        <?php foreach($plugins as $file=>$plugin): ?>
+                        <?php   
+                            $plugin_id = (false !== strpos($file, '/')) ? dirname($file) : $file;
+                            $plugin_id = 'plugin ' . $plugin_id;
+                            if(isset($plugin_localization_stats[$plugin_id]['complete'])){
+                                $_tmpcomp = $plugin_localization_stats[$plugin_id]['complete'];
+                                $_tmpinco = $plugin_localization_stats[$plugin_id]['incomplete'];
+                                $_tmptotal = $_tmpcomp + $_tmpinco;
+                                $_tmplink = true;
+                            }else{
+                                $_tmpcomp = $_tmpinco = $_tmptotal =  __('n/a', 'sitepress');
+                                $_tmplink = false;
+                            }
+                            
+                        ?>
+                        <tr scope="col">
+                            <td><input type="checkbox" value="<?php echo $file ?>" name="plugin[]" /></td>
+                            <td><?php echo $plugin['Name'] ?></td>
+                            <td align="center"><?php echo in_array($file, $active_plugins) ? __('Yes', 'sitepress') :  __('No', 'sitepress'); ?></td>
+                            <td>
+                                <table width="100%" cellspacing="0">
+                                    <tr>
+                                        <td><?php echo __('Fully translated', 'sitepress') ?></td>                    
+                                        <td align="right"><?php echo $_tmpcomp ?></td>
+                                    </tr>
+                                    <tr>
+                                        <td><?php echo __('Not translated or needs update', 'sitepress') ?></td>
+                                        <td align="right"><?php echo $_tmpinco  ?></td>
+                                    </tr>
+                                    <tr scope="col">
+                                        <td style="border:none"><strong><?php echo __('Total', 'sitepress') ?></strong></td>
+                                        <td style="border:none" align="right"><strong><?php echo $_tmptotal; ?></strong></td>
+                                    </tr>            
+                                </table>
+                            </td>
+                            <td align="right" style="padding-top:10px;">
+                                <?php if($_tmplink): ?>
+                                    <a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH) ?>/menu/string-translation.php&amp;context=<?php echo $plugin_id ?>" class="button-secondary"><?php echo __("View all the plugin's texts",'sitepress')?></a>
+                                    <a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH) ?>/menu/string-translation.php&amp;context=<?php echo $plugin_id ?>&amp;status=0" class="button-primary"><?php echo __("View strings that need translation",'sitepress')?></a>
+                                <?php else: ?>
+                                    <p><i><?php _e('Select and use the button below to scan for strings', 'sitepress')?></i></p>
+                                <?php endif; ?>
+                            </td>                     
+                        </tr>
+                        <?php endforeach  ?>
+                    </tbody>
+                </table>        
+            </div>    
+                
+            <p>
+            <input type="submit" class="button-primary" value="<?php echo __("Scan the selected plugins for strings",'sitepress')?>" />
+            <img class="icl_ajx_loader_p" src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" style="display:none;" alt="" />
+            </p>
+        
+        
+        </form>
+        
         <div id="icl_tl_scan_stats_p"></div>  
+        
         
     <?php endif; ?>
     
