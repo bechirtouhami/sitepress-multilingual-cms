@@ -1,5 +1,5 @@
 jQuery(document).ready(function(){  
-    if(jQuery('form input[name="action"]').attr('value')=='addtag'){
+    if(jQuery('form input[name="action"]').attr('value')=='add-tag'){
         jQuery('.form-wrap p[class="submit"]').before(jQuery('#icl_tag_menu').html());    
     }else{
         jQuery('#edittag table[class="form-table"]').append(jQuery('#edittag table[class="form-table"] tr:last').clone());    

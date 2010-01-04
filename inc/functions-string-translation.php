@@ -1085,7 +1085,7 @@ function icl_st_track_string($text, $context, $kind = ICL_STRING_TRANSLATION_STR
 
 function icl_st_string_in_page($string_id){
     global $wpdb;
-    // get urls    
+    // get urls   
     $urls = $wpdb->get_col("SELECT position_in_page 
                             FROM {$wpdb->prefix}icl_string_positions 
                             WHERE string_id = '{$string_id}' AND kind = ". ICL_STRING_TRANSLATION_STRING_TRACKING_TYPE_PAGE);

@@ -86,6 +86,7 @@ class SitePress{
             
             
             add_action('create_term',  array($this, 'create_term'),1, 2);
+            add_action('edit_term',  array($this, 'create_term'),1, 2);
             add_action('delete_term',  array($this, 'delete_term'),1,3);       
             add_filter('list_terms_exclusions', array($this, 'exclude_other_terms'),1,2);         
             
@@ -95,7 +96,7 @@ class SitePress{
             add_action('admin_init', array($this, 'pre_save_category'));
             
             // category language selection        
-            add_action('edit_category',  array($this, 'create_term'),1, 2);        
+            // add_action('edit_category',  array($this, 'create_term'),1, 2);        
             if($pagenow == 'categories.php'){
                 add_action('admin_print_scripts-categories.php', array($this,'js_scripts_categories'));
                 add_action('edit_category_form', array($this, 'edit_term_form'));
@@ -2341,7 +2342,6 @@ class SitePress{
     
     function create_term($cat_id, $tt_id){        
         global $wpdb;
-        
         // case of ajax inline category creation
         if(isset($_POST['_ajax_nonce']) && $_POST['action']=='add-category'){
             $referer = $_SERVER['HTTP_REFERER'];
@@ -3558,7 +3558,7 @@ class SitePress{
         $active_languages = $this->get_active_languages();
         foreach($active_languages as $k=>$v){
             if($v['code']==$this->get_current_language()) continue;
-            if($pagenow=='edit.php'){
+            if($pagenow=='edit.php' || @$_POST['post_type'] == 'post' ){
                 $post_type = 'post';
             }else{
                 $post_type = 'page';
@@ -3588,7 +3588,6 @@ class SitePress{
     function display_wpml_footer(){
         echo '<p id="wpml_credit_footer">';
         printf(__('%s is running multilingual thanks to <a href="%s">WPML</a>', 'sitepress'), get_bloginfo('blogname'), 'http://wpml.org');
-        //printf(__('%s is running multilingual thanks to <a href="%s">WPML</a>', 'sitepress'), get_bloginfo('blogname'), 'http://wpml.org');
         echo '</p>';
     }
     

@@ -5,7 +5,7 @@
         if (false !== strpos($referer, 'action=edit')) {
             // we have come from another edit page and we don't want to
             // return there after the "Update"
-            $ref = "/wp-admin/categories.php";
+            $ref = "categories.php";
             echo '<input type="hidden" name="_wp_original_http_referer" value="' . attribute_escape( stripslashes( $ref ) ) . '" />';
         }
     }
