@@ -99,9 +99,9 @@
     
     <?php if($untranslated_found > 0): ?>    
         <?php if($this->get_icl_translation_enabled()):?>
-            <p style="clear:both;"><b>or, translate manually:</b>
+            <p style="clear:both;"><b><?php _e('or, translate manually:', 'sitepress'); ?> </b>
         <?php else: ?>
-            <p style="clear:both;"><b>Translate</b>
+            <p style="clear:both;"><b><?php _e('Translate', 'sitepress'); ?></b>
         <?php endif; ?>
         <table>
         <?php foreach($active_languages as $lang): if($selected_language==$lang['code']) continue; ?>

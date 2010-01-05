@@ -590,6 +590,23 @@ function icl_get_string_translations($offset=0){
     return $string_translations;
 }
 
+function icl_get_strigs_tracked_in_pages($string_translations){
+    global $wpdb;
+    // get string position in page - if found
+    $found_strings = $strings_in_page = array();
+    foreach(array_keys($string_translations) as $string_id){
+        $found_strings[] = $string_id;
+    }
+    if($found_strings){
+        $res = $wpdb->get_results("
+            SELECT kind, string_id  FROM {$wpdb->prefix}icl_string_positions 
+            WHERE string_id IN (".implode(',', $found_strings).")");
+        foreach($res as $row){
+            $strings_in_page[$row->kind][$row->string_id] = true;
+        }
+    }
+    return $strings_in_page;
+}
 
 function icl_sw_filters_blogname($val){
     return icl_t('WP', 'Blog Title', $val);
@@ -626,7 +643,8 @@ function icl_sw_filters_gettext($translation, $text, $domain){
         $context = ($domain != 'default') ? 'theme ' . $domain : 'theme';
     }
     
-    if($sitepress_settings['st']['track_strings']){
+    // track strings if the user has enabled this and if it's and editor or admin
+    if($sitepress_settings['st']['track_strings'] && current_user_can('edit_others_posts')){
         icl_st_track_string($text, $context, ICL_STRING_TRANSLATION_STRING_TRACKING_TYPE_PAGE);
     }   
     
@@ -844,7 +862,7 @@ function icl_st_scan_theme_files($dir = false, $recursion = 0){
     
 }
 
-function __icl_st_scan_theme_files_store_results($string, $domain){
+function __icl_st_scan_theme_files_store_results($string, $domain, $file, $line){
     global $icl_scan_theme_found_domains;
     
     $string = stripslashes($string);
@@ -852,20 +870,28 @@ function __icl_st_scan_theme_files_store_results($string, $domain){
     if(!isset($icl_scan_theme_found_domains[$domain])){
         $icl_scan_theme_found_domains[$domain] = true;
     }
-    global $__icl_registered_strings;
+    global $wpdb, $__icl_registered_strings;
     if(!isset($__icl_registered_strings)){
         $__icl_registered_strings = array();
+        
+        // clear existing entries (both source and page type)
+        $context  = $domain ? 'theme ' . $domain : 'theme';
+        $wpdb->query("DELETE FROM {$wpdb->prefix}icl_string_positions WHERE string_id IN 
+            (SELECT id FROM {$wpdb->prefix}icl_strings WHERE context = '{$context}')");        
     }
     
     if(!isset($__icl_registered_strings[$domain.'||'.$string])){
         if(!$domain){
-            icl_register_string('theme', md5($string), $string);
+            $context = 'theme';
         }else{
-            icl_register_string('theme ' . $domain, md5($string), $string);
+            $context = 'theme ' . $domain;            
         }        
+        icl_register_string($context, md5($string), $string);
         $__icl_registered_strings[$domain.'||'.$string] = true;
     }                
     
+    // store position in source
+    icl_st_track_string($string, $context, ICL_STRING_TRANSLATION_STRING_TRACKING_TYPE_SOURCE, $file, $line);              
 }
 
 
@@ -940,9 +966,14 @@ function __icl_st_scan_plugin_files_store_results($string, $domain, $file, $line
     //    $icl_scan_plugin_found_domains[$domain] = true;
     //}
     
-    global $__icl_registered_strings;
+    global $wpdb, $__icl_registered_strings;
     if(!isset($__icl_registered_strings)){
         $__icl_registered_strings = array();
+        
+        // clear existing entries (both source and page type)
+        $context  = $domain ? 'plugin ' . $icl_st_p_scan_plugin_id : 'plugins';
+        $wpdb->query("DELETE FROM {$wpdb->prefix}icl_string_positions WHERE string_id IN 
+            (SELECT id FROM {$wpdb->prefix}icl_strings WHERE context = '{$context}')");
     }
     
     if(!isset($__icl_registered_strings[$icl_st_p_scan_plugin_id.'||'.$string])){
@@ -1120,8 +1151,9 @@ function icl_st_string_in_source($string_id){
         $string = $wpdb->get_row("SELECT context, value FROM {$wpdb->prefix}icl_strings WHERE id='{$string_id}'");        
         for($i = 0; $i < count($files); $i++){            
             $c = $i+1;
-            echo '<a href="#" 
-                onclick="jQuery(\'.icl_string_track_source\').fadeOut(function(){jQuery(\'#icl_string_track_source_'.$i.'\').fadeIn()})">'.$c.'</a>&nbsp;&nbsp;';
+            $exp = explode('::', $files[$i]);
+            $line = $exp[1];
+            echo '<a href="#" onclick="icl_show_in_source('.$i.','.$line.')">'.$c.'</a>&nbsp;&nbsp;';
         }
         for($i = 0; $i < count($files); $i++){            
             $exp = explode('::', $files[$i]);
@@ -1133,12 +1165,18 @@ function icl_st_string_in_source($string_id){
             }
             echo '>';
             echo '<strong>' . $file . "</strong>\n";
-            echo '<pre style="width:800px;height:575px;font-size:10px;line-height:10px;font-family:Arial;background-color:#fefefe;border:1px solid #eee">';        
-            $content = htmlspecialchars(file_get_contents($file));
-            $exp = explode(PHP_EOL, $content);
-            $exp[$line-1] = '<div style="background-color:#ff0">' . $exp[$line-1] . '</div>';
-            $content = implode(PHP_EOL, $exp);
-            echo $content;
+            echo '<pre style="width:800px;height:575px;font-family:Arial;background-color:#fefefe;border:1px solid #eee">';        
+            $content = file($file);
+            echo '<ol style="line-height:10px;">';
+            foreach($content as $k=>$l){
+                if($k == $line-1){
+                    $hl =  'background-color:#ff0;';
+                }else{
+                    $hl = '';   
+                }
+                echo '<li id="icl_source_line_'.$i.'_'.$k.'" style="font-size:10px;margin:0;padding:0;line-height:0px;'.$hl.'">' . htmlspecialchars($l) . '&nbsp;</li>';
+            }
+            echo '</ol>';
             echo '</pre>';
             echo '</div>';
             

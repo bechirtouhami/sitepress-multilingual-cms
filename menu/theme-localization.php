@@ -241,8 +241,8 @@ $plugin_localization_stats = get_plugin_localization_stats();
                             </td>
                             <td align="right" style="padding-top:10px;">
                                 <?php if($_tmplink): ?>
-                                    <a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH) ?>/menu/string-translation.php&amp;context=<?php echo $plugin_id ?>" class="button-secondary"><?php echo __("View all the plugin's texts",'sitepress')?></a>
-                                    <a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH) ?>/menu/string-translation.php&amp;context=<?php echo $plugin_id ?>&amp;status=0" class="button-primary"><?php echo __("View strings that need translation",'sitepress')?></a>
+                                    <p><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH) ?>/menu/string-translation.php&amp;context=<?php echo $plugin_id ?>" class="button-secondary"><?php echo __("View all the plugin's texts",'sitepress')?></a></p>
+                                    <p><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH) ?>/menu/string-translation.php&amp;context=<?php echo $plugin_id ?>&amp;status=0" class="button-primary"><?php echo __("View strings that need translation",'sitepress')?></a></p>
                                 <?php else: ?>
                                     <p><i><?php _e('Select and use the button below to scan for strings', 'sitepress')?></i></p>
                                 <?php endif; ?>
