@@ -1155,6 +1155,7 @@ function icl_st_string_in_source($string_id){
             $line = $exp[1];
             echo '<a href="#" onclick="icl_show_in_source('.$i.','.$line.')">'.$c.'</a>&nbsp;&nbsp;';
         }
+        echo '<div id="icl_show_source_wrap">';
         for($i = 0; $i < count($files); $i++){            
             $exp = explode('::', $files[$i]);
             $file = $exp[0];
@@ -1162,26 +1163,30 @@ function icl_st_string_in_source($string_id){
             echo '<div class="icl_string_track_source" id="icl_string_track_source_'.$i.'"';
             if($i > 0){
                 echo 'style="display:none"';
+            }else{
+                $first_pos = $line;                
             }
             echo '>';
-            echo '<strong>' . $file . "</strong>\n";
-            echo '<pre style="width:800px;height:575px;font-family:Arial;background-color:#fefefe;border:1px solid #eee">';        
+            if($i == 0){
+                echo '<script type="text/javascript">icl_show_in_source_scroll_once = ' . $line . '</script>';
+            }
+            echo '<span class="icl_string_track_filename">' . $file . "</span>\n";
+            echo '<pre>';        
             $content = file($file);
-            echo '<ol style="line-height:10px;">';
+            echo '<ol>';
             foreach($content as $k=>$l){
                 if($k == $line-1){
-                    $hl =  'background-color:#ff0;';
+                    $hl =  ' style="background-color:#ff0;"';
                 }else{
                     $hl = '';   
                 }
-                echo '<li id="icl_source_line_'.$i.'_'.$k.'" style="font-size:10px;margin:0;padding:0;line-height:0px;'.$hl.'">' . htmlspecialchars($l) . '&nbsp;</li>';
+                echo '<li id="icl_source_line_'.$i.'_'.$k.'"'.$hl.'">' . htmlspecialchars($l) . '&nbsp;</li>';
             }
             echo '</ol>';
             echo '</pre>';
-            echo '</div>';
-            
+            echo '</div>'; 
         }
-        
+        echo '</div>';
     }else{
         _e('No records found', 'sitepress');
     }    

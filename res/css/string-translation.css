@@ -49,3 +49,32 @@ div.postbox div.inside {
     margin:10px;
     position:relative;
 }
+
+#icl_show_source_wrap{
+    height:575px;
+    width:805px;
+    overflow:auto;
+}
+.icl_string_track_source pre{
+    width:800px;
+    height:575px;
+    font-family:Arial;
+    background-color:#fefefe;
+    border:1px solid #eee;
+}
+.icl_string_track_source ol{
+    line-height:10px;
+}
+.icl_string_track_source ol li{
+    font-size:10px;
+    margin:0;
+    list-style-position: inside;
+    padding:0;
+    line-height:0px;
+}
+.icl_string_track_source .icl_string_track_filename{
+    position:fixed;
+    top:648px;
+    z-index: 999;
+    font-size:10px;
+}

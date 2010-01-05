@@ -226,6 +226,13 @@ function icl_validate_po_upload(){
     
 }
 
+var icl_show_in_source_scroll_once = false;
+jQuery('#icl_show_source_wrap').live('mouseover', function(){
+    if(icl_show_in_source_scroll_once){
+        icl_show_in_source(0, icl_show_in_source_scroll_once);
+        icl_show_in_source_scroll_once = false;
+    }
+})
 function icl_show_in_source(tabfile, line){
     jQuery('.icl_string_track_source').hide(
         function(){
