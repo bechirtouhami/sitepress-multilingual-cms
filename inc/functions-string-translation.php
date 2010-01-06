@@ -628,15 +628,16 @@ function icl_sw_filters_gettext($translation, $text, $domain){
     global $sitepress_settings;
     $has_translation = 0;
     
-    $dbt = debug_backtrace();
+    $dbt = debug_backtrace();    
     $dbt4 = str_replace('\\','/',$dbt[4]['file']);
     $wp_plugin_dir = str_replace('\\','/',WP_PLUGIN_DIR);
+    
     if(0 === strpos($dbt4, $wp_plugin_dir)){        
         if(dirname($dbt4) == $wp_plugin_dir){
             $plugin_folder = basename(str_replace($wp_plugin_dir, '', $dbt4));    
         }else{
-            $plugin_folder = basename(dirname(str_replace($wp_plugin_dir, '', $dbt4)));    
-            
+            $exp = explode('/', ltrim(str_replace($wp_plugin_dir, '', $dbt4),'/'));            
+            $plugin_folder = $exp[0];    
         }
         $context = 'plugin ' . $plugin_folder;
     }else{
@@ -655,7 +656,7 @@ function icl_sw_filters_gettext($translation, $text, $domain){
     
     if(isset($_GET['icl_string_track_value']) && isset($_GET['icl_string_track_context']) 
         && stripslashes($_GET['icl_string_track_context']) == $context && stripslashes($_GET['icl_string_track_value']) == $text){
-            $ret_translation = '<span style="background-color:#ff0">' . $ret_translation . '</span>';
+            $ret_translation = '<span style="background-color:'.$sitepress_settings['st']['hl_color'].'">' . $ret_translation . '</span>';
             
     }
     
@@ -1086,7 +1087,7 @@ function icl_st_generate_po_file($strings, $potonly = false){
 function icl_st_track_string($text, $context, $kind = ICL_STRING_TRANSLATION_STRING_TRACKING_TYPE_PAGE, $file = null, $line = null){
     global $wpdb;
     // get string id
-    $string_id = $wpdb->get_var("SELECT id FROM {$wpdb->prefix}icl_strings WHERE context='".$wpdb->escape($context)."' AND value='".$wpdb->escape($text)."'");
+    $string_id = $wpdb->get_var("SELECT id FROM {$wpdb->prefix}icl_strings WHERE context='".$wpdb->escape($context)."' AND value='".$wpdb->escape($text)."'");    
     if($string_id){
         // get existing records
         $string_records_count = $wpdb->get_var("SELECT COUNT(id) 
@@ -1133,7 +1134,7 @@ function icl_st_string_in_page($string_id){
             echo '<a href="#" onclick="jQuery(\'#icl_string_track_frame_wrap iframe\').attr(\'src\',\''.$urls[$i].'\')">'.$c.'</a>&nbsp;&nbsp;';
         }
         echo '<div id="icl_string_track_frame_wrap">';
-        echo '<iframe src="'.$urls[0].'" width="800" height="600" frameborder="0" marginheight="0" marginwidth="0"></iframe>';
+        echo '<iframe src="'.$urls[0].'" width="800" height="575" frameborder="0" marginheight="0" marginwidth="0"></iframe>';
         echo '</div>';
         
     }else{
@@ -1142,7 +1143,7 @@ function icl_st_string_in_page($string_id){
 }
 
 function icl_st_string_in_source($string_id){
-    global $wpdb;
+    global $wpdb, $sitepress_settings;
     // get positions    
     $files = $wpdb->get_col("SELECT position_in_page 
                             FROM {$wpdb->prefix}icl_string_positions 
@@ -1176,7 +1177,7 @@ function icl_st_string_in_source($string_id){
             echo '<ol>';
             foreach($content as $k=>$l){
                 if($k == $line-1){
-                    $hl =  ' style="background-color:#ff0;"';
+                    $hl =  ' style="background-color:'.$sitepress_settings['st']['hl_color'].';"';
                 }else{
                     $hl = '';   
                 }

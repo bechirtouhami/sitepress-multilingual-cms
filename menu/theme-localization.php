@@ -110,6 +110,10 @@ $plugin_localization_stats = get_plugin_localization_stats();
     
     <?php if($sitepress_settings['theme_localization_type'] == 1):?>
         
+        <div class="updated fade">
+            <p><i><?php _e('Re-scanning the plugins or the themes will reset the strings tracked in the code or the HTML source', 'sitepress') ?></i></p>
+        </div>
+        
         <h3><?php _e('Strings in the theme', 'sitepress'); ?></h3>
         <div id="icl_strings_in_theme_wrap">
         
@@ -124,14 +128,6 @@ $plugin_localization_stats = get_plugin_localization_stats();
                     <th scope="col">&nbsp;</th>
                 </tr>
             </thead>  
-            <tfoot>
-                <tr>                
-                    <th scope="col"><?php echo __('Total', 'sitepress') ?></th>
-                    <th scope="col">&nbsp;</th>
-                    <th scope="col" style="text-align:right"><?php echo $_tmpgt ?></th>
-                    <th scope="col">&nbsp;</th>
-                </tr>
-            </tfoot>                              
             <tbody>
                 <?php foreach($sitepress_settings['st']['theme_localization_domains'] as $tl_domain): ?>
                 <tr scope="col">
@@ -154,6 +150,14 @@ $plugin_localization_stats = get_plugin_localization_stats();
                 <?php endforeach  ?>
             </tbody>
             <?php if(1 < count($sitepress_settings['st']['theme_localization_domains'])): ?>
+                <tfoot>
+                    <tr>                
+                        <th scope="col"><?php echo __('Total', 'sitepress') ?></th>
+                        <th scope="col">&nbsp;</th>
+                        <th scope="col" style="text-align:right"><?php echo $_tmpgt ?></th>
+                        <th scope="col">&nbsp;</th>
+                    </tr>
+                </tfoot>                              
             <?php endif; ?>
         </table>
         <?php else: ?>
@@ -161,25 +165,20 @@ $plugin_localization_stats = get_plugin_localization_stats();
         <?php endif; ?>
         
         </div>
-        <br />
-        
-        
-        
+                
         <p>
         <input id="icl_tl_rescan" type="button" class="button-primary" value="<?php echo __("Scan the theme for strings",'sitepress')?>" />
         <img class="icl_ajx_loader" src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" style="display:none;" alt="" />
-        </p>
+        </p>        
         <div id="icl_tl_scan_stats"></div>  
         
+        <br />
         
         <h3><?php _e('Strings in the plugins', 'sitepress'); ?></h3>
         <?php 
         $plugins = get_plugins();
         $active_plugins = get_option('active_plugins'); 
         ?>
-        
-        
-        
         <form id="icl_tl_rescan_p" action="">
             <div id="icl_strings_in_plugins_wrap">
                 <table id="icl_strings_in_plugins" class="widefat" cellspacing="0">

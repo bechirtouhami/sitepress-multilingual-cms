@@ -78,3 +78,9 @@ div.postbox div.inside {
     z-index: 999;
     font-size:10px;
 }
+
+#colorPickerDiv{
+    background-color: #000;
+    color:#fff;
+    border:1px solid #000;
+}

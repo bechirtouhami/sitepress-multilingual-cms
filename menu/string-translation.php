@@ -414,9 +414,23 @@ $available_contexts = array_unique($available_contexts);
                                 <form id="icl_st_more_options" name="icl_st_more_options" action="">
                                     <p class="icl_form_errors" style="display:none"></p>
                                     <ul>
-                                        <li><label><input type="checkbox" name="icl_st[track_strings]" value="1" <?php 
+                                        <li>
+                                            <li><input type="hidden" name="icl_st[track_strings]" value="0" />
+                                            <label><input type="checkbox" id="icl_st_track_strings" name="icl_st[track_strings]" value="1" <?php 
                                             if($sitepress_settings['st']['track_strings']): ?>checked="checked"<?php endif ?> /> 
                                         <?php _e('Track where strings appear on the site', 'sitepress'); ?></label>
+                                        </li>
+                                        <li>
+                                            <label>
+                                                <?php _e('Highlight color for strings', 'sitepress'); ?>
+                                                <?php $hl_color = $sitepress_settings['st']['hl_color']?$sitepress_settings['st']['hl_color']:'#FFFF00'; ?>
+                                                <input type="text" size="7" id="icl_st_hl_color" name="icl_st[hl_color]" value="<?php echo $hl_color ?>" 
+                                                    style="background-color:<?php echo $hl_color ?>" <?php 
+                                                    if(!$sitepress_settings['st']['track_strings']): ?>disabled="disabled"<?php endif ?> />
+                                            </label>
+                                            <img src="<?php echo ICL_PLUGIN_URL; ?>/res/img/icon_color_picker.png" id="icl_st_hl_picker" 
+                                                alt="" border="0" style="vertical-align:bottom;cursor:pointer;" class="pick-show" 
+                                                onclick="cp.show('icl_st_hl_color');return false;" />
                                         </li>
                                     </ul>
                                     <p>

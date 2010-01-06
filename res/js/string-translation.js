@@ -33,6 +33,22 @@ jQuery(document).ready(function(){
     
     jQuery('#icl_st_more_options').submit(iclSaveForm);
     
+    jQuery('#icl_st_track_strings').change(function(){
+        if(jQuery(this).attr('checked')){
+            jQuery('#icl_st_hl_color').removeAttr('disabled');
+        }else{
+            jQuery('#icl_st_hl_color').attr('disabled', 'disabled');
+        }
+    })
+    
+    // Picker align
+    jQuery(".pick-show").click(function () {
+        var set = jQuery(this).offset();
+           jQuery("#colorPickerDiv").css({"top":set.top-180,"left":set.left, "z-index":99});
+    });
+    
+    
+    
 });
 
 function icl_st_toggler(){
@@ -257,3 +273,9 @@ function icl_show_in_source(tabfile, line){
     );
     return false;
 }
+
+var cp = new ColorPicker();
+function pickColor(color) {
+            jQuery('#icl_st_hl_color').val(color).css('background-color',color);
+        }
+cp.writeDiv();

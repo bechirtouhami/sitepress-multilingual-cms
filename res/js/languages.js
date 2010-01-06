@@ -475,7 +475,7 @@ function iclUpdateLangSelColorScheme(){
     }
 }
 
-	// Picker f
+// Picker f
 var cp = new ColorPicker();
 function pickColor(color) {
 			jQuery('#'+icl_cp_target).val(color);

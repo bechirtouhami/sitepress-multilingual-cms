@@ -358,6 +358,25 @@ function icl_plugin_upgrade(){
         if($mig_debug) fwrite($mig_debug, "Upgraded to 1.5.0 \n");
     }
     
+    if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.5.3', '<')){
+        
+        if($mig_debug) fwrite($mig_debug, "Upgrading to 1.5.3 \n");
+        
+        // force icl_string_positions table creation
+        $table_name = $wpdb->prefix.'icl_string_positions';
+        if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){        
+            icl_sitepress_activate();
+        }
+        
+        $iclsettings['st']['track_strings'] = 1;
+        $iclsettings['st']['hl_color'] = '#FFFF00';
+        
+        update_option('icl_sitepress_settings',$iclsettings);
+        
+        if($mig_debug) fwrite($mig_debug, "Upgraded to 1.5.3 \n");
+        
+    }
+    
     if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '<')){
         if($mig_debug) fwrite($mig_debug, "Update plugin version in the database \n");
         update_option('icl_sitepress_version', ICL_SITEPRESS_VERSION);
