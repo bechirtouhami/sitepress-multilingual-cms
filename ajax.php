@@ -439,6 +439,7 @@ switch($_REQUEST['icl_ajx_action']){
         break;
     case 'icl_tl_rescan_p':
         set_time_limit(0);
+        ini_set('memory_limit', '128M');
         $scan_stats = '';
         foreach($_POST['plugin'] as $plugin){
             if(false !== strpos($plugin, '/')){

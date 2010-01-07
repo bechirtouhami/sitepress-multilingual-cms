@@ -7,7 +7,9 @@ $status_filter = isset($_GET['status']) ? intval($_GET['status']) : false;
 $context_filter = isset($_GET['context']) ? $_GET['context'] : false;
 
 $icl_string_translations = icl_get_string_translations();
-$icl_strings_in_page = icl_get_strigs_tracked_in_pages($icl_string_translations);
+if(!empty($icl_string_translations)){
+    $icl_strings_in_page = icl_get_strigs_tracked_in_pages($icl_string_translations);
+}
 $active_languages = $sitepress->get_active_languages();            
 $icl_contexts = icl_st_get_contexts($status_filter);
 

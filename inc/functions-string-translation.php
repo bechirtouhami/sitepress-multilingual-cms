@@ -594,7 +594,7 @@ function icl_get_strigs_tracked_in_pages($string_translations){
     global $wpdb;
     // get string position in page - if found
     $found_strings = $strings_in_page = array();
-    foreach(array_keys($string_translations) as $string_id){
+    foreach(array_keys((array)$string_translations) as $string_id){
         $found_strings[] = $string_id;
     }
     if($found_strings){

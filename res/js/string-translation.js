@@ -250,27 +250,35 @@ jQuery('#icl_show_source_wrap').live('mouseover', function(){
     }
 })
 function icl_show_in_source(tabfile, line){
-    jQuery('.icl_string_track_source').hide(
-        function(){
-            jQuery('#icl_string_track_source_'+tabfile).fadeIn(
-                function(){
-                    
-                    if(line > 40){
-                        line = line - 10;
-                        location.href=location.protocol+'//'+location.host+location.pathname+location.search+'#icl_source_line_'+tabfile+'_'+line;
-                    }
-                    
-                    /*
-                    var divOffset = jQuery('#TB_ajaxContent').offset().top;
-                    var pOffset = jQuery('#icl_source_line_'+tabfile+'_'+line).offset().top;
-                    var pScroll = pOffset - divOffset - 90;                    
-                    jQuery('#TB_ajaxContent').animate({scrollTop: '+=' + pScroll}, 1000);
-                    */
-                    
-                }
-            );
+    
+    if(icl_show_in_source_scroll_once){
+        if(line > 40){
+            line = line - 10;
+            location.href=location.protocol+'//'+location.host+location.pathname+location.search+'#icl_source_line_'+tabfile+'_'+line;
         }
-    );
+    }else{
+        jQuery('.icl_string_track_source').fadeOut(
+            function(){
+                jQuery('#icl_string_track_source_'+tabfile).fadeIn(
+                    function(){
+                        
+                        if(line > 40){
+                            line = line - 10;
+                            location.href=location.protocol+'//'+location.host+location.pathname+location.search+'#icl_source_line_'+tabfile+'_'+line;
+                        }
+                        
+                        /*
+                        var divOffset = jQuery('#TB_ajaxContent').offset().top;
+                        var pOffset = jQuery('#icl_source_line_'+tabfile+'_'+line).offset().top;
+                        var pScroll = pOffset - divOffset - 90;                    
+                        jQuery('#TB_ajaxContent').animate({scrollTop: '+=' + pScroll}, 1000);
+                        */
+                        
+                    }
+                );
+            }
+        );
+    }
     return false;
 }
 
