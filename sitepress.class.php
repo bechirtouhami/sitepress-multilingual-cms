@@ -249,7 +249,7 @@ class SitePress{
         global $wpdb, $wp_query;
         
         //exceptions
-        if($wp_query->is_singular || $posts[0]->post_type == 'page'){
+        if($wp_query->is_singular || $posts[0]->post_type == 'page' || $this->get_current_language() == $this->get_default_language()){
             return $posts;
         }
         
@@ -259,8 +259,15 @@ class SitePress{
         remove_filter('the_posts', array($this, 'the_posts')); 
         //$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
         $qs = 'suppress_filters=0';
+        
+        if($wp_query->query_vars['category_name']){
+            $cat_id = get_cat_ID($wp_query->query_vars['category_name']);
+            $wp_query->query_vars['category__in'] = array($cat_id);
+            $wp_query->query_var['query']['cat'] = $cat_id;
+        }
+        
         foreach($wp_query->query_vars as $k=>$v){
-            if(!empty($v)){
+            if(!empty($v) && $k != 'category_name'){
                 if(is_array($v)){
                     if($k == 'category__in'){
                         foreach($v as $kc=>$c){
@@ -275,6 +282,7 @@ class SitePress{
                 $qs .= '&' . $k . '=' . $v;  
             }
         }
+
         $my_query = new WP_Query($qs);
         add_filter('the_posts', array($this, 'the_posts'));
         $this->this_lang = $this_lang;
