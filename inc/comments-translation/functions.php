@@ -446,7 +446,7 @@ class IclCommentsTranslation{
                     SELECT element_id, trid 
                     FROM {$wpdb->prefix}icl_translations
                     WHERE element_type='comment' AND trid IN (".join(',',$trids).") AND language_code = '{$this->user_language}'
-                ");                            
+                ");   
                 foreach($res as $row){
                     $comments_in_the_users_language[] = $row->element_id;
                     $translated_comments_trids[] = $row->trid;
@@ -461,7 +461,6 @@ class IclCommentsTranslation{
                     WHERE element_type='comment' AND trid IN (".join(',',$comments_not_translated_trids).") AND language_code <> '{$this->user_language}'
                 ");
             }
-            
             if($comments_not_translated){            
                 $res = $wpdb->get_results("
                     SELECT element_id, trid, language_code
@@ -469,6 +468,9 @@ class IclCommentsTranslation{
                     WHERE element_type='comment' AND element_id IN (".join(',',$comments_not_translated).")
                 ");
             
+                
+                $wp_comments_cols = array_keys($wpdb->get_row("SELECT * FROM {$wpdb->comments} LIMIT 1", ARRAY_A));
+                
                 foreach($res as $original_comment){
                     $comment_content = $comments_by_id[$original_comment->element_id]->comment_content;                                            
                     $machine_translation = $this->machine_translate($original_comment->language_code, $this->user_language, $comment_content);                                        
@@ -476,7 +478,7 @@ class IclCommentsTranslation{
                     $comment_new->comment_content = $machine_translation;
                     
                     unset($comment_new->comment_ID);
-                    $wpdb->insert($wpdb->comments, (array)$comment_new);
+                    $wpdb->insert($wpdb->comments, array_intersect_key((array)$comment_new, array_flip($wp_comments_cols)));
                     $new_comment_id = $wpdb->insert_id;
                     $sitepress->set_element_language_details($new_comment_id, 'comment', $original_comment->trid, $this->user_language);        
                     $comment_new->comment_ID = $new_comment_id;
@@ -586,7 +588,9 @@ class IclCommentsTranslation{
                         WHERE t.element_type='comment' AND language_code='{$this->user_language}'");                    
                     foreach($res as $r){
                         $trids_tr[$r->trid] = $r->element_id;
-                    }                    
+                    }   
+                    
+                    $wp_comments_cols = array_keys($wpdb->get_row("SELECT * FROM {$wpdb->comments} LIMIT 1", ARRAY_A));                 
                     foreach($trids_orig as $o_trid=>$o_cid){
                         if(!isset($trids_tr[$o_trid])){
                             $original_comment = get_comment($trids_orig[$o_trid]);
@@ -594,7 +598,7 @@ class IclCommentsTranslation{
                             $comment_new = clone $original_comment;
                             $comment_new->comment_content = $machine_translation;
                             unset($comment_new->comment_ID);
-                            $wpdb->insert($wpdb->comments, (array)$comment_new);
+                            $wpdb->insert($wpdb->comments, array_intersect_key((array)$comment_new, array_flip($wp_comments_cols)));
                             $new_comment_id = $wpdb->insert_id;
                             $sitepress->set_element_language_details($new_comment_id, 'comment', $o_trid, $this->user_language);        
                             

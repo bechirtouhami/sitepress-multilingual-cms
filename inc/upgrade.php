@@ -355,6 +355,8 @@ function icl_plugin_upgrade(){
         $iclsettings['upgrade_flags']['1.5'] = true;
         update_option('icl_sitepress_settings',$iclsettings);            
         
+        mysql_query("DELETE FROM {$wpdb->prefix}icl_translations WHERE element_type='comment' AND element_id = 0");
+        
         if($mig_debug) fwrite($mig_debug, "Upgraded to 1.5.0 \n");
     }
     
