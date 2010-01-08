@@ -170,6 +170,7 @@ $available_contexts = array_unique($available_contexts);
                     <th scope="col" class="manage-column column-cb check-column"><input type="checkbox" /></th>
                     <th scope="col"><?php echo __('Context', 'sitepress') ?></th>
                     <th scope="col"><?php echo __('Name', 'sitepress') ?></th>
+                    <th scope="col"><?php echo __('View', 'sitepress') ?></th>
                     <th scope="col"><?php echo __('String', 'sitepress') ?></th>        
                     <th scope="col"><?php echo __('Status', 'sitepress') ?></th>
                 </tr>        
@@ -179,6 +180,7 @@ $available_contexts = array_unique($available_contexts);
                     <th scope="col" class="manage-column column-cb check-column"><input type="checkbox" /></th>
                     <th scope="col"><?php echo __('Context', 'sitepress') ?></th>
                     <th scope="col"><?php echo __('Name', 'sitepress') ?></th>
+                    <th scope="col"><?php echo __('View', 'sitepress') ?></th>
                     <th scope="col"><?php echo __('String', 'sitepress') ?></th>
                     <th scope="col"><?php echo __('Status', 'sitepress') ?></th>        
                 </tr>        
@@ -194,20 +196,23 @@ $available_contexts = array_unique($available_contexts);
                     <td><input class="icl_st_row_cb" type="checkbox" value="<?php echo $string_id ?>" /></td>
                     <td><?php echo htmlspecialchars($icl_string['context']); ?></td>
                     <td><?php echo htmlspecialchars($icl_string['name']); ?></td>
+                    <td nowrap="nowrap">
+                        <?php if($icl_strings_in_page[ICL_STRING_TRANSLATION_STRING_TRACKING_TYPE_SOURCE][$string_id]): ?>
+                            <a class="thickbox" title="<?php _e('view in source', 'sitepress') ?>"
+                                href="admin.php?page=sitepress-multilingual-cms%2Fmenu%2Fstring-translation.php&icl_action=view_string_in_source&string_id=<?php 
+                                echo $string_id ?>&width=810&height=600"><img src="<?php echo ICL_PLUGIN_URL ?>/res/img/view-in-source.png" width="16" height="16"
+                                alt="<?php _e('view in page', 'sitepress') ?>" /></a>
+                        <?php endif; ?>
+                        <?php if($icl_strings_in_page[ICL_STRING_TRANSLATION_STRING_TRACKING_TYPE_PAGE][$string_id]): ?>
+                            <a class="thickbox" title="<?php _e('view in page', 'sitepress') ?>"
+                            href="admin.php?page=sitepress-multilingual-cms%2Fmenu%2Fstring-translation.php&icl_action=view_string_in_page&string_id=<?php 
+                            echo $string_id ?>&width=810&height=600"><img src="<?php echo ICL_PLUGIN_URL ?>/res/img/view-in-page.png" width="16" height="16" 
+                            alt="<?php _e('view in page', 'sitepress') ?>" /></a>                        
+                        <?php endif; ?>
+                    </td> 
                     <td width="70%">                                        
                         <div class="icl-st-original" style="float:left;">                    
                         <?php echo htmlspecialchars($icl_string['value']); ?>                    
-                        <?php 
-                            $_in_source = $icl_strings_in_page[ICL_STRING_TRANSLATION_STRING_TRACKING_TYPE_SOURCE][$string_id];
-                            $_in_page   = $icl_strings_in_page[ICL_STRING_TRANSLATION_STRING_TRACKING_TYPE_PAGE][$string_id];
-                        ?>
-                        <?php if($_in_page || $_in_source): ?>(<?php endif;?><?php if($_in_page): ?><a class="thickbox" 
-                            href="admin.php?page=sitepress-multilingual-cms%2Fmenu%2Fstring-translation.php&icl_action=view_string_in_page&string_id=<?php 
-                            echo $string_id ?>&width=810&height=600"><?php _e('view in page', 'sitepress')?></a><?php endif; 
-                            ?><?php if($_in_page && $_in_source): ?> | <?php endif; ?><?php if($_in_source): 
-                         ?><a class="thickbox" href="admin.php?page=sitepress-multilingual-cms%2Fmenu%2Fstring-translation.php&icl_action=view_string_in_source&string_id=<?php
-                             echo $string_id ?>&width=810&height=600"><?php _e('view source', 'sitepress')?></a><?php endif; ?><?php if($_in_page || $_in_source): ?>)<?php
-                                 endif;?>
                         </div>                    
                         <div style="float:right;">
                             <a href="#icl-st-toggle-translations"><?php echo __('translations','sitepress') ?></a>
@@ -250,7 +255,7 @@ $available_contexts = array_unique($available_contexts);
                                 </form>
                                 <?php endforeach;?>
                         </div>
-                    </td>  
+                    </td>
                     <td nowrap="nowrap" id="icl_st_string_status_<?php echo $string_id ?>">
                     <?php
                         $icl_status = icl_translation_get_string_translation_status($string_id);
