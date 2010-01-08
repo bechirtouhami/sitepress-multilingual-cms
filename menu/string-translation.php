@@ -396,28 +396,10 @@ $available_contexts = array_unique($available_contexts);
                                 <br/>
                             </div>
                             <h3 class="hndle">
-                                <span><?php echo __('Translate general settings texts', 'sitepress')?></span>
+                                <span><?php echo __('Track where string appear on the site', 'sitepress')?></span>
                             </h3>         
                             <div class="inside">
-                                <p class="sub"><?php echo __('WPML can translate texts entered in different admin screens. Select which texts to translate.', 'sitepress')?></p>
-                                <form id="icl_st_sw_form" name="icl_st_sw_form" method="post" action="">
-                                    <p class="icl_form_errors" style="display:none"></p>
-                                    <ul>
-                                        <li><label><input type="checkbox" name="icl_st_sw[blog_title]" value="1" <?php if($sitepress_settings['st']['sw']['blog_title']): ?>checked="checked"<?php endif ?> /> 
-                                            <?php echo __('Blog Title', 'sitepress'); ?></label></li>
-                                        <li><label><input type="checkbox" name="icl_st_sw[tagline]" value="1" <?php if($sitepress_settings['st']['sw']['tagline']): ?>checked="checked"<?php endif ?> /> 
-                                            <?php echo __('Tagline', 'sitepress'); ?></label></li>
-                                        <li><label><input type="checkbox" name="icl_st_sw[widget_titles]" value="1" <?php if($sitepress_settings['st']['sw']['widget_titles']): ?>checked="checked"<?php endif ?> /> 
-                                            <?php echo __('Widget titles', 'sitepress'); ?></label></li>
-                                        <li><label><input type="checkbox" name="icl_st_sw[text_widgets]" value="1" <?php if($sitepress_settings['st']['sw']['text_widgets']): ?>checked="checked"<?php endif ?> /> 
-                                            <?php echo __('Content for text-widgets', 'sitepress'); ?></label></li>
-                                    </ul>
-                                    <p>
-                                    <input class="button-secondary" type="submit" name="iclt_st_sw_save" value="<?php echo __('Save options and rescan strings', 'sitepress')?>" />
-                                    <span class="icl_ajx_response" style="display:inline"><?php if(isset($_GET['updated']) && $_GET['updated']=='true') echo __('Settings saved', 'sitepress') ?></span>
-                                    </p>
-                                </form> 
-                                
+                                <p class="sub"><?php echo __("WPML can keep track of where strings are used on the public pages. Activating this feature will enable the 'view in page' functionality and make translation easier.", 'sitepress')?></p>
                                 <form id="icl_st_more_options" name="icl_st_more_options" action="">
                                     <p class="icl_form_errors" style="display:none"></p>
                                     <ul>
@@ -448,6 +430,38 @@ $available_contexts = array_unique($available_contexts);
                                                                
                             </div>           
                         </div>
+                        
+                        
+                        <div id="dashboard_wpml_stsel" class="postbox">
+                            <div class="handlediv" title="<?php echo __('Click to toggle', 'sitepress'); ?>">
+                                <br/>
+                            </div>
+                            <h3 class="hndle">
+                                <span><?php echo __('Translate general settings texts', 'sitepress')?></span>
+                            </h3>         
+                            <div class="inside">
+                                <p class="sub"><?php echo __('WPML can translate texts entered in different admin screens. Select which texts to translate.', 'sitepress')?></p>
+                                <form id="icl_st_sw_form" name="icl_st_sw_form" method="post" action="">
+                                    <p class="icl_form_errors" style="display:none"></p>
+                                    <ul>
+                                        <li><label><input type="checkbox" name="icl_st_sw[blog_title]" value="1" <?php if($sitepress_settings['st']['sw']['blog_title']): ?>checked="checked"<?php endif ?> /> 
+                                            <?php echo __('Blog Title', 'sitepress'); ?></label></li>
+                                        <li><label><input type="checkbox" name="icl_st_sw[tagline]" value="1" <?php if($sitepress_settings['st']['sw']['tagline']): ?>checked="checked"<?php endif ?> /> 
+                                            <?php echo __('Tagline', 'sitepress'); ?></label></li>
+                                        <li><label><input type="checkbox" name="icl_st_sw[widget_titles]" value="1" <?php if($sitepress_settings['st']['sw']['widget_titles']): ?>checked="checked"<?php endif ?> /> 
+                                            <?php echo __('Widget titles', 'sitepress'); ?></label></li>
+                                        <li><label><input type="checkbox" name="icl_st_sw[text_widgets]" value="1" <?php if($sitepress_settings['st']['sw']['text_widgets']): ?>checked="checked"<?php endif ?> /> 
+                                            <?php echo __('Content for text-widgets', 'sitepress'); ?></label></li>
+                                    </ul>
+                                    <p>
+                                    <input class="button-secondary" type="submit" name="iclt_st_sw_save" value="<?php echo __('Save options and rescan strings', 'sitepress')?>" />
+                                    <span class="icl_ajx_response" style="display:inline"><?php if(isset($_GET['updated']) && $_GET['updated']=='true') echo __('Settings saved', 'sitepress') ?></span>
+                                    </p>
+                                </form> 
+                                                               
+                            </div>           
+                        </div>                        
+                        
                     </div>
                 </div>
                 
