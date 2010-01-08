@@ -1193,11 +1193,16 @@ function icl_st_string_in_source($string_id){
     }    
 }
 
+function _icl_st_hide_random($str){
+    $str = preg_replace('#^((.+)( - ))?([a-z0-9]{32})$#', '$2', $str);
+    return $str;
+}
 
 
 function icl_st_debug($str){
     trigger_error($str, E_USER_WARNING);
 }
+
 
 
 

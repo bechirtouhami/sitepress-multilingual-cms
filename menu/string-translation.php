@@ -195,7 +195,7 @@ $available_contexts = array_unique($available_contexts);
                 <tr valign="top">
                     <td><input class="icl_st_row_cb" type="checkbox" value="<?php echo $string_id ?>" /></td>
                     <td><?php echo htmlspecialchars($icl_string['context']); ?></td>
-                    <td><?php echo htmlspecialchars($icl_string['name']); ?></td>
+                    <td><?php echo htmlspecialchars(_icl_st_hide_random($icl_string['name'])); ?></td>
                     <td nowrap="nowrap">
                         <?php if($icl_strings_in_page[ICL_STRING_TRANSLATION_STRING_TRACKING_TYPE_SOURCE][$string_id]): ?>
                             <a class="thickbox" title="<?php _e('view in source', 'sitepress') ?>"
