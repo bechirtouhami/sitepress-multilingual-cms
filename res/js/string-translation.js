@@ -289,6 +289,6 @@ function pickColor(color) {
 cp.writeDiv();
 
 function iclResizeIframe(){
-    jQuery('#icl_string_track_frame_wrap iframe').attr('height',jQuery('#TB_ajaxContent').height());
+    jQuery('#icl_string_track_frame_wrap iframe').attr('height',jQuery('#TB_ajaxContent').height()-20);
     jQuery('#icl_string_track_frame_wrap iframe').attr('width',jQuery('#TB_ajaxContent').width());
 }

@@ -1142,9 +1142,9 @@ function icl_st_string_in_page($string_id){
             
         }
         echo '</div>';
-        echo '<div id="icl_string_track_frame_wrap">';
-        echo '<div id="icl_string_track_url" class="icl_string_track_url"><a href="'.$urls[0].'">' . htmlspecialchars($urls[0]) . "</a></div>\n";
+        echo '<div id="icl_string_track_frame_wrap">';        
         echo '<iframe onload="iclResizeIframe()" src="'.$urls[0].'" width="10" height="10" frameborder="0" marginheight="0" marginwidth="0"></iframe>';
+        echo '<div id="icl_string_track_url" class="icl_string_track_url"><a href="'.$urls[0].'">' . htmlspecialchars($urls[0]) . "</a></div>\n";
         echo '</div>';        
     }else{
         _e('No records found', 'sitepress');

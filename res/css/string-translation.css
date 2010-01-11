@@ -98,12 +98,9 @@ div.postbox div.inside {
     height:16px;
     overflow:hidden;
     white-space:nowrap;
-    margin:-25px 0 0 -5px;
-    color:#fff;
-    background-color: #222222;    
-}
-.icl_string_track_url a, .icl_string_track_url a:hover{
-    color:#fff !important;
+    /*margin:0 0 -25px -5px;*/
+    /*color:#000;*/
+    /*background-color: #222222;    */
 }
 
 #colorPickerDiv{
