@@ -103,7 +103,13 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
             </tbody>
         </table>         
         <br />
-        <div style="text-align:right"><input class="button-primary" name="save" value="<?php echo __('Next', 'sitepress') ?>" type="submit" /></div>
+        <div style="text-align:right">
+            <input class="button-primary" name="save" value="<?php echo __('Next', 'sitepress') ?>" type="submit" />
+            <?php /*
+            <input class="button-primary" name="save" value="<?php echo __('Add more languages', 'sitepress') ?> &raquo;" type="submit" />
+            <input class="button" name="save_one_language" value="<?php echo __('Done (just one language)', 'sitepress') ?>" type="submit" />
+            */ ?>
+        </div>
         </form>                
     <?php else: ?>
         <?php if($sitepress_settings['setup_complete'] || $sitepress_settings['setup_wizard_step'] == 2): ?>

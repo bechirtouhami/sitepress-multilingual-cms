@@ -452,14 +452,12 @@ switch($_REQUEST['icl_ajx_action']){
                 $mo_files = icl_st_get_mo_files($plugin_path);
                 foreach($mo_files as $m){
                     $i = preg_match('#[-]([a-z_]+)\.mo$#i', $m, $matches);
-                    if(!$i || !$lang = $wpdb->get_var("SELECT code FROM {$wpdb->prefix}icl_locale_map WHERE locale='".$matches[1]."'")){
-                        $undet[] = sprintf(__("Can't determine language for %s", 'sitepress'),$m) . '<br />';
-                    }else{
+                    if($i && $lang = $wpdb->get_var("SELECT code FROM {$wpdb->prefix}icl_locale_map WHERE locale='".$matches[1]."'")){
                         $tr_pairs = icl_st_load_translations_from_mo($m);
                         foreach($tr_pairs as $original=>$translation){
                             $string_id = icl_get_string_id($original, 'plugin ' . basename($plugin_path));
                             if(!$wpdb->get_var{"SELECT id FROM {$wpdb->prefix}icl_string_translations WHERE string_id={$string_id} AND language='{$lang}'"}){
-                                icl_add_string_translation($string_id, $lang, $translation, true);
+                                icl_add_string_translation($string_id, $lang, $translation, ICL_STRING_TRANSLATION_COMPLETE);
                             }
                         }
                     }
@@ -467,7 +465,7 @@ switch($_REQUEST['icl_ajx_action']){
             }
             
         }
-        echo '1|' . @join('', $undet) . $scan_stats;
+        echo '1|' . $scan_stats;
         break;
     
     case 'save_ct_user_pref':

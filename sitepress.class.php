@@ -527,10 +527,12 @@ class SitePress{
                             'manage_options', basename(ICL_PLUGIN_PATH).'/menu/overview.php'); 
             add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Languages','sitepress'), __('Languages','sitepress'), 
                             'manage_options', basename(ICL_PLUGIN_PATH).'/menu/languages.php'); 
-            if(1 < count($this->get_active_languages())){
+            
+            if(1 < count($this->get_active_languages())){                
                 add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Theme localization','sitepress'), __('Theme localization','sitepress'), 
                             'manage_options', basename(ICL_PLUGIN_PATH).'/menu/theme-localization.php'); 
-                icl_st_administration_menu();
+                            icl_st_administration_menu();
+            //if(1 < count($this->get_active_languages())){                
                 add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Translation sync','sitepress'), __('Translation sync','sitepress'), 
                             'manage_options', basename(ICL_PLUGIN_PATH).'/menu/translation-synchronization.php');                             
                 add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Comments translation','sitepress'), __('Comments translation','sitepress'), 
@@ -1348,13 +1350,21 @@ class SitePress{
             }
         }
         elseif(isset($_POST['icl_initial_languagenonce']) && $_POST['icl_initial_languagenonce']==wp_create_nonce('icl_initial_language')){
+            
             $this->prepopulate_translations($_POST['icl_initial_language_code']);
             $wpdb->update($wpdb->prefix . 'icl_languages', array('active'=>'1'), array('code'=>$_POST['icl_initial_language_code']));
             $blog_default_cat = get_option('default_category');
             $blog_default_cat_tax_id = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id='{$blog_default_cat}' AND taxonomy='category'");
+            
+            if(isset($_POST['save_one_language'])){
+                $this->settings['setup_wizard_step'] = 0;
+                $this->settings['setup_complete'] = 1;
+            }else{
+                $this->settings['setup_wizard_step'] = 2;
+            }
+            
             $this->settings['default_categories'] = array($_POST['icl_initial_language_code'] => $blog_default_cat_tax_id);
-            $this->settings['existing_content_language_verified'] = 1;
-            $this->settings['setup_wizard_step'] = 2;
+            $this->settings['existing_content_language_verified'] = 1;            
             $this->settings['default_language'] = $_POST['icl_initial_language_code'];            
             $this->settings['admin_default_language'] = $this->admin_language = $_POST['icl_initial_language_code'];            
             

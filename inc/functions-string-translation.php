@@ -347,7 +347,7 @@ function __icl_get_default_widget_title($id){
 
 function icl_st_administration_menu(){
     global $sitepress_settings, $sitepress;
-    if((!isset($sitepress_settings['existing_content_language_verified']) || !$sitepress_settings['existing_content_language_verified']) || 2 > count($sitepress->get_active_languages())){
+    if((!isset($sitepress_settings['existing_content_language_verified']) || !$sitepress_settings['existing_content_language_verified']) /*|| 2 > count($sitepress->get_active_languages())*/){
         return;
     }
     add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('String translation','sitepress'), __('String translation','sitepress'), 'edit_others_pages', basename(ICL_PLUGIN_PATH).'/menu/string-translation.php');  
