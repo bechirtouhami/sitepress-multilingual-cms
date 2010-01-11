@@ -529,7 +529,7 @@ class SitePress{
                             'manage_options', basename(ICL_PLUGIN_PATH).'/menu/languages.php'); 
             
             if(1 < count($this->get_active_languages())){                
-                add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Theme localization','sitepress'), __('Theme localization','sitepress'), 
+                add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Theme and plugins localization','sitepress'), __('Theme and plugins localization','sitepress'), 
                             'manage_options', basename(ICL_PLUGIN_PATH).'/menu/theme-localization.php'); 
                             icl_st_administration_menu();
             //if(1 < count($this->get_active_languages())){                

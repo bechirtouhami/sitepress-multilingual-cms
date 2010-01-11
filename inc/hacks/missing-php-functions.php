@@ -12,4 +12,10 @@ if ( !function_exists('json_decode') ){
         return( $json->decode($data) );
     }
 }   
+
+if(!function_exists('_cleanup_header_comment')){
+    function _cleanup_header_comment($str) {
+        return trim(preg_replace("/\s*(?:\*\/|\?>).*/", '', $str));
+    } 
+}
 ?>
