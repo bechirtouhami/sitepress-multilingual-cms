@@ -259,7 +259,12 @@ $plugin_localization_stats = get_plugin_localization_stats();
                     </tbody>
                 </table>        
             </div>    
-                
+            
+            <p>
+            <label>
+            <input type="checkbox" name="icl_load_mo" value="1" checked="checked" />            
+            <?php _e('Load translations if found in the .mo files. (it will not override exiting translations)', 'sitepress')?></label> 
+            </p>
             <p>
             <input type="submit" class="button-primary" value="<?php echo __("Scan the selected plugins for strings",'sitepress')?>" />
             <img class="icl_ajx_loader_p" src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" style="display:none;" alt="" />
