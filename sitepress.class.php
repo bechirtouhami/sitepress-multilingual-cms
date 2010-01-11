@@ -2858,7 +2858,7 @@ class SitePress{
                     $icl_archive_url_filter_off = false;
                 }elseif(is_search()){
                     $url_glue = strpos($this->language_url($lang['code']),'?')===false ? '?' : '&';
-                    $lang['translated_url'] = $this->language_url($lang['code']) . $url_glue . 's=' . $_GET['s'];                                        
+                    $lang['translated_url'] = $this->language_url($lang['code']) . $url_glue . 's=' . htmlspecialchars($_GET['s']);                                        
                 }else{ 
                     global $icl_language_switcher_preview;                   
                     if($icl_lso_link_empty || is_home() || is_404() 
