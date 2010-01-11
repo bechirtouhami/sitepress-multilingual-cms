@@ -287,3 +287,8 @@ function pickColor(color) {
             jQuery('#icl_st_hl_color').val(color).css('background-color',color);
         }
 cp.writeDiv();
+
+function iclResizeIframe(){
+    jQuery('#icl_string_track_frame_wrap iframe').attr('height',jQuery('#TB_ajaxContent').height());
+    jQuery('#icl_string_track_frame_wrap iframe').attr('width',jQuery('#TB_ajaxContent').width());
+}

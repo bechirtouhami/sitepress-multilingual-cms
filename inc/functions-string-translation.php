@@ -1129,6 +1129,7 @@ function icl_st_string_in_page($string_id){
                             WHERE string_id = '{$string_id}' AND kind = ". ICL_STRING_TRANSLATION_STRING_TRACKING_TYPE_PAGE);
     if(!empty($urls)){
         $string = $wpdb->get_row("SELECT context, value FROM {$wpdb->prefix}icl_strings WHERE id='{$string_id}'");
+        echo '<div id="icl_show_source_top">';
         for($i = 0; $i < count($urls); $i++){
             $c = $i+1;
             if(strpos($urls[$i], '?') !== false){
@@ -1136,13 +1137,15 @@ function icl_st_string_in_page($string_id){
             }else{
                 $urls[$i] .= '?icl_string_track_value=' . urlencode($string->value);
             }            
-            $urls[$i] .= '&icl_string_track_context=' . urlencode($string->context);
-            echo '<a href="#" onclick="jQuery(\'#icl_string_track_frame_wrap iframe\').attr(\'src\',\''.$urls[$i].'\')">'.$c.'</a>&nbsp;&nbsp;';
+            $urls[$i] .= '&icl_string_track_context=' . urlencode($string->context);            
+            echo '<a href="#" onclick="jQuery(\'#icl_string_track_frame_wrap iframe\').attr(\'src\',\''.$urls[$i].'\');jQuery(\'#icl_string_track_url a\').html(\''.$urls[$i].'\').attr(\'href\',  \''.$urls[$i].'\'); return false;">'.$c.'</a><br />';
+            
         }
-        echo '<div id="icl_string_track_frame_wrap">';
-        echo '<iframe src="'.$urls[0].'" width="800" height="575" frameborder="0" marginheight="0" marginwidth="0"></iframe>';
         echo '</div>';
-        
+        echo '<div id="icl_string_track_frame_wrap">';
+        echo '<div id="icl_string_track_url" class="icl_string_track_url"><a href="'.$urls[0].'">' . htmlspecialchars($urls[0]) . "</a></div>\n";
+        echo '<iframe onload="iclResizeIframe()" src="'.$urls[0].'" width="10" height="10" frameborder="0" marginheight="0" marginwidth="0"></iframe>';
+        echo '</div>';        
     }else{
         _e('No records found', 'sitepress');
     }
@@ -1156,12 +1159,14 @@ function icl_st_string_in_source($string_id){
                             WHERE string_id = '{$string_id}' AND kind = ". ICL_STRING_TRANSLATION_STRING_TRACKING_TYPE_SOURCE);
     if(!empty($files)){
         $string = $wpdb->get_row("SELECT context, value FROM {$wpdb->prefix}icl_strings WHERE id='{$string_id}'");        
+        echo '<div id="icl_show_source_top">';
         for($i = 0; $i < count($files); $i++){            
             $c = $i+1;
             $exp = explode('::', $files[$i]);
             $line = $exp[1];
-            echo '<a href="#" onclick="icl_show_in_source('.$i.','.$line.')">'.$c.'</a>&nbsp;&nbsp;';
+            echo '<a href="#" onclick="icl_show_in_source('.$i.','.$line.')">'.$c.'</a><br />';
         }
+        echo '</div>';
         echo '<div id="icl_show_source_wrap">';
         for($i = 0; $i < count($files); $i++){            
             $exp = explode('::', $files[$i]);
@@ -1177,7 +1182,7 @@ function icl_st_string_in_source($string_id){
             if($i == 0){
                 echo '<script type="text/javascript">icl_show_in_source_scroll_once = ' . $line . '</script>';
             }
-            echo '<span class="icl_string_track_filename">' . $file . "</span>\n";
+            echo '<div class="icl_string_track_filename">' . $file . "</div>\n";
             echo '<pre>';        
             $content = file($file);
             echo '<ol>';
@@ -1225,7 +1230,7 @@ function icl_st_get_mo_files($path){
 }
 //$mo_files = icl_st_get_mo_files(dirname(dirname(__FILE__)));
 
-function icl_st_load_translations_from_mo($mo_file, $context){
+function icl_st_load_translations_from_mo($mo_file){
     $translations = array();
     $mo = new MO();     
     $mo->import_from_file( $mo_file );

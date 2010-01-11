@@ -50,14 +50,21 @@ div.postbox div.inside {
     position:relative;
 }
 
+#icl_show_source_top{
+    position:fixed;
+    margin-left:-10px;
+}
 #icl_show_source_wrap{
-    height:575px;
-    width:805px;
-    overflow:auto;
+    /*height:575px;*/    
+    /*width:805px;*/
+    /*overflow:auto;*/
+    /*margin-top:10px;*/
+
 }
 .icl_string_track_source pre{
-    width:800px;
-    height:575px;
+    /*width:800px;*/
+    /*height:575px;*/
+    height:100%;
     font-family:Arial;
     background-color:#fefefe;
     border:1px solid #eee;
@@ -74,9 +81,29 @@ div.postbox div.inside {
 }
 .icl_string_track_source .icl_string_track_filename{
     position:fixed;
-    top:648px;
-    z-index: 999;
+    /*top:663px;*/
+    /*z-index: 999;*/
     font-size:10px;
+    margin:-25px 0 0 -5px;
+    color:#fff;
+    background-color: #222222;
+}
+
+.icl_string_track_url{
+    /*position:fixed;*/
+    /*top:663px;*/
+    /*z-index: 999;*/
+    font-size:10px;
+    /*width:810px !important;*/
+    height:16px;
+    overflow:hidden;
+    white-space:nowrap;
+    margin:-25px 0 0 -5px;
+    color:#fff;
+    background-color: #222222;    
+}
+.icl_string_track_url a, .icl_string_track_url a:hover{
+    color:#fff !important;
 }
 
 #colorPickerDiv{
