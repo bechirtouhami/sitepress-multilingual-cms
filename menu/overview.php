@@ -61,7 +61,7 @@ if($sitepress_settings['existing_content_language_verified']){
                 <?php if(2 <= count($sitepress->get_active_languages())) :?>
                 
                 <tr>
-                    <td><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/theme-localization.php"><?php _e('Theme localization', 'sitepress')?></a></td>
+                    <td><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/theme-localization.php"><?php _e('Theme and plugins localization', 'sitepress')?></a></td>
                     <td>
                         <p>
                             <?php 
@@ -75,7 +75,7 @@ if($sitepress_settings['existing_content_language_verified']){
                             echo '</strong>';
                             ?>
                         </p>                                                                              
-                        <p><a class="button secondary" href="<?php echo 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/theme-localization.php' ?>"><?php echo __('Manage theme localization', 'sitepress'); ?></a></p>                     
+                        <p><a class="button secondary" href="<?php echo 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/theme-localization.php' ?>"><?php echo __('Manage theme and plugins localization', 'sitepress'); ?></a></p>                     
                     </td>
                 </tr>                            
                 
