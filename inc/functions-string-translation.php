@@ -446,6 +446,7 @@ function icl_unregister_string($context, $name){
     if($string_id){
         $wpdb->query("DELETE FROM {$wpdb->prefix}icl_strings WHERE id=" . $string_id);
         $wpdb->query("DELETE FROM {$wpdb->prefix}icl_string_translations WHERE string_id=" . $string_id);
+        $wpdb->query("DELETE FROM {$wpdb->prefix}icl_string_positions WHERE string_id=" . $string_id);
     }
 }  
 
@@ -455,6 +456,7 @@ function __icl_unregister_string_multi($arr){
     $wpdb->query("
         DELETE s.*, t.* FROM {$wpdb->prefix}icl_strings s LEFT JOIN {$wpdb->prefix}icl_string_translations t ON s.id = t.string_id
         WHERE s.id IN ({$str})");
+    $wpdb->query("DELETE FROM {$wpdb->prefix}icl_string_positions WHERE string_id IN ({$str})");
 }  
 
 function icl_t($context, $name, $original_value=false, &$has_translation=null){
