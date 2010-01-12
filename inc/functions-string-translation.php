@@ -939,6 +939,7 @@ function icl_st_scan_plugin_files($plugin, $recursion = 0){
     
     if(!$recursion){
         global $__icl_registered_strings;
+        $__icl_registered_strings = array();
         $scan_stats .= __('Done scanning files', 'sitepress') . PHP_EOL;                    
         
         /*
@@ -971,14 +972,13 @@ function __icl_st_scan_plugin_files_store_results($string, $domain, $file, $line
         
     //if(!isset($icl_scan_plugin_found_domains[$domain])){
     //    $icl_scan_plugin_found_domains[$domain] = true;
-    //}
-    
+    //}    
     global $wpdb, $__icl_registered_strings;
-    if(!isset($__icl_registered_strings)){
+    if(empty($__icl_registered_strings) ){
         $__icl_registered_strings = array();
         
-        // clear existing entries (both source and page type)
-        $context  = $domain ? 'plugin ' . $icl_st_p_scan_plugin_id : 'plugins';
+        // clear existing entries (both source and page type)        
+        $context  = $icl_st_p_scan_plugin_id ? 'plugin ' . $icl_st_p_scan_plugin_id : 'plugins';
         $wpdb->query("DELETE FROM {$wpdb->prefix}icl_string_positions WHERE string_id IN 
             (SELECT id FROM {$wpdb->prefix}icl_strings WHERE context = '{$context}')");
     }
