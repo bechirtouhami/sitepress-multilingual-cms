@@ -11,6 +11,7 @@ class SitePress{
         global $wpdb;
                                          
         $this->settings = get_option('icl_sitepress_settings');                                
+        
         if(false != $this->settings){
             $this->verify_settings();
         } 

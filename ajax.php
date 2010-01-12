@@ -435,6 +435,28 @@ switch($_REQUEST['icl_ajx_action']){
         break;
     case 'icl_tl_rescan':
         $scan_stats = icl_st_scan_theme_files();                
+        
+        if($_POST['icl_load_mo']){
+            $mo_files = icl_st_get_mo_files(TEMPLATEPATH);
+            foreach($mo_files as $m){
+                $i = preg_match('#[-]?([a-z_]+)\.mo$#i', $m, $matches);
+                if($i && $lang = $wpdb->get_var("SELECT code FROM {$wpdb->prefix}icl_locale_map WHERE locale='".$matches[1]."'")){
+                    $tr_pairs = icl_st_load_translations_from_mo($m);
+                    foreach($tr_pairs as $original=>$translation){
+                        foreach($this->settings['st']['theme_localization_domains'] as $tld){
+                            $string_id = icl_get_string_id($original, 'theme ' . $tld);                            
+                            if($string_id){
+                                break;
+                            }
+                        }                        
+                        if(!$wpdb->get_var{"SELECT id FROM {$wpdb->prefix}icl_string_translations WHERE string_id={$string_id} AND language='{$lang}'"}){
+                            icl_add_string_translation($string_id, $lang, $translation, ICL_STRING_TRANSLATION_COMPLETE);
+                        }
+                    }
+                }
+            }
+        }
+        
         echo '1|'.$scan_stats;
         break;
     case 'icl_tl_rescan_p':

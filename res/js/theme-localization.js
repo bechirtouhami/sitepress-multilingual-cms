@@ -45,10 +45,14 @@ function iclSaveThemeLocalizationType(){
 function iclThemeLocalizationRescan(){
     var thisb = jQuery(this);
     thisb.next().fadeIn();
+    var data = "icl_ajx_action=icl_tl_rescan";
+    if(jQuery('#icl_load_mo_themes').attr('checked')){
+        data += '&icl_load_mo=1';
+    }
     jQuery.ajax({
         type: "POST",
         url: icl_ajx_url,
-        data: "icl_ajx_action=icl_tl_rescan",
+        data: data,
         success: function(msg){
             thisb.next().fadeOut();
             spl = msg.split('|');

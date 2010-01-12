@@ -173,6 +173,12 @@ $plugin_localization_stats = get_plugin_localization_stats();
         </div>
                 
         <p>
+        <label>
+        <input type="checkbox" id="icl_load_mo_themes" value="1" checked="checked" />            
+        <?php _e('Load translations if found in the .mo files. (it will not override existing translations)', 'sitepress')?></label> 
+        </p>
+                
+        <p>
         <input id="icl_tl_rescan" type="button" class="button-primary" value="<?php echo __("Scan the theme for strings",'sitepress')?>" />
         <img class="icl_ajx_loader" src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" style="display:none;" alt="" />
         </p>        
