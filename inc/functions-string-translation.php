@@ -126,10 +126,10 @@ function icl_st_init(){
                 }                                                        
                 $int = preg_match('#msgid "(.+)"#im',trim($lines[$k]), $matches);
                 if($int){
-                    $string = $matches[1];
+                    $string = str_replace('\"','"', $matches[1]);
                     $int = preg_match('#msgstr "(.+)"#im',trim($lines[$k+1]),$matches);
                     if($int){
-                        $translation = $matches[1];
+                        $translation = str_replace('\"','"',$matches[1]);
                     }else{
                         $translation = "";
                     }
@@ -872,7 +872,7 @@ function icl_st_scan_theme_files($dir = false, $recursion = 0){
 function __icl_st_scan_theme_files_store_results($string, $domain, $file, $line){
     global $icl_scan_theme_found_domains;
     
-    $string = stripslashes($string);
+    $string = str_replace(array('\"',"\\'"), array('"',"'"), $string);
     
     if(!isset($icl_scan_theme_found_domains[$domain])){
         $icl_scan_theme_found_domains[$domain] = true;
@@ -967,7 +967,7 @@ function icl_st_scan_plugin_files($plugin, $recursion = 0){
 function __icl_st_scan_plugin_files_store_results($string, $domain, $file, $line){
     global $icl_scan_plugin_found_domains, $icl_st_p_scan_plugin_id;
     
-    $string = stripslashes($string);
+    $string = str_replace(array('\"',"\\'"), array('"',"'"), $string);
         
     //if(!isset($icl_scan_plugin_found_domains[$domain])){
     //    $icl_scan_plugin_found_domains[$domain] = true;
@@ -1083,8 +1083,8 @@ function icl_st_generate_po_file($strings, $potonly = false){
         }else{
             $translation = '';            
         }
-        $po .= 'msgid "'.$s['value'].'"' . PHP_EOL;
-        $po .= 'msgstr "'.$translation.'"' . PHP_EOL;
+        $po .= 'msgid "'.str_replace('"', '\"', $s['value']).'"' . PHP_EOL;
+        $po .= 'msgstr "'.str_replace('"', '\"', $translation).'"' . PHP_EOL;
     }
     
     return $po;
@@ -1239,6 +1239,8 @@ function icl_st_load_translations_from_mo($mo_file){
     }
     return $translations;
 }
+
+
 
 
 
