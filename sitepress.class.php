@@ -252,7 +252,7 @@ class SitePress{
         if($wp_query->is_singular || $posts[0]->post_type == 'page' || $this->get_current_language() == $this->get_default_language()){
             return $posts;
         }
-        
+                          
         // get the posts in the default language instead        
         $this_lang = $this->this_lang;
         $this->this_lang = $this->get_default_language();        
@@ -264,6 +264,16 @@ class SitePress{
             $cat_id = get_cat_ID($wp_query->query_vars['category_name']);
             $wp_query->query_vars['category__in'] = array($cat_id);
             $wp_query->query_var['query']['cat'] = $cat_id;
+        }
+        
+        if(isset($wp_query->query_vars['pagename'])){
+            $page_id = $wpdb->get_var("SELECT ID FROM {$wpdb->posts} WHERE post_name='{$wp_query->query_vars['pagename']}' AND post_type='page'");            
+            if($page_id){
+                $tr_page_id = icl_object_id($page_id, 'page', false, $this->get_default_language());
+                if($tr_page_id){
+                    $wp_query->query_vars['pagename'] = $wpdb->get_var("SELECT post_name FROM {$wpdb->posts} WHERE ID={$tr_page_id}");
+                }
+            }                        
         }
         
         foreach($wp_query->query_vars as $k=>$v){
@@ -282,7 +292,7 @@ class SitePress{
                 $qs .= '&' . $k . '=' . $v;  
             }
         }
-
+        
         $my_query = new WP_Query($qs);
         add_filter('the_posts', array($this, 'the_posts'));
         $this->this_lang = $this_lang;
