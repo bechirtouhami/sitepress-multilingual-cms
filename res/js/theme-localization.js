@@ -4,7 +4,7 @@ addLoadEvent(function(){
     jQuery('#icl_tl_rescan').click(iclThemeLocalizationRescan);
     jQuery('#icl_tl_rescan_p').submit(iclThemeLocalizationRescanP);
     
-    jQuery('.check-column :checkbox').change(iclCheckColumn);
+    jQuery('.check-column :checkbox').live('change', iclCheckColumn);
 });
 
 function iclSaveThemeLocalization(){

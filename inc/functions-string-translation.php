@@ -1109,7 +1109,7 @@ function icl_st_track_string($text, $context, $kind = ICL_STRING_TRANSLATION_STR
             }
             
             if(!$wpdb->get_var("SELECT id FROM {$wpdb->prefix}icl_string_positions 
-                                WHERE string_id='{$string_id}' AND position_in_page='{$position}' AND kind='".$kind."'")){
+                                WHERE string_id='{$string_id}' AND position_in_page='".$wpdb->escape($position)."' AND kind='".$kind."'")){
                 $wpdb->insert($wpdb->prefix . 'icl_string_positions', array(
                     'string_id' => $string_id,
                     'kind' => $kind,
