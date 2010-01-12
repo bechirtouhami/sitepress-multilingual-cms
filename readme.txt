@@ -65,16 +65,18 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 2. Translation controls in edit screen.
 
 == Changelog ==
-= 1.6.0 =
-* String translation improvements - translate plugins using strings translation
-* Ability to add translations form the plugins/theme .mo files
-* Added ability to view pthe strings to be trasnalated in their context (source or page)
-* Fixed bugs for the option of showing the default language posts when translations are missing
-* Added placeholder for _cleanup_header_comment (available from WP 2.8)
-* Fixed some bugs with the tags and the tag cloud
-* Fixed bug with missing comments
-* Added correct Estonian flag
 
+= 1.6.0 =
+* Allows translating both themes and plugins in WPML's string translation.
+* Existing translations in .mo files are imported to WPML's translation interface.
+* Shows the source of strings for translation (both in the PHP and on the HTML).
+* Cleaned and simplified string translation page.
+* Fixed bugs for the option of showing the default language posts when translations are missing.
+* Fixed search function when blog is set to display all posts with language fallback.
+* Added placeholder for _cleanup_header_comment (for compatibility with WP 2.7 and below).
+* Fixed some bugs with the tags and the tag cloud.
+* Fixed bug with missing comments,
+* Added correct Estonian flag.
 
 = 1.5.1 =
 * Fixed broken link to media library
@@ -84,7 +86,6 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 * Added support for PHP setups without json_decode
 * Added compatibility package for Headspace2 SEO plugin
 * Fixed bug in the 'icl_object_id' template function
-
 
 = 1.5.0 =
 * Added compatibility packages for Thematic, Hybrid and the default WordPress theme.
@@ -251,3 +252,8 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 
 = 0.9.2 =
 * First public release
+
+== Upgrade Notice ==
+
+= 1.6.0 =
+* WPML can now translate other plugins without editing .po/.mo files
