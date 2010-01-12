@@ -531,7 +531,8 @@ function icl_add_string_translation($string_id, $language, $value, $status = fal
 function icl_get_string_id($string, $context){
     global $wpdb;
     $string = $wpdb->escape($string);
-    return (int) $wpdb->get_var("SELECT id FROM {$wpdb->prefix}icl_strings WHERE value='{$string}' AND context='{$context}'");
+    $id = (int) $wpdb->get_var("SELECT id FROM {$wpdb->prefix}icl_strings WHERE value='{$string}' AND context='{$context}'");    
+    return $id;
 }
 
 function icl_get_string_translations($offset=0){
@@ -1230,13 +1231,13 @@ function icl_st_get_mo_files($path){
     
     return $mo_files;
 }
-//$mo_files = icl_st_get_mo_files(dirname(dirname(__FILE__)));
 
 function icl_st_load_translations_from_mo($mo_file){
     $translations = array();
     $mo = new MO();     
     $mo->import_from_file( $mo_file );
     foreach($mo->entries as $str=>$v){
+        $str = str_replace("\n",'\n', $str);
         $translations[$str] = $v->translations[0];
     }
     return $translations;
