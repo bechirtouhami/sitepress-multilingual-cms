@@ -65,6 +65,16 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 2. Translation controls in edit screen.
 
 == Changelog ==
+= 1.6.0 =
+* String translation improvements - translate plugins using strings translation
+* Ability to add translations form the plugins/theme .mo files
+* Added ability to view pthe strings to be trasnalated in their context (source or page)
+* Fixed bugs for the option of showing the default language posts when translations are missing
+* Added placeholder for _cleanup_header_comment (available from WP 2.8)
+* Fixed some bugs with the tags and the tag cloud
+* Fixed bug with missing comments
+* Added correct Estonian flag
+
 
 = 1.5.1 =
 * Fixed broken link to media library
