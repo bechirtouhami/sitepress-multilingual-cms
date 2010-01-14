@@ -2085,12 +2085,14 @@ class SitePress{
         }
         $allas = join(' | ', $as);
         if($type == 'page'){
-            $allas .= ' <span class="icl_cyan_box" style="padding:4px;margin-left:15px;"><img align="baseline" src="' . ICL_PLUGIN_URL .'/res/img/icon16.png" width="16" height="16" style="margin-bottom:-4px" /> <a href="admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/content-translation.php">' . 
+            $prot_link = '<span class="icl_cyan_box" style="padding:4px;margin-left:15px;"><img align="baseline" src="' . ICL_PLUGIN_URL .'/res/img/icon16.png" width="16" height="16" style="margin-bottom:-4px" /> <a href="admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/content-translation.php">' . 
             __('Manage professional translation', 'sitepress') . '</a>' . '</span>';
+        }else{
+            $prot_link = '';
         }
         ?>
         <script type="text/javascript">        
-            jQuery(".subsubsub").append('<br /><span id="icl_subsubsub"><?php echo $allas ?></span>');
+            jQuery(".subsubsub").append('<?php echo $prot_link ?><br /><span id="icl_subsubsub"><?php echo $allas ?></span>');
         </script>
         <?php
     }
