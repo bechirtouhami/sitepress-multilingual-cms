@@ -1332,7 +1332,13 @@ class SitePress{
                 $icl_query = new ICanLocalizeQuery();                
                 list($site_id, $access_key) = $icl_query->createAccount(array_merge($user,$lang_pairs));                
                 if(!$site_id){
-                    $_POST['icl_form_errors'] = $access_key;
+                    if ($access_key) {
+                        $_POST['icl_form_errors'] = $access_key;
+                    } else {
+                        $_POST['icl_form_errors'] = __('An unknown error has occurred when communicating with the ICanLocalize server. Please try again.', 'sitepress');
+                        // We will force the next try to be http.
+                        update_option('_force_mp_post_http', 1);
+                    }
                 }else{                    
                     $iclsettings['site_id'] = $site_id;
                     $iclsettings['access_key'] = $access_key;
@@ -1348,7 +1354,9 @@ class SitePress{
                     $this->save_settings($iclsettings);
                 }
 
-                if ($this->settings['content_translation_setup_complete'] == 0 && 
+                if (intval($site_id) > 0 &&
+                            $access_key &&
+                            $this->settings['content_translation_setup_complete'] == 0 && 
                             $this->settings['content_translation_setup_wizard_step'] == 3 && 
                             !isset($_POST['icl_form_errors'])) {
                     // we are running the wizard, so we can finish it now.
