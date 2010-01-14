@@ -169,11 +169,6 @@ switch($_REQUEST['icl_ajx_action']){
         }
         
        break;
-    case 'icl_save_website_kind':
-        $iclsettings['website_kind'] = $_POST['icl_website_kind'];
-        $this->save_settings($iclsettings);
-        echo '1';
-        break;               
     case 'icl_plugins_texts':
         update_option('icl_plugins_texts_enabled', $_POST['icl_plugins_texts_enabled']);
         echo '1|';

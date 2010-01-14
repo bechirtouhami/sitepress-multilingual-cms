@@ -7,14 +7,10 @@ addLoadEvent(function(){
     jQuery('#icl_save_language_pairs').click(saveLanguagePairs);    
     jQuery('form[name="icl_more_options"]').submit(iclSaveForm);
     jQuery('form[name="icl_more_options"]').submit(iclSaveMoreOptions);
-    jQuery('#icl_create_account, #icl_configure_account').submit(iclValidateWebsiteKind);
     jQuery('form[name="icl_editor_account"]').submit(iclSaveForm);    
     jQuery('#icl_enable_content_translation,#icl_disable_content_translation').click(iclToggleContentTranslation);
     jQuery('a[href="#icl-ct-advanced-options"]').click(iclToggleAdvancedOptions);        
     jQuery('a[href="#icl-show_disabled_langs"]').click(iclToggleMoreLanguages);        
-    if(jQuery('input[name="icl_website_kind"]:checked').length==0){
-        jQuery('input[name="icl_website_kind"]').click(iclQuickSaveWebsiteKind);
-    }
     jQuery('input[name="icl_content_trans_setup_cancel"]').click(iclWizardCancel)
     
     jQuery('.handlediv').click(function(){
@@ -196,30 +192,7 @@ function iclToggleMoreLanguages(){
     }    
 }
 
-function iclValidateWebsiteKind(){
-    if (jQuery('form[name="icl_more_options"]').length > 0 ) {
-        
-        jQuery('form[name="icl_more_options"] ul:first').css('border','none').css('padding','0');
-        jQuery('form[name="icl_more_options"] .icl_form_errors').fadeOut();
-        iclHaltSave = false;
-        if(jQuery('input[name="icl_website_kind"]:checked').length==0){
-            jQuery('form[name="icl_more_options"] ul:first').css('border','1px solid red').css('padding','2px');
-            jQuery('form[name="icl_more_options"] .icl_form_errors').fadeIn();
-            iclHaltSave = true;
-            location.href=location.href.replace(/#(.+)$/,'') + '#icl_more_options';
-            return false;
-        }
-    }
-}
 
-function iclQuickSaveWebsiteKind(){
-    jQuery.ajax({
-        type: "POST",
-        url: icl_ajx_url,
-        data: "icl_ajx_action=icl_save_website_kind&icl_website_kind="+jQuery(this).val()
-    });
-    return false;     
-}
 
 
 //jQuery('#TB_window').live('unload', function(){
