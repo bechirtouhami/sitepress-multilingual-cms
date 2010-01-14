@@ -706,8 +706,14 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
     </div>    
     <div id="icl_translate_help" class="icl_yellow_box" <?php if(!$sitepress_settings['setup_complete'] || $sitepress_settings['dont_show_translate_help']) echo 'style="display:none"' ?>>
     <h3><?php _e('How to translate ', 'sitepress')?></h3>
-    <p><?php _e('You can add translations to posts, pages, tags and categories. Each edit page now includes a new languages box. From that box you can add translations to other languages.', 'sitepress'); ?></p>
-    <p><?php printf(__('If you need help translating, you can also try the <a href="%s">professional translation</a> option.','sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php'); ?></p>
+    <h4><?php _e('Translating yourself?', 'sitepress')?></h4>
+    <p><?php _e('You can add translations to posts, pages, tags and categories. Each edit page now includes a new languages box. From that box you can add translations to other languages.', 'sitepress'); ?></p>                                                                                                         
+    <h4><?php _e('Need help translating?', 'sitepress')?></h4>    
+    
+    <img align="left" src="<?php echo ICL_PLUGIN_URL ?>/res/img/icon16.png" width="16" height="16" style="margin-right:7px" />
+    
+    <p><?php printf(__('Try WPML&#8217;s <a href="%s">professional translation</a> and get excellent translations at an affordable rate. <a href="%s">Learn more</a>.','sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php', 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php'); ?></p>
+    <br />
     <input id="icl_dismiss_translate_help" type="button" class="button secondary" value="<?php _e('Hide this message', 'sitepress');?>" />
     </div> 
     <br />   

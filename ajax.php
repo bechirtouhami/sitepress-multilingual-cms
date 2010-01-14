@@ -520,10 +520,14 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings['dont_show_help_admin_notice'] = true;
         $this->save_settings($iclsettings);
         break;
+    case 'dismiss_page_estimate_hint':
+        $iclsettings['dismiss_page_estimate_hint'] = true;
+        $this->save_settings($iclsettings);
+        break;        
     case 'dismiss_upgrade_notice':
         $iclsettings['hide_upgrade_notice'] = implode('.', array_slice(explode('.', ICL_SITEPRESS_VERSION), 0, 3));
         $this->save_settings($iclsettings);
-        break;
+        break;        
     case 'dismiss_translate_help':
         $iclsettings['dont_show_translate_help'] = true;
         $this->save_settings($iclsettings);

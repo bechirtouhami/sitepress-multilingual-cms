@@ -1207,7 +1207,7 @@ class SitePress{
         }
     }
        
-    function front_end_js(){
+    function front_end_js(){        
         echo '<script type="text/javascript">var icl_lang = \''.$this->this_lang.'\';var icl_home = \''.$this->language_url().'\';</script>';        
         if(defined('ICL_DONT_LOAD_LANGUAGES_JS') && ICL_DONT_LOAD_LANGUAGES_JS){
             return;
@@ -2084,6 +2084,10 @@ class SitePress{
             $as[] =  $px . $lang['display_name'] . $sx;
         }
         $allas = join(' | ', $as);
+        if($type == 'page'){
+            $allas .= ' <span class="icl_cyan_box" style="padding:4px;margin-left:15px;"><img align="baseline" src="' . ICL_PLUGIN_URL .'/res/img/icon16.png" width="16" height="16" style="margin-bottom:-4px" /> <a href="admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/content-translation.php">' . 
+            __('Manage professional translation', 'sitepress') . '</a>' . '</span>';
+        }
         ?>
         <script type="text/javascript">        
             jQuery(".subsubsub").append('<br /><span id="icl_subsubsub"><?php echo $allas ?></span>');

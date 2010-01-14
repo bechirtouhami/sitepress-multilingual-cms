@@ -7,6 +7,7 @@ jQuery(document).ready(function(){
     jQuery('select[name="icl_translation_of"]').change(function(){jQuery('#icl_translate_options').fadeOut();});
     jQuery('#icl_dismiss_help').click(iclDismissHelp);
     jQuery('#icl_dismiss_upgrade_notice').click(iclDismissUpgradeNotice);
+    jQuery('#icl_dismiss_page_estimate_hint').click(iclDismissPageEstimateHint);
     jQuery('a.icl_toggle_show_translations').click(iclToggleShowTranslations);
     
     icl_tn_initial_value   = jQuery('#icl_post_note textarea').val();
@@ -170,6 +171,19 @@ function iclDismissUpgradeNotice(){
     });    
     return false;
 }
+
+function iclDismissPageEstimateHint(){
+    var thisa = jQuery(this);
+    jQuery.ajax({
+            type: "POST",
+            url: icl_ajx_url,
+            data: "icl_ajx_action=dismiss_page_estimate_hint",
+            success: function(msg){
+                thisa.parent().fadeOut();                    
+            }
+    });    
+    return false;
+} 
 
 function iclToggleShowTranslations(){
     jQuery('a.icl_toggle_show_translations').toggle();

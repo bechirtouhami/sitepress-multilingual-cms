@@ -33,7 +33,7 @@ addLoadEvent(function(){
 		var set = jQuery(this).offset();
    		jQuery("#colorPickerDiv").css({"top":set.top+25,"left":set.left});
 	});
-    jQuery('#icl_translate_help_collapsed').click(function(){jQuery(this).hide();jQuery('#icl_translate_help').fadeIn()});
+    jQuery('#icl_translate_help_collapsed').click(function(){jQuery(this).hide();jQuery('#icl_translate_help').fadeIn();return false;});
     jQuery('form[name="icl_promote_form"] input[name="icl_promote"]').change(function(){
         jQuery.post(icl_ajx_url, 'icl_ajx_action=icl_promote&icl_promote='+jQuery(this).attr('checked'));
     });    

@@ -69,19 +69,29 @@
 </div><!--//translation_of_wrap-->
 
 <div style="clear:both;font-size:1px">&nbsp;</div>
-
+       
 <?php 
+    $translations_count = count($translations) - 1;
+    $language_count = count($active_languages) - 1;        
+    
+    if(!$this->get_icl_translation_enabled() && !$this->settings['dismiss_page_estimate_hint'] && $post->post_type == 'page'
+        && $language_count - $translations_count > 0){
+        $estimate = ICL_PRO_TRANSLATION_COST_PER_WORD * count(explode(' ', strip_tags($post->post_content)));
+        ?><p class="icl_sidebar" style="width:auto;"><img align="baseline" 
+            src="<?php echo ICL_PLUGIN_URL ?>/res/img/icon16.png" width="16" height="16" style="margin-bottom:-4px" />&nbsp;<?php 
+            printf(__('This page can be professionally translated for %s USD.<br /><a href="%s">Learn more</a> <a %s>dismiss</a>','sitepress'),
+            $estimate, 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php', 'id="icl_dismiss_page_estimate_hint" href="#"')?></p><?php
+    }
     do_action('icl_post_languages_options_before', $post->ID);
 ?>
 
 <?php if($_GET['action'] == 'edit' && $trid): ?>
     <span id="icl_translate_options">
     <?php if($this->get_icl_translation_enabled() && current_user_can('manage_options')):?>
-        <p>
-            <?php echo __('You can ', 'sitepress') ?><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH); ?>/menu/content-translation.php&post_id=<?php echo $post->ID ?><?php if($this->get_current_language() != $this->get_default_language()) echo '&amp;lang=' . $this->get_current_language(); ?>"><?php echo __('let ICanLocalize translate this page professionally','sitepress'); ?></a>.
-        </p>
+        <p class="icl_cyan_box"><img align="baseline" 
+            src="<?php echo ICL_PLUGIN_URL ?>/res/img/icon16.png" width="16" height="16" style="margin-bottom:-4px" />&nbsp;
+        <a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH); ?>/menu/content-translation.php&post_id=<?php echo $post->ID ?><?php if($this->get_current_language() != $this->get_default_language()) echo '&amp;lang=' . $this->get_current_language(); ?>"><?php _e('Translate by ICanLocalize')?></a></p>
     <?php endif; ?>
-        
 
     <?php
         // count number of translated and un-translated pages.

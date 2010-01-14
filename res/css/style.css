@@ -152,3 +152,17 @@
 .icl_next_step {
     padding-left:20px;
 }
+
+.icl_cyan_box{
+    border: 1px solid #8cceea;
+    background-color: #eff8fc;
+    padding:10px;    
+    margin-bottom:0px;
+    margin-top:25px;
+    -moz-border-radius-bottomleft:5px;
+    -moz-border-radius-bottomright:5px;
+    -moz-border-radius-topleft:5px;
+    -moz-border-radius-topright:5px;
+}
+
+.icl_cyan_box H3 { margin-top: 2px; }
