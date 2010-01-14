@@ -33,7 +33,7 @@ addLoadEvent(function(){
 		var set = jQuery(this).offset();
    		jQuery("#colorPickerDiv").css({"top":set.top+25,"left":set.left});
 	});
-    jQuery('#icl_translate_help_collapsed').click(function(){jQuery(this).hide();jQuery('#icl_translate_help').fadeIn();return false;});
+    jQuery('#icl_translate_help_collapsed').click(iclDismissTranslateHelp);
     jQuery('form[name="icl_promote_form"] input[name="icl_promote"]').change(function(){
         jQuery.post(icl_ajx_url, 'icl_ajx_action=icl_promote&icl_promote='+jQuery(this).attr('checked'));
     });    
@@ -271,7 +271,12 @@ function iclDismissTranslateHelp(){
             url: icl_ajx_url,
             data: "icl_ajx_action=dismiss_translate_help",
             success: function(msg){
-                thisa.parent().fadeOut('fast',function(){jQuery('#icl_translate_help_collapsed').fadeIn();});                    
+                if(jQuery('#icl_translate_help').css('display') == 'none'){
+                    thisa.hide();
+                    jQuery('#icl_translate_help').fadeIn();
+                }else{
+                    thisa.parent().fadeOut('fast',function(){jQuery('#icl_translate_help_collapsed').fadeIn();});                    
+                }
             }
     });    
     return false;

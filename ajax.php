@@ -529,7 +529,7 @@ switch($_REQUEST['icl_ajx_action']){
         $this->save_settings($iclsettings);
         break;        
     case 'dismiss_translate_help':
-        $iclsettings['dont_show_translate_help'] = true;
+        $iclsettings['dont_show_translate_help'] = !$this->settings['dont_show_translate_help'];
         $this->save_settings($iclsettings);
         break;        
     case 'setup_got_to_step1':
