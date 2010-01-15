@@ -3511,7 +3511,7 @@ class SitePress{
         $q = http_build_query(array(
             'name'      => 'wpml-intro',
             'iso'       => WPLANG,
-            'source'    => get_option('home')
+            'src'    => get_option('home')
         ));
         ?>                                                                                                           
         <br clear="all" />
