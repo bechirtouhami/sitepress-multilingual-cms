@@ -153,7 +153,7 @@ function iclDismissHelp(){
             url: icl_ajx_url,
             data: "icl_ajx_action=dismiss_help",
             success: function(msg){
-                thisa.parent().parent().fadeOut();    
+                thisa.closest('#message').fadeOut();    
             }
     });    
     return false;

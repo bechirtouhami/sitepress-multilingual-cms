@@ -440,16 +440,13 @@ class SitePress{
             add_filter('query', array($this, 'filter_queries'));                
             
         }
-
+        
         if(empty($this->settings['dont_show_help_admin_notice'])){
-            if(basename($_GET['page'])=='languages.php'){
-                $this->settings['dont_show_help_admin_notice'] = true;
-                $this->save_settings();                
-            }elseif(count($this->get_active_languages()) < 2){
+            if(count($this->get_active_languages()) < 2){
                 add_action('admin_notices', array($this, 'help_admin_notice'));
             }
         }
-        
+                
         $short_v = implode('.', array_slice(explode('.', ICL_SITEPRESS_VERSION), 0, 3));
         if($this->settings['hide_upgrade_notice'] != $short_v){
             add_action('admin_notices', array($this, 'upgrade_notice'));
@@ -2090,7 +2087,7 @@ class SitePress{
         $allas = join(' | ', $as);
         if($type == 'page' && !$this->get_icl_translation_enabled()){
             $prot_link = '<span class="icl_cyan_box" style="padding:4px;margin-top:10px;"><img align="baseline" src="' . ICL_PLUGIN_URL .'/res/img/icon16.png" width="16" height="16" style="margin-bottom:-4px" /> <a href="admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/content-translation.php">' . 
-            __('Get your site professionally translated - find out more.', 'sitepress') . '</a>' . '</span>';
+            __('Get your site professionally translated - find out more', 'sitepress') . '</a>' . '</span>';
         }else{
             $prot_link = '';
         }
@@ -3510,11 +3507,23 @@ class SitePress{
         }        
     }
     
-    function help_admin_notice(){                                   
-        echo '<br clear="all" /><div id="message" class="updated message fade" style="clear:both;margin-top:5px;"><p>';
-        echo '<a title="'.__('Stop showing this message', 'sitepress').'" id="icl_dismiss_help" href="#" style="float:right">'.__('Dismiss', 'sitepress').'</a>';
-        printf(__('Please go to <a href="%s">WPML’s configuration</a> to setup languages or CMS navigation.', 'sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/languages.php');
-        echo '</p></div>';
+    function help_admin_notice(){  
+        $q = http_build_query(array(
+            'name'      => 'wpml-intro',
+            'iso'       => WPLANG,
+            'source'    => get_option('home')
+        ));
+        ?>                                                                                                           
+        <br clear="all" />
+        <div id="message" class="updated message fade" style="clear:both;margin-top:5px;"><p>
+        <?php _e('WPML is a powerful plugin with many features. Would you like to see a quick overview?', 'sitepress'); ?>
+        <span style="float:right">
+        <a href="<?php echo ICL_API_ENDPOINT ?>/destinations/go?<?php echo $q ?>" target="_blank"><?php _e('Yes', 'sitepress')?></a> |         
+        <a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH).'/menu/languages.php'; ?>"><?php _e('No thanks, I will configure myself', 'sitepress')?></a> | 
+        <a title="<?php _e('Stop showing this message', 'sitepress') ?>" id="icl_dismiss_help" href=""><?php _e('Dismiss', 'sitepress')?></a>
+        </span>
+        </p></div>
+        <?php 
     }
     
     function upgrade_notice(){
