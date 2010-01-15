@@ -74,7 +74,7 @@
     $translations_count = count($translations) - 1;
     $language_count = count($active_languages) - 1;        
     
-    if(!$this->get_icl_translation_enabled() && !$this->settings['dismiss_page_estimate_hint'] && $post->post_type == 'page'
+    if($trid && !$this->get_icl_translation_enabled() && !$this->settings['dismiss_page_estimate_hint'] && $post->post_type == 'page'
         && $language_count - $translations_count > 0){
         $estimate = ICL_PRO_TRANSLATION_COST_PER_WORD * count(explode(' ', strip_tags($post->post_content)));
         ?><p class="icl_sidebar" style="width:auto;"><img align="baseline" 
