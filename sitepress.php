@@ -61,6 +61,7 @@ require ICL_PLUGIN_PATH . '/inc/upgrade.php';
 require ICL_PLUGIN_PATH . '/inc/functions-string-translation.php';
 require ICL_PLUGIN_PATH . '/inc/compatibility-packages/functions-packages.php';
 require ICL_PLUGIN_PATH . '/inc/compatibility-packages/wpml-package.class.php';
+require ICL_PLUGIN_PATH . '/inc/affiliate-info.php';
 
 
 if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQUEST['action']!='activate-selected') 

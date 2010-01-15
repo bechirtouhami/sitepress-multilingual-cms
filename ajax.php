@@ -676,6 +676,16 @@ switch($_REQUEST['icl_ajx_action']){
         echo 1;
         break;
         
+    case 'affiliate_info_check':
+        $iclq = new ICanLocalizeQuery($this->settings['site_id'], $this->settings['access_key']);       
+        if($iclq->test_affiliate_info($_POST['icl_affiliate_id'], $_POST['icl_affiliate_key'])){
+            $error = array('error'=>0);
+        }else{
+            $error = array('error'=>1);
+        }
+        echo json_encode($error);
+        break;
+        
     default:
         echo __('Invalid action','sitepress');                
 }    

@@ -249,6 +249,10 @@ class SitePress{
     function the_posts($posts){        
         global $wpdb, $wp_query;
         
+        //foreach($posts as $p){
+        //    echo $p->post_date . ' ' . $p->post_title . "\n";
+        //}
+        
         //exceptions
         if($wp_query->is_singular || $posts[0]->post_type == 'page' || $this->get_current_language() == $this->get_default_language()){
             return $posts;

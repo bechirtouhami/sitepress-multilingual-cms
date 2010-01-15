@@ -1,5 +1,4 @@
 <?php
-
 class ICanLocalizeQuery{
       private $site_id; 
       private $access_key;
@@ -489,7 +488,11 @@ class ICanLocalizeQuery{
         return $res;
     }
     
-    
+    function test_affiliate_info($id, $key){
+        $request_url = ICL_API_ENDPOINT . '/websites/validate_affiliate.xml?affiliate_id='.$id.'&affiliate_key=' . $key;
+        $res = $this->_request($request_url, 'GET');
+        return $res['info']['result']['value'] == 'OK';
+    }
     
 }
   
