@@ -21,12 +21,16 @@ class SitePress{
             if($_GET['icl_action']=='advanced' && wp_create_nonce('icl_enable_advanced_mode')==$_GET['nonce']){
                 $this->enable_advanced_mode();
             }
-            if($_GET['icl_action']=='basic' && wp_create_nonce('icl_enable_basic_mode')==$_GET['nonce']){
+            elseif($_GET['icl_action']=='basic' && wp_create_nonce('icl_enable_basic_mode')==$_GET['nonce']){
                 $this->enable_basic_mode();
             }                                              
-            if($_GET['icl_action']=='reminder_popup'){
+            elseif($_GET['icl_action']=='reminder_popup'){
                 add_action('init', array($this, 'reminders_popup'));
             }            
+            elseif($_GET['icl_action']=='dismiss_help'){
+                $this->settings['dont_show_help_admin_notice'] = true;
+                $this->save_settings();                
+            }                        
         }
         
         if(isset($_REQUEST['icl_ajx_action'])){
@@ -3517,12 +3521,13 @@ class SitePress{
         <br clear="all" />
         <div id="message" class="updated message fade" style="clear:both;margin-top:5px;"><p>
         <?php _e('WPML is a powerful plugin with many features. Would you like to see a quick overview?', 'sitepress'); ?>
-        <span style="float:right">
-        <a href="<?php echo ICL_API_ENDPOINT ?>/destinations/go?<?php echo $q ?>" target="_blank"><?php _e('Yes', 'sitepress')?></a> |         
-        <a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH).'/menu/languages.php'; ?>"><?php _e('No thanks, I will configure myself', 'sitepress')?></a> | 
+        </p>
+        <p>
+        <a href="<?php echo ICL_API_ENDPOINT ?>/destinations/go?<?php echo $q ?>" target="_blank" class="button-primary"><?php _e('Yes', 'sitepress')?></a>&nbsp;
+        <a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH).'/menu/languages.php&icl_action=dismiss_help'; ?>"  class="button"><?php _e('No thanks, I will configure myself', 'sitepress')?></a>&nbsp;
         <a title="<?php _e('Stop showing this message', 'sitepress') ?>" id="icl_dismiss_help" href=""><?php _e('Dismiss', 'sitepress')?></a>
-        </span>
-        </p></div>
+        </p>
+        </div>
         <?php 
     }
     
