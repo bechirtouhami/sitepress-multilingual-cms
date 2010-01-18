@@ -5,6 +5,9 @@ jQuery(document).ready(function(){
     jQuery(".icl_st_form").submit(icl_st_submit_translation);
     jQuery('select[name="icl_st_filter_status"]').change(icl_st_filter_status);
     jQuery('select[name="icl_st_filter_context"]').change(icl_st_filter_context);
+    jQuery('#icl_st_filter_search_sb').click(icl_st_filter_search);    
+    jQuery('#icl_st_filter_search_remove').click(icl_st_filter_search_remove);    
+    
     jQuery('.check-column input').click(icl_st_select_all);
     jQuery('#icl_st_delete_selected').click(icl_st_delete_selected);
     jQuery('#icl_st_send_need_translation').click(icl_st_send_need_translation);
@@ -108,7 +111,19 @@ function icl_st_filter_context(){
     var qs = jQuery(this).val() != '' ? '&context=' + jQuery(this).val() : '';
     location.href=location.href.replace(/#(.*)$/,'').replace(/&paged=([0-9]+)/,'').replace(/&updated=true/,'').replace(/&context=(.*)/g,'') + qs;
 }
-
+function icl_st_filter_search(){
+    var val = jQuery('#icl_st_filter_search').val();
+    var exact_match = jQuery('#icl_st_filter_search_em').attr('checked');
+    var qs = val != '' ? '&search=' + val : '';
+     qs = qs.replace(/&em=1/g,'');
+    if(exact_match){
+        qs += '&em=1';
+    }
+    location.href=location.href.replace(/#(.*)$/,'').replace(/&paged=([0-9]+)/,'').replace(/&updated=true/,'').replace(/&search=(.*)/g,'') + qs;
+}
+function icl_st_filter_search_remove(){
+    location.href=location.href.replace(/#(.*)$/,'').replace(/&search=(.*)/g,'').replace(/&em=1/g,'');
+}
 
 function icl_st_select_all(){
     if(jQuery(this).attr('checked')){

@@ -540,6 +540,9 @@ function icl_get_string_translations($offset=0){
     
     $extra_cond = "";
     $status_filter = isset($_GET['status']) ? intval($_GET['status']) : false;
+    $search_filter = isset($_GET['search']) ? $_GET['search'] : false;
+    $exact_match   = isset($_GET['em']) ? $_GET['em'] == 1 : false;
+    
     if($status_filter !== false){
         if($status_filter == ICL_STRING_TRANSLATION_COMPLETE){
             $extra_cond .= " AND status = " . ICL_STRING_TRANSLATION_COMPLETE;
@@ -547,6 +550,15 @@ function icl_get_string_translations($offset=0){
             $extra_cond .= " AND status IN (" . ICL_STRING_TRANSLATION_PARTIAL . "," . ICL_STRING_TRANSLATION_NEEDS_UPDATE . "," . ICL_STRING_TRANSLATION_NOT_TRANSLATED . ")";
         }        
     }
+    
+    if($search_filter != false){
+        if($exact_match){
+            $extra_cond .= " AND value = '". $wpdb->escape($search_filter)."' ";            
+        }else{
+            $extra_cond .= " AND value LIKE '%". $wpdb->escape($search_filter)."%' ";            
+        }
+    }
+    
     $context_filter = isset($_GET['context']) ? $_GET['context'] : false;
     if($context_filter !== false){
         $extra_cond .= " AND context = '" . $wpdb->escape($context_filter) . "'";

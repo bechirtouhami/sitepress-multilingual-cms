@@ -5,6 +5,8 @@ if((!isset($sitepress_settings['existing_content_language_verified']) || !$sitep
 
 $status_filter = isset($_GET['status']) ? intval($_GET['status']) : false;
 $context_filter = isset($_GET['context']) ? $_GET['context'] : false;
+$search_filter = isset($_GET['search']) ? $_GET['search'] : false;
+$exact_match = isset($_GET['em']) ? $_GET['em'] == 1 : false;
 
 $icl_string_translations = icl_get_string_translations();
 if(!empty($icl_string_translations)){
@@ -144,7 +146,7 @@ $available_contexts = array_unique($available_contexts);
         </form>        
     <?php else: ?>
     
-        <p>
+        <p style="line-height:220%;">
         <?php echo __('Select which strings to display:', 'sitepress')?>
         <select name="icl_st_filter_status">
             <option value="" <?php if($status_filter === false ):?>selected="selected"<?php endif;?>><?php echo __('All strings', 'sitepress') ?></option>        
@@ -154,6 +156,7 @@ $available_contexts = array_unique($available_contexts);
         
         <?php if(!empty($icl_contexts)): ?>
         &nbsp;&nbsp;
+        <span style="white-space:nowrap">
         <?php echo __('Select strings within context:', 'sitepress')?>
         <select name="icl_st_filter_context">
             <option value="" <?php if($context_filter === false ):?>selected="selected"<?php endif;?>><?php echo __('All contexts', 'sitepress') ?></option>
@@ -161,7 +164,31 @@ $available_contexts = array_unique($available_contexts);
             <option value="<?php echo htmlspecialchars($v->context)?>" <?php if($context_filter == $v->context ):?>selected="selected"<?php endif;?>><?php echo $v->context . ' ('.$v->c.')'; ?></option>
             <?php endforeach; ?>
         </select>    
+        </span>
         <?php endif; ?>
+        
+        &nbsp;&nbsp;
+        <span style="white-space:nowrap">
+        <label>
+        <?php echo __('Search for:', 'sitepress')?>
+        <input type="text" id="icl_st_filter_search" value="<?php echo $search_filter ?>" />
+        </label>
+        
+        <label>
+        <input type="checkbox" id="icl_st_filter_search_em" value="1" <?php if($exact_match):?>checked="checked"<?php endif;?> />
+        <?php echo __('Exact match', 'sitepress')?>
+        </label>
+        
+        <input class="button" type="button" value="<?php _e('Search', 'sitepress')?>" id="icl_st_filter_search_sb" />
+        </span>
+        
+        <?php if($search_filter): ?>
+        <span style="white-space:nowrap">
+        <?php printf(__('Showing only strings that contain %s', 'sitepress'), '<i>' . htmlspecialchars($search_filter)) . '</i>'; ?>
+        <input class="button" type="button" value="<?php _e('Exit search', 'sitepress')?>" id="icl_st_filter_search_remove" />
+        </span>
+        <?php endif; ?>
+        
         </p>
     
         <table id="icl_string_translations" class="widefat" cellspacing="0">
@@ -188,7 +215,7 @@ $available_contexts = array_unique($available_contexts);
             <tbody>
                 <?php if(empty($icl_string_translations)):?> 
                 <tr>
-                    <td colspan="5" align="center"><?php echo __('No strings found', 'sitepress')?></td>
+                    <td colspan="6" align="center"><?php echo __('No strings found', 'sitepress')?></td>
                 </tr>
                 <?php else: ?>
                 <?php foreach($icl_string_translations as $string_id=>$icl_string): ?> 
