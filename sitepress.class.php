@@ -265,13 +265,13 @@ class SitePress{
         //$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
         $qs = 'suppress_filters=0';
         
-        if($wp_query->query_vars['category_name']){
+        if($wp_query->query_vars['category_name'] && !empty($wp_query->query_vars['category_name'])){
             $cat_id = get_cat_ID($wp_query->query_vars['category_name']);
             $wp_query->query_vars['category__in'] = array($cat_id);
             $wp_query->query_var['query']['cat'] = $cat_id;
         }
         
-        if(isset($wp_query->query_vars['pagename'])){
+        if(isset($wp_query->query_vars['pagename']) && !empty($wp_query->query_vars['pagename'])){
             $page_id = $wpdb->get_var("SELECT ID FROM {$wpdb->posts} WHERE post_name='{$wp_query->query_vars['pagename']}' AND post_type='page'");            
             if($page_id){
                 $tr_page_id = icl_object_id($page_id, 'page', false, $this->get_default_language());
@@ -282,7 +282,7 @@ class SitePress{
         }
         
         foreach($wp_query->query_vars as $k=>$v){
-            if(!empty($v) && $k != 'category_name'&& $k != 'pagename'){
+            if(!empty($v) && $k != 'category_name'){
                 if(is_array($v)){
                     if($k == 'category__in'){
                         foreach($v as $kc=>$c){
