@@ -12,9 +12,10 @@ $icl_tables = array(
     $wpdb->prefix . 'icl_strings',
     $wpdb->prefix . 'icl_string_translations',
     $wpdb->prefix . 'icl_string_status',
+    $wpdb->prefix . 'icl_string_positions',
     $wpdb->prefix . 'icl_cms_nav_cache',
     $wpdb->prefix . 'icl_message_status',
-    $wpdb->prefix . 'icl_reminders',
+    $wpdb->prefix . 'icl_reminders',    
 );
 
 if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_create_nonce('icl_reset_all'))){

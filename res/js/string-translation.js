@@ -35,15 +35,7 @@ jQuery(document).ready(function(){
     })
     
     jQuery('#icl_st_more_options').submit(iclSaveForm);
-    
-    jQuery('#icl_st_track_strings').change(function(){
-        if(jQuery(this).attr('checked')){
-            jQuery('#icl_st_hl_color').removeAttr('disabled');
-        }else{
-            jQuery('#icl_st_hl_color').attr('disabled', 'disabled');
-        }
-    })
-    
+        
     // Picker align
     jQuery(".pick-show").click(function () {
         var set = jQuery(this).offset();

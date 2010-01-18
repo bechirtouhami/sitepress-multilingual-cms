@@ -441,8 +441,7 @@ $available_contexts = array_unique($available_contexts);
                                                 <?php _e('Highlight color for strings', 'sitepress'); ?>
                                                 <?php $hl_color = $sitepress_settings['st']['hl_color']?$sitepress_settings['st']['hl_color']:'#FFFF00'; ?>
                                                 <input type="text" size="7" id="icl_st_hl_color" name="icl_st[hl_color]" value="<?php echo $hl_color ?>" 
-                                                    style="background-color:<?php echo $hl_color ?>" <?php 
-                                                    if(!$sitepress_settings['st']['track_strings']): ?>disabled="disabled"<?php endif ?> />
+                                                    style="background-color:<?php echo $hl_color ?>" />
                                             </label>
                                             <img src="<?php echo ICL_PLUGIN_URL; ?>/res/img/icon_color_picker.png" id="icl_st_hl_picker" 
                                                 alt="" border="0" style="vertical-align:bottom;cursor:pointer;" class="pick-show" 
