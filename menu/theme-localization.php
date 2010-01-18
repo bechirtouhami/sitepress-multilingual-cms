@@ -10,7 +10,7 @@ $plugin_localization_stats = get_plugin_localization_stats();
 
 <div class="wrap">
     <div id="icon-options-general" class="icon32 icon32_adv"><br /></div>
-    <h2><?php _e('Theme localization', 'sitepress') ?></h2>    
+    <h2><?php _e('Theme and plugins localization', 'sitepress') ?></h2>    
 
     <?php include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php' ?>
     

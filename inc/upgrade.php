@@ -360,9 +360,9 @@ function icl_plugin_upgrade(){
         if($mig_debug) fwrite($mig_debug, "Upgraded to 1.5.0 \n");
     }
     
-    if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.5.3', '<')){
+    if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.6.0', '<')){
         
-        if($mig_debug) fwrite($mig_debug, "Upgrading to 1.5.3 \n");
+        if($mig_debug) fwrite($mig_debug, "Upgrading to 1.6.0 \n");
         
         // force icl_string_positions table creation
         $table_name = $wpdb->prefix.'icl_string_positions';
@@ -375,7 +375,7 @@ function icl_plugin_upgrade(){
         
         update_option('icl_sitepress_settings',$iclsettings);
         
-        if($mig_debug) fwrite($mig_debug, "Upgraded to 1.5.3 \n");
+        if($mig_debug) fwrite($mig_debug, "Upgraded to 1.6.0 \n");
         
     }
     
