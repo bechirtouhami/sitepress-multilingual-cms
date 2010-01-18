@@ -468,7 +468,11 @@ function icl_t($context, $name, $original_value=false, &$has_translation=null){
         return $original_value !== false ? $original_value : $name;
     }   
        
-    $current_language = $sitepress->get_current_language();
+    if(is_admin()){
+        $current_language = $sitepress->get_admin_language();
+    }else{
+        $current_language = $sitepress->get_current_language();
+    }    
     $default_language = $sitepress->get_default_language();
     if($current_language == $default_language && $original_value){
         
