@@ -302,6 +302,29 @@ class SitePress{
             }
         }
         
+        // look for posts without translations
+        if($posts){
+            foreach($posts as $p){
+                $pids[] = $p->ID;
+            }
+            $trids = $wpdb->get_col("
+                SELECT trid 
+                FROM {$wpdb->prefix}icl_translations 
+                WHERE element_type='post' AND element_id IN (".join(',', $pids).") AND language_code = '".$this_lang."'");
+            
+            $posts_not_translated = $wpdb->get_col("
+                SELECT element_id, COUNT(language_code) AS c
+                FROM {$wpdb->prefix}icl_translations
+                WHERE trid IN (".join(',', $trids).") GROUP BY trid HAVING c = 1 
+            ");
+            
+            if($posts_not_translated){
+                    $GLOBALS['__icl_the_posts_posts_not_translated'] = $posts_not_translated;
+                    add_filter('posts_where', array($this, '_posts_untranslated_extra_posts_where'), 99);
+            }
+
+        }
+        
         $my_query = new WP_Query($qs);
         add_filter('the_posts', array($this, 'the_posts'));
         $this->this_lang = $this_lang;
@@ -338,6 +361,12 @@ class SitePress{
         $posts = $my_query->posts;
         
         return $posts;
+    }
+    
+    function _posts_untranslated_extra_posts_where($where){
+        global $wpdb;
+        $where .= ' OR ' . $wpdb->posts . '.ID IN (' . join(',', $GLOBALS['__icl_the_posts_posts_not_translated']) . ')';
+        return $where;
     }
                                               
     function initialize_cache(){ 
