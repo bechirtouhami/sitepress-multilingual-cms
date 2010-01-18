@@ -140,7 +140,7 @@ class Thematic_theme_compatibility  extends WPML_Package{
 
 	function add_thematic_blogtitle() {
 ?>
-		<div id="blog-title"><span><a href="<?php icl_get_home_url(); ?>" title="<?php bloginfo('name') ?>" rel="home"><?php bloginfo('name') ?></a></span></div>
+		<div id="blog-title"><span><a href="<?php echo icl_get_home_url(); ?>" title="<?php bloginfo('name') ?>" rel="home"><?php bloginfo('name') ?></a></span></div>
 		<?php 
 	}
 
