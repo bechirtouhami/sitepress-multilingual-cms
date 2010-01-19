@@ -4,7 +4,7 @@ Donate link: http://wpml.org/?page_id=2312
 Tags: CMS, navigation, menus, menu, dropdown, css, sidebar, pages, i18n, translation, localization, language, multilingual, WPML
 Requires at least: 2.6
 Tested up to: 2.9.1
-Stable tag: 1.5.1
+Stable tag: 1.6.0
 
 Allows building complete multilingual sites with WordPress.
 
