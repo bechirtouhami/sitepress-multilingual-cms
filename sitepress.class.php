@@ -286,7 +286,7 @@ class SitePress{
         }
         
         foreach($wp_query->query_vars as $k=>$v){
-            if(!empty($v) && $k != 'category_name'){
+            if(!empty($v) && $k != 'category_name' && $k != 'page_id'){
                 if(is_array($v)){
                     if($k == 'category__in'){
                         foreach($v as $kc=>$c){
@@ -301,7 +301,6 @@ class SitePress{
                 $qs .= '&' . htmlspecialchars_decode($k) . '=' . htmlspecialchars_decode($v);  
             }
         }
-        
         // look for posts without translations
         if($posts){
             foreach($posts as $p){

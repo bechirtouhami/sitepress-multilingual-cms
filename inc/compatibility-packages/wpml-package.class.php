@@ -39,6 +39,10 @@ abstract class WPML_Package{
 		
 		$this->textdomain = 'packages-'.$this->type.'-'.$this->name;
 		load_plugin_textdomain( $this->textdomain, false, ICL_PLUGIN_FOLDER . '/compatibility-packages/' . $this->type . '/' . $this->name . '/languages/');
+        
+        if(!isset($this->settings['translation_sync_file_loaded']) || !$this->settings['translation_sync_file_loaded']){
+            $this->load_custom_fields_sync_file();
+        }
     }
     
     function __destruct(){
@@ -291,7 +295,31 @@ abstract class WPML_Package{
 		if(isset($wp_registered_widgets['language-selector'])) unregister_sidebar_widget('language-selector');
     }
     // Theme packages functions. - end (added SJ)
-        
+    
+    function load_custom_fields_sync_file(){
+        global $wpdb;
+        if(file_exists($this->package_path . '/res/custom_field_translation.csv')){
+            $fh = fopen($this->package_path . '/res/custom_field_translation.csv', 'rb');
+            if($fh){                
+                $wpdb->query("DELETE FROM {$wpdb->prefix}icl_plugins_texts WHERE plugin_name='{$this->data['Plugin']}'");
+                while($data = fgetcsv($fh)){
+                    $wpdb->insert($wpdb->prefix.'icl_plugins_texts', array(   
+                            'plugin_name'=>substr($data[0],0,128),
+                            'attribute_type' => substr($data[1], 0, 64),
+                            'attribute_name' => substr($data[2], 0, 128),
+                            'description'    => $data[3],
+                            'translate'      => $data[4]
+                        )
+                    );
+                }
+                fclose($fh);
+            }
+            if($wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}icl_plugins_texts WHERE plugin_name='".$this->data['Plugin']."'")){
+                $this->settings['translation_sync_file_loaded'] = true;
+                $this->save_settings();
+            }                                
+        }
+    }    
         
 }
   

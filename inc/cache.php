@@ -57,7 +57,7 @@ class icl_cache{
         if(ICL_DISABLE_CACHE){
             return false;
         }
-        return array_key_exists($key, $this->data);
+        return array_key_exists($key, (array)$this->data);
     }
     
     function set($key, $value) {

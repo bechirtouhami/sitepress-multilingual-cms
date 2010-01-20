@@ -31,7 +31,6 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
         $ra = get_option('recently_activated');
         $ra[basename(ICL_PLUGIN_PATH) . '/sitepress.php'] = time();
         update_option('recently_activated', $ra);        
-        delete_option('_icl_cache');
         echo '<script type="text/javascript">location.href=\''.admin_url('plugins.php?deactivate=true').'\'</script>';
     }
 }
