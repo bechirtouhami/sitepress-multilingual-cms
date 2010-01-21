@@ -763,6 +763,7 @@ class SitePress{
     
     function get_active_languages($refresh = false){
         global $wpdb;   
+        
         if($refresh || !$this->active_languages){
             if(defined('WP_ADMIN') && $this->admin_language){
                 $in_language = $this->admin_language;
@@ -775,19 +776,13 @@ class SitePress{
                 $res = null;
             }
             
-            // hide languages for front end
-            $extra_cond = "";
-            if(!is_admin() && !empty($this->settings['hidden_languages']) 
-                && is_array($this->settings['hidden_languages']) && !current_user_can('delete_others_posts')){
-                $extra_cond .= " AND code NOT IN('".join("','", $this->settings['hidden_languages'])."')";
-            }
             if (!$res) { 
                 $res = $wpdb->get_results("
                     SELECT code, english_name, active, lt.name AS display_name 
                     FROM {$wpdb->prefix}icl_languages l
                         JOIN {$wpdb->prefix}icl_languages_translations lt ON l.code=lt.language_code           
                     WHERE 
-                        active=1 AND lt.display_language_code = '{$in_language}'  {$extra_cond}
+                        active=1 AND lt.display_language_code = '{$in_language}'
                     ORDER BY major DESC, english_name ASC", ARRAY_A);
                 if (isset($this->icl_language_name_cache)) {
                     $this->icl_language_name_cache->set('in_language_'.$in_language, $res);
@@ -812,11 +807,12 @@ class SitePress{
                     SELECT language_code, name 
                     FROM {$wpdb->prefix}icl_languages_translations
                     WHERE language_code IN ('".join("','",array_keys($languages))."') AND language_code = display_language_code
-                ");
+                "); 
                 if (isset($this->icl_language_name_cache)) {
                     $this->icl_language_name_cache->set('languages_'.$languages, $res);
                 }
             }
+                            
             foreach($res as $row){
                 $languages[$row->language_code]['native_name'] = $row->name;     
             }
@@ -824,6 +820,14 @@ class SitePress{
             $this->active_languages = $languages;           
         }
         
+        // hide languages for front end
+        global $current_user;        
+        if(!is_admin() && !empty($this->settings['hidden_languages']) 
+            && is_array($this->settings['hidden_languages']) && !get_usermeta($current_user->data->ID, 'icl_show_hidden_languages')){
+            foreach($this->settings['hidden_languages'] as $l){
+                unset($this->active_languages[$l]);
+            }
+        }
         return $this->active_languages;
     }
     
@@ -3601,6 +3605,34 @@ class SitePress{
                         <span class="description"><?php _e('this will be your admin language and will also be used for translating comments.', 'sitepress'); ?></span>
                     </td>
                 </tr>
+                <tr>
+                    <th><?php _e('Hidden languages:', 'sitepress') ?></th>
+                    <td>   
+                        <p>                     
+                        <?php if(!empty($this->settings['hidden_languages'])): ?>                        
+                            <?php
+                             if(1 == count($this->settings['hidden_languages'])){
+                                 printf(__('%s is currently hidden to visitors.', 'sitepress'), 
+                                    $active_languages[$this->settings['hidden_languages'][0]]['display_name']);
+                             }else{
+                                 foreach($this->settings['hidden_languages'] as $l){
+                                     $_hlngs[] = $active_languages[$l]['display_name'];
+                                 }                                 
+                                 $hlangs = join(', ', $_hlngs);
+                                 printf(__('%s are currently hidden to visitors.', 'sitepress'), $hlangs);
+                             }
+                            ?>                            
+                        <?php else: ?>
+                        <?php _e('All languages are currently displayed. Choose what to do when site languages are hidden.', 'sitepress'); ?>
+                        <?php endif; ?>                        
+                        </p>
+                        <p>
+                        <label><input name="icl_show_hidden_languages" type="checkbox" value="1" <?php 
+                            if(get_usermeta($current_user->data->ID, 'icl_show_hidden_languages')):?>checked="checked"<?php endif?> />&nbsp;<?php 
+                            _e('Display hidden languages', 'sitepress') ?></label>
+                        </p>
+                    </td>
+                </tr>                
             </tbody>
         </table>        
         <?php
@@ -3610,6 +3642,7 @@ class SitePress{
         $user_id = $_POST['user_id'];
         if($user_id){
             update_usermeta($user_id,'icl_admin_language',$_POST['icl_user_admin_language']);        
+            update_usermeta($user_id,'icl_show_hidden_languages',intval($_POST['icl_show_hidden_languages']));        
             $this->icl_locale_cache->clear();
         }        
     }

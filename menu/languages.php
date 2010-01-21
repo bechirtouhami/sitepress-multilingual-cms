@@ -684,7 +684,15 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                         <tr>
                             <td>
                                 <h4><?php _e('Hide languages', 'sitepress')?></h4>
-                                <p><?php _e('These languages will not be public on the front end of the site.', 'sitepress')?></p>
+
+                                <?php 
+                                    if(!empty($sitepress_settings['hidden_languages'])){
+                                         printf(__('You can enable their display for yourself, in your <a href="%s">profile page</a>.', 'sitepress'),
+                                            'profile.php#wpml');
+                                     }else{
+                                          _e('All languages are currently displayed.', 'sitepress');
+                                     }
+                                ?>
                                 <form id="icl_hide_languages" name="icl_hide_languages" action="">                                        
                                 <p>
                                     <?php foreach($active_languages as $l): ?>
