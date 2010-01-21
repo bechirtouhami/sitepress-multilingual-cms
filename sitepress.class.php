@@ -774,13 +774,20 @@ class SitePress{
             } else {
                 $res = null;
             }
-            if (!$res) {
+            
+            // hide languages for front end
+            $extra_cond = "";
+            if(!is_admin() && !empty($this->settings['hidden_languages']) 
+                && is_array($this->settings['hidden_languages']) && !current_user_can('delete_others_posts')){
+                $extra_cond .= " AND code NOT IN('".join("','", $this->settings['hidden_languages'])."')";
+            }
+            if (!$res) { 
                 $res = $wpdb->get_results("
                     SELECT code, english_name, active, lt.name AS display_name 
                     FROM {$wpdb->prefix}icl_languages l
                         JOIN {$wpdb->prefix}icl_languages_translations lt ON l.code=lt.language_code           
                     WHERE 
-                        active=1 AND lt.display_language_code = '{$in_language}' 
+                        active=1 AND lt.display_language_code = '{$in_language}'  {$extra_cond}
                     ORDER BY major DESC, english_name ASC", ARRAY_A);
                 if (isset($this->icl_language_name_cache)) {
                     $this->icl_language_name_cache->set('in_language_'.$in_language, $res);
@@ -816,6 +823,7 @@ class SitePress{
             
             $this->active_languages = $languages;           
         }
+        
         return $this->active_languages;
     }
     
@@ -2877,6 +2885,9 @@ class SitePress{
     
     function get_ls_languages($template_args=array()){
             global $wpdb, $post, $cat, $tag_id, $w_this_lang;
+            
+            if(is_null($this->wp_query)) $this->set_wp_query();
+            
             $w_active_languages = $this->get_active_languages();                        
             $this_lang = $this->this_lang;
             if($this_lang=='all'){

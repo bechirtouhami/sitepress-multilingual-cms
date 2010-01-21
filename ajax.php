@@ -686,6 +686,11 @@ switch($_REQUEST['icl_ajx_action']){
         echo json_encode($error);
         break;
         
+    case 'icl_hide_languages':
+        $iclsettings['hidden_languages'] = $_POST['icl_hidden_languages'];        
+        $this->save_settings($iclsettings);    
+        echo 1;
+        break;
     default:
         echo __('Invalid action','sitepress');                
 }    

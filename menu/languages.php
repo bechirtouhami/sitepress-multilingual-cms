@@ -680,6 +680,27 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                                 </form>
                             </td>
                         </tr>
+
+                        <tr>
+                            <td>
+                                <h4><?php _e('Hide languages', 'sitepress')?></h4>
+                                <p><?php _e('These languages will not be public on the front end of the site.', 'sitepress')?></p>
+                                <form id="icl_hide_languages" name="icl_hide_languages" action="">                                        
+                                <p>
+                                    <?php foreach($active_languages as $l): ?>
+                                    <?php if($l['code'] == $default_language['code']) continue; ?>
+                                    <label style="white-space:nowrap">
+                                        <input type="checkbox" name="icl_hidden_languages[]" <?php if(in_array($l['code'],(array)$sitepress_settings['hidden_languages'])) echo 'checked="checked"' ?> value="<?php echo $l['code']?>" /> <?php echo $l['display_name'] ?>
+                                    </label>&nbsp;&nbsp;&nbsp;
+                                    <?php endforeach; ?>
+                                </p>
+                                <p>
+                                    <input class="button" name="save" value="<?php echo __('Apply','sitepress') ?>" type="submit" />
+                                    <span class="icl_ajx_response" id="icl_ajx_response_hl"></span>
+                                </p>
+                                </form>
+                            </td>
+                        </tr>
                         
                     </tbody>
                 </table>

@@ -18,7 +18,7 @@ abstract class WPML_Package{
         $this->package_path = dirname($trace[0]['file']);
         $this->name = basename($this->package_path);
         $this->type = basename(dirname(dirname($trace[0]['file'])));
-        $this->package_url = get_option('home') . str_replace('\\','/',str_replace(trim(ABSPATH,'/'), '', $this->package_path));
+        $this->package_url = get_option('siteurl') . str_replace('\\','/',str_replace(trim(ABSPATH,'/'), '', $this->package_path));
         
         $_packages = $WPML_Packages->get_packages();
         $this->data = $_packages[$this->type][$this->name];
