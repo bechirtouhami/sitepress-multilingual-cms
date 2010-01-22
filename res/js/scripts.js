@@ -68,7 +68,7 @@ function iclSaveForm(){
             if(spl[0]=='1'){
                 fadeInAjxResp('#'+ajx_resp, icl_ajx_saved);                                         
                 for(i=0;i<iclSaveForm_success_cb.length;i++){
-                    iclSaveForm_success_cb[i]();    
+                    iclSaveForm_success_cb[i](jQuery('form[name="'+formname+'"]'), spl);    
                 }
             }else{                        
                 jQuery('form[name="'+formname+'"] .icl_form_errors').html(spl[1]);

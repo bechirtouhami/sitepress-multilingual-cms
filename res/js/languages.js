@@ -11,6 +11,7 @@ addLoadEvent(function(){
     jQuery('#icl_admin_language_options').submit(iclSaveForm);    
     jQuery('#icl_lang_more_options').submit(iclSaveForm);    
     jQuery('#icl_blog_posts').submit(iclSaveForm);        
+    jQuery('#icl_hide_languages').submit(iclHideLanguagesCallback);    
     jQuery('#icl_hide_languages').submit(iclSaveForm);    
     jQuery('input[name="icl_language_negotiation_type"]').change(iclLntDomains);
     jQuery('#icl_dismiss_translate_help').click(iclDismissTranslateHelp);
@@ -488,3 +489,9 @@ function pickColor(color) {
 			jQuery('#'+icl_cp_target).trigger('keyup');
 		}
 cp.writeDiv();
+
+function iclHideLanguagesCallback(){
+    iclSaveForm_success_cb.push(function(frm,res){
+        jQuery('#icl_hidden_languages_status').html(res[1]);
+    });
+}

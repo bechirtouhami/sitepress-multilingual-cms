@@ -684,15 +684,6 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                         <tr>
                             <td>
                                 <h4><?php _e('Hide languages', 'sitepress')?></h4>
-
-                                <?php 
-                                    if(!empty($sitepress_settings['hidden_languages'])){
-                                         printf(__('You can enable their display for yourself, in your <a href="%s">profile page</a>.', 'sitepress'),
-                                            'profile.php#wpml');
-                                     }else{
-                                          _e('All languages are currently displayed.', 'sitepress');
-                                     }
-                                ?>
                                 <form id="icl_hide_languages" name="icl_hide_languages" action="">                                        
                                 <p>
                                     <?php foreach($active_languages as $l): ?>
@@ -706,6 +697,28 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                                     <input class="button" name="save" value="<?php echo __('Apply','sitepress') ?>" type="submit" />
                                     <span class="icl_ajx_response" id="icl_ajx_response_hl"></span>
                                 </p>
+                                <p id="icl_hidden_languages_status">                     
+                                <?php 
+                                    if(!empty($sitepress_settings['hidden_languages'])){
+                                        
+                                         if(1 == count($sitepress_settings['hidden_languages'])){
+                                             printf(__('%s is currently hidden to visitors.', 'sitepress'), 
+                                                $active_languages[$sitepress_settings['hidden_languages'][0]]['display_name']);
+                                         }else{
+                                             foreach($sitepress_settings['hidden_languages'] as $l){
+                                                 $_hlngs[] = $active_languages[$l]['display_name'];
+                                             }                                 
+                                             $hlangs = join(', ', $_hlngs);
+                                             printf(__('%s are currently hidden to visitors.', 'sitepress'), $hlangs);
+                                         }
+                                         echo ' ';
+                                         printf(__('You can enable its/their display for yourself, in your <a href="%s">profile page</a>.', 'sitepress'),
+                                            'profile.php#wpml');
+                                     }else{
+                                          _e('All languages are currently displayed.', 'sitepress');
+                                     }
+                                ?>
+                                </p>                                
                                 </form>
                             </td>
                         </tr>

@@ -688,8 +688,25 @@ switch($_REQUEST['icl_ajx_action']){
         
     case 'icl_hide_languages':
         $iclsettings['hidden_languages'] = $_POST['icl_hidden_languages'];        
+        $active_languages = $this->get_active_languages();
+        if(!empty($iclsettings['hidden_languages'])){
+             if(1 == count($iclsettings['hidden_languages'])){
+                 $out = sprintf(__('%s is currently hidden to visitors.', 'sitepress'), 
+                    $active_languages[$iclsettings['hidden_languages'][0]]['display_name']);
+             }else{
+                 foreach($iclsettings['hidden_languages'] as $l){
+                     $_hlngs[] = $active_languages[$l]['display_name'];
+                 }                                 
+                 $hlangs = join(', ', $_hlngs);
+                 $out = sprintf(__('%s are currently hidden to visitors.', 'sitepress'), $hlangs);                 
+             }
+             $out .= ' ' . sprintf(__('You can enable its/their display for yourself, in your <a href="%s">profile page</a>.', 'sitepress'),
+                                            'profile.php#wpml');
+        } else {
+            $out = __('All languages are currently displayed.', 'sitepress'); 
+        }            
         $this->save_settings($iclsettings);    
-        echo 1;
+        echo '1|'.$out;
         break;
     default:
         echo __('Invalid action','sitepress');                
