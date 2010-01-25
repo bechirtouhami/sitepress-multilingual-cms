@@ -253,6 +253,10 @@ switch($_REQUEST['icl_ajx_action']){
     case 'icl_page_sync_options':
         $iclsettings['sync_page_ordering'] = intval($_POST['icl_sync_page_ordering']);        
         $iclsettings['sync_page_parent'] = intval($_POST['icl_sync_page_parent']);            
+        $iclsettings['sync_page_template'] = intval($_POST['icl_sync_page_template']);            
+        $iclsettings['sync_comment_status'] = intval($_POST['icl_sync_comment_status']);            
+        $iclsettings['sync_ping_status'] = intval($_POST['icl_sync_ping_status']);            
+        $iclsettings['sync_sticky_flag'] = intval($_POST['icl_sync_sticky_flag']);            
         $this->save_settings($iclsettings);
         echo 1; 
         break;        

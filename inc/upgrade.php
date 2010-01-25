@@ -378,6 +378,21 @@ function icl_plugin_upgrade(){
         if($mig_debug) fwrite($mig_debug, "Upgraded to 1.6.0 \n");
         
     }
+
+    if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.6.1', '<')){
+        
+        if($mig_debug) fwrite($mig_debug, "Upgrading to 1.6.1 \n");
+        
+        $iclsettings['sync_ping_status'] = 1;
+        $iclsettings['sync_comment_status'] = 1;
+        $iclsettings['sync_sticky_flag'] = 1;
+        $iclsettings['sync_page_template'] = 1;
+        
+        update_option('icl_sitepress_settings',$iclsettings);
+        
+        if($mig_debug) fwrite($mig_debug, "Upgraded to 1.6.1 \n");
+        
+    }
     
     if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '<')){
         if($mig_debug) fwrite($mig_debug, "Update plugin version in the database \n");

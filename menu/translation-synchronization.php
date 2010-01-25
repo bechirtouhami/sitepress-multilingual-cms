@@ -85,7 +85,7 @@
     <table class="widefat">
         <thead>
             <tr>
-                <th><?php _e('Page synchronization', 'sitepress');?></t>
+                <th><?php _e('Posts and pages synchronization', 'sitepress');?></t>
             </tr>
         </thead>
         <tbody>
@@ -101,6 +101,22 @@
                         <label><input type="checkbox" id="icl_sync_page_parent" name="icl_sync_page_parent" <?php if($sitepress_settings['sync_page_parent']): ?>checked="checked"<?php endif; ?> value="1" />
                         <?php echo __('Set page parent for translation according to page parent of the original language.', 'sitepress') ?></label>                        
                     </p>
+                    <p>
+                        <label><input type="checkbox" name="icl_sync_page_template" <?php if($sitepress_settings['sync_page_template']): ?>checked="checked"<?php endif; ?> value="1" />
+                        <?php echo __('Synchronize page template.', 'sitepress') ?></label>                        
+                    </p>                    
+                    <p>
+                        <label><input type="checkbox" name="icl_sync_comment_status" <?php if($sitepress_settings['sync_comment_status']): ?>checked="checked"<?php endif; ?> value="1" />
+                        <?php echo __('Synchronize comment status.', 'sitepress') ?></label>                        
+                    </p>                    
+                    <p>
+                        <label><input type="checkbox" name="icl_sync_ping_status" <?php if($sitepress_settings['sync_ping_status']): ?>checked="checked"<?php endif; ?> value="1" />
+                        <?php echo __('Synchronize ping status.', 'sitepress') ?></label>                        
+                    </p>                                        
+                    <p>
+                        <label><input type="checkbox" name="icl_sync_sticky_flag" <?php if($sitepress_settings['sync_sicky_flag']): ?>checked="checked"<?php endif; ?> value="1" />
+                        <?php echo __('Synchronize sticky flag.', 'sitepress') ?></label>                        
+                    </p>                                                            
                     <p>
                         <input class="button" name="save" value="<?php echo __('Save','sitepress') ?>" type="submit" />
                         <span class="icl_ajx_response" id="icl_ajx_response_mo"></span>

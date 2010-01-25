@@ -637,6 +637,11 @@ class SitePress{
             'icl_lso_native_lang' => 1,
             'icl_lso_display_lang' => 1,
             'sync_page_ordering' => 1,
+            'sync_page_parent' => 1,
+            'sync_page_template' => 1,
+            'sync_ping_status' => 1,
+            'sync_comment_status' => 1,
+            'sync_sticky_flag' => 1,
             'translated_document_status' => 0,
             'translation_pickup_method' => 0,
             'notify_complete' => 1,
@@ -1190,37 +1195,49 @@ class SitePress{
                         break;
                     }
                 }
-                if(isset($_GET['trid'])){
+                if(isset($_GET['trid']) && ($this->settings['sync_ping_status'] || $this->settings['sync_comment_status'])){
                     $res = $wpdb->get_row("SELECT comment_status, ping_status FROM {$wpdb->prefix}icl_translations t 
                     JOIN {$wpdb->posts} p ON t.element_id = p.ID WHERE t.trid='".intval($_GET['trid'])."'"); ?>
                     <script type="text/javascript">addLoadEvent(function(){
-                    <?php if($res->comment_status == 'open'): ?>
-                    jQuery('#comment_status').attr('checked','checked');
-                    <?php else: ?>
-                    jQuery('#comment_status').removeAttr('checked');
+                    <?php if($this->settings['sync_comment_status']): ?>
+                        <?php if($res->comment_status == 'open'): ?>
+                        jQuery('#comment_status').attr('checked','checked');
+                        <?php else: ?>
+                        jQuery('#comment_status').removeAttr('checked');
+                        <?php endif; ?>
                     <?php endif; ?>
-                    <?php if($res->ping_status == 'open'): ?>
-                    jQuery('#ping_status').attr('checked','checked');
-                    <?php else: ?>
-                    jQuery('#ping_status').removeAttr('checked');
-                    <?php endif; ?>                    
+                    <?php if($this->settings['sync_ping_status']): ?>
+                        <?php if($res->ping_status == 'open'): ?>
+                        jQuery('#ping_status').attr('checked','checked');
+                        <?php else: ?>
+                        jQuery('#ping_status').removeAttr('checked');
+                        <?php endif; ?>                    
+                    <?php endif; ?>
                     });</script><?php 
                 }
                 //get menu_order for page
                 
             }
             ?>
-            <?php if($is_sticky): ?><script type="text/javascript">addLoadEvent(function(){jQuery('#sticky').attr('checked','checked');});</script><?php endif; ?>               
+            <?php if($is_sticky && $this->settings['sync_sticky_flag']): ?><script type="text/javascript">addLoadEvent(function(){jQuery('#sticky').attr('checked','checked');});</script><?php endif; ?>               
             <?php
         }elseif('page-new.php' == $pagenow){
-            if(isset($_GET['trid'])){
+            if(isset($_GET['trid']) && ($this->settings['sync_page_template'] || $this->settings['sync_page_ordering'])){
                 $res = $wpdb->get_row("
                     SELECT p.ID, p.menu_order FROM {$wpdb->prefix}icl_translations t
                     JOIN {$wpdb->posts} p ON t.element_id = p.ID
                     WHERE t.trid='{$_GET['trid']}' AND p.post_type='page' AND t.element_type='post'
                 "); 
-                $menu_order = $res->menu_order;                   
-                $page_template = get_post_meta($res->ID, '_wp_page_template', true);
+                if($this->settings['sync_page_ordering']){
+                    $menu_order = $res->menu_order;                   
+                }else{
+                    $menu_order = false;
+                }
+                if($this->settings['sync_page_template']){
+                    $page_template = get_post_meta($res->ID, '_wp_page_template', true);
+                }else{
+                    $page_template = false;
+                }                
                 if($menu_order || $page_template){
                     ?><script type="text/javascript">addLoadEvent(function(){ <?php 
                     if($menu_order){ ?>
@@ -1748,7 +1765,7 @@ class SitePress{
         }
                 
         // synchronize the page parent for translations
-        if($trid && $_POST['post_type']=='page'){
+        if($trid && $_POST['post_type']=='page' && $this->settings['sync_page_parent']){
             $translations = $this->get_element_translations($trid);
             foreach($translations as $target_lang => $target_details){
                 if($target_lang != $language_code){
@@ -1769,7 +1786,7 @@ class SitePress{
         }        
                 
         // synchronize the page template
-        if($trid && $_POST['post_type']=='page'){
+        if($trid && $_POST['post_type']=='page' && $this->settings['sync_page_template']){
             $translated_pages = $wpdb->get_col("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid='{$trid}' AND element_id<>{$post_id}");
             if(!empty($translated_pages)){
                 foreach($translated_pages as $tp){
@@ -1781,17 +1798,25 @@ class SitePress{
         }        
 
         // synchronize comment and ping status
-        if($trid && $_POST['post_type']=='post'){
-            $comment_status = $_POST['comment_status']; 
-            $ping_status = $_POST['ping_status']; 
-            $translated_posts = $wpdb->get_col("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid='{$trid}' AND element_id<>{$post_id}");
-            if(!empty($translated_posts)){
-                foreach($translated_posts as $tp){
-                    if($tp != $post_id){
-                        $wpdb->update($wpdb->posts, array('comment_status'=>$comment_status, 'ping_status'=>$ping_status), array('ID'=>$tp));
+        if($trid && $_POST['post_type']=='post' && ($this->settings['sync_ping_status'] || $this->settings['sync_comment_status'])){
+            $arr = array();
+            if($this->settings['sync_comment_status']){
+                $arr['comment_status'] = $_POST['comment_status'];
+            }
+            if($this->settings['sync_ping_status']){
+                $arr['ping_status'] = $_POST['ping_status'];
+            }
+            if(!empty($arr)){
+                $translated_posts = $wpdb->get_col("
+                    SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid='{$trid}' AND element_id<>{$post_id}");
+                if(!empty($translated_posts)){
+                    foreach($translated_posts as $tp){
+                        if($tp != $post_id){
+                            $wpdb->update($wpdb->posts, $arr, array('ID'=>$tp));
+                        }
                     }
-                }
-            }            
+                }            
+            }
         }        
         
         require_once ICL_PLUGIN_PATH . '/inc/plugins-texts-functions.php';
@@ -1801,7 +1826,7 @@ class SitePress{
         
                 
         //sync posts stcikiness
-        if($_POST['post_type']=='post' && $_POST['action']!='post-quickpress-publish' ){ //not for quick press            
+        if($_POST['post_type']=='post' && $_POST['action']!='post-quickpress-publish' && $this->settings['sync_sticly_flag']){ //not for quick press
             remove_filter('option_sticky_posts', array($this,'option_sticky_posts')); // remove filter used to get language relevant stickies. get them all
             $sticky_posts = get_option('sticky_posts');
             // get ids of othe translations

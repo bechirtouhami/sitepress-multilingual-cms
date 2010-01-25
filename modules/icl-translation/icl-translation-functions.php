@@ -777,9 +777,15 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     }
     $postarr['post_author'] = $original_post_details->post_author;  
     $postarr['post_type'] = $original_post_details->post_type;
-    $postarr['comment_status'] = $original_post_details->comment_status;
-    $postarr['ping_status'] = $original_post_details->ping_status;
-    $postarr['menu_order'] = $original_post_details->menu_order;
+    if($this->settings['sync_comment_status']){
+        $postarr['comment_status'] = $original_post_details->comment_status;
+    }
+    if($this->settings['sync_ping_status']){
+        $postarr['ping_status'] = $original_post_details->ping_status;
+    }
+    if($this->settings['sync_menu_order']){
+        $postarr['menu_order'] = $original_post_details->menu_order;
+    }
     if(!$is_update){
         $postarr['post_status'] = !$sitepress_settings['translated_document_status'] ? 'draft' : $original_post_details->post_status;
     } else {
@@ -787,7 +793,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
         $postarr['post_status'] = $wpdb->get_var("SELECT post_status FROM {$wpdb->prefix}posts WHERE ID = ".$post_id);
     }
     
-    if(isset($parent_id)){
+    if(isset($parent_id) && $this->settings['sync_page_parent']){
         $_POST['post_parent'] = $postarr['post_parent'] = $parent_id;  
         $_POST['parent_id'] = $postarr['parent_id'] = $parent_id;  
     }
@@ -803,7 +809,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     $new_post_id = wp_insert_post($postarr);
 
     // set stickiness
-    if($is_original_sticky){
+    if($is_original_sticky && $sitepress_settings['sync_sticky_flag']){
         stick_post($new_post_id);
     }else{
         if($original_post_details->post_type=='post' && $is_update){
@@ -826,8 +832,10 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     }    
     
     // sync _wp_page_template
-    $_wp_page_template = get_post_meta($translation['original_id'], '_wp_page_template', true);
-    update_post_meta($new_post_id, '_wp_page_template', $_wp_page_template);
+    if($this->settings['sync_page_template']){
+        $_wp_page_template = get_post_meta($translation['original_id'], '_wp_page_template', true);
+        update_post_meta($new_post_id, '_wp_page_template', $_wp_page_template);
+    }
     
     
     // set the translated custom fields if we have some.
