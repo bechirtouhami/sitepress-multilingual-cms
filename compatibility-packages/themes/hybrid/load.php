@@ -132,15 +132,17 @@ class Hybrid_theme_compatibility  extends WPML_Package{
 		$settings = get_option('hybrid_theme_settings');
 		if ( $settings && !empty($settings['footer_insert']) ) {
 			icl_register_string( 'theme '.$this->name, 'Footer text', $settings['footer_insert'] );
-			add_action('wp_head',array(&$this,'translate_footer_text'));
+			add_action('hybrid_footer',array(&$this,'translate_footer_text'),0);
 		}
 		
 		$this->load_css('css/compatibility-package.css');
     }
 
 	function translate_footer_text() {
-		global $hybrid_settings;
-		$hybrid_settings['footer_insert'] = icl_t('theme '.$this->name,'Footer text',$hybrid_settings['footer_insert']);
+		global $hybrid, $hybrid_settings;
+		$translation = icl_t('theme '.$this->name,'Footer text',$hybrid_settings['footer_insert']);
+		$hybrid_settings['footer_insert'] = $translation;
+		$hybrid->settings['footer_insert'] = $translation;
 	}
 
     function __destruct(){
