@@ -2,8 +2,7 @@
 <h3><?php echo __('Need help?', 'sitepress')?></h3>
 
 <p>
-<?php printf(__('Quick question - ask <a href="%s">WPML on Twitter</a>', 'sitepress'), 'http://twitter.com/wpml')?> &nbsp; | &nbsp;
-<?php printf(__('Technical questions - use the <a href="%s">support forum</a>', 'sitepress'), 'http://forum.wpml.org')?> &nbsp; | &nbsp;
-<?php printf(__('Documentation - <a href="%s">wpml.org</a>', 'sitepress'), 'http://wpml.org')?>
+<a href="http://wpml.org/?page_id=505"><?php _e('WPML user guide', 'sitepress')?></a> &nbsp; | &nbsp;
+<a href="http://wpml.org/?page_id=3884"><?php _e('Information for web developers', 'sitepress')?></a> &nbsp;
 </p>
 </div>
