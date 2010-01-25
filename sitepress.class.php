@@ -246,9 +246,10 @@ class SitePress{
                 add_action('wp_head', array($this, 'custom_language_switcher_style'));
             }
             
-            
-            
-            
+            // adjust queried categories and tags ids according to the language            
+            if($this->settings['auto_adjust_ids']){
+                add_action('parse_query', array($this, 'parse_query'));            
+            }            
             
         } //end if the initial language is set - existing_content_language_verified
         
@@ -647,6 +648,7 @@ class SitePress{
             'notify_complete' => 1,
             'translated_document_status' => 1,
             'remote_management' => 0,
+            'auto_adjust_ids' => 1,
             'alert_delay' => 0,
             'modules' => array(
                 'absolute-links' => array('enabled'=>0),
@@ -1941,7 +1943,6 @@ class SitePress{
         icl_cache_clear($post_type.'s_per_language');        
     }
 
-    
     function untrashed_post_actions($post_id){
         global $wpdb;
         
@@ -1966,7 +1967,6 @@ class SitePress{
         
         
     }
-    
     
     function get_element_translations($trid, $el_type='post', $skip_empty = false){        
         global $wpdb;  
@@ -2062,7 +2062,6 @@ class SitePress{
         
         return $untranslated;
     }
-            
     
     function meta_box($post){
         global $wpdb;   
@@ -2577,6 +2576,7 @@ class SitePress{
         }
         
     }
+    
     function pre_term_name($value, $taxonomy){
         //allow adding terms with the same name in different languages
         global $wpdb;
@@ -2915,7 +2915,7 @@ class SitePress{
     function get_ls_languages($template_args=array()){
             global $wpdb, $post, $cat, $tag_id, $w_this_lang;
             
-            if(is_null($this->wp_query)) $this->set_wp_query();
+            //if(is_null($this->wp_query)) $this->set_wp_query();
             
             $w_active_languages = $this->get_active_languages();                        
             $this_lang = $this->this_lang;
@@ -3132,6 +3132,7 @@ class SitePress{
         
         return false;
     }
+    
     function get_default_categories(){
         $default_categories_all = $this->settings['default_categories'];
         
@@ -3280,7 +3281,166 @@ class SitePress{
         $wp_query->query_vars['lang'] = $this->this_lang;                    
         return $public_query_vars;
     }
-    
+        
+    function parse_query($q){
+        global $wp_query, $wpdb;
+        if($q == $wp_query) return; // not touching the WP query
+        
+        if($this->get_current_language() != $this->get_default_language()) {
+            $cat_array = array();
+            // cat
+            if(isset($q->query_vars['cat']) && !empty($q->query_vars['cat'])){
+                $cat_array = array_map('trim', explode(',', $q->query_vars['cat']));
+            }
+            // category_name
+            if(isset($q->query_vars['category_name']) && !empty($q->query_vars['category_name'])){
+                $cat_id = get_cat_ID($q->query_vars['category_name']);
+                $cat_array = array($cat_id);            
+            }
+            // category_and
+            if(isset($q->query_vars['category__and']) && !empty($q->query_vars['category__and'])){
+                $cat_array = $q->query_vars['category__and'];
+            }
+            // category_in
+            if(isset($q->query_vars['category__in']) && !empty($q->query_vars['category__in'])){
+                $cat_array = $q->query_vars['category__in'];
+            }            
+            // category__not_in
+            if(isset($q->query_vars['category__not_in']) && !empty($q->query_vars['category__not_in'])){
+                $cat_array = $q->query_vars['category__not_in'];
+            }
+            
+            if(!empty($cat_array)){
+                $translated_ids = array();
+                foreach($cat_array as $c){                    
+                    if(intval($c) < 0){
+                        $sign = -1;
+                    }else{
+                        $sign = 1;
+                    }
+                    $translated_ids[] = $sign * intval(icl_object_id(abs($c), 'category', true));
+                }
+            }
+            
+            //cat
+            if(isset($q->query_vars['cat']) && !empty($q->query_vars['cat'])){
+                $q->query_vars['cat'] = join(',', $translated_ids);    
+            }
+            // category_name
+            if(isset($q->query_vars['category_name']) && !empty($q->query_vars['category_name'])){
+                $q->query_vars['cat'] = $translated_ids[0];    
+                unset($q->query_vars['category_name']);
+            }
+            // category__and
+            if(isset($q->query_vars['category__and']) && !empty($q->query_vars['category__and'])){
+                $q->query_vars['category__and'] = $translated_ids;
+            }
+            // category__in
+            if(isset($q->query_vars['category__in']) && !empty($q->query_vars['category__in'])){
+                $q->query_vars['category__in'] = $translated_ids;
+            }            
+            // category__not_in
+            if(isset($q->query_vars['category__not_in']) && !empty($q->query_vars['category__not_in'])){
+                $q->query_vars['category__not_in'] = $translated_ids;
+            }
+            
+            // TAGS
+            $tag_array = array();
+            // tag
+            if(isset($q->query_vars['tag']) && !empty($q->query_vars['tag'])){
+                if(false !== strpos($q->query_vars['tag'],'+')){
+                    $tag_glue = '+';
+                    $exp = explode('+', $q->query_vars['tag']);
+                }else{
+                    $tag_glue = ',';
+                    $exp = explode('+', $q->query_vars['tag']);                    
+                } 
+                $tag_ids = array();               
+                foreach($exp as $e){
+                    $tag_array[] = $wpdb->get_var($wpdb->prepare( "SELECT x.term_taxonomy_id FROM $wpdb->terms t 
+                        JOIN $wpdb->term_taxonomy x ON t.term_id=x.term_id WHERE x.taxonomy='post_tag' AND t.slug='%s'", $wpdb->escape($e)));    
+                }
+            }            
+            //tag_id
+            if(isset($q->query_vars['tag_id']) && !empty($q->query_vars['tag_id'])){
+                $tag_array = array_map('trim', explode($tag_glue, $q->query_vars['tag_id']));
+            }
+            
+            // tag__and
+            if(isset($q->query_vars['tag__and']) && !empty($q->query_vars['tag__and'])){
+                $tag_array = $q->query_vars['tag__and'];
+            }
+            // tag__in
+            if(isset($q->query_vars['tag__in']) && !empty($q->query_vars['tag__in'])){
+                $tag_array = $q->query_vars['tag__in'];
+            }            
+            // tag__not_in
+            if(isset($q->query_vars['tag__not_in']) && !empty($q->query_vars['tag__not_in'])){
+                $tag_array = $q->query_vars['tag__not_in'];
+            }
+            // tag_slug__in
+            if(isset($q->query_vars['tag_slug__in']) && !empty($q->query_vars['tag_slug__in'])){
+                foreach($q->query_vars['tag_slug__in'] as $t){
+                    $tag_array[] = $wpdb->get_var($wpdb->prepare( "SELECT x.term_taxonomy_id FROM $wpdb->terms t 
+                        JOIN $wpdb->term_taxonomy x ON t.term_id=x.term_id WHERE x.taxonomy='post_tag' AND t.slug='%s'", $wpdb->escape($t)));    
+                }
+            }            
+            // tag_slug__and
+            if(isset($q->query_vars['tag_slug__and']) && !empty($q->query_vars['tag_slug__and'])){
+                foreach($q->query_vars['tag_slug__and'] as $t){
+                    $tag_array[] = $wpdb->get_var($wpdb->prepare( "SELECT x.term_taxonomy_id FROM $wpdb->terms t 
+                        JOIN $wpdb->term_taxonomy x ON t.term_id=x.term_id WHERE x.taxonomy='post_tag' AND t.slug='%s'", $wpdb->escape($t)));    
+                }
+            }
+            
+            if(!empty($tag_array)){
+                $translated_ids = array();
+                foreach($tag_array as $c){                    
+                    if(intval($c) < 0){
+                        $sign = -1;
+                    }else{
+                        $sign = 1;
+                    }
+                     $_tid = intval(icl_object_id(abs($c), 'post_tag', true));
+                     $translated_ids[] = $sign * $wpdb->get_var($wpdb->prepare("SELECT term_id FROM $wpdb->term_taxonomy WHERE term_taxonomy_id=%d", $_tid));
+                }
+            }
+            
+
+            //tag            
+            if(isset($q->query_vars['tag']) && !empty($q->query_vars['tag'])){
+                $slugs = $wpdb->get_col("SELECT slug FROM $wpdb->terms WHERE term_id IN (".join(',', $translated_ids).")");
+                $q->query_vars['tag'] = join($tag_glue, $slugs);    
+            }
+            //tag_id
+            if(isset($q->query_vars['tag_id']) && !empty($q->query_vars['tag_id'])){
+                $q->query_vars['tag_id'] = join(',', $translated_ids);    
+            }                        
+            // tag__and
+            if(isset($q->query_vars['tag__and']) && !empty($q->query_vars['tag__and'])){
+                $q->query_vars['tag__and'] = $translated_ids;
+            }
+            // tag__in
+            if(isset($q->query_vars['tag__in']) && !empty($q->query_vars['tag__in'])){
+                $q->query_vars['tag__in'] = $translated_ids;
+            }            
+            // tag__not_in
+            if(isset($q->query_vars['tag__not_in']) && !empty($q->query_vars['tag__not_in'])){
+                $q->query_vars['tag__not_in'] = $translated_ids;
+            }   
+            // tag_slug__in
+            if(isset($q->query_vars['tag_slug__in']) && !empty($q->query_vars['tag_slug__in'])){
+                $q->query_vars['tag_slug__in'] = $wpdb->get_col("SELECT slug FROM $wpdb->terms WHERE term_id IN (".join(',', $translated_ids).")");
+            }            
+            // tag_slug__and
+            if(isset($q->query_vars['tag_slug__and']) && !empty($q->query_vars['tag_slug__and'])){
+                $q->query_vars['tag_slug__and'] = $wpdb->get_col("SELECT slug FROM $wpdb->terms WHERE term_id IN (".join(',', $translated_ids).")");
+            }
+                     
+        } 
+        //return $q;
+    }
+        
     function language_attributes($output){
         if(preg_match('#lang="[a-z-]+"#i',$output)){
             $output = preg_replace('#lang="([a-z-]+)"#i', 'lang="'.$this->this_lang.'"', $output);

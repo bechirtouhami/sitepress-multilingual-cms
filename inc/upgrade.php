@@ -388,6 +388,8 @@ function icl_plugin_upgrade(){
         $iclsettings['sync_sticky_flag'] = 1;
         $iclsettings['sync_page_template'] = 1;
         
+        $iclsettings['auto_adjust_ids'] = 0;
+        
         update_option('icl_sitepress_settings',$iclsettings);
         
         if($mig_debug) fwrite($mig_debug, "Upgraded to 1.6.1 \n");

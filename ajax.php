@@ -712,6 +712,13 @@ switch($_REQUEST['icl_ajx_action']){
         $this->save_settings($iclsettings);    
         echo '1|'.$out;
         break;
+        
+    case 'icl_adjust_ids':
+        $iclsettings['auto_adjust_ids'] = intval($_POST['icl_adjust_ids']);        
+        $this->save_settings($iclsettings);    
+        echo '1|';        
+        break;
+    
     default:
         echo __('Invalid action','sitepress');                
 }    

@@ -723,6 +723,25 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                             </td>
                         </tr>
                         
+                        <tr>
+                            <td>
+                                <h4><?php _e('Adjust category and tag IDs', 'sitepress')?></h4>
+                                <form id="icl_adjust_ids" name="icl_adjust_ids" action="">        
+                                <p>
+                                    <label>
+                                        <input type="checkbox" value="1" name="icl_adjust_ids" <?php if($sitepress_settings['auto_adjust_ids']) echo 'checked="checked"' ?> /> 
+                                        <?php _e('Adjust category and tag IDs for translations', 'sitepress')?>
+                                    </label>
+                                </p>
+                                <p><i><?php _e('This feature is intended for themes that display posts for special categories', 'sitepress')?></i></p>
+                                <p>
+                                    <input class="button" name="save" value="<?php echo __('Apply','sitepress') ?>" type="submit" />
+                                    <span class="icl_ajx_response" id="icl_ajx_response_ai"></span>
+                                </p>
+                                </form>
+                            </td>
+                        </tr>
+                        
                     </tbody>
                 </table>
                 <br />

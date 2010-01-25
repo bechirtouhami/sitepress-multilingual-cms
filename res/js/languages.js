@@ -13,6 +13,7 @@ addLoadEvent(function(){
     jQuery('#icl_blog_posts').submit(iclSaveForm);        
     jQuery('#icl_hide_languages').submit(iclHideLanguagesCallback);    
     jQuery('#icl_hide_languages').submit(iclSaveForm);    
+    jQuery('#icl_adjust_ids').submit(iclSaveForm);    
     jQuery('input[name="icl_language_negotiation_type"]').change(iclLntDomains);
     jQuery('#icl_dismiss_translate_help').click(iclDismissTranslateHelp);
     jQuery('#icl_setup_back_1').click(iclSetupStep1);
