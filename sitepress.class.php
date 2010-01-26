@@ -11,7 +11,7 @@ class SitePress{
         global $wpdb;
                                          
         $this->settings = get_option('icl_sitepress_settings');                                
-        
+                
         if(false != $this->settings){
             $this->verify_settings();
         } 
@@ -3361,7 +3361,7 @@ class SitePress{
                         JOIN $wpdb->term_taxonomy x ON t.term_id=x.term_id WHERE x.taxonomy='post_tag' AND t.slug='%s'", $wpdb->escape($e)));    
                 }
             }            
-            //tag_id
+            // tag_id
             if(isset($q->query_vars['tag_id']) && !empty($q->query_vars['tag_id'])){
                 $tag_array = array_map('trim', explode($tag_glue, $q->query_vars['tag_id']));
             }
@@ -3435,6 +3435,49 @@ class SitePress{
             // tag_slug__and
             if(isset($q->query_vars['tag_slug__and']) && !empty($q->query_vars['tag_slug__and'])){
                 $q->query_vars['tag_slug__and'] = $wpdb->get_col("SELECT slug FROM $wpdb->terms WHERE term_id IN (".join(',', $translated_ids).")");
+            }
+               
+               
+            // POST & PAGES
+            // page_id
+            if(isset($q->query_vars['page_id']) && !empty($q->query_vars['page_id'])){
+                $q->query_vars['page_id'] = icl_object_id($q->query_vars['page_id'], 'page', true);
+            }
+            // p
+            if(isset($q->query_vars['p']) && !empty($q->query_vars['p'])){
+                $q->query_vars['p'] = icl_object_id($q->query_vars['p'], 'post', true);
+            }
+            // name
+            if(isset($q->query_vars['name']) && !empty($q->query_vars['name'])){
+                $pid = $wpdb->get_var("SELECT ID FRM $wpdb->posts WHERE name='".$wpdb->escape($q->query_vars['name'])."'");
+                $q->query_vars['p'] = icl_object_id($pid, 'post', true);
+                unset($q->query_vars['name']);
+            }
+            // pagename
+            if(isset($q->query_vars['pagename']) && !empty($q->query_vars['pagename'])){
+                $pid = $wpdb->get_var("SELECT ID FRM $wpdb->posts WHERE name='".$wpdb->escape($q->query_vars['name'])."'");
+                $q->query_vars['page_id'] = icl_object_id($pid, 'page', true);
+                unset($q->query_vars['pagename']);
+            }
+            // post__in
+            if(isset($q->query_vars['post__in']) && !empty($q->query_vars['post__in'])){
+                $pid = array();
+                foreach($q->query_vars['post__in'] as $p){
+                    $pid[] = icl_object_id($p, 'post', true);                    
+                }
+                $q->query_vars['post__in'] = $pid;
+            }
+            // post__not_in
+            if(isset($q->query_vars['post__not_in']) && !empty($q->query_vars['post__not_in'])){
+                $pid = array();
+                foreach($q->query_vars['post__not_in'] as $p){
+                    $pid[] = icl_object_id($p, 'post', true);                    
+                }
+                $q->query_vars['post__not_in'] = $pid;
+            }
+            // post_parent
+            if(isset($q->query_vars['post_parent']) && !empty($q->query_vars['post_parent'])){
+                $q->query_vars['post_parent'] = icl_object_id($q->query_vars['post_parent'], 'post', true);
             }
                      
         } 
