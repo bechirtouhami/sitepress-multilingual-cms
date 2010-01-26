@@ -725,7 +725,7 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                         
                         <tr>
                             <td>
-                                <h4><?php _e('Adjust category and tag IDs', 'sitepress')?></h4>
+                                <h4><?php _e('Adjust category, tag, post and page IDs', 'sitepress')?></h4>
                                 <form id="icl_adjust_ids" name="icl_adjust_ids" action="">        
                                 <p>
                                     <label>
