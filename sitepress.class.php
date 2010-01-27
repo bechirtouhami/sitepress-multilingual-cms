@@ -79,7 +79,7 @@ class SitePress{
                 add_action('admin_footer', array($this,'language_filter'));
             }
             
-            add_filter('wp_list_pages_excludes', array($this, 'exclude_other_language_pages'));
+            //add_filter('wp_list_pages_excludes', array($this, 'exclude_other_language_pages'));
             add_filter('get_pages', array($this, 'exclude_other_language_pages2'));
             add_filter('wp_dropdown_pages', array($this, 'wp_dropdown_pages'));
             
@@ -249,6 +249,8 @@ class SitePress{
             // adjust queried categories and tags ids according to the language            
             if($this->settings['auto_adjust_ids']){
                 add_action('parse_query', array($this, 'parse_query'));            
+                add_action('wp_list_pages_excludes', array($this, 'adjust_wp_list_pages_excludes'));            
+                
             }            
             
         } //end if the initial language is set - existing_content_language_verified
@@ -257,19 +259,20 @@ class SitePress{
     
     function the_posts($posts){        
         global $wpdb, $wp_query;
-        
         $db = debug_backtrace();   
-        $custom_wp_query = $db[3]['object'];
+        $custom_wp_query = $db[3]['object'];        
+        
         
         //exceptions
         if( 
             ($this->get_current_language() == $this->get_default_language())  // original language
             || ($wp_query != $custom_wp_query)   // called by a custom query
             || (!$custom_wp_query->is_posts_page && !$custom_wp_query->is_home) // not the blog posts page           
+            || $wp_query->is_singular //is singular
         ){
+            
             return $posts;                
         }
-        
         // get the posts in the default language instead        
         $this_lang = $this->this_lang;
         $this->this_lang = $this->get_default_language();        
@@ -313,8 +316,6 @@ class SitePress{
         }  
                    
         $my_query = new WP_Query($custom_wp_query->query_vars);
-        
-        
         add_filter('the_posts', array($this, 'the_posts'));
         $this->this_lang = $this_lang;
         
@@ -352,6 +353,9 @@ class SitePress{
         }        
         
         $posts = $my_query->posts;
+        
+        unset($GLOBALS['__icl_the_posts_posts_not_translated']);
+        remove_filter('posts_where', array($this, '_posts_untranslated_extra_posts_where'), 99);
         
         return $posts;
     }
@@ -2224,6 +2228,7 @@ class SitePress{
         <?php
     }
     
+    /*
     function exclude_other_language_pages($s){
         global $wpdb;
         $excl_pages = $wpdb->get_col("
@@ -2233,6 +2238,7 @@ class SitePress{
             ");
         return array_merge($s, $excl_pages);
     }
+    */
     
     function exclude_other_language_pages2($arr){
         global $wpdb;
@@ -3434,10 +3440,12 @@ class SitePress{
                
                
             // POST & PAGES
-            // page_id
+            // page_id                        
             if(isset($q->query_vars['page_id']) && !empty($q->query_vars['page_id'])){
                 $q->query_vars['page_id'] = icl_object_id($q->query_vars['page_id'], 'page', true);
+                $q->query = preg_replace('/page_id=[0-9]+/','page_id='.$q->query_vars['page_id'], $q->query);
             }
+            
             // p
             if(isset($q->query_vars['p']) && !empty($q->query_vars['p'])){
                 $q->query_vars['p'] = icl_object_id($q->query_vars['p'], 'post', true);
@@ -3452,7 +3460,7 @@ class SitePress{
             if(isset($q->query_vars['pagename']) && !empty($q->query_vars['pagename'])){
                 $pid = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_name='".$wpdb->escape($q->query_vars['name'])."'");
                 $q->query_vars['page_id'] = icl_object_id($pid, 'page', true);
-                unset($q->query_vars['pagename']);
+                unset($q->query_vars['pagename']);                
             }
             // post__in
             if(isset($q->query_vars['post__in']) && !empty($q->query_vars['post__in'])){
@@ -3473,10 +3481,17 @@ class SitePress{
             // post_parent
             if(isset($q->query_vars['post_parent']) && !empty($q->query_vars['post_parent'])){
                 $q->query_vars['post_parent'] = icl_object_id($q->query_vars['post_parent'], 'post', true);
-            }
+            } 
                      
-        } 
+        }
         return $q;
+    }
+    
+    function adjust_wp_list_pages_excludes($pages){
+        foreach($pages as $k=>$v){
+            $pages[$k] = icl_object_id($v, 'page', true);
+        }
+        return $pages;
     }
         
     function language_attributes($output){
