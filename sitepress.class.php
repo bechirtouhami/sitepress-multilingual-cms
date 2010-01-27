@@ -257,7 +257,7 @@ class SitePress{
     
     function the_posts($posts){        
         global $wpdb, $wp_query;
-         
+        
         $db = debug_backtrace();   
         $custom_wp_query = $db[3]['object'];
         
@@ -274,8 +274,18 @@ class SitePress{
 
         $custom_wp_query->query_vars['suppress_filters'] = 0;
         
+        if(isset($custom_wp_query->query_vars['pagename']) && !empty($custom_wp_query->query_vars['pagename'])){
+            $page_id = $wpdb->get_var("SELECT ID FROM {$wpdb->posts} WHERE post_name='{$custom_wp_query->query_vars['pagename']}' AND post_type='page'");            
+            if($page_id){
+                $tr_page_id = icl_object_id($page_id, 'page', false, $this->get_default_language());
+                if($tr_page_id){
+                    $custom_wp_query->query_vars['pagename'] = $wpdb->get_var("SELECT post_name FROM {$wpdb->posts} WHERE ID={$tr_page_id}");
+                }
+            }                        
+        }
+        
         /* START ADJUSTING QUERY */
-        /*
+        /**/
         // CATEGORIES
         
         // cat
@@ -466,7 +476,7 @@ class SitePress{
         if(isset($q->query_vars['post_parent']) && !empty($custom_wp_query->query_vars['post_parent'])){
             $custom_wp_query->query_vars['post_parent'] = icl_object_id($custom_wp_query->query_vars['post_parent'], 'post', true, $this->get_default_language());
         }        
-        */
+        /**/
         /* END ADJUSTING QUERY */
         
         // look for posts without translations
