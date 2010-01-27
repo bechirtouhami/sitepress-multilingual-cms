@@ -265,7 +265,7 @@ class SitePress{
         if( 
             ($this->get_current_language() == $this->get_default_language())  // original language
             || ($wp_query != $custom_wp_query)   // called by a custom query
-            || (!$custom_wp_query->is_posts_page && !$custom_wp_query->is_home)            
+            || (!$custom_wp_query->is_posts_page && !$custom_wp_query->is_home) // not the blog posts page           
         ){
             return $posts;                
         }
@@ -3278,7 +3278,8 @@ class SitePress{
         
     function parse_query($q){
         global $wp_query, $wpdb;
-        if($q == $wp_query) return; // not touching the WP query
+        //if($q == $wp_query) return; // not touching the WP query
+        if(is_admin()) return; 
         
         if($this->get_current_language() != $this->get_default_language()) {
             $cat_array = array();
