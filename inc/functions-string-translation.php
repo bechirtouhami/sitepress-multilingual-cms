@@ -22,10 +22,11 @@ add_action('icl_update_active_languages', 'icl_update_string_status_all');
 add_action('update_option_blogname', 'icl_st_update_blogname_actions',5,2);
 add_action('update_option_blogdescription', 'icl_st_update_blogdescription_actions',5,2);
 
-wp_enqueue_style('thickbox');
-wp_enqueue_script('jquery');
-wp_enqueue_script('thickbox');
-
+if(is_admin()){
+    wp_enqueue_style('thickbox');
+    wp_enqueue_script('jquery');
+    wp_enqueue_script('thickbox');
+}
 
 function icl_st_init(){                       
     global $sitepress_settings, $sitepress, $wpdb, $icl_st_err_str;
