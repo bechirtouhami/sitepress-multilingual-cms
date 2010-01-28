@@ -2541,6 +2541,9 @@ class SitePress{
         }elseif($_POST['action']=='inline-save-tax'){
             $lang_details = $this->get_element_language_details($tt_id, $el_type);
             $term_lang = $lang_details->language_code;
+        }elseif($_POST['action']=='inline-save'){
+            $lang_details = $this->get_element_language_details($_POST['post_ID'], 'post');
+            $term_lang = $lang_details->language_code;
         }
 
         // has trid only when it's a translation of another tag             
