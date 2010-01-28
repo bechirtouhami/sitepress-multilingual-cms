@@ -3458,7 +3458,7 @@ class SitePress{
             }
             // pagename
             if(isset($q->query_vars['pagename']) && !empty($q->query_vars['pagename'])){
-                $pid = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_name='".$wpdb->escape($q->query_vars['name'])."'");
+                $pid = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_name='".$wpdb->escape($q->query_vars['pagename'])."'");
                 $q->query_vars['page_id'] = icl_object_id($pid, 'page', true);
                 unset($q->query_vars['pagename']);                
             }
