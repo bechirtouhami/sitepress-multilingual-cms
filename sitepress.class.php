@@ -274,7 +274,7 @@ class SitePress{
             //|| !empty($custom_wp_query->query_vars['category__and'])
         ){
             
-            //$wp_query->query_vars = $this->wp_query->query_vars;
+            //$wp_query->query_vars = $this->wp_query->query_vars;            
             return $posts;                
         }
         // get the posts in the default language instead        
@@ -3359,9 +3359,9 @@ class SitePress{
             $tag_array = array();
             // tag
             if(isset($q->query_vars['tag']) && !empty($q->query_vars['tag'])){
-                if(false !== strpos($q->query_vars['tag'],'+')){
+                if(false !== strpos($q->query_vars['tag'],' ')){
                     $tag_glue = '+';
-                    $exp = explode('+', $q->query_vars['tag']);
+                    $exp = explode(' ', $q->query_vars['tag']);
                 }else{
                     $tag_glue = ',';
                     $exp = explode(',', $q->query_vars['tag']);                    
@@ -3370,6 +3370,10 @@ class SitePress{
                 foreach($exp as $e){
                     $tag_array[] = $wpdb->get_var($wpdb->prepare( "SELECT x.term_taxonomy_id FROM $wpdb->terms t 
                         JOIN $wpdb->term_taxonomy x ON t.term_id=x.term_id WHERE x.taxonomy='post_tag' AND t.slug='%s'", $wpdb->escape($e)));    
+                }
+                $_tmp = array_unique($tag_array);
+                if(count($_tmp) == 1 && empty($_tmp[0])){
+                    $tag_array = array();    
                 }
             }            
             // tag_id
@@ -3420,8 +3424,10 @@ class SitePress{
 
             //tag            
             if(isset($q->query_vars['tag']) && !empty($q->query_vars['tag'])){
-                $slugs = $wpdb->get_col("SELECT slug FROM $wpdb->terms WHERE term_id IN (".join(',', $translated_ids).")");
-                $q->query_vars['tag'] = join($tag_glue, $slugs);    
+                if(isset($translated_ids)){
+                    $slugs = $wpdb->get_col("SELECT slug FROM $wpdb->terms WHERE term_id IN (".join(',', $translated_ids).")");
+                    $q->query_vars['tag'] = join($tag_glue, $slugs);    
+                }                                
             }
             //tag_id
             if(isset($q->query_vars['tag_id']) && !empty($q->query_vars['tag_id'])){
