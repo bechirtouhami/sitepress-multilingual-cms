@@ -262,7 +262,6 @@ class SitePress{
         $db = debug_backtrace();   
         $custom_wp_query = $db[3]['object'];        
         
-        
         //exceptions
         if( 
             ($this->get_current_language() == $this->get_default_language())  // original language
@@ -274,6 +273,8 @@ class SitePress{
             //|| !empty($custom_wp_query->query_vars['category__and'])
             || !empty($custom_wp_query->query_vars['tag__not_in'])
             || !empty($custom_wp_query->query_vars['post__in'])
+            || !empty($custom_wp_query->query_vars['post__not_in'])
+            || !empty($custom_wp_query->query_vars['post_parent'])
         ){
             
             //$wp_query->query_vars = $this->wp_query->query_vars;            
