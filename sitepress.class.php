@@ -272,6 +272,8 @@ class SitePress{
             || !empty($custom_wp_query->query_vars['category__not_in'])
             //|| !empty($custom_wp_query->query_vars['category__in'])
             //|| !empty($custom_wp_query->query_vars['category__and'])
+            || !empty($custom_wp_query->query_vars['tag__not_in'])
+            || !empty($custom_wp_query->query_vars['post__in'])
         ){
             
             //$wp_query->query_vars = $this->wp_query->query_vars;            
@@ -2922,8 +2924,16 @@ class SitePress{
     function get_ls_languages($template_args=array()){
             global $wpdb, $post, $cat, $tag_id, $w_this_lang;
             
-            //if(is_null($this->wp_query)) $this->set_wp_query();
-            
+            if(is_null($this->wp_query)) $this->set_wp_query();
+             
+             // use original wp_query for this
+             // backup current $wp_query
+             global $wp_query;
+             $_wp_query_back = clone $wp_query;
+             $wp_query = $this->wp_query;
+             
+             
+                        
             $w_active_languages = $this->get_active_languages();                        
             $this_lang = $this->this_lang;
             if($this_lang=='all'){
@@ -2966,10 +2976,10 @@ class SitePress{
                 $translations = $this->get_element_translations($trid,'post');                
                 
             }
-                                       
+                                                                                                                                                                 
             foreach($w_active_languages as $k=>$lang){                
                 $skip_lang = false;
-                if(is_singular() || ($this->wp_query->queried_object_id && $this->wp_query->queried_object_id == get_option('page_for_posts'))){                    
+                if(is_singular() || ($this->wp_query->queried_object_id && $this->wp_query->queried_object_id == get_option('page_for_posts'))){                 
                     $this_lang_tmp = $this->this_lang; 
                     $this->this_lang = $lang['code']; 
                     $lang_page_on_front = get_option('page_on_front');                     
@@ -2994,7 +3004,7 @@ class SitePress{
                             }                        
                         }
                     }
-                }elseif(is_category()){
+                }elseif(is_category()){  
                     if(isset($translations[$lang['code']])){
                         $lang['translated_url'] = get_category_link($translations[$lang['code']]->term_id);
                     }else{  
@@ -3004,7 +3014,7 @@ class SitePress{
                             $skip_lang = true;
                         }                        
                     }
-                }elseif(is_tag()){                                                                  
+                }elseif(is_tag()){                                     
                     if(isset($translations[$lang['code']])){
                         $lang['translated_url'] = get_tag_link($translations[$lang['code']]->term_id);
                     }else{
@@ -3025,16 +3035,17 @@ class SitePress{
                         $lang['translated_url'] = $this->archive_url(get_day_link( $this->wp_query->query_vars['year'], $this->wp_query->query_vars['monthnum'], $this->wp_query->query_vars['day'] ), $lang['code']);
                     }
                     $icl_archive_url_filter_off = false;
-                }elseif(is_search()){
+                }elseif(is_search()){                    
                     $url_glue = strpos($this->language_url($lang['code']),'?')===false ? '?' : '&';
                     $lang['translated_url'] = $this->language_url($lang['code']) . $url_glue . 's=' . htmlspecialchars($_GET['s']);                                        
-                }else{ 
+                }else{                     
                     global $icl_language_switcher_preview;                   
                     if($icl_lso_link_empty || is_home() || is_404() 
                         || ('page' == get_option('show_on_front') && ($this->wp_query->queried_object_id == get_option('page_on_front') || $this->wp_query->queried_object_id == get_option('page_for_posts')))
                         || $icl_language_switcher_preview){
                         $lang['translated_url'] = $this->language_url($lang['code']);
                         $skip_lang = false;
+                        
                     }else{
                         $skip_lang = true; 
                         unset($w_active_languages[$k]);                       
@@ -3045,7 +3056,7 @@ class SitePress{
                 }else{
                     unset($w_active_languages[$k]); 
                 }                        
-            } 
+            }              
                    
             foreach($w_active_languages as $k=>$v){
                 $lang_code = $w_active_languages[$k]['language_code'] = $w_active_languages[$k]['code'];
@@ -3075,7 +3086,13 @@ class SitePress{
                 $w_active_languages[$k]['country_flag_url'] = $flag_url;                
                 
                 $w_active_languages[$k]['active'] = $this->get_current_language()==$lang_code?'1':0;;
-            }
+            }     
+            
+            
+            // restore current $wp_query
+            $wp_query = clone $_wp_query_back;
+            unset($_wp_query_back);             
+                                
             return $w_active_languages;
             
     }
