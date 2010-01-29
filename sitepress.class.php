@@ -269,8 +269,12 @@ class SitePress{
             || ($wp_query != $custom_wp_query)   // called by a custom query
             || (!$custom_wp_query->is_posts_page && !$custom_wp_query->is_home) // not the blog posts page           
             || $wp_query->is_singular //is singular
+            || !empty($custom_wp_query->query_vars['category__not_in'])
+            //|| !empty($custom_wp_query->query_vars['category__in'])
+            //|| !empty($custom_wp_query->query_vars['category__and'])
         ){
             
+            //$wp_query->query_vars = $this->wp_query->query_vars;
             return $posts;                
         }
         // get the posts in the default language instead        
@@ -1137,7 +1141,7 @@ class SitePress{
         });
         <?php endif; ?>
         </script>         
-        <?php
+        <?php  
         wp_enqueue_script('sitepress-scripts', ICL_PLUGIN_URL . '/res/js/scripts.js', array(), ICL_SITEPRESS_VERSION);
         if(isset($page_basename) && file_exists(ICL_PLUGIN_PATH . '/res/js/'.$page_basename.'.js')){
             wp_enqueue_script('sitepress-' . $page_basename, ICL_PLUGIN_URL . '/res/js/'.$page_basename.'.js', array(), ICL_SITEPRESS_VERSION);
@@ -3298,8 +3302,11 @@ class SitePress{
             }
             // category_name
             if(isset($q->query_vars['category_name']) && !empty($q->query_vars['category_name'])){
-                $cat_id = get_cat_ID($q->query_vars['category_name']);
-                $cat_array = array($cat_id);            
+                if($cat_id = get_cat_ID($q->query_vars['category_name'])){
+                    $cat_array = array($cat_id);            
+                }else{
+                    $q->query_vars['p'] = -1;
+                }                
             }
             // category_and
             if(isset($q->query_vars['category__and']) && !empty($q->query_vars['category__and'])){

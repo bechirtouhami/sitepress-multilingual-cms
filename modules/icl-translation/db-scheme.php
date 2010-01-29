@@ -1,7 +1,7 @@
 <?php
   global $wpdb;
   
-  if ( $wpdb->has_cap( 'collation' ) ) {
+  if ( method_exists($wpdb, 'has_cap') && $wpdb->has_cap( 'collation' ) ) {
         if ( ! empty($wpdb->charset) )
                 $charset_collate = "DEFAULT CHARACTER SET $wpdb->charset";
         if ( ! empty($wpdb->collate) )
