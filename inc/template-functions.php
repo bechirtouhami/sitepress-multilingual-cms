@@ -140,7 +140,7 @@ function icl_object_id($element_id, $element_type='post', $return_original_if_mi
     $translations = $sitepress->get_element_translations($trid, $icl_element_type);
     
     if(is_null($ulanguage_code)){
-        $ulanguage_code = ICL_LANGUAGE_CODE;
+        $ulanguage_code = $sitepress->get_current_language();
     }
     
     if(isset($translations[$ulanguage_code]->element_id)){
