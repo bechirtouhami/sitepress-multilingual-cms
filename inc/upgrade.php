@@ -379,9 +379,9 @@ function icl_plugin_upgrade(){
         
     }
 
-    if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.6.1', '<')){
+    if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.7.0', '<')){
         
-        if($mig_debug) fwrite($mig_debug, "Upgrading to 1.6.1 \n");
+        if($mig_debug) fwrite($mig_debug, "Upgrading to 1.7.0 \n");
         
         $iclsettings['sync_ping_status'] = 1;
         $iclsettings['sync_comment_status'] = 1;
@@ -392,7 +392,31 @@ function icl_plugin_upgrade(){
         
         update_option('icl_sitepress_settings',$iclsettings);
         
-        if($mig_debug) fwrite($mig_debug, "Upgraded to 1.6.1 \n");
+        // get tags with missing language_code value in icl_translations
+        $tags = $wpdb->get_col("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE language_code=''");
+        if(!empty($tags)){
+            $res = $wpdb->get_results("
+                SELECT r.object_id, r.term_taxonomy_id, t.language_code 
+                FROM {$wpdb->term_relationships} r 
+                    JOIN {$wpdb->posts} p ON r.object_id = p.ID
+                    JOIN {$wpdb->prefix}icl_translations t ON p.ID = t.element_id AND t.element_type='post'
+                WHERE term_taxonomy_id IN (".join(",",$tags).")");                
+            foreach($res as $row){
+                $wpdb->update($wpdb->prefix.'icl_translations', 
+                    array('language_code'=>$row->language_code), 
+                    array('element_id'=>$row->term_taxonomy_id, 'element_type'=>'tag')
+                );
+            }
+        }
+        // set the rest to default language        
+        $wpdb->update($wpdb->prefix.'icl_translations',
+            array('language_code'=>$sitepress_settings['default_language']),
+            array('element_type'=>'tag', 'language_code'=>'')
+        );
+        
+        
+        
+        if($mig_debug) fwrite($mig_debug, "Upgraded to 1.7.0 \n");
         
     }
     
