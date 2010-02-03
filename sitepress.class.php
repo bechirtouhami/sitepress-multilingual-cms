@@ -6,12 +6,14 @@ class SitePress{
     private $this_lang;
     private $wp_query;
     private $admin_language = null;
+    private $abshome;
     
     function __construct(){
         global $wpdb;
                                          
         $this->settings = get_option('icl_sitepress_settings');                                
-                
+        $this->abshome = get_option('home');        
+        
         if(false != $this->settings){
             $this->verify_settings();
         } 
@@ -2715,7 +2717,7 @@ class SitePress{
         }
         
         if($code && $code != $this->get_default_language()){
-            $abshome = preg_replace('@\?lang=' . $code . '@i','',get_option('home'));
+            $abshome = preg_replace('@\?lang=' . $code . '@i','',$this->abshome);            
             switch($this->settings['language_negotiation_type']){
                 case '1':                 
                     if($abshome==$url) $url .= '/';
@@ -2744,7 +2746,7 @@ class SitePress{
         
     function language_url($code=null){
         if(is_null($code)) $code = $this->this_lang;
-        $abshome = get_option('home');
+        $abshome = $this->abshome;
         if($this->settings['language_negotiation_type'] == 1 || $this->settings['language_negotiation_type'] == 2){
             $url = trailingslashit($this->convert_url($abshome, $code));  
         }else{
@@ -2759,12 +2761,15 @@ class SitePress{
             $pid = $pid->ID;
         }
         $element_lang_details = $this->get_element_language_details($pid,'post');        
+        if($this->settings['language_negotiation_type'] == 3){
+            $p = preg_replace('@\?lang=' . $this->get_current_language() . '@i','',$p);            
+        }                    
         if($element_lang_details->language_code && $this->get_default_language() != $element_lang_details->language_code){
             $p = $this->convert_url($p, $element_lang_details->language_code);
         }elseif(isset($_POST['action']) && $_POST['action']=='sample-permalink'){ // check whether this is an autosaved draft 
             $exp = explode('?', $_SERVER["HTTP_REFERER"]);
             if(isset($exp[1])) parse_str($exp[1], $args);        
-            if(isset($args['lang']) && $this->get_default_language() != $args['lang']){
+            if(isset($args['lang']) && $this->get_default_language() != $args['lang']){                
                 $p = $this->convert_url($p, $args['lang']);
             }
         }
@@ -3292,7 +3297,8 @@ class SitePress{
     // TO REVISE
     function pre_option_home(){                              
         $dbbt = debug_backtrace();                                     
-        if($dbbt[3]['file'] == @realpath(TEMPLATEPATH . '/header.php')){
+        //if(1 || $dbbt[3]['file'] == @realpath(TEMPLATEPATH . '/header.php')){
+        if(!is_admin()){
             $ret = $this->language_url($this->this_lang);                                       
         }else{
             $ret = false;
