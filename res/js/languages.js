@@ -31,6 +31,7 @@ addLoadEvent(function(){
     icl_lp_flag = jQuery('.iclflag:visible').length > 0;         
     
 	jQuery('#icl_lang_preview_config input').each(iclUpdateLangSelQuickPreview);
+	jQuery('#icl_lang_preview_config_footer input').each(iclUpdateLangSelQuickPreviewFooter);
 	// Picker align
 	jQuery(".pick-show").click(function () {
 		var set = jQuery(this).offset();
@@ -41,7 +42,9 @@ addLoadEvent(function(){
         jQuery.post(icl_ajx_url, 'icl_ajx_action=icl_promote&icl_promote='+jQuery(this).attr('checked'));
     });    
     
-    jQuery('#icl_lang_preview_config input').keyup(iclUpdateLangSelQuickPreview);    
+    jQuery('#icl_lang_preview_config input').keyup(iclUpdateLangSelQuickPreview);
+	jQuery('#icl_lang_preview_config_footer input').keyup(iclUpdateLangSelQuickPreviewFooter);
+	  
     jQuery('#icl_save_language_switcher_options :checkbox[name="icl_lso_flags"]').change(function(){
         if(jQuery(this).attr('checked')){
             jQuery('#lang_sel .iclflag').show();
@@ -90,6 +93,7 @@ addLoadEvent(function(){
     });
     
     jQuery('#icl_lang_sel_color_scheme').change(iclUpdateLangSelColorScheme);
+	jQuery('#icl_lang_sel_footer_color_scheme').change(iclUpdateLangSelColorSchemeFooter);
     
     //jQuery('#icl_lang_preview_config input').change(iclUpdateLangSelPreview);    
     
@@ -482,6 +486,187 @@ function iclUpdateLangSelColorScheme(){
         
     }
 }
+
+
+
+
+
+
+// FOOTER
+
+
+var icl_lp_footer_font_current_normal = false;
+var icl_lp_footer_font_current_hover = false;
+var icl_lp_footer_background_current_normal = false;
+var icl_lp_footer_background_current_hover = false;
+var icl_lp_footer_font_other_normal = false;
+var icl_lp_footer_font_other_hover = false;
+var icl_lp_footer_background_other_normal = false;
+var icl_lp_footer_background_other_hover = false;
+var icl_lp_footer_border = false;
+var icl_lp_footer_flag = false;
+
+
+function iclUpdateLangSelQuickPreviewFooter(){
+    name = jQuery(this).attr('name');
+    value = jQuery(this).val();
+    switch(name){
+        case 'icl_lang_sel_footer_config[font-current-normal]':
+            icl_lp_footer_font_current_normal = value;
+            break;
+        case 'icl_lang_sel_footer_config[font-current-hover]':
+            icl_lp_footer_font_current_hover = value;
+            break;                
+        case 'icl_lang_sel_footer_config[background-current-normal]':
+            icl_lp_footer_background_current_normal = value;
+            break;
+        case 'icl_lang_sel_footer_config[background-current-hover]':
+            icl_lp_footer_background_current_hover = value;
+            break;                
+        case 'icl_lang_sel_footer_config[font-other-normal]':
+            icl_lp_footer_font_other_normal = value;
+            break;
+        case 'icl_lang_sel_footer_config[font-other-hover]':
+            icl_lp_footer_font_other_hover = value;
+            break;                
+        case 'icl_lang_sel_footer_config[background-other-normal]':
+            icl_lp_footer_background_other_normal = value;
+            break;
+        case 'icl_lang_sel_footer_config[background-other-hover]':
+            icl_lp_footer_background_other_hover = value;
+            break;                
+        case 'icl_lang_sel_footer_config[border]':
+            icl_lp_footer_border = value;
+            break;            
+        case 'icl_lso_flags':
+            icl_lp_footer_flag = jQuery(this).attr('checked');
+            break;            
+            
+    }
+    iclRenderLangPreviewFooter();
+}
+
+function iclRenderLangPreviewFooter(){
+    
+    if(icl_lp_footer_font_current_normal){                                                                          
+        jQuery('#lang_sel_footer a:first').css('color',icl_lp_footer_font_current_normal) ; 
+    }    
+    if(icl_lp_footer_font_current_hover){
+        jQuery('#lang_sel_footer a:first, #lang_sel_footer a.lang_sel_sel').unbind('hover');
+        jQuery('#lang_sel_footer a:first, #lang_sel_footer a.lang_sel_sel').hover(
+            function(){jQuery(this).css('color',icl_lp_footer_font_current_hover)},
+            function(){
+                jQuery(this).css('color',icl_lp_footer_font_current_normal);
+                jQuery('#lang_sel_footer a.lang_sel_sel').css('color',icl_lp_footer_font_current_normal);
+                }
+            );
+    }
+    
+    if(icl_lp_footer_background_current_normal){
+        jQuery('#lang_sel_footer a:first').css('background-color', icl_lp_footer_background_current_normal); 
+        
+        jQuery('#lang_sel_footer a:first').unbind('hover');
+        jQuery('#lang_sel_footer a:first').hover(
+            function(){jQuery(this).css('background-color', '')},
+            function(){jQuery(this).css('background-color', icl_lp_footer_background_current_normal)}
+            );
+        
+    }
+    
+    if(icl_lp_footer_background_current_hover){                                                          
+        jQuery('#lang_sel_footer a:first').unbind('hover');
+        jQuery('#lang_sel_footer a:first').hover(
+            function(){jQuery(this).css('background-color', icl_lp_footer_background_current_hover)},
+            function(){jQuery(this).css('background-color', icl_lp_footer_background_current_normal)}
+            );
+    }
+                                                                                                               
+    if(icl_lp_footer_font_other_normal){
+        jQuery('#lang_sel_footer ul a').css('color', icl_lp_footer_font_other_normal); 
+    }    
+    if(icl_lp_footer_font_other_hover){
+        jQuery('#lang_sel_footer ul a').unbind('hover');
+        jQuery('#lang_sel_footer ul a').hover(
+            function(){jQuery(this).css('color',icl_lp_footer_font_other_hover)},
+            function(){jQuery(this).css('color',icl_lp_footer_font_other_normal)}
+            );
+    }
+
+    if(icl_lp_footer_background_other_normal){
+        jQuery('#lang_sel_footer ul a').css('background-color', icl_lp_footer_background_other_normal) ; 
+        jQuery('#lang_sel_footer ul a').unbind('hover');
+        jQuery('#lang_sel_footer ul a').hover(
+            function(){jQuery(this).css('background-color', '')},
+            function(){jQuery(this).css('background-color', icl_lp_footer_background_other_normal)}
+            );        
+    }    
+    if(icl_lp_footer_background_other_hover){
+        jQuery('#lang_sel_footer ul a').unbind('hover');
+        jQuery('#lang_sel_footer ul a').hover(
+            function(){jQuery(this).css('background-color', icl_lp_footer_background_other_hover)},
+            function(){jQuery(this).css('background-color', icl_lp_footer_background_other_normal)}
+            );
+    }
+    
+    if(icl_lp_footer_border){
+        jQuery('#lang_sel_footer a').css('border-color', icl_lp_footer_border);
+    }
+    
+    if(icl_lp_footer_flag){
+        jQuery('#lang_sel_footer .iclflag').show();
+    }else{
+        jQuery('#lang_sel_footer .iclflag').hide();
+    }
+    
+}
+
+function iclUpdateLangSelColorSchemeFooter(){
+    scheme = jQuery(this).val();
+    if(scheme && confirm(jQuery(this).next().html())){
+        jQuery('#icl_lang_preview_config_footer input[type="text"]').each(function(){
+            thisn = jQuery(this).attr('name').replace('icl_lang_sel_footer_config[','').replace(']','');
+            value = jQuery('#icl_lang_sel_footer_config_alt_'+scheme+'_'+thisn).val();
+            jQuery(this).val(value);
+                        
+            switch(jQuery(this).attr('name')){
+                case 'icl_lang_sel_footer_config[font-current-normal]':
+                    icl_lp_footer_font_current_normal = value;
+                    break;
+                case 'icl_lang_sel_footer_config[font-current-hover]':
+                    icl_lp_footer_font_current_hover = value;
+                    break;                
+                case 'icl_lang_sel_footer_config[background-current-normal]':
+                    icl_lp_footer_background_current_normal = value;
+                    break;
+                case 'icl_lang_sel_footer_config[background-current-hover]':
+                    icl_lp_footer_background_current_hover = value;
+                    break;                
+                case 'icl_lang_sel_footer_config[font-other-normal]':
+                    icl_lp_footer_font_other_normal = value;
+                    break;
+                case 'icl_lang_sel_footer_config[font-other-hover]':
+                    icl_lp_footer_font_other_hover = value;
+                    break;                
+                case 'icl_lang_sel_footer_config[background-other-normal]':
+                    icl_lp_footer_background_other_normal = value;
+                    break;
+                case 'icl_lang_sel_footer_config[background-other-hover]':
+                    icl_lp_footer_background_other_hover = value;
+                    break;                
+                case 'icl_lang_sel_footer_config[border]':
+                    icl_lp_footer_border = value;
+                    break;            
+            }            
+            
+        });
+        
+        iclRenderLangPreviewFooter();
+        
+    }
+}
+
+
+
 
 // Picker f
 var cp = new ColorPicker();
