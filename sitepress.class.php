@@ -11,7 +11,7 @@ class SitePress{
         global $wpdb;
                                          
         $this->settings = get_option('icl_sitepress_settings');                                
-                
+        
         if(false != $this->settings){
             $this->verify_settings();
         } 
@@ -2227,8 +2227,8 @@ class SitePress{
         }
         $allas = join(' | ', $as);
         if($type == 'page' && !$this->get_icl_translation_enabled()){
-            $prot_link = '<span class="icl_cyan_box" style="padding:4px;margin-top:10px;"><img align="baseline" src="' . ICL_PLUGIN_URL .'/res/img/icon16.png" width="16" height="16" style="margin-bottom:-4px" /> <a href="admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/content-translation.php">' . 
-            __('Get your site professionally translated - find out more', 'sitepress') . '</a>' . '</span>';
+            $prot_link = '<span class="button" style="padding:4px;margin-top:10px;"><img align="baseline" src="' . ICL_PLUGIN_URL .'/res/img/icon16.png" width="16" height="16" style="margin-bottom:-4px" /> <a href="http://wpml.org/?page_id=3416">' . 
+            __('How to translate', 'sitepress') . '</a>' . '</span>';
         }else{
             $prot_link = '';
         }
