@@ -2889,7 +2889,7 @@ class SitePress{
                         break;
                     case 'background-current-normal': 
                         if($v != $language_switcher_defaults[$k])
-                            echo '#lang_sel a.lang_sel_sel, #lang_sel a.lang_sel_sel:visited{background-color:'.$v.';}'; 
+							echo '#lang_sel a.lang_sel_sel, #lang_sel a.lang_sel_sel:visited{background-color:'.$v.';}'; 
                         break;
                     case 'background-current-hover': 
                         if($v != $language_switcher_defaults[$k])
@@ -2913,7 +2913,7 @@ class SitePress{
                         break;
                     case 'border': 
                         if($v != $language_switcher_defaults[$k])
-                            echo '#lang_sel a{border-color:'.$v.';}';
+                            echo '#lang_sel a, #lang_sel a:visited{border-color:'.$v.';} #lang_sel ul ul{border-top:1px solid '.$v.';}';
                         break;
                     
                 }
