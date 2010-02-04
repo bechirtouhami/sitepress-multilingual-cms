@@ -316,7 +316,7 @@ switch($_REQUEST['icl_ajx_action']){
         $url = $_POST['url'] . $url_glue . '____icl_validate_domain=1';
         $client = new WP_Http();
         $response = $client->request($url, 'timeout=15');
-        if(!is_wp_error($response) && ($response['response']['code']=='200') && ($response['body'] == '<!--'.get_option('home').'-->')){
+        if(!is_wp_error($response) && ($response['response']['code']=='200') && (rtrim($response['body'],'/') == '<!--'.trailingslashit(get_option('home')).'-->')){
             echo 1;
         }else{
             echo 0;
