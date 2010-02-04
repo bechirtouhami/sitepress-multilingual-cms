@@ -42,6 +42,7 @@ function icl_sitepress_activate(){
     }
 
     // languages translations table
+    $add_languages_translations = false;
     $table_name = $wpdb->prefix.'icl_languages_translations';
     if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
         $sql = "
@@ -53,21 +54,30 @@ function icl_sitepress_activate(){
             UNIQUE(`language_code`, `display_language_code`)            
         ) ENGINE=MyISAM {$charset_collate}"; 
         mysql_query($sql);
+        $add_languages_translations = true;
     }else{
-        mysql_query("TRUNCATE TABLE `{$table_name}`");
+        $v = serialize(!defined('ICL_PRESERVE_LANGUAGES_TRANSLATIONS') || !ICL_PRESERVE_LANGUAGES_TRANSLATIONS);
+        fwrite(fopen(ABSPATH . '/debug.txt', 'w'), $v);
+        if(!defined('ICL_PRESERVE_LANGUAGES_TRANSLATIONS') || !ICL_PRESERVE_LANGUAGES_TRANSLATIONS){
+            mysql_query("TRUNCATE TABLE `{$table_name}`");
+            $add_languages_translations = true;
+        }        
     }
-    foreach($langs_names as $lang=>$val){        
-        if(strpos($lang,'Norwegian Bokm')===0){ $lang = 'Norwegian Bokmål'; $lang_codes[$lang] = 'nb';}
-        foreach($val['tr'] as $k=>$display){        
-            if(strpos($k,'Norwegian Bokm')===0){ $k = 'Norwegian Bokmål';}
-            if(!trim($display)){
-                $display = $lang;
-            }
-            if(!($wpdb->get_var("SELECT id FROM {$table_name} WHERE language_code='{$lang_codes[$lang]}' AND display_language_code='{$lang_codes[$k]}'"))){
-                $wpdb->insert($wpdb->prefix . 'icl_languages_translations', array('language_code'=>$lang_codes[$lang], 'display_language_code'=>$lang_codes[$k], 'name'=>$display));
-            }
-        }    
-    }        
+    
+    if($add_languages_translations){
+        foreach($langs_names as $lang=>$val){        
+            if(strpos($lang,'Norwegian Bokm')===0){ $lang = 'Norwegian Bokmål'; $lang_codes[$lang] = 'nb';}
+            foreach($val['tr'] as $k=>$display){        
+                if(strpos($k,'Norwegian Bokm')===0){ $k = 'Norwegian Bokmål';}
+                if(!trim($display)){
+                    $display = $lang;
+                }
+                if(!($wpdb->get_var("SELECT id FROM {$table_name} WHERE language_code='{$lang_codes[$lang]}' AND display_language_code='{$lang_codes[$k]}'"))){
+                    $wpdb->insert($wpdb->prefix . 'icl_languages_translations', array('language_code'=>$lang_codes[$lang], 'display_language_code'=>$lang_codes[$k], 'name'=>$display));
+                }
+            }    
+        }        
+    }
     
 
     // translations
@@ -203,6 +213,7 @@ function icl_sitepress_activate(){
             ) ENGINE=MyISAM {$charset_collate}"; 
         mysql_query($sql);
     }
+    
     $table_name = $wpdb->prefix.'icl_string_translations';
     if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
         $sql = "
