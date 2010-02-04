@@ -2780,11 +2780,12 @@ class SitePress{
             }
         }else{
             if($element_lang_details->language_code){
-                $p = $this->convert_url($p, $element_lang_details->language_code);                
+                $p = str_replace(rtrim(get_option('home'),'/'), $this->abshome, $p);
+                $p = $this->convert_url($p, $element_lang_details->language_code);        
                 if($element_lang_details->language_code != $this->get_current_language()){
                     if($element_lang_details->language_code == $this->get_default_language()){
                         $p = str_replace($this->settings['language_domains'][$this->get_current_language()], 
-                            $this->abshome, $p);
+                            $this->abshome, $p);                        
                     }else{
                         $p = str_replace($this->settings['language_domains'][$this->get_current_language()], 
                             $this->settings['language_domains'][$element_lang_details->language_code], $p);
@@ -2822,6 +2823,7 @@ class SitePress{
                 $p = preg_replace("@\?lang=(.+)/\?(.+)$@", '?$2&lang=$1', $p);
             }
         }else{
+            $p = str_replace(rtrim(get_option('home'),'/'), $this->abshome, $p);
             if($this->get_default_language() != $element_lang_details->language_code){
                 $p = $this->convert_url($p, $element_lang_details->language_code);
             }
@@ -2847,11 +2849,12 @@ class SitePress{
             }
         }        
         $element_lang_details = $this->get_element_language_details($tag_id,'tag');
-        if(!is_admin() && ($element_lang_details->language_code == $this->get_current_language())){           
+        if(!is_admin() && ($element_lang_details->language_code == $this->get_current_language())){                       
             if($this->settings['language_negotiation_type'] == 3){
                 $p = preg_replace("@\?lang=(.+)/\?(.+)$@", '?$2&lang=$1', $p);
             }
-        }else{
+        }else{            
+            $p = str_replace(rtrim(get_option('home'),'/'), $this->abshome, $p);
             if($this->get_default_language() != $element_lang_details->language_code){
                 $p = $this->convert_url($p, $element_lang_details->language_code);
             }
