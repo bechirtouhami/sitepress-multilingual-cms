@@ -6,14 +6,12 @@ class SitePress{
     private $this_lang;
     private $wp_query;
     private $admin_language = null;
-    private $abshome;
     
     function __construct(){
         global $wpdb;
                                          
         $this->settings = get_option('icl_sitepress_settings');                                
-        $this->abshome = get_option('home');        
-        
+                
         if(false != $this->settings){
             $this->verify_settings();
         } 
@@ -92,9 +90,7 @@ class SitePress{
             add_filter('page_link', array($this, 'permalink_filter'),1,2);   
             add_filter('category_link', array($this, 'category_permalink_filter'),1,2);   
             add_filter('tag_link', array($this, 'tag_permalink_filter'),1,2);   
-            if(!is_admin()){
-                add_filter('option_permalink_structure', array($this, 'permalink_structure'), 99);
-            }
+            
             
             add_action('create_term',  array($this, 'create_term'),1, 2);
             add_action('edit_term',  array($this, 'create_term'),1, 2);
@@ -451,8 +447,8 @@ class SitePress{
                         }
                         break;
                     case 2:    
-                        //$exp = explode('.', $_SERVER['HTTP_HOST']);
-                        $__l = array_search('http' . $s . '://' . $_SERVER['HTTP_HOST'] . $blog_path, array_map('trailingslashit', $this->settings['language_domains']));
+                        $exp = explode('.', $_SERVER['HTTP_HOST']);
+                        $__l = array_search('http' . $s . '://' . $_SERVER['HTTP_HOST'] . $blog_path, $this->settings['language_domains']);
                         $this->this_lang = $__l?$__l:$this->get_default_language(); 
                         if(defined('ICL_USE_MULTIPLE_DOMAIN_LOGIN') && ICL_USE_MULTIPLE_DOMAIN_LOGIN){
                             include ICL_PLUGIN_PATH . '/modules/multiple-domains-login.php';
@@ -506,12 +502,12 @@ class SitePress{
         if($this->settings['promote_wpml']){
             add_action('wp_footer', array($this, 'display_wpml_footer'),20);
         }  
-		
-		if($this->settings['icl_lang_sel_footer']){
-			add_action('wp_head', array($this, 'language_selector_footer_style'),19);
+        
+        if($this->settings['icl_lang_sel_footer']){
+            add_action('wp_head', array($this, 'language_selector_footer_style'),19);
             add_action('wp_footer', array($this, 'language_selector_footer'),19);
         }
-        
+                
         if(defined('XMLRPC_REQUEST') && XMLRPC_REQUEST){
             add_action('xmlrpc_call', array($this, 'xmlrpc_call_actions'));
             add_filter('xmlrpc_methods',array($this, 'xmlrpc_methods'));
@@ -2724,7 +2720,7 @@ class SitePress{
         }
         
         if($code && $code != $this->get_default_language()){
-            $abshome = preg_replace('@\?lang=' . $code . '@i','',$this->abshome);            
+            $abshome = preg_replace('@\?lang=' . $code . '@i','',get_option('home'));
             switch($this->settings['language_negotiation_type']){
                 case '1':                 
                     if($abshome==$url) $url .= '/';
@@ -2732,7 +2728,7 @@ class SitePress{
                     
                     break;
                 case '2': 
-                    $url = str_replace($this->abshome, $this->settings['language_domains'][$code], $url);
+                    $url = str_replace($abshome, $this->settings['language_domains'][$code], $url);
                     break;                
                 case '3':
                 default:
@@ -2753,15 +2749,14 @@ class SitePress{
         
     function language_url($code=null){
         if(is_null($code)) $code = $this->this_lang;
-        $abshome = $this->abshome;
+        $abshome = get_option('home');
         if($this->settings['language_negotiation_type'] == 1 || $this->settings['language_negotiation_type'] == 2){
             $url = trailingslashit($this->convert_url($abshome, $code));  
         }else{
             $url = $this->convert_url($abshome, $code);
-        }      
+        }        
         return $url;
     }
-    
     
     function permalink_filter($p, $pid){ 
         global $wpdb;
@@ -2769,38 +2764,18 @@ class SitePress{
             $pid = $pid->ID;
         }
         $element_lang_details = $this->get_element_language_details($pid,'post');        
-        //if($this->settings['language_negotiation_type'] == 3){
-        //    $p = preg_replace('@\?lang=' . $this->get_current_language() . '@i','',$p);            
-        //} 
-        
-        
-        if(!is_admin() && ($element_lang_details->language_code == $this->get_current_language())){
-            if($this->settings['language_negotiation_type'] == 3){
-                $p = preg_replace("@\?lang=(.+)/\?(.+)$@", '?$2&lang=$1', $p);                
+        if($element_lang_details->language_code && $this->get_default_language() != $element_lang_details->language_code){
+            $p = $this->convert_url($p, $element_lang_details->language_code);
+        }elseif(isset($_POST['action']) && $_POST['action']=='sample-permalink'){ // check whether this is an autosaved draft 
+            $exp = explode('?', $_SERVER["HTTP_REFERER"]);
+            if(isset($exp[1])) parse_str($exp[1], $args);        
+            if(isset($args['lang']) && $this->get_default_language() != $args['lang']){
+                $p = $this->convert_url($p, $args['lang']);
             }
-        }else{
-            if($element_lang_details->language_code){
-                $p = str_replace(rtrim(get_option('home'),'/'), $this->abshome, $p);
-                $p = $this->convert_url($p, $element_lang_details->language_code);        
-                if($element_lang_details->language_code != $this->get_current_language()){
-                    if($element_lang_details->language_code == $this->get_default_language()){
-                        $p = str_replace($this->settings['language_domains'][$this->get_current_language()], 
-                            $this->abshome, $p);                        
-                    }else{
-                        $p = str_replace($this->settings['language_domains'][$this->get_current_language()], 
-                            $this->settings['language_domains'][$element_lang_details->language_code], $p);
-                    }
-                }   
-            }elseif(isset($_POST['action']) && $_POST['action']=='sample-permalink'){ // check whether this is an autosaved draft 
-                $exp = explode('?', $_SERVER["HTTP_REFERER"]);
-                if(isset($exp[1])) parse_str($exp[1], $args);        
-                if(isset($args['lang']) && $this->get_default_language() != $args['lang']){                
-                    $p = $this->convert_url($p, $args['lang']);
-                }
-            }            
-        }    
+        }
         return $p;
-    }
+    }    
+    
     function category_permalink_filter($p, $cat_id){
         global $wpdb;
         if (isset($this->icl_term_taxonomy_cache)) {
@@ -2817,16 +2792,8 @@ class SitePress{
         $cat_id = $term_cat_id;
         
         $element_lang_details = $this->get_element_language_details($cat_id,'category');
-        
-        if(!is_admin() && ($element_lang_details->language_code == $this->get_current_language())){           
-            if($this->settings['language_negotiation_type'] == 3){
-                $p = preg_replace("@\?lang=(.+)/\?(.+)$@", '?$2&lang=$1', $p);
-            }
-        }else{
-            $p = str_replace(rtrim(get_option('home'),'/'), $this->abshome, $p);
-            if($this->get_default_language() != $element_lang_details->language_code){
-                $p = $this->convert_url($p, $element_lang_details->language_code);
-            }
+        if($this->get_default_language() != $element_lang_details->language_code){
+            $p = $this->convert_url($p, $element_lang_details->language_code);
         }
         return $p;
     }  
@@ -2849,23 +2816,11 @@ class SitePress{
             }
         }        
         $element_lang_details = $this->get_element_language_details($tag_id,'tag');
-        if(!is_admin() && ($element_lang_details->language_code == $this->get_current_language())){                       
-            if($this->settings['language_negotiation_type'] == 3){
-                $p = preg_replace("@\?lang=(.+)/\?(.+)$@", '?$2&lang=$1', $p);
-            }
-        }else{            
-            $p = str_replace(rtrim(get_option('home'),'/'), $this->abshome, $p);
-            if($this->get_default_language() != $element_lang_details->language_code){
-                $p = $this->convert_url($p, $element_lang_details->language_code);
-            }
-        } 
+        if($this->get_default_language() != $element_lang_details->language_code){
+            $p = $this->convert_url($p, $element_lang_details->language_code);
+        }
         return $p;
-    }
-    
-    function permalink_structure($str){
-        return ltrim($str, '/');  
-    }
-    
+    }            
     
     function language_selector_widget_init(){ 
         
@@ -2939,7 +2894,7 @@ class SitePress{
                         break;
                     case 'background-current-normal': 
                         if($v != $language_switcher_defaults[$k])
-							echo '#lang_sel a.lang_sel_sel, #lang_sel a.lang_sel_sel:visited{background-color:'.$v.';}'; 
+                            echo '#lang_sel a.lang_sel_sel, #lang_sel a.lang_sel_sel:visited{background-color:'.$v.';}'; 
                         break;
                     case 'background-current-hover': 
                         if($v != $language_switcher_defaults[$k])
@@ -2963,7 +2918,7 @@ class SitePress{
                         break;
                     case 'border': 
                         if($v != $language_switcher_defaults[$k])
-                            echo '#lang_sel a, #lang_sel a:visited{border-color:'.$v.';} #lang_sel ul ul{border-top:1px solid '.$v.';}';
+                            echo '#lang_sel a{border-color:'.$v.';}';
                         break;
                     
                 }
@@ -3341,9 +3296,8 @@ class SitePress{
     
     // TO REVISE
     function pre_option_home(){                              
-        //$dbbt = debug_backtrace();                                     
-        //if(1 || $dbbt[3]['file'] == @realpath(TEMPLATEPATH . '/header.php')){
-        if(!is_admin()){
+        $dbbt = debug_backtrace();                                     
+        if($dbbt[3]['file'] == @realpath(TEMPLATEPATH . '/header.php')){
             $ret = $this->language_url($this->this_lang);                                       
         }else{
             $ret = false;
@@ -3776,12 +3730,12 @@ class SitePress{
     }
     
     function get_edit_post_link($link, $id, $context = 'display'){
-		
-		if ( 'display' == $context )
-			$and = '&amp;';
-		else
-			$and = '&';
-		
+        
+        if ( 'display' == $context )
+            $and = '&amp;';
+        else
+            $and = '&';
+        
         if($id){
             $details = $this->get_element_language_details($id, 'post');
             $lang = $details->language_code;
@@ -4382,9 +4336,9 @@ class SitePress{
         return $output;
         
     }
-	
-	function language_selector_footer_style(){
-		
+        
+    function language_selector_footer_style(){
+        
         global $language_switcher_defaults;    
         $add = false;
         foreach($language_switcher_defaults as $key=>$d){
@@ -4408,7 +4362,7 @@ class SitePress{
                         break;
                     case 'background-current-normal': 
                         if($v != $language_switcher_defaults[$k])
-							echo '#lang_sel_footer a.lang_sel_sel, #lang_sel_footer a.lang_sel_sel:visited{background-color:'.$v.';}'; 
+                            echo '#lang_sel_footer a.lang_sel_sel, #lang_sel_footer a.lang_sel_sel:visited{background-color:'.$v.';}'; 
                         break;
                     case 'background-current-hover': 
                         if($v != $language_switcher_defaults[$k])
@@ -4440,11 +4394,11 @@ class SitePress{
             echo "</style>\n";
         }
     }
-	
-	function language_selector_footer() {
-		if($this->settings['footer_skip_languages'] == 'checked')
-			$this->settings['footer_skip_languages'] = 1;
-		$skip = is_singular() ? intval($this->settings['footer_skip_languages']) : 0;
+    
+    function language_selector_footer() {
+        if($this->settings['footer_skip_languages'] == 'checked')
+            $this->settings['footer_skip_languages'] = 1;
+        $skip = is_singular() ? intval($this->settings['footer_skip_languages']) : 0;
         $languages = icl_get_languages('skip_missing='.$skip);
         if(!empty($languages)){
             global $sitepress_settings;
@@ -4467,6 +4421,6 @@ class SitePress{
                     </ul>
                 </div>';
             }
-    }
+    }    
 }
 ?>

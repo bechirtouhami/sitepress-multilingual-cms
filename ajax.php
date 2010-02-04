@@ -225,17 +225,17 @@ switch($_REQUEST['icl_ajx_action']){
         if(isset($_POST['icl_lang_sel_config'])){
             $iclsettings['icl_lang_sel_config'] = $_POST['icl_lang_sel_config'];
         }
-		
-		 if(isset($_POST['icl_lang_sel_footer_config'])){
+        
+         if(isset($_POST['icl_lang_sel_footer_config'])){
             $iclsettings['icl_lang_sel_footer_config'] = $_POST['icl_lang_sel_footer_config'];
         }
-		
-		if (isset($_POST['icl_lang_sel_type']))
-			$iclsettings['icl_lang_sel_type'] = $_POST['icl_lang_sel_type'];
-		
-		if (isset($_POST['icl_lang_sel_footer']))
-			$iclsettings['icl_lang_sel_footer'] = 1;
-		else $iclsettings['icl_lang_sel_footer'] = 0;
+        
+        if (isset($_POST['icl_lang_sel_type']))
+            $iclsettings['icl_lang_sel_type'] = $_POST['icl_lang_sel_type'];
+        
+        if (isset($_POST['icl_lang_sel_footer']))
+            $iclsettings['icl_lang_sel_footer'] = 1;
+        else $iclsettings['icl_lang_sel_footer'] = 0;
         
         if(!$iclsettings['icl_lso_flags'] && !$iclsettings['icl_lso_native_lang'] && !$iclsettings['icl_lso_display_lang']){
             echo '0|';
@@ -316,7 +316,7 @@ switch($_REQUEST['icl_ajx_action']){
         $url = $_POST['url'] . $url_glue . '____icl_validate_domain=1';
         $client = new WP_Http();
         $response = $client->request($url, 'timeout=15');
-        if(!is_wp_error($response) && ($response['response']['code']=='200') && (rtrim($response['body'],'/') == '<!--'.trailingslashit(get_option('home')).'-->')){
+        if(!is_wp_error($response) && ($response['response']['code']=='200') && ($response['body'] == '<!--'.get_option('home').'-->')){
             echo 1;
         }else{
             echo 0;
