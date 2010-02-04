@@ -88,11 +88,20 @@ class SitePress{
             
 
             // posts and pages links filters            
-            add_filter('post_link', array($this, 'permalink_filter'),1,2);   
-            add_filter('page_link', array($this, 'permalink_filter'),1,2);   
-            add_filter('category_link', array($this, 'category_permalink_filter'),1,2);   
-            add_filter('tag_link', array($this, 'tag_permalink_filter'),1,2);   
-            
+            if(is_admin()){
+                add_filter('post_link', array($this, 'permalink_filter'),1,2);   
+                add_filter('page_link', array($this, 'permalink_filter'),1,2);   
+                add_filter('category_link', array($this, 'category_permalink_filter'),1,2);   
+                add_filter('tag_link', array($this, 'tag_permalink_filter'),1,2);   
+            }else{
+                add_filter('option_permalink_structure', array($this, 'permalink_structure'), 99);
+                if($this->settings['language_negotiation_type'] == 3){
+                    add_filter('post_link', array($this, 'permalink_adjust_lang_param'),1);   
+                    add_filter('page_link', array($this, 'permalink_adjust_lang_param'),1);   
+                    add_filter('category_link', array($this, 'permalink_adjust_lang_param'),1);   
+                    add_filter('tag_link', array($this, 'permalink_adjust_lang_param'),1);   
+                }
+            }            
             
             add_action('create_term',  array($this, 'create_term'),1, 2);
             add_action('edit_term',  array($this, 'create_term'),1, 2);
@@ -2756,9 +2765,10 @@ class SitePress{
             $url = trailingslashit($this->convert_url($abshome, $code));  
         }else{
             $url = $this->convert_url($abshome, $code);
-        }        
+        }      
         return $url;
     }
+    
     
     function permalink_filter($p, $pid){ 
         global $wpdb;
@@ -2826,6 +2836,14 @@ class SitePress{
         }
         return $p;
     }            
+    
+    function permalink_structure($str){
+        return ltrim($str, '/');  
+    }
+    
+    function permalink_adjust_lang_param($str){
+        return preg_replace("@\?lang=(.+)/\?(.+)$@", '?$2&lang=$1', $str);
+    }
     
     function language_selector_widget_init(){ 
         
@@ -3301,7 +3319,7 @@ class SitePress{
     
     // TO REVISE
     function pre_option_home(){                              
-        $dbbt = debug_backtrace();                                     
+        //$dbbt = debug_backtrace();                                     
         //if(1 || $dbbt[3]['file'] == @realpath(TEMPLATEPATH . '/header.php')){
         if(!is_admin()){
             $ret = $this->language_url($this->this_lang);                                       
