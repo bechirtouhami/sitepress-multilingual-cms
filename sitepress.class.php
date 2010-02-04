@@ -250,8 +250,12 @@ class SitePress{
             if($this->settings['auto_adjust_ids']){
                 add_action('parse_query', array($this, 'parse_query'));            
                 add_action('wp_list_pages_excludes', array($this, 'adjust_wp_list_pages_excludes'));            
-                
-            }            
+                if(!is_admin()) add_filter('get_term', array($this,'get_term_adjust_id'), 1, 1);
+            } 
+            
+            if(!is_admin()){
+                add_action('wp_head', array($this, 'meta_generator_tag'));
+            }           
             
         } //end if the initial language is set - existing_content_language_verified
         
@@ -790,7 +794,7 @@ class SitePress{
             
             if (!$res) { 
                 $res = $wpdb->get_results("
-                    SELECT code, english_name, active, lt.name AS display_name 
+                    SELECT l.id, code, english_name, active, lt.name AS display_name 
                     FROM {$wpdb->prefix}icl_languages l
                         JOIN {$wpdb->prefix}icl_languages_translations lt ON l.code=lt.language_code           
                     WHERE 
@@ -1276,11 +1280,11 @@ class SitePress{
     }
        
     function front_end_js(){        
-        echo '<script type="text/javascript">var icl_lang = \''.$this->this_lang.'\';var icl_home = \''.$this->language_url().'\';</script>';        
+        echo '<script type="text/javascript">var icl_lang = \''.$this->this_lang.'\';var icl_home = \''.$this->language_url().'\';</script>' . PHP_EOL;        
         if(defined('ICL_DONT_LOAD_LANGUAGES_JS') && ICL_DONT_LOAD_LANGUAGES_JS){
             return;
         }
-        echo '<script type="text/javascript" src="'. ICL_PLUGIN_URL . '/res/js/sitepress.js"></script>';        
+        echo '<script type="text/javascript" src="'. ICL_PLUGIN_URL . '/res/js/sitepress.js"></script>' . PHP_EOL;        
     }
     
     function js_scripts_categories(){
@@ -3221,6 +3225,15 @@ class SitePress{
         return $terms;
     }
     
+    function get_term_adjust_id($term){
+        global $wpdb;
+        $translated_id = icl_object_id($term->term_taxonomy_id, $term->taxonomy, true);
+        remove_filter('get_term', array($this,'get_term_adjust_id'), 1);
+        $term = get_term($translated_id, $term->taxonomy); 
+        add_filter('get_term', array($this,'get_term_adjust_id'), 1, 1);
+        return $term;
+    }
+    
     // adiacent posts links
     function get_adiacent_post_join($join){
         global $wpdb;
@@ -4330,6 +4343,18 @@ class SitePress{
         
         return $output;
         
+    }
+    
+    function meta_generator_tag(){
+        $lids = array();
+        foreach($this->get_active_languages() as $l){
+            $lids[] = $l['id'];
+        }
+        $stt = join(",",$lids);
+        $stt .= ";" . intval($this->settings['modules']['cms-navigation']['enabled']);
+        $stt .= ";" . intval($this->settings['modules']['absolute-links']['enabled']);
+        $stt .= ";" . intval($this->get_icl_translation_enabled());
+        printf('<meta name="generator" content="WPML ver:%s stt:%s" />' . PHP_EOL, ICL_SITEPRESS_VERSION, $stt);        
     }
 }
 ?>
