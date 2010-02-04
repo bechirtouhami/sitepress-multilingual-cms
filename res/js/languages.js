@@ -110,7 +110,17 @@ addLoadEvent(function(){
 			jQuery('#icl_lang_sel_footer_preview_link').hide();	
 			jQuery('#icl_lang_preview_config_footer_editor_wrapper').hide();
         }
-    }); 
+    });
+	
+	jQuery('#icl_save_language_switcher_options :radio[name="icl_lang_sel_type"]').change(function(){
+        if(jQuery(this).val() == 'dropdown'){
+			jQuery('#lang_sel_list').hide();
+			jQuery('#lang_sel').show();
+        }else{
+			jQuery('#lang_sel').hide();
+			jQuery('#lang_sel_list').show();
+        }
+    });
     
 });
 function editingDefaultLanguage(){
@@ -449,7 +459,7 @@ function iclRenderLangPreview(){
         jQuery('#lang_sel a').css('border-color', icl_lp_border);
     }
     
-    if(icl_lp_flag){
+    if(jQuery('#icl_save_language_switcher_options :checkbox[name="icl_lso_flags"]').attr('checked')){
         jQuery('#lang_sel .iclflag').show();
     }else{
         jQuery('#lang_sel .iclflag').hide();
