@@ -502,11 +502,6 @@ class SitePress{
         if($this->settings['promote_wpml']){
             add_action('wp_footer', array($this, 'display_wpml_footer'),20);
         }  
-        
-        if($this->settings['icl_lang_sel_footer']){
-            add_action('wp_head', array($this, 'language_selector_footer_style'),19);
-            add_action('wp_footer', array($this, 'language_selector_footer'),19);
-        }
                 
         if(defined('XMLRPC_REQUEST') && XMLRPC_REQUEST){
             add_action('xmlrpc_call', array($this, 'xmlrpc_call_actions'));
@@ -4336,91 +4331,5 @@ class SitePress{
         return $output;
         
     }
-        
-    function language_selector_footer_style(){
-        
-        global $language_switcher_defaults;    
-        $add = false;
-        foreach($language_switcher_defaults as $key=>$d){
-            if(isset($this->settings['icl_lang_sel_footer_config'][$key]) && $this->settings['icl_lang_sel_footer_config'][$key] != $d){
-                $this->settings['icl_lang_sel_footer_config'][$key] . "\n";
-                $add = true;
-                break;
-            }
-        }
-        if($add){
-            echo "\n<style type=\"text/css\">";
-            foreach($this->settings['icl_lang_sel_footer_config'] as $k=>$v){
-                switch($k){
-                    case 'font-current-normal': 
-                        if($v != $language_switcher_defaults[$k])
-                            echo '#lang_sel_footer a, #lang_sel_footer a.lang_sel_sel{color:'.$v.';}'; 
-                        break;
-                    case 'font-current-hover': 
-                        if($v != $language_switcher_defaults[$k])
-                            echo '#lang_sel_footer a:hover, #lang_sel_footer a.lang_sel_sel:hover{color:'.$v.';}';
-                        break;
-                    case 'background-current-normal': 
-                        if($v != $language_switcher_defaults[$k])
-                            echo '#lang_sel_footer a.lang_sel_sel, #lang_sel_footer a.lang_sel_sel:visited{background-color:'.$v.';}'; 
-                        break;
-                    case 'background-current-hover': 
-                        if($v != $language_switcher_defaults[$k])
-                            echo '#lang_sel_footer a.lang_sel_sel:hover{background-color:'.$v.';}'; 
-                        break;
-                    case 'font-other-normal':
-                        if($v != $language_switcher_defaults[$k])
-                            echo '#lang_sel_footer ul a, #lang_sel_footer ul a:visited{color:'.$v.';}'; 
-                        break;
-                    case 'font-other-hover': 
-                        if($v != $language_switcher_defaults[$k])
-                            echo '#lang_sel_footer ul a:hover{color:'.$v.';}'; 
-                        break;
-                    case 'background-other-normal': 
-                        if($v != $language_switcher_defaults[$k])
-                            echo '#lang_sel_footer ul a, #lang_sel_footer ul a:visited{background-color:'.$v.';}'; 
-                        break;
-                    case 'background-other-hover': 
-                        if($v != $language_switcher_defaults[$k])
-                            echo '#lang_sel_footer ul a:hover{background-color:'.$v.';}'; 
-                        break;
-                    case 'border': 
-                        if($v != $language_switcher_defaults[$k])
-                            echo '#lang_sel_footer a, #lang_sel_footer a:visited{border-color:'.$v.';} #lang_sel_footer ul ul{border-top:1px solid '.$v.';}';
-                        break;
-                    
-                }
-            }
-            echo "</style>\n";
-        }
-    }
-    
-    function language_selector_footer() {
-        if($this->settings['footer_skip_languages'] == 'checked')
-            $this->settings['footer_skip_languages'] = 1;
-        $skip = is_singular() ? intval($this->settings['footer_skip_languages']) : 0;
-        $languages = icl_get_languages('skip_missing='.$skip);
-        if(!empty($languages)){
-            global $sitepress_settings;
-            echo '
-                <div id="lang_sel_footer">
-                    <ul>
-                    ';
-                foreach($languages as $l){
-                    echo '<li>';
-                    if(!$l['active']) echo '<a href="'.$l['url'].'">';
-                    if ($sitepress_settings['icl_lso_flags']) echo '<img src="'.$l['country_flag_url'].'" alt="'.$l['language_code'].'" />&nbsp;';
-                    if(!$l['active']) echo '</a>';
-                     if(!$l['active']) echo '<a href="'.$l['url'].'">';
-                    echo icl_disp_language( $sitepress_settings['icl_lso_native_lang'] ? $l['native_name'] : null, $sitepress_settings['icl_lso_display_lang'] ? $l['translated_name'] : null );
-                    if(!$l['active']) echo '</a>';
-                    echo '</li>
-                    ';
-                }
-            echo '
-                    </ul>
-                </div>';
-            }
-    }    
 }
 ?>
