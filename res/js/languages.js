@@ -28,7 +28,8 @@ addLoadEvent(function(){
         }
     });
 	             
-    icl_lp_flag = jQuery('.iclflag:visible').length > 0;         
+    icl_lp_flag = jQuery('.iclflag:visible').length > 0;    
+	icl_lp_footer_flag = jQuery('.iclflag:visible').length > 0;     
     
 	jQuery('#icl_lang_preview_config input').each(iclUpdateLangSelQuickPreview);
 	jQuery('#icl_lang_preview_config_footer input').each(iclUpdateLangSelQuickPreviewFooter);
@@ -48,8 +49,10 @@ addLoadEvent(function(){
     jQuery('#icl_save_language_switcher_options :checkbox[name="icl_lso_flags"]').change(function(){
         if(jQuery(this).attr('checked')){
             jQuery('#lang_sel .iclflag').show();
+			jQuery('#lang_sel_footer .iclflag').show();
         }else{
-			jQuery('#lang_sel .iclflag').hide();			
+			jQuery('#lang_sel .iclflag').hide();		
+			jQuery('#lang_sel_footer .iclflag').hide();	
             /*if(jQuery('#icl_save_language_switcher_options :checkbox[name="icl_lso_display_lang"]').attr('checked')
                 || jQuery('#icl_save_language_switcher_options :checkbox[name="icl_lso_native_lang"]').attr('checked')){
                 jQuery('#lang_sel .iclflag').hide();
@@ -95,7 +98,19 @@ addLoadEvent(function(){
     jQuery('#icl_lang_sel_color_scheme').change(iclUpdateLangSelColorScheme);
 	jQuery('#icl_lang_sel_footer_color_scheme').change(iclUpdateLangSelColorSchemeFooter);
     
-    //jQuery('#icl_lang_preview_config input').change(iclUpdateLangSelPreview);    
+    //jQuery('#icl_lang_preview_config input').change(iclUpdateLangSelPreview);  
+	
+	jQuery('#icl_save_language_switcher_options :checkbox[name="icl_lang_sel_footer"]').change(function(){
+        if(jQuery(this).attr('checked')){
+            jQuery('#icl_lang_sel_footer_preview_wrap').show();
+			jQuery('#icl_lang_sel_footer_preview_link').show();
+			//jQuery('#icl_lang_preview_config_footer_editor_wrapper').show();
+        }else{
+			jQuery('#icl_lang_sel_footer_preview_wrap').hide();		
+			jQuery('#icl_lang_sel_footer_preview_link').hide();	
+			jQuery('#icl_lang_preview_config_footer_editor_wrapper').hide();
+        }
+    }); 
     
 });
 function editingDefaultLanguage(){
@@ -539,7 +554,7 @@ function iclUpdateLangSelQuickPreviewFooter(){
         case 'icl_lang_sel_footer_config[border]':
             icl_lp_footer_border = value;
             break;            
-        case 'icl_lso_flags':
+        case 'icl_lso_footer_flags':
             icl_lp_footer_flag = jQuery(this).attr('checked');
             break;            
         case 'icl_lang_sel_footer_config[background]':
@@ -550,39 +565,8 @@ function iclUpdateLangSelQuickPreviewFooter(){
 }
 
 function iclRenderLangPreviewFooter(){
+   
     
-    if(icl_lp_footer_font_current_normal){                                                                          
-        jQuery('#lang_sel_footer a:first').css('color',icl_lp_footer_font_current_normal) ; 
-    }    
-    if(icl_lp_footer_font_current_hover){
-        jQuery('#lang_sel_footer a:first, #lang_sel_footer a.lang_sel_sel').unbind('hover');
-        jQuery('#lang_sel_footer a:first, #lang_sel_footer a.lang_sel_sel').hover(
-            function(){jQuery(this).css('color',icl_lp_footer_font_current_hover)},
-            function(){
-                jQuery(this).css('color',icl_lp_footer_font_current_normal);
-                jQuery('#lang_sel_footer a.lang_sel_sel').css('color',icl_lp_footer_font_current_normal);
-                }
-            );
-    }
-    
-    if(icl_lp_footer_background_current_normal){
-        jQuery('#lang_sel_footer a:first').css('background-color', icl_lp_footer_background_current_normal); 
-        
-        jQuery('#lang_sel_footer a:first').unbind('hover');
-        jQuery('#lang_sel_footer a:first').hover(
-            function(){jQuery(this).css('background-color', '')},
-            function(){jQuery(this).css('background-color', icl_lp_footer_background_current_normal)}
-            );
-        
-    }
-    
-    if(icl_lp_footer_background_current_hover){                                                          
-        jQuery('#lang_sel_footer a:first').unbind('hover');
-        jQuery('#lang_sel_footer a:first').hover(
-            function(){jQuery(this).css('background-color', icl_lp_footer_background_current_hover)},
-            function(){jQuery(this).css('background-color', icl_lp_footer_background_current_normal)}
-            );
-    }
                                                                                                                
     if(icl_lp_footer_font_other_normal){
         jQuery('#lang_sel_footer ul a').css('color', icl_lp_footer_font_other_normal); 
@@ -619,10 +603,44 @@ function iclRenderLangPreviewFooter(){
         jQuery('#lang_sel_footer').css('background-color', icl_lp_footer_background);
     }
     
-    if(icl_lp_footer_flag){
+    if(jQuery('#icl_save_language_switcher_options :checkbox[name="icl_lso_flags"]').attr('checked')){
         jQuery('#lang_sel_footer .iclflag').show();
     }else{
         jQuery('#lang_sel_footer .iclflag').hide();
+    }
+	
+	if(icl_lp_footer_font_current_normal){                                                                     
+        jQuery('#lang_sel_footer a:first').css('color',icl_lp_footer_font_current_normal) ; 
+    } 
+	
+	if(icl_lp_footer_font_current_hover){
+        jQuery('#lang_sel_footer a:first, #lang_sel_footer a.lang_sel_sel').unbind('hover');
+        jQuery('#lang_sel_footer a:first, #lang_sel_footer a.lang_sel_sel').hover(
+            function(){jQuery(this).css('color',icl_lp_footer_font_current_hover)},
+            function(){
+                jQuery(this).css('color',icl_lp_footer_font_current_normal);
+                jQuery('#lang_sel_footer a.lang_sel_sel').css('color',icl_lp_footer_font_current_normal);
+                }
+            );
+    }
+    
+    if(icl_lp_footer_background_current_normal){
+        jQuery('#lang_sel_footer a:first').css('background-color', icl_lp_footer_background_current_normal); 
+        
+        jQuery('#lang_sel_footer a:first').unbind('hover');
+        jQuery('#lang_sel_footer a:first').hover(
+            function(){jQuery(this).css('background-color', '')},
+            function(){jQuery(this).css('background-color', icl_lp_footer_background_current_normal)}
+            );
+        
+    }
+    
+    if(icl_lp_footer_background_current_hover){                                                          
+        jQuery('#lang_sel_footer a:first').unbind('hover');
+        jQuery('#lang_sel_footer a:first').hover(
+            function(){jQuery(this).css('background-color', icl_lp_footer_background_current_hover)},
+            function(){jQuery(this).css('background-color', icl_lp_footer_background_current_normal)}
+            );
     }
     
 }
