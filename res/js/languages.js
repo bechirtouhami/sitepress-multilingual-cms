@@ -505,6 +505,7 @@ var icl_lp_footer_background_other_normal = false;
 var icl_lp_footer_background_other_hover = false;
 var icl_lp_footer_border = false;
 var icl_lp_footer_flag = false;
+var icl_lp_footer_background = false;
 
 
 function iclUpdateLangSelQuickPreviewFooter(){
@@ -541,7 +542,9 @@ function iclUpdateLangSelQuickPreviewFooter(){
         case 'icl_lso_flags':
             icl_lp_footer_flag = jQuery(this).attr('checked');
             break;            
-            
+        case 'icl_lang_sel_footer_config[background]':
+            icl_lp_footer_background = value;
+            break;  
     }
     iclRenderLangPreviewFooter();
 }
@@ -609,7 +612,11 @@ function iclRenderLangPreviewFooter(){
     }
     
     if(icl_lp_footer_border){
-        jQuery('#lang_sel_footer a').css('border-color', icl_lp_footer_border);
+        jQuery('#lang_sel_footer').css('border-color', icl_lp_footer_border);
+    }
+	
+	if(icl_lp_footer_background){
+        jQuery('#lang_sel_footer').css('background-color', icl_lp_footer_background);
     }
     
     if(icl_lp_footer_flag){
@@ -655,7 +662,10 @@ function iclUpdateLangSelColorSchemeFooter(){
                     break;                
                 case 'icl_lang_sel_footer_config[border]':
                     icl_lp_footer_border = value;
-                    break;            
+                    break;
+				case 'icl_lang_sel_footer_config[background]':
+                    icl_lp_footer_background = value;
+                    break;             
             }            
             
         });
