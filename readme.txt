@@ -66,6 +66,15 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 
 == Changelog ==
 
+= 1.7.0 =
+* WPML adapts itself to any WordPress theme, making any website fully multilingual without any changes.
+* Added option to add a list of language links in the site's footer.
+* Added controls for choosing what to synchronize between originals and translations.
+* Added feature to allow [hiding all contents per language](http://wpml.org/?p=4031).
+* Fixed bug when quick editing tags.
+* Switched locales for Chinese between simplified and traditional.
+* Lots of other tiny bug fixes.
+
 = 1.6.0 =
 * Allows translating both themes and plugins in WPML's string translation.
 * Existing translations in .mo files are imported to WPML's translation interface.
