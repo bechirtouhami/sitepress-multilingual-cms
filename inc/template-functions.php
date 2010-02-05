@@ -5,6 +5,10 @@ function icl_get_home_url(){
 } 
 
 
+// args:
+// skip_missing (0|1|true|false)
+// orderby (id|code|name)
+// order (asc|desc)
 function icl_get_languages($a=''){
     if($a){
         parse_str($a, $args);        

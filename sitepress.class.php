@@ -3097,6 +3097,31 @@ class SitePress{
             // restore current $wp_query
             $wp_query = clone $_wp_query_back;
             unset($_wp_query_back);             
+              
+            // sort languages according to parameters  
+            if(isset($template_args['orderby'])){
+                if(isset($template_args['order'])){
+                    $order = $template_args['order'];
+                }else{
+                    $order = 'asc';
+                }
+                $comp = $order == 'asc' ? '>' : '<';
+                switch($template_args['orderby']){
+                    case 'id':                   
+                        uasort($w_active_languages, create_function('$a,$b','return $a[\'id\'] '.$comp.' $b[\'id\'];')); 
+                        break;
+                    case 'code':    
+                        ksort($w_active_languages);
+                        if($order == 'desc'){
+                            $w_active_languages = array_reverse($w_active_languages);
+                        }
+                        break;
+                    case 'name':                                        
+                    default:
+                        uasort($w_active_languages, create_function('$a,$b','return $a[\'translated_name\'] '.$comp.' $b[\'translated_name\'];')); 
+                }                
+            }                    
+            
                                 
             return $w_active_languages;
             
