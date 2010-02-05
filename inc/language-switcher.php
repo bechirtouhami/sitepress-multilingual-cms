@@ -208,7 +208,7 @@ class SitePressLanguageSwitcher {
                                             
                             
                                             
-                                            <a href="#" onclick="jQuery(this).next().slideToggle();return false;" id="icl_lang_sel_footer_preview_link" <?php if (!$this->settings['icl_lang_sel_footer']) echo 'style="display:none;" '; ?>><?php _e('Edit the language switcher colors', 'sitepress')?></a>                                            
+                                            <a href="#" onclick="jQuery(this).next().slideToggle();return false;" id="icl_lang_sel_footer_preview_link" <?php if (!$this->settings['icl_lang_sel_footer']) echo 'style="display:none;" '; ?>><?php _e('Edit the footer language switcher colors', 'sitepress')?></a>                                            
                                             <div style="display:none" id="icl_lang_preview_config_footer_editor_wrapper">                                          
                                                 <table id="icl_lang_preview_config_footer" style="width:auto;">
                                                     <thead>

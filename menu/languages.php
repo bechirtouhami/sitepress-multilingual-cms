@@ -419,13 +419,13 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                                         </li>                    
                                         <li>
                                         
-                                            <h4><?php echo __('Sidebar language switcher style', 'sitepress')?></h4>
+                                            <h4><?php echo __('What to include in the language switcher', 'sitepress')?></h4>
                                     
                                                                              
                                             <?php if(!defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') || !ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS): ?>                                            
                                             <div id="icl_lang_sel_preview_wrap" style="height:<?php echo 50 + 20 * count($sitepress->get_active_languages())?>px">                                            
                                             <span id="icl_lang_sel_preview">                                            
-                                            <h4><?php _e('Language switcher preview', 'sitepress')?></h4>
+                                            <h4><?php _e('Language switcher widget preview', 'sitepress')?></h4>
                                             <?php 
                                                 global $icl_language_switcher_preview;
                                                 $icl_language_switcher_preview = true;                                                
@@ -464,7 +464,8 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                                             
                             
                                             <?php if(!defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') || !ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS): ?>
-                                            <a href="#" onclick="jQuery(this).next().slideToggle();return false;"><?php _e('Edit the language switcher colors', 'sitepress')?></a>                                            
+                                            <br />
+                                            <a href="#" onclick="jQuery(this).next().slideToggle();return false;"><?php _e('Edit the language switcher widget colors', 'sitepress')?></a>                                            
                                             <div style="display:none">                                          
                                                 <table id="icl_lang_preview_config" style="width:auto;">
                                                     <thead>
