@@ -728,15 +728,15 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                         
                         <tr>
                             <td>
-                                <h4><?php _e('Adjust category, tag, post and page IDs', 'sitepress')?></h4>
+                                <h4><?php _e('Make themes work multilingual', 'sitepress')?></h4>
                                 <form id="icl_adjust_ids" name="icl_adjust_ids" action="">        
                                 <p>
                                     <label>
                                         <input type="checkbox" value="1" name="icl_adjust_ids" <?php if($sitepress_settings['auto_adjust_ids']) echo 'checked="checked"' ?> /> 
-                                        <?php _e('Adjust category and tag IDs for translations', 'sitepress')?>
+                                        <?php _e('Adjust IDs for multilingual functionality', 'sitepress')?>
                                     </label>
                                 </p>
-                                <p><i><?php _e('This feature is intended for themes that display posts for special categories', 'sitepress')?></i></p>
+                                <p><?php _e('This feature turns themes into multilingual, without having to edit their PHP files.', 'sitepress')?></p>
                                 <p>
                                     <input class="button" name="save" value="<?php echo __('Apply','sitepress') ?>" type="submit" />
                                     <span class="icl_ajx_response" id="icl_ajx_response_ai"></span>
