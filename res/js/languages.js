@@ -112,7 +112,7 @@ addLoadEvent(function(){
         }
     });
 	
-	jQuery('#icl_save_language_switcher_options :radio[name="icl_lang_sel_type"]').change(function(){
+	/*jQuery('#icl_save_language_switcher_options :radio[name="icl_lang_sel_type"]').change(function(){
         if(jQuery(this).val() == 'dropdown'){
 			jQuery('#lang_sel_list').hide();
 			jQuery('#lang_sel').show();
@@ -120,7 +120,7 @@ addLoadEvent(function(){
 			jQuery('#lang_sel').hide();
 			jQuery('#lang_sel_list').show();
         }
-    });
+    });*/
     
 });
 function editingDefaultLanguage(){
