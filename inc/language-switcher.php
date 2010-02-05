@@ -183,7 +183,7 @@ class SitePressLanguageSwitcher {
 ?>
 
 
-										<!--<li class="icl_advanced_feature">
+										<li class="icl_advanced_feature">
                                             <h4><?php echo __('How to show widget', 'sitepress')?></h4>
                                             <p><?php echo __('Select type of appearance.', 'sitepress') ?></p>
                                             <ul>
@@ -200,7 +200,7 @@ class SitePressLanguageSwitcher {
                                                 </label>                    
                                                 </li>
                                             </ul>
-                                        </li>-->
+                                        </li>
 
 										<li class="icl_advanced_feature">
                                             <h4><?php echo __('Footer', 'sitepress')?></h4>

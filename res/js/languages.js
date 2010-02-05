@@ -112,15 +112,31 @@ addLoadEvent(function(){
         }
     });
 	
-	/*jQuery('#icl_save_language_switcher_options :radio[name="icl_lang_sel_type"]').change(function(){
+	jQuery('#icl_save_language_switcher_options :radio[name="icl_lang_sel_type"]').change(function(){
         if(jQuery(this).val() == 'dropdown'){
-			jQuery('#lang_sel_list').hide();
-			jQuery('#lang_sel').show();
+			//jQuery('#lang_sel_list').hide();
+			//jQuery('#lang_sel').show();
+			jQuery('#lang_sel ul ul').css('visibility','hidden');
+			jQuery('#lang_sel a.lang_sel_sel').css('background-image','url(../img/nav-arrow-down.png)');
+			jQuery('#lang_sel ul').hover(
+				function(){
+					jQuery('#lang_sel ul ul').css('visibility','visible');
+				},
+				function(){
+					jQuery('#lang_sel ul ul').css('visibility','hidden');
+				}
+			);
         }else{
-			jQuery('#lang_sel').hide();
-			jQuery('#lang_sel_list').show();
+			//jQuery('#lang_sel').hide();
+			//jQuery('#lang_sel_list').show();
+			jQuery('#lang_sel a.lang_sel_sel').css('background-image','none');
+			//jQuery('#lang_sel ul').unbind('hover');
+			//jQuery('#lang_sel ul').unbind('onmouseover').unbind('onmouseout');
+			jQuery('#lang_sel ul').hover(function(){jQuery('#lang_sel ul ul').css('visibility','visible');}, function(){jQuery('#lang_sel ul ul').css('visibility','visible');});
+			jQuery('#lang_sel ul ul').css('visibility','visible');
+			//jQuery('#lang_sel a.lang_sel_sel').addClass('lang_sel_ul_ul');
         }
-    });*/
+    });
     
 });
 function editingDefaultLanguage(){
