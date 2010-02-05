@@ -440,6 +440,9 @@ function icl_translation_get_documents($lang,
     if(!isset($_GET['paged'])) $_GET['paged'] = 1;
     $offset = ($_GET['paged']-1)*$limit;
     
+    // exclude trashed posts
+    $where .= " AND p.post_status <> 'trash'";
+    
     $sql = "
         SELECT SQL_CALC_FOUND_ROWS p.ID as post_id, p.post_title, p.post_type, p.post_status, post_content, 
             c.rid,
