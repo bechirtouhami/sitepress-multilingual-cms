@@ -119,10 +119,7 @@ class SitePressLanguageSwitcher {
     }
 	
 	function language_selector_footer() {
-		if($this->settings['footer_skip_languages'] == 'checked')
-			$this->settings['footer_skip_languages'] = 1;
-		$skip = is_singular() ? intval($this->settings['footer_skip_languages']) : 0;
-        $languages = icl_get_languages('skip_missing='.$skip);
+        $languages = icl_get_languages('orderby=id&order=asc&skip_missing=0');
         if(!empty($languages)){
             echo '
                 <div id="lang_sel_footer">
