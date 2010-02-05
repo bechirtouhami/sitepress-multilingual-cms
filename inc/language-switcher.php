@@ -179,8 +179,8 @@ class SitePressLanguageSwitcher {
 	function admin(){
 ?>
 
-										<li class="icl_advanced_feature">
-                                            <h4><?php echo __('Footer', 'sitepress')?></h4>
+										<li>
+                                            <h4><?php echo __('Footer language switcher style', 'sitepress')?></h4>
                                             <ul>
                                                 <li>
                                                     <label>

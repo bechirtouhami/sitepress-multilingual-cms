@@ -417,9 +417,9 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                                                 </li>
                                             </ul>
                                         </li>                    
-                                        <li class="icl_advanced_feature">
+                                        <li>
                                         
-                                            <h4><?php echo __('Language switcher style', 'sitepress')?></h4>
+                                            <h4><?php echo __('Sidebar language switcher style', 'sitepress')?></h4>
                                     
                                                                              
                                             <?php if(!defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') || !ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS): ?>                                            
@@ -561,10 +561,9 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                                             <?php else: ?>
                                             <em><?php printf(__("%s is defined in your theme. The language switcher can only be customized using the theme's CSS.", 'sitepress'), 'ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') ?></em>
                                             <?php endif; ?>
-                                            
                                         </li>
 										
-<?php do_action('icl_language_switcher_options'); ?>
+                                        <?php do_action('icl_language_switcher_options'); ?>
 
                                     </ul>
                                     <?php if($sitepress_settings['setup_complete']): ?>             

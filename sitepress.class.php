@@ -3266,6 +3266,7 @@ class SitePress{
         return $term;
     }
     
+    
     function category_link_adjust_id($catlink, $cat_id){
         $translated_id = icl_object_id($cat_id, 'category', true);
         if($translated_id != $cat_id){
@@ -3274,7 +3275,7 @@ class SitePress{
             add_filter('category_link', array($this,'category_link_adjust_id'), 1, 2);
         }
         return $catlink;        
-    }
+    } 
     
     // adiacent posts links
     function get_adiacent_post_join($join){
