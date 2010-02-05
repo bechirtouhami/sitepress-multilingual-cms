@@ -263,6 +263,7 @@ class SitePress{
     
     function the_posts($posts){        
         global $wpdb, $wp_query;
+        
         $db = debug_backtrace();   
         $custom_wp_query = $db[3]['object'];        
         
@@ -286,7 +287,8 @@ class SitePress{
         }
         // get the posts in the default language instead        
         $this_lang = $this->this_lang;
-        $this->this_lang = $this->get_default_language();        
+        $this->this_lang = $this->get_default_language(); 
+               
         remove_filter('the_posts', array($this, 'the_posts')); 
 
         $custom_wp_query->query_vars['suppress_filters'] = 0;
@@ -325,7 +327,10 @@ class SitePress{
             }
 
         }  
-                   
+        
+        //fix page for posts           
+        unset($custom_wp_query->query_vars['page_id']); unset($custom_wp_query->query_vars['p']);
+        
         $my_query = new WP_Query($custom_wp_query->query_vars);
         add_filter('the_posts', array($this, 'the_posts'));
         $this->this_lang = $this_lang;

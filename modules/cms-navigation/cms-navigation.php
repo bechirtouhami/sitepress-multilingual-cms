@@ -383,7 +383,7 @@ class CMSNavigation{
                             ?>
                             <?php elseif($this->settings['cat_menu_contents'] == 'posts'): ?>
                                 <?php 
-                                    $postbk = $post; // preserve $post                              
+                                    $postbk = $post; // preserve $post                                                                  
                                     $cmsnavq = new WP_Query();
                                     $cmsnavq->query('suppress_filters=0');
                                     if ( $cmsnavq->have_posts() ) : while ( $cmsnavq->have_posts() ) : $cmsnavq->the_post(); 
