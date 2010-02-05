@@ -90,8 +90,7 @@ class SitePress{
             add_filter('page_link', array($this, 'permalink_filter'),1,2);   
             add_filter('category_link', array($this, 'category_permalink_filter'),1,2);   
             add_filter('tag_link', array($this, 'tag_permalink_filter'),1,2);   
-            
-            
+                        
             add_action('create_term',  array($this, 'create_term'),1, 2);
             add_action('edit_term',  array($this, 'create_term'),1, 2);
             add_action('delete_term',  array($this, 'delete_term'),1,3);       
@@ -2780,6 +2779,9 @@ class SitePress{
                 $p = $this->convert_url($p, $args['lang']);
             }
         }
+        if(is_feed()){
+            $p = str_replace("&lang=", "&#038;lang=", $p);
+        }
         return $p;
     }    
     
@@ -2828,7 +2830,7 @@ class SitePress{
         }
         return $p;
     }            
-    
+        
     function language_selector_widget_init(){ 
         
         function language_selector_widget($args){            
