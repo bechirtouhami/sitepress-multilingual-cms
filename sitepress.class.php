@@ -250,7 +250,10 @@ class SitePress{
             if($this->settings['auto_adjust_ids']){
                 add_action('parse_query', array($this, 'parse_query'));            
                 add_action('wp_list_pages_excludes', array($this, 'adjust_wp_list_pages_excludes'));            
-                if(!is_admin()) add_filter('get_term', array($this,'get_term_adjust_id'), 1, 1);
+                if(!is_admin()){
+                    add_filter('get_term', array($this,'get_term_adjust_id'), 1, 1);
+                    add_filter('category_link', array($this,'category_link_adjust_id'), 1, 2);
+                }
             } 
             
             if(!is_admin()){
@@ -3255,13 +3258,22 @@ class SitePress{
         return $terms;
     }
     
-    function get_term_adjust_id($term){
-        global $wpdb;
+    function get_term_adjust_id($term){        
         $translated_id = icl_object_id($term->term_taxonomy_id, $term->taxonomy, true);
         remove_filter('get_term', array($this,'get_term_adjust_id'), 1);
         $term = get_term($translated_id, $term->taxonomy); 
         add_filter('get_term', array($this,'get_term_adjust_id'), 1, 1);
         return $term;
+    }
+    
+    function category_link_adjust_id($catlink, $cat_id){
+        $translated_id = icl_object_id($cat_id, 'category', true);
+        if($translated_id != $cat_id){
+            remove_filter('category_link', array($this,'category_link_adjust_id'), 1);
+            $catlink = get_category_link($translated_id, 'category'); 
+            add_filter('category_link', array($this,'category_link_adjust_id'), 1, 2);
+        }
+        return $catlink;        
     }
     
     // adiacent posts links
