@@ -181,12 +181,11 @@ class SitePressLanguageSwitcher {
 
 										<li class="icl_advanced_feature">
                                             <h4><?php echo __('Footer', 'sitepress')?></h4>
-                                            <p><?php echo __('Show language switcher in footer?', 'sitepress') ?></p>
                                             <ul>
                                                 <li>
                                                     <label>
                                                         <input type="checkbox" name="icl_lang_sel_footer" value="1" <?php if($this->settings['icl_lang_sel_footer']):?>checked="checked"<?php endif?> />
-                                                        <?php echo __('Yes', 'sitepress') ?>
+                                                        <?php echo __('Show language switcher in footer', 'sitepress') ?>
                                                     </label>
                                                 </li>
                                             </ul>
