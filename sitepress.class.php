@@ -2306,7 +2306,7 @@ class SitePress{
         return $output;
     }
             
-    function edit_term_form($term){                
+    function edit_term_form($term){   
         global $wpdb, $pagenow;
         $element_id = $term->term_taxonomy_id;    
         $element_type = $pagenow=='categories.php'?'category':'tag';
@@ -2536,6 +2536,7 @@ class SitePress{
     
     function create_term($cat_id, $tt_id){        
         global $wpdb;
+        
         // case of ajax inline category creation
         if(isset($_POST['_ajax_nonce']) && $_POST['action']=='add-category'){
             $referer = $_SERVER['HTTP_REFERER'];
@@ -2550,6 +2551,7 @@ class SitePress{
         }
 
         $el_type = $wpdb->get_var("SELECT taxonomy FROM {$wpdb->term_taxonomy} WHERE term_taxonomy_id={$tt_id}");
+        if($el_type == 'post_tag') $el_type = 'tag'; 
         
         // case of adding a tag via post save
         if($_POST['action']=='editpost'){
@@ -2575,8 +2577,7 @@ class SitePress{
                 $trid = null;
             }
         }
-
-        if($el_type == 'post_tag') $el_type = 'tag'; 
+        
         if(!isset($term_lang)){
             $term_lang = $_POST['icl_'.$el_type.'_language'];        
         }        
