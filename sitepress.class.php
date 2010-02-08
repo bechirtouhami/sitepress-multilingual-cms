@@ -3263,7 +3263,10 @@ class SitePress{
     function get_term_adjust_id($term){        
         $translated_id = icl_object_id($term->term_taxonomy_id, $term->taxonomy, true);
         remove_filter('get_term', array($this,'get_term_adjust_id'), 1);
-        $term = get_term($translated_id, $term->taxonomy); 
+        $t_term = get_term($translated_id, $term->taxonomy); 
+        if(!is_wp_error($t_term)){
+            $term = $t_term;
+        }        
         add_filter('get_term', array($this,'get_term_adjust_id'), 1, 1);
         return $term;
     }
