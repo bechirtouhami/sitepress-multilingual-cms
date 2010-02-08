@@ -125,9 +125,7 @@ class SitePressLanguageSwitcher {
                 <div id="lang_sel_footer">
                     <ul>
                     ';
-					//if ($this->footer_preview) $i = 0;
                 foreach($languages as $lang){
-					//if ($this->footer_preview && $i == 2) continue;
                     echo '<li>';
 					echo '<a href="'.$lang['url'].'"';
                     if($lang['active']) echo ' class="lang_sel_sel"';
@@ -168,7 +166,6 @@ class SitePressLanguageSwitcher {
 					echo '</a>';
                     echo '</li>
                     ';
-					//if ($this->footer_preview) $i = $i+1;
                 }
             echo '
                     </ul>
