@@ -114,7 +114,7 @@
                         <?php echo __('Synchronize ping status.', 'sitepress') ?></label>                        
                     </p>                                        
                     <p>
-                        <label><input type="checkbox" name="icl_sync_sticky_flag" <?php if($sitepress_settings['sync_sicky_flag']): ?>checked="checked"<?php endif; ?> value="1" />
+                        <label><input type="checkbox" name="icl_sync_sticky_flag" <?php if($sitepress_settings['sync_sticky_flag']): ?>checked="checked"<?php endif; ?> value="1" />
                         <?php echo __('Synchronize sticky flag.', 'sitepress') ?></label>                        
                     </p>                                                            
                     <p>
