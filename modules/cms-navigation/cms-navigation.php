@@ -80,8 +80,10 @@ class CMSNavigation{
         add_action('delete_category', array($this, 'clear_cache'));
         add_action('create_category', array($this, 'clear_cache'));
         add_action('edited_category', array($this, 'clear_cache'));
-        add_action('trashed_post', array($this,'clear_cache'));        
-        add_action('untrashed_post', array($this,'clear_cache'));        
+        
+        // not needed - save_post handles this
+        //add_action('trashed_post', array($this,'clear_cache'));        
+        //add_action('untrashed_post', array($this,'clear_cache'));        
         
         
     } 
