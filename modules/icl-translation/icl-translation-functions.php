@@ -587,7 +587,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
         WHERE t.element_type='post' AND trid='{$trid}' AND p.ID = '{$translation['original_id']}'
     ");
     //is the original post a sticky post?
-    remove_filter('option_sticky_posts', array($this,'option_sticky_posts')); // remove filter used to get language relevant stickies. get them all
+    remove_filter('option_sticky_posts', array($sitepress,'option_sticky_posts')); // remove filter used to get language relevant stickies. get them all
     $sticky_posts = get_option('sticky_posts');
     $is_original_sticky = $original_post_details->post_type=='post' && in_array($translation['original_id'], $sticky_posts);
     
@@ -780,13 +780,13 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     }
     $postarr['post_author'] = $original_post_details->post_author;  
     $postarr['post_type'] = $original_post_details->post_type;
-    if($this->settings['sync_comment_status']){
+    if($sitepress_settings['sync_comment_status']){
         $postarr['comment_status'] = $original_post_details->comment_status;
     }
-    if($this->settings['sync_ping_status']){
+    if($sitepress_settings['sync_ping_status']){
         $postarr['ping_status'] = $original_post_details->ping_status;
     }
-    if($this->settings['sync_menu_order']){
+    if($sitepress_settings['sync_menu_order']){
         $postarr['menu_order'] = $original_post_details->menu_order;
     }
     if(!$is_update){
@@ -796,7 +796,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
         $postarr['post_status'] = $wpdb->get_var("SELECT post_status FROM {$wpdb->prefix}posts WHERE ID = ".$post_id);
     }
     
-    if(isset($parent_id) && $this->settings['sync_page_parent']){
+    if(isset($parent_id) && $sitepress_settings['sync_page_parent']){
         $_POST['post_parent'] = $postarr['post_parent'] = $parent_id;  
         $_POST['parent_id'] = $postarr['parent_id'] = $parent_id;  
     }
@@ -835,7 +835,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     }    
     
     // sync _wp_page_template
-    if($this->settings['sync_page_template']){
+    if($sitepress_settings['sync_page_template']){
         $_wp_page_template = get_post_meta($translation['original_id'], '_wp_page_template', true);
         update_post_meta($new_post_id, '_wp_page_template', $_wp_page_template);
     }
