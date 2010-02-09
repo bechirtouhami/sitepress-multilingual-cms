@@ -89,7 +89,8 @@ class SitePress{
             add_filter('post_link', array($this, 'permalink_filter'),1,2);   
             add_filter('page_link', array($this, 'permalink_filter'),1,2);   
             add_filter('category_link', array($this, 'category_permalink_filter'),1,2);   
-            add_filter('tag_link', array($this, 'tag_permalink_filter'),1,2);   
+            add_filter('tag_link', array($this, 'tag_permalink_filter'),1,2);               
+            add_filter('get_comment_link', array($this, 'get_comment_link_filter'));
                         
             add_action('create_term',  array($this, 'create_term'),1, 2);
             add_action('edit_term',  array($this, 'create_term'),1, 2);
@@ -2742,12 +2743,12 @@ class SitePress{
                     if(false===strpos($url,'?')){
                         $url_glue = '?';
                     }else{
-                        if(isset($_POST['comment'])|| 1){ // will be used for a redirect
+                        if(isset($_POST['comment'])){ // will be used for a redirect
                             $url_glue = '&';
                         }else{
                             $url_glue = '&amp;';
                         }                                                
-                    }
+                    }                    
                     $url .= $url_glue . 'lang=' . $code;
             }
         }
@@ -2831,6 +2832,12 @@ class SitePress{
         }
         return $p;
     }            
+    
+    function get_comment_link_filter($link){
+        // decode html characters since they are already encoded in the template for some reason
+        $link = html_entity_decode($link);
+        return $link;
+    }
         
     function language_selector_widget_init(){ 
         

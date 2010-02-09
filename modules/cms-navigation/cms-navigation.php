@@ -259,7 +259,7 @@ class CMSNavigation{
             }                                       
             $excluded_pages = join(',', $excluded_pages);
             
-            if(!$post->ancestors){
+            if(!empty($post) && !$post->ancestors){
                 $post->ancestors = array();
             }   
             if($sitepress_settings['existing_content_language_verified'] && 'all' != $sitepress->get_current_language()){   // user has initialized 
