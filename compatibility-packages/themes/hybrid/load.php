@@ -49,32 +49,6 @@ class Hybrid_theme_compatibility  extends WPML_Package{
 			$title . __('More options', 'sitepress'),
 			'checked'
 				);
-
-			// Footer switcher
-		
-        $this->add_option_checkbox(
-			$wpage,
-			__('Add a language selector to the site\'s footer','sitepress'),
-			'footer_language_selector',
-			$title . __('Language selector options','sitepress'),
-			'checked'
-				);
-		
-        $this->add_option_checkbox(
-			$wpage,
-			__('Only include languages with translation in the footer', 'sitepress'),
-			'footer_skip_languages',
-			$title . __('More options', 'sitepress')
-				);
-		
-		$this->add_option_checkbox(
-			$wpage,
-			__('Load CSS for footer language selector', 'sitepress'),
-			'footer_load_css',
-			$title . __('More options', 'sitepress'),
-			'checked'
-				);
-		
 		
 			// This post is available
 		
@@ -112,13 +86,6 @@ class Hybrid_theme_compatibility  extends WPML_Package{
 				$this->load_css('css/selector-header.css');
 			}
 			$this->check_sidebar_language_selector_widget();
-        }
-		
-        if($this->settings['footer_language_selector']){
-            add_action('hybrid_after_footer',array(&$this,'language_selector_footer'));
-			if($this->settings['footer_load_css']) {
-				$this->load_css('css/selector-footer.css');
-			}
         }
         
         if($this->settings['post_languages']){

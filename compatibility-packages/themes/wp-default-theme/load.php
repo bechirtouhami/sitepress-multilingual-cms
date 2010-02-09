@@ -32,32 +32,6 @@ class WP_Default_theme_compatibility  extends WPML_Package{
         $wpage = ICL_PLUGIN_FOLDER . '/menu/languages.php';
 		$title = 'Default - ';
 		
-			// Footer switcher
-		
-        $this->add_option_checkbox(
-			$wpage,
-			__('Add a language selector to the site\'s footer','sitepress'),
-			'footer_language_selector',
-			$title . __('Language selector options','sitepress'),
-			'checked'
-				);
-		
-        $this->add_option_checkbox(
-			$wpage,
-			__('Only include languages with translation in the footer', 'sitepress'),
-			'footer_skip_languages',
-			$title . __('More options', 'sitepress')
-				);
-		
-		$this->add_option_checkbox(
-			$wpage,
-			__('Load CSS for footer language selector', 'sitepress'),
-			'footer_load_css',
-			$title . __('More options', 'sitepress'),
-			'checked'
-				);
-		
-		
 			// This post is available
 		
 		$this->add_option_checkbox(
@@ -87,16 +61,6 @@ class WP_Default_theme_compatibility  extends WPML_Package{
 			'bottom'
 				);
 		
-		
-		
-		
-		
-        if($this->settings['footer_language_selector']){
-            add_action('wp_footer',array(&$this,'language_selector_footer'));
-			if($this->settings['footer_load_css']) {
-				$this->load_css('css/selector-footer.css');
-			}
-        }
 		
         if($this->settings['post_languages']){
             add_filter('the_content', array($this, 'add_post_available'));

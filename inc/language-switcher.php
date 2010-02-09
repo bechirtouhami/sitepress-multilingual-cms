@@ -174,6 +174,7 @@ class SitePressLanguageSwitcher {
     }
 
 	function admin(){
+		if (defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS')) return;
 ?>
 
 										<li>
