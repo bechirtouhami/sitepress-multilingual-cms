@@ -2841,46 +2841,9 @@ class SitePress{
         
     function language_selector_widget_init(){ 
         
-        function language_selector_widget($args){            
-            global $sitepress;
-            extract($args, EXTR_SKIP);
-            echo $before_widget;
-            $sitepress->language_selector();
-            echo $after_widget;
-        }        
         register_sidebar_widget(__('Language Selector', 'sitepress'), 'language_selector_widget', 'icl_languages_selector');
-        
-        function icl_lang_sel_nav_css($show = true){              
-            
-            if(defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') && ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS){
-                return '';                
-            }
-            
-            $link_tag = '<link rel="stylesheet" href="'. ICL_PLUGIN_URL . '/res/css/language-selector.css?v='.ICL_SITEPRESS_VERSION.'" type="text/css" media="all" />';
-            if(!$show && (!isset($_GET['page']) || $_GET['page'] != ICL_PLUGIN_FOLDER . '/menu/languages.php')){
-                return $link_tag;
-            }else{
-                echo $link_tag;
-            }
-        }
-        
         add_action('template_redirect','icl_lang_sel_nav_ob_start');
         add_action('wp_head','icl_lang_sel_nav_ob_end');
-        
-        function icl_lang_sel_nav_ob_start(){ 
-            if(is_feed()) return;
-            ob_start('icl_lang_sel_nav_prepend_css'); 
-        }
-        
-        function icl_lang_sel_nav_ob_end(){ ob_end_flush();}
-        
-        function icl_lang_sel_nav_prepend_css($buf){
-            if(defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') && ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS){
-                return $buf;
-            }
-            return preg_replace('#</title>#i','</title>' . PHP_EOL . PHP_EOL . icl_lang_sel_nav_css(false), $buf);
-        }    
-        
     }
     
     function custom_language_switcher_style(){
@@ -4413,4 +4376,45 @@ class SitePress{
         printf('<meta name="generator" content="WPML ver:%s stt:%s" />' . PHP_EOL, ICL_SITEPRESS_VERSION, $stt);        
     }
 }
+
+
+
+// language switcher functions
+function language_selector_widget($args){            
+    global $sitepress;
+    extract($args, EXTR_SKIP);
+    echo $before_widget;
+    $sitepress->language_selector();
+    echo $after_widget;
+}  
+
+function icl_lang_sel_nav_css($show = true){              
+    
+    if(defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') && ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS){
+        return '';                
+    }
+    
+    $link_tag = '<link rel="stylesheet" href="'. ICL_PLUGIN_URL . '/res/css/language-selector.css?v='.ICL_SITEPRESS_VERSION.'" type="text/css" media="all" />';
+    if(!$show && (!isset($_GET['page']) || $_GET['page'] != ICL_PLUGIN_FOLDER . '/menu/languages.php')){
+        return $link_tag;
+    }else{
+        echo $link_tag;
+    }
+}
+
+function icl_lang_sel_nav_ob_start(){ 
+    if(is_feed()) return;
+    ob_start('icl_lang_sel_nav_prepend_css'); 
+}
+
+function icl_lang_sel_nav_ob_end(){ ob_end_flush();}
+
+function icl_lang_sel_nav_prepend_css($buf){
+    if(defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') && ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS){
+        return $buf;
+    }
+    return preg_replace('#</title>#i','</title>' . PHP_EOL . PHP_EOL . icl_lang_sel_nav_css(false), $buf);
+}    
+      
+
 ?>
