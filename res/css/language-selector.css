@@ -53,9 +53,6 @@
   padding: 7px;
   text-align: center;
   border: 1px solid #fff;
-  /*border-left:0;
-  border-right:0;*/
-  /*color: inherit;*/
   font: 11px Verdana, sans-serif;
   height: 15px;
 }
@@ -67,7 +64,6 @@
 }
 
 #lang_sel_footer ul li img {
-  /*margin-right:5px;*/
   position: relative;
   top: 1px;
   width: 18px;
@@ -81,14 +77,26 @@
 }
 
 #lang_sel_footer ul li a, #lang_sel_footer ul li a:visited {
-  /*color: inherit;*/
   text-decoration: none;
   padding: 5px 10px;
 }
 
-#lang_sel_footer ul li a:hover, #lang_sel_footer ul li a:active {
-  /*color: #6E6E6E;*/
-}
+#lang_sel_footer ul li a:hover, #lang_sel_footer ul li a:active {}
 
 #wpml_credit_footer { width: 100%; margin: 10px 0; padding: 0; text-align: center; font-size: 11px; }
+
+
+
+
+
+
+
+
+
+/* hide the sub levels and give them a positon absolute so that they take up no room */
+#lang_sel #lang_sel_list ul {visibility:visible;position:relative;height:0;top:0;left:0; width:149px;border-top:0;}
+
+#lang_sel #lang_sel_list a.lang_sel_sel{
+    background-image: none;
+}
 

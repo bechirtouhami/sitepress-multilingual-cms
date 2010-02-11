@@ -5,7 +5,7 @@ if($w_this_lang['code']=='all'){
 }
 ?>
 <div id="lang_sel">
-    <ul>
+    <ul <?php if($this->settings['icl_lang_sel_type'] == 'list') echo 'id="lang_sel_list"';?>>
         <li><a href="#" class="lang_sel_sel icl-<?php echo $w_this_lang['code'] ?>">
             <?php if( $this->settings['icl_lso_flags'] || $icl_language_switcher_preview):?>                
             <img <?php if( !$this->settings['icl_lso_flags'] ):?>style="display:none"<?php endif?> class="iclflag" src="<?php echo $main_language['country_flag_url'] ?>" alt="<?php echo $main_language['language_code'] ?>" />                                
