@@ -3336,7 +3336,12 @@ class SitePress{
     // TO REVISE
     function pre_option_home(){                              
         $dbbt = debug_backtrace();                                     
-        if($dbbt[3]['file'] == @realpath(TEMPLATEPATH . '/header.php')){
+        
+        $is_template_file = false !== strpos($dbbt[3]['file'], realpath(TEMPLATEPATH));
+        $is_direct_call   = $dbbt[4]['function'] == 'include';
+        
+        //if($dbbt[3]['file'] == @realpath(TEMPLATEPATH . '/header.php')){
+        if($is_template_file && $is_direct_call){
             $ret = $this->language_url($this->this_lang);                                       
         }else{
             $ret = false;
