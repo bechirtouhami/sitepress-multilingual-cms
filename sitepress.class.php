@@ -3542,7 +3542,9 @@ class SitePress{
             if(isset($q->query_vars['pagename']) && !empty($q->query_vars['pagename'])){
                 $pid = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_name='".$wpdb->escape($q->query_vars['pagename'])."'");
                 $q->query_vars['page_id'] = icl_object_id($pid, 'page', true);
-                unset($q->query_vars['pagename']);                
+                if($pid != $q->query_vars['page_id']){
+                    $q->query_vars['pagename'] = $wpdb->get_var("SELECT post_name FROM $wpdb->posts WHERE ID=" . $pid);                
+                }
             }
             // post__in
             if(isset($q->query_vars['post__in']) && !empty($q->query_vars['post__in'])){
