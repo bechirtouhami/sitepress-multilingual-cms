@@ -3337,8 +3337,17 @@ class SitePress{
     function pre_option_home(){                              
         $dbbt = debug_backtrace();                                     
         
-        $is_template_file = false !== strpos($dbbt[3]['file'], realpath(TEMPLATEPATH));
-        $is_direct_call   = $dbbt[4]['function'] == 'include' || (false !== strpos($dbbt[4]['file'], realpath(TEMPLATEPATH)));
+        static $inc_methods = array('include','include_once','require','require_once');
+        if($dbbt['4']['function']=='get_bloginfo' && $dbbt['5']['function']=='bloginfo'){  // case of bloginfo
+            $is_template_file = false !== strpos($dbbt[5]['file'], realpath(TEMPLATEPATH));
+            $is_direct_call   = in_array($dbbt[6]['function'], $inc_methods) || (false !== strpos($dbbt[6]['file'], realpath(TEMPLATEPATH)));
+        }elseif($dbbt['4']['function']=='get_bloginfo'){  // case of get_bloginfo
+            $is_template_file = false !== strpos($dbbt[4]['file'], realpath(TEMPLATEPATH));
+            $is_direct_call   = in_array($dbbt[5]['function'], $inc_methods) || (false !== strpos($dbbt[5]['file'], realpath(TEMPLATEPATH)));
+        }else{ // case of get_option
+            $is_template_file = false !== strpos($dbbt[3]['file'], realpath(TEMPLATEPATH));
+            $is_direct_call   = in_array($dbbt[4]['function'], $inc_methods) || (false !== strpos($dbbt[4]['file'], realpath(TEMPLATEPATH)));
+        }
         
         /*
         if(defined('START') && !defined('STOP')){
