@@ -3338,7 +3338,19 @@ class SitePress{
         $dbbt = debug_backtrace();                                     
         
         $is_template_file = false !== strpos($dbbt[3]['file'], realpath(TEMPLATEPATH));
-        $is_direct_call   = $dbbt[4]['function'] == 'include';
+        $is_direct_call   = $dbbt[4]['function'] == 'include' || (false !== strpos($dbbt[4]['file'], realpath(TEMPLATEPATH)));
+        
+        /*
+        if(defined('START') && !defined('STOP')){
+            foreach($dbbt as $k=>$d){
+                echo $k . '<br />';
+                echo $d['file'] . ":" . $d['line'] .'<br />';
+                echo $d['function'] . '<br />';
+                echo '<br />';
+            }
+            define('STOP', true);
+        }
+        */
         
         //if($dbbt[3]['file'] == @realpath(TEMPLATEPATH . '/header.php')){
         if($is_template_file && $is_direct_call){
