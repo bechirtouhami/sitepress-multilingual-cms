@@ -1617,19 +1617,23 @@ function _icl_list_posts($args){
     if ($site_id != $sitepress_settings['site_id']) {
         return array('err_code'=>4, 'err_str'=>__('website id is not correct','sitepress'));
     }
-
-    $documents = icl_translation_get_documents($sitepress->get_language_code($lang), $tstatus, $status, $type, 100000, $from_date, $to_date);
-    foreach($documents as $id=>$data){
-        $_cats = (array)get_the_terms($id,'category');
-        $cats = array();
-        foreach($_cats as $cv){
-            $cats[] = $cv->name;
+    
+    try{
+        $documents = icl_translation_get_documents($sitepress->get_language_code($lang), $tstatus, $status, $type, 100000, $from_date, $to_date);
+        foreach($documents as $id=>$data){
+            $_cats = (array)get_the_terms($id,'category');
+            $cats = array();
+            foreach($_cats as $cv){
+                $cats[] = $cv->name;
+            }
+            $documents[$id]->categories = $cats;
+            $documents[$id]->words = icl_estimate_word_count($data, $sitepress->get_language_code($lang));
+            $documents[$id]->words += icl_estimate_custom_field_word_count($id, $sitepress->get_language_code($lang));
+            unset($documents[$id]->post_content);
+            unset($documents[$id]->post_title);
         }
-        $documents[$id]->categories = $cats;
-        $documents[$id]->words = icl_estimate_word_count($data, $sitepress->get_language_code($lang));
-        $documents[$id]->words += icl_estimate_custom_field_word_count($id, $sitepress->get_language_code($lang));
-        unset($documents[$id]->post_content);
-        unset($documents[$id]->post_title);
+    }catch(Exception $e){
+        return array('err_code'=>$e->getCode(), 'err_str'=>$e->getMessage().'[' . $e->getFile() . ':' . $e->getLine() . ']');
     }
     return array('err_code'=>0, 'posts'=>$documents);
 
@@ -1688,7 +1692,12 @@ function _icl_remote_control_translate_post($args){
     // everything is ok.
     
     $post_type = $wpdb->get_var("SELECT post_type FROM {$wpdb->posts} WHERE ID={$post_id}");
-    $result = icl_translation_send_post($post_id, $langs, $post_type);
+    
+    try{
+        $result = icl_translation_send_post($post_id, $langs, $post_type);
+    }catch(Exception $e){
+        return array('err_code'=>$e->getCode(), 'err_str'=>$e->getMessage().'[' . $e->getFile() . ':' . $e->getLine() . ']');
+    }        
     
     if ($result != false){
         return array('err_code'=>0, 'rid'=>$result);
@@ -1935,14 +1944,18 @@ function _icl_xmlrpc_add_message_translation($args){
     $object_id   = $res->object_id;
     $object_type   = $res->object_type;
     
-    if(is_array($wpml_add_message_translation_callbacks[$object_type])){
-        foreach($wpml_add_message_translation_callbacks[$object_type] as $callback){
-            if ( !is_null($callback) ) {
-                call_user_func($callback, $object_id, $to_language, $translation);    
-            } 
-        }
-    }                            
-    $wpdb->update($wpdb->prefix.'icl_message_status', array('status'=>MESSAGE_TRANSLATION_COMPLETE), array('rid'=>$rid));
+    try{
+        if(is_array($wpml_add_message_translation_callbacks[$object_type])){
+            foreach($wpml_add_message_translation_callbacks[$object_type] as $callback){
+                if ( !is_null($callback) ) {
+                    call_user_func($callback, $object_id, $to_language, $translation);    
+                } 
+            }
+        }                            
+        $wpdb->update($wpdb->prefix.'icl_message_status', array('status'=>MESSAGE_TRANSLATION_COMPLETE), array('rid'=>$rid));
+    }catch(Exception $e){
+        return $e->getMessage().'[' . $e->getFile() . ':' . $e->getLine() . ']');
+    }
     return 1;
     
 }
