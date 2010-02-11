@@ -1954,7 +1954,7 @@ function _icl_xmlrpc_add_message_translation($args){
         }                            
         $wpdb->update($wpdb->prefix.'icl_message_status', array('status'=>MESSAGE_TRANSLATION_COMPLETE), array('rid'=>$rid));
     }catch(Exception $e){
-        return $e->getMessage().'[' . $e->getFile() . ':' . $e->getLine() . ']');
+        return $e->getMessage().'[' . $e->getFile() . ':' . $e->getLine() . ']';
     }
     return 1;
     
