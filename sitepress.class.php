@@ -3014,10 +3014,22 @@ class SitePress{
                     global $icl_archive_url_filter_off;
                     $icl_archive_url_filter_off = true;
                     if($this->wp_query->is_year){
+                        if(isset($this->wp_query->query_vars['m']) && !$this->wp_query->query_vars['year'] ){
+                            $this->wp_query->query_vars['year'] = substr($this->wp_query->query_vars['m'], 0, 4);
+                        }                        
                         $lang['translated_url'] = $this->archive_url(get_year_link( $this->wp_query->query_vars['year'] ), $lang['code']);
                     }elseif($this->wp_query->is_month){
+                        if(isset($this->wp_query->query_vars['m']) && !$this->wp_query->query_vars['year'] ){
+                            $this->wp_query->query_vars['year'] = substr($this->wp_query->query_vars['m'], 0, 4);
+                            $this->wp_query->query_vars['monthnum'] = substr($this->wp_query->query_vars['m'], 4, 2);
+                        }
                         $lang['translated_url'] = $this->archive_url(get_month_link( $this->wp_query->query_vars['year'], $this->wp_query->query_vars['monthnum'] ), $lang['code']);
                     }elseif($this->wp_query->is_day){
+                        if(isset($this->wp_query->query_vars['m']) && !$this->wp_query->query_vars['year'] ){
+                            $this->wp_query->query_vars['year'] = substr($this->wp_query->query_vars['m'], 0, 4);
+                            $this->wp_query->query_vars['monthnum'] = substr($this->wp_query->query_vars['m'], 4, 2);
+                            $this->wp_query->query_vars['day'] = substr($this->wp_query->query_vars['m'], 6, 2);
+                        }
                         $lang['translated_url'] = $this->archive_url(get_day_link( $this->wp_query->query_vars['year'], $this->wp_query->query_vars['monthnum'], $this->wp_query->query_vars['day'] ), $lang['code']);
                     }
                     $icl_archive_url_filter_off = false;
