@@ -1,11 +1,19 @@
-<?php 
+<?php
+
 global $w_this_lang, $icl_language_switcher_preview;
 if($w_this_lang['code']=='all'){
     $main_language['native_name'] = __('All languages', 'sitepress');
 }
+
+if ($this->settings['icl_lang_sel_type'] == 'list' || $icl_language_switcher_preview){
+	global $icl_language_switcher;
+	$icl_language_switcher->widget_list();
+	if (!$icl_language_switcher_preview) return;
+}
+
 ?>
-<div id="lang_sel">
-    <ul<?php if($this->settings['icl_lang_sel_type'] == 'list') echo ' id="lang_sel_list"';?>>
+<div id="lang_sel"<?php if ($this->settings['icl_lang_sel_type'] == 'list') echo ' style="visibility:hidden;"';?>>
+    <ul>
         <li><a href="#" class="lang_sel_sel icl-<?php echo $w_this_lang['code'] ?>">
             <?php if( $this->settings['icl_lso_flags'] || $icl_language_switcher_preview):?>                
             <img <?php if( !$this->settings['icl_lso_flags'] ):?>style="display:none"<?php endif?> class="iclflag" src="<?php echo $main_language['country_flag_url'] ?>" alt="<?php echo $main_language['language_code'] ?>" />                                
