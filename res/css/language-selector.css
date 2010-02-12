@@ -89,7 +89,7 @@
 
 
 
-#lang_sel_list {height:32px; position:relative; z-index:99;  font-family:arial, sans-serif; width:149px;}
+#lang_sel_list {height:32px; position:relative; z-index:99;  font-family: verdana, arial, sans-serif; width:149px;}
 /* hack to correct IE5.5 faulty box model */
 * html #lang_sel_list {width:12em; w\idth:12em;}
 /* remove all the bullets, borders and padding from the default list styling */
@@ -99,12 +99,12 @@
 /* float the list to make it horizontal and a relative positon so that you can control the dropdown menu positon */
 #lang_sel_list li {float:left;width:149px;position:relative;}
 /* style the links for the top level */
-#lang_sel_list a, #lang_sel_list a:visited {display:block;font-size:12px;text-decoration:none !important; color:#444444; border:1px solid #000; border-width:0 1px 1px 1px; background:#fff; padding-left:10px; line-height:18px;}
+#lang_sel_list a, #lang_sel_list a:visited {display:block;font-size:11px;text-decoration:none !important; color:#444444; border:1px solid #cdcdcd; border-width:0 1px 1px 1px; background:#fff; padding-left:10px; line-height:18px;}
 /* a hack so that IE5.5 faulty box model is corrected */
 * html #lang_sel_list a, * html #lang_sel_list a:visited {width:149px; w\idth:138px;}
 
 /* hide the sub levels and give them a positon absolute so that they take up no room */
-#lang_sel_list ul {/*visibility:hidden;position:absolute;*/height:0;top:19px;left:0; width:149px;border-top:1px solid #000;}
+#lang_sel_list ul {/*visibility:hidden;position:absolute;*/height:0;top:19px;left:0; width:149px;border-top:1px solid #cdcdcd;}
 /* another hack for IE5.5 */
 * html #lang_sel_list ul {top:18px;t\op:19px;}
 
