@@ -48,42 +48,7 @@ class SitePressLanguageSwitcher {
 	);
 	
 	function __construct(){
-		/*global $language_switcher_defaults, $language_switcher_defaults_alt;
-            $language_switcher_defaults_alt['White'] = array(
-                'font-current-normal' => ICL_LANG_SEL_WHITE_FONT_CURRENT_NORMAL,
-                'font-current-hover' => ICL_LANG_SEL_WHITE_FONT_CURRENT_HOVER,
-                'background-current-normal' => ICL_LANG_SEL_WHITE_BACKGROUND_CURRENT_NORMAL,
-                'background-current-hover' => ICL_LANG_SEL_WHITE_BACKGROUND_CURRENT_HOVER,
-                'font-other-normal' => ICL_LANG_SEL_WHITE_FONT_OTHER_NORMAL,
-                'font-other-hover' => ICL_LANG_SEL_WHITE_FONT_OTHER_HOVER,
-                'background-other-normal' => ICL_LANG_SEL_WHITE_BACKGROUND_OTHER_NORMAL,
-                'background-other-hover' => ICL_LANG_SEL_WHITE_BACKGROUND_OTHER_HOVER,
-                'border' => ICL_LANG_SEL_WHITE_BORDER            
-            );
-            $language_switcher_defaults_alt['Gray'] = array(
-                'font-current-normal' => ICL_LANG_SEL_GRAY_FONT_CURRENT_NORMAL,
-                'font-current-hover' => ICL_LANG_SEL_GRAY_FONT_CURRENT_HOVER,
-                'background-current-normal' => ICL_LANG_SEL_GRAY_BACKGROUND_CURRENT_NORMAL,
-                'background-current-hover' => ICL_LANG_SEL_GRAY_BACKGROUND_CURRENT_HOVER,
-                'font-other-normal' => ICL_LANG_SEL_GRAY_FONT_OTHER_NORMAL,
-                'font-other-hover' => ICL_LANG_SEL_GRAY_FONT_OTHER_HOVER,
-                'background-other-normal' => ICL_LANG_SEL_GRAY_BACKGROUND_OTHER_NORMAL,
-                'background-other-hover' => ICL_LANG_SEL_GRAY_BACKGROUND_OTHER_HOVER,
-                'border' => ICL_LANG_SEL_GRAY_BORDER            
-            );
-            $language_switcher_defaults_alt['Blue'] = array(
-                'font-current-normal' => ICL_LANG_SEL_BLUE_FONT_CURRENT_NORMAL,
-                'font-current-hover' => ICL_LANG_SEL_BLUE_FONT_CURRENT_HOVER,
-                'background-current-normal' => ICL_LANG_SEL_BLUE_BACKGROUND_CURRENT_NORMAL,
-                'background-current-hover' => ICL_LANG_SEL_BLUE_BACKGROUND_CURRENT_HOVER,
-                'font-other-normal' => ICL_LANG_SEL_BLUE_FONT_OTHER_NORMAL,
-                'font-other-hover' => ICL_LANG_SEL_BLUE_FONT_OTHER_HOVER,
-                'background-other-normal' => ICL_LANG_SEL_BLUE_BACKGROUND_OTHER_NORMAL,
-                'background-other-hover' => ICL_LANG_SEL_BLUE_BACKGROUND_OTHER_HOVER,
-                'border' => ICL_LANG_SEL_BLUE_BORDER            
-            );            
-            $language_switcher_defaults = $language_switcher_defaults_alt['White'];
-			*/
+		
 		$this->widget_css_defaults = $this->color_schemes['White'];
 		$this->footer_css_defaults = $this->color_schemes['White'];
 		
@@ -138,43 +103,43 @@ class SitePressLanguageSwitcher {
             foreach($this->settings['icl_lang_sel_footer_config'] as $k=>$v){
                 switch($k){
                     case 'font-current-normal': 
-                        if($v != $this->color_schemes[$k])
+                        //if($v != $this->color_schemes[$k])
                             echo '#lang_sel_footer a, #lang_sel_footer a.lang_sel_sel, #lang_sel_footer a.lang_sel_sel:visited{color:'.$v.';}'; 
                         break;
                     case 'font-current-hover': 
-                        if($v != $this->color_schemes[$k])
+                        //if($v != $this->color_schemes[$k])
                             echo '#lang_sel_footer a:hover, #lang_sel_footer a.lang_sel_sel:hover{color:'.$v.';}';
                         break;
                     case 'background-current-normal': 
-                        if($v != $this->color_schemes[$k])
+                        //if($v != $this->color_schemes[$k])
 							echo '#lang_sel_footer a.lang_sel_sel, #lang_sel_footer a.lang_sel_sel:visited{background-color:'.$v.';}'; 
                         break;
                     case 'background-current-hover': 
-                        if($v != $this->color_schemes[$k])
+                        //if($v != $this->color_schemes[$k])
                             echo '#lang_sel_footer a.lang_sel_sel:hover{background-color:'.$v.';}'; 
                         break;
                     case 'font-other-normal':
-                        if($v != $this->color_schemes[$k])
+                        //if($v != $this->color_schemes[$k])
                             echo '#lang_sel_footer ul a, #lang_sel_footer ul a:visited{color:'.$v.';}'; 
                         break;
                     case 'font-other-hover': 
-                        if($v != $this->color_schemes[$k])
+                        //if($v != $this->color_schemes[$k])
                             echo '#lang_sel_footer ul a:hover{color:'.$v.';}'; 
                         break;
                     case 'background-other-normal': 
-                        if($v != $this->color_schemes[$k])
+                        //if($v != $this->color_schemes[$k])
                             echo '#lang_sel_footer ul a, #lang_sel_footer ul a:visited{background-color:'.$v.';}'; 
                         break;
                     case 'background-other-hover': 
-                        if($v != $this->color_schemes[$k])
+                        //if($v != $this->color_schemes[$k])
                             echo '#lang_sel_footer ul a:hover{background-color:'.$v.';}'; 
                         break;
                     case 'border': 
-                        if($v != $this->color_schemes[$k])
+                        //if($v != $this->color_schemes[$k])
                             echo '#lang_sel_footer{border-color:'.$v.';}';
                         break;
                     case 'background': 
-                        if($v != $this->color_schemes[$k])
+                        //if($v != $this->color_schemes[$k])
                             echo '#lang_sel_footer{background-color:'.$v.';}';
                         break;
                 }
@@ -526,7 +491,7 @@ class SitePressLanguageSwitcher {
             <ul>
                 <?php foreach($active_languages as $lang): ?>
                 <li class="icl-<?php echo $lang['language_code'] ?>">          
-                    <a href="<?php echo $lang['url']?>"<?php if ($lang['language_code'] == $sitepress->get_current_language()) echo ' class="lang_sel_sel"'; ?>>
+                    <a href="<?php echo $lang['url']?>"<?php if ($lang['language_code'] == $sitepress->get_current_language()) echo ' class="lang_sel_sel"'; else echo ' class="lang_sel_other"'; ?>>
                     <?php if( $this->settings['icl_lso_flags'] || $icl_language_switcher_preview):?>                
                     <img <?php if( !$this->settings['icl_lso_flags'] ):?>style="display:none"<?php endif?> class="iclflag" src="<?php echo $lang['country_flag_url'] ?>" alt="<?php echo $lang['language_code'] ?>" />&nbsp;                    
                     <?php endif; ?>
@@ -583,44 +548,71 @@ class SitePressLanguageSwitcher {
             }
         }
         if($add){
-			//if ($this->settings['icl_lang_sel_type'] == 'list') ? '_list' : '';
+			$list = ($this->settings['icl_lang_sel_type'] == 'list') ? true : false;
             echo "\n<style type=\"text/css\">";
             foreach($this->settings['icl_lang_sel_config'] as $k=>$v){
                 switch($k){
                     case 'font-current-normal': 
-                        if($v != $this->widget_css_defaults[$k])
+                        //if($v != $this->widget_css_defaults[$k])
+						if ($list)
+							echo '#lang_sel_list a.lang_sel_sel, #lang_sel_list a.lang_sel_sel:visited{color:'.$v.';}';
+						else
                             echo '#lang_sel a, #lang_sel a.lang_sel_sel{color:'.$v.';}'; 
                         break;
                     case 'font-current-hover': 
-                        if($v != $this->widget_css_defaults[$k])
+                        //if($v != $this->widget_css_defaults[$k])
+						if ($list)
+							echo '#lang_sel_list a:hover, #lang_sel_list a.lang_sel_sel:hover{color:'.$v.';}';
+						else
                             echo '#lang_sel a:hover, #lang_sel a.lang_sel_sel:hover{color:'.$v.';}';
                         break;
                     case 'background-current-normal': 
-                        if($v != $this->widget_css_defaults[$k])
+                        //if($v != $this->widget_css_defaults[$k])
+						if ($list)
+							echo '#lang_sel_list a.lang_sel_sel, #lang_sel_list a.lang_sel_sel:visited{background-color:'.$v.';}';
+						else
 							echo '#lang_sel a.lang_sel_sel, #lang_sel a.lang_sel_sel:visited{background-color:'.$v.';}'; 
                         break;
                     case 'background-current-hover': 
-                        if($v != $this->widget_css_defaults[$k])
+                        //if($v != $this->widget_css_defaults[$k])
+						if ($list)
+							echo '#lang_sel_list a.lang_sel_sel:hover{background-color:'.$v.';}'; 
+						else
                             echo '#lang_sel a.lang_sel_sel:hover{background-color:'.$v.';}'; 
                         break;
                     case 'font-other-normal':
-                        if($v != $this->widget_css_defaults[$k])
+                        //if($v != $this->widget_css_defaults[$k])
+						if ($list)
+							echo '#lang_sel_list ul a.lang_sel_other, #lang_sel_list ul a.lang_sel_other:visited{color:'.$v.';}'; 
+						else
                             echo '#lang_sel li ul a, #lang_sel li ul a:visited{color:'.$v.';}'; 
                         break;
                     case 'font-other-hover': 
-                        if($v != $this->widget_css_defaults[$k])
+                        //if($v != $this->widget_css_defaults[$k])
+						if ($list)
+							echo '#lang_sel_list ul a.lang_sel_other:hover{color:'.$v.';}'; 
+						else
                             echo '#lang_sel li ul a:hover{color:'.$v.';}'; 
                         break;
                     case 'background-other-normal': 
-                        if($v != $this->widget_css_defaults[$k])
+                        //if($v != $this->widget_css_defaults[$k])
+						if ($list)
+							 echo '#lang_sel_list ul a.lang_sel_other, #lang_sel_list ul a.lang_sel_other:visited{background-color:'.$v.';}'; 
+						else
                             echo '#lang_sel li ul a, #lang_sel li ul a:visited{background-color:'.$v.';}'; 
                         break;
                     case 'background-other-hover': 
-                        if($v != $this->widget_css_defaults[$k])
+                        //if($v != $this->widget_css_defaults[$k])
+						if ($list)
+							 echo '#lang_sel_list ul a.lang_sel_other:hover{background-color:'.$v.';}'; 
+						else
                             echo '#lang_sel li ul a:hover{background-color:'.$v.';}'; 
                         break;
                     case 'border': 
-                        if($v != $this->widget_css_defaults[$k])
+                        //if($v != $this->widget_css_defaults[$k])
+						if ($list)
+							 echo '#lang_sel_list a, #lang_sel_list a:visited{border-color:'.$v.';} #lang_sel_list  ul{border-top:1px solid '.$v.';}';
+						else
                             echo '#lang_sel a, #lang_sel a:visited{border-color:'.$v.';} #lang_sel ul ul{border-top:1px solid '.$v.';}';
                         break;
                     
