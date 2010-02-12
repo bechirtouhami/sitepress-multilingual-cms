@@ -30,7 +30,7 @@ class SitePressLanguageSwitcher {
                 'font-other-hover' => '#000000',
                 'background-other-normal' => '#ffffff',
                 'background-other-hover' => '#eeeeee',
-                'border' => '#e5e5e5',
+                'border' => '#cdcdcd',
 				'background' => '#ffffff'
             ),
             'Blue' => array(
