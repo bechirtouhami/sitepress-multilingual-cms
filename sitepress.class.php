@@ -3241,6 +3241,9 @@ class SitePress{
         }elseif($dbbt['4']['function']=='get_bloginfo'){  // case of get_bloginfo
             $is_template_file = false !== strpos($dbbt[4]['file'], realpath(TEMPLATEPATH));
             $is_direct_call   = in_array($dbbt[5]['function'], $inc_methods) || (false !== strpos($dbbt[5]['file'], realpath(TEMPLATEPATH)));
+        }elseif($dbbt['4']['function']=='get_settings'){  // case of get_settings
+            $is_template_file = false !== strpos($dbbt[4]['file'], realpath(TEMPLATEPATH));
+            $is_direct_call   = in_array($dbbt[5]['function'], $inc_methods) || (false !== strpos($dbbt[5]['file'], realpath(TEMPLATEPATH)));
         }else{ // case of get_option
             $is_template_file = false !== strpos($dbbt[3]['file'], realpath(TEMPLATEPATH));
             $is_direct_call   = in_array($dbbt[4]['function'], $inc_methods) || (false !== strpos($dbbt[4]['file'], realpath(TEMPLATEPATH)));
