@@ -13,7 +13,7 @@
 * html #lang_sel a, * html #lang_sel a:visited {width:149px; w\idth:138px;}
 
 /* hide the sub levels and give them a positon absolute so that they take up no room */
-#lang_sel ul ul {visibility:hidden;position:absolute;height:0;top:25px;left:0; width:149px;border-top:1px solid #000;}
+#lang_sel ul ul {visibility:hidden;position:absolute;height:0;top:25px;left:0; width:149px;border-top:1px solid #cdcdcd;}
 /* another hack for IE5.5 */
 * html #lang_sel ul ul {top:18px;t\op:19px;}
 
