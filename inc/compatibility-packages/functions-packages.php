@@ -122,13 +122,15 @@ class WPML_Packages{
 
     function _read_theme_packages(){
         try{
-            $this->packages['themes'] = $this->scan(ICL_EXTRAS_PACKAGES_BASE_PATH . '/themes');
+            $this->packages['themes'] = array_merge((array)$this->packages['themes'], 
+                $this->scan(ICL_EXTRAS_PACKAGES_BASE_PATH . '/themes'));
         }catch (Exception $e){ echo $e->getMessage(); }
     }
 
     function _read_plugin_packages(){
         try{
-            $this->packages['plugins'] = $this->scan(ICL_EXTRAS_PACKAGES_BASE_PATH . '/plugins');
+            $this->packages['plugins'] = array_merge((array)$this->packages['plugins'],
+                $this->scan(ICL_EXTRAS_PACKAGES_BASE_PATH . '/plugins'));
         }catch (Exception $e){ echo $e->getMessage(); }
     }
 
