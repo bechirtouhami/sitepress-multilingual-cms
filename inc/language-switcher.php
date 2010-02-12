@@ -24,7 +24,7 @@ class SitePressLanguageSwitcher {
             'White' => array(
                 'font-current-normal' => '#444444',
                 'font-current-hover' => '#000000',
-                'background-current-normal' => '#eeeeee',
+                'background-current-normal' => '#ffffff',
                 'background-current-hover' => '#eeeeee',
                 'font-other-normal' => '#444444',
                 'font-other-hover' => '#000000',
