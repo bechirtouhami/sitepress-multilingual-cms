@@ -12,7 +12,7 @@ if ($this->settings['icl_lang_sel_type'] == 'list' || $icl_language_switcher_pre
 }
 
 ?>
-<div id="lang_sel"<?php if ($this->settings['icl_lang_sel_type'] == 'list') echo ' style="visibility:hidden;"';?>>
+<div id="lang_sel"<?php if ($this->settings['icl_lang_sel_type'] == 'list') echo ' style="display:none;"';?>>
     <ul>
         <li><a href="#" class="lang_sel_sel icl-<?php echo $w_this_lang['code'] ?>">
             <?php if( $this->settings['icl_lso_flags'] || $icl_language_switcher_preview):?>                
