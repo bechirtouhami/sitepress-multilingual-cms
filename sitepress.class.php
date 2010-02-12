@@ -223,6 +223,7 @@ class SitePress{
         
     }
     
+    
     function the_posts($posts){        
         global $wpdb, $wp_query;
         
@@ -3489,7 +3490,7 @@ class SitePress{
                 $q->query_vars['post__not_in'] = $pid;
             }
             // post_parent
-            if(isset($q->query_vars['post_parent']) && !empty($q->query_vars['post_parent'])){
+            if(isset($q->query_vars['post_parent']) && !empty($q->query_vars['post_parent']) && $q->query_vars['post_type']!='attachment'){
                 $q->query_vars['post_parent'] = icl_object_id($q->query_vars['post_parent'], 'post', true);
             } 
                      
