@@ -316,7 +316,7 @@ class SitePressLanguageSwitcher {
 										
 										
 										
-										<li class="icl_advanced_feature">
+										<li>
                                             <h4><?php echo __('How to show widget', 'sitepress')?></h4>
                                             <p><?php echo __('Select type of appearance.', 'sitepress') ?></p>
                                             <ul>
@@ -486,7 +486,7 @@ class SitePressLanguageSwitcher {
 		$active_languages = icl_get_languages('orderby=id&order=asc&skip_missing=0');
 		if(empty($active_languages)) return; ?>
 		
-<div id="lang_sel_list"<?php if($this->settings['icl_lang_sel_type'] == 'dropdown') echo ' style="display:none;"';?>>           
+<div id="lang_sel_list"<?php if(!$this->settings['icl_lang_sel_type'] || $this->settings['icl_lang_sel_type'] == 'dropdown') echo ' style="display:none;"';?>>           
             <ul>
                 <?php foreach($active_languages as $lang): ?>
                 <li class="icl-<?php echo $lang['language_code'] ?>">          
