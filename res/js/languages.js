@@ -117,8 +117,10 @@ addLoadEvent(function(){
 	var icl_arrow_img = icl_ajxloaderimg_src.replace("ajax-loader.gif", "nav-arrow-down.png");
 	jQuery('#icl_save_language_switcher_options :radio[name="icl_lang_sel_type"]').change(function(){
         if(jQuery(this).val() == 'dropdown'){
-			jQuery('#lang_sel_list').css('visibility','hidden');
-			jQuery('#lang_sel').css('visibility','visible');
+			//jQuery('#lang_sel_list').css('visibility','hidden');
+			jQuery('#lang_sel_list').hide();
+			//jQuery('#lang_sel').css('visibility','visible');
+			jQuery('#lang_sel').show();
 			/*jQuery('#lang_sel ul ul').css('visibility','hidden');
 			jQuery('#lang_sel a.lang_sel_sel').css('background-image','url('+icl_arrow_img+')');
 			jQuery('#lang_sel ul').hover(
@@ -130,8 +132,10 @@ addLoadEvent(function(){
 				}
 			);*/
         }else{
-			jQuery('#lang_sel').css('visibility','hidden');
-			jQuery('#lang_sel_list').css('visibility','visible');
+			//jQuery('#lang_sel').css('visibility','hidden');
+			jQuery('#lang_sel').hide();
+			//jQuery('#lang_sel_list').css('visibility','visible');
+			jQuery('#lang_sel_list').show();
 			/*jQuery('#lang_sel a.lang_sel_sel').css('background-image','url()');
 			jQuery('#lang_sel ul').hover(function(){jQuery('#lang_sel ul ul').css('visibility','visible');}, function(){jQuery('#lang_sel ul ul').css('visibility','visible');});
 			jQuery('#lang_sel ul ul').css('visibility','visible');*/
