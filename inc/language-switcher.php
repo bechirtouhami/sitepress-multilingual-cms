@@ -486,7 +486,7 @@ class SitePressLanguageSwitcher {
 		$active_languages = icl_get_languages('orderby=id&order=asc&skip_missing=0');
 		if(empty($active_languages)) return; ?>
 		
-<div id="lang_sel_list"<?php if($this->settings['icl_lang_sel_type'] == 'dropdown') echo ' style="visibility:hidden;"';?>>
+<div id="lang_sel_list"<?php if($this->settings['icl_lang_sel_type'] == 'dropdown') echo ' style="display:none;"';?>>
             <?php if(isset($ie_ver) && $ie_ver <= 6): ?><table><tr><td><?php endif ?>            
             <ul>
                 <?php foreach($active_languages as $lang): ?>
@@ -536,8 +536,6 @@ class SitePressLanguageSwitcher {
         if(defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') && ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS){
             return;
         }
-        
-        //global $this->widget_css_defaults;
 		$this->widget_css_defaults = $this->widget_css_defaults;
         $add = false;
         foreach($this->widget_css_defaults as $key=>$d){
