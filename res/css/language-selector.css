@@ -8,7 +8,7 @@
 /* float the list to make it horizontal and a relative positon so that you can control the dropdown menu positon */
 #lang_sel li {float:left;width:149px;position:relative;}
 /* style the links for the top level */
-#lang_sel a, #lang_sel a:visited {display:block;font-size:11px;text-decoration:none !important; color:#fff; border:1px solid #000; background:#fff; padding-left:10px; line-height:24px;}
+#lang_sel a, #lang_sel a:visited {display:block;font-size:11px;text-decoration:none !important; color:#444444; border:1px solid #cdcdcd; background:#fff; padding-left:10px; line-height:24px;}
 /* a hack so that IE5.5 faulty box model is corrected */
 * html #lang_sel a, * html #lang_sel a:visited {width:149px; w\idth:138px;}
 
