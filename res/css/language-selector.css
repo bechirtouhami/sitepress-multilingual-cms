@@ -1,4 +1,4 @@
-#lang_sel {height:32px; position:relative; z-index:99;  font-family:arial, sans-serif;}
+#lang_sel {height:32px; position:relative; z-index:99;  font-family: verdana, arial, sans-serif;}
 /* hack to correct IE5.5 faulty box model */
 * html #lang_sel {width:12em; w\idth:12em;}
 /* remove all the bullets, borders and padding from the default list styling */
@@ -8,12 +8,12 @@
 /* float the list to make it horizontal and a relative positon so that you can control the dropdown menu positon */
 #lang_sel li {float:left;width:149px;position:relative;}
 /* style the links for the top level */
-#lang_sel a, #lang_sel a:visited {display:block;font-size:12px;text-decoration:none !important; color:#fff; border:1px solid #000; background:#fff; padding-left:10px; line-height:18px;}
+#lang_sel a, #lang_sel a:visited {display:block;font-size:11px;text-decoration:none !important; color:#fff; border:1px solid #000; background:#fff; padding-left:10px; line-height:24px;}
 /* a hack so that IE5.5 faulty box model is corrected */
 * html #lang_sel a, * html #lang_sel a:visited {width:149px; w\idth:138px;}
 
 /* hide the sub levels and give them a positon absolute so that they take up no room */
-#lang_sel ul ul {visibility:hidden;position:absolute;height:0;top:19px;left:0; width:149px;border-top:1px solid #000;}
+#lang_sel ul ul {visibility:hidden;position:absolute;height:0;top:25px;left:0; width:149px;border-top:1px solid #000;}
 /* another hack for IE5.5 */
 * html #lang_sel ul ul {top:18px;t\op:19px;}
 
@@ -21,7 +21,7 @@
 #lang_sel table {position:absolute; top:0; left:0; border-collapse:collapse;;}
 
 /* style the second level links */
-#lang_sel ul ul a, #lang_sel ul ul a:visited {background:#ffffff; color:#444444; height:auto; line-height:1em; padding:3px 10px;border-width:0 1px 1px 1px;}
+#lang_sel ul ul a, #lang_sel ul ul a:visited {background:#ffffff; color:#444444; height:auto; line-height:1em; padding:5px 10px;border-width:0 1px 1px 1px;}
 /* yet another hack for IE5.5 */
 * html #lang_sel ul ul a, * html #lang_sel ul ul a:visited {width:150px;w\idth:128px;}
 
@@ -42,7 +42,7 @@
 #lang_sel ul li:hover ul,
 #lang_sel ul a:hover ul{visibility:visible; }
 
-#lang_sel img.iclflag{width:18px;height:12px;}
+#lang_sel img.iclflag{width:18px;height:12px;position: relative; top: 1px;}
 
 
 
@@ -129,5 +129,5 @@
 #lang_sel_list ul li:hover ul,
 #lang_sel_list ul a:hover ul{visibility:visible; }
 
-#lang_sel_list img.iclflag{width:18px;height:12px;}
+#lang_sel_list img.iclflag{width:18px;height:12px;position: relative; top: 1px;}
 
