@@ -486,8 +486,7 @@ class SitePressLanguageSwitcher {
 		$active_languages = icl_get_languages('orderby=id&order=asc&skip_missing=0');
 		if(empty($active_languages)) return; ?>
 		
-<div id="lang_sel_list"<?php if($this->settings['icl_lang_sel_type'] == 'dropdown') echo ' style="display:none;"';?>>
-            <?php if(isset($ie_ver) && $ie_ver <= 6): ?><table><tr><td><?php endif ?>            
+<div id="lang_sel_list"<?php if($this->settings['icl_lang_sel_type'] == 'dropdown') echo ' style="display:none;"';?>>           
             <ul>
                 <?php foreach($active_languages as $lang): ?>
                 <li class="icl-<?php echo $lang['language_code'] ?>">          
@@ -526,8 +525,7 @@ class SitePressLanguageSwitcher {
                     </a>
                 </li>
                 <?php endforeach; ?>
-            </ul>            
-            <?php if(isset($ie_ver) && $ie_ver <= 6): ?></td></tr></table></a><?php endif ?>  
+            </ul>
 </div>
 <?php
 	}
