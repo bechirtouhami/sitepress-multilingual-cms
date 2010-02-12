@@ -73,7 +73,7 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
             <?php
             echo '<span id="'.$icl_table.'" style="display:none">';    
             $results = $wpdb->get_results("SELECT * FROM {$icl_table}", ARRAY_A);
-            echo '<textarea style="font-size:10px;width:100%" wrap="off" rows="8">';
+            echo '<textarea style="font-size:10px;width:100%" wrap="off" rows="8" readonly="readonly">';
             $inc = 0;
             foreach((array)$results as $res){
                 if($inc==0){
@@ -96,7 +96,7 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
         return $s;
     }
     echo '<br /><hr /><h3 id="wpml-settings"> ' . __('WPML settings', 'sitepress') . '</h3>';
-    echo '<textarea style="font-size:10px;width:100%" wrap="off" rows="16">';
+    echo '<textarea style="font-size:10px;width:100%" wrap="off" rows="16" readonly="readonly">';
     ob_start();
     print_r($sitepress->get_settings());
     $ob = ob_get_contents();
