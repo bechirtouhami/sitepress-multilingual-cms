@@ -78,6 +78,10 @@ class SitePress{
             }elseif($pagenow == 'edit-pages.php'){
                 add_action('admin_footer', array($this,'language_filter'));
             }
+			
+			if(is_admin() && $_GET['page'] == ICL_PLUGIN_FOLDER . '/menu/languages.php'){
+                add_action('admin_head', 'icl_lang_sel_nav_css', 1, 1, true);
+            }
             
             //add_filter('wp_list_pages_excludes', array($this, 'exclude_other_language_pages'));
             add_filter('get_pages', array($this, 'exclude_other_language_pages2'));
@@ -201,51 +205,6 @@ class SitePress{
                 add_action('manage_pages_custom_column',array($this,'add_content_for_posts_management_column'));
                 add_action('admin_print_scripts', array($this, '__set_posts_management_column_width'));
             }
-              
-            global $language_switcher_defaults, $language_switcher_defaults_alt;
-            $language_switcher_defaults_alt['White'] = array(
-                'font-current-normal' => ICL_LANG_SEL_WHITE_FONT_CURRENT_NORMAL,
-                'font-current-hover' => ICL_LANG_SEL_WHITE_FONT_CURRENT_HOVER,
-                'background-current-normal' => ICL_LANG_SEL_WHITE_BACKGROUND_CURRENT_NORMAL,
-                'background-current-hover' => ICL_LANG_SEL_WHITE_BACKGROUND_CURRENT_HOVER,
-                'font-other-normal' => ICL_LANG_SEL_WHITE_FONT_OTHER_NORMAL,
-                'font-other-hover' => ICL_LANG_SEL_WHITE_FONT_OTHER_HOVER,
-                'background-other-normal' => ICL_LANG_SEL_WHITE_BACKGROUND_OTHER_NORMAL,
-                'background-other-hover' => ICL_LANG_SEL_WHITE_BACKGROUND_OTHER_HOVER,
-                'border' => ICL_LANG_SEL_WHITE_BORDER            
-            );
-            $language_switcher_defaults_alt['Gray'] = array(
-                'font-current-normal' => ICL_LANG_SEL_GRAY_FONT_CURRENT_NORMAL,
-                'font-current-hover' => ICL_LANG_SEL_GRAY_FONT_CURRENT_HOVER,
-                'background-current-normal' => ICL_LANG_SEL_GRAY_BACKGROUND_CURRENT_NORMAL,
-                'background-current-hover' => ICL_LANG_SEL_GRAY_BACKGROUND_CURRENT_HOVER,
-                'font-other-normal' => ICL_LANG_SEL_GRAY_FONT_OTHER_NORMAL,
-                'font-other-hover' => ICL_LANG_SEL_GRAY_FONT_OTHER_HOVER,
-                'background-other-normal' => ICL_LANG_SEL_GRAY_BACKGROUND_OTHER_NORMAL,
-                'background-other-hover' => ICL_LANG_SEL_GRAY_BACKGROUND_OTHER_HOVER,
-                'border' => ICL_LANG_SEL_GRAY_BORDER            
-            );
-            $language_switcher_defaults_alt['Blue'] = array(
-                'font-current-normal' => ICL_LANG_SEL_BLUE_FONT_CURRENT_NORMAL,
-                'font-current-hover' => ICL_LANG_SEL_BLUE_FONT_CURRENT_HOVER,
-                'background-current-normal' => ICL_LANG_SEL_BLUE_BACKGROUND_CURRENT_NORMAL,
-                'background-current-hover' => ICL_LANG_SEL_BLUE_BACKGROUND_CURRENT_HOVER,
-                'font-other-normal' => ICL_LANG_SEL_BLUE_FONT_OTHER_NORMAL,
-                'font-other-hover' => ICL_LANG_SEL_BLUE_FONT_OTHER_HOVER,
-                'background-other-normal' => ICL_LANG_SEL_BLUE_BACKGROUND_OTHER_NORMAL,
-                'background-other-hover' => ICL_LANG_SEL_BLUE_BACKGROUND_OTHER_HOVER,
-                'border' => ICL_LANG_SEL_BLUE_BORDER            
-            );            
-            $language_switcher_defaults = $language_switcher_defaults_alt['White'];
-            
-            if(is_admin() && $_GET['page'] == ICL_PLUGIN_FOLDER . '/menu/languages.php'){
-                add_action('admin_head', 'icl_lang_sel_nav_css', 1, 1, true);
-                add_action('admin_head', array($this, 'custom_language_switcher_style'));
-            }            
-            if(!is_admin()){
-                add_action('wp_head', array($this, 'custom_language_switcher_style'));
-            }
-            
             // adjust queried categories and tags ids according to the language            
             if($this->settings['auto_adjust_ids']){
                 add_action('parse_query', array($this, 'parse_query'));            
@@ -2838,75 +2797,13 @@ class SitePress{
         $link = html_entity_decode($link);
         return $link;
     }
-        
+     
     function language_selector_widget_init(){ 
         
         register_sidebar_widget(__('Language Selector', 'sitepress'), 'language_selector_widget', 'icl_languages_selector');
         add_action('template_redirect','icl_lang_sel_nav_ob_start');
         add_action('wp_head','icl_lang_sel_nav_ob_end');
     }
-    
-    function custom_language_switcher_style(){
-        if(defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') && ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS){
-            return;
-        }
-        
-        global $language_switcher_defaults;    
-        $add = false;
-        foreach($language_switcher_defaults as $key=>$d){
-            if(isset($this->settings['icl_lang_sel_config'][$key]) && $this->settings['icl_lang_sel_config'][$key] != $d){
-                $this->settings['icl_lang_sel_config'][$key] . "\n";
-                $add = true;
-                break;
-            }
-        }
-        if($add){
-            echo "\n<style type=\"text/css\">";
-            foreach($this->settings['icl_lang_sel_config'] as $k=>$v){
-                switch($k){
-                    case 'font-current-normal': 
-                        if($v != $language_switcher_defaults[$k])
-                            echo '#lang_sel a, #lang_sel a.lang_sel_sel{color:'.$v.';}'; 
-                        break;
-                    case 'font-current-hover': 
-                        if($v != $language_switcher_defaults[$k])
-                            echo '#lang_sel a:hover, #lang_sel a.lang_sel_sel:hover{color:'.$v.';}';
-                        break;
-                    case 'background-current-normal': 
-                        if($v != $language_switcher_defaults[$k])
-							echo '#lang_sel a.lang_sel_sel, #lang_sel a.lang_sel_sel:visited{background-color:'.$v.';}'; 
-                        break;
-                    case 'background-current-hover': 
-                        if($v != $language_switcher_defaults[$k])
-                            echo '#lang_sel a.lang_sel_sel:hover{background-color:'.$v.';}'; 
-                        break;
-                    case 'font-other-normal':
-                        if($v != $language_switcher_defaults[$k])
-                            echo '#lang_sel li ul a, #lang_sel li ul a:visited{color:'.$v.';}'; 
-                        break;
-                    case 'font-other-hover': 
-                        if($v != $language_switcher_defaults[$k])
-                            echo '#lang_sel li ul a:hover{color:'.$v.';}'; 
-                        break;
-                    case 'background-other-normal': 
-                        if($v != $language_switcher_defaults[$k])
-                            echo '#lang_sel li ul a, #lang_sel li ul a:visited{background-color:'.$v.';}'; 
-                        break;
-                    case 'background-other-hover': 
-                        if($v != $language_switcher_defaults[$k])
-                            echo '#lang_sel li ul a:hover{background-color:'.$v.';}'; 
-                        break;
-                    case 'border': 
-                        if($v != $language_switcher_defaults[$k])
-                            echo '#lang_sel a, #lang_sel a:visited{border-color:'.$v.';} #lang_sel ul ul{border-top:1px solid '.$v.';}';
-                        break;
-                    
-                }
-            }
-            echo "</style>\n";
-        }
-    }
-    
     function get_ls_languages($template_args=array()){
             global $wpdb, $post, $cat, $tag_id, $w_this_lang;
             
