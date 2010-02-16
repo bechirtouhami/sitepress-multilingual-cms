@@ -49,6 +49,12 @@ class SitePressLanguageSwitcher {
 	
 	function __construct(){
 		
+		// the language selector widget      
+        add_action('plugins_loaded', array($this, 'language_selector_widget_init'));
+		if(is_admin() && $_GET['page'] == ICL_PLUGIN_FOLDER . '/menu/languages.php'){
+			add_action('admin_head', 'icl_lang_sel_nav_css', 1, 1, true);
+        }
+		
 		$this->widget_css_defaults = $this->color_schemes['White'];
 		$this->footer_css_defaults = $this->color_schemes['White'];
 		
@@ -61,6 +67,12 @@ class SitePressLanguageSwitcher {
 			add_action('wp_head', array($this, 'custom_language_switcher_style'));
 		}
 	}
+	
+	function language_selector_widget_init(){ 
+        register_sidebar_widget(__('Language Selector', 'sitepress'), 'language_selector_widget', 'icl_languages_selector');
+        add_action('template_redirect','icl_lang_sel_nav_ob_start');
+        add_action('wp_head','icl_lang_sel_nav_ob_end');
+    }
 	
 	function home_test(){
 		//add_filter('option_home',array(&$this,'option_home'));
@@ -617,7 +629,49 @@ class SitePressLanguageSwitcher {
             echo "</style>\n";
         }
     }
-}
+} // end class
+
+
+
+
+
+// language switcher functions
+	function language_selector_widget($args){            
+    	global $sitepress;
+    	extract($args, EXTR_SKIP);
+    	echo $before_widget;
+    	$sitepress->language_selector();
+    	echo $after_widget;
+	}
+
+	function icl_lang_sel_nav_ob_start(){ 
+   		if(is_feed()) return;
+    	ob_start('icl_lang_sel_nav_prepend_css'); 
+	}
+
+	function icl_lang_sel_nav_ob_end(){ ob_end_flush();}
+
+	function icl_lang_sel_nav_prepend_css($buf){
+    	if(defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') && ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS){
+    	    return $buf;
+   		}
+    	return preg_replace('#</title>#i','</title>' . PHP_EOL . PHP_EOL . icl_lang_sel_nav_css(false), $buf);
+	}
+
+	function icl_lang_sel_nav_css($show = true){
+    	if(defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') && ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS){
+        	return '';
+    	}
+    	$link_tag = '<link rel="stylesheet" href="'. ICL_PLUGIN_URL . '/res/css/language-selector.css?v='.ICL_SITEPRESS_VERSION.'" type="text/css" media="all" />';
+    	if(!$show && (!isset($_GET['page']) || $_GET['page'] != ICL_PLUGIN_FOLDER . '/menu/languages.php')){
+        	return $link_tag;
+    	}else{
+        	echo $link_tag;
+    	}
+	}
+
+
+
 
 global $icl_language_switcher;
 $icl_language_switcher = new SitePressLanguageSwitcher;
