@@ -243,6 +243,9 @@ switch($_REQUEST['icl_ajx_action']){
 		
 		if (isset($_POST['icl_post_availability_position']))
             $iclsettings['icl_post_availability_position'] = $_POST['icl_post_availability_position'];
+		
+		if (isset($_POST['icl_post_availability_text']))
+            $iclsettings['icl_post_availability_text'] = $_POST['icl_post_availability_text'];
         
         if(!$iclsettings['icl_lso_flags'] && !$iclsettings['icl_lso_native_lang'] && !$iclsettings['icl_lso_display_lang']){
             echo '0|';
