@@ -49,23 +49,10 @@ class SitePressLanguageSwitcher {
 	
 	function __construct(){
 		
-		// the language selector widget      
-        add_action('plugins_loaded', array($this, 'language_selector_widget_init'));
-		if(is_admin() && $_GET['page'] == ICL_PLUGIN_FOLDER . '/menu/languages.php'){
-			add_action('admin_head', 'icl_lang_sel_nav_css', 1, 1, true);
-        }
-		
 		$this->widget_css_defaults = $this->color_schemes['White'];
 		$this->footer_css_defaults = $this->color_schemes['White'];
 		
 		add_action('plugins_loaded',array(&$this,'init'));
-		
-		if(is_admin() && $_GET['page'] == ICL_PLUGIN_FOLDER . '/menu/languages.php'){
-			add_action('admin_head', array($this, 'custom_language_switcher_style'));
-		}
-		if(!is_admin()){
-			add_action('wp_head', array($this, 'custom_language_switcher_style'));
-		}
 	}
 	
 	function language_selector_widget_init(){ 
@@ -89,6 +76,7 @@ class SitePressLanguageSwitcher {
 	}
 	
 	function init(){
+		
 		global $sitepress_settings;
 		$this->settings = $sitepress_settings;
         if ($this->settings['icl_lang_sel_footer']){
@@ -100,6 +88,15 @@ class SitePressLanguageSwitcher {
 		} else if ($this->settings['icl_post_availability']) {
 			icl_register_string('WPML', 'Text for alternative languages for posts', $this->settings['icl_post_availability_text']);
 			add_filter('the_content', array(&$this, 'post_availability'));
+		}
+		// the language selector widget      
+        $this->language_selector_widget_init();
+		if(is_admin() && $_GET['page'] == ICL_PLUGIN_FOLDER . '/menu/languages.php'){
+			add_action('admin_head', 'icl_lang_sel_nav_css', 1, 1, true);
+			add_action('admin_head', array($this, 'custom_language_switcher_style'));
+        }
+		if(!is_admin()){
+			add_action('wp_head', array($this, 'custom_language_switcher_style'));
 		}
 	}
 	
