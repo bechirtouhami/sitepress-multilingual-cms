@@ -8,6 +8,7 @@ define('ICL_STRING_TRANSLATION_STRING_TRACKING_TYPE_SOURCE', 0);
 define('ICL_STRING_TRANSLATION_STRING_TRACKING_TYPE_PAGE', 1);
 define('ICL_STRING_TRANSLATION_STRING_TRACKING_THRESHOLD', 5);
 
+
 $icl_st_string_translation_statuses = array(
     ICL_STRING_TRANSLATION_COMPLETE => __('Translation complete','sitepress'),
     ICL_STRING_TRANSLATION_PARTIAL => __('Partial translation','sitepress'),
@@ -209,7 +210,7 @@ function icl_st_init(){
         if($_POST['icl_st_e_context']){
             $_GET['context'] = $_POST['icl_st_e_context'];
         }
-
+                                                    
         $_GET['translation_language'] = $_POST['icl_st_e_language'];
         $strings = icl_get_string_translations();
         if(!empty($strings)){
