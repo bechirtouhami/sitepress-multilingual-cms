@@ -402,7 +402,19 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                                             <p class="icl_advanced_feature"><?php echo __('You can also create custom language switchers, such as a list of languages or country flags.','sitepress'); ?>
                                             <a href="http://wpml.org/?page_id=989"><?php echo __('Custom language switcher creation guide','sitepress')?></a>.
                                             </p>
-                                        </li>                                   
+                                        </li>
+										<li>
+                                            <h4><?php echo __('Display \'Languages\' as the widget title', 'sitepress')?></h4>
+											<ul>
+                                                <li>
+                                                    <label>
+                                                        <input type="checkbox" name="icl_widget_title_show" value="1"<?php if ($sitepress_settings['icl_widget_title_show']) echo ' checked="checked"'; ?> />
+                                                        <?php echo __('Yes', 'sitepress') ?>
+                                                    </label>
+                                                </li>
+											</ul>                                
+                                            
+                                        </li>                                  
                                         <li class="icl_advanced_feature">
                                             <h4><?php echo __('How to handle languages without translation', 'sitepress')?></h4>
                                             <p><?php echo __('Some pages or posts may not be translated to all languages. Select how the language selector should behave in case translation is missing.', 'sitepress') ?></p>
