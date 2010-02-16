@@ -460,7 +460,7 @@ switch($_REQUEST['icl_ajx_action']){
         
         if($_POST['icl_load_mo']){
             $mo_files = icl_st_get_mo_files(TEMPLATEPATH);
-            foreach($mo_files as $m){
+            foreach((array)$mo_files as $m){
                 $i = preg_match('#[-]?([a-z_]+)\.mo$#i', $m, $matches);
                 if($i && $lang = $wpdb->get_var("SELECT code FROM {$wpdb->prefix}icl_locale_map WHERE locale='".$matches[1]."'")){
                     $tr_pairs = icl_st_load_translations_from_mo($m);

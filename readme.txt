@@ -66,6 +66,15 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 
 == Changelog ==
 
+= 1.7.1 =
+* bug fix: subpages in different language than the default not rendering correctly when the auto-adjust IDs option was set
+* bug fix: compatibility packages from the theme folder were not included
+* language switcher improvements ???
+* added mysqldump feature on the troubleshooting page
+* Catalan, Slovenian flags fixed
+* fixed gallery links http://forum.wpml.org/topic.php?id=1000#post-4652
+* automatic language homepage urls
+
 = 1.7.0 =
 * WPML adapts itself to any WordPress theme, making any website fully multilingual without any changes.
 * Added option to add a list of language links in the site's footer.

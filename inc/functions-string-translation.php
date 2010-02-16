@@ -482,9 +482,8 @@ function icl_t($context, $name, $original_value=false, &$has_translation=null){
         if(isset($has_translation)) $has_translation = false;
         
     }else{
-            
         $result = icl_t_cache_lookup($context, $name); 
-
+        
         if($result === false || !$result['translated'] && $original_value){        
             $ret_val = $original_value;    
             if(isset($has_translation)) $has_translation = false;
@@ -766,6 +765,11 @@ function icl_t_cache_lookup($context, $name){
         $current_language = $sitepress->get_current_language();     
         $default_language = $sitepress->get_default_language();
         
+        global $switched, $switched_stack;        
+        if(isset($switched) && $switched){
+            $prev_blog_id = $wpdb->blogid;
+            $wpdb->set_blog_id($switched_stack[0]);
+        }
         $res = $wpdb->get_results("
             SELECT s.name, s.value, t.value AS translation_value, t.status
             FROM  {$wpdb->prefix}icl_strings s
@@ -774,6 +778,9 @@ function icl_t_cache_lookup($context, $name){
                 s.language = '{$default_language}' AND s.context = '{$context}'
                 AND (t.language = '{$current_language}' OR t.language IS NULL)
             ", ARRAY_A);
+        if(isset($switched) && $switched){
+            $wpdb->set_blog_id($prev_blog_id);
+        }            
         if($res){
             foreach($res as $row){
                 if($row['status'] != ICL_STRING_TRANSLATION_COMPLETE || empty($row['translation_value'])){
