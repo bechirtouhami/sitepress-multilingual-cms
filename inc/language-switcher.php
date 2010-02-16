@@ -70,9 +70,24 @@ class SitePressLanguageSwitcher {
 	
 	function language_selector_widget_init(){ 
         register_sidebar_widget(__('Language Selector', 'sitepress'), 'language_selector_widget', 'icl_languages_selector');
+		register_widget_control(__('Language Selector', 'sitepress'), array(&$this, 'set_widget') );
         add_action('template_redirect','icl_lang_sel_nav_ob_start');
         add_action('wp_head','icl_lang_sel_nav_ob_end');
     }
+	
+	function set_widget(){
+		global $sitepress, $sitepress_settings;
+		if (isset($_POST['icl-language-selector-widget-options'])){
+			$sitepress_settings['widget_title'] = $_POST['icl-language-selector-widget-options']['widget_title'];
+			$sitepress_settings['widget_title_show'] = (isset($_POST['icl-language-selector-widget-options']['widget_title_show'])) ? 1 : 0;
+			$sitepress->save_settings($sitepress_settings);
+		}
+		echo '<label>' . __('Enter widget title', 'sitepress') . '<br><input type="text" name="icl-language-selector-widget-options[widget_title]" value="'.$sitepress_settings['widget_title'].'"></label><br>';
+		
+		echo '<label><input type="checkbox" name="icl-language-selector-widget-options[widget_title_show]" value="1"';
+		if ($sitepress_settings['widget_title_show']) echo ' checked="checked"';
+		echo '>&nbsp;' . __('Show title', 'sitepress') . '</label><br>';
+	}
 	
 	function home_test(){
 		//add_filter('option_home',array(&$this,'option_home'));
@@ -637,9 +652,14 @@ class SitePressLanguageSwitcher {
 
 // language switcher functions
 	function language_selector_widget($args){            
-    	global $sitepress;
+    	global $sitepress, $sitepress_settings;
     	extract($args, EXTR_SKIP);
     	echo $before_widget;
+		if ($sitepress_settings['widget_title_show']) {
+			echo $args['before_title'];
+			_e($sitepress_settings['widget_title']);
+			echo $args['after_title'];
+		}
     	$sitepress->language_selector();
     	echo $after_widget;
 	}
