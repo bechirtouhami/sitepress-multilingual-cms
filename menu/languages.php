@@ -415,7 +415,7 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                                                     <h4><?php echo __('Language switcher style', 'sitepress')?></h4>
                                                     
                                             <?php if(!defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') || !ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS): ?>                                            
-                                            <div id="icl_lang_sel_preview_wrap" style="height:<?php echo 50 + 20 * count($sitepress->get_active_languages())?>px">                                            
+                                            <div id="icl_lang_sel_preview_wrap" style="height:<?php echo 50 + 25 * count($sitepress->get_active_languages())?>px">                                            
                                             <span id="icl_lang_sel_preview">                                            
                                             <h4><?php _e('Language switcher widget preview', 'sitepress')?></h4>
                                             <?php 
