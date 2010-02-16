@@ -31,6 +31,11 @@ class SitePress{
                 $this->settings['dont_show_help_admin_notice'] = true;
                 $this->save_settings();                
             }                        
+            elseif($_GET['icl_action']=='dbdump'){
+                include_once ICL_PLUGIN_PATH . '/inc/functions-troubleshooting.php';
+                icl_troubleshooting_dumpdb();
+                exit;
+            }                                    
         }
         
         if(isset($_REQUEST['icl_ajx_action'])){

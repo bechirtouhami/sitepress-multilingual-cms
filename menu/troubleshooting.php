@@ -94,7 +94,7 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
     function __custom_csv_escape($s){
         $s = "&#34;". str_replace('"','&#34;',addslashes($s)) . "&#34;";
         return $s;
-    }
+    }                         
     echo '<br /><hr /><h3 id="wpml-settings"> ' . __('WPML settings', 'sitepress') . '</h3>';
     echo '<textarea style="font-size:10px;width:100%" wrap="off" rows="16" readonly="readonly">';
     ob_start();
@@ -104,6 +104,10 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
     echo htmlspecialchars($ob);
     echo '</textarea>';
     
+    ?>    
+    <h3><?php _e('Database dump', 'sitepress')?></h3>
+    <a class="button" href="admin.php?page=<?php ICL_PLUGIN_FOLDER ?>/menu/troublehooting.php&icl_action=dbdump"><?php _e('Download', 'sitepress') ?></a>
+    <?php
     
     echo '<br /><hr /><h3 id="wpml-settings"> ' . __('Reset', 'sitepress') . '</h3>';
     echo '<form method="post" onsubmit="return confirm(\''.__('Are you sure you want to reset all languages data? This operation cannot be reversed.', 'sitepress').'\')">';
