@@ -113,6 +113,29 @@ class SitePressLanguageSwitcher {
             add_action('wp_footer', array($this, 'language_selector_footer'),19);
 		}
 		if (is_admin()) add_action('icl_language_switcher_options',array(&$this,'admin'),1);
+		if ($this->settings['icl_post_availability']) {
+			icl_register_string('WPML', 'Text for alternative languages for posts', $this->settings['icl_post_availability_text']);
+			add_filter('the_content', array(&$this, 'post_availability'));
+		}
+	}
+	
+	function post_availability($content){
+		$out = '';
+        if(is_singular()){
+            $languages = icl_get_languages('skip_missing=true');
+            if(1 < count($languages)){
+                //$out .= $this->settings['post_available_before'] ? $this->settings['post_available_before'] : ''; 
+                foreach($languages as $l){
+                    if(!$l['active']) $langs[] = '<a href="'.$l['url'].'">'.$l['translated_name'].'</a>';
+                }
+                $out .= join(', ', $langs);
+                //$out .= $this->settings['post_available_after'] ? $this->settings['post_available_after'] : '';
+				$out = '<p>' . sprintf(icl_t('WPML', 'Text for alternative languages for posts', $this->settings['icl_post_availability_text']), $out) . '</p>';
+            }
+        }
+         if ($this->settings['icl_post_availability_position'] == 'above')
+            return $out . $content;
+        else return $content . $out;
 	}
 	
 	function language_selector_footer_style(){
@@ -500,7 +523,33 @@ class SitePressLanguageSwitcher {
                                                 </select>
                                                 <span style="display:none"><?php _e("Are you sure? The customization you may have made will be overriden once you click 'Apply'", 'sitepress')?></span>
                                             </div>   
-                                            <br /><br />
+                                            <br />
+                                        </li>
+										
+										<li>
+                                            <h4><?php _e('Show post translation links', 'sitepress'); ?></h4>
+                                            <ul>
+                                                <li>
+                                                    <label>
+                                                        <input type="checkbox" name="icl_post_availability" value="1" <?php if($this->settings['icl_post_availability']):?>checked="checked"<?php endif?> />
+                                                        <?php _e('Yes', 'sitepress'); ?>
+                                                    </label>
+                                                </li>
+												 <li>
+                                                    <label>
+														<?php _e('Position', 'sitepress'); ?>&nbsp;
+                                                       <select name="icl_post_availability_position">
+															<option value="above"<?php if($this->settings['icl_post_availability_position'] == 'above'):?> selected="selected"<?php endif?>><?php _e('Above post', 'sitepress'); ?>&nbsp;&nbsp;</option>
+															<option value="bellow"<?php if($this->settings['icl_post_availability_position'] == 'bellow'):?> selected="selected"<?php endif?>><?php _e('Bellow post', 'sitepress'); ?>&nbsp;&nbsp;</option>
+														</select>
+                                                    </label>
+                                                </li>
+												<li>
+                                                    <label>
+                                                      <?php _e('Text for alternative languages for posts', 'sitepress'); ?><br /><input type="text" name="icl_post_availability_text" value="<?php if($this->settings['icl_post_availability_text']) echo $this->settings['icl_post_availability_text']; else _e('This post is available in: %s','sitepress'); ?>" size="40" />
+                                                    </label>
+                                                </li>
+                                            </ul>
                                         </li>
 <?php
 	}
