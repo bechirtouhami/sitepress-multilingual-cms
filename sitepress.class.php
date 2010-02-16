@@ -79,10 +79,6 @@ class SitePress{
                 add_action('admin_footer', array($this,'language_filter'));
             }
 			
-			if(is_admin() && $_GET['page'] == ICL_PLUGIN_FOLDER . '/menu/languages.php'){
-                add_action('admin_head', 'icl_lang_sel_nav_css', 1, 1, true);
-            }
-            
             //add_filter('wp_list_pages_excludes', array($this, 'exclude_other_language_pages'));
             add_filter('get_pages', array($this, 'exclude_other_language_pages2'));
             add_filter('wp_dropdown_pages', array($this, 'wp_dropdown_pages'));
@@ -121,8 +117,7 @@ class SitePress{
                 add_action('admin_footer', array($this,'terms_language_filter'));                
             }
             
-            // the language selector widget      
-            add_action('plugins_loaded', array($this, 'language_selector_widget_init'));
+            
             
             // custom hook for adding the language selector to the template
             add_action('icl_language_selector', array($this, 'language_selector'));
@@ -2799,12 +2794,6 @@ class SitePress{
         return $link;
     }
      
-    function language_selector_widget_init(){ 
-        
-        register_sidebar_widget(__('Language Selector', 'sitepress'), 'language_selector_widget', 'icl_languages_selector');
-        add_action('template_redirect','icl_lang_sel_nav_ob_start');
-        add_action('wp_head','icl_lang_sel_nav_ob_end');
-    }
     function get_ls_languages($template_args=array()){
             global $wpdb, $post, $cat, $tag_id, $w_this_lang;
             
@@ -4317,45 +4306,4 @@ class SitePress{
         printf('<meta name="generator" content="WPML ver:%s stt:%s" />' . PHP_EOL, ICL_SITEPRESS_VERSION, $stt);        
     }
 }
-
-
-
-// language switcher functions
-function language_selector_widget($args){            
-    global $sitepress;
-    extract($args, EXTR_SKIP);
-    echo $before_widget;
-    $sitepress->language_selector();
-    echo $after_widget;
-}  
-
-function icl_lang_sel_nav_css($show = true){              
-    
-    if(defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') && ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS){
-        return '';                
-    }
-    
-    $link_tag = '<link rel="stylesheet" href="'. ICL_PLUGIN_URL . '/res/css/language-selector.css?v='.ICL_SITEPRESS_VERSION.'" type="text/css" media="all" />';
-    if(!$show && (!isset($_GET['page']) || $_GET['page'] != ICL_PLUGIN_FOLDER . '/menu/languages.php')){
-        return $link_tag;
-    }else{
-        echo $link_tag;
-    }
-}
-
-function icl_lang_sel_nav_ob_start(){ 
-    if(is_feed()) return;
-    ob_start('icl_lang_sel_nav_prepend_css'); 
-}
-
-function icl_lang_sel_nav_ob_end(){ ob_end_flush();}
-
-function icl_lang_sel_nav_prepend_css($buf){
-    if(defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') && ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS){
-        return $buf;
-    }
-    return preg_replace('#</title>#i','</title>' . PHP_EOL . PHP_EOL . icl_lang_sel_nav_css(false), $buf);
-}    
-      
-
 ?>
