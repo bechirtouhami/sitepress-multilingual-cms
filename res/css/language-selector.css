@@ -55,6 +55,7 @@
   border: 1px solid #fff;
   font: 11px Verdana, sans-serif;
   height: 15px;
+  clear: both;
 }
 
 #lang_sel_footer ul {
