@@ -59,7 +59,7 @@ class SitePressLanguageSwitcher {
 		$this->footer_css_defaults = $this->color_schemes['White'];
 		
 		add_action('plugins_loaded',array(&$this,'init'));
-		//add_action('wp_head',array(&$this,'home_test'),0);
+		
 		if(is_admin() && $_GET['page'] == ICL_PLUGIN_FOLDER . '/menu/languages.php'){
 			add_action('admin_head', array($this, 'custom_language_switcher_style'));
 		}
@@ -89,22 +89,6 @@ class SitePressLanguageSwitcher {
 		echo '>&nbsp;' . __('Show title', 'sitepress') . '</label><br>';
 	}
 	
-	function home_test(){
-		//add_filter('option_home',array(&$this,'option_home'));
-	}
-	
-	function option_home($url){
-		if ($this->settings['language_negotiation_type'] == 1){
-			global $sitepress;
-			remove_action('pre_option_home', array($sitepress,'pre_option_home'));
-			//$this->home = get_option('home');
-            //$url = $sitepress->convert_url($this->home, ICL_LANGUAGE_CODE);
-			return rtrim($url,'/');
-			//return get_bloginfo('home').'/'.ICL_LANGUAGE_CODE;
-		}
-		return $url;
-	}
-	
 	function init(){
 		global $sitepress_settings;
 		$this->settings = $sitepress_settings;
@@ -112,8 +96,9 @@ class SitePressLanguageSwitcher {
             add_action('wp_head', array($this, 'language_selector_footer_style'),19);
             add_action('wp_footer', array($this, 'language_selector_footer'),19);
 		}
-		if (is_admin()) add_action('icl_language_switcher_options',array(&$this,'admin'),1);
-		if ($this->settings['icl_post_availability']) {
+		if (is_admin()) {
+			add_action('icl_language_switcher_options',array(&$this,'admin'),1);
+		} else if ($this->settings['icl_post_availability']) {
 			icl_register_string('WPML', 'Text for alternative languages for posts', $this->settings['icl_post_availability_text']);
 			add_filter('the_content', array(&$this, 'post_availability'));
 		}
