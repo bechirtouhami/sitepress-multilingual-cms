@@ -404,12 +404,11 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                                             </p>
                                         </li>
 										<li>
-                                            <h4><?php echo __('Display \'Languages\' as the widget title', 'sitepress')?></h4>
 											<ul>
                                                 <li>
                                                     <label>
                                                         <input type="checkbox" name="icl_widget_title_show" value="1"<?php if ($sitepress_settings['icl_widget_title_show']) echo ' checked="checked"'; ?> />
-                                                        <?php echo __('Yes', 'sitepress') ?>
+                                                        <?php _e('Display \'Languages\' as the widget title', 'sitepress'); ?>
                                                     </label>
                                                 </li>
 											</ul>                                
