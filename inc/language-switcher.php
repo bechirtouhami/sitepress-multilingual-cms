@@ -340,30 +340,6 @@ class SitePressLanguageSwitcher {
                                             <em><?php printf(__("%s is defined in your theme. The language switcher can only be customized using the theme's CSS.", 'sitepress'), 'ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') ?></em>
                                             <?php endif; ?>
                                         </li>
-										
-										
-										
-										
-										
-										
-										<li>
-                                            <h4><?php echo __('How to show widget', 'sitepress')?></h4>
-                                            <p><?php echo __('Select type of appearance.', 'sitepress') ?></p>
-                                            <ul>
-                                                <li>
-                                                    <label>
-                                                        <input type="radio" name="icl_lang_sel_type" value="list" <?php if($this->settings['icl_lang_sel_type'] == 'list'):?>checked="checked"<?php endif?> />
-                                                        <?php echo __('List', 'sitepress') ?>
-                                                    </label>
-                                                </li>
-                                                <li>
-                                                <label>
-                                                    <input type="radio" name="icl_lang_sel_type" value="dropdown" <?php if(!$this->settings['icl_lang_sel_type'] || $this->settings['icl_lang_sel_type'] == 'dropdown'):?>checked="checked"<?php endif?> />
-                                                    <?php echo __('Dropdown menu', 'sitepress') ?>
-                                                </label>                    
-                                                </li>
-                                            </ul>
-                                        </li>
 <?php
 		if (defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS')) return;
 ?>

@@ -403,13 +403,44 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                                             <a href="http://wpml.org/?page_id=989"><?php echo __('Custom language switcher creation guide','sitepress')?></a>.
                                             </p>
                                         </li>
-										<li>
-											<ul>
+                                        <li>
+                                            <ul>
                                                 <li>
-                                                    <label>
+                                                    <br /><label>
                                                         <input type="checkbox" name="icl_widget_title_show" value="1"<?php if ($sitepress_settings['icl_widget_title_show']) echo ' checked="checked"'; ?> />
                                                         <?php _e('Display \'Languages\' as the widget title', 'sitepress'); ?>
                                                     </label>
+                                                </li>
+                                                <li>
+                                                    <h4><?php echo __('Language switcher style', 'sitepress')?></h4>
+                                                    
+                                            <?php if(!defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') || !ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS): ?>                                            
+                                            <div id="icl_lang_sel_preview_wrap" style="height:<?php echo 50 + 20 * count($sitepress->get_active_languages())?>px">                                            
+                                            <span id="icl_lang_sel_preview">                                            
+                                            <h4><?php _e('Language switcher widget preview', 'sitepress')?></h4>
+                                            <?php 
+                                                global $icl_language_switcher_preview;
+                                                $icl_language_switcher_preview = true;                                                
+                                                $sitepress->language_selector(); 
+                                            ?>                                                                          
+                                            </span>                                                                     
+                                            </div>
+                                            <?php endif; ?>
+                                            
+                                                    <ul>
+                                                        <li>
+                                                        <label>
+                                                            <input type="radio" name="icl_lang_sel_type" value="dropdown" <?php if(!$sitepress_settings->settings['icl_lang_sel_type'] || $sitepress_settings->settings['icl_lang_sel_type'] == 'dropdown'):?>checked="checked"<?php endif?> />
+                                                            <?php echo __('Drop-down menu', 'sitepress') ?>
+                                                        </label>                    
+                                                        </li>
+                                                        <li>
+                                                            <label>
+                                                                <input type="radio" name="icl_lang_sel_type" value="list" <?php if($sitepress_settings->settings['icl_lang_sel_type'] == 'list'):?>checked="checked"<?php endif?> />
+                                                                <?php echo __('List of languages', 'sitepress') ?>
+                                                            </label>
+                                                        </li>
+                                                    </ul>
                                                 </li>
 											</ul>                                
                                             
@@ -435,21 +466,6 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                                         <li>
                                         
                                             <h4><?php echo __('What to include in the language switcher', 'sitepress')?></h4>
-                                    
-                                                                             
-                                            <?php if(!defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') || !ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS): ?>                                            
-                                            <div id="icl_lang_sel_preview_wrap" style="height:<?php echo 50 + 20 * count($sitepress->get_active_languages())?>px">                                            
-                                            <span id="icl_lang_sel_preview">                                            
-                                            <h4><?php _e('Language switcher widget preview', 'sitepress')?></h4>
-                                            <?php 
-                                                global $icl_language_switcher_preview;
-                                                $icl_language_switcher_preview = true;                                                
-                                                $sitepress->language_selector(); 
-                                            ?>                                                                          
-                                            </span>                                                                     
-                                            </div>
-                                            <?php endif; ?>
-                                            
                                             <ul>
                                                 <li>
                                                     <label>
