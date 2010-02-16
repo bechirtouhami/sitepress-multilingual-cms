@@ -55,26 +55,6 @@ class SitePressLanguageSwitcher {
 		add_action('plugins_loaded',array(&$this,'init'));
 	}
 	
-	function language_selector_widget_init(){ 
-        register_sidebar_widget(__('Language Selector', 'sitepress'), 'language_selector_widget', 'icl_languages_selector');
-		register_widget_control(__('Language Selector', 'sitepress'), array(&$this, 'set_widget') );
-        add_action('template_redirect','icl_lang_sel_nav_ob_start');
-        add_action('wp_head','icl_lang_sel_nav_ob_end');
-		if ($this->settings['icl_widget_title_show']) icl_register_string('WPML', 'Widget title', __('Languages','sitepress'));
-    }
-	
-	function set_widget(){
-		global $sitepress, $sitepress_settings;
-		if (isset($_POST['icl_widget_update'])){
-			$sitepress_settings['icl_widget_title_show'] = (isset($_POST['icl_widget_title_show'])) ? 1 : 0;
-			$sitepress->save_settings($sitepress_settings);
-		}
-		echo '<input type="hidden" name="icl_widget_update" value="1">';
-		echo '<label><input type="checkbox" name="icl_widget_title_show" value="1"';
-		if ($sitepress_settings['icl_widget_title_show']) echo ' checked="checked"';
-		echo '>&nbsp;' . __('Display \'Languages\' as the widget\'s title', 'sitepress') . '</label><br>';
-	}
-	
 	function init(){
 		
 		global $sitepress_settings;
@@ -98,6 +78,25 @@ class SitePressLanguageSwitcher {
 		if(!is_admin()){
 			add_action('wp_head', array($this, 'custom_language_switcher_style'));
 		}
+	}
+	
+	function language_selector_widget_init(){ 
+        register_sidebar_widget(__('Language Selector', 'sitepress'), 'language_selector_widget', 'icl_languages_selector');
+		register_widget_control(__('Language Selector', 'sitepress'), array(&$this, 'set_widget') );
+        add_action('template_redirect','icl_lang_sel_nav_ob_start');
+        add_action('wp_head','icl_lang_sel_nav_ob_end');
+    }
+	
+	function set_widget(){
+		global $sitepress, $sitepress_settings;
+		if (isset($_POST['icl_widget_update'])){
+			$sitepress_settings['icl_widget_title_show'] = (isset($_POST['icl_widget_title_show'])) ? 1 : 0;
+			$sitepress->save_settings($sitepress_settings);
+		}
+		echo '<input type="hidden" name="icl_widget_update" value="1">';
+		echo '<label><input type="checkbox" name="icl_widget_title_show" value="1"';
+		if ($sitepress_settings['icl_widget_title_show']) echo ' checked="checked"';
+		echo '>&nbsp;' . __('Display \'Languages\' as the widget\'s title', 'sitepress') . '</label><br>';
 	}
 	
 	function post_availability($content){
