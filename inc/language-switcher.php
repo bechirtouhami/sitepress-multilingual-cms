@@ -73,20 +73,19 @@ class SitePressLanguageSwitcher {
 		register_widget_control(__('Language Selector', 'sitepress'), array(&$this, 'set_widget') );
         add_action('template_redirect','icl_lang_sel_nav_ob_start');
         add_action('wp_head','icl_lang_sel_nav_ob_end');
+		if ($this->settings['icl_widget_title_show']) icl_register_string('WPML', 'Widget title', __('Languages','sitepress'));
     }
 	
 	function set_widget(){
 		global $sitepress, $sitepress_settings;
-		if (isset($_POST['icl-language-selector-widget-options'])){
-			$sitepress_settings['widget_title'] = $_POST['icl-language-selector-widget-options']['widget_title'];
-			$sitepress_settings['widget_title_show'] = (isset($_POST['icl-language-selector-widget-options']['widget_title_show'])) ? 1 : 0;
+		if (isset($_POST['icl_widget_update'])){
+			$sitepress_settings['icl_widget_title_show'] = (isset($_POST['icl_widget_title_show'])) ? 1 : 0;
 			$sitepress->save_settings($sitepress_settings);
 		}
-		echo '<label>' . __('Enter widget title', 'sitepress') . '<br><input type="text" name="icl-language-selector-widget-options[widget_title]" value="'.$sitepress_settings['widget_title'].'"></label><br>';
-		
-		echo '<label><input type="checkbox" name="icl-language-selector-widget-options[widget_title_show]" value="1"';
-		if ($sitepress_settings['widget_title_show']) echo ' checked="checked"';
-		echo '>&nbsp;' . __('Show title', 'sitepress') . '</label><br>';
+		echo '<input type="hidden" name="icl_widget_update" value="1">';
+		echo '<label><input type="checkbox" name="icl_widget_title_show" value="1"';
+		if ($sitepress_settings['icl_widget_title_show']) echo ' checked="checked"';
+		echo '>&nbsp;' . __('Display \'Languages\' as the widget\'s title', 'sitepress') . '</label><br>';
 	}
 	
 	function init(){
@@ -689,9 +688,9 @@ class SitePressLanguageSwitcher {
     	global $sitepress, $sitepress_settings;
     	extract($args, EXTR_SKIP);
     	echo $before_widget;
-		if ($sitepress_settings['widget_title_show']) {
+		if ($sitepress_settings['icl_widget_title_show']) {
 			echo $args['before_title'];
-			_e($sitepress_settings['widget_title']);
+			echo icl_t('WPML', 'Widget title', __('Languages','sitepress'));
 			echo $args['after_title'];
 		}
     	$sitepress->language_selector();
