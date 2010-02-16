@@ -226,7 +226,7 @@ switch($_REQUEST['icl_ajx_action']){
             $iclsettings['icl_lang_sel_config'] = $_POST['icl_lang_sel_config'];
         }
         
-         if(isset($_POST['icl_lang_sel_footer_config'])){
+        if(isset($_POST['icl_lang_sel_footer_config'])){
             $iclsettings['icl_lang_sel_footer_config'] = $_POST['icl_lang_sel_footer_config'];
         }
         
@@ -236,6 +236,13 @@ switch($_REQUEST['icl_ajx_action']){
         if (isset($_POST['icl_lang_sel_footer']))
             $iclsettings['icl_lang_sel_footer'] = 1;
         else $iclsettings['icl_lang_sel_footer'] = 0;
+		
+		if (isset($_POST['icl_post_availability']))
+            $iclsettings['icl_post_availability'] = 1;
+        else $iclsettings['icl_post_availability'] = 0;
+		
+		if (isset($_POST['icl_post_availability_position']))
+            $iclsettings['icl_post_availability_position'] = $_POST['icl_post_availability_position'];
         
         if(!$iclsettings['icl_lso_flags'] && !$iclsettings['icl_lso_native_lang'] && !$iclsettings['icl_lso_display_lang']){
             echo '0|';
