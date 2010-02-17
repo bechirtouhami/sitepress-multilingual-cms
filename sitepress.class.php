@@ -2882,9 +2882,16 @@ class SitePress{
                             }                        
                         }
                     }
-                }elseif(is_category()){  
+                }elseif(is_category()){                      
                     if(isset($translations[$lang['code']])){
+                        if($this->settings['auto_adjust_ids']){
+                            global $icl_adjust_id_url_filter_off;  // force  the category_link_adjust_id to not modify this
+                            $icl_adjust_id_url_filter_off = true;
+                        }
                         $lang['translated_url'] = get_category_link($translations[$lang['code']]->term_id);
+                        if($this->settings['auto_adjust_ids']){
+                            $icl_adjust_id_url_filter_off = false; // restore default bahavior
+                        }                        
                     }else{  
                         if($icl_lso_link_empty){
                             $lang['translated_url'] = $this->language_url($lang['code']);
@@ -2894,7 +2901,14 @@ class SitePress{
                     }
                 }elseif(is_tag()){                                     
                     if(isset($translations[$lang['code']])){
+                        if($this->settings['auto_adjust_ids']){
+                            global $icl_adjust_id_url_filter_off;  // force  the category_link_adjust_id to not modify this
+                            $icl_adjust_id_url_filter_off = true;
+                        }
                         $lang['translated_url'] = get_tag_link($translations[$lang['code']]->term_id);
+                        if($this->settings['auto_adjust_ids']){
+                            $icl_adjust_id_url_filter_off = false; // restore default bahavior
+                        }                                                
                     }else{
                         if($icl_lso_link_empty){
                             $lang['translated_url'] = $this->language_url($lang['code']);
@@ -2932,11 +2946,11 @@ class SitePress{
                 }else{                     
                     global $icl_language_switcher_preview;                   
                     if($icl_lso_link_empty || is_home() || is_404() 
-                        || ('page' == get_option('show_on_front') && ($this->wp_query->queried_object_id == get_option('page_on_front') || $this->wp_query->queried_object_id == get_option('page_for_posts')))
+                        || ('page' == get_option('show_on_front') && ($this->wp_query->queried_object_id == get_option('page_on_front') 
+                        || $this->wp_query->queried_object_id == get_option('page_for_posts')))
                         || $icl_language_switcher_preview){
                         $lang['translated_url'] = $this->language_url($lang['code']);
-                        $skip_lang = false;
-                        
+                        $skip_lang = false;                        
                     }else{
                         $skip_lang = true; 
                         unset($w_active_languages[$k]);                       
@@ -3136,7 +3150,11 @@ class SitePress{
         return $terms;
     }
     
-    function get_term_adjust_id($term){        
+    function get_term_adjust_id($term){
+        
+        global $icl_adjust_id_url_filter_off;
+        if($icl_adjust_id_url_filter_off) return $term; // special cases when we need the categiry in a different language
+            
         $translated_id = icl_object_id($term->term_taxonomy_id, $term->taxonomy, true);
         remove_filter('get_term', array($this,'get_term_adjust_id'), 1);
         $t_term = get_term($translated_id, $term->taxonomy); 
@@ -3149,6 +3167,9 @@ class SitePress{
     
     
     function category_link_adjust_id($catlink, $cat_id){
+        global $icl_adjust_id_url_filter_off;
+        if($icl_adjust_id_url_filter_off) return $catlink; // special cases when we need the categiry in a different language
+         
         $translated_id = icl_object_id($cat_id, 'category', true);
         if($translated_id != $cat_id){
             remove_filter('category_link', array($this,'category_link_adjust_id'), 1);
