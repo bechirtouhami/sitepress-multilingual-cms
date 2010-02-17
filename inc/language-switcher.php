@@ -451,7 +451,7 @@ class SitePressLanguageSwitcher {
                                                             if(isset($this->settings['icl_lang_sel_footer_config']['background'])) 
                                                                 echo $this->settings['icl_lang_sel_footer_config']['background']; 
                                                             else 
-                                                                echo $this->footer_css_defaults['border'] ;
+                                                                echo $this->footer_css_defaults['background'] ;
                                                             ?>" /><img src="<?php echo ICL_PLUGIN_URL; ?>/res/img/icon_color_picker.png" id="icl-background-picker-footer" alt="" border="0" style="vertical-align:bottom;cursor:pointer;" class="pick-show" onclick="icl_cp_target='icl-lang-sel-footer-config-background';cp.show('icl-background-picker-footer');return false;" /></td>
                                                         <td>&nbsp;</td>
                                                     </tr>
