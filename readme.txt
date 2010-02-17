@@ -2,8 +2,8 @@
 Contributors: ICanLocalize
 Donate link: http://wpml.org/?page_id=2312
 Tags: CMS, navigation, menus, menu, dropdown, css, sidebar, pages, i18n, translation, localization, language, multilingual, WPML
-Requires at least: 2.6
-Tested up to: 2.9.1
+Requires at least: 2.7
+Tested up to: 2.9.2
 Stable tag: 1.7.0
 
 Allows building complete multilingual sites with WordPress.
@@ -67,14 +67,14 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 == Changelog ==
 
 = 1.7.1 =
-* bug fix: subpages in different language than the default not rendering correctly when the auto-adjust IDs option was set
-* bug fix: compatibility packages from the theme folder were not included
-* language switcher improvements ???
-* added mysqldump feature on the troubleshooting page
-* Catalan, Slovenian, Serbian flags fixed
-* fixed gallery links http://forum.wpml.org/topic.php?id=1000#post-4652
-* automatic language homepage urls
-* bug fix: WPMU - some strings translations for subblogs were wrong
+* Home-page URLs are now automatically adjusted per language.
+* Added optional title to the language switcher (some theme don't display correctly without a title).
+* Bug fix: subpages in different language than the default not rendering correctly when the auto-adjust IDs option was set.
+* Bug fix: compatibility packages from the theme folder were not included.
+* Added mysqldump feature on the troubleshooting page.
+* Catalan, Slovenian, Serbian flags fixed.
+* Fixed gallery links, per the [discussion](http://forum.wpml.org/topic.php?id=1000#post-4652) in the forum.
+* Bug fix: WPMU - some strings translations for subblogs were wrong.
 
 = 1.7.0 =
 * WPML adapts itself to any WordPress theme, making any website fully multilingual without any changes.
@@ -273,6 +273,12 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 * First public release
 
 == Upgrade Notice ==
+
+= 1.7.1 =
+Home page auto adjusts per language.
+
+= 1.7.0 =
+WPML automatically adjusts to any theme.
 
 = 1.6.0 =
 * WPML can now translate other plugins without editing .po/.mo files
