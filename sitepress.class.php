@@ -2921,6 +2921,7 @@ class SitePress{
                             $this->wp_query->query_vars['year'] = substr($this->wp_query->query_vars['m'], 0, 4);
                             $this->wp_query->query_vars['monthnum'] = substr($this->wp_query->query_vars['m'], 4, 2);
                             $this->wp_query->query_vars['day'] = substr($this->wp_query->query_vars['m'], 6, 2);
+                            gmdate('Y', current_time('timestamp')); //force wp_timezone_override_offset to be called
                         }
                         $lang['translated_url'] = $this->archive_url(get_day_link( $this->wp_query->query_vars['year'], $this->wp_query->query_vars['monthnum'], $this->wp_query->query_vars['day'] ), $lang['code']);
                     }
