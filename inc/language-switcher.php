@@ -501,11 +501,13 @@ class SitePressLanguageSwitcher {
                                                 </li>
 												<li>
                                                     <label>
-                                                      <?php _e('Text for alternative languages for posts', 'sitepress'); ?><br /><input type="text" name="icl_post_availability_text" value="<?php if($this->settings['icl_post_availability_text']) echo $this->settings['icl_post_availability_text']; else _e('This post is available in: %s','sitepress'); ?>" size="40" />
+                                                      <?php _e('Text for alternative languages for posts', 'sitepress'); ?><br /><input type="text" name="icl_post_availability_text" value="<?php if($this->settings['icl_post_availability_text']) echo $this->settings['icl_post_availability_text']; else _e('This post is also available in: %s','sitepress'); ?>" size="40" />
                                                     </label>
+													<br /><br />
                                                 </li>
                                             </ul>
                                         </li>
+										
 <?php
 	}
 	
