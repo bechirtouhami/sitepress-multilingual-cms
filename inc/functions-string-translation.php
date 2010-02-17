@@ -239,7 +239,8 @@ function icl_st_init(){
         global $icl_st_preview_strings;
         $_POST = stripslashes_deep($_POST);
         if($_POST['strings']=='need'){
-            $icl_st_preview_strings = $wpdb->get_results("SELECT value FROM {$wpdb->prefix}icl_strings WHERE status <> " . ICL_STRING_TRANSLATION_COMPLETE);
+            $icl_st_preview_strings = $wpdb->get_results("SELECT value FROM {$wpdb->prefix}icl_strings 
+                WHERE language = '".$sitepress->get_current_language()."' AND status <> " . ICL_STRING_TRANSLATION_COMPLETE);
         }else{
             $icl_st_preview_strings = $wpdb->get_results("SELECT value FROM {$wpdb->prefix}icl_strings WHERE id IN (".$wpdb->escape($_POST['strings']).")");
         }        
