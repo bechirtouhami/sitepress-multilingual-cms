@@ -186,7 +186,7 @@ class SitePressLanguageSwitcher {
                     <ul>
                     ';
                 foreach($languages as $lang){
-                    echo '<li>';
+                    echo '	<li>';
 					echo '<a href="'.$lang['url'].'"';
                     if($lang['active']) echo ' class="lang_sel_sel"';
 					echo '>';
@@ -224,10 +224,10 @@ class SitePressLanguageSwitcher {
                     //echo icl_disp_language( $this->settings['icl_lso_native_lang'] ? $l['native_name'] : null, $this->settings['icl_lso_display_lang'] ? $l['translated_name'] : null );
                     //if(!$l['active']) echo '</a>';
 					echo '</a>';
-                    echo '</li>';
+                    echo '</li>
+                    ';
                 }
-            echo '
-                    </ul>
+            echo '</ul>
                 </div>';
             }
     }
