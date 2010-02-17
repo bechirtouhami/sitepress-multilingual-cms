@@ -395,13 +395,21 @@ class SitePress{
                             remove_action('template_redirect', 'redirect_canonical');
                             global $_icl_server_request_uri;
                             $_icl_server_request_uri = $_SERVER['REQUEST_URI'];
-                            add_action('template_redirect', 'icl_redirect_canonical_wrapper');
+                            add_action('template_redirect', 'icl_redirect_canonical_wrapper', 11);
                             function icl_redirect_canonical_wrapper(){
-                                global $_icl_server_request_uri;
+                                global $_icl_server_request_uri, $wp_query;
                                 $requested_url  = ( !empty($_SERVER['HTTPS'] ) && strtolower($_SERVER['HTTPS']) == 'on' ) ? 'https://' : 'http://';
                                 $requested_url .= $_SERVER['HTTP_HOST'];
                                 $requested_url .= $_icl_server_request_uri;
                                 redirect_canonical($requested_url);
+                                
+                                if(empty($wp_query->posts)){
+                                    $wp_query->is_404 = true;
+                                    $template = get_404_template();
+                                    include($template);
+                                    exit;
+                                }
+                                
                             }
                             //
                             
