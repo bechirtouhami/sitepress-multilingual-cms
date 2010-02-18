@@ -430,13 +430,13 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                                                     <ul>
                                                         <li>
                                                         <label>
-                                                            <input type="radio" name="icl_lang_sel_type" value="dropdown" <?php if(!$sitepress_settings->settings['icl_lang_sel_type'] || $sitepress_settings->settings['icl_lang_sel_type'] == 'dropdown'):?>checked="checked"<?php endif?> />
+                                                            <input type="radio" name="icl_lang_sel_type" value="dropdown" <?php if(!$sitepress_settings['icl_lang_sel_type'] || $sitepress_settings['icl_lang_sel_type'] == 'dropdown'):?>checked="checked"<?php endif?> />
                                                             <?php echo __('Drop-down menu', 'sitepress') ?>
                                                         </label>                    
                                                         </li>
                                                         <li>
                                                             <label>
-                                                                <input type="radio" name="icl_lang_sel_type" value="list" <?php if($sitepress_settings->settings['icl_lang_sel_type'] == 'list'):?>checked="checked"<?php endif?> />
+                                                                <input type="radio" name="icl_lang_sel_type" value="list" <?php if($sitepress_settings['icl_lang_sel_type'] == 'list'):?>checked="checked"<?php endif?> />
                                                                 <?php echo __('List of languages', 'sitepress') ?>
                                                             </label>
                                                         </li>
