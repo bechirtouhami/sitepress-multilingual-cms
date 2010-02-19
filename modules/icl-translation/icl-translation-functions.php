@@ -46,7 +46,7 @@ function icl_get_all_languages_associated($post_id, $source_language, $rid) {
     global $wpdb;
     
     $languages = $wpdb->get_col("SELECT target FROM {$wpdb->prefix}icl_core_status WHERE rid={$rid}");
-    
+                                                
     // check other request_ids that include these languages.
 
     $other_rids = array();    
@@ -810,7 +810,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     
     kses_remove_filters();
     $new_post_id = wp_insert_post($postarr);
-
+    
     // set stickiness
     if($is_original_sticky && $sitepress_settings['sync_sticky_flag']){
         stick_post($new_post_id);

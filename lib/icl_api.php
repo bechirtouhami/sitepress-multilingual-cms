@@ -232,7 +232,7 @@ class ICanLocalizeQuery{
     
     function cms_do_download($request_id, $language){
         $request_url = ICL_API_ENDPOINT . '/websites/' . $this->site_id . '/cms_requests/'.$request_id.'/cms_download?accesskey=' . $this->access_key . '&language=' . $language;                        
-        $res = $this->_request_gz($request_url);        
+        $res = $this->_request_gz($request_url);                
         $content = $res['cms_request_details']['contents']['content'];
         $translation = array();
         if($content)        
@@ -257,6 +257,11 @@ class ICanLocalizeQuery{
             if($c['attr']['format'] == 'base64'){
                 $translation[$c['attr']['type']] = base64_decode($translation[$c['attr']['type']]);
             }
+            
+            if($c['attr']['type'] == 'body'){
+                $translation['body'] = html_entity_decode($translation['body'], ENT_QUOTES, 'UTF-8');
+            }
+            
         }
         return $translation;
     }
