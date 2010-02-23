@@ -403,12 +403,14 @@ class SitePress{
                                 $requested_url .= $_icl_server_request_uri;
                                 redirect_canonical($requested_url);
                                 
-                                if(empty($wp_query->posts)){
+                                /*
+                                if(isset($wp_query) && empty($wp_query->posts)){
                                     $wp_query->is_404 = true;
                                     $template = get_404_template();
                                     include($template);
                                     exit;
                                 }
+                                */
                                 
                             }
                             //

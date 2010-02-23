@@ -56,8 +56,6 @@ function icl_sitepress_activate(){
         mysql_query($sql);
         $add_languages_translations = true;
     }else{
-        $v = serialize(!defined('ICL_PRESERVE_LANGUAGES_TRANSLATIONS') || !ICL_PRESERVE_LANGUAGES_TRANSLATIONS);
-        fwrite(fopen(ABSPATH . '/debug.txt', 'w'), $v);
         if(!defined('ICL_PRESERVE_LANGUAGES_TRANSLATIONS') || !ICL_PRESERVE_LANGUAGES_TRANSLATIONS){
             mysql_query("TRUNCATE TABLE `{$table_name}`");
             $add_languages_translations = true;
