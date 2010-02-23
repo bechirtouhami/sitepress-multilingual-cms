@@ -46,7 +46,7 @@ function icl_st_init(){
         $_POST = stripslashes_deep( $_POST );         
     }
                          
-    if(!isset($sitepress_settings['existing_content_language_verified'])){
+    if(!isset($sitepress_settings['existing_content_language_verified']) || !$sitepress_settings['existing_content_language_verified']){
         return;
     }          
     
@@ -98,7 +98,7 @@ function icl_st_init(){
                 if(is_array($widget_text)){
                     foreach($widget_text as $k=>$w){
                         if(!empty($w) && isset($w['title']) && in_array($k, $active_text_widgets)){
-                            icl_register_string('Widgets', 'widget body - ' . md5(apply_filters('widget_text',$w['text'])), apply_filters('widget_text',$w['text']));                            
+                            icl_register_string('Widgets', 'widget body - ' . md5(apply_filters('widget_text',$w['text'])), apply_filters('widget_text',$w['text']));
                         }
                     }
                 }
@@ -464,9 +464,9 @@ function __icl_unregister_string_multi($arr){
 
 function icl_t($context, $name, $original_value=false, &$has_translation=null){
     global $wpdb, $sitepress, $sitepress_settings;
-    
+        
     // if the default language is not set up return
-    if(!isset($sitepress_settings['existing_content_language_verified'])){
+    if(!isset($sitepress_settings['existing_content_language_verified'])){        
         if(isset($has_translation)) $has_translation = false;
         return $original_value !== false ? $original_value : $name;
     }   
@@ -484,7 +484,6 @@ function icl_t($context, $name, $original_value=false, &$has_translation=null){
         
     }else{
         $result = icl_t_cache_lookup($context, $name); 
-        
         if($result === false || !$result['translated'] && $original_value){        
             $ret_val = $original_value;    
             if(isset($has_translation)) $has_translation = false;
@@ -648,7 +647,8 @@ function icl_sw_filters_widget_title($val){
 }
 
 function icl_sw_filters_widget_text($val){    
-    return icl_t('Widgets', 'widget body - ' . md5($val) , $val);
+    $val = icl_t('Widgets', 'widget body - ' . md5($val) , $val);
+    return $val;
 }
 
 function icl_sw_filters_gettext($translation, $text, $domain){
@@ -758,7 +758,6 @@ function icl_t_cache_lookup($context, $name){
     if(!isset($icl_st_cache)){
         $icl_st_cache = array();
     }
-    
     if(isset($icl_st_cache[$context]) && empty($icl_st_cache[$context])){  // cache semi-hit - string is not in the db
         $ret_value = false;        
     }elseif(!isset($icl_st_cache[$context][$name])){ //cache MISS
