@@ -626,9 +626,9 @@ class SitePressLanguageSwitcher {
                     case 'background-other-normal': 
                         //if($v != $this->widget_css_defaults[$k])
 						if ($list)
-							 echo '#lang_sel_list ul a.lang_sel_other, #lang_sel_list ul a.lang_sel_other:visited{background-color:'.$v.';}'; 
+							 echo '#lang_sel_list ul a.lang_sel_other, #lang_sel li ul a:link, #lang_sel_list ul a.lang_sel_other:visited{background-color:'.$v.';}'; 
 						else
-                            echo '#lang_sel li ul a, #lang_sel li ul a:visited{background-color:'.$v.';}'; 
+                            echo '#lang_sel li ul a, #lang_sel li ul a:link, #lang_sel li ul a:visited{background-color:'.$v.';}'; 
                         break;
                     case 'background-other-hover': 
                         //if($v != $this->widget_css_defaults[$k])
