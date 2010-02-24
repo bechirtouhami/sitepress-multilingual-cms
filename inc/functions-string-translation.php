@@ -1238,6 +1238,81 @@ function _icl_st_hide_random($str){
 }
 
 
+function _icl_st_get_options_writes($path){
+    static $found_writes = array();
+    if(is_dir($path)){        
+        $dh = opendir($path);
+        while($file = readdir($dh)){
+            if($file=="." || $file=="..") continue;
+            if(is_dir($path . '/' . $file)){
+                _icl_st_get_options_writes($path . '/' . $file);                
+            }elseif(preg_match('#(\.php|\.inc)$#i', $file)){
+                $content = file_get_contents($path . '/' . $file);
+                $int = preg_match('#(add|update)_option\(([^,]+),([^)]+)\)#i', $content, $matches);
+                if($int){
+                    $option_name = trim($matches[2]);
+                    if(0 === strpos($option_name, '"') || 0 === strpos($option_name, "'")){
+                        $option_name = trim($option_name, "\"'");
+                    }elseif(false === strpos($option_name, '$')){
+                        $option_name = constant($option_name);
+                    }else{
+                        $option_name = false;
+                    }
+                    if($option_name){
+                        $found_writes[] = $option_name;
+                    }
+                }
+            }
+        }
+    }   
+    return $found_writes;
+}
+
+
+function icl_st_scan_options_strings(){
+    global $wpdb;
+    
+    $options = array();
+    
+    // scan theme php file for update_option(), add_option()
+    $options_names = _icl_st_get_options_writes(get_template_directory());
+    $options_names = array_merge($options_names, _icl_st_get_options_writes(get_stylesheet_directory()));
+    $options_names = array_unique($options_names);
+    
+    //echo '<pre>';
+    //print_r($options_names);
+    //echo '</pre>';
+    
+    //$options_names[] = 'icl_sitepress_settings';
+    
+    if(!empty($options_names)){   
+        $res = $wpdb->get_results("SELECT option_name, option_value FROM $wpdb->options WHERE option_name IN ('".join("','", $options_names)."')");
+        
+        foreach($res as $row){
+            $options[$row->option_name] = maybe_unserialize($row->option_value);
+        }
+    }
+   
+    return $options;
+}
+
+function icl_st_render_option_writes($option_name, $option_value){
+    if(is_array($option_value) || is_object($option_value)){
+        echo '<h4>' . $option_name . '</h4>';
+        echo '<ul class="icl_st_option_writes">';
+        foreach($option_value as $key=>$value){
+            echo '<li>';
+            icl_st_render_option_writes($key, $value);    
+            echo '</li>';
+        }        
+        echo '</ul>';
+    }elseif(is_string($option_value) || is_numeric($option_value)){
+        echo '<input type="text" readonly="readonly" value="'.$option_name.'" size="32" />'; 
+        echo '<input type="text" value="'.htmlspecialchars($option_value).'" readonly="readonly" size="48" />';
+        echo '<input type="button" value="'.__('Register string', 'sitepress').'" />';
+    }
+}
+
 function icl_st_get_mo_files($path){
     static $mo_files;
     

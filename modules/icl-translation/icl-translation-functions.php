@@ -1492,7 +1492,7 @@ function _icl_content_fix_links_to_translated_content($new_post_id, $target_lang
                 } else if($key == 'cat'){
                     $kind = 'category';
                 } else if($key == 'tag'){
-                    $kink = 'tag';
+                    $kind = 'tag';
                 } else {
                     continue;
                 }

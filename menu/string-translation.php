@@ -3,6 +3,11 @@ if((!isset($sitepress_settings['existing_content_language_verified']) || !$sitep
     return;
 }
 
+if(isset($_GET['trop']) && $_GET['trop'] > 0){
+    include dirname(__FILE__) . '/string-translation-translate-options.php';
+    return;
+}
+
 $status_filter = isset($_GET['status']) ? intval($_GET['status']) : false;
 $context_filter = isset($_GET['context']) ? $_GET['context'] : false;
 $search_filter = isset($_GET['search']) ? $_GET['search'] : false;
@@ -580,6 +585,8 @@ $available_contexts = array_unique($available_contexts);
         
         <br clear="all" /><br />
     <?php endif; ?>
+    
+    <a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/string-translation.php&trop=1"><?php _e('Translate strings from the options table', 'sitepress'); ?></a>
     
     <?php do_action('icl_menu_footer'); ?>
     
