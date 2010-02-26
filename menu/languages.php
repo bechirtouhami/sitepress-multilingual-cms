@@ -520,7 +520,7 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
             <?php endif; ?>
             </div>
             
-            <div id="icl_mo" class="icl_advanced_feature">
+            <div class="icl_advanced_feature">
             <?php if(count($active_languages) > 1): ?>   
                 <table class="widefat">
                     <thead>
@@ -560,7 +560,7 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
             <?php endif; ?>                            
             </div>
             
-            <div id="icl_mo" class="icl_advanced_feature">
+            <div class="icl_advanced_feature">
             <?php if(count($active_languages) > 1): ?>   
                 <table class="widefat">
                     <thead>
@@ -681,7 +681,7 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
     
     <?php do_action('icl_extra_options_' . $_GET['page']); ?>        
         
-    <form name="icl_promote_form">
+    <form action="" name="icl_promote_form">
     <p>
         <label><input type="checkbox" name="icl_promote" <?php if($sitepress_settings['promote_wpml']) echo 'checked="checked"' ?> value="1" /> <?php _e("Tell the world your site is running multilingual with WPML (places a message in your site's footer)", 'sitepress'); ?></label>
     </p>
