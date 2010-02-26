@@ -1104,14 +1104,17 @@ class SitePress{
             $page_basename = str_replace('.php','',$page);
         }
         ?>
-        <script type="text/javascript">        
+        <script type="text/javascript">   
+		// <![CDATA[     
         var icl_ajx_url = '<?php echo rtrim(get_option('siteurl'),'/') . '/wp-admin/' ?>admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/languages.php';
         var icl_ajx_saved = '<?php echo __('Data saved','sitepress') ?>';
         var icl_ajx_error = '<?php echo __('Error: data not saved','sitepress') ?>';
         var icl_default_mark = '<?php echo __('default','sitepress') ?>';     
         var icl_this_lang = '<?php echo $this->this_lang ?>';   
         var icl_ajxloaderimg_src = '<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif';
-        var icl_cat_adder_msg = '<?php echo __('To add categories that already exist in other languages go to the <a href="categories.php">category management page</a>','sitepress')?>';
+        var icl_cat_adder_msg = '<?php echo __('To add categories that already exist in other languages go to the <a href="categories.php">category management page<\/a>','sitepress')?>';
+		// ]]>
+		
         <?php if(!$this->settings['ajx_health_checked']): ?>
         addLoadEvent(function(){
             jQuery.ajax({type: "POST",url: icl_ajx_url,data: "icl_ajx_action=health_check", error: function(msg){
