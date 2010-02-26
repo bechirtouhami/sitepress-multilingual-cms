@@ -4060,7 +4060,7 @@ class SitePress{
     
     function __set_posts_management_column_width(){
         $w = 22 * count($this->get_active_languages());
-        echo '<style>.column-icl_translations{width:'.$w.'px;}.column-icl_translations img{margin:2px;}</style>';
+        echo '<style type="text/css">.column-icl_translations{width:'.$w.'px;}.column-icl_translations img{margin:2px;}</style>';
     }
     
     function display_wpml_footer(){
