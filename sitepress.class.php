@@ -4312,7 +4312,7 @@ class SitePress{
         if ($show_minimized) {
             $output .= '<div id="icl_sidebar_full" style="display:none">';
         } else {
-            $output .= '<div id="icl_sidebar_full"">';
+            $output .= '<div id="icl_sidebar_full">';
         }
 
         if ($action_list == '') {
