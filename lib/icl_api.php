@@ -474,12 +474,16 @@ class ICanLocalizeQuery{
     }
     
     function report_back_permalink($request_id, $language, $translation) {
+        global $wpdb;
         $request_url = ICL_API_ENDPOINT . '/websites/' . $this->site_id . '/cms_requests/'. $request_id . '/update_permlink.xml';
         
         $parameters['accesskey'] = $this->access_key;
         $parameters['language'] = $language;
-        $parameters['permlink'] = get_option('home') . '?p=' . $translation->element_id;
-
+        if($wpdb->get_var("SELECT post_type FROM $wpdb->posts WHERE ID={$translation->element_id}")=='page'){
+            $parameters['permlink'] = get_option('home') . '?page_id=' . $translation->element_id;
+        }else{
+            $parameters['permlink'] = get_option('home') . '?p=' . $translation->element_id;
+        }
         
         $res = $this->_request($request_url, 'POST', $parameters);
         
