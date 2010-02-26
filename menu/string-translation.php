@@ -423,7 +423,7 @@ $available_contexts = array_unique($available_contexts);
             
                 <div class="postbox-container" style="width: 49%;">
                     <div id="normal-sortables-stsel" class="meta-box-sortables ui-sortable">
-                        <div id="dashboard_wpml_stsel" class="postbox">
+                        <div id="dashboard_wpml_stsel_1" class="postbox">
                             <div class="handlediv" title="<?php echo __('Click to toggle', 'sitepress'); ?>">
                                 <br/>
                             </div>
@@ -436,7 +436,7 @@ $available_contexts = array_unique($available_contexts);
                                     <p class="icl_form_errors" style="display:none"></p>
                                     <ul>
                                         <li>
-                                            <li><input type="hidden" name="icl_st[track_strings]" value="0" />
+                                           	<input type="hidden" name="icl_st[track_strings]" value="0" />
                                             <label><input type="checkbox" id="icl_st_track_strings" name="icl_st[track_strings]" value="1" <?php 
                                             if($sitepress_settings['st']['track_strings']): ?>checked="checked"<?php endif ?> /> 
                                         <?php _e('Track where strings appear on the site', 'sitepress'); ?></label>
@@ -463,7 +463,7 @@ $available_contexts = array_unique($available_contexts);
                         </div>
                         
                         
-                        <div id="dashboard_wpml_stsel" class="postbox">
+                        <div id="dashboard_wpml_stsel_2" class="postbox">
                             <div class="handlediv" title="<?php echo __('Click to toggle', 'sitepress'); ?>">
                                 <br/>
                             </div>
@@ -486,7 +486,7 @@ $available_contexts = array_unique($available_contexts);
                                     </ul>
                                     <p>
                                     <input class="button-secondary" type="submit" name="iclt_st_sw_save" value="<?php echo __('Save options and rescan strings', 'sitepress')?>" />
-                                    <span class="icl_ajx_response" style="display:inline"><?php if(isset($_GET['updated']) && $_GET['updated']=='true') echo __('Settings saved', 'sitepress') ?></span>
+                                    <span class="icl_ajx_response" style="display:inline">&nbsp;<?php if(isset($_GET['updated']) && $_GET['updated']=='true') echo __('Settings saved', 'sitepress') ?></span>
                                     </p>
                                 </form> 
                                                                
@@ -507,7 +507,7 @@ $available_contexts = array_unique($available_contexts);
                             </h3>         
                             <div class="inside">
                                 <h5><?php echo __('Import', 'sitepress')?></h5>                         
-                                <form id="icl_st_po_form"  name="icl_st_po_form" method="post" enctype="multipart/form-data">
+                                <form id="icl_st_po_form" action="" name="icl_st_po_form" method="post" enctype="multipart/form-data">
                                     <p class="sub">
                                          <label for="icl_po_file"><?php echo __('.po file:', 'sitepress')?></label>
                                         <input id="icl_po_file" class="button primary" type="file" name="icl_po_file" />  
@@ -586,7 +586,7 @@ $available_contexts = array_unique($available_contexts);
         <br clear="all" /><br />
     <?php endif; ?>
     
-    <a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/string-translation.php&trop=1"><?php _e('Translate strings from the options table', 'sitepress'); ?></a>
+    <a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/string-translation.php&amp;trop=1"><?php _e('Translate strings from the options table', 'sitepress'); ?></a>
     
     <?php do_action('icl_menu_footer'); ?>
     
