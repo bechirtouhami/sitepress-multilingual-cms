@@ -471,15 +471,6 @@ class AbsoluteLinksPlugin{
     
     function process_string($st_id, $translation=true){
         global $wpdb;
-        /*
-        global $wp_rewrite, $sitepress, $sitepress_settings;        
-        if(!isset($wp_rewrite)){
-            require_once ABSPATH . WPINC . '/rewrite.php'; 
-            $wp_rewrite = new WP_Rewrite();
-        }
-        
-        $rewrite = $wp_rewrite->wp_rewrite_rules();
-        */
         
         if($translation){
             $string_value = $wpdb->get_var("SELECT value FROM {$wpdb->prefix}icl_string_translations WHERE id=" . $st_id);
@@ -700,8 +691,15 @@ class AbsoluteLinksPlugin{
          
         $post = $wpdb->get_row("SELECT * FROM {$wpdb->posts} WHERE ID={$post_id}"); 
         $home_url = $sitepress->language_url($_POST['icl_post_language']);
-        $int = preg_match_all('#<a([^>]*)href="(('.rtrim($home_url,'/').')?/([^"^>]+))"([^>]*)>#i',$text,$alp_matches);        
+        $int = preg_match_all('#<a([^>]*)href="(('.rtrim($home_url,'/').')?/([^"^>]+))"([^>]*)>#i',$post->post_content,$alp_matches);        
         $sitepress_settings = $sitepress->get_settings();
+        
+        if($post_id == 184){
+            echo '<pre>';
+            print_r($alp_matches);
+            echo '</pre>';
+            var_dump($int);
+        }
         
         if($int){   
             $url_parts = parse_url(rtrim(get_option('home'),'/').'/');                                                    
