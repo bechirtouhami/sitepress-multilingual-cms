@@ -33,6 +33,7 @@ class AbsoluteLinksPlugin{
     
     
     function __construct(){  
+        global $sitepress_settings;
         $this->settings = get_option('alp_settings');
         //add_action('admin_menu',array($this,'management_page'));
         if(isset($_POST['save_alp']) && $_POST['save_alp']){            
@@ -43,6 +44,13 @@ class AbsoluteLinksPlugin{
         add_action('admin_head',array($this,'js_scripts'));  
         
         add_filter('the_content', array($this,'show_permalinks'));
+        
+        if($sitepress_settings['modules']['absolute-links']['sticky_links_widgets'] || $sitepress_settings['modules']['absolute-links']['sticky_links_strings']){            
+            add_filter('widget_text', array($this,'show_permalinks'), 99); // low priority - allow translation to be set        
+        }        
+        if($sitepress_settings['modules']['absolute-links']['sticky_links_widgets']){            
+            add_action('update_option_widget_text', array($this,'update_option_widget_text'), 3, 2);
+        }
         
         $path = dirname(substr(__FILE__, strpos(__FILE__,'wp-content')));
         $path = str_replace('\\','/',$path);
@@ -288,9 +296,393 @@ class AbsoluteLinksPlugin{
         include dirname(__FILE__).'/management-page.php';
     }
     
+    
+    function _process_generic_text($text){
+        global $wpdb;
+        global $wp_rewrite, $sitepress, $sitepress_settings;
+        if(!isset($wp_rewrite)){
+            require_once ABSPATH . WPINC . '/rewrite.php'; 
+            $wp_rewrite = new WP_Rewrite();
+        }
+        
+        $rewrite = $wp_rewrite->wp_rewrite_rules();
+        
+        $home_url = $sitepress->language_url($sitepress->get_default_language());
+        $int = preg_match_all('#<a([^>]*)href="('.rtrim($home_url,'/').'/([^"^>]+))"([^>]*)>#i',$text,$alp_matches);        
+        
+        
+        if($int){   
+            $url_parts = parse_url(rtrim(get_option('home'),'/').'/');                                                    
+            foreach($alp_matches[3] as $k=>$m){
+                if(0===strpos($m,'wp-content')) continue;
+                
+                if($sitepress_settings['language_negotiation_type']==1){
+                        $m_orig = $m;
+                        $exp = explode('/', $m, 2);                
+                        $lang = $exp[0];
+                        if($wpdb->get_var("SELECT code FROM {$wpdb->prefix}icl_languages WHERE code='{$lang}'")){
+                            $m = $exp[1];    
+                        }else{
+                            $m = $m_orig;
+                            unset($m_orig);
+                            $lang = false;
+                        }                        
+                }elseif($sitepress_settings['language_negotiation_type']==2){
+                    //
+                }
+                
+                $pathinfo = '';
+                $req_uri = '/' . $m;                                
+                $req_uri_array = explode('?', $req_uri);
+                $req_uri = $req_uri_array[0];
+                // separate anchor
+                $req_uri_array = explode('#', $req_uri);
+                $req_uri = $req_uri_array[0];
+                $anchor = $req_uri_array[1];
+                $self = '/index.php';
+                $home_path = parse_url(get_option('home'));
+                if ( isset($home_path['path']) )
+                    $home_path = $home_path['path'];
+                else
+                    $home_path = '';
+                $home_path = trim($home_path, '/');
+                
+                $req_uri = str_replace($pathinfo, '', rawurldecode($req_uri));
+                $req_uri = trim($req_uri, '/');
+                $req_uri = preg_replace("|^$home_path|", '', $req_uri);
+                $req_uri = trim($req_uri, '/');
+                $pathinfo = trim($pathinfo, '/');
+                $pathinfo = preg_replace("|^$home_path|", '', $pathinfo);
+                $pathinfo = trim($pathinfo, '/');
+                $self = trim($self, '/');
+                $self = preg_replace("|^$home_path|", '', $self);
+                $self = trim($self, '/');
+                
+                if ( ! empty($pathinfo) && !preg_match('|^.*' . $wp_rewrite->index . '$|', $pathinfo) ) {
+                    $request = $pathinfo;
+                } else {
+                    // If the request uri is the index, blank it out so that we don't try to match it against a rule.
+                    if ( $req_uri == $wp_rewrite->index )
+                        $req_uri = '';
+                    $request = $req_uri;
+                }
+
+                $this_request = $request;
+                
+                $request_match = $request;                
+                
+                foreach ( (array) $rewrite as $match => $query) {
+
+                    // If the requesting file is the anchor of the match, prepend it
+                    // to the path info.
+                    if ((! empty($req_uri)) && (strpos($match, $req_uri) === 0) && ($req_uri != $request)) {
+                        $request_match = $req_uri . '/' . $request;
+                    }
+                    
+                    if (preg_match("!^$match!", $request_match, $matches) ||
+                        preg_match("!^$match!", urldecode($request_match), $matches)) {
+                        // Got a match.
+                        $matched_rule = $match;
+
+                        // Trim the query of everything up to the '?'.
+                        $query = preg_replace("!^.+\?!", '', $query);
+                        
+                        // Substitute the substring matches into the query.
+                        eval("@\$query = \"" . addslashes($query) . "\";");
+
+                        $matched_query = $query;
+
+                        // Parse the query.
+                        parse_str($query, $perma_query_vars);
+                        
+                        break;
+                    }
+                }                
+                
+                
+                $post_name = $category_name = false;
+                if(isset($perma_query_vars['pagename'])){
+                    $post_name = basename($perma_query_vars['pagename']); 
+                }elseif(isset($perma_query_vars['name'])){
+                    $post_name = $perma_query_vars['name']; 
+                }elseif(isset($perma_query_vars['category_name'])){
+                    $category_name = $perma_query_vars['category_name']; 
+                }
+                if($post_name){                    
+                    $name = $wpdb->escape($post_name);
+                    $p = $wpdb->get_row("SELECT ID, post_type FROM {$wpdb->posts} WHERE post_name='{$name}' AND post_type IN('post','page')");
+                    if($p){
+                        if($p->post_type=='post'){
+                            $qvid = 'p';
+                        }else{
+                            $qvid = 'page_id';
+                        }
+                        
+                        if($sitepress_settings['language_negotiation_type']==1 && $lang){
+                            $langprefix = '/' . $lang;
+                        }else{
+                            $langprefix = '';
+                        }
+                        $perm_url = rtrim($home_url,'/'). $langprefix .'/'.$m;
+                        $regk = '@href="('.$perm_url.')"@i'; 
+                        if ($anchor){
+                            $anchor = "#".$anchor;
+                        } else {
+                            $anchor = "";
+                        }
+                        // check if this is an offsite url
+                        if($p->post_type=='page' && $offsite_url = get_post_meta($p->ID, '_cms_nav_offsite_url', true)){
+                            $regv = 'href="'.$offsite_url.$anchor.'"';
+                        }else{
+                            $regv = 'href="' . '/' . ltrim($url_parts['path'],'/') . '?' . $qvid . '=' . $p->ID.$anchor.'"';
+                        }
+                        $def_url[$regk] = $regv;
+                    }
+                }elseif($category_name){
+                    $name = $wpdb->escape($category_name);                    
+                    $c = $wpdb->get_row("SELECT term_id FROM {$wpdb->terms} WHERE slug='{$name}'");                    
+                    if($c){
+                        $perm_url = rtrim(get_option('home'),'/').'/'.$m;
+                        $regk = '@href="('.$perm_url.')"@i';
+                        $url_parts = parse_url(rtrim(get_option('home'),'/').'/');
+                        $regv = 'href="' . '/' . ltrim($url_parts['path'],'/') . '?cat_ID=' . $c->term_id.'"';
+                        $def_url[$regk] = $regv;                        
+                    }                       
+                }
+            }
+              
+            if($def_url){
+                $text = preg_replace(array_keys($def_url),array_values($def_url),$text);
+                
+            }
+                  
+            $int = preg_match_all('@href="('.rtrim(get_option('home'),'/').'/?\?(p|page_id)=([0-9]+))"@i',$string_value,$matches2);            
+            if($int){
+                $url_parts = parse_url(rtrim(get_option('home'),'/').'/');
+                $text = preg_replace('@href="('. rtrim(get_option('home'),'/') .'/?\?(p|page_id)=([0-9]+))"@i', 'href="'.'/' . ltrim($url_parts['path'],'/').'?$2=$3"', $text);
+            }
+            
+        }          
+        
+        return $text;
+    }
+    
+    function process_string($st_id, $translation=true){
+        global $wpdb;
+        /*
+        global $wp_rewrite, $sitepress, $sitepress_settings;        
+        if(!isset($wp_rewrite)){
+            require_once ABSPATH . WPINC . '/rewrite.php'; 
+            $wp_rewrite = new WP_Rewrite();
+        }
+        
+        $rewrite = $wp_rewrite->wp_rewrite_rules();
+        */
+        
+        if($translation){
+            $string_value = $wpdb->get_var("SELECT value FROM {$wpdb->prefix}icl_string_translations WHERE id=" . $st_id);
+        }else{
+            $string_value = $wpdb->get_var("SELECT value FROM {$wpdb->prefix}icl_strings WHERE id=" . $st_id);
+        }
+        
+        $string_value_up = $this->_process_generic_text($string_value);
+        
+        if($string_value_up != $string_value){
+            if($translation){
+                $wpdb->update($wpdb->prefix . 'icl_string_translations', array('value'=>$string_value_up), array('id'=>$st_id));
+            }else{
+                $wpdb->update($wpdb->prefix . 'icl_strings', array('value'=>$string_value_up), array('id'=>$st_id));
+            }
+        }
+        
+        
+        /*
+        $home_url = $sitepress->language_url($sitepress->get_default_language());
+        $int = preg_match_all('#<a([^>]*)href="('.rtrim($home_url,'/').'/([^"^>]+))"([^>]*)>#i',$string_value,$alp_matches);        
+
+        if($int){   
+            $url_parts = parse_url(rtrim(get_option('home'),'/').'/');                                                    
+            foreach($alp_matches[3] as $k=>$m){
+                if(0===strpos($m,'wp-content')) continue;
+                
+                if($sitepress_settings['language_negotiation_type']==1){
+                        $m_orig = $m;
+                        $exp = explode('/', $m, 2);                
+                        $lang = $exp[0];
+                        if($wpdb->get_var("SELECT code FROM {$wpdb->prefix}icl_languages WHERE code='{$lang}'")){
+                            $m = $exp[1];    
+                        }else{
+                            $m = $m_orig;
+                            unset($m_orig);
+                            $lang = false;
+                        }                        
+                }elseif($sitepress_settings['language_negotiation_type']==2){
+                    //
+                }
+                
+                $pathinfo = '';
+                $req_uri = '/' . $m;                                
+                $req_uri_array = explode('?', $req_uri);
+                $req_uri = $req_uri_array[0];
+                // separate anchor
+                $req_uri_array = explode('#', $req_uri);
+                $req_uri = $req_uri_array[0];
+                $anchor = $req_uri_array[1];
+                $self = '/index.php';
+                $home_path = parse_url(get_option('home'));
+                if ( isset($home_path['path']) )
+                    $home_path = $home_path['path'];
+                else
+                    $home_path = '';
+                $home_path = trim($home_path, '/');
+                
+                $req_uri = str_replace($pathinfo, '', rawurldecode($req_uri));
+                $req_uri = trim($req_uri, '/');
+                $req_uri = preg_replace("|^$home_path|", '', $req_uri);
+                $req_uri = trim($req_uri, '/');
+                $pathinfo = trim($pathinfo, '/');
+                $pathinfo = preg_replace("|^$home_path|", '', $pathinfo);
+                $pathinfo = trim($pathinfo, '/');
+                $self = trim($self, '/');
+                $self = preg_replace("|^$home_path|", '', $self);
+                $self = trim($self, '/');
+                
+                if ( ! empty($pathinfo) && !preg_match('|^.*' . $wp_rewrite->index . '$|', $pathinfo) ) {
+                    $request = $pathinfo;
+                } else {
+                    // If the request uri is the index, blank it out so that we don't try to match it against a rule.
+                    if ( $req_uri == $wp_rewrite->index )
+                        $req_uri = '';
+                    $request = $req_uri;
+                }
+
+                $this_request = $request;
+                
+                $request_match = $request;                
+                
+                foreach ( (array) $rewrite as $match => $query) {
+
+                    // If the requesting file is the anchor of the match, prepend it
+                    // to the path info.
+                    if ((! empty($req_uri)) && (strpos($match, $req_uri) === 0) && ($req_uri != $request)) {
+                        $request_match = $req_uri . '/' . $request;
+                    }
+                    
+                    if (preg_match("!^$match!", $request_match, $matches) ||
+                        preg_match("!^$match!", urldecode($request_match), $matches)) {
+                        // Got a match.
+                        $matched_rule = $match;
+
+                        // Trim the query of everything up to the '?'.
+                        $query = preg_replace("!^.+\?!", '', $query);
+                        
+                        // Substitute the substring matches into the query.
+                        eval("@\$query = \"" . addslashes($query) . "\";");
+
+                        $matched_query = $query;
+
+                        // Parse the query.
+                        parse_str($query, $perma_query_vars);
+                        
+                        break;
+                    }
+                }                
+                
+                
+                $post_name = $category_name = false;
+                if(isset($perma_query_vars['pagename'])){
+                    $post_name = basename($perma_query_vars['pagename']); 
+                }elseif(isset($perma_query_vars['name'])){
+                    $post_name = $perma_query_vars['name']; 
+                }elseif(isset($perma_query_vars['category_name'])){
+                    $category_name = $perma_query_vars['category_name']; 
+                }
+                if($post_name){                    
+                    $name = $wpdb->escape($post_name);
+                    $p = $wpdb->get_row("SELECT ID, post_type FROM {$wpdb->posts} WHERE post_name='{$name}' AND post_type IN('post','page')");
+                    if($p){
+                        if($p->post_type=='post'){
+                            $qvid = 'p';
+                        }else{
+                            $qvid = 'page_id';
+                        }
+                        
+                        if($sitepress_settings['language_negotiation_type']==1 && $lang){
+                            $langprefix = '/' . $lang;
+                        }else{
+                            $langprefix = '';
+                        }
+                        $perm_url = rtrim($home_url,'/'). $langprefix .'/'.$m;
+                        $regk = '@href="('.$perm_url.')"@i'; 
+                        if ($anchor){
+                            $anchor = "#".$anchor;
+                        } else {
+                            $anchor = "";
+                        }
+                        // check if this is an offsite url
+                        if($p->post_type=='page' && $offsite_url = get_post_meta($p->ID, '_cms_nav_offsite_url', true)){
+                            $regv = 'href="'.$offsite_url.$anchor.'"';
+                        }else{
+                            $regv = 'href="' . '/' . ltrim($url_parts['path'],'/') . '?' . $qvid . '=' . $p->ID.$anchor.'"';
+                        }
+                        $def_url[$regk] = $regv;
+                    }
+                }elseif($category_name){
+                    $name = $wpdb->escape($category_name);                    
+                    $c = $wpdb->get_row("SELECT term_id FROM {$wpdb->terms} WHERE slug='{$name}'");                    
+                    if($c){
+                        $perm_url = rtrim(get_option('home'),'/').'/'.$m;
+                        $regk = '@href="('.$perm_url.')"@i';
+                        $url_parts = parse_url(rtrim(get_option('home'),'/').'/');
+                        $regv = 'href="' . '/' . ltrim($url_parts['path'],'/') . '?cat_ID=' . $c->term_id.'"';
+                        $def_url[$regk] = $regv;                        
+                    }                       
+                }
+            }
+              
+            if($def_url){
+                $string_value = preg_replace(array_keys($def_url),array_values($def_url),$string_value);
+                
+            }
+                  
+            $int = preg_match_all('@href="('.rtrim(get_option('home'),'/').'/?\?(p|page_id)=([0-9]+))"@i',$string_value,$matches2);            
+            if($int){
+                $url_parts = parse_url(rtrim(get_option('home'),'/').'/');
+                $string_value = preg_replace('@href="('. rtrim(get_option('home'),'/') .'/?\?(p|page_id)=([0-9]+))"@i', 'href="'.'/' . ltrim($url_parts['path'],'/').'?$2=$3"', $string_value);
+            }
+            
+            if($string_value){
+                if($translation){
+                    $wpdb->update($wpdb->prefix . 'icl_string_translations', array('value'=>$string_value), array('id'=>$st_id));
+                }else{
+                    $wpdb->update($wpdb->prefix . 'icl_strings', array('value'=>$string_value), array('id'=>$st_id));
+                }
+            }
+            
+        } 
+        */       
+        
+    }
+    
+    function update_option_widget_text($old_options, $new_options){
+        static $avoid_loop = false;
+        if($avoid_loop) return;
+        $widget_text = get_option('widget_text');        
+        if(is_array($widget_text)){
+            foreach($widget_text as $k=>$w){
+                if(isset($w['text'])){
+                    $w['text'] = $this->_process_generic_text($w['text']);
+                    $widget_text[$k] = $w;  
+                }
+            }
+            $avoid_loop = true;
+            update_option('widget_text', $widget_text);
+        }
+    }
+
     function save_default_urls($post_id){
        $this->process_post($post_id);
-    }
+    }    
     
     function process_post($post_id){
         global $wpdb;
@@ -504,7 +896,7 @@ class AbsoluteLinksPlugin{
         $abshome = $parts['scheme'] .'://' . $parts['host'];
         $path = ltrim($parts['path'],'/');    
         $cont = preg_replace_callback('@<a([^>]+)?href="(('.$abshome.')?/'.$path.'/?\?(p|page_id|cat_ID)=([0-9]+))(#?[^"]*)"([^>]+)?>@i',
-            array($this,'show_permalinks_cb'),$cont);            
+            array($this,'show_permalinks_cb'),$cont);                    
         return $cont;
     }
        

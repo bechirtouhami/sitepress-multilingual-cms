@@ -23,6 +23,8 @@ add_action('icl_update_active_languages', 'icl_update_string_status_all');
 add_action('update_option_blogname', 'icl_st_update_blogname_actions',5,2);
 add_action('update_option_blogdescription', 'icl_st_update_blogdescription_actions',5,2);
 
+add_action('save_post', 'icl_st_fix_links_in_strings', 12);
+
 if(is_admin()){
     wp_enqueue_style('thickbox');
     wp_enqueue_script('jquery');
@@ -390,7 +392,10 @@ function icl_register_string($context, $name, $value){
             $wpdb->insert($wpdb->prefix.'icl_strings', $string);
             $string_id = $wpdb->insert_id;
         }
-    }    
+    } 
+    if($sitepress_settings['modules']['absolute-links']['enabled'] && $sitepress_settings['modules']['absolute-links']['sticky_links_strings']){
+        _icl_content_make_links_sticky($string_id, 'string', false);   
+    }
     return $string_id; 
 }  
 
@@ -527,7 +532,9 @@ function icl_add_string_translation($string_id, $language, $value, $status = fal
         $wpdb->insert($wpdb->prefix.'icl_string_translations', $st);
         $st_id = $wpdb->insert_id;
     }    
-    
+
+    _icl_content_fix_links_to_translated_content($st_id, $language, 'string');    
+                                         
     icl_update_string_status($string_id);
     
     return $st_id;
@@ -1279,6 +1286,11 @@ function icl_st_scan_options_strings(){
     $options_names = array_merge($options_names, _icl_st_get_options_writes(get_stylesheet_directory()));
     $options_names = array_unique($options_names);
     
+    // TO REMOVE
+    //if($_GET['deb']=='ug'){
+    //    $options_names[] = 'icl_sitepress_settings';
+    //}    
+    
     //echo '<pre>';
     //print_r($options_names);
     //echo '</pre>';
@@ -1344,8 +1356,22 @@ function icl_st_load_translations_from_mo($mo_file){
 }
 
 
+// fix links in existing strings according to the new translation added
+function icl_st_fix_links_in_strings($post_id){
+    if($_POST['autosave']) return;
+    global $wpdb, $sitepress;
+    $language = $wpdb->get_var("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE element_type='post' AND element_id={$_POST['post_ID']}");    
 
-
+    if($sitepress->get_default_language()==$language){
+        $strings = $wpdb->get_col("SELECT id FROM {$wpdb->prefix}icl_strings WHERE language='$language'");
+    }else{
+        $strings = $wpdb->get_col("SELECT id FROM {$wpdb->prefix}icl_string_translations WHERE language='$language'");
+    }
+        
+    foreach($strings as $string_id){
+        _icl_content_fix_links_to_translated_content($string_id, $language, 'string');
+    }
+}
 
 
 

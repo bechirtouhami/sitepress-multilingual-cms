@@ -8,6 +8,7 @@ jQuery(document).ready(function(){
     });
     
     jQuery('#icl_enable_absolute_links,#icl_disable_absolute_links').click(iclToggleAbsoluteLinks);
+    jQuery('#icl_save_sl_options').submit(iclSaveForm);
     
 });
 

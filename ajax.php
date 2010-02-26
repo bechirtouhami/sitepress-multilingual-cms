@@ -742,6 +742,13 @@ switch($_REQUEST['icl_ajx_action']){
         echo '1|';        
         break;
     
+    case 'icl_save_sl_options':
+        $iclsettings['modules']['absolute-links']['enabled'] = $this->settings['modules']['absolute-links']['enabled'];
+        $iclsettings['modules']['absolute-links']['sticky_links_widgets'] = intval($_POST['icl_sticky_links_widgets']);
+        $iclsettings['modules']['absolute-links']['sticky_links_strings'] = intval($_POST['icl_sticky_links_strings']);
+        $this->save_settings($iclsettings);    
+        echo '1|';        
+        break;
     default:
         echo __('Invalid action','sitepress');                
 }    

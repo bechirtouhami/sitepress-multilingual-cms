@@ -24,6 +24,26 @@
     <p><?php echo __('If you select to enable sticky links, internal links to pages and posts will never break. When the URL changes, all links to it will automatically update.', 'sitepress'); ?></p>
     <p><?php echo __('When you edit a page (while sticky links are enabled) you will notice that links in that page change to the default WordPress links. This is a normal thing. Visitors will not see these &#8220;strange&#8221; links. Instead they will get links to the full URL.', 'sitepress'); ?></p>
     
+    <h3><?php _e('Options', 'sitepress')?></h3>
+    <form name="icl_save_sl_options" id="icl_save_sl_options" action="" method="post">
+    <ul>
+        <li>
+            <label><input type="checkbox" name="icl_sticky_links_widgets" value="1" 
+            <?php if($sitepress_settings['modules']['absolute-links']['sticky_links_widgets']):?>checked="checked"<?php endif;?>  />
+            &nbsp;<?php _e('Turn links in text widgets to Sticky', 'sitepress')?></label>
+        </li>
+        <li>
+            <label><input type="checkbox" name="icl_sticky_links_strings" value="1"
+            <?php if($sitepress_settings['modules']['absolute-links']['sticky_links_strings']):?>checked="checked"<?php endif;?>  />
+            &nbsp;<?php _e("Turn links in WPML's string Translation to Sticky", 'sitepress')?></label>
+        </li>
+    </ul>
+    <p>
+        <input class="button" name="save" value="<?php echo __('Apply','sitepress') ?>" type="submit" />
+        <span class="icl_ajx_response" id="icl_ajx_response2"></span>
+    </p>    
+    </form>
+    
     <span style="position:absolute;" id="icl_ajax_loader_alp"></span>    
     
     <div id="icl_alp_wrap">

@@ -150,7 +150,12 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
     $iclq = new ICanLocalizeQuery($sitepress_settings['site_id'], $sitepress_settings['access_key']);
     
     //$post_url       = get_permalink($post_id);
-    $post_url       = get_option('home') . '?p=' . ($post_id);
+    if($post->post_type=='page'){
+        $post_url       = get_option('home') . '?p=' . ($post_id);
+    }else{
+        $post_url       = get_option('home') . '?page_id=' . ($post_id);
+    }
+    
     
     $orig_lang = $wpdb->get_var("
         SELECT l.english_name 
@@ -877,7 +882,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     
     update_post_meta($new_post_id, '_icl_translation', 1);
     
-    _icl_content_fix_links_to_translated_content($new_post_id, $lang_code);
+    _icl_content_fix_links_to_translated_content($new_post_id, $lang_code, 'post');
     
     // update translation status
     $wpdb->update($wpdb->prefix.'icl_core_status', array('status'=>CMS_TARGET_LANGUAGE_DONE), array('rid'=>$rid, 'target'=>$sitepress->get_language_code($lang)));
@@ -898,7 +903,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     $needs_fixing = $wpdb->get_results($sql);
     foreach($needs_fixing as $id){
         if($id->nid != $new_post_id){ // fix all except the new_post_id. We have already done this.
-            _icl_content_fix_links_to_translated_content($id->nid, $lang_code);
+            _icl_content_fix_links_to_translated_content($id->nid, $lang_code, 'post');
         }
     }
     
@@ -1106,15 +1111,15 @@ function setTranslationStatus($args){
         $language    = $args[4];
         $status      = $args[5];
         $message     = $args[6];  
+
+        if ($site_id != $sitepress_settings['site_id']) {
+            return 3;                                                             
+        }
         
         //check signature
         $signature_chk = sha1($sitepress_settings['access_key'].$sitepress_settings['site_id'].$request_id.$language.$status.$message);
         if($signature_chk != $signature){
             return 2;
-        }
-        
-        if ($site_id != $sitepress_settings['site_id']) {
-            return 3;                                                             
         }
 
         $lang_code = $sitepress->get_language_code(apply_filters('icl_server_languages_map', $language, true));//the 'reverse' language filter 
@@ -1445,27 +1450,37 @@ function _icl_content_get_link_paths($body) {
     return $links;
 }
 
-function _icl_content_make_links_sticky($post_id) {
+function _icl_content_make_links_sticky($element_id, $element_type='post', $string_translation = true) {
     // only need to do it if sticky links is not enabled.
     if(!$sitepress_settings['modules']['absolute-links']['enabled']){
         // create the object
         include_once ICL_PLUGIN_PATH . '/modules/absolute-links/absolute-links-plugin.php';
         $icl_abs_links = new AbsoluteLinksPlugin();
-        $icl_abs_links->process_post($post_id);
+        if($element_type=='post'){
+            $icl_abs_links->process_post($element_id);
+        }elseif($element_type=='string'){
+            if(!$sitepress_settings['modules']['absolute-links']['sticky_links_strings']){
+                $icl_abs_links->process_string($element_id, $string_translation);
+            }
+        }
     }
 
 }
 
-function _icl_content_fix_links_to_translated_content($new_post_id, $target_lang_code){
+function _icl_content_fix_links_to_translated_content($element_id, $target_lang_code, $element_type='post'){
     global $wpdb, $sitepress;
-    _icl_content_make_links_sticky($new_post_id);
-    
-    $post = $wpdb->get_row("SELECT * FROM {$wpdb->posts} WHERE ID={$new_post_id}");
+    _icl_content_make_links_sticky($element_id, $element_type);
+
+    if($element_type == 'post'){
+        $post = $wpdb->get_row("SELECT * FROM {$wpdb->posts} WHERE ID={$element_id}");
+        $body = $post->post_content;        
+    }elseif($element_type=='string'){
+        $body = $wpdb->get_var("SELECT value FROM {$wpdb->prefix}icl_string_translations WHERE id=" . $element_id);
+    }    
+    $new_body = $body;
 
     $base_url_parts = parse_url(get_option('home'));
     
-    $body = $post->post_content;
-    $new_body = $body;
     
     $links = _icl_content_get_link_paths($body);
     
@@ -1534,12 +1549,17 @@ function _icl_content_fix_links_to_translated_content($new_post_id, $target_lang
     if ($new_body != $body){
         
         // save changes to the database.
-        
-        $wpdb->update($wpdb->posts, array('post_content'=>$new_body), array('ID'=>$new_post_id));
+        if($element_type == 'post'){        
+            $wpdb->update($wpdb->posts, array('post_content'=>$new_body), array('ID'=>$element_id));
+            
+            // save the all links fixed status to the database.
+            $wpdb->query("UPDATE {$wpdb->prefix}icl_node SET links_fixed='{$all_links_fixed}' WHERE nid={$element_id}");
+            
+        }elseif($element_type == 'string'){
+            $wpdb->update($wpdb->prefix.'icl_string_translations', array('value'=>$new_body), array('id'=>$element_id));
+        }
     }
     
-    // save the all links fixed status to the database.
-    $wpdb->query("UPDATE {$wpdb->prefix}icl_node SET links_fixed='{$all_links_fixed}' WHERE nid={$new_post_id}");
 }
 
 $asian_languages = array('ja', 'ko', 'zh-hans', 'zh-hant', 'mn', 'ne', 'hi', 'pa', 'ta', 'th');
