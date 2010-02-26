@@ -356,13 +356,13 @@ class SitePressLanguageSwitcher {
                                         </li>
 										<li>                                        
                                             <div id="icl_lang_sel_footer_preview_wrap" style="<?php if (!$this->settings['icl_lang_sel_footer']) echo 'display:none; '; ?>height:80px">                                            
-                                            <span id="icl_lang_sel_footer_preview">                                            
+                                            <div id="icl_lang_sel_footer_preview">                                            
                                             <h4><?php _e('Footer language switcher preview', 'sitepress')?></h4>
 <?php 
 		$this->footer_preview = true;
 		$this->language_selector_footer(); 
 ?>                                                                          
-                                            </span>                                                                     
+                                            </div>                                                                     
                                             </div>
 
 <?php foreach($this->color_schemes as $key=>$val): ?>
