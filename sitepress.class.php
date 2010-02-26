@@ -2192,30 +2192,30 @@ class SitePress{
         foreach($active_languages as $lang){
             if($lang['code']== $this->this_lang){
                 $px = '<strong>'; 
-                $sx = ' <span class="count">('. intval($langs[$lang['code']]) .')</span></strong>';
+                $sx = ' <span class="count">('. intval($langs[$lang['code']]) .')<\/span><\/strong>';
             }elseif(!isset($langs[$lang['code']])){
                 $px = '<span>';
-                $sx = '</span>';
+                $sx = '<\/span>';
             }else{
                 if($post_status){
                     $px = '<a href="?post_status='.$post_status.'&lang='.$lang['code'].'">';
                 }else{
                     $px = '<a href="?lang='.$lang['code'].'">';
                 }                
-                $sx = '</a> <span class="count">('. intval($langs[$lang['code']]) .')</span>';
+                $sx = '<\/a> <span class="count">('. intval($langs[$lang['code']]) .')<\/span>';
             }
             $as[] =  $px . $lang['display_name'] . $sx;
         }
         $allas = join(' | ', $as);
         if($type == 'page' && !$this->get_icl_translation_enabled()){
             $prot_link = '<span class="button" style="padding:4px;margin-top:10px;"><img align="baseline" src="' . ICL_PLUGIN_URL .'/res/img/icon16.png" width="16" height="16" style="margin-bottom:-4px" /> <a href="http://wpml.org/?page_id=3416">' . 
-            __('How to translate', 'sitepress') . '</a>' . '</span>';
+            __('How to translate', 'sitepress') . '<\/a>' . '<\/span>';
         }else{
             $prot_link = '';
         }
         ?>
-        <script type="text/javascript">        
-            jQuery(".subsubsub").append('<br /><span id="icl_subsubsub"><?php echo $allas ?></span><br /><?php echo $prot_link ?>');
+        <script type="text/javascript">       
+            jQuery(".subsubsub").append('<br /><span id="icl_subsubsub"><?php echo $allas ?><\/span><br /><?php echo $prot_link ?>');
         </script>
         <?php
     }
@@ -2433,7 +2433,7 @@ class SitePress{
         
         <?php if($trid && $_GET['action'] == 'edit'): ?>
         
-            <span id="icl_translate_options">
+            <div id="icl_translate_options">
         
             <?php
                 // count number of translated and un-translated pages.
@@ -2501,7 +2501,7 @@ class SitePress{
             
             <br clear="all" style="line-height:1px;" />
             
-            </span>
+            </div>
         <?php endif; ?>
         
         
@@ -2638,20 +2638,20 @@ class SitePress{
         foreach($active_languages as $lang){
             if($lang['code']== $this->this_lang){
                 $px = '<strong>'; 
-                $sx = ' ('. intval($langs[$lang['code']]) .')</strong>';
+                $sx = ' ('. intval($langs[$lang['code']]) .')<\/strong>';
             }elseif(!isset($langs[$lang['code']])){
                 $px = '<span>';
-                $sx = '</span>';
+                $sx = '<\/span>';
             }else{
                 $px = '<a href="?lang='.$lang['code'].'">';
-                $sx = '</a> ('. $langs[$lang['code']] .')';
+                $sx = '<\/a> ('. $langs[$lang['code']] .')';
             }
             $as[] =  $px . $lang['display_name'] . $sx;
         }
         $allas = join(' | ', $as);
         ?>
         <script type="text/javascript">
-            jQuery('table.widefat').before('<span id="icl_subsubsub"><?php echo $allas ?></span>');
+            jQuery('table.widefat').before('<span id="icl_subsubsub"><?php echo $allas ?><\/span>');
         </script>
         <?php
     }    

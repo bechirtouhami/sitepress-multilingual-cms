@@ -86,7 +86,7 @@
 ?>
 
 <?php if($_GET['action'] == 'edit' && $trid): ?>
-    <span id="icl_translate_options">
+    <div id="icl_translate_options">
     <?php if($this->get_icl_translation_enabled() && current_user_can('manage_options')):?>
         <p class="icl_cyan_box"><img align="baseline" 
             src="<?php echo ICL_PLUGIN_URL ?>/res/img/icon16.png" width="16" height="16" style="margin-bottom:-4px" />&nbsp;
@@ -170,7 +170,7 @@
     <?php endif; ?>
     
     <br clear="all" style="line-height:1px;" />
-    </span>
+    </div>
 <?php endif; ?>
 
 <?php if($this->get_icl_translation_enabled() 
