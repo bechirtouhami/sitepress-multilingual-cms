@@ -47,7 +47,7 @@ if($user_language = get_usermeta($current_user->data->ID,'icl_admin_language',tr
                 <?php if($enable_comments_translation): ?>checked="checked"<?php endif?> /></td>
             <td width="5%" align="center"><input type="checkbox" name="icl_enable_replies_translation[<?php echo $u->ID ?>]" value="1" 
                 <?php if($enable_replies_translation && $sitepress->icl_account_configured() && $sitepress->get_icl_translation_enabled()): ?>checked="checked"<?php endif?> <?php if(!$sitepress->icl_account_configured() || !$sitepress->get_icl_translation_enabled()) echo 'disabled="disabled"' ?> /></td>
-            <tr>                                                                       
+            </tr>                                                                       
             <?php endforeach; ?>
         </tbody>
     </table>       
