@@ -196,7 +196,7 @@
                         $wc += icl_estimate_custom_field_word_count($doc->post_id, $selected_language);
                     ?>
                     <span id="icl-cw-<?php echo $doc->post_id ?>" style="display:none"><?php echo $wc; $wctotal+=$wc; ?></span>
-                    <span class="icl-tr-details"></span>
+                    <span class="icl-tr-details">&nbsp;</span>
                     <div class="icl_post_note" id="icl_post_note_<?php echo $doc->post_id ?>">
                         <?php 
                             if($wpdb->get_var("SELECT source_language_code FROM {$wpdb->prefix}icl_translations WHERE element_type='post' AND element_id={$doc->post_id}")){
