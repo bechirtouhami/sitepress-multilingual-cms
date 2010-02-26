@@ -85,7 +85,7 @@
     <table class="widefat">
         <thead>
             <tr>
-                <th><?php _e('Posts and pages synchronization', 'sitepress');?></t>
+                <th><?php _e('Posts and pages synchronization', 'sitepress');?></th>
             </tr>
         </thead>
         <tbody>
