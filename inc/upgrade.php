@@ -419,6 +419,14 @@ function icl_plugin_upgrade(){
         if($mig_debug) fwrite($mig_debug, "Upgraded to 1.7.0 \n");
         
     }
+
+    if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.7.2', '<')){    
+        if($mig_debug) fwrite($mig_debug, "Upgrading to 1.7.2 \n");
+        $wpdb->update($wpdb->prefix.'icl_flags', array('flag'=>'ku.png'), array('lang_code'=>'ku'));                            
+        $wpdb->update($wpdb->prefix.'icl_languages_translations', array('name'=>'Magyar'), array('language_code'=>'hu', 'display_language_code'=>'hu'));
+        if($mig_debug) fwrite($mig_debug, "Upgraded to 1.7.2 \n");
+    }
+    
     
     if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '<')){
         if($mig_debug) fwrite($mig_debug, "Update plugin version in the database \n");
@@ -426,6 +434,7 @@ function icl_plugin_upgrade(){
         if($mig_debug) fwrite($mig_debug, "Updated plugin version in the database \n");
     }
 
+    
     if(defined('ICL_DEBUG_MODE') && ICL_DEBUG_MODE && $mig_debug){
         @fclose($mig_debug);
     }    

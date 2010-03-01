@@ -3,7 +3,7 @@
 // disabled
 
 return;
-
+ 
 //
 $fh = fopen(ICL_PLUGIN_PATH . '/res/languages.csv', 'r');
 $idx = 0;
