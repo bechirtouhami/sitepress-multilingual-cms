@@ -1824,17 +1824,17 @@ function _icl_translation_send_strings($string_ids, $target) {
             $string_values[$st_id] = $string->value;
             $data['contents']['string-'.$st_id.'-context'] = array(
                     'translate'=>0,
-                    'data'=>base64_encode($string->context),
+                    'data'=>base64_encode(htmlspecialchars($string->context)),
                     'format'=>'base64',
             );
             $data['contents']['string-'.$st_id.'-name'] = array(
                     'translate'=>0,
-                    'data'=>base64_encode($string->name),
+                    'data'=>base64_encode(htmlspecialchars($string->name)),
                     'format'=>'base64',
             );
             $data['contents']['string-'.$st_id.'-value'] = array(
                     'translate'=>1,
-                    'data'=>base64_encode($string->value),
+                    'data'=>base64_encode(htmlspecialchars($string->value)),
                     'format'=>'base64',
             );
             

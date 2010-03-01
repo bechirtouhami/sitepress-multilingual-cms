@@ -360,19 +360,12 @@ function icl_st_administration_menu(){
 
 
 
-function icl_register_string($context, $name, $value){
-    //set_magic_quotes_runtime(true);   
+function icl_register_string($context, $name, $value){    
     global $wpdb, $sitepress, $sitepress_settings;
     // if the default language is not set up return without doing anything
-    if(!isset($sitepress_settings['existing_content_language_verified'])){
+    if(!isset($sitepress_settings['existing_content_language_verified']) || !$sitepress_settings['existing_content_language_verified']){
         return;
     }       
-    
-    //if(get_magic_quotes_runtime()){
-    //    $context = stripslashes($context);
-    //    $name    = stripslashes($name);
-    //    $value   = stripslashes($value);
-    //}
     
     $language = $sitepress->get_default_language();
     $res = $wpdb->get_row("SELECT id, value, status, language FROM {$wpdb->prefix}icl_strings WHERE context='".$wpdb->escape($context)."' AND name='".$wpdb->escape($name)."'");
@@ -629,9 +622,6 @@ function icl_get_string_translations($offset=0){
             }
             
         }
-    }
-    if(get_magic_quotes_runtime()){
-        $string_translations = stripslashes_deep($string_translations);
     }
     return $string_translations;
 }
