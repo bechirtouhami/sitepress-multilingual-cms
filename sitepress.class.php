@@ -878,7 +878,7 @@ class SitePress{
         }                                           
         $res = $wpdb->get_results("
             SELECT 
-                code, english_name, major, active, lt.name AS display_name   
+                code, english_name, major, active, default_locale, lt.name AS display_name   
             FROM {$wpdb->prefix}icl_languages l
                 JOIN {$wpdb->prefix}icl_languages_translations lt ON l.code=lt.language_code           
             WHERE lt.display_language_code = '{$lang}' 
