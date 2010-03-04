@@ -6,7 +6,7 @@ if(is_admin()):
         
         // supported plugins    
         static $wpml_cpi_plugins = array(
-                'wp-super-cache/wp-cache.php' => 'WP_CPI_WP_Super_Cache'
+                'wp-super-cache/wp-cache.php' => 'WP_CPI_WP_Super_Cache'       
             );
         private $plugin_cp_class;  // plugin compatibility package class name
         private $settings;
