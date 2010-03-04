@@ -32,6 +32,8 @@ if($sitepress_settings['existing_content_language_verified']){
         
         <p><?php printf(__('WPML makes it possible to run full multilingual websites with WordPress. You are using <b>WPML %s</b>.', 'sitepress'), ICL_SITEPRESS_VERSION)?></p>
         
+        <?php do_action('icl_page_overview_top'); ?>
+        
         <h3><?php _e('Multilingual', 'sitepress') ?></h3>
         <table class="widefat">
             <thead>

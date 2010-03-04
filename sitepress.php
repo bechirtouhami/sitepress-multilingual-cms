@@ -106,6 +106,7 @@ if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQ
     }
     
     require ICL_PLUGIN_PATH . '/inc/compatibility-packages/init-packages.php';
+    require ICL_PLUGIN_PATH . '/modules/cache-plugins-integration/cache-plugins-integration.php';
     
 }
 

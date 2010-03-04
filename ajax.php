@@ -750,7 +750,7 @@ switch($_REQUEST['icl_ajx_action']){
         echo '1|';        
         break;
     default:
-        echo __('Invalid action','sitepress');                
+        do_action('icl_ajx_custom_call', $_REQUEST['icl_ajx_action'], $_REQUEST);
 }    
 
 if (!isset($_POST['unit-test'])) {

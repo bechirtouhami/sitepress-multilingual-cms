@@ -2234,6 +2234,7 @@ class SitePress{
     
     function exclude_other_language_pages2($arr){
         global $wpdb;
+        $filtered_pages = array();
         $excl_pages = $wpdb->get_col("
             SELECT p.ID FROM {$wpdb->posts} p 
             LEFT JOIN {$wpdb->prefix}icl_translations t ON (p.ID = t.element_id OR t.element_id IS NULL)

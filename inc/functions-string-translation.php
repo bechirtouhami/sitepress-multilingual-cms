@@ -459,6 +459,7 @@ function icl_unregister_string($context, $name){
         $wpdb->query("DELETE FROM {$wpdb->prefix}icl_string_translations WHERE string_id=" . $string_id);
         $wpdb->query("DELETE FROM {$wpdb->prefix}icl_string_positions WHERE string_id=" . $string_id);
     }
+    do_action('icl_st_unregister_string', $string_id);
 }  
 
 function __icl_unregister_string_multi($arr){
@@ -468,6 +469,7 @@ function __icl_unregister_string_multi($arr){
         DELETE s.*, t.* FROM {$wpdb->prefix}icl_strings s LEFT JOIN {$wpdb->prefix}icl_string_translations t ON s.id = t.string_id
         WHERE s.id IN ({$str})");
     $wpdb->query("DELETE FROM {$wpdb->prefix}icl_string_positions WHERE string_id IN ({$str})");
+    do_action('icl_st_unregister_string_multi', $arr);
 }  
 
 function icl_t($context, $name, $original_value=false, &$has_translation=null){
@@ -539,6 +541,8 @@ function icl_add_string_translation($string_id, $language, $value, $status = fal
     _icl_content_fix_links_to_translated_content($st_id, $language, 'string');    
                                          
     icl_update_string_status($string_id);
+    
+    do_action('icl_st_add_string_translation', $st_id);
     
     return $st_id;
 }
@@ -1363,7 +1367,7 @@ function icl_st_load_translations_from_mo($mo_file){
 function icl_st_fix_links_in_strings($post_id){
     if($_POST['autosave']) return;
     global $wpdb, $sitepress;
-    $language = $wpdb->get_var("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE element_type='post' AND element_id={$_POST['post_ID']}");    
+    $language = $wpdb->get_var("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE element_type='post' AND element_id={$post_id}");    
 
     if($sitepress->get_default_language()==$language){
         $strings = $wpdb->get_col("SELECT id FROM {$wpdb->prefix}icl_strings WHERE language='$language'");
