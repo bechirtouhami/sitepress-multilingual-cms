@@ -310,9 +310,13 @@ class AbsoluteLinksPlugin{
         $rewrite = $wp_rewrite->wp_rewrite_rules();
         
         $home_url = $sitepress->language_url($sitepress->get_default_language());
-        $int = preg_match_all('#<a([^>]*)href="(('.rtrim($home_url,'/').')?/([^"^>]+))"([^>]*)>#i',$text,$alp_matches);        
+        $int1  = preg_match_all('#<a([^>]*)href="(('.rtrim($home_url,'/').')?/([^"^>]+))"([^>]*)>#i',$post->post_content,$alp_matches1);        
+        $int2 = preg_match_all('#<a([^>]*)href=\'(('.rtrim($home_url,'/').')?/([^"^>]+))\'([^>]*)>#i',$post->post_content,$alp_matches2);        
+        for($i = 0; $i < 6; $i++){
+            $alp_matches[$i] = array_merge($alp_matches1[$i], $alp_matches2[$i]); 
+        }
                 
-        if($int){   
+        if($int1 || $int2){   
             $url_parts = parse_url(rtrim(get_option('home'),'/').'/');                                                    
             foreach($alp_matches[4] as $k=>$m){
                 if(0===strpos($m,'wp-content')) continue;
@@ -523,10 +527,15 @@ class AbsoluteLinksPlugin{
          
         $post = $wpdb->get_row("SELECT * FROM {$wpdb->posts} WHERE ID={$post_id}"); 
         $home_url = $sitepress->language_url($_POST['icl_post_language']);
-        $int = preg_match_all('#<a([^>]*)href="(('.rtrim($home_url,'/').')?/([^"^>]+))"([^>]*)>#i',$post->post_content,$alp_matches);        
+        $int1  = preg_match_all('#<a([^>]*)href="(('.rtrim($home_url,'/').')?/([^"^>]+))"([^>]*)>#i',$post->post_content,$alp_matches1);        
+        $int2 = preg_match_all('#<a([^>]*)href=\'(('.rtrim($home_url,'/').')?/([^"^>]+))\'([^>]*)>#i',$post->post_content,$alp_matches2);        
+        for($i = 0; $i < 6; $i++){
+            $alp_matches[$i] = array_merge($alp_matches1[$i], $alp_matches2[$i]); 
+        }
+        
         $sitepress_settings = $sitepress->get_settings();
                 
-        if($int){   
+        if($int1 || $int2){   
             $url_parts = parse_url(rtrim(get_option('home'),'/').'/');                                                    
             foreach($alp_matches[4] as $k=>$m){
                 if(0===strpos($m,'wp-content')) continue;

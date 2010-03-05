@@ -1,6 +1,5 @@
 <?php
-
-if(is_admin()):
+if(is_admin() || defined('XMLRPC_REQUEST')):
 
     class WPMLCpi{
         
@@ -13,7 +12,7 @@ if(is_admin()):
         
         
         function __construct(){
-        
+            
             add_action('plugins_loaded', array($this, 'init'), 11);    // lower priority - allow packages to load
             
         }
@@ -40,7 +39,37 @@ if(is_admin()):
                     add_action('icl_st_unregister_string_multi', array($this, 'call_cache_clear'));
                     add_action('icl_st_unregister_string', array($this, 'call_cache_clear'));
                     
-                    add_action('icl_save_settings', array($this, 'icl_save_settings_cb'), 10, 1);
+                    $ajx_request_exceptions = array(
+                        'ajx_health_checked',
+                        'save_language_pairs',
+                        'toggle_content_translation',
+                        'icl_admin_language_options',
+                        'icl_page_sync_options',
+                        'validate_language_domain',
+                        'get_translator_status',
+                        'get_language_status_text',
+                        'icl_save_theme_localization_type',
+                        'dismiss_help',
+                        'dismiss_page_estimate_hint',
+                        'dismiss_upgrade_notice',
+                        'dismiss_upgrade_notice',
+                        'dismiss_translate_help',
+                        'setup_got_to_step1',
+                        'setup_got_to_step2',
+                        'toggle_show_translations',
+                        'icl_show_reminders',
+                        'icl_show_sidebar',
+                    );
+                    if( !isset($_REQUEST['icl_ajx_action']) || !in_array($_REQUEST['icl_ajx_action'], $ajx_request_exceptions)){
+                        add_action('icl_save_settings', array($this, 'icl_save_settings_cb'), 10, 1);
+                    }                    
+                    
+                    // when a post is sent from the translation server
+                    global $HTTP_RAW_POST_DATA;
+                    $hrow = xml2array($HTTP_RAW_POST_DATA);
+                    if(isset($hrow['methodCall']['methodName']['value']) && $hrow['methodCall']['methodName']['value'] == 'icanlocalize.set_translation_status'){
+                        add_action('save_post', array($this, 'call_cache_clear'));
+                    }
                     
                 }
             }
