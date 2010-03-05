@@ -308,9 +308,9 @@ class SitePressEditLanguages {
 				// Insert dummy translation.
 			$wpdb->query("INSERT INTO {$wpdb->prefix}icl_languages_translations (name, language_code, display_language_code) VALUES('".$data['english_name']."', '".$data['code']."', '".$lang['code']."')");
 			
-			if (!$this->added_translation[$lang['code']]){
+			/*if (!$this->added_translation[$lang['code']]){
 				$wpdb->query("INSERT INTO {$wpdb->prefix}icl_languages_translations (name, language_code, display_language_code) VALUES('".$lang['english_name']."', '".$lang['code']."', '".$data['code']."')");
-			}
+			}*/
 		}
 		
 			// Insert native name.
