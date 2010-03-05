@@ -606,6 +606,7 @@ class SitePress{
             }        
         }
         update_option('icl_sitepress_settings', $this->settings);
+        do_action('icl_save_settings', $settings);
     }
 
     function get_settings(){

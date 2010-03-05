@@ -40,6 +40,8 @@ if(is_admin()):
                     add_action('icl_st_unregister_string_multi', array($this, 'call_cache_clear'));
                     add_action('icl_st_unregister_string', array($this, 'call_cache_clear'));
                     
+                    add_action('icl_save_settings', array($this, 'icl_save_settings_cb'), 10, 1);
+                    
                 }
             }
             
@@ -63,7 +65,9 @@ if(is_admin()):
         function save_settings(){
             global $sitepress;
             $iclsettings['modules']['caching-plugins-integration'] = $this->settings;
+            remove_action('icl_save_settings', array($this, 'icl_save_settings_cb'), 10, 1);
             $sitepress->save_settings($iclsettings);
+            add_action('icl_save_settings', array($this, 'icl_save_settings_cb'), 10, 1);
         }
         
         function ajx_calls($call, $data){
@@ -96,6 +100,12 @@ if(is_admin()):
                 echo '<p><input id="wpml_cpi_clear_cache" type="button" class="button secondary" value="' . __('Clear cache now','sitepress'). '"/></p>';
             }
             echo '</div>';
+        }
+        
+        function icl_save_settings_cb($settings){
+            if(!empty($settings)){
+                $this->call_cache_clear();
+            }            
         }
         
         function call_cache_clear($do_clear = false){
