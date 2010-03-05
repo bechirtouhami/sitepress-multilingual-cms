@@ -9,6 +9,9 @@
         <?php
         return;
     }
+	
+	if (isset($_GET['trop'])) { require_once dirname(__FILE__).'/edit-languages.php'; return; }
+	
     if(!$sitepress_settings['existing_content_language_verified']){
         // try to determine the blog language
         $blog_current_lang = 0;            
@@ -44,7 +47,7 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap">
     <div id="icon-options-general" class="icon32<?php if(!$sitepress_settings['basic_menu']) echo ' icon32_adv'?>" ><br /></div>
-    <h2><?php echo __('Setup WPML', 'sitepress') ?></h2>    
+    <h2><?php echo __('Setup WPML', 'sitepress') ?></h2>
     
     <?php 
         if($sitepress_settings['setup_complete']){
@@ -169,7 +172,8 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                                     </div>
                                 </td>
                             </tr>
-                        </table>                
+							<tr><td><a href="/wp-admin/admin.php?page=sitepress-multilingual-cms/menu/languages.php&trop=1"><?php _e('Edit Languages','sitepress'); ?></a></td></tr>
+                        </table>              
                         
                         <?php if(!empty($inactive_content)): ?>
                             <?php 
