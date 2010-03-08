@@ -310,12 +310,12 @@ class AbsoluteLinksPlugin{
         $rewrite = $wp_rewrite->wp_rewrite_rules();
         
         $home_url = $sitepress->language_url($sitepress->get_default_language());
-        /*$int1 = preg_match_all('#<a([^>]*)href="(('.rtrim($home_url,'/').')?/([^"^>]+))"([^>]*)>#i',$text,$alp_matches1);        
-        $int2 = preg_match_all('#<a([^>]*)href=\'(('.rtrim($home_url,'/').')?/([^"^>]+))\'([^>]*)>#i',$text,$alp_matches2);        
+        $int1 = preg_match_all('@<a([^>]*)href="(('.rtrim($home_url,'/').')?/([^"^>]+))"([^>]*)>@i',$text,$alp_matches1);        
+        $int2 = preg_match_all('@<a([^>]*)href=\'(('.rtrim($home_url,'/').')?/([^\'^>]+))\'([^>]*)>@i',$text,$alp_matches2);        
         for($i = 0; $i < 6; $i++){
-            $alp_matches[$i] = array_merge($alp_matches1[$i], $alp_matches2[$i]); 
-        }*/
-		$int1 = preg_match_all('#<a([^>]*)href=["\'](('.rtrim($home_url,'/').')?/([^"^>]+))["\']([^>]*)>#i',$text,$alp_matches);
+            $alp_matches[$i] = array_merge((array)$alp_matches1[$i], (array)$alp_matches2[$i]); 
+        }
+        
         if($int1 || $int2){   
             $url_parts = parse_url(rtrim(get_option('home'),'/').'/');                                                    
             foreach($alp_matches[4] as $k=>$m){
@@ -429,7 +429,7 @@ class AbsoluteLinksPlugin{
                             $langprefix = '';
                         }
                         $perm_url = '('.rtrim($home_url,'/') . ')?' . $langprefix .'/'.$m;
-                        $regk = '@href=["\']('.$perm_url.')["\']@i'; 
+                        $regk = '@href=[\'"]('.$perm_url.')[\'"]@i'; 
                         if ($anchor){
                             $anchor = "#".$anchor;
                         } else {
@@ -448,7 +448,7 @@ class AbsoluteLinksPlugin{
                     $c = $wpdb->get_row("SELECT term_id FROM {$wpdb->terms} WHERE slug='{$name}'");                    
                     if($c){
                         $perm_url = '(' . rtrim(get_option('home'),'/') . ')?' .'/'.$m;
-                        $regk = '@href=["\']('.$perm_url.')["\']@i';
+                        $regk = '@href=[\'"]('.$perm_url.')[\'"]@i';
                         $url_parts = parse_url(rtrim(get_option('home'),'/').'/');
                         $regv = 'href="' . '/' . ltrim($url_parts['path'],'/') . '?cat_ID=' . $c->term_id.'"';
                         $def_url[$regk] = $regv;                        
@@ -462,10 +462,10 @@ class AbsoluteLinksPlugin{
                 
             }
                   
-            $int = preg_match_all('@href="('.rtrim(get_option('home'),'/').'/?\?(p|page_id)=([0-9]+))"@i',$string_value,$matches2);            
+            $int = preg_match_all('@href=[\'"]('.rtrim(get_option('home'),'/').'/?\?(p|page_id)=([0-9]+))[\'"]@i',$string_value,$matches2);            
             if($int){
                 $url_parts = parse_url(rtrim(get_option('home'),'/').'/');
-                $text = preg_replace('@href="('. rtrim(get_option('home'),'/') .'/?\?(p|page_id)=([0-9]+))"@i', 'href="'.'/' . ltrim($url_parts['path'],'/').'?$2=$3"', $text);
+                $text = preg_replace('@href=[\'"]('. rtrim(get_option('home'),'/') .'/?\?(p|page_id)=([0-9]+))[\'"]@i', 'href="'.'/' . ltrim($url_parts['path'],'/').'?$2=$3"', $text);
             }
             
         }          
@@ -509,7 +509,9 @@ class AbsoluteLinksPlugin{
     }
 
     function save_default_urls($post_id){
-       $this->process_post($post_id);
+        if(!isset($_POST['autosave'])){
+            $this->process_post($post_id);
+        }       
     }    
     
     function process_post($post_id){
@@ -526,14 +528,14 @@ class AbsoluteLinksPlugin{
          
         $post = $wpdb->get_row("SELECT * FROM {$wpdb->posts} WHERE ID={$post_id}"); 
         $home_url = $sitepress->language_url($_POST['icl_post_language']);
-        $int1  = preg_match_all('#<a([^>]*)href="(('.rtrim($home_url,'/').')?/([^"^>]+))"([^>]*)>#i',$post->post_content,$alp_matches1);        
-        $int2 = preg_match_all('#<a([^>]*)href=\'(('.rtrim($home_url,'/').')?/([^"^>]+))\'([^>]*)>#i',$post->post_content,$alp_matches2);        
+        $int1  = preg_match_all('@<a([^>]*)href="(('.rtrim($home_url,'/').')?/([^"^>^#]+))"([^>]*)>@i',$post->post_content,$alp_matches1);        
+        $int2 = preg_match_all('@<a([^>]*)href=\'(('.rtrim($home_url,'/').')?/([^\'^>^#]+))\'([^>]*)>@i',$post->post_content,$alp_matches2);        
         for($i = 0; $i < 6; $i++){
-            $alp_matches[$i] = array_merge($alp_matches1[$i], $alp_matches2[$i]); 
+            $alp_matches[$i] = array_merge((array)$alp_matches1[$i], (array)$alp_matches2[$i]); 
         }
         
         $sitepress_settings = $sitepress->get_settings();
-                
+        
         if($int1 || $int2){   
             $url_parts = parse_url(rtrim(get_option('home'),'/').'/');                                                    
             foreach($alp_matches[4] as $k=>$m){
@@ -554,7 +556,6 @@ class AbsoluteLinksPlugin{
                     //
                 }
 
-                
                 $pathinfo = '';
                 $req_uri = '/' . $m;                                
                 $req_uri_array = explode('?', $req_uri);
@@ -621,7 +622,8 @@ class AbsoluteLinksPlugin{
                         
                         break;
                     }
-                }                
+                }   
+                             
                 $post_name = $category_name = false;
                 if(isset($perma_query_vars['pagename'])){
                     $post_name = basename($perma_query_vars['pagename']); 
@@ -681,10 +683,10 @@ class AbsoluteLinksPlugin{
                     $c = $wpdb->get_row("SELECT term_id FROM {$wpdb->terms} WHERE slug='{$name}'");                    
                     if($c){
                         $perm_url = '(' . rtrim(get_option('home'),'/') . ')?' .'/'.$m;
-                        $regk = '@href=["\']('.$perm_url.')["\']@i';
+                        $regk = '@href=[\'"]('.$perm_url.')[\'"]@i';
                         $url_parts = parse_url(rtrim(get_option('home'),'/').'/');
                         $regv = 'href="' . '/' . ltrim($url_parts['path'],'/') . '?cat_ID=' . $c->term_id.'"';
-                        $def_url[$regk] = $regv;                        
+                        $def_url[$regk] = $regv;
                     }else{
                         $alp_broken_links[$alp_matches[2][$k]] = array();                             
                         $c = $wpdb->get_results("SELECT term_id FROM {$wpdb->terms} WHERE slug LIKE '{$name}%'");                        
@@ -706,10 +708,10 @@ class AbsoluteLinksPlugin{
                 
             }
             
-            $int = preg_match_all('@href="('.rtrim(get_option('home'),'/').'/?\?(p|page_id)=([0-9]+))"@i',$post_content,$matches2);            
+            $int = preg_match_all('@href=[\'"]('.rtrim(get_option('home'),'/').'/?\?(p|page_id)=([0-9]+)(#.+)?)[\'"]@i',$post_content,$matches2);            
             if($int){
                 $url_parts = parse_url(rtrim(get_option('home'),'/').'/');
-                $post_content = preg_replace('@href="('. rtrim(get_option('home'),'/') .'/?\?(p|page_id)=([0-9]+))"@i', 'href="'.'/' . ltrim($url_parts['path'],'/').'?$2=$3"', $post_content);
+                $post_content = preg_replace('@href=[\'"]('. rtrim(get_option('home'),'/') .'/?\?(p|page_id)=([0-9]+)(#.+)?)[\'"]@i', 'href="'.'/' . ltrim($url_parts['path'],'/').'?$2=$3$4"', $post_content);
             }
             
             if($post_content){

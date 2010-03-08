@@ -814,7 +814,9 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     if(!isset($wp_rewrite)) $wp_rewrite = new WP_Rewrite();
     
     kses_remove_filters();
+    
     $new_post_id = wp_insert_post($postarr);
+    
     
     // set stickiness
     if($is_original_sticky && $sitepress_settings['sync_sticky_flag']){
@@ -958,6 +960,7 @@ function icl_process_translated_document($request_id, $language){
     $iclq = new ICanLocalizeQuery($sitepress_settings['site_id'], $sitepress_settings['access_key']);       
     $trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations t JOIN {$wpdb->prefix}icl_content_status c ON t.element_id = c.nid AND t.element_type='post' AND c.rid=".$request_id);
     $translation = $iclq->cms_do_download($request_id, $language);                           
+    
     if($translation){
         if (icl_is_string_translation($translation)){
             $ret = icl_translation_add_string_translation($trid, $translation, apply_filters('icl_server_languages_map', $language, true), $request_id); //the 'reverse' language filter
@@ -1480,7 +1483,6 @@ function _icl_content_fix_links_to_translated_content($element_id, $target_lang_
     $new_body = $body;
 
     $base_url_parts = parse_url(get_option('home'));
-    
     
     $links = _icl_content_get_link_paths($body);
     
