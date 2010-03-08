@@ -310,11 +310,12 @@ class AbsoluteLinksPlugin{
         $rewrite = $wp_rewrite->wp_rewrite_rules();
         
         $home_url = $sitepress->language_url($sitepress->get_default_language());
-        $int1 = preg_match_all('#<a([^>]*)href="(('.rtrim($home_url,'/').')?/([^"^>]+))"([^>]*)>#i',$text,$alp_matches1);        
+        /*$int1 = preg_match_all('#<a([^>]*)href="(('.rtrim($home_url,'/').')?/([^"^>]+))"([^>]*)>#i',$text,$alp_matches1);        
         $int2 = preg_match_all('#<a([^>]*)href=\'(('.rtrim($home_url,'/').')?/([^"^>]+))\'([^>]*)>#i',$text,$alp_matches2);        
         for($i = 0; $i < 6; $i++){
             $alp_matches[$i] = array_merge($alp_matches1[$i], $alp_matches2[$i]); 
-        }
+        }*/
+		$int1 = preg_match_all('#<a([^>]*)href=["\'](('.rtrim($home_url,'/').')?/([^"^>]+))["\']([^>]*)>#i',$text,$alp_matches);
         if($int1 || $int2){   
             $url_parts = parse_url(rtrim(get_option('home'),'/').'/');                                                    
             foreach($alp_matches[4] as $k=>$m){
@@ -428,7 +429,7 @@ class AbsoluteLinksPlugin{
                             $langprefix = '';
                         }
                         $perm_url = '('.rtrim($home_url,'/') . ')?' . $langprefix .'/'.$m;
-                        $regk = '@href="('.$perm_url.')"@i'; 
+                        $regk = '@href=["\']('.$perm_url.')["\']@i'; 
                         if ($anchor){
                             $anchor = "#".$anchor;
                         } else {
@@ -447,7 +448,7 @@ class AbsoluteLinksPlugin{
                     $c = $wpdb->get_row("SELECT term_id FROM {$wpdb->terms} WHERE slug='{$name}'");                    
                     if($c){
                         $perm_url = '(' . rtrim(get_option('home'),'/') . ')?' .'/'.$m;
-                        $regk = '@href="('.$perm_url.')"@i';
+                        $regk = '@href=["\']('.$perm_url.')["\']@i';
                         $url_parts = parse_url(rtrim(get_option('home'),'/').'/');
                         $regv = 'href="' . '/' . ltrim($url_parts['path'],'/') . '?cat_ID=' . $c->term_id.'"';
                         $def_url[$regk] = $regv;                        
@@ -645,7 +646,7 @@ class AbsoluteLinksPlugin{
                             $langprefix = '';
                         }
                         $perm_url = '('.rtrim($home_url,'/') . ')?' . $langprefix .'/'.$m;
-                        $regk = '@href="('.$perm_url.')"@i'; 
+                        $regk = '@href=["\']('.$perm_url.')["\']@i'; 
                         if ($anchor){
                             $anchor = "#".$anchor;
                         } else {
@@ -680,7 +681,7 @@ class AbsoluteLinksPlugin{
                     $c = $wpdb->get_row("SELECT term_id FROM {$wpdb->terms} WHERE slug='{$name}'");                    
                     if($c){
                         $perm_url = '(' . rtrim(get_option('home'),'/') . ')?' .'/'.$m;
-                        $regk = '@href="('.$perm_url.')"@i';
+                        $regk = '@href=["\']('.$perm_url.')["\']@i';
                         $url_parts = parse_url(rtrim(get_option('home'),'/').'/');
                         $regv = 'href="' . '/' . ltrim($url_parts['path'],'/') . '?cat_ID=' . $c->term_id.'"';
                         $def_url[$regk] = $regv;                        
