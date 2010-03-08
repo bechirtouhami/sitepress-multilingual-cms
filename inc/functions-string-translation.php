@@ -396,7 +396,7 @@ function icl_register_string($context, $name, $value){
             $string_id = $wpdb->insert_id;
         }
     } 
-    if($sitepress_settings['modules']['absolute-links']['enabled'] && $sitepress_settings['modules']['absolute-links']['sticky_links_strings']){
+    if($sitepress_settings['modules']['absolute-links']['enabled'] && $sitepress_settings['modules']['absolute-links']['sticky_links_strings']){        
         _icl_content_make_links_sticky($string_id, 'string', false);   
     }
     return $string_id; 

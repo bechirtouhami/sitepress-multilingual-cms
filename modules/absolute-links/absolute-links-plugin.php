@@ -310,12 +310,11 @@ class AbsoluteLinksPlugin{
         $rewrite = $wp_rewrite->wp_rewrite_rules();
         
         $home_url = $sitepress->language_url($sitepress->get_default_language());
-        $int1  = preg_match_all('#<a([^>]*)href="(('.rtrim($home_url,'/').')?/([^"^>]+))"([^>]*)>#i',$post->post_content,$alp_matches1);        
-        $int2 = preg_match_all('#<a([^>]*)href=\'(('.rtrim($home_url,'/').')?/([^"^>]+))\'([^>]*)>#i',$post->post_content,$alp_matches2);        
+        $int1 = preg_match_all('#<a([^>]*)href="(('.rtrim($home_url,'/').')?/([^"^>]+))"([^>]*)>#i',$text,$alp_matches1);        
+        $int2 = preg_match_all('#<a([^>]*)href=\'(('.rtrim($home_url,'/').')?/([^"^>]+))\'([^>]*)>#i',$text,$alp_matches2);        
         for($i = 0; $i < 6; $i++){
             $alp_matches[$i] = array_merge($alp_matches1[$i], $alp_matches2[$i]); 
         }
-                
         if($int1 || $int2){   
             $url_parts = parse_url(rtrim(get_option('home'),'/').'/');                                                    
             foreach($alp_matches[4] as $k=>$m){
@@ -481,7 +480,6 @@ class AbsoluteLinksPlugin{
         }else{
             $string_value = $wpdb->get_var("SELECT value FROM {$wpdb->prefix}icl_strings WHERE id=" . $st_id);
         }
-        
         $string_value_up = $this->_process_generic_text($string_value);
         
         if($string_value_up != $string_value){
