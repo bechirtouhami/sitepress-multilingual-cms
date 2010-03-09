@@ -1437,7 +1437,7 @@ function _icl_content_fix_relative_link_paths_in_body(&$translation) {
 function _icl_content_get_link_paths($body) {
   
     $regexp_links = array(
-                        "/<a.*?href\s*=\s*([\"\']??)([^\"]*)\">(.*?)<\/a>/i",
+                        "/<a.*?href\s*=\s*([\"\']??)([^\"]*)[\"\']>(.*?)<\/a>/i",
                         );
     
     $links = array();
