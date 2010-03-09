@@ -1463,10 +1463,11 @@ function _icl_content_make_links_sticky($element_id, $element_type='post', $stri
             $icl_abs_links->process_post($element_id);
         }
     }elseif($element_type=='string'){        
-        if(class_exists('AbsoluteLinksPlugin')){
-            $icl_abs_links = new AbsoluteLinksPlugin();
-            $icl_abs_links->process_string($element_id, $string_translation);            
-        }            
+        if(!class_exists('AbsoluteLinksPlugin')){
+            include_once ICL_PLUGIN_PATH . '/modules/absolute-links/absolute-links-plugin.php';
+        }
+        $icl_abs_links = new AbsoluteLinksPlugin();
+        $icl_abs_links->process_string($element_id, $string_translation);                                
     }
 }
 
@@ -1551,6 +1552,7 @@ function _icl_content_fix_links_to_translated_content($element_id, $target_lang_
     if ($new_body != $body){
 
         // unless sticky links is on - we convert default links to permalinks
+        /*
         if(!$sitepress_settings['modules']['absolute-links']['enabled']){
             // create the object
             include_once ICL_PLUGIN_PATH . '/modules/absolute-links/absolute-links-plugin.php';
@@ -1558,6 +1560,7 @@ function _icl_content_fix_links_to_translated_content($element_id, $target_lang_
             
             $new_body = $icl_abs_links->show_permalinks($new_body);
         }        
+        */
         
         // save changes to the database.
         if($element_type == 'post'){        
