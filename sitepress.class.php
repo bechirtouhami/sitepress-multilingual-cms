@@ -439,7 +439,7 @@ class SitePress{
                     case 3:
                     default:
                         if(isset($_GET['lang'])){
-                            $this->this_lang = rtrim($_GET['lang'],'/');             
+                            $this->this_lang = preg_replace("/[^0-9a-zA-Z-]/i", '',$_GET['lang']);             
                         }else{
                             $this->this_lang = $this->get_default_language();
                         }                        
