@@ -1714,8 +1714,9 @@ class SitePress{
         
         if($_POST['autosave'] || $_POST['skip_sitepress_actions'] || 
             (isset($_POST['post_ID']) && $_POST['post_ID']!=$pidd) || $_POST['post_type']=='revision' || $post_type == 'revision' || 
-            get_post_meta($pidd, '_wp_trash_meta_status', true))
-        {
+            get_post_meta($pidd, '_wp_trash_meta_status', true) || 
+            ( isset($_GET['action']) && $_GET['action']=='restore')
+        ){
             return;
         }
                 
