@@ -424,6 +424,8 @@ function icl_plugin_upgrade(){
         if($mig_debug) fwrite($mig_debug, "Upgrading to 1.7.2 \n");
         $wpdb->update($wpdb->prefix.'icl_flags', array('flag'=>'ku.png'), array('lang_code'=>'ku'));                            
         $wpdb->update($wpdb->prefix.'icl_languages_translations', array('name'=>'Magyar'), array('language_code'=>'hu', 'display_language_code'=>'hu'));
+        $wpdb->update($wpdb->prefix.'icl_languages_translations', array('name'=>'Hrvatski'), array('language_code'=>'hr', 'display_language_code'=>'hr'));
+        $wpdb->update($wpdb->prefix.'icl_languages_translations', array('name'=>'فارسی'), array('language_code'=>'fa', 'display_language_code'=>'fa'));
         if($mig_debug) fwrite($mig_debug, "Upgraded to 1.7.2 \n");
     }
     
