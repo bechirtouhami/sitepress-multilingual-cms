@@ -23,7 +23,7 @@
 
     $on_click = 'parent.dismiss_message(' . $_GET['message_id'] . ');';
     
-    $can_delete = $wpdb->get_var("SELECT can_delete FROM {$wpdb->prefix}icl_reminders WHERE id={$_GET['message_id']}") == '1';
+    $can_delete = isset($_GET['message_id']) ? $wpdb->get_var("SELECT can_delete FROM {$wpdb->prefix}icl_reminders WHERE id={$_GET['message_id']}") == '1' : false;
 
     $image_path = ICL_PLUGIN_URL . '/res/img/web_logo_small.png';
     echo '<img src="' . $image_path . '"  style="margin: 0px 0px 0px; float: left; "><br clear="all" />';
