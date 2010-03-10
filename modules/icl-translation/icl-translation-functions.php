@@ -1116,7 +1116,6 @@ function setTranslationStatus($args){
             $status      = $args[5];
             $message     = $args[6];  
 
-            
             if ($site_id != $sitepress_settings['site_id']) {
                 return 3;                                                             
             }
