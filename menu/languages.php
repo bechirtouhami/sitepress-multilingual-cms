@@ -172,7 +172,7 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                                     </div>
                                 </td>
                             </tr>
-							<tr><td><a href="/wp-admin/admin.php?page=sitepress-multilingual-cms/menu/languages.php&trop=1"><?php _e('Edit Languages','sitepress'); ?></a></td></tr>
+							<!--<tr><td><a href="/wp-admin/admin.php?page=sitepress-multilingual-cms/menu/languages.php&trop=1"><?php _e('Edit Languages','sitepress'); ?></a></td></tr>-->
                         </table>              
                         
                         <?php if(!empty($inactive_content)): ?>
