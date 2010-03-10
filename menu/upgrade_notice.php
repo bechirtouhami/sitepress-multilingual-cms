@@ -9,8 +9,8 @@ $upgrade_lines =  array(
     '1.5.1' => __('bugs fixed and new support for Headspace2 SEO plugin', 'sitepress'),
     '1.6.0' => __('WPML can now translate other plugins', 'sitepress'),
     '1.7.0' => __('WPML adapts to any WordPress theme', 'sitepress'),
-    '1.7.1' => __('Home-page link automatically adjusts per language', 'sitepress')
-    
+    '1.7.1' => __('Home-page link automatically adjusts per language', 'sitepress'),
+    '1.7.2' => __('Bug fixes and stability improvements', 'sitepress')
 );
 
 $short_v = implode('.', array_slice(explode('.', ICL_SITEPRESS_VERSION), 0, 3));

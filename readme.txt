@@ -66,6 +66,16 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 
 == Changelog ==
 
+= 1.7.2 =
+* Fixed bug related to using a revision for a translated page.
+* Fixed language names Magyar, Croatian, Persian, Latvian.
+* Set correct locales for Chinese (traditional and simplified).
+* Fixed potential Cross Site Scripting (XSS) security hole.
+* Sticky links works with single quote links too.
+* Implemented Sticky links for strings.
+* Fixed bug related to special (UTF-8) characters in translation body.
+* Added warning on the reset function, to avoid accidental plugin data reset.
+
 = 1.7.1 =
 * Home-page URLs are now automatically adjusted per language.
 * Added optional title to the language switcher (some theme don't display correctly without a title).
