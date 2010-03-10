@@ -1041,7 +1041,8 @@ function icl_add_custom_xmlrpc_methods($methods){
         preg_match('#<methodName>([^<]+)</methodName>#i', $GLOBALS['HTTP_RAW_POST_DATA'], $matches);
         $method = $matches[1];            
         if(in_array($method, array_keys($icl_methods))){  
-            //ini_set('display_errors', '0');        
+            error_reporting(E_ALL^E_NOTICE);
+            ini_set('display_errors', '0');        
             $old_error_handler = set_error_handler("_icl_translation_error_handler",E_ALL);
         }
     }
