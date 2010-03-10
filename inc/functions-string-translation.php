@@ -363,7 +363,10 @@ function icl_st_administration_menu(){
 function icl_register_string($context, $name, $value){    
     global $wpdb, $sitepress, $sitepress_settings;
     // if the default language is not set up return without doing anything
-    if(!isset($sitepress_settings['existing_content_language_verified']) || !$sitepress_settings['existing_content_language_verified']){
+    if( 
+        !isset($sitepress_settings['existing_content_language_verified']) || 
+        !$sitepress_settings['existing_content_language_verified']
+    ){
         return;
     }       
     
