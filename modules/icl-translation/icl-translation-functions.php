@@ -1025,6 +1025,17 @@ function icl_poll_for_translations(){
 }
 
 function _icl_translation_error_handler($errno, $errstr, $errfile, $errline){
+    
+    // exceptions
+    // case of wpdb bug
+    if(
+        (0 === strpos($errstr, 'mysql_num_fields()') && false !== strpos($errfile, 'wp-db.php')) || 
+        (0 === strpos($errstr, 'mysql_fetch_object()') && false !== strpos($errfile, 'wp-db.php')) ||
+        (0 === strpos($errstr, 'mysql_free_result()') && false !== strpos($errfile, 'wp-db.php')) 
+    ){
+        return;
+    }
+    
     throw new Exception ($errstr . ' [code:' . $errno . '] in '. $errfile . ':' . $errline);
 }
 
@@ -1043,7 +1054,7 @@ function icl_add_custom_xmlrpc_methods($methods){
         if(in_array($method, array_keys($icl_methods))){  
             error_reporting(E_NONE);
             //ini_set('display_errors', '0');        
-            $old_error_handler = set_error_handler("_icl_translation_error_handler",E_ERROR);
+            $old_error_handler = set_error_handler("_icl_translation_error_handler",E_ALL^E_NOTICE);
         }
     }
     return $methods;
