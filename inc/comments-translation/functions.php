@@ -566,7 +566,7 @@ class IclCommentsTranslation{
                 }
                 
             }
-        }elseif(@$_POST['action']=='get-comments' && $_POST['mode']=='single'){
+        }elseif( isset($_POST['action']) && $_POST['action']=='get-comments' && isset($_POST['mode']) && $_POST['mode']=='single'){
             global $sitepress;
             if(preg_match('#SELECT \* FROM (.+)comments USE INDEX \(comment_date_gmt\) WHERE \( comment_approved = \'0\' OR comment_approved = \'1\' \)  AND comment_post_ID = \'([0-9]+)\'  ORDER BY comment_date_gmt ASC LIMIT ([0-9]+), ([0-9]+)#i',$sql,$matches)){
                 
