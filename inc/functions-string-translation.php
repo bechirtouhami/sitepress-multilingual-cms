@@ -1370,8 +1370,10 @@ function icl_st_load_translations_from_mo($mo_file){
 function icl_st_fix_links_in_strings($post_id){
     if($_POST['autosave']) return;
     global $wpdb, $sitepress;
+    if(isset($_POST['post_ID'])){
+        $post_id = $_POST['post_ID'];
+    }    
     $language = $wpdb->get_var("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE element_type='post' AND element_id={$post_id}");    
-
     if($sitepress->get_default_language()==$language){
         $strings = $wpdb->get_col("SELECT id FROM {$wpdb->prefix}icl_strings WHERE language='$language'");
     }else{
