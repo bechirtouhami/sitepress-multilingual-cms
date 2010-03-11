@@ -1026,17 +1026,30 @@ function icl_poll_for_translations(){
 
 function _icl_translation_error_handler($errno, $errstr, $errfile, $errline){
     
-    // exceptions
-    // case of wpdb bug
-    if(
-        (0 === strpos($errstr, 'mysql_num_fields()') && false !== strpos($errfile, 'wp-db.php')) || 
-        (0 === strpos($errstr, 'mysql_fetch_object()') && false !== strpos($errfile, 'wp-db.php')) ||
-        (0 === strpos($errstr, 'mysql_free_result()') && false !== strpos($errfile, 'wp-db.php')) 
-    ){
-        return;
+    switch($errno){
+        case E_ERROR:
+        case E_USER_ERROR:
+            throw new Exception ($errstr . ' [code:e' . $errno . '] in '. $errfile . ':' . $errline);
+        case E_WARNING:
+        case E_USER_WARNING:
+            return true;                
+            //throw new Exception ($errstr . ' [code:w' . $errno . '] in '. $errfile . ':' . $errline);    
+        default: 
+            return true;
     }
     
-    throw new Exception ($errstr . ' [code:' . $errno . '] in '. $errfile . ':' . $errline);
+}
+
+function _icl_throw_exception_for_mysql_errors(){
+    global $EZSQL_ERROR, $sitepress_settings;
+    if($sitepress_settings['troubleshooting_options']['raise_mysql_errors']){
+        if(!empty($EZSQL_ERROR)){
+            foreach($EZSQL_ERROR as $k=>$v){
+                $mysql_errors[] = $v['error_str'] . ' [' . $v['query'] . ']';
+            }
+            throw new Exception(join("\n", $mysql_errors));
+        }    
+    }
 }
 
 function icl_add_custom_xmlrpc_methods($methods){
@@ -1054,7 +1067,7 @@ function icl_add_custom_xmlrpc_methods($methods){
         if(in_array($method, array_keys($icl_methods))){  
             error_reporting(E_NONE);
             //ini_set('display_errors', '0');        
-            $old_error_handler = set_error_handler("_icl_translation_error_handler",E_ALL^E_NOTICE);
+            $old_error_handler = set_error_handler("_icl_translation_error_handler",E_ERROR|E_USER_ERROR);
         }
     }
     return $methods;
@@ -1137,21 +1150,25 @@ function setTranslationStatus($args){
             if($signature_chk != $signature){
                 return 2;
             }
-
+            
             $lang_code = $sitepress->get_language_code(apply_filters('icl_server_languages_map', $language, true));//the 'reverse' language filter 
             $cms_request_info = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}icl_core_status WHERE rid={$request_id} AND target='{$lang_code}'");
             
             if (empty($cms_request_info)){
+                _icl_throw_exception_for_mysql_errors();
                 return 4;
             }
             
             if ( !$sitepress->get_icl_translation_enabled() ) {
+                _icl_throw_exception_for_mysql_errors();
                 return 5;
             }            
         
             if (icl_process_translated_document($request_id, $language) === true){
+                _icl_throw_exception_for_mysql_errors();
                 return 1;
             } else {
+                _icl_throw_exception_for_mysql_errors();                
                 return 6;
             }
             

@@ -104,7 +104,24 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
     echo htmlspecialchars($ob);
     echo '</textarea>';
     
-    ?>    
+    ?> 
+    
+    <script type="text/javascript">
+    jQuery(document).ready(function(){
+        jQuery('#icl_torubleshooting_more_options').submit(iclSaveForm);
+    })
+    </script>
+    <h3><?php _e('More options', 'sitepress')?></h3>
+    <form name="icl_torubleshooting_more_options" id="icl_torubleshooting_more_options" action="">
+    <label><input type="checkbox" name="troubleshooting_options[raise_mysql_errors]" value="1" <?php 
+        if($sitepress_settings['troubleshooting_options']['raise_mysql_errors']): ?>checked="checked"<?php endif; ?>/>&nbsp;<?php 
+        _e('Raise mysql errors on XML-RPC calls', 'sitepress')?></label>
+    <p>
+        <input class="button" name="save" value="<?php echo __('Apply','sitepress') ?>" type="submit" />
+        <span class="icl_ajx_response" id="icl_ajx_response"></span>
+    </p>    
+    </form>
+       
     <h3><?php _e('Database dump', 'sitepress')?></h3>
     <a class="button" href="admin.php?page=<?php ICL_PLUGIN_FOLDER ?>/menu/troublehooting.php&icl_action=dbdump"><?php _e('Download', 'sitepress') ?></a>
     <?php

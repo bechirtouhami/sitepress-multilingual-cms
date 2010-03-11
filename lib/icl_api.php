@@ -365,7 +365,7 @@ class ICanLocalizeQuery{
                 
             if($res['info']['status']['attr']['err_code']=='0'){
                 
-                $wpdb->query("TRUNCATE {$wpdb->prefix}icl_reminders");
+                @mysql_query("TRUNCATE {$wpdb->prefix}icl_reminders");
                 
                 // First add any low funding warning.
                 $website_data = $this->get_website_details();

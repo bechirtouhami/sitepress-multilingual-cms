@@ -93,7 +93,7 @@ class CMSNavigation{
         
         // clear the cache.
         $sitepress->icl_cms_nav_offsite_url_cache->clear();
-        $wpdb->query("TRUNCATE {$wpdb->prefix}icl_cms_nav_cache");
+        @mysql_query("TRUNCATE {$wpdb->prefix}icl_cms_nav_cache");
         
         return $data;
     }
@@ -576,7 +576,7 @@ class CMSNavigation{
         
         // clear the caches
         $sitepress->icl_cms_nav_offsite_url_cache->clear();
-        $wpdb->query("TRUNCATE {$wpdb->prefix}icl_cms_nav_cache");
+        @mysql_query("TRUNCATE {$wpdb->prefix}icl_cms_nav_cache");
         
         if($_POST['post_type']!='page' || $_POST['action']=='inline-save'  || $_POST['autosave']) return;
         $post_id = $_POST['post_ID'];

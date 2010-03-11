@@ -355,7 +355,7 @@ switch($_REQUEST['icl_ajx_action']){
         
         // clear the cms navigation caches
         $this->icl_cms_nav_offsite_url_cache->clear();
-        $wpdb->query("TRUNCATE {$wpdb->prefix}icl_cms_nav_cache");
+        @mysql_query("TRUNCATE {$wpdb->prefix}icl_cms_nav_cache");
         
         echo '1|';
         break;
@@ -363,7 +363,7 @@ switch($_REQUEST['icl_ajx_action']){
     case 'icl_clear_nav_cache':
         // clear the cms navigation caches
         $this->icl_cms_nav_offsite_url_cache->clear();
-        $wpdb->query("TRUNCATE {$wpdb->prefix}icl_cms_nav_cache");
+        @mysql_query("TRUNCATE {$wpdb->prefix}icl_cms_nav_cache");
         echo '1|';
         
             
@@ -562,7 +562,7 @@ switch($_REQUEST['icl_ajx_action']){
     case 'setup_got_to_step1':
         $iclsettings['existing_content_language_verified'] = 0;
         $iclsettings['setup_wizard_step'] = 1;
-        $wpdb->query("TRUNCATE TABLE {$wpdb->prefix}icl_translations");
+        @mysql_query("TRUNCATE TABLE {$wpdb->prefix}icl_translations");
         $this->save_settings($iclsettings);
         break;
     case 'setup_got_to_step2':
@@ -747,6 +747,11 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings['modules']['absolute-links']['sticky_links_widgets'] = intval($_POST['icl_sticky_links_widgets']);
         $iclsettings['modules']['absolute-links']['sticky_links_strings'] = intval($_POST['icl_sticky_links_strings']);
         $this->save_settings($iclsettings);    
+        echo '1|';        
+        break;
+    case 'icl_torubleshooting_more_options':
+        $iclsettings['troubleshooting_options'] = $_POST['troubleshooting_options'];
+        $this->save_settings($iclsettings);
         echo '1|';        
         break;
     default:
