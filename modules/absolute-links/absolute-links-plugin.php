@@ -415,9 +415,10 @@ class AbsoluteLinksPlugin{
                 }
                 if($post_name){                    
                     $name = $wpdb->escape($post_name);
-                    $p = $wpdb->get_row("SELECT ID, post_type FROM {$wpdb->posts} WHERE post_name='{$name}' AND post_type IN('post','page')");
+                    $post_type = isset($perma_query_vars['pagename']) ? 'page' : 'post';
+                    $p = $wpdb->get_row("SELECT ID, post_type FROM {$wpdb->posts} WHERE post_name='{$name}' AND post_type ='{$post_type}'");
                     if($p){
-                        if($p->post_type=='post'){
+                        if($post_type=='post'){
                             $qvid = 'p';
                         }else{
                             $qvid = 'page_id';
@@ -526,6 +527,8 @@ class AbsoluteLinksPlugin{
         
         delete_post_meta($post_id,'_alp_broken_links');
          
+        
+         
         $post = $wpdb->get_row("SELECT * FROM {$wpdb->posts} WHERE ID={$post_id}"); 
         $home_url = $sitepress->language_url($_POST['icl_post_language']);
         $int1  = preg_match_all('@<a([^>]*)href="(('.rtrim($home_url,'/').')?/([^"^>^#]+))"([^>]*)>@i',$post->post_content,$alp_matches1);        
@@ -623,7 +626,6 @@ class AbsoluteLinksPlugin{
                         break;
                     }
                 }   
-                             
                 $post_name = $category_name = false;
                 if(isset($perma_query_vars['pagename'])){
                     $post_name = basename($perma_query_vars['pagename']); 
@@ -634,9 +636,10 @@ class AbsoluteLinksPlugin{
                 }
                 if($post_name){                    
                     $name = $wpdb->escape($post_name);
-                    $p = $wpdb->get_row("SELECT ID, post_type FROM {$wpdb->posts} WHERE post_name='{$name}' AND post_type IN('post','page')");
+                    $post_type = isset($perma_query_vars['pagename']) ? 'page' : 'post';
+                    $p = $wpdb->get_row("SELECT ID, post_type FROM {$wpdb->posts} WHERE post_name='{$name}' AND post_type ='{$post_type}'");
                     if($p){
-                        if($p->post_type=='post'){
+                        if($post_type=='post'){
                             $qvid = 'p';
                         }else{
                             $qvid = 'page_id';
