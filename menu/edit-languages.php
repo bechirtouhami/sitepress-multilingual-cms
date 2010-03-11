@@ -194,7 +194,7 @@ class SitePressEditLanguages {
 			// First check if add and validate it.
 		if (isset($_POST['icl_edit_languages']['add']) && $_POST['icl_edit_languages_ignore_add'] == 'false') {
 			if ($this->validate_one('add', $_POST['icl_edit_languages']['add'])) {
-				$this->insert_one($_POST['icl_edit_languages']['add']);
+				$this->insert_one($this->sanitize($_POST['icl_edit_languages']['add']));
 			}
 		}
 		
@@ -231,9 +231,13 @@ class SitePressEditLanguages {
 				
 					// Check if update.
 				if ($wpdb->get_var("SELECT name FROM {$wpdb->prefix}icl_languages_translations WHERE language_code='".$translation_code."' AND display_language_code='".$data['code']."'")) {
-					$wpdb->query("UPDATE {$wpdb->prefix}icl_languages_translations SET name='".$translation_value."' WHERE language_code = '".$data['code']."' AND display_language_code = '".$translation_code."'");
+					if (!$this->update_translation($translation_value, $data['code'], $translation_code)) {
+						$this->error(sprintf(__('Error updating translation %s for %s.', 'sitepress'), $data['code'], $translation_code));
+					}
 				} else {
-					$wpdb->query("INSERT INTO {$wpdb->prefix}icl_languages_translations (name, language_code, display_language_code) VALUES('".$translation_value."', '".$data['code']."', '".$translation_code."')");
+					if (!$this->insert_translation($translation_value, $data['code'], $translation_code)) {
+						$this->error(sprintf(__('Error adding translation %s for %s.', 'sitepress'), $data['code'], $translation_code));
+					}
 				}
 			}
 			
@@ -259,11 +263,45 @@ class SitePressEditLanguages {
 		delete_option('_icl_cache');
 	}
 
+
+
+
+	function insert_main_table($code, $english_name, $default_locale, $major = 0, $active = 0) {
+		global $wpdb;
+		return $wpdb->query("INSERT INTO {$wpdb->prefix}icl_languages (code, english_name, default_locale, major, active) VALUES('".$code."', '".$english_name."', '".$default_locale."', ".$major.", ".$active.")");
+	}
+
+	function update_main_table(){
+		global $wpdb;
+	}
+
+	function insert_translation($name, $language_code, $display_language_code) {
+		global $wpdb;
+		return $wpdb->query("INSERT INTO {$wpdb->prefix}icl_languages_translations (name, language_code, display_language_code) VALUES('".$name."', '".$language_code."', '".$display_language_code."')");
+	}
+
+	function update_translation($name, $language_code, $display_language_code) {
+		global $wpdb;
+		return $wpdb->query("UPDATE {$wpdb->prefix}icl_languages_translations SET name='".$name."' WHERE language_code = '".$language_code."' AND display_language_code = '".$display_language_code."'");
+	}
+
+	function insert_flag($lang_code, $flag, $from_template) {
+		global $wpdb;
+		return $wpdb->query("INSERT INTO {$wpdb->prefix}icl_flags (lang_code, flag, from_template) VALUES('".$lang_code."', '".$flag."', ".$from_template.")");
+	}
+
+	function update_flag() {
+		global $wpdb;
+	}
+
 	function insert_one($data) {
-		global $sitepress,$wpdb;
+		global $sitepress;
 		
 			// Insert main table.
-		$wpdb->query("INSERT INTO {$wpdb->prefix}icl_languages (code, english_name, default_locale, major, active) VALUES('".$data['code']."', '".$data['english_name']."', '".$data['default_locale']."', 0, 1)");
+		if (!$this->insert_main_table($data['code'], $data['english_name'], $data['default_locale'], 0, 1)) {
+			$this->error(__('Adding language failed.', 'sitepress'));
+			return false;
+		}
 		
 			// Insert translations.
 		$all_languages = $sitepress->get_languages();
@@ -271,23 +309,25 @@ class SitePressEditLanguages {
 			
 				// If submitted.
 			if (array_key_exists($lang['code'], $data['translations'])) {
-				$wpdb->query("INSERT INTO {$wpdb->prefix}icl_languages_translations (name, language_code, display_language_code) VALUES('".$data['translations'][$lang['code']]."', '".$data['code']."', '".$lang['code']."')");
+				if (!$this->insert_translation($data['translations'][$lang['code']], $data['code'], $lang['code'])) {
+					$this->error(sprintf(__('Error adding translation %s for %s.', 'sitepress'), $data['code'], $lang['code']));
+				}
 				continue;
 			}
 			
 				// Insert dummy translation.
-			$wpdb->query("INSERT INTO {$wpdb->prefix}icl_languages_translations (name, language_code, display_language_code) VALUES('".$data['english_name']."', '".$data['code']."', '".$lang['code']."')");
-			
-			/*if (!$this->added_translation[$lang['code']]){
-				$wpdb->query("INSERT INTO {$wpdb->prefix}icl_languages_translations (name, language_code, display_language_code) VALUES('".$lang['english_name']."', '".$lang['code']."', '".$data['code']."')");
-			}*/
+			if (!$this->insert_translation($data['english_name'], $data['code'], $lang['code'])) {
+					$this->error(sprintf(__('Error adding translation %s for %s.', 'sitepress'), $data['code'], $lang['code']));
+			}
 		}
 		
 			// Insert native name.
 		if (!isset($data['translations']['add']) || empty($data['translations']['add'])) {
 			$data['translations']['add'] = $data['english_name'];
 		}
-		$wpdb->query("INSERT INTO {$wpdb->prefix}icl_languages_translations (name, language_code, display_language_code) VALUES('".$data['translations']['add']."', '".$data['code']."', '".$data['code']."')");
+		if (!$this->insert_translation($data['translations']['add'], $data['code'], $data['code'])) {
+			$this->error(__('Error adding native name.', 'sitepress'));
+		}
 		
 			// Handle flag.
 		if ($data['flag_upload'] == 'true' && !empty($_FILES['icl_edit_languages']['name']['add']['flag_file'])) {
@@ -302,7 +342,9 @@ class SitePressEditLanguages {
 		}
 		
 			// Insert flag table.
-		$wpdb->query("INSERT INTO {$wpdb->prefix}icl_flags (lang_code, flag, from_template) VALUES('".$data['code']."', '".$data['flag']."', ".$from_template.")");
+		if (!$this->insert_flag($data['code'], $data['flag'], $from_template)) {
+			$this->error(__('Error adding flag.', 'sitepress'));
+		}
 	}
 
 
@@ -399,6 +441,7 @@ class SitePressEditLanguages {
 
 }
 
+global $icl_edit_languages;
 $icl_edit_languages = new SitePressEditLanguages;
 
 
