@@ -429,6 +429,11 @@ function icl_plugin_upgrade(){
         if($mig_debug) fwrite($mig_debug, "Upgraded to 1.7.2 \n");
     }
     
+    if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.7.3', '<')){    
+        if($mig_debug) fwrite($mig_debug, "Upgrading to 1.7.3 \n");
+        $wpdb->update($wpdb->prefix.'icl_languages_translations', array('name'=>'پارسی'), array('language_code'=>'fa', 'display_language_code'=>'fa'));
+        if($mig_debug) fwrite($mig_debug, "Upgraded to 1.7.3 \n");
+    }
     
     if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '<')){
         if($mig_debug) fwrite($mig_debug, "Update plugin version in the database \n");
