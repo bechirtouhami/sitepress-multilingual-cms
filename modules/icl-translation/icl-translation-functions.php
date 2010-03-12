@@ -818,7 +818,6 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     
     $new_post_id = wp_insert_post($postarr);
     
-    
     // set stickiness
     if($is_original_sticky && $sitepress_settings['sync_sticky_flag']){
         stick_post($new_post_id);
@@ -886,6 +885,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     update_post_meta($new_post_id, '_icl_translation', 1);
     
     _icl_content_fix_links_to_translated_content($new_post_id, $lang_code, 'post');
+    icl_st_fix_links_in_strings($new_post_id);
     
     // update translation status
     $wpdb->update($wpdb->prefix.'icl_core_status', array('status'=>CMS_TARGET_LANGUAGE_DONE), array('rid'=>$rid, 'target'=>$sitepress->get_language_code($lang)));

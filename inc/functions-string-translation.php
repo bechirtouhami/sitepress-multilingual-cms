@@ -23,7 +23,11 @@ add_action('icl_update_active_languages', 'icl_update_string_status_all');
 add_action('update_option_blogname', 'icl_st_update_blogname_actions',5,2);
 add_action('update_option_blogdescription', 'icl_st_update_blogdescription_actions',5,2);
 
-add_action('save_post', 'icl_st_fix_links_in_strings', 12);
+if(!defined('XMLRPC')){
+    // called separately for XMLRPC post saves
+    add_action('save_post', 'icl_st_fix_links_in_strings', 19);
+}
+
 
 if(is_admin()){
     wp_enqueue_style('thickbox');
@@ -1368,20 +1372,31 @@ function icl_st_load_translations_from_mo($mo_file){
 
 // fix links in existing strings according to the new translation added
 function icl_st_fix_links_in_strings($post_id){
+    static $runnonce = false;
+    if($runnonce){
+        return;
+    }
+    $runonce = true;
+    
     if($_POST['autosave']) return;
-    global $wpdb, $sitepress;
+    
     if(isset($_POST['post_ID'])){
         $post_id = $_POST['post_ID'];
-    }    
-    $language = $wpdb->get_var("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE element_type='post' AND element_id={$post_id}");    
-    if($sitepress->get_default_language()==$language){
-        $strings = $wpdb->get_col("SELECT id FROM {$wpdb->prefix}icl_strings WHERE language='$language'");
-    }else{
-        $strings = $wpdb->get_col("SELECT id FROM {$wpdb->prefix}icl_string_translations WHERE language='$language'");
     }
-        
-    foreach($strings as $string_id){
-        _icl_content_fix_links_to_translated_content($string_id, $language, 'string');
+    
+    global $wpdb, $sitepress;
+    $language = $wpdb->get_var("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE element_type='post' AND element_id={$post_id}");    
+    if($language){
+        if($sitepress->get_default_language()==$language){
+            $strings = $wpdb->get_col("SELECT id FROM {$wpdb->prefix}icl_strings WHERE language='$language'");
+        }else{
+            $strings = $wpdb->get_col("SELECT id FROM {$wpdb->prefix}icl_string_translations WHERE language='$language'");
+        }
+            
+        foreach($strings as $string_id){
+            _icl_content_fix_links_to_translated_content($string_id, $language, 'string');
+        }
+    
     }
 }
 
