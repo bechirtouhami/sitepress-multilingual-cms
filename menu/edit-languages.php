@@ -3,8 +3,7 @@
 - dir mode?
 BUGS
 - update flag field dont get UPDATED right away
-- new translations dont add
-- update translations buggg
+- if lang code is changed - translations and flag are lost
 */
 
 class SitePressEditLanguages {
@@ -182,6 +181,36 @@ class SitePressEditLanguages {
 <?php
 	}
 
+	function insert_main_table($code, $english_name, $default_locale, $major = 0, $active = 0) {
+		global $wpdb;
+		return $wpdb->query("INSERT INTO {$wpdb->prefix}icl_languages (code, english_name, default_locale, major, active) VALUES('".$code."', '".$english_name."', '".$default_locale."', ".$major.", ".$active.")");
+	}
+
+	function update_main_table($id, $code, $english_name, $default_locale){
+		global $wpdb;
+		$wpdb->query("UPDATE {$wpdb->prefix}icl_languages SET code='".$code."', english_name='".$english_name."', default_locale='".$default_locale."'  WHERE ID = ".$id);
+	}
+
+	function insert_translation($name, $language_code, $display_language_code) {
+		global $wpdb;
+		return $wpdb->query("INSERT INTO {$wpdb->prefix}icl_languages_translations (name, language_code, display_language_code) VALUES('".$name."', '".$language_code."', '".$display_language_code."')");
+	}
+
+	function update_translation($name, $language_code, $display_language_code) {
+		global $wpdb;
+		$wpdb->query("UPDATE {$wpdb->prefix}icl_languages_translations SET name='".$name."' WHERE language_code = '".$language_code."' AND display_language_code = '".$display_language_code."'");
+	}
+
+	function insert_flag($lang_code, $flag, $from_template) {
+		global $wpdb;
+		return $wpdb->query("INSERT INTO {$wpdb->prefix}icl_flags (lang_code, flag, from_template) VALUES('".$lang_code."', '".$flag."', ".$from_template.")");
+	}
+
+	function update_flag($lang_code, $flag, $from_template) {
+		global $wpdb;
+		$wpdb->query("UPDATE {$wpdb->prefix}icl_flags SET flag='".$flag."',from_template=".$from_template." WHERE lang_code = '".$lang_code."'");
+	}
+
 	function update() {
 			// Basic check.
 		if (!isset($_POST['icl_edit_languages']) || !is_array($_POST['icl_edit_languages'])){
@@ -208,32 +237,25 @@ class SitePressEditLanguages {
 			$data = $this->sanitize($data);
 			
 				// Update main table.
-			$wpdb->query("UPDATE {$wpdb->prefix}icl_languages SET code='".$data['code']."', english_name='".$data['english_name']."', default_locale='".$data['default_locale']."'  WHERE ID = ".$id);
-			
-			
-			
+			$this->update_main_table($id, $data['code'], $data['english_name'], $data['default_locale']);
 			
 				// Update translations table.
 			foreach ($data['translations'] as $translation_code => $translation_value) {
 				
 					// If new (add language) translations are submitted.
 				if ($translation_code == 'add') {
-					if ($this->add_validation_failed) {
+					if ($this->add_validation_failed || $_POST['icl_edit_languages_ignore_add'] == 'true') {
 						continue;
 					}
-						// Check if there is new language.
-					if (!isset($_POST['icl_edit_languages']['add']['code']) || empty($_POST['icl_edit_languages']['add']['code'])) {
-						continue;
-					} else {
-						$translation_code = $_POST['icl_edit_languages']['add']['code'];
+					if (empty($translation_value)) {
+						$translation_value = $data['english_name'];
 					}
+					$translation_code = $_POST['icl_edit_languages']['add']['code'];
 				}
 				
 					// Check if update.
-				if ($wpdb->get_var("SELECT name FROM {$wpdb->prefix}icl_languages_translations WHERE language_code='".$translation_code."' AND display_language_code='".$data['code']."'")) {
-					if (!$this->update_translation($translation_value, $data['code'], $translation_code)) {
-						$this->error(sprintf(__('Error updating translation %s for %s.', 'sitepress'), $data['code'], $translation_code));
-					}
+				if ($wpdb->get_var("SELECT id FROM {$wpdb->prefix}icl_languages_translations WHERE language_code='".$data['code']."' AND display_language_code='".$translation_code."'")) {
+					$this->update_translation($translation_value, $data['code'], $translation_code);
 				} else {
 					if (!$this->insert_translation($translation_value, $data['code'], $translation_code)) {
 						$this->error(sprintf(__('Error adding translation %s for %s.', 'sitepress'), $data['code'], $translation_code));
@@ -241,57 +263,29 @@ class SitePressEditLanguages {
 				}
 			}
 			
-			
-			
-			
 				// Handle flag.
 			if ($data['flag_upload'] == 'true' && !empty($_FILES['icl_edit_languages']['name'][$id]['flag_file'])) {
 				if ($filename = $this->upload_flag($id, $data)) {
 					$data['flag'] = $filename;
 					$from_template = 1;
 				} else {
+					$this->error(__('Error uploading flag file.', 'sitepress'));
 					$from_template = 0;
 				}
 			} else {
 				$from_template = 0;
 			}
 				// Update flag table.
-			$wpdb->query("UPDATE {$wpdb->prefix}icl_flags SET flag='".$data['flag']."',from_template=".$from_template." WHERE lang_code = '".$data['code']."'");
+			$this->update_flag($data['code'], $data['flag'], $from_template);
 		}
-			// Refresh cache;
+			// Refresh cache.
 		$sitepress->icl_language_name_cache->clear();
 		delete_option('_icl_cache');
-	}
-
-
-
-
-	function insert_main_table($code, $english_name, $default_locale, $major = 0, $active = 0) {
-		global $wpdb;
-		return $wpdb->query("INSERT INTO {$wpdb->prefix}icl_languages (code, english_name, default_locale, major, active) VALUES('".$code."', '".$english_name."', '".$default_locale."', ".$major.", ".$active.")");
-	}
-
-	function update_main_table(){
-		global $wpdb;
-	}
-
-	function insert_translation($name, $language_code, $display_language_code) {
-		global $wpdb;
-		return $wpdb->query("INSERT INTO {$wpdb->prefix}icl_languages_translations (name, language_code, display_language_code) VALUES('".$name."', '".$language_code."', '".$display_language_code."')");
-	}
-
-	function update_translation($name, $language_code, $display_language_code) {
-		global $wpdb;
-		return $wpdb->query("UPDATE {$wpdb->prefix}icl_languages_translations SET name='".$name."' WHERE language_code = '".$language_code."' AND display_language_code = '".$display_language_code."'");
-	}
-
-	function insert_flag($lang_code, $flag, $from_template) {
-		global $wpdb;
-		return $wpdb->query("INSERT INTO {$wpdb->prefix}icl_flags (lang_code, flag, from_template) VALUES('".$lang_code."', '".$flag."', ".$from_template.")");
-	}
-
-	function update_flag() {
-		global $wpdb;
+		
+			// Unset ADD fields.
+		if (!$this->add_validation_failed) {
+			unset($_POST['icl_edit_languages']['add']);
+		}
 	}
 
 	function insert_one($data) {
@@ -309,6 +303,9 @@ class SitePressEditLanguages {
 			
 				// If submitted.
 			if (array_key_exists($lang['code'], $data['translations'])) {
+				if (empty($data['translations'][$lang['code']])) {
+					$data['translations'][$lang['code']] = $data['english_name'];
+				}
 				if (!$this->insert_translation($data['translations'][$lang['code']], $data['code'], $lang['code'])) {
 					$this->error(sprintf(__('Error adding translation %s for %s.', 'sitepress'), $data['code'], $lang['code']));
 				}
