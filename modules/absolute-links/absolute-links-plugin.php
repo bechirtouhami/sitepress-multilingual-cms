@@ -45,11 +45,11 @@ class AbsoluteLinksPlugin{
         
         add_filter('the_content', array($this,'show_permalinks'));
         
-        if($sitepress_settings['modules']['absolute-links']['sticky_links_widgets'] || $sitepress_settings['modules']['absolute-links']['sticky_links_strings']){            
-            add_filter('widget_text', array($this,'show_permalinks'), 99); // low priority - allow translation to be set        
+        if($sitepress_settings['modules']['absolute-links']['sticky_links_widgets'] || $sitepress_settings['modules']['absolute-links']['sticky_links_strings']){              add_filter('widget_text', array($this,'show_permalinks'), 99); // low priority - allow translation to be set        
         }        
+        
         if($sitepress_settings['modules']['absolute-links']['sticky_links_widgets']){            
-            add_action('update_option_widget_text', array($this,'update_option_widget_text'), 3, 2);
+            add_filter('pre_update_option_widget_text', array($this,'pre_update_option_widget_text'), 5, 2);
         }
         
         $path = dirname(substr(__FILE__, strpos(__FILE__,'wp-content')));
@@ -493,20 +493,19 @@ class AbsoluteLinksPlugin{
         }
     }
     
-    function update_option_widget_text($old_options, $new_options){
-        static $avoid_loop = false;
-        if($avoid_loop) return;
-        $widget_text = get_option('widget_text');        
-        if(is_array($widget_text)){
-            foreach($widget_text as $k=>$w){
+    function pre_update_option_widget_text($new_value, $old_value){
+        global $wpdb;
+        if(is_array($new_value)){ 
+            foreach($new_value as $k=>$w){
                 if(isset($w['text'])){
-                    $w['text'] = $this->_process_generic_text($w['text']);
-                    $widget_text[$k] = $w;  
+                    $new_value[$k]['text'] = $this->_process_generic_text($w['text']);
                 }
             }
-            $avoid_loop = true;
-            update_option('widget_text', $widget_text);
+            if($new_value !== $old_value){
+                $wpdb->update($wpdb->options, array('option_value'=>$new_value), array('option_name'=>'widget_text'));
+            }            
         }
+        return $new_value;
     }
 
     function save_default_urls($post_id){
@@ -729,12 +728,14 @@ class AbsoluteLinksPlugin{
     }
     
     function show_permalinks($cont){
-        $home = rtrim(get_option('home'),'/');        
-        $parts = parse_url($home);        
-        $abshome = $parts['scheme'] .'://' . $parts['host'];
-        $path = ltrim($parts['path'],'/');    
-        $cont = preg_replace_callback('@<a([^>]+)?href="(('.$abshome.')?/'.$path.'/?\?(p|page_id|cat_ID)=([0-9]+))(#?[^"]*)"([^>]+)?>@i',
-            array($this,'show_permalinks_cb'),$cont);                    
+        if(!isset($GLOBALS['__disable_absolute_links_permalink_filter']) || !$GLOBALS['__disable_absolute_links_permalink_filter']){
+            $home = rtrim(get_option('home'),'/');        
+            $parts = parse_url($home);        
+            $abshome = $parts['scheme'] .'://' . $parts['host'];
+            $path = ltrim($parts['path'],'/');    
+            $cont = preg_replace_callback('@<a([^>]+)?href="(('.$abshome.')?/'.$path.'/?\?(p|page_id|cat_ID)=([0-9]+))(#?[^"]*)"([^>]+)?>@i',
+                array($this,'show_permalinks_cb'),$cont);                    
+        }
         return $cont;
     }
        

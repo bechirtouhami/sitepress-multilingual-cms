@@ -760,7 +760,12 @@ function icl_st_update_widget_title_actions($old_options, $new_options){
 }
 
 function icl_st_update_text_widgets_actions($old_options, $new_options){
-    $widget_text = get_option('widget_text');
+    global $sitepress_settings;
+    
+    // remove filter for showing permalinks instead of sticky links while saving
+    $GLOBALS['__disable_absolute_links_permalink_filter'] = 1;
+    
+    $widget_text = get_option('widget_text');    
     if(is_array($widget_text)){
         foreach($widget_text as $k=>$w){
             if(isset($old_options[$k]['text']) && trim($old_options[$k]['text']) && $old_options[$k]['text'] != $w['text']){
@@ -770,6 +775,10 @@ function icl_st_update_text_widgets_actions($old_options, $new_options){
             }
         }
     }
+
+    // add back the filter for showing permalinks instead of sticky links after saving
+    unset($GLOBALS['__disable_absolute_links_permalink_filter']);
+    
 }
 
 function icl_t_cache_lookup($context, $name){
