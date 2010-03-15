@@ -94,4 +94,6 @@ a#toggle-theme-localization{
 		padding: 1px;
 		text-decoration: none;
 		border-bottom: 0px;
-	}
+}
+
+#icl_edit_languages_table input { width:80px; }
