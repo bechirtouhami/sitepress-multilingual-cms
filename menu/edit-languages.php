@@ -2,8 +2,7 @@
 /*
 - dir mode?
 BUGS
-- update flag field dont get UPDATED right away
-- if lang code is changed - translations and flag are lost
+- if lang code is changed - translations and flag are lost (no table foreign key)
 */
 
 class SitePressEditLanguages {
@@ -280,6 +279,7 @@ class SitePressEditLanguages {
 		}
 			// Refresh cache.
 		$sitepress->icl_language_name_cache->clear();
+		$sitepress->icl_flag_cache->clear();
 		delete_option('_icl_cache');
 		
 			// Unset ADD fields.
