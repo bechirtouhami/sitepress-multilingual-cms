@@ -35,6 +35,10 @@ jQuery(document).ready(function(){
     })
     
     jQuery('#icl_st_more_options').submit(iclSaveForm);
+    
+    jQuery('#icl_st_option_write_form').submit(iclSaveForm);
+    
+    
         
     // Picker align
     jQuery(".pick-show").click(function () {

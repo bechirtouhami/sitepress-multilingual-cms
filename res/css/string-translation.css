@@ -113,3 +113,18 @@ div.postbox div.inside {
     margin-left:20px;
 
 }
+
+.icl_st_admin_string{
+    -moz-border-radius: 4px;
+    padding:2px;
+    float: left;
+    margin-bottom: 5px;;
+}
+.icl_st_numeric{
+    background-color: #d5e8f9;
+    border: 1px solid #9bc8f0;
+}
+.icl_st_string{
+    background-color: #f3ece2;
+    border: 1px solid #c4a26f;
+}

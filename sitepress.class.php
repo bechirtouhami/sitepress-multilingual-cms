@@ -404,7 +404,7 @@ class SitePress{
                                 redirect_canonical($requested_url);
                                 
                                 /*
-                                if(isset($wp_query) && empty($wp_query->posts)){
+                                if($wp_query->query_vars['error'] == '404'){
                                     $wp_query->is_404 = true;
                                     $template = get_404_template();
                                     include($template);

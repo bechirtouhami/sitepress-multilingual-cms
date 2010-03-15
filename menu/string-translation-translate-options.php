@@ -9,9 +9,17 @@
 
     <?php if(!empty($troptions)): ?>
     <div id="icl_st_option_writes">
+    <form name="icl_st_option_writes_form" id="icl_st_option_write_form">
     <?php foreach($troptions as $option_name=>$option_value): ?>
     <?php echo icl_st_render_option_writes($option_name, $option_value); ?>
-    <?php endforeach; ?>
+    <br clear="all" />
+    <?php endforeach; ?>    
+    <p class="submit">
+        <input type="submit" value="<?php _e('Register selected strings', 'sitepress');?>" />
+        <span class="icl_ajx_response" id="icl_ajx_response"></span>
+    </p>
+    
+    </form>
     </div>
     <?php else: ?>
     <div align="center"><?php _e('No options found', 'sitepress') ?></div>

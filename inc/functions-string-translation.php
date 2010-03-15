@@ -409,6 +409,14 @@ function icl_register_string($context, $name, $value){
     return $string_id; 
 }  
 
+function icl_st_is_registered_string($context, $name){
+    global $wpdb;
+    $string_id = $wpdb->get_var("
+        SELECT id 
+        FROM {$wpdb->prefix}icl_strings WHERE context='".$wpdb->escape($context)."' AND name='".$wpdb->escape($name)."'");
+    return $string_id;
+}
+
 function icl_rename_string($context, $old_name, $new_name){
     global $wpdb;
     $wpdb->update($wpdb->prefix.'icl_strings', array('name'=>$new_name), array('context'=>$context, 'name'=>$old_name));
@@ -1331,21 +1339,51 @@ function icl_st_scan_options_strings(){
     return $options;
 }
 
-function icl_st_render_option_writes($option_name, $option_value){
+function icl_st_render_option_writes($option_name, $option_value, $option_key=''){
     if(is_array($option_value) || is_object($option_value)){
         echo '<h4>' . $option_name . '</h4>';
         echo '<ul class="icl_st_option_writes">';
         foreach($option_value as $key=>$value){
             echo '<li>';
-            icl_st_render_option_writes($key, $value);    
+            icl_st_render_option_writes($key, $value, $option_key . '[' . $option_name . ']');    
             echo '</li>';
         }        
         echo '</ul>';
     }elseif(is_string($option_value) || is_numeric($option_value)){
+        if(icl_st_is_registered_string('admin_options_' . get_option('template'), $option_key . $option_name)){
+            $checked = ' checked="checked"';
+        }else{
+            $checked = '';
+        }
+        if(is_numeric($option_value)){
+            $class = 'icl_st_numeric';
+        }else{
+            $class = 'icl_st_string';
+        }
+        echo '<div class="icl_st_admin_string '.$class.'">';
+        echo '<input type="checkbox" name="icl_admin_options'.$option_key.'['.$option_name.']" value="'.htmlspecialchars($option_value).'" 
+            '.$checked.' />';
         echo '<input type="text" readonly="readonly" value="'.$option_name.'" size="32" />'; 
-        echo '<input type="text" value="'.htmlspecialchars($option_value).'" readonly="readonly" size="48" />';
-        echo '<input type="button" value="'.__('Register string', 'sitepress').'" />';
+        echo '<input type="text" value="'.htmlspecialchars($option_value).'" readonly="readonly" size="48" />';        
+        //echo '<br /><input type="text" size="100" value="icl_admin_options'.$option_key.'['.$option_name.']" />';
+        echo '</div>';
     }
+}
+
+function icl_register_admin_options($array, $key=""){
+    if($key){
+        $real_key = $key . '::';
+    }else{
+        $real_key = '';
+    }
+    
+    foreach($array as $k=>$v){
+        if(is_array($v)){
+            icl_register_admin_options($v, $key . '['.$k.']');
+        }else{
+            icl_register_string('admin_options_' . get_option('template'), $key . $k, $v);
+        }
+    }    
 }
 
 function icl_st_get_mo_files($path){

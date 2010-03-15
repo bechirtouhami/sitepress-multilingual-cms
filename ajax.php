@@ -754,6 +754,14 @@ switch($_REQUEST['icl_ajx_action']){
         $this->save_settings($iclsettings);
         echo '1|';        
         break;
+    case 'icl_st_option_writes_form':
+        if(!empty($_POST['icl_admin_options'])){
+            icl_register_admin_options($_POST['icl_admin_options']);
+            echo '1|';        
+        }else{
+            echo '0' . __('No strings selected', 'sitepress');
+        }
+        break;
     default:
         do_action('icl_ajx_custom_call', $_REQUEST['icl_ajx_action'], $_REQUEST);
 }    

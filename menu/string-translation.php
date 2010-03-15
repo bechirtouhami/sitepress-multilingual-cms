@@ -586,8 +586,8 @@ $available_contexts = array_unique($available_contexts);
         <br clear="all" /><br />
     <?php endif; ?>
     
-    <?php /*
-    <a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/string-translation.php&amp;trop=1"><?php _e('Translate strings from the options table', 'sitepress'); ?></a> */ ?>
+     
+    <a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/string-translation.php&amp;trop=1"><?php _e('Translate strings from the options table', 'sitepress'); ?></a> 
     
     <?php do_action('icl_menu_footer'); ?>
     
