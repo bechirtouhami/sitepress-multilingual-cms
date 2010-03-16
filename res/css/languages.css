@@ -97,7 +97,10 @@ a#toggle-theme-localization{
 }
 
 #icl_edit_languages_table input { width:70px; }
+#icl_edit_languages_table .radio, #icl_edit_languages_table .file { width:auto; }
 #icl_edit_languages_info ul {
 	list-style : square inside;
 	padding: 15px;
 }
+
+#icl_edit_languages_table td { vertical-align: middle; }
