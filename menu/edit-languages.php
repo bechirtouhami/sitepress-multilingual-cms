@@ -40,6 +40,19 @@ class SitePressEditLanguages {
 <div class="wrap">
     <div id="icon-options-general" class="icon32 icon32_adv"><br /></div>
     <h2><?php _e('Edit Languages', 'sitepress') ?></h2>
+	<div id="icl_edit_languages_info">
+<?php
+	_e('This table allows you to edit languages for your site. Each row represents a language.
+<br /><br />
+For each language, you need to enter the following information:
+<ul>
+    <li>Code: a unique value that identifies the language. Once entered, the language code cannot be changed.</li>
+    <li>Translations: the way the language name will be displayed in different languages.</li>
+    <li>Flag: the flag to display next to the language (optional). You can either upload your own flag or use one of WPML\'s built in flag images.</li>
+    <li>Default locale: This determines the locale value for this language. You should check the name of WordPress localization file to set this correctly.</li>
+</ul>', 'sitepress'); ?>
+
+	</div>
 <?php
 	if ($this->error) {
 		echo '	<div class="icl_error_text" style="margin:10px;">
@@ -49,14 +62,14 @@ class SitePressEditLanguages {
 ?>
 	<br />
 	<?php $this->edit_table(); ?>
-	<div class="icl_error_text icl_edit_languages_show" style="display: none; margin:10px;"><p><?php _e('Notice: language code can\'t be changed after adding language.', 'sitepress'); ?></p></div>
+	<div class="icl_error_text icl_edit_languages_show" style="display: none; margin:10px;"><p><?php _e('Please note: language codes cannot be changed after adding languages. Make sure you enter the correct code.', 'sitepress'); ?></p></div>
 </div>
 <?php
 	}
 
 	function edit_table(){
 ?>
-	<form enctype="multipart/form-data" action="" method="post">
+	<form enctype="multipart/form-data" action="" method="post" id="icl_edit_languages_form">
 	<input type="hidden" name="icl_edit_languages_action" value="update" />
 	<input type="hidden" name="icl_edit_languages_ignore_add" id="icl_edit_languages_ignore_add" value="<?php echo ($this->add_validation_failed) ? 'false' : 'true'; ?>" />
 	<table id="icl_edit_languages_table" class="widefat" cellspacing="0">
@@ -103,9 +116,10 @@ class SitePressEditLanguages {
 ?>
 			</tbody>
 	</table>
-	<p class="submit alignleft"><a href="/wp-admin/admin.php?page=sitepress-multilingual-cms/menu/languages.php" class="button-primary"><?php _e('Back to languages', 'sitepress'); ?></a></p>
+	<p class="submit alignleft"><a href="/wp-admin/admin.php?page=sitepress-multilingual-cms/menu/languages.php">&laquo;<?php _e('Back to languages', 'sitepress'); ?></a></p>
 
-	<p class="submit alignright"><input type="button" name="icl_edit_languages_add_language_button" id="icl_edit_languages_add_language_button" value="<?php _e('Add Language', 'sitepress'); ?>" class="button-primary"<?php if ($this->add_validation_failed) { ?> style="display:none;"<?php } ?> />&nbsp;<input type="button" name="icl_edit_languages_cancel_button" id="icl_edit_languages_cancel_button" value="<?php _e('Cancel', 'sitepress'); ?>" class="button-primary icl_edit_languages_show"<?php if (!$this->add_validation_failed) { ?> style="display:none;"<?php } ?> />&nbsp;<input type="submit" value="<?php _e('Update', 'sitepress'); ?>" /></p>
+	<p class="submit alignright">
+		<input type="button" name="icl_edit_languages_add_language_button" id="icl_edit_languages_add_language_button" value="<?php _e('Add Language', 'sitepress'); ?>" class="button-secondary"<?php if ($this->add_validation_failed) { ?> style="display:none;"<?php } ?> />&nbsp;<input type="button" name="icl_edit_languages_cancel_button" id="icl_edit_languages_cancel_button" value="<?php _e('Cancel', 'sitepress'); ?>" class="button-secondary icl_edit_languages_show"<?php if (!$this->add_validation_failed) { ?> style="display:none;"<?php } ?> />&nbsp;<input disabled type="submit" class="button-primary" value="<?php _e('Save', 'sitepress'); ?>" /></p>
     <br clear="all" />
 	</form>
 
@@ -154,7 +168,7 @@ class SitePressEditLanguages {
 						jQuery('#icl_edit_languages_ignore_add').val('true');
 					});
 				});
-				jQuery('.icl_edit_languages_switch_upload').toggle(function() {
+				jQuery('.icl_edit_languages_switch_upload').toggle(function(){
 						jQuery(this).val('<?php _e('Use field','sitepress'); ?>');
 						jQuery(this).parent().children('.icl_edit_languages_flag_upload').val('true');
 						jQuery(this).parent().children('.icl_edit_languages_flag_enter_field').hide();
@@ -164,7 +178,11 @@ class SitePressEditLanguages {
 						jQuery(this).parent().children('.icl_edit_languages_flag_upload').val('false');
 						jQuery(this).parent().children('.icl_edit_languages_flag_upload_field').hide();
  						jQuery(this).parent().children('.icl_edit_languages_flag_enter_field').show();
-					});
+				});
+				jQuery('#icl_edit_languages_form :submit').attr('disabled',true);
+				jQuery('#icl_edit_languages_form input').click(function(){
+					jQuery('#icl_edit_languages_form :submit').attr('disabled',false);
+				});
 			});
 		</script>
 <?php

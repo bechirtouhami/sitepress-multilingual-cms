@@ -97,3 +97,7 @@ a#toggle-theme-localization{
 }
 
 #icl_edit_languages_table input { width:70px; }
+#icl_edit_languages_info ul {
+	list-style : square inside;
+	padding: 15px;
+}
