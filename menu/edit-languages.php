@@ -46,10 +46,10 @@ class SitePressEditLanguages {
 <br /><br />
 For each language, you need to enter the following information:
 <ul>
-    <li>Code: a unique value that identifies the language. Once entered, the language code cannot be changed.</li>
-    <li>Translations: the way the language name will be displayed in different languages.</li>
-    <li>Flag: the flag to display next to the language (optional). You can either upload your own flag or use one of WPML\'s built in flag images.</li>
-    <li>Default locale: This determines the locale value for this language. You should check the name of WordPress localization file to set this correctly.</li>
+    <li><strong>Code:</strong> a unique value that identifies the language. Once entered, the language code cannot be changed.</li>
+    <li><strong>Translations:</strong> the way the language name will be displayed in different languages.</li>
+    <li><strong>Flag:</strong> the flag to display next to the language (optional). You can either upload your own flag or use one of WPML\'s built in flag images.</li>
+    <li><strong>Default locale:</strong> This determines the locale value for this language. You should check the name of WordPress localization file to set this correctly.</li>
 </ul>', 'sitepress'); ?>
 
 	</div>
@@ -116,7 +116,7 @@ For each language, you need to enter the following information:
 ?>
 			</tbody>
 	</table>
-	<p class="submit alignleft"><a href="/wp-admin/admin.php?page=sitepress-multilingual-cms/menu/languages.php">&laquo;<?php _e('Back to languages', 'sitepress'); ?></a></p>
+	<p class="submit alignleft"><a href="/wp-admin/admin.php?page=sitepress-multilingual-cms/menu/languages.php">&laquo;&nbsp;<?php _e('Back to languages', 'sitepress'); ?></a></p>
 
 	<p class="submit alignright">
 		<input type="button" name="icl_edit_languages_add_language_button" id="icl_edit_languages_add_language_button" value="<?php _e('Add Language', 'sitepress'); ?>" class="button-secondary"<?php if ($this->add_validation_failed) { ?> style="display:none;"<?php } ?> />&nbsp;<input type="button" name="icl_edit_languages_cancel_button" id="icl_edit_languages_cancel_button" value="<?php _e('Cancel', 'sitepress'); ?>" class="button-secondary icl_edit_languages_show"<?php if (!$this->add_validation_failed) { ?> style="display:none;"<?php } ?> />&nbsp;<input disabled type="submit" class="button-primary" value="<?php _e('Save', 'sitepress'); ?>" /></p>
@@ -385,7 +385,6 @@ For each language, you need to enter the following information:
 		} else {
 			if (empty($data['flag'])) {
 				$data['flag'] = $data['code'] . '.png';
-				
 			}
 			$from_template = 0;
 		}
@@ -418,6 +417,7 @@ For each language, you need to enter the following information:
 			if ($name == 'flag') {
 				if ($data['flag_upload'] == 'true') {
 					$check =  $_FILES['icl_edit_languages']['name'][$id]['flag_file'];
+					if (empty($check)) continue;
 					if (!$this->check_extension($check)) {
 						if ($id == 'add') {
 							$this->add_validation_failed = true;
