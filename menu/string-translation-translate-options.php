@@ -9,15 +9,22 @@
 
     <?php if(!empty($troptions)): ?>
     <div id="icl_st_option_writes">
+    <p><?php _e('This table shows all the admin texts that WPML  found.', 'sitepress'); ?></p>
+    <p><?php printf(__('The fields with <span%s>cyan</span> background are text fields and the fields with <span%s>gray</span> background are numeric.', 'sitepress'),' class="icl_st_string"',' class="icl_st_numeric"'); ?></p>
+    <p><?php printf(__("Choose the fields you'd like to translate and click on the 'Apply' button. Then, use WPML's <a%s>String translation</a> to translate them.", 'sitepress'),' href="admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/string-translation.php&context=admin_options_'.get_option('template').'"'); ?></p>    
     <form name="icl_st_option_writes_form" id="icl_st_option_write_form">
     <?php foreach($troptions as $option_name=>$option_value): ?>
     <?php echo icl_st_render_option_writes($option_name, $option_value); ?>
     <br clear="all" />
     <?php endforeach; ?>    
+    <span id="icl_st_options_write_success" class="hidden updated message fade"><?php printf(__('The selected strings can now be translated using the <a%s>string translation</a> screen', 'sitepress'), ' href="admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/string-translation.php&context=admin_options_'.get_option('template').'"');?></span>
+    <span id="icl_st_options_write_confirm" class="hidden"><?php _e('You have removed some of the texts that are translated already. The translations will be lost.','sitepress')?></span>
     <p class="submit">
-        <input type="submit" value="<?php _e('Register selected strings', 'sitepress');?>" />
+        <input type="submit" value="<?php _e('Apply', 'sitepress');?>" />
         <span class="icl_ajx_response" id="icl_ajx_response"></span>
     </p>
+    
+    
     
     </form>
     </div>

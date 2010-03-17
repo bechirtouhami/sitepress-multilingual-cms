@@ -36,8 +36,10 @@ jQuery(document).ready(function(){
     
     jQuery('#icl_st_more_options').submit(iclSaveForm);
     
+    jQuery('#icl_st_option_write_form').submit(icl_st_admin_options_form_submit);
     jQuery('#icl_st_option_write_form').submit(iclSaveForm);
     
+    jQuery('.icl_stow_toggler').click(icl_st_admin_strings_toggle_strings);
     
         
     // Picker align
@@ -302,4 +304,31 @@ cp.writeDiv();
 function iclResizeIframe(){
     jQuery('#icl_string_track_frame_wrap iframe').attr('height',jQuery('#TB_ajaxContent').height()-20);
     jQuery('#icl_string_track_frame_wrap iframe').attr('width',jQuery('#TB_ajaxContent').width());
+}
+
+function icl_st_admin_options_form_submit(){
+    if(jQuery('input:checkbox.icl_st_has_translations[checked!=true]').length){
+        c = confirm(jQuery('#icl_st_options_write_confirm').html());
+        if(c){
+            iclHaltSave = false;
+        }else{
+            iclHaltSave = true;
+        }
+    }
+    iclSaveForm_success_cb.push(function(){
+        jQuery('#icl_st_options_write_success').fadeIn();
+    });
+}
+
+
+function icl_st_admin_strings_toggle_strings(){
+    var thisa = jQuery(this);
+    jQuery(this).parent().next().slideToggle(function(){
+        if(thisa.html()=='+'){
+            thisa.html('-');
+        }else{
+            thisa.html('+');
+        }
+    });
+    return false;
 }

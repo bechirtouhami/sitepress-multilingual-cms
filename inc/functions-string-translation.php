@@ -417,6 +417,17 @@ function icl_st_is_registered_string($context, $name){
     return $string_id;
 }
 
+function icl_st_string_has_translations($context, $name){
+    global $wpdb;
+    $sql = "
+        SELECT COUNT(st.id) 
+        FROM {$wpdb->prefix}icl_string_translations st 
+        JOIN {$wpdb->prefix}icl_strings s ON s.id=st.string_id
+        WHERE s.name='".$wpdb->escape($name)."' AND s.context='".$wpdb->escape($context)."'
+    ";
+    return $wpdb->get_var($sql);
+}
+
 function icl_rename_string($context, $old_name, $new_name){
     global $wpdb;
     $wpdb->update($wpdb->prefix.'icl_strings', array('name'=>$new_name), array('context'=>$context, 'name'=>$old_name));
@@ -792,7 +803,7 @@ function icl_st_update_text_widgets_actions($old_options, $new_options){
 function icl_t_cache_lookup($context, $name){
     global $sitepress_settings;
     static $icl_st_cache;
-    
+        
     if(!isset($icl_st_cache)){
         $icl_st_cache = array();
     }
@@ -816,6 +827,7 @@ function icl_t_cache_lookup($context, $name){
                 s.language = '{$default_language}' AND s.context = '{$context}'
                 AND (t.language = '{$current_language}' OR t.language IS NULL)
             ", ARRAY_A);
+                        
         if(isset($switched) && $switched){
             $wpdb->set_blog_id($prev_blog_id);
         }            
@@ -1286,23 +1298,25 @@ function _icl_st_get_options_writes($path){
                 _icl_st_get_options_writes($path . '/' . $file);                
             }elseif(preg_match('#(\.php|\.inc)$#i', $file)){
                 $content = file_get_contents($path . '/' . $file);
-                $int = preg_match('#(add|update)_option\(([^,]+),([^)]+)\)#i', $content, $matches);
+                $int = preg_match_all('#(add|update)_option\(([^,]+),([^)]+)\)#im', $content, $matches);
                 if($int){
-                    $option_name = trim($matches[2]);
-                    if(0 === strpos($option_name, '"') || 0 === strpos($option_name, "'")){
-                        $option_name = trim($option_name, "\"'");
-                    }elseif(false === strpos($option_name, '$')){
-                        $option_name = constant($option_name);
-                    }else{
-                        $option_name = false;
-                    }
-                    if($option_name){
-                        $found_writes[] = $option_name;
+                    foreach($matches[2] as $m){
+                        $option_name = trim($m);
+                        if(0 === strpos($option_name, '"') || 0 === strpos($option_name, "'")){
+                            $option_name = trim($option_name, "\"'");
+                        }elseif(false === strpos($option_name, '$')){
+                            $option_name = constant($option_name);
+                        }else{
+                            $option_name = false;
+                        }
+                        if($option_name){
+                            $found_writes[] = $option_name;
+                        }
                     }
                 }
             }
         }
-    }   
+    } 
     return $found_writes;
 }
 
@@ -1330,18 +1344,19 @@ function icl_st_scan_options_strings(){
     
     if(!empty($options_names)){   
         $res = $wpdb->get_results("SELECT option_name, option_value FROM $wpdb->options WHERE option_name IN ('".join("','", $options_names)."')");
-        
         foreach($res as $row){
             $options[$row->option_name] = maybe_unserialize($row->option_value);
         }
     }
-   
+    
+    update_option('_icl_admin_option_names', $options_names);
+         
     return $options;
 }
 
-function icl_st_render_option_writes($option_name, $option_value, $option_key=''){
+function icl_st_render_option_writes($option_name, $option_value, $option_key=''){    
     if(is_array($option_value) || is_object($option_value)){
-        echo '<h4>' . $option_name . '</h4>';
+        echo '<h4><a class="icl_stow_toggler" href="#">-</a>' . $option_name . '</h4>';
         echo '<ul class="icl_st_option_writes">';
         foreach($option_value as $key=>$value){
             echo '<li>';
@@ -1352,38 +1367,87 @@ function icl_st_render_option_writes($option_name, $option_value, $option_key=''
     }elseif(is_string($option_value) || is_numeric($option_value)){
         if(icl_st_is_registered_string('admin_options_' . get_option('template'), $option_key . $option_name)){
             $checked = ' checked="checked"';
+            if(icl_st_string_has_translations('admin_options_' . get_option('template'), $option_key . $option_name)){
+                $has_translations = ' class="icl_st_has_translations"';
+            }else{
+                $has_translations = '';
+            }            
         }else{
             $checked = '';
-        }
+        }        
         if(is_numeric($option_value)){
             $class = 'icl_st_numeric';
         }else{
             $class = 'icl_st_string';
         }
+        if(trim($option_value)===''){
+            $disabled = ' disabled="disabled"';
+        }else{
+            $disabled = '';
+        }
         echo '<div class="icl_st_admin_string '.$class.'">';
-        echo '<input type="checkbox" name="icl_admin_options'.$option_key.'['.$option_name.']" value="'.htmlspecialchars($option_value).'" 
+        echo '<input'.$disabled.' type="hidden" name="icl_admin_options'.$option_key.'['.$option_name.']" value=""  />';
+        echo '<input'.$disabled.$has_translations.' type="checkbox" name="icl_admin_options'.$option_key.'['.$option_name.']" value="'.htmlspecialchars($option_value).'" 
             '.$checked.' />';
         echo '<input type="text" readonly="readonly" value="'.$option_name.'" size="32" />'; 
         echo '<input type="text" value="'.htmlspecialchars($option_value).'" readonly="readonly" size="48" />';        
         //echo '<br /><input type="text" size="100" value="icl_admin_options'.$option_key.'['.$option_name.']" />';
-        echo '</div>';
+        echo '</div><br clear="all" />';
     }
 }
 
-function icl_register_admin_options($array, $key=""){
-    if($key){
-        $real_key = $key . '::';
-    }else{
-        $real_key = '';
-    }
-    
+function icl_register_admin_options($array, $key=""){    
     foreach($array as $k=>$v){
         if(is_array($v)){
             icl_register_admin_options($v, $key . '['.$k.']');
         }else{
-            icl_register_string('admin_options_' . get_option('template'), $key . $k, $v);
+            if($v === ''){
+                icl_unregister_string('admin_options_' . get_option('template'), $key . $k);
+            }else{
+                icl_register_string('admin_options_' . get_option('template'), $key . $k, $v);
+            }            
         }
     }    
+}
+
+
+add_action('init', 'icl_st_set_admin_options_filters');
+function icl_st_set_admin_options_filters(){
+    $option_names = get_option('_icl_admin_option_names');
+    foreach($option_names as $option){
+        add_filter('option_'.$option, 'icl_st_translate_admin_string');
+    }
+}
+
+
+function icl_st_translate_admin_string($option_value, $key="", $name=""){
+       
+    if(is_array($option_value) || is_object($option_value)){
+        if(!$name){
+            $ob = debug_backtrace();
+            $name = preg_replace('@^option_@', '', $ob[3]['args'][0]);
+        }
+        
+        foreach($option_value as $k=>$value){            
+            $val = icl_st_translate_admin_string($value, $key . '[' . $name . ']' , $k);
+            if(is_object($option_value)){
+                $option_value->$k = $val;
+            }else{
+                $option_value[$k] = $val;
+            }   
+        }            
+    }else{   
+        if(!$name){
+            $ob = debug_backtrace();
+            $name = preg_replace('@^option_@', '',$ob[2]['args'][0]);
+        }
+        $tr = icl_t('admin_options_' . get_option('template'), $key . $name);
+        if($tr !== null){
+            $option_value = $tr;
+        }            
+    }
+    
+    return $option_value;
 }
 
 function icl_st_get_mo_files($path){

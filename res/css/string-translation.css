@@ -124,7 +124,26 @@ div.postbox div.inside {
     background-color: #d5e8f9;
     border: 1px solid #9bc8f0;
 }
+span.icl_st_numeric, span.icl_st_string{
+    padding:2px;
+    -moz-border-radius: 4px;
+}
 .icl_st_string{
     background-color: #f3ece2;
     border: 1px solid #c4a26f;
+}
+
+.icl_stow_head{
+    float:left;
+}
+
+#icl_st_options_write_success{
+    padding:4px;
+}
+.icl_stow_toggler{
+    text-decoration: none;
+    font-weight: bold;
+    display: block;
+    float: left;
+    width: 14px;
 }
