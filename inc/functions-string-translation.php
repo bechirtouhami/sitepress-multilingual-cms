@@ -1356,7 +1356,7 @@ function icl_st_scan_options_strings(){
 
 function icl_st_render_option_writes($option_name, $option_value, $option_key=''){    
     if(is_array($option_value) || is_object($option_value)){
-        echo '<h4><a class="icl_stow_toggler" href="#">-</a>' . $option_name . '</h4>';
+        echo '<h4><a class="icl_stow_toggler" href="#">- ' . $option_name . '</a></h4>';
         echo '<ul class="icl_st_option_writes">';
         foreach($option_value as $key=>$value){
             echo '<li>';
@@ -1410,13 +1410,15 @@ function icl_register_admin_options($array, $key=""){
     }    
 }
 
+function wpml_register_admin_strings($serizlized_array){
+    icl_register_admin_options(unserialize($serizlized_array));    
+}
 
 add_action('init', 'icl_st_set_admin_options_filters');
 function icl_st_set_admin_options_filters(){
-    if ($option_names = get_option('_icl_admin_option_names')) {
-        foreach($option_names as $option){
-            add_filter('option_'.$option, 'icl_st_translate_admin_string');
-        }
+    $option_names = get_option('_icl_admin_option_names');
+    foreach((array)$option_names as $option){
+        add_filter('option_'.$option, 'icl_st_translate_admin_string');
     }
 }
 

@@ -41,6 +41,10 @@ jQuery(document).ready(function(){
     
     jQuery('.icl_stow_toggler').click(icl_st_admin_strings_toggle_strings);
     
+    jQuery('#icl_st_ow_export').click(icl_st_ow_export_selected);
+    jQuery('#icl_st_ow_export_close').click(icl_st_ow_export_close);
+    
+    
         
     // Picker align
     jQuery(".pick-show").click(function () {
@@ -306,7 +310,7 @@ function iclResizeIframe(){
     jQuery('#icl_string_track_frame_wrap iframe').attr('width',jQuery('#TB_ajaxContent').width());
 }
 
-function icl_st_admin_options_form_submit(){
+function icl_st_admin_options_form_submit(frm,msg){
     if(jQuery('input:checkbox.icl_st_has_translations[checked!=true]').length){
         c = confirm(jQuery('#icl_st_options_write_confirm').html());
         if(c){
@@ -324,11 +328,36 @@ function icl_st_admin_options_form_submit(){
 function icl_st_admin_strings_toggle_strings(){
     var thisa = jQuery(this);
     jQuery(this).parent().next().slideToggle(function(){
-        if(thisa.html()=='+'){
-            thisa.html('-');
+        if(thisa.html().charAt(0)=='+'){
+            thisa.html(thisa.html().replace(/^\+/,'-'));
         }else{
-            thisa.html('+');
+            thisa.html(thisa.html().replace(/^-/,'+'));
         }
     });
     return false;
+}
+
+function icl_st_ow_export_selected(){
+    jQuery('#icl_st_ow_export').attr('disabled','disabled');
+    jQuery('#icl_st_option_writes .ajax_loader').fadeIn();
+    jQuery.ajax({
+        type: "POST",
+        dataType: 'json',
+        url: icl_ajx_url,
+        data: "icl_ajx_action=icl_st_ow_export&"+jQuery('#icl_st_option_write_form').serialize(),
+        success: function(res){            
+            jQuery('#icl_st_ow_export_out').val(res.message).slideDown();
+            jQuery('#icl_st_option_writes .ajax_loader').fadeOut(
+                function(){
+                    jQuery('#icl_st_ow_export_close').fadeIn();            
+                }
+            );
+            
+        }
+    });
+}
+
+function icl_st_ow_export_close(){
+    jQuery('#icl_st_ow_export_out').slideUp(function(){jQuery('#icl_st_ow_export_close').fadeOut()});
+    jQuery('#icl_st_ow_export').removeAttr('disabled');
 }

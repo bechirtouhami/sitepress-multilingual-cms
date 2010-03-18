@@ -140,10 +140,16 @@ span.icl_st_numeric, span.icl_st_string{
 #icl_st_options_write_success{
     padding:4px;
 }
-.icl_stow_toggler{
+a.icl_stow_toggler{
     text-decoration: none;
-    font-weight: bold;
-    display: block;
-    float: left;
-    width: 14px;
+}
+
+#icl_st_ow_export_out{
+    display: none;
+    width:100%;
+    height:200px;
+    font-size:10px;
+}
+#icl_st_ow_export_close{
+    display: none;
 }

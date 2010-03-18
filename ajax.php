@@ -762,6 +762,26 @@ switch($_REQUEST['icl_ajx_action']){
             echo '0' . __('No strings selected', 'sitepress');
         }
         break;
+    case 'icl_st_ow_export':
+        if(!empty($_POST['icl_admin_options'])){
+            
+            foreach($_POST['icl_admin_options'] as $k => $opt){
+                if(empty($opt)){
+                    unset($_POST['icl_admin_options'][$k]);
+                }
+            }
+            
+            $message = "<?php
+if (function_exists('wpml_register_admin_strings')) {
+    wpml_register_admin_strings('".serialize($_POST['icl_admin_options'])."');
+}
+?>";
+        }else{
+            $error = 1;
+            $message = __('Error: no strings selected', 'sitepress');
+        }
+        echo json_encode(array('error'=>0, 'message'=>$message));
+        break;
     default:
         do_action('icl_ajx_custom_call', $_REQUEST['icl_ajx_action'], $_REQUEST);
 }    
