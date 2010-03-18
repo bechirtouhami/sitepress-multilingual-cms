@@ -38,7 +38,7 @@
     </form>
     </div>
     <?php else: ?>
-    <div align="center"><?php _e('No options found', 'sitepress') ?></div>
+    <div align="center"><?php _e('No options found. Make sure you saved your theme options at least once. <br />Some themes only add these to the wp_options table after the user explitly saves over the theme defaults', 'sitepress') ?></div>
     <?php endif; ?>
     
 </div>

@@ -1328,8 +1328,10 @@ function icl_st_scan_options_strings(){
     
     // scan theme php file for update_option(), add_option()
     $options_names = _icl_st_get_options_writes(get_template_directory());
+    
     $options_names = array_merge($options_names, _icl_st_get_options_writes(get_stylesheet_directory()));
     $options_names = array_unique($options_names);
+    
     
     // TO REMOVE
     //if($_GET['deb']=='ug'){
@@ -1346,6 +1348,8 @@ function icl_st_scan_options_strings(){
         $res = $wpdb->get_results("SELECT option_name, option_value FROM $wpdb->options WHERE option_name IN ('".join("','", $options_names)."')");
         foreach($res as $row){
             $options[$row->option_name] = maybe_unserialize($row->option_value);
+            // try unserializing twice - just in case (see Arras Theme)
+            $options[$row->option_name] = maybe_unserialize($options[$row->option_name]);
         }
     }
     
@@ -1433,7 +1437,7 @@ function wpml_register_admin_strings($serizlized_array){
     }
 }
 
-add_action('init', 'icl_st_set_admin_options_filters');
+add_action('plugins_loaded', 'icl_st_set_admin_options_filters');
 function icl_st_set_admin_options_filters(){
     $option_names = get_option('_icl_admin_option_names');
     foreach((array)$option_names as $option){
@@ -1443,7 +1447,15 @@ function icl_st_set_admin_options_filters(){
 
 
 function icl_st_translate_admin_string($option_value, $key="", $name=""){
-       
+    
+    // case of double-serialized options (See Arras theme)   
+    $serialized = false;
+    if(is_serialized( $option_value )){
+        $option_value = @unserialize($option_value);
+        $serialized = true;
+    }
+    
+    
     if(is_array($option_value) || is_object($option_value)){
         if(!$name){
             $ob = debug_backtrace();
@@ -1463,10 +1475,15 @@ function icl_st_translate_admin_string($option_value, $key="", $name=""){
             $ob = debug_backtrace();
             $name = preg_replace('@^option_@', '',$ob[2]['args'][0]);
         }
-        $tr = icl_t('admin_options_' . get_option('template'), $key . $name);
+        $tr = icl_t('admin_options_' . get_option('template'), $key . $name, $option_value);
         if($tr !== null){
             $option_value = $tr;
         }            
+    }
+    
+    // case of double-serialized options (See Arras theme)   
+    if($serialized){
+        $option_value = serialize($option_value);
     }
     
     return $option_value;
