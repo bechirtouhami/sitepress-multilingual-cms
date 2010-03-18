@@ -346,7 +346,7 @@ function icl_st_ow_export_selected(){
         url: icl_ajx_url,
         data: "icl_ajx_action=icl_st_ow_export&"+jQuery('#icl_st_option_write_form').serialize(),
         success: function(res){            
-            jQuery('#icl_st_ow_export_out').val(res.message).slideDown();
+            jQuery('#icl_st_ow_export_out').html(res.message).slideDown();
             jQuery('#icl_st_option_writes .ajax_loader').fadeOut(
                 function(){
                     jQuery('#icl_st_ow_export_close').fadeIn();            

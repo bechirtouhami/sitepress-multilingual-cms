@@ -18,9 +18,7 @@
         <input type="button" class="button-primary" id="icl_st_ow_export_close" value="<?php _e('Close', 'sitepress')?>" />
         <img class="ajax_loader" src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" style="display:none" width="16" height="16" />
     </p>
-    <p>
-    <textarea id="icl_st_ow_export_out" wrap="soft"></textarea>
-    </p>
+    <p id="icl_st_ow_export_out"></p>
     
     <form name="icl_st_option_writes_form" id="icl_st_option_write_form">    
         

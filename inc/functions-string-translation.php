@@ -1411,7 +1411,11 @@ function icl_register_admin_options($array, $key=""){
 }
 
 function wpml_register_admin_strings($serizlized_array){
-    icl_register_admin_options(unserialize($serizlized_array));    
+    try{
+        icl_register_admin_options(unserialize($serizlized_array));    
+    }catch(Exception $e){
+        trigger_error($e->getMessage(), E_USER_WARNING);
+    }
 }
 
 add_action('init', 'icl_st_set_admin_options_filters');

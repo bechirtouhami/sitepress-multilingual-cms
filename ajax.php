@@ -771,11 +771,12 @@ switch($_REQUEST['icl_ajx_action']){
                 }
             }
             
-            $message = "<?php
+            $message = __('Include the following PHP in your code. <em>functions.php</em> would be a good place.', 'sitepress')
+            . "<textarea wrap=\"soft\">&lt;?php
 if (function_exists('wpml_register_admin_strings')) {
     wpml_register_admin_strings('".serialize($_POST['icl_admin_options'])."');
 }
-?>";
+?&gt;</textarea>";
         }else{
             $error = 1;
             $message = __('Error: no strings selected', 'sitepress');
