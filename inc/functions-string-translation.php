@@ -1410,6 +1410,21 @@ function icl_register_admin_options($array, $key=""){
     }    
 }
 
+function _icl_st_filter_empty_options_out($array){
+    $empty_found = false;
+    foreach($array as $k=>$v){
+        if(is_array($v) && !empty($v)){
+            list($array[$k], $empty_found) = _icl_st_filter_empty_options_out($v);
+        }else{
+            if(empty($v)){
+                unset($array[$k]);
+                $empty_found = true;
+            }
+        }
+    }
+    return array($array, $empty_found);
+}
+
 function wpml_register_admin_strings($serizlized_array){
     try{
         icl_register_admin_options(unserialize($serizlized_array));    

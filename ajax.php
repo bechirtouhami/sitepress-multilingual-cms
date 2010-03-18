@@ -763,10 +763,15 @@ switch($_REQUEST['icl_ajx_action']){
         }
         break;
     case 'icl_st_ow_export':
+        // filter empty options out
+        do{
+            list($_POST['icl_admin_options'], $empty_found) = _icl_st_filter_empty_options_out($_POST['icl_admin_options']);
+        }while($empty_found);
+        
         if(!empty($_POST['icl_admin_options'])){
             
             foreach($_POST['icl_admin_options'] as $k => $opt){
-                if(empty($opt)){
+                if(!$opt){
                     unset($_POST['icl_admin_options'][$k]);
                 }
             }
