@@ -476,19 +476,20 @@ class AbsoluteLinksPlugin{
     
     function process_string($st_id, $translation=true){
         global $wpdb;
-        
-        if($translation){
-            $string_value = $wpdb->get_var("SELECT value FROM {$wpdb->prefix}icl_string_translations WHERE id=" . $st_id);
-        }else{
-            $string_value = $wpdb->get_var("SELECT value FROM {$wpdb->prefix}icl_strings WHERE id=" . $st_id);
-        }
-        $string_value_up = $this->_process_generic_text($string_value);
-        
-        if($string_value_up != $string_value){
+        if($st_id){
             if($translation){
-                $wpdb->update($wpdb->prefix . 'icl_string_translations', array('value'=>$string_value_up), array('id'=>$st_id));
+                $string_value = $wpdb->get_var("SELECT value FROM {$wpdb->prefix}icl_string_translations WHERE id=" . $st_id);
             }else{
-                $wpdb->update($wpdb->prefix . 'icl_strings', array('value'=>$string_value_up), array('id'=>$st_id));
+                $string_value = $wpdb->get_var("SELECT value FROM {$wpdb->prefix}icl_strings WHERE id=" . $st_id);
+            }
+            $string_value_up = $this->_process_generic_text($string_value);
+            
+            if($string_value_up != $string_value){
+                if($translation){
+                    $wpdb->update($wpdb->prefix . 'icl_string_translations', array('value'=>$string_value_up), array('id'=>$st_id));
+                }else{
+                    $wpdb->update($wpdb->prefix . 'icl_strings', array('value'=>$string_value_up), array('id'=>$st_id));
+                }
             }
         }
     }
