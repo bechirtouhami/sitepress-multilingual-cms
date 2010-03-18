@@ -1413,9 +1413,10 @@ function icl_register_admin_options($array, $key=""){
 
 add_action('init', 'icl_st_set_admin_options_filters');
 function icl_st_set_admin_options_filters(){
-    $option_names = get_option('_icl_admin_option_names');
-    foreach($option_names as $option){
-        add_filter('option_'.$option, 'icl_st_translate_admin_string');
+    if ($option_names = get_option('_icl_admin_option_names')) {
+        foreach($option_names as $option){
+            add_filter('option_'.$option, 'icl_st_translate_admin_string');
+        }
     }
 }
 
