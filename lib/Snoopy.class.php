@@ -198,9 +198,23 @@ class IcanSnoopy
             case "https":
                 if(!$this->curl_path)
                     return false;
-                if(function_exists("is_executable"))
-                    if (!@is_readable($this->curl_path) || !@is_executable($this->curl_path))
-                        return false;
+                
+                // disable error reporting
+                // needed for open_basedir restrictions (is_readable)
+                $_display_errors = ini_get('display_errors');
+                $_error_reporting = ini_get('error_reporting');
+                ini_set('display_errors', '0');        
+                ini_set('error_reporting', E_NONE);        
+                
+                $_test = function_exists("is_executable") && (!@is_readable($this->curl_path) || !@is_executable($this->curl_path));
+                
+                // restore error reporting
+                // needed for open_basedir restrictions
+                ini_set('display_errors', $_display_errors);        
+                ini_set('error_reporting', $_error_reporting);        
+                
+                if($_test) return false;
+                
                 $this->host = $URI_PARTS["host"];
                 if(!empty($URI_PARTS["port"]))
                     $this->port = $URI_PARTS["port"];
@@ -357,9 +371,23 @@ class IcanSnoopy
             case "https":
                 if(!$this->curl_path)
                     return false;
-                if(function_exists("is_executable"))
-                    if (!@is_readable($this->curl_path) || !@is_executable($this->curl_path))
-                        return false;
+
+                // disable error reporting
+                // needed for open_basedir restrictions (is_readable)
+                $_display_errors = ini_get('display_errors');
+                $_error_reporting = ini_get('error_reporting');
+                ini_set('display_errors', '0');        
+                ini_set('error_reporting', E_NONE);        
+                
+                $_test = function_exists("is_executable") && (!@is_readable($this->curl_path) || !@is_executable($this->curl_path));
+                
+                // restore error reporting
+                // needed for open_basedir restrictions
+                ini_set('display_errors', $_display_errors);        
+                ini_set('error_reporting', $_error_reporting);        
+                
+                if($_test) return false;
+                    
                 $this->host = $URI_PARTS["host"];
                 if(!empty($URI_PARTS["port"]))
                     $this->port = $URI_PARTS["port"];
@@ -1234,7 +1262,22 @@ class IcanSnoopy
                             $base_name = basename($file_name);
                             
                         } else {
-                            if (!@is_readable($file_name)) continue;
+                            
+                            // disable error reporting
+                            // needed for open_basedir restrictions (is_readable)
+                            $_display_errors = ini_get('display_errors');
+                            $_error_reporting = ini_get('error_reporting');
+                            ini_set('display_errors', '0');        
+                            ini_set('error_reporting', E_NONE);        
+                            
+                            $_is_readable = @is_readable($file_name);
+                            
+                            // restore error reporting
+                            // needed for open_basedir restrictions
+                            ini_set('display_errors', $_display_errors);        
+                            ini_set('error_reporting', $_error_reporting);        
+                            
+                            if (!$_is_readable) continue;
     
                             $fp = fopen($file_name, "r");
                             $file_content = fread($fp, filesize($file_name));

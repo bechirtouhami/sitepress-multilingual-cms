@@ -54,18 +54,26 @@ class ICanLocalizeQuery{
     
     function _request($request, $method='GET', $formvars=null, $formfiles=null, $gzipped = false){
         
-        //reset errors displaying settings
+        $request = str_replace(" ", "%20", $request);
+        $c = new IcanSnoopy();
+
+        // disable error reporting
+        // needed for open_basedir restrictions (is_readable)
         $_display_errors = ini_get('display_errors');
         $_error_reporting = ini_get('error_reporting');
         ini_set('display_errors', '0');        
         ini_set('error_reporting', E_NONE);        
         
-        $request = str_replace(" ", "%20", $request);
-        $c = new IcanSnoopy();
-        
         if (!@is_readable($c->curl_path) || !@is_executable($c->curl_path)){
             $c->curl_path = '/usr/bin/curl';
         }        
+        
+        // restore error reporting
+        // needed for open_basedir restrictions
+        ini_set('display_errors', $_display_errors);        
+        ini_set('error_reporting', $_error_reporting);        
+        
+        
         $c->_fp_timeout = 3;
         $url_parts = parse_url($request);
         $https = $url_parts['scheme']=='https';
@@ -119,11 +127,7 @@ class ICanLocalizeQuery{
             $this->error = $results['info']['status']['value'];            
             return false;
         }
-        
-        //restore errors displaying settings
-        ini_set('display_errors', $_display_errors);        
-        ini_set('error_reporting', $_error_reporting);        
-        
+                
         return $results;
     }
     
