@@ -444,6 +444,8 @@ class SitePress{
                             $this->this_lang = $this->get_default_language();
                         }                        
                 }
+                // allow forcing the current language when it can't be decoded from the URL
+                $this->this_lang = apply_filters('icl_set_current_language', $this->this_lang);
             }
             
             //reorder active language to put 'this_lang' in front
