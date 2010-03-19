@@ -55,12 +55,15 @@ function icl_sitepress_activate(){
         ) ENGINE=MyISAM {$charset_collate}"; 
         mysql_query($sql);
         $add_languages_translations = true;
-    }else{
-        if(!defined('ICL_PRESERVE_LANGUAGES_TRANSLATIONS') || !ICL_PRESERVE_LANGUAGES_TRANSLATIONS){
-            mysql_query("TRUNCATE TABLE `{$table_name}`");
-            $add_languages_translations = true;
-        }        
     }
+    //else{
+        // this table will not be trucated on upgrade starting with WPML 1.7.3
+        // $add_languages_translations sticks to false;
+        //if(!defined('ICL_PRESERVE_LANGUAGES_TRANSLATIONS') || !ICL_PRESERVE_LANGUAGES_TRANSLATIONS){
+        //    mysql_query("TRUNCATE TABLE `{$table_name}`");
+        //    $add_languages_translations = true;
+        //}        
+    //}
     
     if($add_languages_translations){
         foreach($langs_names as $lang=>$val){        

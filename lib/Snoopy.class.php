@@ -1234,7 +1234,7 @@ class IcanSnoopy
                             $base_name = basename($file_name);
                             
                         } else {
-                            if (!is_readable($file_name)) continue;
+                            if (!@is_readable($file_name)) continue;
     
                             $fp = fopen($file_name, "r");
                             $file_content = fread($fp, filesize($file_name));

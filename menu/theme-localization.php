@@ -69,7 +69,7 @@ $plugin_localization_stats = get_plugin_localization_stats();
         <input type="text" size="10" name="locale_file_name_<?php echo $lang['code']?>" value="<?php echo $locales[$lang['code']]?>" />.mo
     </td> 
     <td>
-        <?php if(is_readable(ABSPATH . LANGDIR . '/' . $locales[$lang['code']] . '.mo')): ?>
+        <?php if(@is_readable(ABSPATH . LANGDIR . '/' . $locales[$lang['code']] . '.mo')): ?>
         <span class="icl_valid_text"><?php echo __('File exists.', 'sitepress') ?></span>                
 		<?php elseif($lang['code'] != 'en' ): ?>
         <span class="icl_error_text"><?php echo __('File not found!', 'sitepress') ?></span>
@@ -77,7 +77,7 @@ $plugin_localization_stats = get_plugin_localization_stats();
     </td>
     <?php if($sitepress_settings['theme_localization_type']==2):?>       
     <td>
-        <?php if(is_readable(TEMPLATEPATH . '/' . $locales[$lang['code']] . '.mo')): ?>
+        <?php if(@is_readable(TEMPLATEPATH . '/' . $locales[$lang['code']] . '.mo')): ?>
         <span class="icl_valid_text"><?php echo __('File exists.', 'sitepress') ?></span>                
         <?php elseif($lang['code'] != 'en' ): ?>
         <span class="icl_error_text"><?php echo __('File not found!', 'sitepress') ?></span>
