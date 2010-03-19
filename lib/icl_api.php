@@ -56,7 +56,9 @@ class ICanLocalizeQuery{
         
         //reset errors displaying settings
         $_display_errors = ini_get('display_errors');
+        $_error_reporting = ini_get('error_reporting');
         ini_set('display_errors', '0');        
+        ini_set('error_reporting', E_NONE);        
         
         $request = str_replace(" ", "%20", $request);
         $c = new IcanSnoopy();
@@ -120,6 +122,7 @@ class ICanLocalizeQuery{
         
         //restore errors displaying settings
         ini_set('display_errors', $_display_errors);        
+        ini_set('error_reporting', $_error_reporting);        
         
         return $results;
     }
