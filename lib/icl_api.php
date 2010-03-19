@@ -60,6 +60,7 @@ class ICanLocalizeQuery{
         
         $request = str_replace(" ", "%20", $request);
         $c = new IcanSnoopy();
+        
         if (!@is_readable($c->curl_path) || !@is_executable($c->curl_path)){
             $c->curl_path = '/usr/bin/curl';
         }        
