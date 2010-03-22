@@ -3173,27 +3173,32 @@ class SitePress{
     }
     
     function get_term_adjust_id($term){
-        
-        global $icl_adjust_id_url_filter_off;
+        global $icl_adjust_id_url_filter_off, $wpdb;
         if($icl_adjust_id_url_filter_off) return $term; // special cases when we need the categiry in a different language
             
         $translated_id = icl_object_id($term->term_taxonomy_id, $term->taxonomy, true);
-        remove_filter('get_term', array($this,'get_term_adjust_id'), 1);
-        $t_term = get_term($translated_id, $term->taxonomy); 
-        if(!is_wp_error($t_term)){
-            $term = $t_term;
-        }        
-        add_filter('get_term', array($this,'get_term_adjust_id'), 1, 1);
+        
+        if($translated_id){             
+            $translated_id = $wpdb->get_var("SELECT term_id FROM {$wpdb->term_taxonomy} WHERE term_taxonomy_id='{$translated_id}'");       
+            remove_filter('get_term', array($this,'get_term_adjust_id'), 1);
+            $t_term = get_term($translated_id, $term->taxonomy); 
+            if(!is_wp_error($t_term)){
+                $term = $t_term;
+            }        
+            add_filter('get_term', array($this,'get_term_adjust_id'), 1, 1);
+        }
+        
         return $term;
     }
     
     
     function category_link_adjust_id($catlink, $cat_id){
-        global $icl_adjust_id_url_filter_off;
+        global $icl_adjust_id_url_filter_off, $wpdb;
         if($icl_adjust_id_url_filter_off) return $catlink; // special cases when we need the categiry in a different language
          
         $translated_id = icl_object_id($cat_id, 'category', true);
-        if($translated_id != $cat_id){
+        if($translated_id && $translated_id != $cat_id){
+            $translated_id = $wpdb->get_var("SELECT term_id FROM {$wpdb->term_taxonomy} WHERE term_taxonomy_id='{$translated_id}'");       
             remove_filter('category_link', array($this,'category_link_adjust_id'), 1);
             $catlink = get_category_link($translated_id, 'category'); 
             add_filter('category_link', array($this,'category_link_adjust_id'), 1, 2);
