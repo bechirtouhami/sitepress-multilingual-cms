@@ -66,6 +66,12 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 
 == Changelog ==
 
+= 1.7.3 =
+* Added option to edit/add languages.
+* Added option to scan & register themes options so they can be translated.
+* Fixed some issues with categories and tags when automaticallt adjust ids was on.
+* Reverted language name for Persian (in Farsi)
+
 = 1.7.2 =
 * Fixed bug related to using a revision for a translated page.
 * Fixed language names Magyar, Croatian, Persian, Latvian.
