@@ -50,36 +50,6 @@ class Hybrid_theme_compatibility  extends WPML_Package{
 			'checked'
 				);
 		
-			// This post is available
-		
-		$this->add_option_checkbox(
-			$wpage,
-			__('Show alternative languages for posts and pages', 'sitepress'),
-			'post_languages',
-			$title . __('Language selector options', 'sitepress'),
-			'checked'
-				);
-		
-        $this->add_option_text(
-			$wpage,
-			__('Text for alternative languages display', 'sitepress'),
-			'post_available_text',
-			$title . __('Language selector options','sitepress'),
-			'This post is also available in: %s',
-			array('size'=>40)
-				);
-		
-		$this->add_option_select(
-			$wpage,
-			__('Position to display alternative languages', 'sitepress'),
-			'post_available_position',
-			array( 'top' => __('Above post', 'sitepress'),
-			'bottom' => __('Bellow post', 'sitepress') ),
-			$title . __('Language selector options','sitepress'),
-			'bottom'
-				);
-        
-		
 		if($this->settings['header_language_selector']){
             add_action('hybrid_before_header',array(&$this,'language_selector_header'));
 			if($this->settings['header_load_css']) {
@@ -87,15 +57,10 @@ class Hybrid_theme_compatibility  extends WPML_Package{
 			}
 			$this->check_sidebar_language_selector_widget();
         }
-        
-        if($this->settings['post_languages']){
-            add_filter('the_content', array($this, 'add_post_available'));
-        }
 		
 		add_filter('hybrid_site_title',array(&$this,'filter_home_link'));
 		add_filter('wp_page_menu',array(&$this,'filter_home_link'));
 		
-		icl_register_string( 'theme '.$this->name, 'Text for alternative languages for posts', $this->settings['post_available_text'] );
 		$settings = get_option('hybrid_theme_settings');
 		if ( $settings && !empty($settings['footer_insert']) ) {
 			icl_register_string( 'theme '.$this->name, 'Footer text', $settings['footer_insert'] );

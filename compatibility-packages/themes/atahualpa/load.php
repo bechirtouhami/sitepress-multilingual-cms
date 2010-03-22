@@ -58,36 +58,6 @@ class Atahualpa_theme_compatibility  extends WPML_Package{
 		
         $wpage = ICL_PLUGIN_FOLDER . '/menu/languages.php';
 		$title = 'Atahualpa - ';
-		
-		
-			// This post is available
-		
-		$this->add_option_checkbox(
-			$wpage,
-			__('Show alternative languages for posts and pages', 'sitepress'),
-			'post_languages',
-			$title . __('Language selector options', 'sitepress'),
-			'checked'
-				);
-		
-        $this->add_option_text(
-			$wpage,
-			__('Text for alternative languages display', 'sitepress'),
-			'post_available_text',
-			$title . __('Language selector options','sitepress'),
-			'This post is also available in: %s',
-			array('size'=>40)
-				);
-		
-		$this->add_option_select(
-			$wpage,
-			__('Position to display alternative languages', 'sitepress'),
-			'post_available_position',
-			array( 'top' => __('Above post', 'sitepress'),
-			'bottom' => __('Bellow post', 'sitepress') ),
-			$title . __('Language selector options','sitepress'),
-			'bottom'
-				);
         
 			// Widget switcher CSS
 		$this->add_option_checkbox($wpage, __('Load CSS for language selector widget', 'sitepress'), 'widget_load_css', $title . __('More options', 'sitepress'), 'checked');
@@ -100,10 +70,6 @@ class Atahualpa_theme_compatibility  extends WPML_Package{
 			if(!defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS'))
 				define('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS',true);
 		}
-        
-        if($this->settings['post_languages']){
-            add_filter('the_content', array($this, 'add_post_available'));
-        }
 		
 		$this->load_css('css/compatibility-package.css');
     }
@@ -113,7 +79,6 @@ class Atahualpa_theme_compatibility  extends WPML_Package{
 	}
 
 	function register_strings(){
-		icl_register_string( 'theme '.$this->name, 'Text for alternative languages for posts', $this->settings['post_available_text'] );
 		global $bfa_ata;
 		foreach ($this->translatable_strings as $string) {
 			icl_register_string( 'theme '.$this->name, $this->make_title($string), $bfa_ata[$string] );
