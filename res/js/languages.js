@@ -142,6 +142,8 @@ addLoadEvent(function(){
         }
     });
     
+    jQuery('#icl_reset_languages').click(icl_reset_languages);
+    
 });
 function editingDefaultLanguage(){
     jQuery('#icl_change_default_button').hide();
@@ -783,4 +785,19 @@ function iclHideLanguagesCallback(){
     iclSaveForm_success_cb.push(function(frm,res){
         jQuery('#icl_hidden_languages_status').html(res[1]);
     });
+}
+
+function icl_reset_languages(){
+    var thisb = jQuery(this);
+    if(confirm(thisb.next().html())){
+        thisb.attr('disabled','disabled').next().html(icl_ajxloaderimg).fadeIn();
+        jQuery.ajax({
+                type: "POST",
+                url: icl_ajx_url,
+                data: "icl_ajx_action=reset_languages",
+                success: function(msg){location.href=location.pathname+location.search}
+        });    
+        
+        
+    }
 }

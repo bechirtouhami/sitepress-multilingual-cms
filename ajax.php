@@ -788,6 +788,50 @@ if (function_exists('wpml_register_admin_strings')) {
         }
         echo json_encode(array('error'=>0, 'message'=>$message));
         break;
+    case 'reset_languages':
+        require_once(ICL_PLUGIN_PATH . '/inc/lang-data.inc');
+        
+        $active = $wpdb->get_col("SELECT code FROM {$wpdb->prefix}icl_languages WHERE active = 1");
+        
+        mysql_query("TRUNCATE TABLE `{$wpdb->prefix}icl_languages`");
+        mysql_query("TRUNCATE TABLE `{$wpdb->prefix}icl_languages_translations`");
+        mysql_query("TRUNCATE TABLE `{$wpdb->prefix}icl_flags`");
+
+        foreach($langs_names as $key=>$val){
+            if(strpos($key,'Norwegian Bokm')===0){ $key = 'Norwegian Bokmål'; $lang_codes[$key] = 'nb';} // exception for norwegian
+            $default_locale = isset($lang_locales[$lang_codes[$key]]) ? $lang_locales[$lang_codes[$key]] : '';
+            @$wpdb->insert($wpdb->prefix . 'icl_languages', array('english_name'=>$key, 'code'=>$lang_codes[$key], 'major'=>$val['major'], 'active'=>0, 'default_locale'=>$default_locale));
+        }        
+        
+        //restore active
+        $wpdb->query("UPDATE {$wpdb->prefix}icl_languages SET active=1 WHERE code IN('".join("','",$active)."')");
+        
+        foreach($langs_names as $lang=>$val){        
+            if(strpos($lang,'Norwegian Bokm')===0){ $lang = 'Norwegian Bokmål'; $lang_codes[$lang] = 'nb';}
+            foreach($val['tr'] as $k=>$display){        
+                if(strpos($k,'Norwegian Bokm')===0){ $k = 'Norwegian Bokmål';}
+                if(!trim($display)){$display = $lang;}
+                if(!($wpdb->get_var("SELECT id FROM {$table_name} WHERE language_code='{$lang_codes[$lang]}' AND display_language_code='{$lang_codes[$k]}'"))){
+                    $wpdb->insert($wpdb->prefix . 'icl_languages_translations', 
+                    array('language_code'=>$lang_codes[$lang], 'display_language_code'=>$lang_codes[$k], 'name'=>$display));
+                }
+            }    
+        } 
+        $wpdb->update($wpdb->prefix.'icl_flags', array('from_template'=>0));       
+        
+        $codes = $wpdb->get_col("SELECT code FROM {$wpdb->prefix}icl_languages");
+        foreach($codes as $code){
+            if(!$code || $wpdb->get_var("SELECT lang_code FROM {$wpdb->prefix}icl_flags WHERE lang_code='{$code}'")) continue;
+            if(!file_exists(ICL_PLUGIN_PATH.'/res/flags/'.$code.'.png')){
+                $file = 'nil.png';
+            }else{
+                $file = $code.'.png';
+            }    
+            $wpdb->insert($wpdb->prefix.'icl_flags', array('lang_code'=>$code, 'flag'=>$file, 'from_template'=>0));
+        }
+        
+        icl_cache_clear();
+        break;
     default:
         do_action('icl_ajx_custom_call', $_REQUEST['icl_ajx_action'], $_REQUEST);
 }    

@@ -118,6 +118,11 @@ For each language, you need to enter the following information:
 		<input type="button" name="icl_edit_languages_add_language_button" id="icl_edit_languages_add_language_button" value="<?php _e('Add Language', 'sitepress'); ?>" class="button-secondary"<?php if ($this->add_validation_failed) { ?> style="display:none;"<?php } ?> />&nbsp;<input type="button" name="icl_edit_languages_cancel_button" id="icl_edit_languages_cancel_button" value="<?php _e('Cancel', 'sitepress'); ?>" class="button-secondary icl_edit_languages_show"<?php if (!$this->add_validation_failed) { ?> style="display:none;"<?php } ?> />&nbsp;<input disabled type="submit" class="button-primary" value="<?php _e('Save', 'sitepress'); ?>" /></p>
     <br clear="all" />
 	</form>
+    
+    <p>
+        <input class="button-primary" type="button" id="icl_reset_languages" value="<?php _e('Reset languages', 'sitepress'); ?>" />
+        <span class="hidden"><?php _e('WPML will reset all language information to its default values. Any languages that you added or edited will be lost.','sitepress')?></span>
+    </p>
 
 <?php
 	}
