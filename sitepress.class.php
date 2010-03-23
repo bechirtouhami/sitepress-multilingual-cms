@@ -459,7 +459,7 @@ class SitePress{
             add_filter('get_pagenum_link', array($this,'get_pagenum_link_filter'));        
             // filter some queries
             add_filter('query', array($this, 'filter_queries'));                
-            
+                
             $this->set_language_cookie();  
         }
         
@@ -1038,7 +1038,7 @@ class SitePress{
         return $this->settings['default_language'];
     }
     
-    function get_current_language(){                                  
+    function get_current_language(){                                          
         return apply_filters('icl_current_language' , $this->this_lang);
     }
     
@@ -4365,6 +4365,10 @@ class SitePress{
     }
     
     function set_language_cookie(){
+        if(preg_match('@\.(css|js|png|jpg|gif|jpeg|bmp)@i',basename(preg_replace('@\?.*$@','',$_SERVER['REQUEST_URI'])))){
+            return;
+        }
+        
         $cookie_domain = defined('COOKIE_DOMAIN') ? COOKIE_DOMAIN : $_SERVER['HTTP_HOST'];
         $cookie_path = defined('COOKIEPATH') ? COOKIEPATH : '/';                
         setcookie('_icl_current_language', $this->get_current_language(), time()+86400, $cookie_path, $cookie_domain);
