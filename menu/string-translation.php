@@ -252,7 +252,7 @@ $available_contexts = array_unique($available_contexts);
                         <br clear="all" />
                         <div class="icl-st-inline">                        
                             <?php foreach($active_languages as $lang): if($lang['code'] == $sitepress->get_current_language()) continue;  ?>
-                            <form class="icl_st_form" name="icl_st_form_<?php echo $string_id ?>" action="">
+                            <form class="icl_st_form" name="icl_st_form_<?php echo $lang['code'] . '_' . $string_id ?>" action="">
                             <input type="hidden" name="icl_st_language" value="<?php echo $lang['code'] ?>" />                        
                             <input type="hidden" name="icl_st_string_id" value="<?php echo $string_id ?>" />                        
                             <table class="icl-st-table">
