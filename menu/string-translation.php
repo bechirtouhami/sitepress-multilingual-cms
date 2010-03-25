@@ -231,8 +231,8 @@ $available_contexts = array_unique($available_contexts);
                     <td nowrap="nowrap">
                         <?php if($icl_strings_in_page[ICL_STRING_TRANSLATION_STRING_TRACKING_TYPE_SOURCE][$string_id]): ?>
                             <a class="thickbox" title="<?php _e('view in source', 'sitepress') ?>"
-                                href="admin.php?page=sitepress-multilingual-cms%2Fmenu%2Fstring-translation.php&icl_action=view_string_in_source&string_id=<?php 
-                                echo $string_id ?>&width=810&height=600"><img src="<?php echo ICL_PLUGIN_URL ?>/res/img/view-in-source.png" width="16" height="16"
+                                href="admin.php?page=sitepress-multilingual-cms%2Fmenu%2Fstring-translation.php&amp;icl_action=view_string_in_source&amp;string_id=<?php 
+                                echo $string_id ?>&amp;width=810&amp;height=600"><img src="<?php echo ICL_PLUGIN_URL ?>/res/img/view-in-source.png" width="16" height="16"
                                 alt="<?php _e('view in page', 'sitepress') ?>" /></a>
                         <?php endif; ?>
                         <?php if($icl_strings_in_page[ICL_STRING_TRANSLATION_STRING_TRACKING_TYPE_PAGE][$string_id]): ?>
