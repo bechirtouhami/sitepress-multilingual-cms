@@ -3225,10 +3225,8 @@ class SitePress{
                     $tr_include[] = $t;    
                 }            
             }
-			if (is_array($tr_include)) {
-            	$args['include'] = join(',',$tr_include);
-            	$terms = get_terms($taxonomies, $args);
-			}
+            $args['include'] = join(',',$tr_include);
+            $terms = get_terms($taxonomies, $args);
         }        
         return $terms;
     }
