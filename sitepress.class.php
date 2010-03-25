@@ -3199,6 +3199,7 @@ class SitePress{
         if($args['include'] && !$__run_once && $this->get_current_language() != $this->get_default_language()){
             $__run_once = true;
             $include = array_map('trim', explode(',', $args['include']));
+            $tr_include = array();
             foreach($include as $i){
                 $t = icl_object_id($i, 'page');
                 if($t){
@@ -3217,7 +3218,7 @@ class SitePress{
             $__run_once = true;
             
             $include = array_map('trim', explode(',', $args['include']));
-            
+            $tr_include = array();
             foreach($include as $i){
                 $t = icl_object_id($i, $taxonomies[0]);
                 if($t){
