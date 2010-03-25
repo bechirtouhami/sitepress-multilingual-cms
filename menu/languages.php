@@ -172,7 +172,7 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                                     </div>
                                 </td>
                             </tr>
-							<tr><td><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/languages.php&trop=1"><?php _e('Edit Languages','sitepress'); ?></a></td></tr>
+							<tr><td><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/languages.php&amp;trop=1"><?php _e('Edit Languages','sitepress'); ?></a></td></tr>
                         </table>              
                         
                         <?php if(!empty($inactive_content)): ?>
@@ -395,9 +395,9 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                                             ?>                
                                             <select name="icl_language_switcher_sidebar">                
                                             <?php foreach($wp_registered_sidebars as $rs): ?>                
-                                            <option value="<?php echo $rs['id']?>" <?php if($sb == $rs['id']) echo 'selected="SELECTED"'?>><?php echo $rs['name']?>&nbsp;</option>
+                                            <option value="<?php echo $rs['id']?>" <?php if($sb == $rs['id']) echo 'selected="selected"'?>><?php echo $rs['name']?>&nbsp;</option>
                                             <?php endforeach;?>
-                                            <option value="" <?php if(!$sb && $sitepress_settings['setup_complete']) echo 'selected="SELECTED"' ?> ><?php _e('--none--', 'sitepress'); ?></option>
+                                            <option value="" <?php if(!$sb && $sitepress_settings['setup_complete']) echo 'selected="selected"' ?> ><?php _e('--none--', 'sitepress'); ?></option>
                                             </select>
                                                                                         
                                             <p class="icl_advanced_feature"><?php printf(__('The drop-down language switcher can be added to your theme by inserting this PHP code: %s or as a widget','sitepress'),
