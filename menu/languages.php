@@ -9,9 +9,9 @@
         <?php
         return;
     }
-	
-	if (isset($_GET['trop'])) { require_once dirname(__FILE__).'/edit-languages.php'; return; }
-	
+    
+    if (isset($_GET['trop'])) { require_once dirname(__FILE__).'/edit-languages.php'; return; }
+    
     if(!$sitepress_settings['existing_content_language_verified']){
         // try to determine the blog language
         $blog_current_lang = 0;            
@@ -172,7 +172,7 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                                     </div>
                                 </td>
                             </tr>
-							<tr><td><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/languages.php&amp;trop=1"><?php _e('Edit Languages','sitepress'); ?></a></td></tr>
+                            <tr><td><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/languages.php&amp;trop=1"><?php _e('Edit Languages','sitepress'); ?></a></td></tr>
                         </table>              
                         
                         <?php if(!empty($inactive_content)): ?>
@@ -382,7 +382,7 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                                     <ul>
                                         <li>
                                             <h4 class="icl_advanced_feature"><?php echo __('Language switcher widget', 'sitepress')?></h4>                                
-                                            <?php _e('Choose where to display the language switcher widget:', 'sitepress') ?>
+                                            
                                             <?php 
                                             global $wp_registered_sidebars; 
                                             $swidgets = wp_get_sidebars_widgets();
@@ -390,15 +390,21 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                                             foreach($swidgets as $k=>$v){
                                                 if(in_array('language-selector', $v)){
                                                     $sb = $k;
+                                                    $active_sidebar_check = $k;
                                                 }
                                             }
+                                            if (!array_key_exists($active_sidebar_check, $wp_registered_sidebars)) {
+                                                echo '<span class="icl_error_text"><strong>' . sprintf(__('Theme has changed and widget is not active. Please visit %swidgets page%s.', 'sitepress'), '<a href="widgets.php">', '</a>') . '</strong></span>';
+                                            } else {
                                             ?>                
+                                            <?php _e('Choose where to display the language switcher widget:', 'sitepress') ?>
                                             <select name="icl_language_switcher_sidebar">                
                                             <?php foreach($wp_registered_sidebars as $rs): ?>                
                                             <option value="<?php echo $rs['id']?>" <?php if($sb == $rs['id']) echo 'selected="selected"'?>><?php echo $rs['name']?>&nbsp;</option>
                                             <?php endforeach;?>
                                             <option value="" <?php if(!$sb && $sitepress_settings['setup_complete']) echo 'selected="selected"' ?> ><?php _e('--none--', 'sitepress'); ?></option>
                                             </select>
+                                            <?php } ?>
                                                                                         
                                             <p class="icl_advanced_feature"><?php printf(__('The drop-down language switcher can be added to your theme by inserting this PHP code: %s or as a widget','sitepress'),
                                             '<code class="php">&lt;?php do_action(\'icl_language_selector\'); ?&gt;</code>'); ?>.</p>
@@ -446,7 +452,7 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                                                         </li>
                                                     </ul>
                                                 </li>
-											</ul>                                
+                                            </ul>                                
                                             
                                         </li>                                  
                                         <li class="icl_advanced_feature">
