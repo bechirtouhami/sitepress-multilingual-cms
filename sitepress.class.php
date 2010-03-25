@@ -212,9 +212,8 @@ class SitePress{
                 if(!is_admin()){
                     add_filter('get_term', array($this,'get_term_adjust_id'), 1, 1);
                     add_filter('category_link', array($this,'category_link_adjust_id'), 1, 2);
-                    add_filter('get_terms', array($this,'get_tems_adjust_ids'), 1, 3);
-                    add_filter('wp_list_pages', array($this,'wp_list_pages_adjust_ids'), 1, 2);
-                    
+                    add_filter('get_terms', array($this,'get_terms_adjust_ids'), 1, 3);
+                    add_filter('get_pages', array($this,'get_pages_adjust_ids'), 1, 2);
                 }
             } 
             
@@ -3212,7 +3211,7 @@ class SitePress{
         return $out;
     }
     
-    function get_tems_adjust_ids($terms, $taxonomies, $args){
+    function get_terms_adjust_ids($terms, $taxonomies, $args){
         static $__run_once = false; // only run for calls that have 'include' as an argument. ant only run once.
         if($args['include'] && !$__run_once && $this->get_current_language() != $this->get_default_language()){
             $__run_once = true;
@@ -3229,6 +3228,34 @@ class SitePress{
             $terms = get_terms($taxonomies, $args);
         }        
         return $terms;
+    }
+
+    function get_pages_adjust_ids($pages, $args){
+        static $__run_once = false; // only run for calls that have 'include' as an argument. ant only run once.
+        if(!$__run_once && $this->get_current_language() != $this->get_default_language()){
+            $__run_once = true;
+            $args_updated = false;            
+            if($args['include']){                
+                $include = array_map('trim', explode(',', $args['include']));
+                $tr_include = array();
+                foreach($include as $i){
+                    $t = icl_object_id($i, 'page', true);
+                    if($t){
+                        $tr_include[] = $t;    
+                    }            
+                }
+                $args['include'] = join(',',$tr_include);                
+                $args_updated = true;
+            }
+            if($args['child_of']){
+                $args['child_of'] = icl_object_id($args['child_of'], 'page', true);   
+                $args_updated = true;
+            }        
+            if($args_updated){
+                $pages = get_pages($args);
+            }            
+        }
+        return $pages;
     }
     
     function category_link_adjust_id($catlink, $cat_id){
