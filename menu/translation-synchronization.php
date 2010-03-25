@@ -29,7 +29,7 @@
             
                     <p><?php echo __('Select what other texts (besides title and body) you want to include in the translation.', 'sitepress') ?></p>
                     <form name="icl_plugins_texts" action="">
-                    <table id="icl_plugins_texts" class="widefat" cellspacing="0">
+                    <table class="widefat" cellspacing="0">
                     <thead>
                     <tr>
                     <th scope="col"><?php echo __('Enable translation', 'sitepress') ?></th>
