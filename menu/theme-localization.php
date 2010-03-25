@@ -36,7 +36,7 @@ $plugin_localization_stats = get_plugin_localization_stats();
     <p><?php _e('Select the locale to use for each language. The locale for the default language is set in your wp_config.php file.', 'sitepress') ?></p>
     <form id="icl_theme_localization" name="icl_lang_more_options" method="post" action="">
     <input type="hidden" name="icl_post_action" value="save_theme_localization" />    
-    <div id="icl_theme_localization_wrap"><span id="icl_theme_localization_subwrap">    
+    <div id="icl_theme_localization_wrap"><div id="icl_theme_localization_subwrap">    
     <table id="icl_theme_localization_table" class="widefat" cellspacing="0">
     <thead>
     <tr>
@@ -97,7 +97,7 @@ $plugin_localization_stats = get_plugin_localization_stats();
         <?php endif ?>
     </p>
     <?php endif; ?>
-    </span>
+    </div>
     </div>
     <p>
         <input class="button" name="save" value="<?php echo __('Save','sitepress') ?>" type="submit" />
@@ -134,22 +134,22 @@ $plugin_localization_stats = get_plugin_localization_stats();
                     $_tmpcomp = $theme_localization_stats[$tl_domain ? 'theme ' . $tl_domain : 'theme']['complete'];
                     $_tmpinco = $theme_localization_stats[$tl_domain ? 'theme ' . $tl_domain : 'theme']['incomplete'];
                 ?>
-                <tr scope="col">
+                <tr>
                     <td rowspan="3"><?php echo $tl_domain ? $tl_domain : '<i>' . __('no domain','sitepress') . '</i>'; ?></td>
                     <td><?php echo __('Fully translated', 'sitepress') ?></td>
                     <td align="right"><?php echo $_tmpcomp; ?></td>
                     <td rowspan="3" align="right" style="padding-top:10px;">
-                        <a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH) ?>/menu/string-translation.php&amp;context=<?php echo $tl_domain ? 'theme ' . $tl_domain : 'theme' ?>" class="button-secondary"><?php echo __("View all the theme's texts",'sitepress')?></a>
+                        <a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH) ?>/menu/string-translation.php&amp;context=<?php echo $tl_domain ? 'theme%20' . $tl_domain : 'theme' ?>" class="button-secondary"><?php echo __("View all the theme's texts",'sitepress')?></a>
                         <?php if($_tmpinco): ?>
-                        <a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH) ?>/menu/string-translation.php&amp;context=<?php echo $tl_domain ? 'theme ' . $tl_domain : 'theme' ?>&amp;status=0" class="button-primary"><?php echo __("View strings that need translation",'sitepress')?></a>
+                        <a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH) ?>/menu/string-translation.php&amp;context=<?php echo $tl_domain ? 'theme%20' . $tl_domain : 'theme' ?>&amp;status=0" class="button-primary"><?php echo __("View strings that need translation",'sitepress')?></a>
                         <?php endif; ?>
                     </td>
                 </tr>
-                <tr scope="col">
+                <tr>
                     <td><?php echo __('Not translated or needs update', 'sitepress') ?></td>
                     <td align="right"><?php echo $_tmpinco ?></td>
                 </tr>
-                <tr scope="col" style="background-color:#f9f9f9;">
+                <tr style="background-color:#f9f9f9;">
                     <td><strong><?php echo __('Total', 'sitepress') ?></strong></td>
                     <td align="right"><strong><?php echo $_tmpcomp + $_tmpinco; if(1 < count($sitepress_settings['st']['theme_localization_domains'])) { if(!isset($_tmpgt)) $_tmpgt = 0; $_tmpgt += $_tmpcomp + $_tmpinco; } ?></strong></td>
                 </tr>            
@@ -230,7 +230,7 @@ $plugin_localization_stats = get_plugin_localization_stats();
                             }
                             
                         ?>
-                        <tr scope="col">
+                        <tr>
                             <td><input type="checkbox" value="<?php echo $file ?>" name="plugin[]" /></td>
                             <td><?php echo $plugin['Name'] ?></td>
                             <td align="center"><?php echo in_array($file, $active_plugins) ? __('Yes', 'sitepress') :  __('No', 'sitepress'); ?></td>
@@ -244,7 +244,7 @@ $plugin_localization_stats = get_plugin_localization_stats();
                                         <td><?php echo __('Not translated or needs update', 'sitepress') ?></td>
                                         <td align="right"><?php echo $_tmpinco  ?></td>
                                     </tr>
-                                    <tr scope="col">
+                                    <tr>
                                         <td style="border:none"><strong><?php echo __('Total', 'sitepress') ?></strong></td>
                                         <td style="border:none" align="right"><strong><?php echo $_tmptotal; ?></strong></td>
                                     </tr>            
