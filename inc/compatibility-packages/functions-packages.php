@@ -400,7 +400,7 @@ class WPML_Packages{
                         echo '</tr>';
                     }
                 }  
-                echo '<tr><td colspan="2" align="right"><input name="icl_extras_submit" class="button" type="submit" value="'.__('Save', 'sitepress').'"></td></tr>';  
+                echo '<tr><td colspan="2" align="right"><input name="icl_extras_submit" class="button" type="submit" value="'.__('Save', 'sitepress').'" /></td></tr>';  
                 echo '</tbody>';
                 echo '</table>';
                 $frm_idx++;
