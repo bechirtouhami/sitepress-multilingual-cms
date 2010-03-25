@@ -212,6 +212,9 @@ class SitePress{
                 if(!is_admin()){
                     add_filter('get_term', array($this,'get_term_adjust_id'), 1, 1);
                     add_filter('category_link', array($this,'category_link_adjust_id'), 1, 2);
+                    add_filter('get_terms', array($this,'get_tems_adjust_ids'), 1, 3);
+                    add_filter('wp_list_pages', array($this,'wp_list_pages_adjust_ids'), 1, 2);
+                    
                 }
             } 
             
@@ -3191,6 +3194,41 @@ class SitePress{
         return $term;
     }
     
+    function wp_list_pages_adjust_ids($out, $args){
+        static $__run_once = false; // only run for calls that have 'include' as an argument. ant only run once.
+        if($args['include'] && !$__run_once && $this->get_current_language() != $this->get_default_language()){
+            $__run_once = true;
+            $include = array_map('trim', explode(',', $args['include']));
+            foreach($include as $i){
+                $t = icl_object_id($i, 'page');
+                if($t){
+                    $tr_include[] = $t;    
+                }            
+            }
+            $args['include'] = join(',',$tr_include);
+            $out = wp_list_pages($args);            
+        }
+        return $out;
+    }
+    
+    function get_tems_adjust_ids($terms, $taxonomies, $args){
+        static $__run_once = false; // only run for calls that have 'include' as an argument. ant only run once.
+        if($args['include'] && !$__run_once && $this->get_current_language() != $this->get_default_language()){
+            $__run_once = true;
+            
+            $include = array_map('trim', explode(',', $args['include']));
+            
+            foreach($include as $i){
+                $t = icl_object_id($i, $taxonomies[0]);
+                if($t){
+                    $tr_include[] = $t;    
+                }            
+            }
+            $args['include'] = join(',',$tr_include);
+            $terms = get_terms($taxonomies, $args);
+        }        
+        return $terms;
+    }
     
     function category_link_adjust_id($catlink, $cat_id){
         global $icl_adjust_id_url_filter_off, $wpdb;
