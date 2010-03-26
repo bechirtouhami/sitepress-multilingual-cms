@@ -168,6 +168,8 @@ class SitePress{
             add_filter('getarchives_join', array($this,'getarchives_join'));
             add_filter('getarchives_where', array($this,'getarchives_where'));
             add_filter('pre_option_home', array($this,'pre_option_home'));            
+            
+            add_filter('home_url', array($this, 'convert_url')) ;
                         
             // language negotiation
             add_action('query_vars', array($this,'query_vars'));
