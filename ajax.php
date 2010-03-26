@@ -321,9 +321,6 @@ switch($_REQUEST['icl_ajx_action']){
         echo '</table>';
         break;
     case 'validate_language_domain':
-        if(!class_exists('WP_Http')){
-            include_once ICL_PLUGIN_PATH . '/lib/http.php';
-        }
         if(false === strpos($_POST['url'],'?')){$url_glue='?';}else{$url_glue='&';}
         $url = $_POST['url'] . $url_glue . '____icl_validate_domain=1';
         $client = new WP_Http();
