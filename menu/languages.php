@@ -250,6 +250,7 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                                 <form id="icl_save_language_negotiation_type" name="icl_save_language_negotiation_type" action="">
                                 <ul>
                                     <?php
+                                    if(!class_exists('WP_Http')) include_once ABSPATH . WPINC . '/class-http.php';
                                     $client = new WP_Http();
                                     if(false === strpos($_POST['url'],'?')){$url_glue='?';}else{$url_glue='&';}                    
                                     $response = $client->request(get_option('home') . '/' . $sample_lang['code'] .'/' . $url_glue . '____icl_validate_domain=1', array('timeout'=>15, 'decompress'=>false));
