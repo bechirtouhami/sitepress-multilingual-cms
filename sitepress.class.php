@@ -195,16 +195,12 @@ class SitePress{
             
             if(($pagenow == 'edit.php' || ($pagenow == 'admin-ajax.php' && $_POST['action']=='inline-save'))  
                 && !$this->settings['hide_translation_controls_on_posts_lists']){
-                add_filter('manage_posts_columns',array($this,'add_posts_management_column'));
-                add_action('manage_posts_custom_column',array($this,'add_content_for_posts_management_column'));            
+                $post_type = $_GET['post_type'];    
+                add_filter('manage_'.$post_type.'s_columns',array($this,'add_posts_management_column'));
+                add_action('manage_'.$post_type.'s_custom_column',array($this,'add_content_for_posts_management_column'));            
                 add_action('admin_print_scripts', array($this, '__set_posts_management_column_width'));
             }
-            if(($pagenow == 'edit-pages.php' || ($pagenow == 'admin-ajax.php' && $_POST['action']=='inline-save'))  
-                && !$this->settings['hide_translation_controls_on_posts_lists']){                    
-                add_filter('manage_pages_columns',array($this,'add_posts_management_column'));
-                add_action('manage_pages_custom_column',array($this,'add_content_for_posts_management_column'));
-                add_action('admin_print_scripts', array($this, '__set_posts_management_column_width'));
-            }
+
             // adjust queried categories and tags ids according to the language            
             if($this->settings['auto_adjust_ids']){
                 add_action('parse_query', array($this, 'parse_query'));            
@@ -4113,11 +4109,7 @@ class SitePress{
         $active_languages = $this->get_active_languages();
         foreach($active_languages as $k=>$v){
             if($v['code']==$this->get_current_language()) continue;
-            if($pagenow=='edit.php' || @$_POST['post_type'] == 'post' ){
-                $post_type = 'post';
-            }else{
-                $post_type = 'page';
-            }
+            $post_type = isset($_REQUEST['post_type']) ? $_REQUEST['post_type'] : 'post';
             
             if($__management_columns_posts_translations[$id][$v['code']]){
                 $img = 'edit_translation.png';
@@ -4127,7 +4119,7 @@ class SitePress{
                 $img = 'add_translation.png';
                 $alt = sprintf(__('Add translation to %s','sitepress'), $v['display_name']);
                 $src_lang = $this->get_current_language() == 'all' ? $this->get_default_language() : $this->get_current_language();
-                $link = $post_type . '-new.php?trid=' . $__management_columns_posts_translations[$id][$this->get_current_language()]->trid.'&amp;lang='.$v['code'].'&amp;source_lang=' . $src_lang;
+                $link = 'post-new.php?post_type='.$post_type.'&trid=' . $__management_columns_posts_translations[$id][$this->get_current_language()]->trid.'&amp;lang='.$v['code'].'&amp;source_lang=' . $src_lang;
             }
             echo '<a href="'.$link.'" title="'.$alt.'">';
             echo '<img style="padding:1px;margin:2px;" border="0" src="'.ICL_PLUGIN_URL . '/res/img/' .$img.'" alt="'.$alt.'" width="16" height="16" />';
