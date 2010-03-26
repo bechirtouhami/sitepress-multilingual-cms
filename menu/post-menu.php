@@ -20,19 +20,19 @@
         
         <p style="float:left;">
         <?php echo __('This is a translation of', 'sitepress') ?>&nbsp;
-        <select name="icl_translation_of" id="icl_translation_of"<?php if($_GET['action'] != 'edit' && $trid) echo " disabled"?>>
+        <select name="icl_translation_of" id="icl_translation_of"<?php if($_GET['action'] != 'edit' && $trid) echo ' disabled="disabled"';?>>
             <?php if($source_language == null || $source_language == $default_language): ?>
                 <?php if($trid): ?>
-                    <option value="none"><?php echo __('--None--', 'sitepress') ?></option>
+                    <option value="none"><?php echo __('--None--', 'sitepress') ?></option>                    
                     <?php
                         //get source
-                        $src_language_id = $wpdb->get_var("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid={$trid} AND language_code='{$default_language}'");
+                        $src_language_id = $wpdb->get_var("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid={$trid} AND language_code='{$default_language}'");                        
                         if(!$src_language_id) {
                             // select the first id found for this trid
                             $src_language_id = $wpdb->get_var("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid={$trid}");
-                        }
+                        }                                                      
                         if($src_language_id && $src_language_id != $post->ID) {
-                            $src_language_title = $wpdb->get_var("SELECT post_title FROM {$wpdb->prefix}posts WHERE ID = {$src_language_id}");
+                            $src_language_title = $wpdb->get_var("SELECT post_title FROM {$wpdb->prefix}posts WHERE ID = {$src_language_id}");                            
                         }
                     ?>
                     <?php if($src_language_title && !isset($_GET['icl_ajx'])): ?>
@@ -80,7 +80,7 @@
         ?><p class="icl_sidebar" style="width:auto;"><img align="baseline" 
             src="<?php echo ICL_PLUGIN_URL ?>/res/img/icon16.png" width="16" height="16" style="margin-bottom:-4px" />&nbsp;<?php 
             printf(__('This page can be professionally translated for %s USD.<br /><a href="%s">Learn more</a> <a %s>dismiss</a>','sitepress'),
-            $estimate, 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php', 'id="icl_dismiss_page_estimate_hint" href="#"')?></p><?php
+            $estimate, 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php', 'id="icl_dismiss_page_estimate_hint" href="#"')?></p><br clear="all" /><?php
     }
     do_action('icl_post_languages_options_before', $post->ID);
 ?>
@@ -119,7 +119,7 @@
             <?php if(!isset($translations[$lang['code']]->element_id)):?>
                 <td><?php echo $lang['display_name'] ?></td>
                 <?php
-                    $add_link = get_option('siteurl') . "/wp-admin/" . $post->post_type . "-new.php?trid=" . $trid . "&lang=" . $lang['code'] . "&source_lang=" . $selected_language;
+                    $add_link = get_option('siteurl') . "/wp-admin/post-new.php?post_type={$post->post_type}&trid=" . $trid . "&lang=" . $lang['code'] . "&source_lang=" . $selected_language;
                 ?>
                 <td><a href="<?php echo $add_link?>"><?php echo __('add','sitepress') ?></a></td>
             <?php endif; ?>        

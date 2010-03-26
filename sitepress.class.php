@@ -192,14 +192,22 @@ class SitePress{
             
             add_action('show_user_profile', array($this, 'show_user_options'));
             add_action('personal_options_update', array($this, 'save_user_options'));
+
+            /* preWP3 compatibility  - start */
+            if($pagenow == 'edit-pages.php'){
+                $pagenow ='edit.php';
+                $_GET['post_type'] = 'page';    
+            } 
+            /* preWP3 compatibility  - end */            
             
             if(($pagenow == 'edit.php' || ($pagenow == 'admin-ajax.php' && $_POST['action']=='inline-save'))  
                 && !$this->settings['hide_translation_controls_on_posts_lists']){
-                $post_type = $_GET['post_type'];    
+                $post_type = isset($_GET['post_type']) ? $_GET['post_type'] : 'post';    
                 add_filter('manage_'.$post_type.'s_columns',array($this,'add_posts_management_column'));
                 add_action('manage_'.$post_type.'s_custom_column',array($this,'add_content_for_posts_management_column'));            
                 add_action('admin_print_scripts', array($this, '__set_posts_management_column_width'));
             }
+            
 
             // adjust queried categories and tags ids according to the language            
             if($this->settings['auto_adjust_ids']){
@@ -1707,12 +1715,17 @@ class SitePress{
     function save_post_actions($pidd){
         global $wpdb;        
         
-        $post_type = $wpdb->get_var("SELECT post_type FROM {$wpdb->posts} WHERE ID = " . $pidd);
+        list($post_type, $post_status) = $wpdb->get_row("SELECT post_type, post_status FROM {$wpdb->posts} WHERE ID = " . $pidd, ARRAY_N);
         
-        if($_POST['autosave'] || $_POST['skip_sitepress_actions'] || 
-            (isset($_POST['post_ID']) && $_POST['post_ID']!=$pidd) || $_POST['post_type']=='revision' || $post_type == 'revision' || 
-            get_post_meta($pidd, '_wp_trash_meta_status', true) || 
-            ( isset($_GET['action']) && $_GET['action']=='restore')
+        // exceptions
+        if( 
+               $_POST['autosave'] 
+            || $_POST['skip_sitepress_actions'] 
+            || (isset($_POST['post_ID']) && $_POST['post_ID']!=$pidd) || $_POST['post_type']=='revision' 
+            || $post_type == 'revision' 
+            || get_post_meta($pidd, '_wp_trash_meta_status', true) 
+            || ( isset($_GET['action']) && $_GET['action']=='restore')
+            || $post_status == 'auto-draft' 
         ){
             return;
         }
@@ -2040,7 +2053,7 @@ class SitePress{
             // filter for "page" or "post"
             $ids = join(',',$untranslated_ids);
             $type = $is_page?"page":"post";
-            $untranslated_ids = $wpdb->get_col("SELECT ID FROM {$wpdb->prefix}posts WHERE ID IN ({$ids}) AND post_type = '{$type}'");
+            $untranslated_ids = $wpdb->get_col("SELECT ID FROM {$wpdb->posts} WHERE ID IN ({$ids}) AND post_type = '{$type}' AND post_status <> 'auto-draft'");
         }
         
         $untranslated = array();
@@ -2056,7 +2069,7 @@ class SitePress{
         global $wpdb;   
         $active_languages = $this->get_active_languages();
         $default_language = $this->get_default_language();
-        if($post->ID){
+        if($post->ID && $post->post_status != 'auto-draft'){
             $res = $this->get_element_language_details($post->ID, 'post');
             $trid = $res->trid;
             if($trid){                
@@ -4114,7 +4127,7 @@ class SitePress{
             if($__management_columns_posts_translations[$id][$v['code']]){
                 $img = 'edit_translation.png';
                 $alt = sprintf(__('Edit the %s translation','sitepress'), $v['display_name']);                
-                $link = $post_type . '.php?action=edit&amp;post='.$__management_columns_posts_translations[$id][$v['code']]->element_id.'&amp;lang='.$v['code'];
+                $link = 'post.php?post_type='.$post_type.'&action=edit&amp;post='.$__management_columns_posts_translations[$id][$v['code']]->element_id.'&amp;lang='.$v['code'];
             }else{
                 $img = 'add_translation.png';
                 $alt = sprintf(__('Add translation to %s','sitepress'), $v['display_name']);
