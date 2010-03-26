@@ -682,6 +682,7 @@ class SitePress{
     }
 
     function _validate_language_per_directory($language_code){
+        if(!class_exists('WP_Http')) include_once ABSPATH . WPINC . '/class-http.php';
         $client = new WP_Http();
         if(false === strpos($_POST['url'],'?')){$url_glue='?';}else{$url_glue='&';}                    
         $response = $client->request(get_option('home') . '/' . $language_code .'/' . $url_glue . '____icl_validate_domain=1', array('timeout'=>15, 'decompress'=>false));
