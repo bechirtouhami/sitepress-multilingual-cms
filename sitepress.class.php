@@ -194,7 +194,7 @@ class SitePress{
             add_action('personal_options_update', array($this, 'save_user_options'));
 
             /* preWP3 compatibility  - start */
-            if($pagenow == 'edit-pages.php'){
+            if(ICL_PRE_WP3 && $pagenow == 'edit-pages.php'){
                 $pagenow ='edit.php';
                 $_GET['post_type'] = 'page';    
             } 
