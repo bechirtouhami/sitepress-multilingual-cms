@@ -169,7 +169,7 @@ class SitePress{
             add_filter('getarchives_where', array($this,'getarchives_where'));
             add_filter('pre_option_home', array($this,'pre_option_home'));            
             
-            add_filter('home_url', array($this, 'convert_url')) ;
+            add_filter('home_url', array($this, 'home_url'), 1, 4) ;
                         
             // language negotiation
             add_action('query_vars', array($this,'query_vars'));
@@ -232,6 +232,153 @@ class SitePress{
     }
     
     
+
+             
+    function init(){ 
+
+        $this->set_admin_language();
+        //configure callbacks for plugin menu pages
+        if(defined('WP_ADMIN') && isset($_GET['page']) && 0 === strpos($_GET['page'],basename(ICL_PLUGIN_PATH).'/')){
+            add_action('icl_menu_footer', array($this, 'menu_footer'));
+        }
+        if($this->settings['existing_content_language_verified']){
+            if(defined('WP_ADMIN')){
+                if(isset($_GET['lang'])){
+                    $this->this_lang = rtrim($_GET['lang'],'/');             
+                }else{
+                    $this->this_lang = $this->get_default_language();
+                }                   
+            }else{
+                $al = $this->get_active_languages();
+                foreach($al as $l){
+                    $active_languages[] = $l['code'];
+                }
+                $active_languages[] = 'all';
+                $s = $_SERVER['HTTPS']=='on'?'s':'';
+                $request = 'http' . $s . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+                $home = get_option('home');
+                $url_parts = parse_url($home);
+                $blog_path = $url_parts['path']?$url_parts['path']:'';            
+                switch($this->settings['language_negotiation_type']){
+                    case 1:
+                        $path  = str_replace($home,'',$request);
+                        $parts = explode('?', $path);
+                        $path = $parts[0];
+                        $exp = explode('/',trim($path,'/'));                                        
+                        if(in_array($exp[0], $active_languages)){
+                            $this->this_lang = $exp[0];
+                            
+                            // before hijiking the SERVER[REQUEST_URI]
+                            // override the canonical_redirect action
+                            // keep a copy of the original request uri
+                            remove_action('template_redirect', 'redirect_canonical');
+                            global $_icl_server_request_uri;
+                            $_icl_server_request_uri = $_SERVER['REQUEST_URI'];
+                            add_action('template_redirect', 'icl_redirect_canonical_wrapper', 11);
+                            function icl_redirect_canonical_wrapper(){
+                                global $_icl_server_request_uri, $wp_query;
+                                $requested_url  = ( !empty($_SERVER['HTTPS'] ) && strtolower($_SERVER['HTTPS']) == 'on' ) ? 'https://' : 'http://';
+                                $requested_url .= $_SERVER['HTTP_HOST'];
+                                $requested_url .= $_icl_server_request_uri;
+                                redirect_canonical($requested_url);
+                                
+                                /*
+                                if($wp_query->query_vars['error'] == '404'){
+                                    $wp_query->is_404 = true;
+                                    $template = get_404_template();
+                                    include($template);
+                                    exit;
+                                }
+                                */
+                                
+                            }
+                            //
+                            
+                            //deal with situations when template files need to be called directly
+                            add_action('template_redirect', array($this, '_allow_calling_template_file_directly'));
+                            
+                            $_SERVER['REQUEST_URI'] = preg_replace('@^'. $blog_path . '/' . $this->this_lang.'@i', $blog_path ,$_SERVER['REQUEST_URI']);
+                            
+                            // Check for special case of www.example.com/fr where the / is missing on the end
+                            $parts = parse_url($_SERVER['REQUEST_URI']);
+                            if(strlen($parts['path']) == 0){
+                                $_SERVER['REQUEST_URI'] = '/' . $_SERVER['REQUEST_URI'];
+                            }
+                        }else{
+                            $this->this_lang = $this->get_default_language();
+                        }
+                        break;
+                    case 2:    
+                        $exp = explode('.', $_SERVER['HTTP_HOST']);
+                        $__l = array_search('http' . $s . '://' . $_SERVER['HTTP_HOST'] . $blog_path, $this->settings['language_domains']);
+                        $this->this_lang = $__l?$__l:$this->get_default_language(); 
+                        if(defined('ICL_USE_MULTIPLE_DOMAIN_LOGIN') && ICL_USE_MULTIPLE_DOMAIN_LOGIN){
+                            include ICL_PLUGIN_PATH . '/modules/multiple-domains-login.php';
+                        }                        
+                        break;
+                    case 3:
+                    default:
+                        if(isset($_GET['lang'])){
+                            $this->this_lang = preg_replace("/[^0-9a-zA-Z-]/i", '',$_GET['lang']);             
+                        }else{
+                            $this->this_lang = $this->get_default_language();
+                        }                        
+                }
+                // allow forcing the current language when it can't be decoded from the URL
+                $this->this_lang = apply_filters('icl_set_current_language', $this->this_lang);
+            }
+            
+            //reorder active language to put 'this_lang' in front
+            foreach($this->active_languages as $k=>$al){
+                if($al['code']==$this->this_lang){                
+                    unset($this->active_languages[$k]);
+                    $this->active_languages = array_merge(array($k=>$al), $this->active_languages);
+                }
+            }
+            
+            add_filter('get_pagenum_link', array($this,'get_pagenum_link_filter'));        
+            // filter some queries
+            add_filter('query', array($this, 'filter_queries'));                
+                
+            $this->set_language_cookie();  
+        }
+        
+        if(empty($this->settings['dont_show_help_admin_notice'])){
+            if(count($this->get_active_languages()) < 2){
+                add_action('admin_notices', array($this, 'help_admin_notice'));
+            }
+        }
+                
+        $short_v = implode('.', array_slice(explode('.', ICL_SITEPRESS_VERSION), 0, 3));
+        if($this->settings['hide_upgrade_notice'] != $short_v){
+            add_action('admin_notices', array($this, 'upgrade_notice'));
+        }
+        
+        if ($this->icl_account_configured()) {
+            add_action('admin_notices', array($this, 'icl_reminders'));
+        }
+        
+        require ICL_PLUGIN_PATH . '/inc/template-constants.php';        
+        if(defined('WPML_LOAD_API_SUPPORT')){
+            require ICL_PLUGIN_PATH . '/inc/wpml-api.php';
+            
+        } 
+        
+        if($this->settings['promote_wpml']){
+            add_action('wp_footer', array($this, 'display_wpml_footer'),20);
+        }  
+                
+        if(defined('XMLRPC_REQUEST') && XMLRPC_REQUEST){
+            add_action('xmlrpc_call', array($this, 'xmlrpc_call_actions'));
+            add_filter('xmlrpc_methods',array($this, 'xmlrpc_methods'));
+        }
+        
+    }
+    
+    function ajax_setup(){
+        require ICL_PLUGIN_PATH . '/ajax.php';
+    }
+      
     function the_posts($posts){        
         global $wpdb, $wp_query;
         
@@ -362,151 +509,7 @@ class SitePress{
         $this->icl_term_taxonomy_cache = new icl_cache();
         $this->icl_cms_nav_offsite_url_cache = new icl_cache('cms_nav_offsite_url', true);
     }
-             
-    function init(){ 
-
-        $this->set_admin_language();
-        //configure callbacks for plugin menu pages
-        if(defined('WP_ADMIN') && isset($_GET['page']) && 0 === strpos($_GET['page'],basename(ICL_PLUGIN_PATH).'/')){
-            add_action('icl_menu_footer', array($this, 'menu_footer'));
-        }
-        if($this->settings['existing_content_language_verified']){
-            if(defined('WP_ADMIN')){
-                if(isset($_GET['lang'])){
-                    $this->this_lang = rtrim($_GET['lang'],'/');             
-                }else{
-                    $this->this_lang = $this->get_default_language();
-                }                   
-            }else{
-                $al = $this->get_active_languages();
-                foreach($al as $l){
-                    $active_languages[] = $l['code'];
-                }
-                $active_languages[] = 'all';
-                $s = $_SERVER['HTTPS']=='on'?'s':'';
-                $request = 'http' . $s . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
-                $home = get_option('home');
-                $url_parts = parse_url($home);
-                $blog_path = $url_parts['path']?$url_parts['path']:'';            
-                switch($this->settings['language_negotiation_type']){
-                    case 1:
-                        $path  = str_replace($home,'',$request);
-                        $parts = explode('?', $path);
-                        $path = $parts[0];
-                        $exp = explode('/',trim($path,'/'));                                        
-                        if(in_array($exp[0], $active_languages)){
-                            $this->this_lang = $exp[0];
-                            
-                            // before hijiking the SERVER[REQUEST_URI]
-                            // override the canonical_redirect action
-                            // keep a copy of the original request uri
-                            remove_action('template_redirect', 'redirect_canonical');
-                            global $_icl_server_request_uri;
-                            $_icl_server_request_uri = $_SERVER['REQUEST_URI'];
-                            add_action('template_redirect', 'icl_redirect_canonical_wrapper', 11);
-                            function icl_redirect_canonical_wrapper(){
-                                global $_icl_server_request_uri, $wp_query;
-                                $requested_url  = ( !empty($_SERVER['HTTPS'] ) && strtolower($_SERVER['HTTPS']) == 'on' ) ? 'https://' : 'http://';
-                                $requested_url .= $_SERVER['HTTP_HOST'];
-                                $requested_url .= $_icl_server_request_uri;
-                                redirect_canonical($requested_url);
-                                
-                                /*
-                                if($wp_query->query_vars['error'] == '404'){
-                                    $wp_query->is_404 = true;
-                                    $template = get_404_template();
-                                    include($template);
-                                    exit;
-                                }
-                                */
-                                
-                            }
-                            //
-                            
-                            //deal with situations when template files need to be called directly
-                            add_action('template_redirect', array($this, '_allow_calling_template_file_directly'));
-                            
-                            $_SERVER['REQUEST_URI'] = preg_replace('@^'. $blog_path . '/' . $this->this_lang.'@i', $blog_path ,$_SERVER['REQUEST_URI']);
-                            // Check for special case of www.example.com/fr where the / is missing on the end
-                            $parts = parse_url($_SERVER['REQUEST_URI']);
-                            if(strlen($parts['path']) == 0){
-                                $_SERVER['REQUEST_URI'] = '/' . $_SERVER['REQUEST_URI'];
-                            }
-                        }else{
-                            $this->this_lang = $this->get_default_language();
-                        }
-                        break;
-                    case 2:    
-                        $exp = explode('.', $_SERVER['HTTP_HOST']);
-                        $__l = array_search('http' . $s . '://' . $_SERVER['HTTP_HOST'] . $blog_path, $this->settings['language_domains']);
-                        $this->this_lang = $__l?$__l:$this->get_default_language(); 
-                        if(defined('ICL_USE_MULTIPLE_DOMAIN_LOGIN') && ICL_USE_MULTIPLE_DOMAIN_LOGIN){
-                            include ICL_PLUGIN_PATH . '/modules/multiple-domains-login.php';
-                        }                        
-                        break;
-                    case 3:
-                    default:
-                        if(isset($_GET['lang'])){
-                            $this->this_lang = preg_replace("/[^0-9a-zA-Z-]/i", '',$_GET['lang']);             
-                        }else{
-                            $this->this_lang = $this->get_default_language();
-                        }                        
-                }
-                // allow forcing the current language when it can't be decoded from the URL
-                $this->this_lang = apply_filters('icl_set_current_language', $this->this_lang);
-            }
-            
-            //reorder active language to put 'this_lang' in front
-            foreach($this->active_languages as $k=>$al){
-                if($al['code']==$this->this_lang){                
-                    unset($this->active_languages[$k]);
-                    $this->active_languages = array_merge(array($k=>$al), $this->active_languages);
-                }
-            }
-            
-            add_filter('get_pagenum_link', array($this,'get_pagenum_link_filter'));        
-            // filter some queries
-            add_filter('query', array($this, 'filter_queries'));                
-                
-            $this->set_language_cookie();  
-        }
-        
-        if(empty($this->settings['dont_show_help_admin_notice'])){
-            if(count($this->get_active_languages()) < 2){
-                add_action('admin_notices', array($this, 'help_admin_notice'));
-            }
-        }
-                
-        $short_v = implode('.', array_slice(explode('.', ICL_SITEPRESS_VERSION), 0, 3));
-        if($this->settings['hide_upgrade_notice'] != $short_v){
-            add_action('admin_notices', array($this, 'upgrade_notice'));
-        }
-        
-        if ($this->icl_account_configured()) {
-            add_action('admin_notices', array($this, 'icl_reminders'));
-        }
-        
-        require ICL_PLUGIN_PATH . '/inc/template-constants.php';        
-        if(defined('WPML_LOAD_API_SUPPORT')){
-            require ICL_PLUGIN_PATH . '/inc/wpml-api.php';
-            
-        } 
-        
-        if($this->settings['promote_wpml']){
-            add_action('wp_footer', array($this, 'display_wpml_footer'),20);
-        }  
-                
-        if(defined('XMLRPC_REQUEST') && XMLRPC_REQUEST){
-            add_action('xmlrpc_call', array($this, 'xmlrpc_call_actions'));
-            add_filter('xmlrpc_methods',array($this, 'xmlrpc_methods'));
-        }
-        
-    }
-    
-    function ajax_setup(){
-        require ICL_PLUGIN_PATH . '/ajax.php';
-    }
-                    
+                        
     function set_admin_language(){
         global $wpdb, $current_user;
         
@@ -2137,7 +2140,6 @@ class SitePress{
     
     function posts_where_filter($where){
         global $wpdb, $pagenow;
-
         //exceptions
         if(isset($_POST['wp-preview']) && $_POST['wp-preview']=='dopreview' || is_preview()){
             $is_preview = true;
@@ -2709,6 +2711,15 @@ class SitePress{
         $this->wp_query = $wp_query;
     }
     
+    // filter for WP home_url function
+    function home_url($url, $path, $orig_scheme, $blog_id){
+        // only apply this for home url - not for posts or page permalinks since this filter is called there too
+        if(did_action('template_redirect') && rtrim($url,'/') == rtrim(get_option('home'),'/')){
+            $url = $this->convert_url($url);
+        }
+        return $url;
+    }
+    
     // converts WP generated url to language specific based on plugin settings
     function convert_url($url, $code=null){
         if(is_null($code)){
@@ -2759,7 +2770,7 @@ class SitePress{
         if(is_object($pid)){                        
             $pid = $pid->ID;
         }
-        $element_lang_details = $this->get_element_language_details($pid,'post');        
+        $element_lang_details = $this->get_element_language_details($pid,'post');                
         if($element_lang_details->language_code && $this->get_default_language() != $element_lang_details->language_code){
             $p = $this->convert_url($p, $element_lang_details->language_code);
         }elseif(isset($_POST['action']) && $_POST['action']=='sample-permalink'){ // check whether this is an autosaved draft 
@@ -2839,7 +2850,7 @@ class SitePress{
              $wp_query = $this->wp_query;
              
              
-            $w_active_languages = $this->get_active_languages();                        
+            $w_active_languages = $this->get_active_languages();                                    
             $this_lang = $this->this_lang;
             if($this_lang=='all'){
                 $w_this_lang = array(
@@ -3299,6 +3310,9 @@ class SitePress{
     
     // commenting links
     function post_comments_feed_link($out){
+        if($this->settings['language_negotiation_type']==3){
+            $out = preg_replace('@(\?|&)lang=([^/]+)/feed/@i','feed/$1lang=$2',$out);
+        }
         return $out;
         //return $this->convert_url($out);
     }
