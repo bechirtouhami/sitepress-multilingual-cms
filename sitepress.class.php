@@ -138,6 +138,8 @@ class SitePress{
         
             // short circuit get default category
             add_filter('pre_option_default_category', array($this, 'pre_option_default_category'));
+            add_filter('update_option_default_category', array($this, 'update_option_default_category'), 1, 2);
+            
             add_filter('the_category', array($this,'the_category_name_filter'));
             add_filter('get_terms', array($this,'get_terms_filter'));
             add_filter('single_cat_title', array($this,'the_category_name_filter'));
@@ -3156,6 +3158,16 @@ class SitePress{
         }
         return false;
     }
+    
+    function update_option_default_category($oldvalue, $newvalue){
+        $translations = $this->get_element_translations($this->get_element_trid($newvalue, 'category'));
+        if(!empty($translations)){
+            foreach($translations as $t){
+                $icl_settings['default_categories'][$t->language_code] = $t->element_id;    
+            }
+            $this->save_settings($icl_settings);
+        }
+    }    
     
     function the_category_name_filter($name){                    
         if(is_array($name)){
