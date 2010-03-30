@@ -9,6 +9,12 @@ if(version_compare(preg_replace('#-(.+)#','',$wp_version), '3.0', '<')){
         exit;
     }
     
+    if(is_admin() && $pagenow=='edit-tags.php' && isset($_GET['taxonomy']) && $_GET['taxonomy']=='category'){
+        header("HTTP/1.1 301 Moved Permanently");
+        header("Location: categories.php?".$_SERVER['QUERY_STRING']);
+        exit;
+    }
+    
     
 }else{
     define('ICL_PRE_WP3', false);

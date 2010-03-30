@@ -109,20 +109,28 @@ class SitePress{
             
             // category language selection        
             // add_action('edit_category',  array($this, 'create_term'),1, 2);        
-            if($pagenow == 'categories.php'){
+            
+            /* preWP3 compatibility  - start */
+            if(ICL_PRE_WP3 && $pagenow == 'categories.php'){
                 add_action('admin_print_scripts-categories.php', array($this,'js_scripts_categories'));
                 add_action('edit_category_form', array($this, 'edit_term_form'));
                 add_action('admin_footer', array($this,'terms_language_filter'));
-            }        
+            } 
+            /* preWP3 compatibility  - end */            
+            
             // tags language selection
             if($pagenow == 'edit-tags.php'){
-                add_action('admin_print_scripts-edit-tags.php', array($this,'js_scripts_tags'));
-                add_action('add_tag_form', array($this, 'edit_term_form'));
-                add_action('edit_tag_form', array($this, 'edit_term_form'));
+                $taxonomy = isset($_GET['taxonomy']) ? $wpdb->escape($_GET['taxonomy']) : 'post_tag';
+                if($taxonomy == 'category'){
+                    add_action('admin_print_scripts-edit-tags.php', array($this,'js_scripts_categories'));   
+                    add_action('edit_category_form', array($this, 'edit_term_form'));
+                }else{
+                    add_action('admin_print_scripts-edit-tags.php', array($this,'js_scripts_tags'));
+                    add_action('add_tag_form', array($this, 'edit_term_form'));
+                    add_action('edit_tag_form', array($this, 'edit_term_form'));                    
+                }                
                 add_action('admin_footer', array($this,'terms_language_filter'));                
             }
-            
-            
             
             // custom hook for adding the language selector to the template
             add_action('icl_language_selector', array($this, 'language_selector'));
@@ -1125,7 +1133,7 @@ class SitePress{
         var icl_default_mark = '<?php echo __('default','sitepress') ?>';     
         var icl_this_lang = '<?php echo $this->this_lang ?>';   
         var icl_ajxloaderimg_src = '<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif';
-        var icl_cat_adder_msg = '<?php echo __('To add categories that already exist in other languages go to the <a href="categories.php">category management page<\/a>','sitepress')?>';
+        var icl_cat_adder_msg = '<?php echo __('To add categories that already exist in other languages go to the <a href="edit-tags.php?taxonomy=category">category management page<\/a>','sitepress')?>';
 		// ]]>
 		
         <?php if(!$this->settings['ajx_health_checked']): ?>
@@ -2302,17 +2310,26 @@ class SitePress{
     function edit_term_form($term){   
         global $wpdb, $pagenow;
         $element_id = $term->term_taxonomy_id;    
-        $element_type = $pagenow=='categories.php'?'category':'tag';
+        
+        /* preWP3 compatibility  - start */
+        if(ICL_PRE_WP3){
+            $icl_element_type = $element_type = $pagenow=='categories.php'?'category':'tag';
+        }else{
+        /* preWP3 compatibility  - end */            
+            $icl_element_type = $element_type = $wpdb->escape($_GET['taxonomy']);
+            if($element_type=='post_tag') $icl_element_type = 'tag';
+        }
         
         $default_language = $this->get_default_language();
         
         if($element_id){
-            $res = $wpdb->get_row("SELECT trid, language_code, source_language_code FROM {$wpdb->prefix}icl_translations WHERE element_id='{$element_id}' AND element_type='{$element_type}'");
+            $res = $wpdb->get_row("SELECT trid, language_code, source_language_code 
+                FROM {$wpdb->prefix}icl_translations WHERE element_id='{$element_id}' AND element_type='{$icl_element_type}'");
             $trid = $res->trid;
             if($trid){                
                 $element_lang_code = $res->language_code;
             }else{
-                $trid = $this->set_element_language_details($element_id, $element_type, null, $default_language);
+                $trid = $this->set_element_language_details($element_id, $icl_element_type, null, $default_language);
                 $element_lang_code = $default_language;
             }                            
         }else{
@@ -2320,19 +2337,19 @@ class SitePress{
             $element_lang_code = $_GET['lang'];
         }
         if($trid){
-            $translations = $this->get_element_translations($trid, $element_type);        
-        }                                   
+            $translations = $this->get_element_translations($trid, $icl_element_type);        
+        }     
         $active_languages = $this->get_active_languages();
         $selected_language = $element_lang_code?$element_lang_code:$default_language;
         
         $source_language = $_GET['source_lang'];
         
-        $untranslated_ids = $this->get_elements_without_translations($element_type, $selected_language, $default_language);
+        $untranslated_ids = $this->get_elements_without_translations($icl_element_type, $selected_language, $default_language);
         
         include ICL_PLUGIN_PATH . '/menu/'.$element_type.'-menu.php';        
     }
 
-    function add_language_selector_to_page($active_languages, $selected_language, $translations, $element_id, $type) {
+    function add_language_selector_to_page($active_languages, $selected_language, $translations, $element_id, $type) {        
         ?>
         <div id="icl_<?php echo $type ?>_menu" style="display:none">
         
@@ -2476,10 +2493,18 @@ class SitePress{
                     <?php if(!isset($translations[$lang['code']]->element_id)):?>
                         <td style="padding: 0px;line-height:normal;"><?php echo $lang['display_name'] ?></td>
                         <?php
-                            if ($type == 'tag') {
-                                $add_link = "edit-tags.php?trid=" . $trid . "&amp;lang=" . $lang['code'] . "&amp;source_lang=" . $selected_language;
-                            } else {
-                                $add_link = "categories.php?trid=" . $trid . "&amp;lang=" . $lang['code'] . "&amp;source_lang=" . $selected_language;
+                            /* preWP3 compatibility  - start */
+                            if(ICL_PRE_WP3){
+                                if ($type == 'tag') {
+                                    $add_link = "edit-tags.php?trid=" . $trid . "&amp;lang=" . $lang['code'] . "&amp;source_lang=" . $selected_language;
+                                } else {
+                                    $add_link = "categories.php?trid=" . $trid . "&amp;lang=" . $lang['code'] . "&amp;source_lang=" . $selected_language;
+                                }
+                            }else
+                            /* preWP3 compatibility  - end */
+                            {
+                                $taxonomy = $_GET['taxonomy'];
+                                $add_link = "edit-tags.php?taxonomy=".$taxonomy."&amp;trid=" . $trid . "&amp;lang=" . $lang['code'] . "&amp;source_lang=" . $selected_language;
                             }
                         ?>
                         <td style="padding: 0px;line-height:normal;"><a href="<?php echo $add_link ?>"><?php echo __('add','sitepress') ?></a></td>
@@ -2501,10 +2526,18 @@ class SitePress{
                     <?php if(isset($translations[$lang['code']]->element_id)):?>
                         <td style="line-height:normal;"><?php echo $lang['display_name'] ?></td>
                         <?php
-                            if ($type == 'tag') {
-                                $edit_link = "edit-tags.php?action=edit&amp;tag_ID=" . $translations[$lang['code']]->term_id . "&amp;lang=" . $lang['code'];
-                            } else {
-                                $edit_link = "categories.php?action=edit&amp;cat_ID=" . $translations[$lang['code']]->term_id . "&amp;lang=" . $lang['code'];
+                            /* preWP3 compatibility  - start */
+                            if(ICL_PRE_WP3){
+                                if ($type == 'tag') {
+                                    $edit_link = "edit-tags.php?action=edit&amp;tag_ID=" . $translations[$lang['code']]->term_id . "&amp;lang=" . $lang['code'];
+                                } else {
+                                    $edit_link = "categories.php?action=edit&amp;cat_ID=" . $translations[$lang['code']]->term_id . "&amp;lang=" . $lang['code'];
+                                }
+                            }else
+                            /* preWP3 compatibility  - end */
+                            {
+                                $taxonomy = $_GET['taxonomy'];
+                                $edit_link = "edit-tags.php?taxonomy=".$taxonomy."&amp;action=edit&amp;tag_ID=" . $translations[$lang['code']]->term_id . "&amp;lang=" . $lang['code'];
                             }
                         ?>
                         <td align="right" width="30%" style="line-height:normal;"><?php echo isset($translations[$lang['code']]->name)?'<a href="'.$edit_link.'" title="'.__('Edit','sitepress').'">'.$translations[$lang['code']]->name.'</a>':__('n/a','sitepress') ?></td>
@@ -2633,12 +2666,22 @@ class SitePress{
        
     function terms_language_filter(){
         global $wpdb, $pagenow;
-        if($pagenow=='categories.php'){
-            $element_type = $taxonomy = 'category';
-        }else{
-            $element_type = 'tag';
-            $taxonomy = 'post_tag';
+        
+        /* preWP3 compatibility  - start */
+        if(ICL_PRE_WP3){
+            if($pagenow=='categories.php'){
+                $element_type = $taxonomy = 'category';
+            }else{
+                $element_type = 'tag';
+                $taxonomy = 'post_tag';
+            }
+        }else
+        /* preWP3 compatibility  - end */            
+        {
+            $element_type = $taxonomy = isset($_GET['taxonomy']) ? $_GET['taxonomy'] : 'post_tag';
+            if($element_type == 'post_tag') $element_type = 'tag';
         }
+        
         $active_languages = $this->get_active_languages();
         
         $res = $wpdb->get_results("
@@ -2662,7 +2705,7 @@ class SitePress{
                 $px = '<span>';
                 $sx = '<\/span>';
             }else{
-                $px = '<a href="?lang='.$lang['code'].'">';
+                $px = '<a href="?taxonomy='.$taxonomy.'&amp;lang='.$lang['code'].'">';
                 $sx = '<\/a> ('. $langs[$lang['code']] .')';
             }
             $as[] =  $px . $lang['display_name'] . $sx;
@@ -2676,18 +2719,33 @@ class SitePress{
     }    
     
     function exclude_other_terms($exclusions, $args){                
-        global $wpdb, $pagenow;        
-        if($args['type']=='category' || in_array($pagenow, array('post-new.php','post.php'))){
-            $element_type = $taxonomy = 'category';
+        global $wpdb, $pagenow;    
+        /* preWP3 compatibility  - start */
+        if(ICL_PRE_WP3){
+            $_GET['taxonomy'] = $args['type'];
+            if($args['type']=='post_tag'){
+                $taxonomy = 'post_tag';    
+            }
+            if(isset($_GET['cat_ID']) && $_GET['cat_ID']){
+                $_GET['tag_ID'] = $_GET['cat_ID'];
+            }
+        }
+        /* preWP3 compatibility  - end */                    
+        if(isset($_GET['taxonomy'])){
+            $element_type = $taxonomy = $_GET['taxonomy'];    
         }else{
-            $element_type = 'tag';
-            $taxonomy = 'post_tag';
+            if(in_array($pagenow, array('post-new.php','post.php'))){
+                $element_type = $taxonomy = 'category';    
+            }else{
+                $element_type = 'tag';
+                $taxonomy = 'post_tag';
+            }
         }
         if($_GET['lang']=='all'){
             return $exclusions;
         }
-        if(isset($_GET['cat_ID']) && $_GET['cat_ID']){
-            $element_lang_details = $this->get_element_language_details($wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id='{$_GET['cat_ID']}' AND taxonomy='category'"),'category');            
+        if(isset($_GET['tag_ID']) && $_GET['tag_ID']){
+            $element_lang_details = $this->get_element_language_details($wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id='{$_GET['tag_ID']}' AND taxonomy='{$taxonomy}'"),$element_type);            
             $this_lang = $element_lang_details->language_code;
         }elseif($this->this_lang != $this->get_default_language()){
             $this_lang = $this->get_current_language();
@@ -2702,7 +2760,7 @@ class SitePress{
             LEFT JOIN {$wpdb->terms} tm ON tt.term_id = tm.term_id 
             LEFT JOIN {$wpdb->prefix}icl_translations t ON (tt.term_taxonomy_id = t.element_id OR t.element_id IS NULL)
             WHERE tt.taxonomy='{$taxonomy}' AND t.element_type='{$element_type}' AND t.language_code <> '{$this_lang}'
-            ");        
+            ");  
         $exclude[] = 0;         
         $exclusions .= ' AND tt.term_taxonomy_id NOT IN ('.join(',',$exclude).')';
         return $exclusions;
