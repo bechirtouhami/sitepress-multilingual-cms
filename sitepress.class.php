@@ -2346,7 +2346,7 @@ class SitePress{
         
         $untranslated_ids = $this->get_elements_without_translations($icl_element_type, $selected_language, $default_language);
         
-        include ICL_PLUGIN_PATH . '/menu/'.$element_type.'-menu.php';        
+        include ICL_PLUGIN_PATH . '/menu/'.$icl_element_type.'-menu.php';        
     }
 
     function add_language_selector_to_page($active_languages, $selected_language, $translations, $element_id, $type) {        
@@ -2732,15 +2732,21 @@ class SitePress{
         }
         /* preWP3 compatibility  - end */                    
         if(isset($_GET['taxonomy'])){
-            $element_type = $taxonomy = $_GET['taxonomy'];    
+            $taxonomy = $_GET['taxonomy'];    
         }else{
             if(in_array($pagenow, array('post-new.php','post.php'))){
-                $element_type = $taxonomy = 'category';    
+                $taxonomy = 'category';    
             }else{
-                $element_type = 'tag';
+                
                 $taxonomy = 'post_tag';
             }
         }
+        if($taxonomy == 'post_tag'){
+            $element_type = 'tag';
+        }else{
+            $element_type = $taxonomy;
+        }
+        
         if($_GET['lang']=='all'){
             return $exclusions;
         }
@@ -2760,7 +2766,7 @@ class SitePress{
             LEFT JOIN {$wpdb->terms} tm ON tt.term_id = tm.term_id 
             LEFT JOIN {$wpdb->prefix}icl_translations t ON (tt.term_taxonomy_id = t.element_id OR t.element_id IS NULL)
             WHERE tt.taxonomy='{$taxonomy}' AND t.element_type='{$element_type}' AND t.language_code <> '{$this_lang}'
-            ");  
+            "); 
         $exclude[] = 0;         
         $exclusions .= ' AND tt.term_taxonomy_id NOT IN ('.join(',',$exclude).')';
         return $exclusions;
