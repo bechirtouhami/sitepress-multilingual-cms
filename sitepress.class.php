@@ -130,6 +130,7 @@ class SitePress{
                     add_action('edit_tag_form', array($this, 'edit_term_form'));                    
                 }                
                 add_action('admin_footer', array($this,'terms_language_filter'));                
+                add_filter('wp_dropdown_cats', array($this, 'wp_dropdown_cats_select_parent'));
             }
             
             // custom hook for adding the language selector to the template
@@ -2348,7 +2349,29 @@ class SitePress{
         
         include ICL_PLUGIN_PATH . '/menu/'.$icl_element_type.'-menu.php';        
     }
-
+    
+    function wp_dropdown_cats_select_parent($html){
+        global $wpdb;        
+        if(isset($_GET['trid'])){
+            $element_type = $taxonomy = isset($_GET['taxonomy']) ? $_GET['taxonomy'] : 'post_tag';
+            if($element_type == 'post_tag') $element_type = 'tag';
+            $trid = intval($_GET['trid']);
+            $source_lang = isset($_GET['source_lang']) ? $_GET['source_lang'] : $this->get_default_language();
+            $parent = $wpdb->get_var("
+                SELECT parent
+                FROM {$wpdb->term_taxonomy} tt 
+                    JOIN {$wpdb->prefix}icl_translations tr ON tr.element_id=tt.term_taxonomy_id 
+                        AND tr.element_type='{$element_type}' AND tt.taxonomy='{$taxonomy}'
+                WHERE trid='{$trid}' AND tr.language_code='{$source_lang}'
+            ");
+            if($parent){
+                $parent = icl_object_id($parent, $element_type);                
+                $html = str_replace('value="'.$parent.'"', 'value="'.$parent.'" selected="selected"', $html);                
+            }
+        }
+        return $html;
+    }
+    
     function add_language_selector_to_page($active_languages, $selected_language, $translations, $element_id, $type) {        
         ?>
         <div id="icl_<?php echo $type ?>_menu" style="display:none">
