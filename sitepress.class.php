@@ -100,6 +100,7 @@ class SitePress{
             add_action('create_term',  array($this, 'create_term'),1, 2);
             add_action('edit_term',  array($this, 'create_term'),1, 2);
             add_action('delete_term',  array($this, 'delete_term'),1,3);       
+            // filters terms by language
             add_filter('list_terms_exclusions', array($this, 'exclude_other_terms'),1,2);         
             
             // allow adding terms with the same name in different languages
@@ -2743,6 +2744,7 @@ class SitePress{
     
     function exclude_other_terms($exclusions, $args){                
         global $wpdb, $pagenow;    
+        
         /* preWP3 compatibility  - start */
         if(ICL_PRE_WP3){
             $_GET['taxonomy'] = $args['type'];
@@ -2754,22 +2756,28 @@ class SitePress{
             }
         }
         /* preWP3 compatibility  - end */                    
-        if(isset($_GET['taxonomy'])){
-            $taxonomy = $_GET['taxonomy'];    
-        }else{
-            if(in_array($pagenow, array('post-new.php','post.php'))){
-                $taxonomy = 'category';    
+        else{
+            
+            if(isset($_GET['taxonomy'])){
+                $taxonomy = $_GET['taxonomy'];    
+            }elseif(isset($args['taxonomy'])){
+                $taxonomy = $args['taxonomy'];    
             }else{
-                
-                $taxonomy = 'post_tag';
+                if(in_array($pagenow, array('post-new.php','post.php', 'edit.php'))){
+                    $taxonomy = 'category';    
+                }else{
+                    
+                    $taxonomy = 'post_tag';
+                }
             }
         }
+        
         if($taxonomy == 'post_tag'){
             $element_type = 'tag';
         }else{
             $element_type = $taxonomy;
         }
-        
+                
         if($_GET['lang']=='all'){
             return $exclusions;
         }
@@ -2783,7 +2791,8 @@ class SitePress{
             $this_lang = $element_lang_details->language_code;
         }else{
             $this_lang = $this->get_default_language();
-        }        
+        }   
+        
         $exclude =  $wpdb->get_col("
             SELECT tt.term_taxonomy_id FROM {$wpdb->term_taxonomy} tt
             LEFT JOIN {$wpdb->terms} tm ON tt.term_id = tm.term_id 
