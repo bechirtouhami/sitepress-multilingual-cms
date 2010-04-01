@@ -2747,13 +2747,14 @@ class SitePress{
         
         /* preWP3 compatibility  - start */
         if(ICL_PRE_WP3){
-            $_GET['taxonomy'] = $args['type'];
+            $element_type = $taxonomy = $_GET['taxonomy'] = $args['type'];
             if($args['type']=='post_tag'){
-                $taxonomy = 'post_tag';    
+                $element_type = 'post_tag';    
             }
             if(isset($_GET['cat_ID']) && $_GET['cat_ID']){
                 $_GET['tag_ID'] = $_GET['cat_ID'];
             }
+            
         }
         /* preWP3 compatibility  - end */                    
         else{
@@ -2777,7 +2778,7 @@ class SitePress{
         }else{
             $element_type = $taxonomy;
         }
-                
+        
         if($_GET['lang']=='all'){
             return $exclusions;
         }
@@ -3518,6 +3519,7 @@ class SitePress{
         
     function parse_query($q){
         global $wp_query, $wpdb;
+        
         //if($q == $wp_query) return; // not touching the WP query
         if(is_admin()) return; 
         
@@ -3529,7 +3531,7 @@ class SitePress{
             }
             // category_name
             if(isset($q->query_vars['category_name']) && !empty($q->query_vars['category_name'])){
-                $cat = get_term_by( 'slug', $q->query_vars['category_name'], 'category' ); 
+                $cat = get_term_by( 'slug', basename($q->query_vars['category_name']), 'category' ); 
                 if(!$cat){
                     $cat = get_term_by( 'name', $q->query_vars['category_name'], 'category' ); 
                 }
@@ -3733,6 +3735,7 @@ class SitePress{
             } 
                      
         }
+                
         return $q;
     }
     
@@ -4018,6 +4021,26 @@ class SitePress{
                 }
             }
         }        
+        
+        if(isset($_GET['action']) && $_GET['action']=='ajax-tag-search'){
+            $search = 'SELECT t.name FROM '. $wpdb->term_taxonomy
+                .' AS tt INNER JOIN '.$wpdb->terms.' AS t ON tt.term_id = t.term_id WHERE tt.taxonomy = \''. $wpdb->escape($_GET['tax'])
+                .'\' AND t.name LIKE (\'%' . $wpdb->escape($_GET['q']) . '%\')';            
+            if($sql == $search){
+                $element_type = $_GET['tax'];
+                if($element_type == 'post_tag') $element_type = 'tag';
+                $sql = 
+                    'SELECT t.name FROM '. $wpdb->term_taxonomy
+                    .' AS tt 
+                    INNER JOIN '.$wpdb->terms.' AS t ON tt.term_id = t.term_id 
+                    JOIN '.$wpdb->prefix.'icl_translations tr ON tt.term_taxonomy_id = tr.element_id
+                    WHERE tt.taxonomy = \''. $wpdb->escape($_GET['tax'])
+                    .'\' AND tr.language_code=\''.$this->get_language_cookie().'\' AND element_type=\''.$element_type.'\'
+                    AND t.name LIKE (\'%' . $wpdb->escape($_GET['q']) . '%\')                
+                ';
+            }
+        }
+        
         return $sql;
     }
     
