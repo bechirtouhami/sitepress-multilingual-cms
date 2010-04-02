@@ -237,7 +237,12 @@ class SitePress{
             
             if(!is_admin()){
                 add_action('wp_head', array($this, 'meta_generator_tag'));
-            }           
+            } 
+            
+            // experimental
+            if($this->settings['language_negotiation_type']==1 && $this->get_current_language()!=$this->get_default_language()){
+                add_filter('option_rewrite_rules', array($this, 'rewrite_rules_filter'));              
+            }            
                                   
         } //end if the initial language is set - existing_content_language_verified
         
@@ -309,7 +314,7 @@ class SitePress{
                             //deal with situations when template files need to be called directly
                             add_action('template_redirect', array($this, '_allow_calling_template_file_directly'));
                             
-                            $_SERVER['REQUEST_URI'] = preg_replace('@^'. $blog_path . '/' . $this->this_lang.'@i', $blog_path ,$_SERVER['REQUEST_URI']);
+                            //$_SERVER['REQUEST_URI'] = preg_replace('@^'. $blog_path . '/' . $this->this_lang.'@i', $blog_path ,$_SERVER['REQUEST_URI']);
                             
                             // Check for special case of www.example.com/fr where the / is missing on the end
                             $parts = parse_url($_SERVER['REQUEST_URI']);
@@ -3939,22 +3944,23 @@ class SitePress{
     }
     
     function get_edit_post_link($link, $id, $context = 'display'){
-        
-        if ( 'display' == $context )
-            $and = '&amp;';
-        else
-            $and = '&';
-        
-        if($id){
-            $details = $this->get_element_language_details($id, 'post');
-            if(isset($details->language_code)){
-                $lang = $details->language_code;
-            }else{                              
-                $lang = $this->get_current_language();
-            }            
-            if($lang != $this->get_default_language()){
-                $link .= $and . 'lang=' . $lang;
-            }        
+        if ( current_user_can( 'edit_post', $id ) ) {
+            if ( 'display' == $context )
+                $and = '&amp;';
+            else
+                $and = '&';
+            
+            if($id){
+                $details = $this->get_element_language_details($id, 'post');
+                if(isset($details->language_code)){
+                    $lang = $details->language_code;
+                }else{                              
+                    $lang = $this->get_current_language();
+                }            
+                if($lang != $this->get_default_language()){
+                    $link .= $and . 'lang=' . $lang;
+                }        
+            }
         }
         return $link;
     }
@@ -4595,6 +4601,14 @@ class SitePress{
             $lang = '';
         }
         return $lang;
+    }
+    
+    function rewrite_rules_filter($value){
+        foreach($value as $k=>$v){
+            $value[$this->get_current_language().'/'.$k] = $v;
+            unset($value[$k]);
+        }
+        return $value;
     }
 }
 ?>
