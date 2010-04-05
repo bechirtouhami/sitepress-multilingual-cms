@@ -115,7 +115,6 @@ function icl_link_to_element($element_id, $element_type='post', $link_text='', $
             $my_cat = &get_term($element_id, 'category', OBJECT, 'display');
             $title = apply_filters('single_cat_title', $my_cat->name);                           
         }else{
-            echo 'HERE';
             $url = get_term_link((int)$element_id, $element_type);               
             $my_cat = &get_term($element_id, $element_type, OBJECT, 'display');     
             $title = apply_filters('single_cat_title',$my_cat->name);                           
