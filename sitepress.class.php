@@ -78,11 +78,24 @@ class SitePress{
             $this->queries = array();
             
             global $pagenow;
-            if($pagenow == 'edit.php'){
-                add_action('restrict_manage_posts', array($this,'language_filter'));                
-            }elseif($pagenow == 'edit-pages.php'){
-                add_action('admin_footer', array($this,'language_filter'));
+            /* preWP3 compatibility  - start */
+            if(ICL_PRE_WP3){
+                if($pagenow == 'edit.php'){
+                    add_action('restrict_manage_posts', array($this,'language_filter'));                            
+                }elseif($pagenow == 'edit-pages.php'){
+                    add_action('admin_footer', array($this,'language_filter'));
+                }
+            }else{
+            /* preWP3 compatibility  - end */
+                if($pagenow == 'edit.php'){                
+                    if(!isset($_GET['post_type']) || $_GET['post_type']=='post'){
+                        add_action('restrict_manage_posts', array($this,'language_filter'));
+                    }elseif(isset($_GET['post_type']) && $_GET['post_type']=='page'){
+                        add_action('admin_footer', array($this,'language_filter'));
+                    }
+                }
             }
+            
 			
             //add_filter('wp_list_pages_excludes', array($this, 'exclude_other_language_pages'));
             add_filter('get_pages', array($this, 'exclude_other_language_pages2'));
@@ -141,7 +154,12 @@ class SitePress{
             add_action('wp_head', array($this, 'front_end_js'));            
             
             add_action('restrict_manage_posts', array($this, 'restrict_manage_posts'));
-            add_action('admin_print_scripts-edit-pages.php', array($this,'restrict_manage_pages'));
+            
+            /* preWP3 compatibility  - start */
+            if(ICL_PRE_WP3){            
+                add_action('admin_print_scripts-edit-pages.php', array($this,'restrict_manage_pages'));
+            }
+            /* preWP3 compatibility  - endif */
             
             add_filter('get_edit_post_link', array($this, 'get_edit_post_link'), 1, 3);
         
@@ -1241,7 +1259,7 @@ class SitePress{
             ?>
             <?php if($is_sticky && $this->settings['sync_sticky_flag']): ?><script type="text/javascript">addLoadEvent(function(){jQuery('#sticky').attr('checked','checked');});</script><?php endif; ?>               
             <?php
-        }elseif('page-new.php' == $pagenow){
+        }elseif('page-new.php' == $pagenow || ('post-new.php' == $pagenow && $_GET['post_type']=='page')){
             if(isset($_GET['trid']) && ($this->settings['sync_page_template'] || $this->settings['sync_page_ordering'])){
                 $res = $wpdb->get_row("
                     SELECT p.ID, p.menu_order FROM {$wpdb->prefix}icl_translations t
@@ -2189,11 +2207,19 @@ class SitePress{
     function language_filter(){
         require_once ICL_PLUGIN_PATH . '/inc/cache.php';        
         global $wpdb, $pagenow;
-        if($pagenow=='edit.php'){
-            $type = 'post';
+        
+        /* preWP3 compatibility  - start */
+        if(ICL_PRE_WP3){
+            if($pagenow=='edit.php'){
+                $type = 'post';
+            }else{
+                $type = 'page';
+            }
         }else{
-            $type = 'page';
+        /* preWP3 compatibility  - end */
+            $type = isset($_GET['post_type'])?$_GET['post_type']:'post';    
         }
+        
         $active_languages = $this->get_active_languages();
         
         $post_status = get_query_var('post_status');
@@ -2231,9 +2257,9 @@ class SitePress{
                 $sx = '<\/span>';
             }else{
                 if($post_status){
-                    $px = '<a href="?post_status='.$post_status.'&lang='.$lang['code'].'">';
+                    $px = '<a href="?post_type='.$type.'&post_status='.$post_status.'&lang='.$lang['code'].'">';
                 }else{
-                    $px = '<a href="?lang='.$lang['code'].'">';
+                    $px = '<a href="?post_type='.$type.'&lang='.$lang['code'].'">';
                 }                
                 $sx = '<\/a> <span class="count">('. intval($langs[$lang['code']]) .')<\/span>';
             }
