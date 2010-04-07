@@ -256,11 +256,6 @@ class SitePress{
             if(!is_admin()){
                 add_action('wp_head', array($this, 'meta_generator_tag'));
             } 
-            
-            // experimental
-            if($this->settings['language_negotiation_type']==1 && $this->get_current_language()!=$this->get_default_language()){
-                add_filter('option_rewrite_rules', array($this, 'rewrite_rules_filter'));              
-            }            
                                   
         } //end if the initial language is set - existing_content_language_verified
         
@@ -374,6 +369,11 @@ class SitePress{
             add_filter('get_pagenum_link', array($this,'get_pagenum_link_filter'));        
             // filter some queries
             add_filter('query', array($this, 'filter_queries'));                
+                
+            // experimental
+            if($this->settings['language_negotiation_type']==1 && $this->get_current_language()!=$this->get_default_language()){
+                add_filter('option_rewrite_rules', array($this, 'rewrite_rules_filter'));              
+            }            
                 
             $this->set_language_cookie();  
         }
@@ -4635,6 +4635,10 @@ class SitePress{
             unset($value[$k]);
         }
         return $value;
+    }
+    
+    function is_rtl(){
+        return in_array($this->get_current_language(), array('ar','he','fa'));
     }
 }
 ?>
