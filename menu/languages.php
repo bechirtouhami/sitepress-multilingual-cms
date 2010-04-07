@@ -389,7 +389,7 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                                                     $active_sidebar_check = $k;
                                                 }
                                             }
-                                            if (!array_key_exists($active_sidebar_check, $wp_registered_sidebars)) {
+                                            if ($sitepress_settings['setup_complete'] && !array_key_exists($active_sidebar_check, $wp_registered_sidebars)) {
                                                 echo '<span class="icl_error_text"><strong>' . sprintf(__('Theme has changed and widget is not active. Please visit %swidgets page%s.', 'sitepress'), '<a href="widgets.php">', '</a>') . '</strong></span>';
                                             } else {
                                             ?>                
