@@ -158,7 +158,7 @@ function icl_object_id($element_id, $element_type='post', $return_original_if_mi
     if(ICL_PRE_WP3){
         $element_types = array('post', 'post_tag', 'category', 'page');
         $taxonomies = array('post_tag', 'category');
-        $post_types = array_keys('post', 'page');
+        $post_types = array('post', 'page');
     }else{        
     /* preWP3 compatibility  - end */
         $post_types = array_keys((array)$wp_post_types);
@@ -208,4 +208,5 @@ function icl_object_id($element_id, $element_type='post', $return_original_if_mi
     return $ret_element_id;
     
 }
+
 ?>
