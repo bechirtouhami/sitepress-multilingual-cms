@@ -172,7 +172,7 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                                     </div>
                                 </td>
                             </tr>
-                            <tr><td><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/languages.php&amp;trop=1"><?php _e('Edit Languages','sitepress'); ?></a></td></tr>
+                            <?php if ($sitepress_settings['setup_complete']) { ?><tr><td><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/languages.php&amp;trop=1"><?php _e('Edit Languages','sitepress'); ?></a></td></tr><?php } ?>
                         </table>              
                         
                         <?php if(!empty($inactive_content)): ?>
