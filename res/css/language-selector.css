@@ -136,6 +136,7 @@
 
 #lang_sel.icl_rtl{
     text-align:right;
+    direction: rtl;
 }
 #lang_sel.icl_rtl .lang_sel_sel{
     padding-right:14px;
