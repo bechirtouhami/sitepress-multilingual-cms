@@ -1031,10 +1031,20 @@ class IcanSnoopy
 
         if($this->read_timeout > 0)
             $cmdline_params .= " -m ".$this->read_timeout;
-
-        $headerfile = tempnam($temp_dir, "sno");
+            
+        if(@!is_readable($temp_dir) || @!is_writable($temp_dir)){
+            $updir = wp_upload_dir();
+            $temp_dir = $updir['path'];
+            $headerfile = $updir['path'] . '/icl_' . time() . '.tar.gz';            
+        }else{
+            $headerfile = tempnam($temp_dir, "sno");    
+        }    
 
         exec($this->curl_path." -k -D \"$headerfile\"".$cmdline_params." \"".escapeshellcmd($URI)."\"",$results,$return);
+        
+        if(isset($updir)){
+            @unlink($headerfile);
+        }
 
         if($return)
         {

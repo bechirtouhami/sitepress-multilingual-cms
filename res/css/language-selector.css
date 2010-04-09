@@ -134,3 +134,9 @@
 
 #lang_sel_list img.iclflag{width:18px;height:12px;position: relative; top: 1px;}
 
+#lang_sel.icl_rtl{
+    text-align:right;
+}
+#lang_sel.icl_rtl .lang_sel_sel{
+    padding-right:14px;
+}

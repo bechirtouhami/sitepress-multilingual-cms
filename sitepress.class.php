@@ -199,6 +199,10 @@ class SitePress{
             add_filter('getarchives_where', array($this,'getarchives_where'));
             add_filter('pre_option_home', array($this,'pre_option_home'));            
             
+            // author template
+            add_filter('author_link', array($this,'convert_url'));            
+            
+            
             add_filter('home_url', array($this, 'home_url'), 1, 4) ;
                         
             // language negotiation
@@ -3088,6 +3092,22 @@ class SitePress{
                             $skip_lang = true;
                         }                        
                     }                    
+                }elseif(is_author()){     
+                    global $authordata;
+                    if($wpdb->get_var("SELECT COUNT(p.ID) FROM {$wpdb->posts} p 
+                    JOIN {$wpdb->prefix}icl_translations t ON p.ID=t.element_id AND t.element_type='post' 
+                    WHERE p.post_author='{$authordata->ID}' AND post_type='post' AND post_status='publish' AND language_code='{$lang['code']}'")
+                    ){
+                        remove_filter('author_link', array($this,'convert_url'));            
+                        $lang['translated_url'] = $this->convert_url(get_author_posts_url($authordata->ID), $lang['code']);                                     
+                        add_filter('author_link', array($this,'convert_url'));
+                    }else{
+                        if($icl_lso_link_empty){
+                            $lang['translated_url'] = $this->language_url($lang['code']);
+                        }else{
+                            $skip_lang = true;
+                        }                        
+                    }
                 }elseif(is_archive() && !is_tag()){
                     global $icl_archive_url_filter_off;
                     $icl_archive_url_filter_off = true;

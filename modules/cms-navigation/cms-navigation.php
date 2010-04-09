@@ -262,16 +262,24 @@ class CMSNavigation{
             if(!empty($post) && !$post->ancestors){
                 $post->ancestors = array();
             }   
+            
+            if(current_user_can('read_private_pages')){
+                $private = " OR post_status='private'";
+            }else{
+                $private = "";
+            }
+            
             if($sitepress_settings['existing_content_language_verified'] && 'all' != $sitepress->get_current_language()){   // user has initialized 
                 $pages = $wpdb->get_col("
                     SELECT p.ID FROM {$wpdb->posts} p
                         JOIN {$wpdb->prefix}icl_translations tr ON p.ID = tr.element_id AND element_type='post' 
-                    WHERE post_type='page' AND post_status='publish' AND post_parent=0 AND p.ID NOT IN ({$excluded_pages})  AND tr.language_code = '{$sitepress->get_current_language()}'
+                    WHERE post_type='page' AND (post_status='publish' {$private})
+                        AND post_parent=0 AND p.ID NOT IN ({$excluded_pages})  AND tr.language_code = '{$sitepress->get_current_language()}'
                     ORDER BY {$order}");   
             }else{
                 $pages = $wpdb->get_col("
                     SELECT p.ID FROM {$wpdb->posts} p                    
-                    WHERE post_type='page' AND post_status='publish' AND post_parent=0 AND p.ID NOT IN ({$excluded_pages})  
+                    WHERE post_type='page' AND (post_status='publish' {$private}) AND post_parent=0 AND p.ID NOT IN ({$excluded_pages})  
                     ORDER BY {$order}");   
             }
             
