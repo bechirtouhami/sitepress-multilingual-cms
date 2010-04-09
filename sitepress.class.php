@@ -684,6 +684,7 @@ class SitePress{
             'sync_ping_status' => 1,
             'sync_comment_status' => 1,
             'sync_sticky_flag' => 1,
+            'sync_private_flag' => 1,
             'translated_document_status' => 0,
             'translation_pickup_method' => 0,
             'notify_complete' => 1,
@@ -1256,6 +1257,19 @@ class SitePress{
                         <?php endif; ?>                    
                     <?php endif; ?>
                     });</script><?php 
+                }
+                if(isset($_GET['trid']) && $this->settings['sync_private_flag']){
+                    if('private' == $wpdb->get_var("
+                        SELECT p.post_status FROM {$wpdb->prefix}icl_translations t
+                        JOIN {$wpdb->posts} p ON t.element_id = p.ID
+                        WHERE t.trid='{$_GET['trid']}' AND t.element_type='post'
+                    ")){
+                        ?><script type="text/javascript">addLoadEvent(function(){
+                            jQuery('#visibility-radio-private').attr('checked','checked');
+                            jQuery('#post-visibility-display').html('<?php _e('Private', 'sitepress') ?>');
+                        });
+                        </script><?php 
+                    }    
                 }
                 //get menu_order for page
                 
@@ -1890,6 +1904,31 @@ class SitePress{
                 $sticky_posts = array_diff($sticky_posts, $translations);                
             }
             update_option('sticky_posts',$sticky_posts);
+        }
+        
+        //sync private flag
+        if($this->settings['sync_private_flag']){
+            if($post_status=='private' && $_POST['original_post_status']!='private'){
+                $translated_posts = $wpdb->get_col("
+                    SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid='{$trid}' AND element_id<>{$post_id}");
+                if(!empty($translated_posts)){
+                    foreach($translated_posts as $tp){
+                        if($tp != $post_id){
+                            $wpdb->update($wpdb->posts, array('post_status'=>'private'), array('ID'=>$tp));
+                        }
+                    }
+                }            
+            }elseif($post_status!='private' && $_POST['original_post_status']=='private'){
+                $translated_posts = $wpdb->get_col("
+                    SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid='{$trid}' AND element_id<>{$post_id}");
+                if(!empty($translated_posts)){
+                    foreach($translated_posts as $tp){
+                        if($tp != $post_id){
+                            $wpdb->update($wpdb->posts, array('post_status'=>$post_status), array('ID'=>$tp));
+                        }
+                    }
+                }            
+            }
         }
         
         // new categories created inline go to the correct language        

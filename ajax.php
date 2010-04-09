@@ -280,6 +280,7 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings['sync_comment_status'] = intval($_POST['icl_sync_comment_status']);            
         $iclsettings['sync_ping_status'] = intval($_POST['icl_sync_ping_status']);            
         $iclsettings['sync_sticky_flag'] = intval($_POST['icl_sync_sticky_flag']);            
+        $iclsettings['sync_private_flag'] = intval($_POST['icl_sync_private_flag']);            
         $this->save_settings($iclsettings);
         echo 1; 
         break;        

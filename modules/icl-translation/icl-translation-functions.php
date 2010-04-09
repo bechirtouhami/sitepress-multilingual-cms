@@ -795,6 +795,9 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     if($sitepress_settings['sync_menu_order']){
         $postarr['menu_order'] = $original_post_details->menu_order;
     }
+    if($sitepress_settings['sync_private_flag'] && $original_post_details->post_status=='private'){    
+        $postarr['post_status'] = 'private';
+    }
     if(!$is_update){
         $postarr['post_status'] = !$sitepress_settings['translated_document_status'] ? 'draft' : $original_post_details->post_status;
     } else {

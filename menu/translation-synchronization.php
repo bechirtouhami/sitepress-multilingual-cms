@@ -118,6 +118,10 @@
                         <?php echo __('Synchronize sticky flag.', 'sitepress') ?></label>                        
                     </p>                                                            
                     <p>
+                        <label><input type="checkbox" name="icl_sync_private_flag" <?php if($sitepress_settings['sync_private_flag']): ?>checked="checked"<?php endif; ?> value="1" />
+                        <?php echo __('Synchronize private flag.', 'sitepress') ?></label>                        
+                    </p>                                                                                
+                    <p>
                         <input class="button" name="save" value="<?php echo __('Save','sitepress') ?>" type="submit" />
                         <span class="icl_ajx_response" id="icl_ajx_response_mo"></span>
                     </p>
