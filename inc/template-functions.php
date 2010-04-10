@@ -43,7 +43,8 @@ function icl_disp_language($native_name, $translated_name, $lang_native_hidden =
     
 }
 
-function icl_link_to_element($element_id, $element_type='post', $link_text='', $optional_parameters=array(), $anchor='', $echoit = true){
+function icl_link_to_element($element_id, $element_type='post', $link_text='', 
+            $optional_parameters=array(), $anchor='', $echoit = true, $return_original_if_missing = true){
     global $sitepress, $wpdb, $wp_post_types, $wp_taxonomies;
     
     $post_types = array_keys((array)$wp_post_types);
@@ -103,6 +104,13 @@ function icl_link_to_element($element_id, $element_type='post', $link_text='', $
             $url = get_term_link($term_id, $element_type);                    
         }        
     }else{
+        if(!$return_original_if_missing){
+            if($echoit){
+                echo '';            
+            }
+            return '';    
+        }
+        
         if($element_type=='post'){
             $url = get_permalink($element_id);
             $title = get_the_title($element_id);
