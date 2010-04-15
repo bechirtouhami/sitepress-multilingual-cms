@@ -1332,18 +1332,7 @@ function icl_st_scan_options_strings(){
     $options_names = array_merge($options_names, _icl_st_get_options_writes(get_stylesheet_directory()));
     $options_names = array_unique($options_names);
     
-    
-    // TO REMOVE
-    //if($_GET['deb']=='ug'){
-    //    $options_names[] = 'icl_sitepress_settings';
-    //}    
-    
-    //echo '<pre>';
-    //print_r($options_names);
-    //echo '</pre>';
-    
-    //$options_names[] = 'icl_sitepress_settings';
-    
+        
     if(!empty($options_names)){   
         $res = $wpdb->get_results("SELECT option_name, option_value FROM $wpdb->options WHERE option_name IN ('".join("','", $options_names)."')");
         foreach($res as $row){
