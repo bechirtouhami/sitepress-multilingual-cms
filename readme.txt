@@ -67,14 +67,15 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 == Changelog ==
 
 = 1.7.4 =
-* Fixed bug for wp_list_pages()/wp_list_categories() when Adjust IDs is on
+* Works with WordPress 3.
+* Fixed bug for wp_list_pages()/wp_list_categories() when Adjust IDs is on.
 * Sync default categories upon change. Wasn't happening before.
-* Fixed bug regarding get_pages() not working with Adjust IDs
-* Include private pages in the CMS navigation
+* Fixed bug regarding get_pages() not working with Adjust IDs.
+* Include private pages in the CMS navigation.
 * Allow the flag 'private' to be synced between pages.
 * icl_link_to_element() - added argument $return_original_if_missing (default true) Allows returning empty strings. 
-* Author links by language
-* bugfix in the library used for communicating with ICanLocalize to work with HTTPS
+* Author links by language.
+* bugfix in the library used for communicating with ICanLocalize to work with HTTPS.
 
 = 1.7.3 =
 * Added languages editing, allowing to enter new languages to WPML.
