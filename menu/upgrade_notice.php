@@ -12,7 +12,8 @@ $upgrade_lines =  array(
     '1.7.1' => __('Home-page link automatically adjusts per language', 'sitepress'),
     '1.7.2' => __('Bug fixes and stability improvements', 'sitepress'),
     '1.7.3' => __('Added languages editing and translation for admin-texts','sitepress'),
-    '1.7.4' => __('Works with WordPress 3','sitepress')
+    '1.7.4' => __('Works with WordPress 3','sitepress'),
+    '1.7.6' => __('Works with WordPress 3','sitepress')
 );
 
 $short_v = implode('.', array_slice(explode('.', ICL_SITEPRESS_VERSION), 0, 3));

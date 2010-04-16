@@ -403,9 +403,7 @@ class SitePress{
             
         } 
         
-        if($this->settings['promote_wpml']){
-            add_action('wp_footer', array($this, 'display_wpml_footer'),20);
-        }  
+        add_action('wp_footer', array($this, 'display_wpml_footer'),20);
                 
         if(defined('XMLRPC_REQUEST') && XMLRPC_REQUEST){
             add_action('xmlrpc_call', array($this, 'xmlrpc_call_actions'));
@@ -695,7 +693,8 @@ class SitePress{
             'modules' => array(
                 'absolute-links' => array('enabled'=>0, 'sticky_links_widgets'=>1, 'sticky_links_strings'=>1),
                 'cms-navigation'=>array('enabled'=>0, 'breadcrumbs_separator'=>' &raquo; ')
-                )
+                ),
+            'promote_wpml' => 1
         ); 
         
         //congigured for three levels
@@ -4384,9 +4383,21 @@ class SitePress{
     }
     
     function display_wpml_footer(){
-        echo '<p id="wpml_credit_footer">';
-        printf(__('%s is running multilingual thanks to <a href="%s">WPML</a>', 'sitepress'), get_bloginfo('blogname'), 'http://wpml.org');
-        echo '</p>';
+        if($this->settings['promote_wpml']){
+            $footers = array(
+                '1' => sprintf(__('Multilingual thanks to <a href="%s">WPML</a>', 'sitepress'), 'http://wpml.org'),
+                '2' => sprintf(__('Multilingual WordPress by <a href="%s">WPML</a>', 'sitepress'), 'http://wpml.org'),
+                '3' => sprintf(__('Translated with <a href="%s">WPML</a>', 'sitepress'), 'http://wpml.org'),
+                '4' => sprintf(__('Translating with <a href="%s">WPML</a>', 'sitepress'), 'http://wpml.org'),
+                '5' => sprintf(__('We translate using <a href="%s">WPML</a>', 'sitepress'), 'http://wpml.org')
+            );
+            if(!isset($this->settings['promote_wpml_footer_version'])){
+                $iclsettings['promote_wpml_footer_version'] = $this->settings['promote_wpml_footer_version'] = rand(1,5);
+                $this->save_settings($iclsettings);
+            }
+            
+            echo '<p id="wpml_credit_footer">' . $footers[$this->settings['promote_wpml_footer_version']] . '</p>';
+        }
     }
     
     function enable_advanced_mode(){
