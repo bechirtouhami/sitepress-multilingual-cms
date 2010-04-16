@@ -375,7 +375,7 @@ class SitePress{
             add_filter('query', array($this, 'filter_queries'));                
                 
             // experimental
-            if($this->settings['language_negotiation_type']==1 && $this->get_current_language()!=$this->get_default_language()){
+            if( $this->settings['language_negotiation_type']==1  && $this->get_current_language()!=$this->get_default_language()){
                 add_filter('option_rewrite_rules', array($this, 'rewrite_rules_filter'));              
             }            
                 
@@ -4693,6 +4693,7 @@ class SitePress{
             $value[$this->get_current_language().'/'.$k] = $v;
             unset($value[$k]);
         }
+        $value[$this->get_current_language()] = 'index.php';
         return $value;
     }
     
