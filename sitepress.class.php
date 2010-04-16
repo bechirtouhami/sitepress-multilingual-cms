@@ -96,7 +96,7 @@ class SitePress{
                 }
             }
             
-			
+            
             //add_filter('wp_list_pages_excludes', array($this, 'exclude_other_language_pages'));
             add_filter('get_pages', array($this, 'exclude_other_language_pages2'));
             add_filter('wp_dropdown_pages', array($this, 'wp_dropdown_pages'));
@@ -375,7 +375,7 @@ class SitePress{
             add_filter('query', array($this, 'filter_queries'));                
                 
             // experimental
-            if($this->settings['language_negotiation_type']==1 && $this->get_current_language()!=$this->get_default_language()){
+            if( $this->settings['language_negotiation_type']==1  && $this->get_current_language()!=$this->get_default_language()){
                 add_filter('option_rewrite_rules', array($this, 'rewrite_rules_filter'));              
             }            
                 
@@ -1156,7 +1156,7 @@ class SitePress{
         }
         ?>
         <script type="text/javascript">   
-		// <![CDATA[     
+        // <![CDATA[     
         var icl_ajx_url = '<?php echo rtrim(get_option('siteurl'),'/') . '/wp-admin/' ?>admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/languages.php';
         var icl_ajx_saved = '<?php echo __('Data saved','sitepress') ?>';
         var icl_ajx_error = '<?php echo __('Error: data not saved','sitepress') ?>';
@@ -1164,8 +1164,8 @@ class SitePress{
         var icl_this_lang = '<?php echo $this->this_lang ?>';   
         var icl_ajxloaderimg_src = '<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif';
         var icl_cat_adder_msg = '<?php echo __('To add categories that already exist in other languages go to the <a href="edit-tags.php?taxonomy=category">category management page<\/a>','sitepress')?>';
-		// ]]>
-		
+        // ]]>
+        
         <?php if(!$this->settings['ajx_health_checked']): ?>
         addLoadEvent(function(){
             jQuery.ajax({type: "POST",url: icl_ajx_url,data: "icl_ajx_action=health_check", error: function(msg){
@@ -4693,6 +4693,7 @@ class SitePress{
             $value[$this->get_current_language().'/'.$k] = $v;
             unset($value[$k]);
         }
+        $value[$this->get_current_language()] = 'index.php';
         return $value;
     }
     
