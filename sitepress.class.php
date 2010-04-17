@@ -694,7 +694,7 @@ class SitePress{
                 'absolute-links' => array('enabled'=>0, 'sticky_links_widgets'=>1, 'sticky_links_strings'=>1),
                 'cms-navigation'=>array('enabled'=>0, 'breadcrumbs_separator'=>' &raquo; ')
                 ),
-            'promote_wpml' => 1
+            'promote_wpml' => isset($this->settings['promote_wpml']) ? $this->settings['promote_wpml'] : 0
         ); 
         
         //congigured for three levels
@@ -4385,11 +4385,11 @@ class SitePress{
     function display_wpml_footer(){
         if($this->settings['promote_wpml']){
             $footers = array(
-                '1' => sprintf(__('Multilingual thanks to <a href="%s">WPML</a>', 'sitepress'), 'http://wpml.org'),
-                '2' => sprintf(__('Multilingual WordPress by <a href="%s">WPML</a>', 'sitepress'), 'http://wpml.org'),
-                '3' => sprintf(__('Translated with <a href="%s">WPML</a>', 'sitepress'), 'http://wpml.org'),
-                '4' => sprintf(__('Translating with <a href="%s">WPML</a>', 'sitepress'), 'http://wpml.org'),
-                '5' => sprintf(__('We translate using <a href="%s">WPML</a>', 'sitepress'), 'http://wpml.org')
+                '1' => sprintf(__('<a href="%s">Multilingual thanks to WPML</a>', 'sitepress'), 'http://wpml.org'),
+                '2' => sprintf(__('<a href="%s">Multilingual WordPress by WPML</a>', 'sitepress'), 'http://wpml.org'),
+                '3' => sprintf(__('<a href="%s">Translated with WPML</a>', 'sitepress'), 'http://wpml.org'),
+                '4' => sprintf(__('<a href="%s">Translating with WPML</a>', 'sitepress'), 'http://wpml.org'),
+                '5' => sprintf(__('<a href="%s">We translate using WPML</a>', 'sitepress'), 'http://wpml.org')
             );
             if(!isset($this->settings['promote_wpml_footer_version'])){
                 $iclsettings['promote_wpml_footer_version'] = $this->settings['promote_wpml_footer_version'] = rand(1,5);
