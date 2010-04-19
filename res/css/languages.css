@@ -68,6 +68,7 @@ a#toggle-theme-localization{
     font-size:11px;
     width:25%;
     float:left;
+    font-weight: bold;
 }
 #icl_setup_wizard_progress{
     height:10px;

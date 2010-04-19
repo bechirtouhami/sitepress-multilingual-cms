@@ -70,10 +70,10 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
     <div id="icl_setup_wizard_wrap">
         <h3><?php _e('Before you can start using WPML, it needs to be set up', 'sitepress') ?></h3>
         <div id="icl_setup_wizard">
-            <div class="icl_setup_wizard_step"><strong><?php _e('1. Language for existing contents', 'sitepress')?></strong></div>
-            <div class="icl_setup_wizard_step"><strong><?php _e('2. Select languages', 'sitepress')?></strong></div>
-            <div class="icl_setup_wizard_step"><strong><?php _e('3. Add a language switcher', 'sitepress')?></strong></div>            
-            <div class="icl_setup_wizard_step"><strong><?php _e('4. How to manage translations', 'sitepress')?></strong></div>
+            <div class="icl_setup_wizard_step"><?php _e('1. Language for existing contents', 'sitepress')?></div>
+            <div class="icl_setup_wizard_step"><?php _e('2. Select languages', 'sitepress')?></div>
+            <div class="icl_setup_wizard_step"><?php _e('3. Add a language switcher', 'sitepress')?></div>            
+            <div class="icl_setup_wizard_step"><?php _e('4. How to manage translations', 'sitepress')?></div>
         </div>        
         <br clear="all" />
         <div id="icl_setup_wizard_progress"><div id="icl_setup_wizard_progress_bar" style="width:<?php echo $sw_width ?>%">&nbsp;</div></div>
@@ -698,18 +698,18 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
             <tr>
                 <td>
                     <p><?php _e('WPML allows you to translate yourself or get professional translation (paid service).', 'sitepress'); ?></p>
-                    <p><a href="http://wpml.org/?page_id=3416"><?php _e('Instructions for translating yourself', 'sitepress')?></a> 
-                        | <a href="http://wpml.org/?page_id=1169"><?php _e("About WPML's professional translation", 'sitepress') ?></a></p>
-                    <p><?php _e('Would you like to enable professional translation now?', 'sitepress') ?></p>
+                    <br />
+                    <p><label><input type="radio" name="icl_translation_option" value="0" /> <?php 
+                        _e("I am translating myself.", 'sitepress') ?></label></p>
+                    <p><label><input type="radio" name="icl_translation_option" value="1" /> <?php printf(
+                        __("I need professional translation (<a%s>learn more</a>)", 'sitepress'), 
+                        ' target="_blank" href="http://wpml.org/?page_id=1169"'); ?></label></p>
+                    <br />
+                    <hr />
+                    <br />
+                    <p><a target="_blank" href="http://wpml.org/?page_id=3416"><?php _e('Instructions for translating yourself', 'sitepress')?></a>
+                        &nbsp; | &nbsp; <a target="_blank" href="http://wpml.org/?page_id=1169"><?php _e("About WPML's professional translation", 'sitepress') ?></a></p>
 
-                    <p>                    
-                    <label><input type="radio" name="icl_translation_option" value="0" /><?php 
-                        _e("I'm translating for myself (free).", 'sitepress') ?></label><br />
-                    <label><input type="radio" name="icl_translation_option" value="1" /> <?php printf(
-                        __("I need professional translation (paid service - <a%s>learn more</a>)", 'sitepress'), 
-                        ' href="http://wpml.org/?page_id=1169"'); ?></label><br />        
-                    </p>
-                    
                 </td>
             </tr>
         </tbody>
