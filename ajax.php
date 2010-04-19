@@ -140,6 +140,7 @@ switch($_REQUEST['icl_ajx_action']){
         echo "1|" . $result;
         break;
     case 'toggle_content_translation':
+        $redir = '';
         $iclsettings['enable_icl_translations'] = $_POST['new_val'];
         if ($iclsettings['enable_icl_translations'] == 0) {
             $settings = $this->get_settings();
@@ -164,10 +165,15 @@ switch($_REQUEST['icl_ajx_action']){
                     }            
                 }
             }            
+            if($_POST['new_val']){
+                $redir = 'admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/content-translation.php';
+            }else{
+                $iclsettings['promote_wpml'] = 1;
+            }
         }
         
         $this->save_settings($iclsettings);
-        echo '1';
+        echo '1|'.$redir;
         break;
     case 'icl_more_options':
         $this->update_icl_more_options();
@@ -276,7 +282,7 @@ switch($_REQUEST['icl_ajx_action']){
             $this->save_settings($iclsettings);    
             echo 1;
         }                
-        break;
+        break;   
     case 'icl_admin_language_options':
         $iclsettings['admin_default_language'] = $_POST['icl_admin_default_language'];
         $this->save_settings($iclsettings);
@@ -585,6 +591,10 @@ switch($_REQUEST['icl_ajx_action']){
         break;
     case 'setup_got_to_step2':
         $iclsettings['setup_wizard_step'] = 2;
+        $this->save_settings($iclsettings);
+        break;
+    case 'setup_got_to_step3':
+        $iclsettings['setup_wizard_step'] = 3;
         $this->save_settings($iclsettings);
         break;
     case 'toggle_show_translations':

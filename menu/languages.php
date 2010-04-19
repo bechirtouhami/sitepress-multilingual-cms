@@ -701,14 +701,22 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                     <p><a href="http://wpml.org/?page_id=3416"><?php _e('Instructions for translating yourself', 'sitepress')?></a> 
                         | <a href="http://wpml.org/?page_id=1169"><?php _e("About WPML's professional translation", 'sitepress') ?></a></p>
                     <p><?php _e('Would you like to enable professional translation now?', 'sitepress') ?></p>
+
+                    <p>                    
+                    <label><input type="radio" name="icl_translation_option" value="0" /><?php 
+                        _e("I'm translating for myself (free).", 'sitepress') ?></label><br />
+                    <label><input type="radio" name="icl_translation_option" value="1" /> <?php printf(
+                        __("I need professional translation (paid service - <a%s>learn more</a>)", 'sitepress'), 
+                        ' href="http://wpml.org/?page_id=1169"'); ?></label><br />        
+                    </p>
+                    
                 </td>
             </tr>
         </tbody>
     </table>
     <p class="submit" style="text-align:right">
-        <input type="button" id="icl_enable_content_translation" class="button-primary" value="<?php _e('Yes', 'sitepress') ?>"/>&nbsp;
-        <input type="button" class="icl_noenable_content_translation button-secondary" value="<?php _e('No', 'sitepress') ?>"/>&nbsp;
-        <input type="button" class="icl_noenable_content_translation button-secondary" value="<?php _e('Remind me later', 'sitepress') ?>"/>
+        <input type="button" id="icl_setup_back_3" class="button-primary" value="<?php _e('Back', 'sitepress') ?>"/>&nbsp;
+        <input type="button" id="icl_enable_content_translation" class="button-primary" value="<?php _e('Finish', 'sitepress') ?>" disabled="disabled"/>
     </p>
     
     <?php endif; ?>

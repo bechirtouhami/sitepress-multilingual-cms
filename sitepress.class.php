@@ -694,7 +694,7 @@ class SitePress{
                 'absolute-links' => array('enabled'=>0, 'sticky_links_widgets'=>1, 'sticky_links_strings'=>1),
                 'cms-navigation'=>array('enabled'=>0, 'breadcrumbs_separator'=>' &raquo; ')
                 ),
-            'promote_wpml' => 1
+            'promote_wpml' => 0
         ); 
         
         //congigured for three levels

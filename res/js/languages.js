@@ -18,6 +18,7 @@ addLoadEvent(function(){
     jQuery('#icl_dismiss_translate_help').click(iclDismissTranslateHelp);
     jQuery('#icl_setup_back_1').click(iclSetupStep1);
     jQuery('#icl_setup_back_2').click(iclSetupStep2);
+    jQuery('#icl_setup_back_3').click(iclSetupStep3);
     jQuery('#icl_setup_next_1').click(saveLanguageSelection);
     
     jQuery('#icl_avail_languages_picker li input:checkbox').click(function(){             
@@ -144,6 +145,9 @@ addLoadEvent(function(){
     
     jQuery('#icl_reset_languages').click(icl_reset_languages);
     
+    jQuery(':radio[name=icl_translation_option]').change(function(){
+        jQuery('#icl_enable_content_translation').removeAttr('disabled');
+    });    
     jQuery('#icl_enable_content_translation, .icl_noenable_content_translation').click(iclEnableContentTranslation);    
         
 });
@@ -354,6 +358,18 @@ function iclSetupStep2(){
             type: "POST",
             url: icl_ajx_url,
             data: "icl_ajx_action=setup_got_to_step2",
+            success: function(msg){
+                location.href = location.href.replace(/#.*/,'');
+            }
+    });    
+    return false;
+}
+
+function iclSetupStep3(){
+    jQuery.ajax({
+            type: "POST",
+            url: icl_ajx_url,
+            data: "icl_ajx_action=setup_got_to_step3",
             success: function(msg){
                 location.href = location.href.replace(/#.*/,'');
             }
@@ -805,14 +821,19 @@ function icl_reset_languages(){
 }
 
 function iclEnableContentTranslation(){
-    var val = jQuery(this).attr('id')=='icl_enable_content_translation'?1:0;
+    var val = jQuery(':radio[name=icl_translation_option]:checked').val();
     jQuery(this).attr('disabled','disabled');
     jQuery.ajax({
         type: "POST",
         url: icl_ajx_url,
         data: "icl_ajx_action=toggle_content_translation&wizard=1&new_val="+val,
         success: function(msg){
-            location.href = location.href.replace(/#.*/,'');
+            spl = msg.split('|');
+            if(spl[1]){
+                location.href = spl[1];
+            }else{
+                location.href = location.href.replace(/#.*/,'');
+            }
         }
     });
     return false;         
