@@ -150,6 +150,21 @@ switch($_REQUEST['icl_ajx_action']){
                 $iclsettings['content_translation_setup_wizard_step'] = 1;
             }
         }
+
+        // finalize wizard if this is the last step        
+        if(isset($_POST['wizard']) && $_POST['wizard']){
+            $iclsettings['setup_wizard_step'] = 0;
+            $iclsettings['setup_complete'] = 1;
+            $active_languages = $this->get_active_languages();
+            $default_language = $this->get_default_language();
+            foreach($active_languages as $al){
+                if($al != $default_language){
+                    if($this->_validate_language_per_directory($al)){
+                        $iclsettings['language_negotiation_type'] = 1;
+                    }            
+                }
+            }            
+        }
         
         $this->save_settings($iclsettings);
         echo '1';
@@ -207,6 +222,10 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings['icl_lso_flags'] = intval($_POST['icl_lso_flags']);
         $iclsettings['icl_lso_native_lang'] = intval($_POST['icl_lso_native_lang']);
         $iclsettings['icl_lso_display_lang'] = intval($_POST['icl_lso_display_lang']);
+        
+        $iclsettings['setup_wizard_step'] = 4;
+        
+        /*
         if(!$iclsettings['setup_complete']){
             $iclsettings['setup_wizard_step'] = 0;
             $iclsettings['setup_complete'] = 1;
@@ -221,6 +240,7 @@ switch($_REQUEST['icl_ajx_action']){
                 }
             }            
         }
+        */
         
         if(isset($_POST['icl_lang_sel_config'])){
             $iclsettings['icl_lang_sel_config'] = $_POST['icl_lang_sel_config'];

@@ -58,11 +58,13 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
     <?php if(!$sitepress_settings['setup_complete']): /* setup wizard */ ?>
     <?php 
         if(!$sitepress_settings['existing_content_language_verified']){
-            $sw_width = 16;
+            $sw_width = 10;
         }elseif(count($sitepress->get_active_languages()) < 2 || $sitepress_settings['setup_wizard_step'] == 2){
-            $sw_width = 50;
+            $sw_width = 32;
+        }elseif($sitepress_settings['setup_wizard_step'] == 3){
+            $sw_width = 60;
         }else{
-            $sw_width = 84;
+            $sw_width = 86;
         }
     ?>
     <div id="icl_setup_wizard_wrap">
@@ -71,6 +73,7 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
             <div class="icl_setup_wizard_step"><strong><?php _e('1. Language for existing contents', 'sitepress')?></strong></div>
             <div class="icl_setup_wizard_step"><strong><?php _e('2. Select languages', 'sitepress')?></strong></div>
             <div class="icl_setup_wizard_step"><strong><?php _e('3. Add a language switcher', 'sitepress')?></strong></div>            
+            <div class="icl_setup_wizard_step"><strong><?php _e('4. How to manage translations', 'sitepress')?></strong></div>
         </div>        
         <br clear="all" />
         <div id="icl_setup_wizard_progress"><div id="icl_setup_wizard_progress_bar" style="width:<?php echo $sw_width ?>%">&nbsp;</div></div>
@@ -510,7 +513,7 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                     <?php if(!$sitepress_settings['setup_complete']): ?>             
                     <div id="icl_setup_nav_3" style="text-align:right">
                         <input id="icl_setup_back_2" class="button-primary" name="save" value="<?php echo __('Back', 'sitepress') ?>" type="button" />
-                        <input class="button-primary" name="save" value="<?php echo __('Finish', 'sitepress') ?>" type="submit" />
+                        <input class="button-primary" name="save" value="<?php echo __('Next', 'sitepress') ?>" type="submit" />
                     </div>
                     <script type="text/javascript">
                     addLoadEvent(function(){     
@@ -681,6 +684,33 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
             </div>            
 
         </div>
+    <?php endif; ?>
+    
+    <?php if($sitepress_settings['setup_wizard_step'] == 4): ?>
+    
+    <table class="widefat">
+        <thead>
+            <tr>
+                <th><?php _e('How to manage translations', 'sitepress')?></th>
+            </tr>    
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <p><?php _e('WPML allows you to translate yourself or get professional translation (paid service).', 'sitepress'); ?></p>
+                    <p><a href="http://wpml.org/?page_id=3416"><?php _e('Instructions for translating yourself', 'sitepress')?></a> 
+                        | <a href="http://wpml.org/?page_id=1169"><?php _e("About WPML's professional translation", 'sitepress') ?></a></p>
+                    <p><?php _e('Would you like to enable professional translation now?', 'sitepress') ?></p>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <p class="submit" style="text-align:right">
+        <input type="button" id="icl_enable_content_translation" class="button-primary" value="<?php _e('Yes', 'sitepress') ?>"/>&nbsp;
+        <input type="button" class="icl_noenable_content_translation button-secondary" value="<?php _e('No', 'sitepress') ?>"/>&nbsp;
+        <input type="button" class="icl_noenable_content_translation button-secondary" value="<?php _e('Remind me later', 'sitepress') ?>"/>
+    </p>
+    
     <?php endif; ?>
     
     <?php if($sitepress_settings['setup_complete']): ?>  

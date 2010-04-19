@@ -65,7 +65,8 @@ a#toggle-theme-localization{
 #icl_inactive_content_table tfoot td{font-weight:bold;}
 
 #icl_setup_wizard .icl_setup_wizard_step{
-    width:33%;
+    font-size:11px;
+    width:25%;
     float:left;
 }
 #icl_setup_wizard_progress{

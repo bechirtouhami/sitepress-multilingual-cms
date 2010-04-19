@@ -144,6 +144,8 @@ addLoadEvent(function(){
     
     jQuery('#icl_reset_languages').click(icl_reset_languages);
     
+    jQuery('#icl_enable_content_translation, .icl_noenable_content_translation').click(iclEnableContentTranslation);    
+        
 });
 function editingDefaultLanguage(){
     jQuery('#icl_change_default_button').hide();
@@ -800,4 +802,18 @@ function icl_reset_languages(){
         
         
     }
+}
+
+function iclEnableContentTranslation(){
+    var val = jQuery(this).attr('id')=='icl_enable_content_translation'?1:0;
+    jQuery(this).attr('disabled','disabled');
+    jQuery.ajax({
+        type: "POST",
+        url: icl_ajx_url,
+        data: "icl_ajx_action=toggle_content_translation&wizard=1&new_val="+val,
+        success: function(msg){
+            location.href = location.href.replace(/#.*/,'');
+        }
+    });
+    return false;         
 }
