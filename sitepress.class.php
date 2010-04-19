@@ -694,7 +694,7 @@ class SitePress{
                 'absolute-links' => array('enabled'=>0, 'sticky_links_widgets'=>1, 'sticky_links_strings'=>1),
                 'cms-navigation'=>array('enabled'=>0, 'breadcrumbs_separator'=>' &raquo; ')
                 ),
-            'promote_wpml' => isset($this->settings['promote_wpml']) ? $this->settings['promote_wpml'] : 0
+            'promote_wpml' => 1
         ); 
         
         //congigured for three levels
@@ -2866,15 +2866,16 @@ class SitePress{
         }else{
             $this_lang = $this->get_default_language();
         }   
-        
         $exclude =  $wpdb->get_col("
             SELECT tt.term_taxonomy_id FROM {$wpdb->term_taxonomy} tt
             LEFT JOIN {$wpdb->terms} tm ON tt.term_id = tm.term_id 
             LEFT JOIN {$wpdb->prefix}icl_translations t ON (tt.term_taxonomy_id = t.element_id OR t.element_id IS NULL)
             WHERE tt.taxonomy='{$taxonomy}' AND t.element_type='{$element_type}' AND t.language_code <> '{$this_lang}'
             "); 
+        echo $wpdb->last_query;
         $exclude[] = 0;         
         $exclusions .= ' AND tt.term_taxonomy_id NOT IN ('.join(',',$exclude).')';
+        echo $exclusions;
         return $exclusions;
     }
   
