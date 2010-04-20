@@ -2874,7 +2874,6 @@ class SitePress{
             "); 
         $exclude[] = 0;         
         $exclusions .= ' AND tt.term_taxonomy_id NOT IN ('.join(',',$exclude).')';
-        echo $exclusions;
         return $exclusions;
     }
   
