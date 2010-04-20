@@ -2872,7 +2872,6 @@ class SitePress{
             LEFT JOIN {$wpdb->prefix}icl_translations t ON (tt.term_taxonomy_id = t.element_id OR t.element_id IS NULL)
             WHERE tt.taxonomy='{$taxonomy}' AND t.element_type='{$element_type}' AND t.language_code <> '{$this_lang}'
             "); 
-        echo $wpdb->last_query;
         $exclude[] = 0;         
         $exclusions .= ' AND tt.term_taxonomy_id NOT IN ('.join(',',$exclude).')';
         echo $exclusions;
