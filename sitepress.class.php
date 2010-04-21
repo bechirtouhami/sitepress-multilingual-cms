@@ -2811,7 +2811,8 @@ class SitePress{
         
         /* preWP3 compatibility  - start */
         if(ICL_PRE_WP3){
-            $taxonomy = $_GET['taxonomy'] = $args['type'];
+            $taxonomy = isset($_GET['taxonomy']) ? $_GET['taxonomy'] : $args['type'];
+            if(!$taxonomy) $taxonomy = 'post_tag';
             if(isset($_GET['cat_ID']) && $_GET['cat_ID']){
                 $_GET['tag_ID'] = $_GET['cat_ID'];
             }
