@@ -2381,7 +2381,7 @@ class SitePress{
         
         /* preWP3 compatibility  - start */
         if(ICL_PRE_WP3){
-            $element_type = $pagenow=='categories.php'?'tax_category':'tax_post_tag';
+            $icl_element_type = $pagenow=='categories.php'?'tax_category':'tax_post_tag';
         }else{
         /* preWP3 compatibility  - end */            
             $element_type = isset($_GET['taxonomy']) ? $wpdb->escape($_GET['taxonomy']) : 'post_tag';
