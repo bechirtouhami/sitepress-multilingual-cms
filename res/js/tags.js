@@ -1,12 +1,12 @@
 jQuery(document).ready(function(){  
     if(jQuery('form input[name="action"]').attr('value')=='add-tag'){
-        jQuery('.form-wrap p[class="submit"]').before(jQuery('#icl_tag_menu').html());    
+        jQuery('.form-wrap p[class="submit"]').before(jQuery('#icl_tax_menu').html());    
     }else{
         jQuery('#edittag table[class="form-table"]').append(jQuery('#edittag table[class="form-table"] tr:last').clone());    
         jQuery('#edittag table[class="form-table"] tr:last th:first').html('&nbsp;');
-        jQuery('#edittag table[class="form-table"] tr:last td:last').html(jQuery('#icl_tag_menu').html());        
+        jQuery('#edittag table[class="form-table"] tr:last td:last').html(jQuery('#icl_tax_menu').html());        
     }    
-    jQuery('#icl_tag_menu').remove();
+    jQuery('#icl_tax_menu').remove();
        
    jQuery('select[name="icl_tag_language"]').change(function(){
         var icl_subsubsub_save = jQuery('#icl_subsubsub').html();

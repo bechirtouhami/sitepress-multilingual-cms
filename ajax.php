@@ -29,7 +29,7 @@ switch($_REQUEST['icl_ajx_action']){
             $default_categories = $this->get_default_categories();            
             $default_category_main = $wpdb->get_var("SELECT name FROM {$wpdb->terms} t JOIN {$wpdb->term_taxonomy} tx ON t.term_id=tx.term_id
                 WHERE term_taxonomy_id='{$default_categories[$this->get_default_language()]}' AND taxonomy='category'");            
-            $default_category_trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id={$default_categories[$this->get_default_language()]} AND element_type='category'");
+            $default_category_trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id={$default_categories[$this->get_default_language()]} AND element_type='tax_category'");
             foreach($active_langs as $lang){
                 $is_default = ($this->get_default_language()==$lang['code']);
                 $iclresponse .= '<li ';
@@ -57,7 +57,7 @@ switch($_REQUEST['icl_ajx_action']){
                    }
                    $default_categories[$lang['code']] = $term_taxonomy_id;                   
                    $wpdb->query("INSERT INTO {$wpdb->prefix}icl_translations(element_id,element_type,trid,language_code,source_language_code) 
-                    VALUES('{$term_taxonomy_id}','category','{$default_category_trid}','{$lang['code']}','{$this->get_default_language()}')");
+                    VALUES('{$term_taxonomy_id}','tax_category','{$default_category_trid}','{$lang['code']}','{$this->get_default_language()}')");
                 }
             } 
             $this->set_default_categories($default_categories) ;                        

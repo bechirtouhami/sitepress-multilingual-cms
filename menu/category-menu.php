@@ -17,19 +17,19 @@
                                               $selected_language,
                                               $translations,
                                               $element_id,
-                                              'category');
+                                              'tax_category');
     $sitepress->add_translation_of_selector_to_page($trid,
                                                  $selected_language,
                                                  $default_language,
                                                  $source_language,
                                                  $untranslated_ids,
                                                  $element_id,
-                                                 'category');
+                                                 'tax_category');
     $sitepress->add_translate_options($trid,
                                    $active_languages,
                                    $selected_language,
                                    $translations,
-                                   'category');
+                                   'tax_category');
 
 ?>
 

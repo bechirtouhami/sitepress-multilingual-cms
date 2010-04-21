@@ -47,23 +47,22 @@ function icl_link_to_element($element_id, $element_type='post', $link_text='',
             $optional_parameters=array(), $anchor='', $echoit = true, $return_original_if_missing = true){
     global $sitepress, $wpdb, $wp_post_types, $wp_taxonomies;
     
+    if($element_type == 'tag') $element_type = 'post_tag';
+    if($element_type == 'page') $element_type = 'post';
+    
     $post_types = array_keys((array)$wp_post_types);
     $taxonomies = array_keys((array)$wp_taxonomies);
     
-    $taxonomies[] = 'custom';
     
-    $icl_element_type = $element_type;
+    
     
     /* preWP3 compatibility  - start */
     if(ICL_PRE_WP3){
-        if($element_type=='tag' || $element_type=='post_tag'){
+        if($element_type == 'post_tag'){
             $element_id = $wpdb->get_var($wpdb->prepare("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id= %d AND taxonomy='post_tag'",$element_id));
-            $element_type = 'tag'; 
-        }elseif($element_type=='category'){
+        }elseif($element_type == 'category'){
             $element_id = $wpdb->get_var($wpdb->prepare("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id= %d AND taxonomy='category'",$element_id));        
-        }elseif($element_type=='page'){
-            $element_type='post'; 
-        }    
+        }   
     }else{
     /* preWP3 compatibility  - end */
         if(in_array($element_type, $taxonomies)){
@@ -77,8 +76,8 @@ function icl_link_to_element($element_id, $element_type='post', $link_text='',
     
     if(!$element_id) return '';
     
-    if($element_type == 'post_tag'){
-        $icl_element_type = 'tag';
+    if(in_array($element_type, $taxonomies)){
+        $icl_element_type = 'tax_' . $element_type;
     }elseif(in_array($element_type, $post_types)){
         $icl_element_type = 'post';
     }
@@ -93,10 +92,10 @@ function icl_link_to_element($element_id, $element_type='post', $link_text='',
         if($element_type=='post'){
             $url = get_permalink($translations[ICL_LANGUAGE_CODE]->element_id);                    
             $title = $translations[ICL_LANGUAGE_CODE]->post_title;
-        }elseif($icl_element_type=='tag'){
+        }elseif($element_type=='post_tag'){
             list($term_id, $title) = $wpdb->get_row($wpdb->prepare("SELECT t.term_id, t.name FROM {$wpdb->term_taxonomy} tx JOIN {$wpdb->terms} t ON t.term_id = tx.term_id WHERE tx.term_taxonomy_id = %d AND tx.taxonomy='post_tag'",$translations[ICL_LANGUAGE_CODE]->element_id), ARRAY_N);                        
             $url = get_tag_link($term_id);        
-        }elseif($icl_element_type=='category'){
+        }elseif($element_type=='category'){
             list($term_id, $title) = $wpdb->get_row($wpdb->prepare("SELECT t.term_id, t.name FROM {$wpdb->term_taxonomy} tx JOIN {$wpdb->terms} t ON t.term_id = tx.term_id WHERE tx.term_taxonomy_id = %d AND tx.taxonomy='category'",$translations[ICL_LANGUAGE_CODE]->element_id), ARRAY_N);            
             $url = get_category_link($term_id);        
         }else{
@@ -111,14 +110,14 @@ function icl_link_to_element($element_id, $element_type='post', $link_text='',
             return '';    
         }
         
-        if($element_type=='post'){
+        if($element_type == 'post'){
             $url = get_permalink($element_id);
             $title = get_the_title($element_id);
-        }elseif($element_type=='tag' || $element_type=='post_tag'){
+        }elseif($element_type == 'post_tag'){
             $url = get_tag_link($element_id);     
             $my_tag = &get_term($element_id, 'post_tag', OBJECT, 'display');
             $title = apply_filters('single_tag_title', $my_tag->name);               
-        }elseif($element_type=='category'){
+        }elseif($element_type == 'category'){
             $url = get_category_link($element_id);        
             $my_cat = &get_term($element_id, 'category', OBJECT, 'display');
             $title = apply_filters('single_cat_title', $my_cat->name);                           
@@ -178,10 +177,10 @@ function icl_object_id($element_id, $element_type='post', $return_original_if_mi
     
     
     if(!in_array($element_type, $element_types)){
-        trigger_error(__('Invalid object kind','sitepress'), E_USER_WARNING);
+        trigger_error(__('Invalid object kind','sitepress'), E_USER_NOTICE);
         return null;
     }elseif(!$element_id){
-        trigger_error(__('Invalid object id','sitepress'), E_USER_WARNING);
+        trigger_error(__('Invalid object id','sitepress'), E_USER_NOTICE);
         return null;
     }
     
@@ -189,8 +188,8 @@ function icl_object_id($element_id, $element_type='post', $return_original_if_mi
         $element_id = $wpdb->get_var($wpdb->prepare("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id= %d AND taxonomy='{$element_type}'",$element_id));
     }
     
-    if($element_type=='post_tag'){
-        $icl_element_type = 'tag';
+    if(in_array($element_type, $taxonomies)){
+        $icl_element_type = 'tax_' . $element_type;
     }elseif(in_array($element_type, $post_types)){
         $icl_element_type = 'post';
     }else{
