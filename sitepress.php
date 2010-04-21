@@ -27,7 +27,7 @@ Version: 1.7.6
 
 
 if(defined('ICL_SITEPRESS_VERSION')) return;
-define('ICL_SITEPRESS_VERSION', '1.7.6');
+define('ICL_SITEPRESS_VERSION', '1.7.7');
 define('ICL_PLUGIN_PATH', dirname(__FILE__));
 define('ICL_PLUGIN_FOLDER', basename(ICL_PLUGIN_PATH));
 
