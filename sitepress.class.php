@@ -2059,7 +2059,7 @@ class SitePress{
                 $sel_add = ', p.post_title, p.post_status';
                 $join_add = " LEFT JOIN {$wpdb->posts} p ON t.element_id=p.ID";
                 $groupby_add = "";
-            }elseif($el_type=='category' || $el_type=='tag'){
+            }elseif(preg_match('#^tax_(.+)$#',$el_type)){
                 $sel_add = ', tm.name, tm.term_id, COUNT(tr.object_id) AS instances';
                 $join_add = " LEFT JOIN {$wpdb->term_taxonomy} tt ON t.element_id=tt.term_taxonomy_id
                               LEFT JOIN {$wpdb->terms} tm ON tt.term_id = tm.term_id
@@ -2078,7 +2078,7 @@ class SitePress{
         ";       
         $ret = $wpdb->get_results($query);        
         foreach($ret as $t){
-            if(($el_type=='tag' || $el_type=='category') && $t->instances==0 && $skip_empty) continue;
+            if((preg_match('#^tax_(.+)$#',$el_type)) && $t->instances==0 && $skip_empty) continue;
             $translations[$t->language_code] = $t;
         }        
         return $translations;
@@ -2388,11 +2388,14 @@ class SitePress{
         
         /* preWP3 compatibility  - start */
         if(ICL_PRE_WP3){
-            $icl_element_type = $element_type = $pagenow=='categories.php'?'category':'tag';
+            $element_type = $pagenow=='categories.php'?'category':'tag';
+            if($element_type == 'tag'){$icl_element_type = 'tax_post_tag';}
+            else{$icl_element_type = 'tax_category';}
+            
         }else{
         /* preWP3 compatibility  - end */            
-            $icl_element_type = $element_type = $wpdb->escape($_GET['taxonomy']);
-            if($element_type=='post_tag') $icl_element_type = 'tag';
+            $element_type = $wpdb->escape($_GET['taxonomy']);
+            $icl_element_type = 'tax_' . $element_type;
         }
         
         $default_language = $this->get_default_language();
@@ -2421,7 +2424,13 @@ class SitePress{
         
         $untranslated_ids = $this->get_elements_without_translations($icl_element_type, $selected_language, $default_language);
         
-        include ICL_PLUGIN_PATH . '/menu/'.$icl_element_type.'-menu.php';        
+        if($icl_element_type == 'tax_post_tag'){                    // backward compatibility
+            include ICL_PLUGIN_PATH . '/menu/tag-menu.php';         // backward compatibility
+        }elseif($icl_element_type == 'tax_category'){               // backward compatibility
+            include ICL_PLUGIN_PATH . '/menu/category-menu.php';    // backward compatibility    
+        }else{
+            include ICL_PLUGIN_PATH . '/menu/taxonomy-menu.php';        
+        }        
     }
     
     function wp_dropdown_cats_select_parent($html){
@@ -4384,18 +4393,18 @@ class SitePress{
     function display_wpml_footer(){
         if($this->settings['promote_wpml']){
             $footers = array(
-                '1' => sprintf(__('<a href="%s">Multilingual thanks to WPML</a>', 'sitepress'), 'http://wpml.org'),
-                '2' => sprintf(__('<a href="%s">Multilingual WordPress by WPML</a>', 'sitepress'), 'http://wpml.org'),
-                '3' => sprintf(__('<a href="%s">Translated with WPML</a>', 'sitepress'), 'http://wpml.org'),
-                '4' => sprintf(__('<a href="%s">Translating with WPML</a>', 'sitepress'), 'http://wpml.org'),
-                '5' => sprintf(__('<a href="%s">We translate using WPML</a>', 'sitepress'), 'http://wpml.org')
+                '1' => __('Multilingual thanks to WPML', 'sitepress'),
+                '2' => __('Multilingual WordPress by WPML', 'sitepress'),
+                '3' => __('Translated with WPML', 'sitepress'),
+                '4' => __('Translating with WPML', 'sitepress'),
+                '5' => __('We translate using WPML', 'sitepress')
             );
             if(!isset($this->settings['promote_wpml_footer_version'])){
                 $iclsettings['promote_wpml_footer_version'] = $this->settings['promote_wpml_footer_version'] = rand(1,5);
                 $this->save_settings($iclsettings);
             }
             
-            echo '<p id="wpml_credit_footer">' . $footers[$this->settings['promote_wpml_footer_version']] . '</p>';
+            echo '<p id="wpml_credit_footer"><a href="http://wpml.org">' . $footers[$this->settings['promote_wpml_footer_version']] . '</a></p>';
         }
     }
     
