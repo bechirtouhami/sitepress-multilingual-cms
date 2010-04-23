@@ -1182,9 +1182,9 @@ function icl_st_generate_po_file($strings, $potonly = false){
             $exp = explode('::',$positions[$s['string_id']]);
             $file = file($exp[0]);
         }
-        $po .= '#: ' . @trim($file[$exp[1]-2])  . PHP_EOL;
-        $po .= '#: ' . @trim($file[$exp[1]-1])  . PHP_EOL;
-        $po .= '#: ' . @trim($file[$exp[1]])  . PHP_EOL;
+        $po .= '# ' . @trim($file[$exp[1]-2])  . PHP_EOL;
+        $po .= '# ' . @trim($file[$exp[1]-1])  . PHP_EOL;
+        $po .= '# ' . @trim($file[$exp[1]])  . PHP_EOL;
         $po .= 'msgid "'.str_replace('"', '\"', $s['value']).'"' . PHP_EOL;
         $po .= 'msgstr "'.str_replace('"', '\"', $translation).'"' . PHP_EOL;
     }
