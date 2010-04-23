@@ -2059,7 +2059,7 @@ class SitePress{
                 $sel_add = ', p.post_title, p.post_status';
                 $join_add = " LEFT JOIN {$wpdb->posts} p ON t.element_id=p.ID";
                 $groupby_add = "";
-            }elseif(preg_match('#^tax_(.+)$#',$el_type)){
+            }elseif($el_type=='category' || $el_type=='tag'){
                 $sel_add = ', tm.name, tm.term_id, COUNT(tr.object_id) AS instances';
                 $join_add = " LEFT JOIN {$wpdb->term_taxonomy} tt ON t.element_id=tt.term_taxonomy_id
                               LEFT JOIN {$wpdb->terms} tm ON tt.term_id = tm.term_id
@@ -2078,7 +2078,7 @@ class SitePress{
         ";       
         $ret = $wpdb->get_results($query);        
         foreach($ret as $t){
-            if((preg_match('#^tax_(.+)$#',$el_type)) && $t->instances==0 && $skip_empty) continue;
+            if(($el_type=='tag' || $el_type=='category') && $t->instances==0 && $skip_empty) continue;
             $translations[$t->language_code] = $t;
         }        
         return $translations;
@@ -2388,14 +2388,11 @@ class SitePress{
         
         /* preWP3 compatibility  - start */
         if(ICL_PRE_WP3){
-            $element_type = $pagenow=='categories.php'?'category':'tag';
-            if($element_type == 'tag'){$icl_element_type = 'tax_post_tag';}
-            else{$icl_element_type = 'tax_category';}
-            
+            $icl_element_type = $element_type = $pagenow=='categories.php'?'category':'tag';
         }else{
         /* preWP3 compatibility  - end */            
-            $element_type = $wpdb->escape($_GET['taxonomy']);
-            $icl_element_type = 'tax_' . $element_type;
+            $icl_element_type = $element_type = $wpdb->escape($_GET['taxonomy']);
+            if($element_type=='post_tag') $icl_element_type = 'tag';
         }
         
         $default_language = $this->get_default_language();
@@ -2424,13 +2421,7 @@ class SitePress{
         
         $untranslated_ids = $this->get_elements_without_translations($icl_element_type, $selected_language, $default_language);
         
-        if($icl_element_type == 'tax_post_tag'){                    // backward compatibility
-            include ICL_PLUGIN_PATH . '/menu/tag-menu.php';         // backward compatibility
-        }elseif($icl_element_type == 'tax_category'){               // backward compatibility
-            include ICL_PLUGIN_PATH . '/menu/category-menu.php';    // backward compatibility    
-        }else{
-            include ICL_PLUGIN_PATH . '/menu/taxonomy-menu.php';        
-        }        
+        include ICL_PLUGIN_PATH . '/menu/'.$icl_element_type.'-menu.php';        
     }
     
     function wp_dropdown_cats_select_parent($html){
