@@ -84,8 +84,8 @@ function icl_get_all_languages_associated($post_id, $source_language, $rid) {
 
 function icl_translation_send_post($post_id, $target_languages, $post_type='post'){
     global $sitepress_settings, $wpdb, $sitepress;
-    
     $post = get_post($post_id);
+    
     if(!$post){
         return false;
     }
@@ -93,15 +93,15 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
     icl_translation_save_md5($post_id); // make sure the md5 is up to date.
     $post_md5 = $wpdb->get_var("SELECT md5 FROM {$wpdb->prefix}icl_node WHERE nid=" . $post_id);
     
+
     $source_lang = $sitepress->get_language_for_element($post_id);
     
     // get the previous request ids for this node and these langauges.
     $previous_rid = icl_get_request_ids_for_post($post_id,
                                                     $source_lang,
                                                     $target_languages);
-    
     $targets_available = array();
-    
+            
     foreach($target_languages as $target){
         // Make sure the previous request is complete.
         $available = true;
@@ -111,6 +111,7 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
             // check to make sure this is the latest $rid
             // get all languages for this rid
             $langs = icl_get_all_languages_associated($post_id, $source_lang, $rid);
+            
             // see if we have any later rids for any language.
             foreach($langs as $lang){
                 $test_rid = icl_get_latest_request_id($post_id,
@@ -141,6 +142,7 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
         }
         
     }
+        
     if (sizeof($targets_available) == 0){
         return false;
     }
@@ -191,7 +193,8 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
                
         foreach(wp_get_object_terms($post_id, 'category') as $cat){
             $post_categories[$cat->term_taxonomy_id] = $cat->name;
-        }            
+        }      
+                      
         if(is_array($post_categories)){
             //only send categories that don't have a translation
             foreach($post_categories as $term_taxonomy_id=>$pc){
@@ -210,10 +213,37 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
             }  
             sort($post_categories, SORT_STRING);
         }
+        
+        // get custom taxonomies
+        global $wp_taxonomies;
+        $taxonomies = array_diff(array_keys((array)$wp_taxonomies), array('post_tag','category'));
+        foreach($taxonomies as $t){
+            if($sitepress_settings['taxonomies_sync_option'][$t] == 1){
+                foreach(wp_get_object_terms($post_id, $t) as $trm){
+                    $trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations 
+                        WHERE element_id='{$trm->term_taxonomy_id}' AND element_type='tax_{$t}'");
+                    foreach($target_languages as $lang){
+                        $lang = $lang[0]; // get the languag name (string)
+                        $not_translated = false;
+                        if($trid != $wpdb->get_var("
+                                SELECT trid FROM {$wpdb->prefix}icl_translations t 
+                                JOIN {$wpdb->prefix}icl_languages l ON l.code = t.language_code WHERE l.english_name='{$lang}' AND trid='{$trid}'
+                        ")){
+                            $not_translated = true;
+                            break;
+                        }                
+                    }
+                    if($not_translated){
+                        $taxonomies_to_translate[$t][$trm->term_taxonomy_id] = $trm->name; 
+                    }            
+                }      
+            }
+        }
     }
     $timestamp = date('Y-m-d H:i:s');
     
     $md5 = icl_translation_calculate_md5($post_id);    
+    
     
     // send off to each language/s as a separate cms_request
     // $target_languages is an array of groups of languages to be sent together
@@ -221,6 +251,7 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
     // array(array("Spanish), array("German"), array("French"))
     // if there was a previous cms_request then some languages may be grouped.
     // array(array("Spanish", "German"), array("French"))
+        
     
     foreach($target_languages as $target){
         $target_for_server = apply_filters('icl_server_languages_map', $target); //filter some language names to match the names on the server
@@ -290,6 +321,7 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
                         'format'=>''
                     );                
             }
+            
             if(is_array($tags_to_translate)){
                 $data['contents']['tags'] = array(
                         'translate'=>1,
@@ -302,8 +334,22 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
                         'format'=>''
                     );                            
             }
+            
+            if(is_array($taxonomies_to_translate)){
+                foreach($taxonomies_to_translate as $k=>$v){
+                    $data['contents'][$k] = array(
+                            'translate'=>1,
+                            'data'=> implode(',', array_map(create_function('$e', 'return \'"\'.base64_encode($e).\'"\';'), $v)),
+                            'format'=>'csv_base64'
+                        );                
+                    $data['contents'][$k.'_ids'] = array(
+                            'translate'=>0,
+                            'data'=> implode(',', array_keys($v)),
+                            'format'=>''
+                        );                            
+                }
+            }
         }
-        
         $previous_rid_for_target = $previous_rid[$target[0]];
         if ($previous_rid_for_target == null){
             $previous_rid_for_target = false;
@@ -388,6 +434,22 @@ function icl_translation_calculate_md5($post_id){
         if(is_array($post_categories)){
             sort($post_categories, SORT_STRING);
         }
+        
+        global $wp_taxonomies, $sitepress_settings;
+        $taxonomies = array_diff(array_keys((array)$wp_taxonomies), array('post_tag', 'category', 'nav_menu', 'link_category'));
+        sort($taxonomies, SORT_STRING);
+        foreach($taxonomies as $t){
+            if($sitepress_settings['taxonomies_sync_option'][$t] == 1){
+                $taxs = array();
+                foreach(wp_get_object_terms($post_id, $t) as $trm){
+                    $taxs[] = $trm->name;
+                }
+                if($taxs){
+                    sort($taxs,SORT_STRING);
+                    $all_taxs[] = '['.$t.']:'.join(',',$taxs);
+                }
+            }
+        }
     }
     
     include_once ICL_PLUGIN_PATH . '/inc/plugins-texts-functions.php';
@@ -400,8 +462,17 @@ function icl_translation_calculate_md5($post_id){
         }
     }
     
-    $md5 = md5($post->post_title . ';' . $post->post_content . ';' . join(',',(array)$post_tags).';' . join(',',(array)$post_categories) . ';' . join(',', $custom_fields_values));    
-
+    $md5str =         
+        $post->post_title . ';' . 
+        $post->post_content . ';' . 
+        join(',',(array)$post_tags).';' . 
+        join(',',(array)$post_categories) . ';' . 
+        join(',', $custom_fields_values);
+    if(!empty($all_taxs)){
+        $md5str .= ';' . join(';', $all_taxs);
+    }    
+    $md5 = md5($md5str);
+                
     return $md5;
 }
 
@@ -578,8 +649,8 @@ function icl_translation_delete_post($post_id){
 }
 
 function icl_add_post_translation($trid, $translation, $lang, $rid){
-    
-    global $wpdb, $sitepress_settings, $sitepress;
+    global $wpdb, $sitepress_settings, $sitepress, $wp_taxonomies;
+    $taxonomies = array_diff(array_keys((array)$wp_taxonomies), array('post_tag','category'));
     $lang_code = $wpdb->get_var("SELECT code FROM {$wpdb->prefix}icl_languages WHERE english_name='".$wpdb->escape($lang)."'");
     if(!$lang_code){        
         return false;
@@ -671,7 +742,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
             $tag_tr_tts = $wpdb->get_col("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE element_type='tax_post_tag' AND language_code='{$lang_code}' AND trid IN (".join(',',$tag_trids).")");    
             $translated_tags = $wpdb->get_col("SELECT t.name FROM {$wpdb->terms} t JOIN {$wpdb->term_taxonomy} tx ON tx.term_id = t.term_id WHERE tx.taxonomy='post_tag' AND tx.term_taxonomy_id IN (".join(',',$tag_tr_tts).")");
         }
-                     
+                                          
         // deal with categories
         if(isset($translation['categories'])){
             $translated_cats = $translation['categories'];   
@@ -752,7 +823,88 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
             $cat_trids = $wpdb->get_col("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_type='tax_category' AND element_id IN (".join(',',$original_post_cats).")");
             $cat_tr_tts = $wpdb->get_col("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE element_type='tax_category' AND language_code='{$lang_code}' AND trid IN (".join(',',$cat_trids).")");
             $translated_cats_ids = $wpdb->get_col("SELECT t.term_id FROM {$wpdb->terms} t JOIN {$wpdb->term_taxonomy} tx ON tx.term_id = t.term_id WHERE tx.taxonomy='tax_category' AND tx.term_taxonomy_id IN (".join(',',$cat_tr_tts).")");
-        }        
+        }   
+        
+        // deal with custom taxonomies
+        if(!empty($sitepress_settings['taxonomies_sync_option'])){
+            foreach($sitepress_settings['taxonomies_sync_option'] as $taxonomy=>$value){
+                if($value == 1 && isset($translation[$taxonomy])){
+                    $translated_taxs[$taxonomy] = $translation[$taxonomy];   
+                    $translated_tax_ids[$taxonomy] = explode(',', $translation[$taxonomy.'_ids']);
+                    foreach($translated_taxs as $k=>$v){
+                        $tax_trid = $wpdb->get_var("
+                                SELECT trid FROM {$wpdb->prefix}icl_translations 
+                                WHERE element_id='{$translated_tag_ids[$k]}' AND element_type='tax_{$taxonomy}'");
+                        // before adding the new term make sure that another tag with the same name doesn't exist. If it does append @lang                                        
+                        // same term name exists in a different language?
+                        $term_different_language = $wpdb->get_var("
+                                SELECT tm.term_id 
+                                FROM {$wpdb->term_taxonomy} tx
+                                    JOIN {$wpdb->terms} tm ON tx.term_id = tm.term_id 
+                                    JOIN {$wpdb->prefix}icl_translations tr ON tx.term_taxonomy_id = tr.element_id
+                                WHERE tm.name='".$wpdb->escape($v)."' AND tr.element_type LIKE 'tax\\_%' AND tr.language_code <> '{$lang_code}'
+                            ");
+                        if($term_different_language){
+                            $v .= ' @'.$lang_code;    
+                        }
+                            
+                        //tax exists? (in the current language)
+                        $term_taxonomy_id = $wpdb->get_var("
+                                SELECT term_taxonomy_id 
+                                FROM {$wpdb->term_taxonomy} tx 
+                                    JOIN {$wpdb->terms} tm ON tx.term_id = tm.term_id 
+                                    JOIN {$wpdb->prefix}icl_translations tr ON tx.term_taxonomy_id = tr.element_id 
+                                        AND tr.element_type = 'tax_{$taxonomy}' AND tr.language_code = '{$lang_code}'
+                                WHERE tm.name='".$wpdb->escape($v)."' OR tm.name='".$wpdb->escape($v)." @{$lang_code}' AND taxonomy='{$taxonomy}'");
+                        if(!$term_taxonomy_id){                                          
+                            $tmp = wp_insert_term($v, $taxonomy);
+                            if(isset($tmp['term_taxonomy_id'])){                
+                                $wpdb->update($wpdb->prefix.'icl_translations', 
+                                        array('language_code'=>$lang_code, 'trid'=>$tag_trid, 'source_language_code'=>$original_post_details->language_code), 
+                                        array('element_type'=>'tax_'.$taxonomy,'element_id'=>$tmp['term_taxonomy_id']));
+                                }
+                            }else{
+                                // check whether we have an orphan translation - the same trid and language but a different element id                             
+                                $__translation_id = $wpdb->get_var("
+                                    SELECT translation_id FROM {$wpdb->prefix}icl_translations 
+                                    WHERE   trid = '{$tag_trid}' 
+                                        AND language_code = '{$lang_code}' 
+                                        AND element_id <> '{$term_taxonomy_id}'
+                                ");
+                                if($__translation_id){
+                                    $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id={$__translation_id}");    
+                                }
+                                
+                                $tag_translation_id = $wpdb->get_var("
+                                    SELECT translation_id FROM {$wpdb->prefix}icl_translations 
+                                    WHERE element_id={$term_taxonomy_id} AND element_type='tax_{$taxonomy}'");                        
+                                if($tag_translation_id){
+                                    $wpdb->update($wpdb->prefix.'icl_translations', 
+                                        array('language_code'=>$lang_code, 'trid'=>$tag_trid, 'source_language_code'=>$original_post_details->language_code), 
+                                        array('element_type'=>'tax_'.$taxonomy,'translation_id'=>$tag_translation_id));                
+                                }else{                                                
+                                    $wpdb->insert($wpdb->prefix.'icl_translations', 
+                                        array('language_code'=>$lang_code, 'trid'=>$tag_trid, 'element_type'=>'tax_'.$taxonomy, 
+                                            'element_id'=>$term_taxonomy_id, 'source_language_code'=>$original_post_details->language_code));                                                      }
+                            }        
+                        }
+                    }
+                    
+                    foreach(wp_get_object_terms($translation['original_id'] , $taxonomy) as $t){
+                        $original_post_taxs[$taxonomy][] = $t->term_taxonomy_id;
+                    }    
+                    if($original_post_taxs[$taxonomy]){
+                        $tag_trids = $wpdb->get_col("SELECT trid FROM {$wpdb->prefix}icl_translations 
+                            WHERE element_type='tax_{$taxonomy}' AND element_id IN (".join(',',$original_post_taxs).")");    
+                        $tag_tr_tts = $wpdb->get_col("SELECT element_id FROM {$wpdb->prefix}icl_translations 
+                            WHERE element_type='tax_{$taxonomy}' AND language_code='{$lang_code}' AND trid IN (".join(',',$tag_trids).")");    
+                        $translated_taxs[$taxonomy][] = $wpdb->get_col("SELECT t.name FROM {$wpdb->terms} t 
+                            JOIN {$wpdb->term_taxonomy} tx ON tx.term_id = t.term_id 
+                            WHERE tx.taxonomy='{$taxonomy}' AND tx.term_taxonomy_id IN (".join(',',$tag_tr_tts).")");                    
+                }
+            }
+        }
+             
     }elseif($original_post_details->post_type=='page'){
         // handle the page parent and set it to the translated parent if we have one.
         if($original_post_details->post_parent){
@@ -782,6 +934,11 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     $postarr['post_content'] = $translation['body'];
     if($original_post_details->post_type=='post'){
         $postarr['tags_input'] = join(',',(array)$translated_tags);
+        if(!empty($translated_taxs)){
+            foreach($translated_taxs as $taxonomy=>$values){
+                $postarr['tax_input'][$taxonomy] = join(',',(array)$values);
+            }
+        }
         $postarr['post_category'] = $translated_cats_ids;
     }
     $postarr['post_author'] = $original_post_details->post_author;  
@@ -813,12 +970,21 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     $_POST['trid'] = $trid;
     $_POST['lang'] = $lang_code;
     $_POST['skip_sitepress_actions'] = true;
-        
+    
+    // debug remove
+    /*
+    ob_start();    
+    print_r($translation);
+    print_r($postarr);
+    $ob = ob_get_contents();
+    ob_end_clean();
+    mail('mihaigrigori@gmail.com','TEST',$ob);
+    */
+    
     global $wp_rewrite;
     if(!isset($wp_rewrite)) $wp_rewrite = new WP_Rewrite();
     
     kses_remove_filters();
-    
     $new_post_id = wp_insert_post($postarr);
     
     // set stickiness

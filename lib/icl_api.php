@@ -137,6 +137,9 @@ class ICanLocalizeQuery{
     }   
        
     function build_cms_request_xml($data, $orig_lang, $previous_rid = false, $linkTo = '') {
+        global $wp_taxonomies;
+        $taxonomies = array_diff(array_keys((array)$wp_taxonomies), array('post_tag','category'));
+        
         if($previous_rid){
             $command = 'update_content';
             $previous_rid = 'previous_cms_request_id="'.$previous_rid.'"';
@@ -152,7 +155,7 @@ class ICanLocalizeQuery{
         $xml .= $tab.'<link url="'.$data['url'].'" />'.$nl;
         $xml .= $tab.'<contents>'.$nl;
         foreach($data['contents'] as $key=>$val){
-            if($key=='categories' || $key == 'tags'){$quote="'";}else{$quote='"';}
+            if($key=='categories' || $key == 'tags' || in_array($key, $taxonomies)){$quote="'";}else{$quote='"';}
             $xml .= $tab.$tab.'<content type="'.$key.'" translate="'.$val['translate'].'" data='.$quote.$val['data'].$quote;
             if(isset($val['format'])) $xml .= ' format="'.$val['format'].'"';
             $xml .=  ' />'.$nl;    
@@ -164,7 +167,6 @@ class ICanLocalizeQuery{
         }                
         $xml .= $tab.'</cms_target_languages>'.$nl;
         $xml .= '</cms_request_details>';                
-        
         return $xml;
     }
       
@@ -239,13 +241,17 @@ class ICanLocalizeQuery{
     }
     
     function cms_do_download($request_id, $language){
+        global $wp_taxonomies;
+        $taxonomies = array_diff(array_keys((array)$wp_taxonomies), array('post_tag','category'));
+        
         $request_url = ICL_API_ENDPOINT . '/websites/' . $this->site_id . '/cms_requests/'.$request_id.'/cms_download?accesskey=' . $this->access_key . '&language=' . $language;                        
         $res = $this->_request_gz($request_url);                
         $content = $res['cms_request_details']['contents']['content'];
+                
         $translation = array();
         if($content)        
         foreach($content as $c){
-            if($c['attr']['type']=='tags' || $c['attr']['type']=='categories'){
+            if($c['attr']['type']=='tags' || $c['attr']['type']=='categories' || in_array($c['attr']['type'], $taxonomies)){
                 $exp = explode(',',$c['translations']['translation']['attr']['data']);
                 $arr = array();
                 foreach($exp as $e){

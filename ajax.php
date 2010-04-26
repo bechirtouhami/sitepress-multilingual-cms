@@ -860,6 +860,14 @@ if (function_exists('wpml_register_admin_strings')) {
         
         icl_cache_clear();
         break;
+    case 'icl_custom_tax_sync_options':
+        foreach($_POST['icl_sync_tax'] as $k=>$v){
+            $iclsettings['taxonomies_sync_option'][$k] = $v;
+        }
+        $this->save_settings($iclsettings);
+        echo '1|';
+        break;
+        
     default:
         do_action('icl_ajx_custom_call', $_REQUEST['icl_ajx_action'], $_REQUEST);
 }    
