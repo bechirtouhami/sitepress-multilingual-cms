@@ -69,6 +69,7 @@ require ICL_PLUGIN_PATH . '/inc/compatibility-packages/functions-packages.php';
 require ICL_PLUGIN_PATH . '/inc/compatibility-packages/wpml-package.class.php';
 require ICL_PLUGIN_PATH . '/inc/affiliate-info.php';
 require ICL_PLUGIN_PATH . '/inc/language-switcher.php';
+require ICL_PLUGIN_PATH . '/inc/import-xml.php';
 
 
 if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQUEST['action']!='activate-selected') 
