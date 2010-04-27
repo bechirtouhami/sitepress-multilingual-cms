@@ -230,12 +230,12 @@ class SitePress{
 
             /* preWP3 compatibility  - start */
             if(ICL_PRE_WP3 && $pagenow == 'edit-pages.php'){
-                $pagenow ='edit.php';
+                $pagenow_ = $pagenow;
                 $_GET['post_type'] = 'page';    
             } 
             /* preWP3 compatibility  - end */            
             
-            if(($pagenow == 'edit.php' || ($pagenow == 'admin-ajax.php' && $_POST['action']=='inline-save'))  
+            if(($pagenow == 'edit.php' || $pagenow_ == 'edit-pages.php' || ($pagenow == 'admin-ajax.php' && $_POST['action']=='inline-save'))  
                 && !$this->settings['hide_translation_controls_on_posts_lists']){
                 $post_type = isset($_GET['post_type']) ? $_GET['post_type'] : 'post';    
                 add_filter('manage_'.$post_type.'s_columns',array($this,'add_posts_management_column'));
