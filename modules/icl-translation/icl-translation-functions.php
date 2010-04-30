@@ -896,7 +896,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
                     }    
                     if($original_post_taxs[$taxonomy]){
                         $tax_trids = $wpdb->get_col("SELECT trid FROM {$wpdb->prefix}icl_translations 
-                            WHERE element_type='tax_{$taxonomy}' AND element_id IN (".join(',',$original_post_taxs).")");    
+                            WHERE element_type='tax_{$taxonomy}' AND element_id IN (".join(',',$original_post_taxs[$taxonomy]).")");    
                         $tax_tr_tts = $wpdb->get_col("SELECT element_id FROM {$wpdb->prefix}icl_translations 
                             WHERE element_type='tax_{$taxonomy}' AND language_code='{$lang_code}' AND trid IN (".join(',',$tax_trids).")");    
                         $translated_taxs[$taxonomy] = $wpdb->get_col("SELECT t.name FROM {$wpdb->terms} t 
@@ -937,11 +937,11 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
         $postarr['tags_input'] = join(',',(array)$translated_tags);
         if(!empty($translated_taxs)){
             foreach($translated_taxs as $taxonomy=>$values){
-                //mail_debug_array(array($translated_taxs, $translated_tax_ids, $tax_trid, $wpdb));
-                $_POST['newtag'][$taxonomy] = $postarr['tax_input'][$taxonomy] = join(',',(array)$values);
+                $postarr['tax_input'][$taxonomy] = join(',',(array)$values);
             }
         }
         $postarr['post_category'] = $translated_cats_ids;
+        
     }
     $postarr['post_author'] = $original_post_details->post_author;  
     $postarr['post_type'] = $original_post_details->post_type;
@@ -973,21 +973,20 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     $_POST['lang'] = $lang_code;
     $_POST['skip_sitepress_actions'] = true;
     
-    // debug remove
-    /*
-    ob_start();    
-    print_r($translation);
-    print_r($postarr);
-    $ob = ob_get_contents();
-    ob_end_clean();
-    mail('mihaigrigori@gmail.com','TEST',$ob);
-    */
     
     global $wp_rewrite;
     if(!isset($wp_rewrite)) $wp_rewrite = new WP_Rewrite();
     
     kses_remove_filters();
     $new_post_id = wp_insert_post($postarr);
+    
+    // associate custom taxonomies by hand
+    if ( !empty($postarr['tax_input']) ) {
+        foreach ( $postarr['tax_input'] as $taxonomy => $tags ) {
+            wp_set_post_terms( $new_post_id, $tags, $taxonomy );
+        }
+    }
+    
     
     // set stickiness
     if($is_original_sticky && $sitepress_settings['sync_sticky_flag']){
