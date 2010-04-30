@@ -826,17 +826,18 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
         }   
         
         // deal with custom taxonomies
+        
         if(!empty($sitepress_settings['taxonomies_sync_option'])){
             foreach($sitepress_settings['taxonomies_sync_option'] as $taxonomy=>$value){
                 if($value == 1 && isset($translation[$taxonomy])){
                     $translated_taxs[$taxonomy] = $translation[$taxonomy];   
                     $translated_tax_ids[$taxonomy] = explode(',', $translation[$taxonomy.'_ids']);
-                    foreach($translated_taxs as $k=>$v){
+                    foreach($translated_taxs[$taxonomy] as $k=>$v){
                         $tax_trid = $wpdb->get_var("
                                 SELECT trid FROM {$wpdb->prefix}icl_translations 
-                                WHERE element_id='{$translated_tag_ids[$k]}' AND element_type='tax_{$taxonomy}'");
-                        // before adding the new term make sure that another tag with the same name doesn't exist. If it does append @lang                                        
-                        // same term name exists in a different language?
+                                WHERE element_id='{$translated_tax_ids[$taxonomy][$k]}' AND element_type='tax_{$taxonomy}'");
+                        // before adding the new term make sure that another tag with the same name doesn't exist. If it does append @lang
+                        // same term name exists in a different language?                        
                         $term_different_language = $wpdb->get_var("
                                 SELECT tm.term_id 
                                 FROM {$wpdb->term_taxonomy} tx
@@ -857,17 +858,17 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
                                         AND tr.element_type = 'tax_{$taxonomy}' AND tr.language_code = '{$lang_code}'
                                 WHERE tm.name='".$wpdb->escape($v)."' OR tm.name='".$wpdb->escape($v)." @{$lang_code}' AND taxonomy='{$taxonomy}'");
                         if(!$term_taxonomy_id){                                          
-                            $tmp = wp_insert_term($v, $taxonomy);
+                            $tmp = wp_insert_term($v, $taxonomy);                            
                             if(isset($tmp['term_taxonomy_id'])){                
                                 $wpdb->update($wpdb->prefix.'icl_translations', 
-                                        array('language_code'=>$lang_code, 'trid'=>$tag_trid, 'source_language_code'=>$original_post_details->language_code), 
+                                        array('language_code'=>$lang_code, 'trid'=>$tax_trid, 'source_language_code'=>$original_post_details->language_code), 
                                         array('element_type'=>'tax_'.$taxonomy,'element_id'=>$tmp['term_taxonomy_id']));
                                 }
                             }else{
                                 // check whether we have an orphan translation - the same trid and language but a different element id                             
                                 $__translation_id = $wpdb->get_var("
                                     SELECT translation_id FROM {$wpdb->prefix}icl_translations 
-                                    WHERE   trid = '{$tag_trid}' 
+                                    WHERE   trid = '{$tax_trid}' 
                                         AND language_code = '{$lang_code}' 
                                         AND element_id <> '{$term_taxonomy_id}'
                                 ");
@@ -875,16 +876,16 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
                                     $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id={$__translation_id}");    
                                 }
                                 
-                                $tag_translation_id = $wpdb->get_var("
+                                $tax_translation_id = $wpdb->get_var("
                                     SELECT translation_id FROM {$wpdb->prefix}icl_translations 
                                     WHERE element_id={$term_taxonomy_id} AND element_type='tax_{$taxonomy}'");                        
-                                if($tag_translation_id){
+                                if($tax_translation_id){
                                     $wpdb->update($wpdb->prefix.'icl_translations', 
-                                        array('language_code'=>$lang_code, 'trid'=>$tag_trid, 'source_language_code'=>$original_post_details->language_code), 
-                                        array('element_type'=>'tax_'.$taxonomy,'translation_id'=>$tag_translation_id));                
+                                        array('language_code'=>$lang_code, 'trid'=>$tax_trid, 'source_language_code'=>$original_post_details->language_code), 
+                                        array('element_type'=>'tax_'.$taxonomy,'translation_id'=>$tax_translation_id));                
                                 }else{                                                
                                     $wpdb->insert($wpdb->prefix.'icl_translations', 
-                                        array('language_code'=>$lang_code, 'trid'=>$tag_trid, 'element_type'=>'tax_'.$taxonomy, 
+                                        array('language_code'=>$lang_code, 'trid'=>$tax_trid, 'element_type'=>'tax_'.$taxonomy, 
                                             'element_id'=>$term_taxonomy_id, 'source_language_code'=>$original_post_details->language_code));                                                      }
                             }        
                         }
@@ -894,13 +895,13 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
                         $original_post_taxs[$taxonomy][] = $t->term_taxonomy_id;
                     }    
                     if($original_post_taxs[$taxonomy]){
-                        $tag_trids = $wpdb->get_col("SELECT trid FROM {$wpdb->prefix}icl_translations 
+                        $tax_trids = $wpdb->get_col("SELECT trid FROM {$wpdb->prefix}icl_translations 
                             WHERE element_type='tax_{$taxonomy}' AND element_id IN (".join(',',$original_post_taxs).")");    
-                        $tag_tr_tts = $wpdb->get_col("SELECT element_id FROM {$wpdb->prefix}icl_translations 
-                            WHERE element_type='tax_{$taxonomy}' AND language_code='{$lang_code}' AND trid IN (".join(',',$tag_trids).")");    
-                        $translated_taxs[$taxonomy][] = $wpdb->get_col("SELECT t.name FROM {$wpdb->terms} t 
+                        $tax_tr_tts = $wpdb->get_col("SELECT element_id FROM {$wpdb->prefix}icl_translations 
+                            WHERE element_type='tax_{$taxonomy}' AND language_code='{$lang_code}' AND trid IN (".join(',',$tax_trids).")");    
+                        $translated_taxs[$taxonomy] = $wpdb->get_col("SELECT t.name FROM {$wpdb->terms} t 
                             JOIN {$wpdb->term_taxonomy} tx ON tx.term_id = t.term_id 
-                            WHERE tx.taxonomy='{$taxonomy}' AND tx.term_taxonomy_id IN (".join(',',$tag_tr_tts).")");                    
+                            WHERE tx.taxonomy='{$taxonomy}' AND tx.term_taxonomy_id IN (".join(',',$tax_tr_tts).")");                    
                 }
             }
         }
@@ -936,7 +937,8 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
         $postarr['tags_input'] = join(',',(array)$translated_tags);
         if(!empty($translated_taxs)){
             foreach($translated_taxs as $taxonomy=>$values){
-                $postarr['tax_input'][$taxonomy] = join(',',(array)$values);
+                //mail_debug_array(array($translated_taxs, $translated_tax_ids, $tax_trid, $wpdb));
+                $_POST['newtag'][$taxonomy] = $postarr['tax_input'][$taxonomy] = join(',',(array)$values);
             }
         }
         $postarr['post_category'] = $translated_cats_ids;
