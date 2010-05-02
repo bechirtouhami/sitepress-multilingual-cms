@@ -2846,6 +2846,8 @@ class SitePress{
                 $taxonomy = $_GET['taxonomy'];    
             }elseif(isset($args['taxonomy'])){
                 $taxonomy = $args['taxonomy'];    
+            }elseif(isset($_POST['action']) && $_POST['action']=='get-tagcloud'){                
+                $taxonomy = $_POST['tax'];    
             }else{
                 if(in_array($pagenow, array('post-new.php','post.php', 'edit.php'))){
                     $taxonomy = 'category';    
@@ -2855,7 +2857,6 @@ class SitePress{
                 }
             }
         }
-        
         $icl_element_type = 'tax_' . $taxonomy;
         
         if($_GET['lang']=='all'){
@@ -2869,9 +2870,13 @@ class SitePress{
         }elseif(isset($_GET['post'])){
             $element_lang_details = $this->get_element_language_details($_GET['post'],'post');
             $this_lang = $element_lang_details->language_code;
+        }elseif(isset($_POST['action']) && $_POST['action']=='get-tagcloud'){
+            $urlparts = parse_url($_SERVER['HTTP_REFERER']); 
+            parse_str($urlparts['query'], $qvars);
+            $this_lang = $qvars['lang']; 
         }else{
             $this_lang = $this->get_default_language();
-        }   
+        }  
         $exclude =  $wpdb->get_col("
             SELECT tt.term_taxonomy_id FROM {$wpdb->term_taxonomy} tt
             LEFT JOIN {$wpdb->terms} tm ON tt.term_id = tm.term_id 
