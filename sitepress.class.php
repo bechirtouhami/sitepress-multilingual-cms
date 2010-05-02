@@ -2432,7 +2432,15 @@ class SitePress{
         $source_language = $_GET['source_lang'];
         $untranslated_ids = $this->get_elements_without_translations($icl_element_type, $selected_language, $default_language);
         
-        include ICL_PLUGIN_PATH . '/menu/taxonomy-menu.php'; 
+        /* preWP3 compatibility  - start */
+        if(ICL_PRE_WP3 && $icl_element_type == 'tax_category'){
+            include ICL_PLUGIN_PATH . '/menu/category-menu.php'; 
+        }else{
+        /* preWP3 compatibility  - end */
+            include ICL_PLUGIN_PATH . '/menu/taxonomy-menu.php';     
+        /* preWP3 compatibility  - start */
+        }
+        /* preWP3 compatibility  - end */
               
     }
     

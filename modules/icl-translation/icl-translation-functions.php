@@ -822,11 +822,10 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
         if($original_post_cats){    
             $cat_trids = $wpdb->get_col("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_type='tax_category' AND element_id IN (".join(',',$original_post_cats).")");
             $cat_tr_tts = $wpdb->get_col("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE element_type='tax_category' AND language_code='{$lang_code}' AND trid IN (".join(',',$cat_trids).")");
-            $translated_cats_ids = $wpdb->get_col("SELECT t.term_id FROM {$wpdb->terms} t JOIN {$wpdb->term_taxonomy} tx ON tx.term_id = t.term_id WHERE tx.taxonomy='tax_category' AND tx.term_taxonomy_id IN (".join(',',$cat_tr_tts).")");
+            $translated_cats_ids = $wpdb->get_col("SELECT t.term_id FROM {$wpdb->terms} t JOIN {$wpdb->term_taxonomy} tx ON tx.term_id = t.term_id WHERE tx.taxonomy='category' AND tx.term_taxonomy_id IN (".join(',',$cat_tr_tts).")");
         }   
-        
-        // deal with custom taxonomies
-        
+                
+        // deal with custom taxonomies        
         if(!empty($sitepress_settings['taxonomies_sync_option'])){
             foreach($sitepress_settings['taxonomies_sync_option'] as $taxonomy=>$value){
                 if($value == 1 && isset($translation[$taxonomy])){
@@ -978,8 +977,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     if(!isset($wp_rewrite)) $wp_rewrite = new WP_Rewrite();
     
     kses_remove_filters();
-    $new_post_id = wp_insert_post($postarr);
-    
+    $new_post_id = wp_insert_post($postarr);    
     // associate custom taxonomies by hand
     if ( !empty($postarr['tax_input']) ) {
         foreach ( $postarr['tax_input'] as $taxonomy => $tags ) {
