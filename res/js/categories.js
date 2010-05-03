@@ -20,7 +20,7 @@ jQuery(document).ready(function(){
         }    
     }
     
-    jQuery('#icl_category_menu').remove();
+    jQuery('#icl_tax_menu').remove();
    
    jQuery('select[name="icl_category_language"]').change(function(){
     
