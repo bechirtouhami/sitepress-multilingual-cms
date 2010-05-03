@@ -369,7 +369,9 @@ class SitePress{
                 }
             }
             
-            add_filter('get_pagenum_link', array($this,'get_pagenum_link_filter'));        
+            // removed since WPML 1.7.7
+            // add_filter('get_pagenum_link', array($this,'get_pagenum_link_filter'));        
+            
             // filter some queries
             add_filter('query', array($this, 'filter_queries'));                
                 
@@ -3573,9 +3575,10 @@ class SitePress{
     }
    
     // Navigation
-    function get_pagenum_link_filter($url){
-        return $this->convert_url($url, $this->this_lang);    
-    }
+    // removed since WPML 1.7.7
+    //function get_pagenum_link_filter($url){
+    //    return $this->convert_url($url, $this->this_lang);    
+    //}
     
     function pre_option_home(){                              
         $dbbt = debug_backtrace();                                     
