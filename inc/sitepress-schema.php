@@ -325,8 +325,22 @@ function icl_sitepress_activate(){
     if(!empty($orphans)){
         $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id IN (".join(',',$orphans).")");
     }
-        
-       
+    
+	global $wp_taxonomies;
+	foreach ($wp_taxonomies as $t => $v) {
+		$orphans = $wpdb->get_col("
+		SELECT t.translation_id 
+		FROM {$wpdb->prefix}icl_translations t 
+        LEFT JOIN {$wpdb->term_taxonomy} p 
+		ON t.element_id = p.term_taxonomy_id 
+		WHERE t.element_type = 'tax_{$t}' 
+		AND p.taxonomy <> '{$t}'
+		");
+    	if(!empty($orphans)){
+        	$wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id IN (".join(',',$orphans).")");
+    	}
+	}
+	
     if(defined('ICL_DEBUG_MODE') && ICL_DEBUG_MODE){
         require_once ICL_PLUGIN_PATH . '/inc/functions.php';
         icl_display_errors_stack(true);
