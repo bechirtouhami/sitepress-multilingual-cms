@@ -5,7 +5,7 @@ Plugin URI: http://wpml.org/
 Description: WPML Multilingual CMS. <a href="http://wpml.org">Documentation</a>.
 Author: OnTheGoSystems
 Author URI: http://www.onthegosystems.com
-Version: 1.7.6
+Version: 1.7.7
 */
 
 /*
@@ -27,7 +27,7 @@ Version: 1.7.6
 
 
 if(defined('ICL_SITEPRESS_VERSION')) return;
-define('ICL_SITEPRESS_VERSION', '1.7.6');
+define('ICL_SITEPRESS_VERSION', '1.7.7');
 define('ICL_PLUGIN_PATH', dirname(__FILE__));
 define('ICL_PLUGIN_FOLDER', basename(ICL_PLUGIN_PATH));
 
@@ -70,7 +70,6 @@ require ICL_PLUGIN_PATH . '/inc/compatibility-packages/wpml-package.class.php';
 require ICL_PLUGIN_PATH . '/inc/affiliate-info.php';
 require ICL_PLUGIN_PATH . '/inc/language-switcher.php';
 require ICL_PLUGIN_PATH . '/inc/import-xml.php';
-
 
 if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQUEST['action']!='activate-selected') 
     || (($_REQUEST['plugin'] != basename(ICL_PLUGIN_PATH).'/'.basename(__FILE__)) 

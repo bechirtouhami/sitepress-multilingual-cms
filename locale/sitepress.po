@@ -142,7 +142,7 @@ msgstr ""
 #: compatibility-packages/themes/thematic/load.php:73
 #: compatibility-packages/themes/wp-default-theme/load.php:59
 #: inc/language-switcher.php:498
-msgid "Bellow post"
+msgid "Below post"
 msgstr ""
 
 #: compatibility-packages/themes/atahualpa/load.php:93

@@ -437,10 +437,18 @@ function icl_plugin_upgrade(){
 
     if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.7.7', '<')){    
         if($mig_debug) fwrite($mig_debug, "Upgrading to 1.7.7 \n");
+        if(!isset($iclsettings['promote_wpml'])){
+            $iclsettings['promote_wpml'] = 0;
+            update_option('icl_sitepress_settings',$iclsettings);
+        }
         if(!isset($iclsettings['auto_adjust_ids'])){
             $iclsettings['auto_adjust_ids'] = 0;
             update_option('icl_sitepress_settings',$iclsettings);
         }
+        
+        mysql_query("UPDATE {$wpdb->prefix}icl_translations SET element_type='tax_post_tag' WHERE element_type='tag'");
+        mysql_query("UPDATE {$wpdb->prefix}icl_translations SET element_type='tax_category' WHERE element_type='category'");
+        
         if($mig_debug) fwrite($mig_debug, "Upgraded to 1.7.7 \n");
     }
     

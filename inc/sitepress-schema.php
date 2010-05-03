@@ -321,7 +321,7 @@ function icl_sitepress_activate(){
         $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id IN (".join(',',$orphans).")");
     }
     $orphans = $wpdb->get_col("SELECT t.translation_id FROM {$wpdb->prefix}icl_translations t 
-        LEFT JOIN {$wpdb->term_taxonomy} p ON t.element_id = p.term_taxonomy_id WHERE t.element_type IN ('tag','category') AND p.term_taxonomy_id IS NULL");   
+        LEFT JOIN {$wpdb->term_taxonomy} p ON t.element_id = p.term_taxonomy_id WHERE t.element_type LIKE  'tax\\_%' AND p.term_taxonomy_id IS NULL");   
     if(!empty($orphans)){
         $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id IN (".join(',',$orphans).")");
     }

@@ -25,9 +25,8 @@ function _wpml_api_allowed_content_type($content_type){
     $reserved_types = array(
         'post'      => 1, 
         'page'      => 1, 
-        'tag'       => 1, 
-        'category'  => 1,
-        'post_tag'  => 1, 
+        'tax_post_tag'       => 1, 
+        'tax_category'  => 1,
         'comment'   => 1
     );
     return !isset($reserved_types[$content_type]) && preg_match('#([a-z0-9_\-])#i', $content_type);
@@ -224,7 +223,9 @@ function wpml_get_content($content_type, $content_id, $return_original = true){
             $content_id = $wpdb->get_var($wpdb->prepare("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id= %d AND taxonomy='{$content_type}'",$content_id));
         }
         if($content_type=='post_tag'){
-            $icl_element_type = 'tag';
+            $icl_element_type = 'tax_post_tag';
+        }elseif($content_type=='category'){
+            $icl_element_type = 'tax_category';
         }elseif($content_type=='page'){
             $icl_element_type = 'post';
         }else{
