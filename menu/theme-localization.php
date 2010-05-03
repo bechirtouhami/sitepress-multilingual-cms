@@ -34,7 +34,7 @@ $plugin_localization_stats = get_plugin_localization_stats();
     <div id="icl_tl">
     <h3><?php _e('Language locale settings', 'sitepress') ?></h3>
     <p><?php _e('Select the locale to use for each language. The locale for the default language is set in your wp_config.php file.', 'sitepress') ?></p>
-    <form id="icl_theme_localization" name="icl_lang_more_options" method="post" action="">
+    <form id="icl_theme_localization" name="icl_theme_localization" method="post" action="">
     <input type="hidden" name="icl_post_action" value="save_theme_localization" />    
     <div id="icl_theme_localization_wrap"><div id="icl_theme_localization_subwrap">    
     <table id="icl_theme_localization_table" class="widefat" cellspacing="0">
