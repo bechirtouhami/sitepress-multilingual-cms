@@ -3415,11 +3415,10 @@ class SitePress{
     function get_term_adjust_id($term){
         global $icl_adjust_id_url_filter_off, $wpdb;
         if($icl_adjust_id_url_filter_off) return $term; // special cases when we need the categiry in a different language
-            
-        $translated_id = icl_object_id($term->term_taxonomy_id, $term->taxonomy, true);
-        
-        if($translated_id){             
-            $translated_id = $wpdb->get_var("SELECT term_id FROM {$wpdb->term_taxonomy} WHERE term_taxonomy_id='{$translated_id}'");       
+                    
+        $translated_id = icl_object_id($term->term_id, $term->taxonomy, true);        
+        if($translated_id != $term->term_id){             
+            //$translated_id = $wpdb->get_var("SELECT term_id FROM {$wpdb->term_taxonomy} WHERE term_taxonomy_id='{$translated_id}'");       
             remove_filter('get_term', array($this,'get_term_adjust_id'), 1);
             $t_term = get_term($translated_id, $term->taxonomy); 
             if(!is_wp_error($t_term)){
