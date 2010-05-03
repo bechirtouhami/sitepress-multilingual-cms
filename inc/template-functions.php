@@ -160,7 +160,7 @@ function icl_object_id($element_id, $element_type='post', $return_original_if_mi
     static $fcache = array();
     $fcache_key = $element_id . '#' . $element_type . '#' . intval($return_original_if_missing) . '#' .  intval($ulanguage_code);
     if(isset($fcache[$fcache_key])){        
-        return $fcache[$fcache_key] . '-cache';
+        return $fcache[$fcache_key];
     }
     
     if($element_id <= 0){
