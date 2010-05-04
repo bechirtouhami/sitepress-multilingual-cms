@@ -3699,7 +3699,7 @@ class SitePress{
                 } 
                 $tag_ids = array();               
                 foreach($exp as $e){
-                    $tag_array[] = $wpdb->get_var($wpdb->prepare( "SELECT x.term_taxonomy_id FROM $wpdb->terms t 
+                    $tag_array[] = $wpdb->get_var($wpdb->prepare( "SELECT x.term_id FROM $wpdb->terms t 
                         JOIN $wpdb->term_taxonomy x ON t.term_id=x.term_id WHERE x.taxonomy='post_tag' AND t.slug='%s'", $wpdb->escape($e)));    
                 }
                 $_tmp = array_unique($tag_array);
@@ -3727,14 +3727,14 @@ class SitePress{
             // tag_slug__in
             if(isset($q->query_vars['tag_slug__in']) && !empty($q->query_vars['tag_slug__in'])){
                 foreach($q->query_vars['tag_slug__in'] as $t){
-                    $tag_array[] = $wpdb->get_var($wpdb->prepare( "SELECT x.term_taxonomy_id FROM $wpdb->terms t 
+                    $tag_array[] = $wpdb->get_var($wpdb->prepare( "SELECT x.term_id FROM $wpdb->terms t 
                         JOIN $wpdb->term_taxonomy x ON t.term_id=x.term_id WHERE x.taxonomy='post_tag' AND t.slug='%s'", $wpdb->escape($t)));    
                 }
             }            
             // tag_slug__and
             if(isset($q->query_vars['tag_slug__and']) && !empty($q->query_vars['tag_slug__and'])){
                 foreach($q->query_vars['tag_slug__and'] as $t){
-                    $tag_array[] = $wpdb->get_var($wpdb->prepare( "SELECT x.term_taxonomy_id FROM $wpdb->terms t 
+                    $tag_array[] = $wpdb->get_var($wpdb->prepare( "SELECT x.term_id FROM $wpdb->terms t 
                         JOIN $wpdb->term_taxonomy x ON t.term_id=x.term_id WHERE x.taxonomy='post_tag' AND t.slug='%s'", $wpdb->escape($t)));    
                 }
             }
@@ -3748,7 +3748,7 @@ class SitePress{
                         $sign = 1;
                     }
                      $_tid = intval(icl_object_id(abs($c), 'post_tag', true));
-                     $translated_ids[] = $sign * $wpdb->get_var($wpdb->prepare("SELECT term_id FROM $wpdb->term_taxonomy WHERE term_taxonomy_id=%d", $_tid));
+                     $translated_ids[] = $sign * $_tid;
                 }
             }
             

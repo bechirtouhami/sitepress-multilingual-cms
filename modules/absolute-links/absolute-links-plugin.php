@@ -32,20 +32,24 @@ class AbsoluteLinksPlugin{
     var $plugin_url = '';
     
     
-    function __construct(){  
+    function __construct($ext = false){  
         global $sitepress_settings;
         $this->settings = get_option('alp_settings');
         //add_action('admin_menu',array($this,'management_page'));
         if(isset($_POST['save_alp']) && $_POST['save_alp']){            
             add_action('init', array($this,'save_settings'));           
         }
-        add_action('save_post', array($this,'save_default_urls'));
-        add_action('init', array($this,'ajax_responses'));
-        add_action('admin_head',array($this,'js_scripts'));  
         
-        add_filter('the_content', array($this,'show_permalinks'));
+        if(!$ext){
+            add_action('save_post', array($this,'save_default_urls'));
+            add_action('init', array($this,'ajax_responses'));
+            add_action('admin_head',array($this,'js_scripts'));  
         
-        if($sitepress_settings['modules']['absolute-links']['sticky_links_widgets'] || $sitepress_settings['modules']['absolute-links']['sticky_links_strings']){              add_filter('widget_text', array($this,'show_permalinks'), 99); // low priority - allow translation to be set        
+            add_filter('the_content', array($this,'show_permalinks'));
+        }
+        
+        if($sitepress_settings['modules']['absolute-links']['sticky_links_widgets'] || $sitepress_settings['modules']['absolute-links']['sticky_links_strings']){                               
+            add_filter('widget_text', array($this,'show_permalinks'), 99); // low priority - allow translation to be set        
         }        
         
         if($sitepress_settings['modules']['absolute-links']['sticky_links_widgets']){            
