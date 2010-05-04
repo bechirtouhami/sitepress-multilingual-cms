@@ -686,7 +686,7 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
         </div>
     <?php endif; ?>
     
-    <?php if($sitepress_settings['setup_wizard_step'] == 4): ?>
+    <?php if($sitepress_settings['setup_wizard_step'] == 4 && !$sitepress_settings['setup_complete']): ?>
     
     <table class="widefat">
         <thead>

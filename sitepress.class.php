@@ -3799,13 +3799,13 @@ class SitePress{
             }
             // name
             if(isset($q->query_vars['name']) && !empty($q->query_vars['name'])){
-                $pid = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_name='".urlencode($wpdb->escape($q->query_vars['name']))."'");                
-                $q->query_vars['p'] = icl_object_id($pid, 'post');
+                $pid = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_name='".urlencode($wpdb->escape($q->query_vars['name']))."'");    
+                $q->query_vars['p'] = icl_object_id($pid, 'post', true);
                 unset($q->query_vars['name']);
             }
             // pagename
             if(isset($q->query_vars['pagename']) && !empty($q->query_vars['pagename'])){
-                $pid = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_name='".urlencode($wpdb->escape($q->query_vars['pagename']))."'");
+                $pid = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_name='".urlencode($wpdb->escape($q->query_vars['pagename']))."'");                
                 $q->query_vars['page_id'] = icl_object_id($pid, 'page', true);
                 if($pid != $q->query_vars['page_id']){
                     $q->query_vars['pagename'] = $wpdb->get_var("SELECT post_name FROM $wpdb->posts WHERE ID=" . $pid);                
