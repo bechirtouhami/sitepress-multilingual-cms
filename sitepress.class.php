@@ -3799,7 +3799,7 @@ class SitePress{
             }
             // name
             if(isset($q->query_vars['name']) && !empty($q->query_vars['name'])){
-                $pid = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_name='".$wpdb->escape($q->query_vars['name'])."'");                
+                $pid = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_name='".urlencode($wpdb->escape($q->query_vars['name']))."'");                
                 $q->query_vars['p'] = icl_object_id($pid, 'post');
                 unset($q->query_vars['name']);
             }
