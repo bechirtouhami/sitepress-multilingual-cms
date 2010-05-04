@@ -493,7 +493,7 @@ function iclRenderLangPreview(){
 		jQuery('#lang_sel_list .iclflag').show();
     }else{
         jQuery('#lang_sel .iclflag').hide();
-		jQuery('#lang_sel_list .iclflag').show();
+		jQuery('#lang_sel_list .iclflag').hide();
     }
 	
 	if(icl_lp_font_current_normal){                                                                          
