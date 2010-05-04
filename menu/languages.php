@@ -701,7 +701,7 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                     <br />
                     <p><label><input type="radio" name="icl_translation_option" value="0" /> <?php 
                         _e("I am translating myself.", 'sitepress') ?></label></p>
-                    <p><label><input type="radio" name="icl_translation_option" value="1" /> <?php printf(
+                    <p><label><input type="radio" name="icl_translation_option" value="1" <?php if($sitepress->get_icl_translation_enabled()):?>checked="checked"<?php endif;?> /> <?php printf(
                         __("I need professional translation (<a%s>learn more</a>)", 'sitepress'), 
                         ' target="_blank" href="http://wpml.org/?page_id=1169"'); ?></label></p>
                     <br />
