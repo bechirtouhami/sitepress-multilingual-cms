@@ -3633,7 +3633,7 @@ class SitePress{
                 if(!$cat){
                     $cat = get_term_by( 'name', $q->query_vars['category_name'], 'category' ); 
                 }
-                if($cat_id = $cat->term_taxonomy_id){
+                if($cat_id = $cat->term_id){
                     $cat_array = array($cat_id);            
                 }else{
                     $q->query_vars['p'] = -1;
@@ -3799,8 +3799,8 @@ class SitePress{
             }
             // name
             if(isset($q->query_vars['name']) && !empty($q->query_vars['name'])){
-                $pid = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_name='".$wpdb->escape($q->query_vars['name'])."'");
-                $q->query_vars['p'] = icl_object_id($pid, 'post', true);
+                $pid = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_name='".$wpdb->escape($q->query_vars['name'])."'");                
+                $q->query_vars['p'] = icl_object_id($pid, 'post');
                 unset($q->query_vars['name']);
             }
             // pagename

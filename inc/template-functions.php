@@ -191,7 +191,9 @@ function icl_object_id($element_id, $element_type='post', $return_original_if_mi
     }
     
     if(in_array($element_type, $taxonomies)){
-        $element_tax_id = $wpdb->get_var($wpdb->prepare("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id= %d AND taxonomy='{$element_type}'",$element_id));
+        $icl_element_id = $wpdb->get_var($wpdb->prepare("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id= %d AND taxonomy='{$element_type}'",$element_id));
+    }else{
+        $icl_element_id = $element_id;
     }
     
     if(in_array($element_type, $taxonomies)){
@@ -202,7 +204,7 @@ function icl_object_id($element_id, $element_type='post', $return_original_if_mi
         $icl_element_type = $element_type;
     }
     
-    $trid = $sitepress->get_element_trid($element_tax_id, $icl_element_type);
+    $trid = $sitepress->get_element_trid($icl_element_id, $icl_element_type);
     $translations = $sitepress->get_element_translations($trid, $icl_element_type);
     if(is_null($ulanguage_code)){
         $ulanguage_code = $sitepress->get_current_language();
