@@ -66,6 +66,12 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 
 == Changelog ==
 
+= 1.7.7 =
+* Added full support for WordPress custom taxonomies.
+* Fixed bugs with category and tag translation.
+* icl_link_to_element fixed to work with auto-link adjustment.
+* Works much faster when using the 'auto adjust IDs' function (caching results).
+
 = 1.7.6 =
 * Fixed bug that slipped through in 1.7.4 
 
