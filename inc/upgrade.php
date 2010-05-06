@@ -451,6 +451,21 @@ function icl_plugin_upgrade(){
         
         if($mig_debug) fwrite($mig_debug, "Upgraded to 1.7.7 \n");
     }
+
+    if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.7.8', '<')){    
+        if($mig_debug) fwrite($mig_debug, "Upgrading to 1.7.8 \n");
+        
+        $res = $wpdb->get_results("SELECT ID, post_type FROM {$wpdb->posts}");
+        foreach($res as $row){
+            $post_types[$row->post_type][] = $row->ID;
+        }
+        foreach($post_types as $type=>$ids){
+            if(!empty($ids)){
+                mysql_query("UPDATE {$wpdb->prefix}icl_translations SET element_type='post_{$type}' WHERE element_type='post' AND element_id IN(".join(',',$ids).")");    
+            }
+        }
+        if($mig_debug) fwrite($mig_debug, "Upgraded to 1.7.8 \n");
+    }
     
     if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '<')){
         if($mig_debug) fwrite($mig_debug, "Update plugin version in the database \n");

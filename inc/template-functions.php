@@ -199,7 +199,7 @@ function icl_object_id($element_id, $element_type='post', $return_original_if_mi
     if(in_array($element_type, $taxonomies)){
         $icl_element_type = 'tax_' . $element_type;
     }elseif(in_array($element_type, $post_types)){
-        $icl_element_type = 'post';
+        $icl_element_type = 'post_'.$element_type;
     }else{
         $icl_element_type = $element_type;
     }
