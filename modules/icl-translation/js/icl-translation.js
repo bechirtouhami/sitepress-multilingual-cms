@@ -67,12 +67,16 @@ jQuery(document).ready(function(){
                 post_ids.push(post_id);
             }            
         });
-
+        post_types = new Array();
+        jQuery('#icl-translation-dashboard .icl_td_post_type').each(function(){
+            post_types.push(jQuery(this).attr('name')+'='+jQuery(this).val()); 
+        });
+        
         jQuery.ajax({
             type: "POST",
             url: icl_ajx_url,
             dataType: 'json',
-            data: "icl_ajx_action=send_translation_request&post_ids="+post_ids+'&type=post&target_languages='+target_languages.join('#'),
+            data: "icl_ajx_action=send_translation_request&post_ids="+post_ids+'&'+post_types.join('')+'&target_languages='+target_languages.join('#'),
             success: function(msg){
                 var all_ok = true;
                 for(i in msg){

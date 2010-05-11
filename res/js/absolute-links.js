@@ -37,6 +37,7 @@ function alp_do_revert_urls(){
             //alert('Something went wrong');
         }                                                            
     });
+    return false;
 }
 
 function iclToggleAbsoluteLinks(){

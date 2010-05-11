@@ -394,11 +394,11 @@ switch($_REQUEST['icl_ajx_action']){
     case 'send_translation_request':
         $post_ids = explode(',',$_POST['post_ids']);
         $target_languages = explode('#', $_POST['target_languages']);
-        $post_type = $_POST['type'];
+        $post_types = $_POST['icl_post_type'];
         foreach($post_ids as $post_id){            
             $resp[] = array(
                 'post_id'=>$post_id, 
-                'status'=>icl_translation_send_post($post_id, $target_languages, $post_type)
+                'status'=>icl_translation_send_post($post_id, $target_languages, $post_types[$post_id])
             );
         }
         echo json_encode($resp);
@@ -863,6 +863,14 @@ if (function_exists('wpml_register_admin_strings')) {
     case 'icl_custom_tax_sync_options':
         foreach($_POST['icl_sync_tax'] as $k=>$v){
             $iclsettings['taxonomies_sync_option'][$k] = $v;
+        }
+        $this->save_settings($iclsettings);
+        echo '1|';
+        break;
+
+    case 'icl_custom_posts_sync_options':
+        foreach($_POST['icl_sync_custom_posts'] as $k=>$v){
+            $iclsettings['custom_posts_sync_option'][$k] = $v;
         }
         $this->save_settings($iclsettings);
         echo '1|';

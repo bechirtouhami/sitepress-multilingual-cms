@@ -91,14 +91,15 @@ class AbsoluteLinksPlugin{
         if(!isset($_POST['alp_ajx_action'])){
             return;
         }
-        global $wpdb;
+        global $wpdb, $wp_post_types;
+        $post_types = array_diff(array_keys($wp_post_types), array('revision','attachment','nav_menu_item'));
         
         $limit  = 5;
         
         switch($_POST['alp_ajx_action']){
             case 'rescan':
                 $posts_pages = $wpdb->get_col("
-                    SELECT SQL_CALC_FOUND_ROWS p1.ID FROM {$wpdb->posts} p1 WHERE post_type IN ('page','post') AND ID NOT IN 
+                    SELECT SQL_CALC_FOUND_ROWS p1.ID FROM {$wpdb->posts} p1 WHERE post_type IN ('".join("','", $post_types)."') AND ID NOT IN 
                     (SELECT post_id FROM {$wpdb->postmeta} WHERE meta_key = '_alp_processed')
                     ORDER BY p1.ID ASC LIMIT $limit
                 ");
@@ -141,7 +142,7 @@ class AbsoluteLinksPlugin{
                 $posts_pages = $wpdb->get_results("
                     SELECT SQL_CALC_FOUND_ROWS p1.ID, p1.post_content FROM {$wpdb->posts} p1
                     JOIN {$wpdb->postmeta} p2 ON p1.ID = p2.post_id
-                    WHERE p1.post_type IN ('page','post') AND p2.meta_key = '_alp_processed'
+                    WHERE p1.post_type IN ('".join("','", $post_types)."') AND p2.meta_key = '_alp_processed'
                     ORDER BY p1.ID ASC LIMIT $limit
                 ");   
                 if($posts_pages){
@@ -520,8 +521,7 @@ class AbsoluteLinksPlugin{
     }    
     
     function process_post($post_id){
-        global $wpdb;
-        global $wp_rewrite, $sitepress;
+        global $wpdb, $wp_post_types, $wp_rewrite, $sitepress;
         if(!isset($wp_rewrite)){
             require_once ABSPATH . WPINC . '/rewrite.php'; 
             $wp_rewrite = new WP_Rewrite();
@@ -531,7 +531,16 @@ class AbsoluteLinksPlugin{
         
         delete_post_meta($post_id,'_alp_broken_links');
          
-        
+        //custom posts query vars
+        $custom_post_query_vars = array();
+        foreach($wp_post_types as $k=>$v){
+            if(in_array($k, array('post','page'))){
+                continue;
+            }
+            if($v->query_var){
+                $custom_post_query_vars[$k] = $v->query_var;    
+            }            
+        }
          
         $post = $wpdb->get_row("SELECT * FROM {$wpdb->posts} WHERE ID={$post_id}"); 
         $home_url = $sitepress->language_url($_POST['icl_post_language']);
@@ -540,7 +549,7 @@ class AbsoluteLinksPlugin{
         for($i = 0; $i < 6; $i++){
             $alp_matches[$i] = array_merge((array)$alp_matches1[$i], (array)$alp_matches2[$i]); 
         }
-        
+                
         $sitepress_settings = $sitepress->get_settings();
         
         if($int1 || $int2){   
@@ -602,7 +611,7 @@ class AbsoluteLinksPlugin{
                 $this_request = $request;
                 
                 $request_match = $request;
-                
+                                
                 foreach ( (array) $rewrite as $match => $query) {
 
                     // If the requesting file is the anchor of the match, prepend it
@@ -629,24 +638,40 @@ class AbsoluteLinksPlugin{
                         
                         break;
                     }
-                }   
+                }  
+                
+                
+                 
                 $post_name = $category_name = false;
                 if(isset($perma_query_vars['pagename'])){
                     $post_name = basename($perma_query_vars['pagename']); 
+                    $post_type = 'page';
                 }elseif(isset($perma_query_vars['name'])){
                     $post_name = $perma_query_vars['name']; 
+                    $post_type = 'post';
                 }elseif(isset($perma_query_vars['category_name'])){
                     $category_name = $perma_query_vars['category_name']; 
+                }else{
+                    foreach($custom_post_query_vars as $k=>$v){
+                        if(isset($perma_query_vars[$v])){
+                            $post_name = $perma_query_vars[$v];
+                            $post_type = $k;
+                            $post_qv   = $v;
+                            break;
+                        }
+                    }                    
                 }
+                
+                
+                
                 if($post_name){                    
                     $name = $wpdb->escape($post_name);
-                    $post_type = isset($perma_query_vars['pagename']) ? 'page' : 'post';
                     $p = $wpdb->get_row("SELECT ID, post_type FROM {$wpdb->posts} WHERE post_name='{$name}' AND post_type ='{$post_type}'");
                     if($p){
-                        if($post_type=='post'){
-                            $qvid = 'p';
-                        }else{
+                        if($post_type=='page'){
                             $qvid = 'page_id';
+                        }else{
+                            $qvid = 'p';
                         }
                         
                         if($sitepress_settings['language_negotiation_type']==1 && $lang){
@@ -673,10 +698,10 @@ class AbsoluteLinksPlugin{
                         $p = $wpdb->get_results("SELECT ID, post_type FROM {$wpdb->posts} WHERE post_name LIKE '{$name}%' AND post_type IN('post','page')");
                         if($p){
                             foreach($p as $post_suggestion){
-                                if($post_suggestion->post_type=='post'){
-                                    $qvid = 'p';
-                                }else{
+                                if($post_suggestion->post_type=='page'){
                                     $qvid = 'page_id';
+                                }else{
+                                    $qvid = 'p';
                                 }
                                 $alp_broken_links[$alp_matches[2][$k]]['suggestions'][] = array(
                                         'absolute'=> '/' . ltrim($url_parts['path'],'/') . '?' . $qvid . '=' . $post_suggestion->ID,
@@ -715,7 +740,7 @@ class AbsoluteLinksPlugin{
                 
             }
             
-            $int = preg_match_all('@href=[\'"]('.rtrim(get_option('home'),'/').'/?\?(p|page_id)=([0-9]+)(#.+)?)[\'"]@i',$post_content,$matches2);            
+            $int = preg_match_all('@href=[\'"]('.rtrim(get_option('home'),'/').'/?\?(p|page_id)=([0-9]+)(#.+)?)[\'"]@i',$post_content,$matches2);          
             if($int){
                 $url_parts = parse_url(rtrim(get_option('home'),'/').'/');
                 $post_content = preg_replace('@href=[\'"]('. rtrim(get_option('home'),'/') .'/?\?(p|page_id)=([0-9]+)(#.+)?)[\'"]@i', 'href="'.'/' . ltrim($url_parts['path'],'/').'?$2=$3$4"', $post_content);
