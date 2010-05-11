@@ -1148,9 +1148,9 @@ class SitePress{
 			$id = ' id="' . $id . '"';
 		}
 		if ($title) {
-            return '<a class="icl_thickbox' . $class . '" title="' . $title . '" href="admin.php?page='.ICL_PLUGIN_FOLDER . "/menu/languages.php&icl_action=reminder_popup&target=" . $link .'"' . $id . '>';
+            return '<a class="icl_thickbox' . $class . '" title="' . $title . '" href="admin.php?page='.ICL_PLUGIN_FOLDER . "/menu/languages.php&amp;icl_action=reminder_popup&amp;target=" . $link .'"' . $id . '>';
         } else {
-            return '<a class="icl_thickbox' . $class . '" href="admin.php?page='.ICL_PLUGIN_FOLDER . "/menu/languages&icl_action=reminder_popup&target=" . $link .'"' . $id . '>';
+            return '<a class="icl_thickbox' . $class . '" href="admin.php?page='.ICL_PLUGIN_FOLDER . "/menu/languages&amp;icl_action=reminder_popup&amp;target=" . $link .'"' . $id . '>';
         }
     }
     

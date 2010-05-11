@@ -95,7 +95,7 @@ Please choose which support subscription is best for you:
 <br /><br />
 %s Single site support %s - $50 / year (good for this site only)
 <br />
-%s Developer support (unlimited sites) %s - $200 / year (good for any site you build)', 'sitepress'), $this->thickbox('subscriptions/new?wid=' . $this->site_id . '&code=1'), '</a>', $this->thickbox('subscriptions/new?wid=' . $this->site_id . '&code=2'), '</a>');
+%s Developer support (unlimited sites) %s - $200 / year (good for any site you build)', 'sitepress'), $this->thickbox('subscriptions/new?wid=' . $this->site_id . '&amp;code=1'), '</a>', $this->thickbox('subscriptions/new?wid=' . $this->site_id . '&amp;code=2'), '</a>');
 		echo '</p>';
 	}
 
@@ -292,7 +292,7 @@ Please choose which support subscription is best for you:
 }
 ?>
 <div class="wrap">
-    <div id="icon-options-general" class="icon32 icon32_adv"><br /></div>
+    <div id="icon-options-general" class="icon32 icon32_adv" style="background: transparent url(<?php echo ICL_PLUGIN_URL; ?>/res/img/icon_adv.png) no-repeat;"><br /></div>
     <h2><?php _e('Support', 'sitepress') ?></h2>
 <?php $icl_support = new SitePress_Support; ?>
 </div>
