@@ -161,7 +161,7 @@ Please choose which support subscription is best for you:
 			if (!$this->initial && $v['messages'] != $this->fetched_tickets[$id]['messages']) {
 				$check_user_message = $this->request(ICL_API_ENDPOINT . '/' . $url . $v['id'] . '.xml?wid=' . $this->site_id . '&accesskey=' . $this->access_key);
 				if ($check_user_message['info']['support_ticket']['attr']['last_message_by_user'] == 'true') {
-					$tickets .= '<tr><td>' . $this->thickbox($url . $v['id']) . $v['subject'] . '</a></td><td>' . date(get_option('date_format'), $v['create_time']) . '</td><td>' . $v['messages'] . '</td></tr>';
+					$tickets .= '<tr><td>' . $this->thickbox($url . $v['id']) . $v['subject'] . '</a></td><td>' . date(get_option('date_format'), $v['create_time']) . '</td><td>' . $this->fetched_tickets[$id]['messages'] . '</td></tr>';
 					$this->data['tickets'][$id]['messages'] = $this->fetched_tickets[$id]['messages'];
 					$update = true;
 					continue;
