@@ -26,8 +26,10 @@ class SitePress_Support {
 			$sitepress->save_settings(array('support_icl_account_created' => 1));
 		}
 		$this->request = new WP_Http;
+		
 		//$this->site_id = $sitepress_settings['site_id'];
 		//$this->access_key = $sitepress_settings['access_key'];
+		
 		$this->site_id = $sp_settings['site_id'];
 		$this->access_key = $sp_settings['access_key'];
 		
