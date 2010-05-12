@@ -30,6 +30,8 @@ class AbsoluteLinksPlugin{
     var $cur_ver;
     var $broken_links;
     var $plugin_url = '';
+    private $custom_post_query_vars = array();
+    private $taxonomies_query_vars = array();
     
     
     function __construct($ext = false){  
@@ -64,6 +66,34 @@ class AbsoluteLinksPlugin{
             $this->plugin_url = str_replace('http://', 'https://', $this->plugin_url);
         }        
         
+        add_action('init', array($this, 'init_query_vars'), 30);
+        
+    }
+    
+    function init_query_vars(){
+        global $wp_post_types, $wp_taxonomies;
+        
+        //custom posts query vars
+        foreach($wp_post_types as $k=>$v){
+            if(in_array($k, array('post','page'))){
+                continue;
+            }
+            if($v->query_var){
+                $this->custom_post_query_vars[$k] = $v->query_var;    
+            }            
+        }
+        //taxonomies query vars
+        foreach($wp_taxonomies as $k=>$v){
+            if(in_array($k, array('category'))){
+                continue;
+            }
+            if($k == 'post_tag' && !$v->query_var){
+                $v->query_var = $tag_base = get_option('tag_base') ? $tag_base : 'tag';
+            }
+            if($v->query_var){
+                $this->taxonomies_query_vars[$k] = $v->query_var;    
+            }            
+        }
         
     }
     
@@ -410,23 +440,42 @@ class AbsoluteLinksPlugin{
                 }                
                 
                 
-                $post_name = $category_name = false;
+                $post_name = $category_name = $tax_name = false;
                 if(isset($perma_query_vars['pagename'])){
                     $post_name = basename($perma_query_vars['pagename']); 
+                    $post_type = 'page';
                 }elseif(isset($perma_query_vars['name'])){
                     $post_name = $perma_query_vars['name']; 
+                    $post_type = 'post';
                 }elseif(isset($perma_query_vars['category_name'])){
                     $category_name = $perma_query_vars['category_name']; 
+                }else{
+                    foreach($this->custom_post_query_vars as $k=>$v){
+                        if(isset($perma_query_vars[$v])){
+                            $post_name = $perma_query_vars[$v];
+                            $post_type = $k;
+                            $post_qv   = $v;
+                            break;
+                        }
+                    }
+                    foreach($this->taxonomies_query_vars as $k=>$v){
+                        if(isset($perma_query_vars[$v])){
+                            $tax_name = $perma_query_vars[$v];
+                            $tax_type = $v;
+                            break;
+                        }
+                    }                    
                 }
+                
                 if($post_name){                    
                     $name = $wpdb->escape($post_name);
                     $post_type = isset($perma_query_vars['pagename']) ? 'page' : 'post';
                     $p = $wpdb->get_row("SELECT ID, post_type FROM {$wpdb->posts} WHERE post_name='{$name}' AND post_type ='{$post_type}'");
                     if($p){
-                        if($post_type=='post'){
-                            $qvid = 'p';
-                        }else{
+                        if($post_type=='page'){
                             $qvid = 'page_id';
+                        }else{
+                            $qvid = 'p';
                         }
                         
                         if($sitepress_settings['language_negotiation_type']==1 && $lang){
@@ -459,6 +508,25 @@ class AbsoluteLinksPlugin{
                         $regv = 'href="' . '/' . ltrim($url_parts['path'],'/') . '?cat_ID=' . $c->term_id.'"';
                         $def_url[$regk] = $regv;                        
                     }                       
+                }elseif($tax_name){
+                    
+                    if($sitepress_settings['language_negotiation_type']==1 && $lang){
+                        $langprefix = '/' . $lang;
+                    }else{
+                        $langprefix = '';
+                    }
+                    
+                    $perm_url = '('.rtrim($home_url,'/') . ')?' . $langprefix .'/'.$m;
+                    $regk = '@href=["\']('.$perm_url.')["\']@i'; 
+                    if ($anchor){
+                        $anchor = "#".$anchor;
+                    } else {
+                        $anchor = "";
+                    }
+                    
+                    $regv = 'href="' . '/' . ltrim($url_parts['path'],'/') . '?' . $tax_type . '=' . $tax_name.$anchor.'"';
+                    $def_url[$regk] = $regv;
+                    
                 }
             }
             
@@ -468,10 +536,11 @@ class AbsoluteLinksPlugin{
                 
             }
                   
-            $int = preg_match_all('@href=[\'"]('.rtrim(get_option('home'),'/').'/?\?(p|page_id)=([0-9]+))[\'"]@i',$string_value,$matches2);            
+            $tx_qvs = $this->taxonomies_query_vars ? '|' . join('|',$this->taxonomies_query_vars) : '';                            $post_qvs = $this->taxonomies_query_vars ? '|' . join('|',$this->custom_posts_query_vars) : '';    
+            $int = preg_match_all('@href=[\'"]('.rtrim(get_option('home'),'/').'/?\?(p|page_id'.$tx_qvs.$post_qvs.')=([0-9a-z-]+)(#.+)?)[\'"]@i',$text,$matches2);          
             if($int){
                 $url_parts = parse_url(rtrim(get_option('home'),'/').'/');
-                $text = preg_replace('@href=[\'"]('. rtrim(get_option('home'),'/') .'/?\?(p|page_id)=([0-9]+))[\'"]@i', 'href="'.'/' . ltrim($url_parts['path'],'/').'?$2=$3"', $text);
+                $text = preg_replace('@href=[\'"]('. rtrim(get_option('home'),'/') .'/?\?(p|page_id'.$tx_qvs.$post_qvs.')=([0-9a-z-]+)(#.+)?)[\'"]@i', 'href="'.'/' . ltrim($url_parts['path'],'/').'?$2=$3$4"', $text);
             }
             
         }          
@@ -521,7 +590,7 @@ class AbsoluteLinksPlugin{
     }    
     
     function process_post($post_id){
-        global $wpdb, $wp_post_types, $wp_rewrite, $sitepress;
+        global $wpdb, $wp_rewrite, $sitepress;
         if(!isset($wp_rewrite)){
             require_once ABSPATH . WPINC . '/rewrite.php'; 
             $wp_rewrite = new WP_Rewrite();
@@ -531,17 +600,6 @@ class AbsoluteLinksPlugin{
         
         delete_post_meta($post_id,'_alp_broken_links');
          
-        //custom posts query vars
-        $custom_post_query_vars = array();
-        foreach($wp_post_types as $k=>$v){
-            if(in_array($k, array('post','page'))){
-                continue;
-            }
-            if($v->query_var){
-                $custom_post_query_vars[$k] = $v->query_var;    
-            }            
-        }
-         
         $post = $wpdb->get_row("SELECT * FROM {$wpdb->posts} WHERE ID={$post_id}"); 
         $home_url = $sitepress->language_url($_POST['icl_post_language']);
         $int1  = preg_match_all('@<a([^>]*)href="(('.rtrim($home_url,'/').')?/([^"^>^#]+))"([^>]*)>@i',$post->post_content,$alp_matches1);        
@@ -549,7 +607,7 @@ class AbsoluteLinksPlugin{
         for($i = 0; $i < 6; $i++){
             $alp_matches[$i] = array_merge((array)$alp_matches1[$i], (array)$alp_matches2[$i]); 
         }
-                
+                 
         $sitepress_settings = $sitepress->get_settings();
         
         if($int1 || $int2){   
@@ -611,7 +669,7 @@ class AbsoluteLinksPlugin{
                 $this_request = $request;
                 
                 $request_match = $request;
-                                
+                
                 foreach ( (array) $rewrite as $match => $query) {
 
                     // If the requesting file is the anchor of the match, prepend it
@@ -640,9 +698,7 @@ class AbsoluteLinksPlugin{
                     }
                 }  
                 
-                
-                 
-                $post_name = $category_name = false;
+                $post_name = $category_name = $tax_name = false;
                 if(isset($perma_query_vars['pagename'])){
                     $post_name = basename($perma_query_vars['pagename']); 
                     $post_type = 'page';
@@ -652,20 +708,26 @@ class AbsoluteLinksPlugin{
                 }elseif(isset($perma_query_vars['category_name'])){
                     $category_name = $perma_query_vars['category_name']; 
                 }else{
-                    foreach($custom_post_query_vars as $k=>$v){
+                    foreach($this->custom_post_query_vars as $k=>$v){
                         if(isset($perma_query_vars[$v])){
                             $post_name = $perma_query_vars[$v];
                             $post_type = $k;
                             $post_qv   = $v;
                             break;
                         }
+                    }
+                    foreach($this->taxonomies_query_vars as $k=>$v){
+                        if(isset($perma_query_vars[$v])){
+                            $tax_name = $perma_query_vars[$v];
+                            $tax_type = $v;
+                            break;
+                        }
                     }                    
                 }
                 
-                
-                
                 if($post_name){                    
                     $name = $wpdb->escape($post_name);
+                    $post_type = isset($perma_query_vars['pagename']) ? 'page' : 'post';
                     $p = $wpdb->get_row("SELECT ID, post_type FROM {$wpdb->posts} WHERE post_name='{$name}' AND post_type ='{$post_type}'");
                     if($p){
                         if($post_type=='page'){
@@ -731,6 +793,25 @@ class AbsoluteLinksPlugin{
                             }
                         }                        
                     }                        
+                }elseif($tax_name){
+                    
+                    if($sitepress_settings['language_negotiation_type']==1 && $lang){
+                        $langprefix = '/' . $lang;
+                    }else{
+                        $langprefix = '';
+                    }
+                    
+                    $perm_url = '('.rtrim($home_url,'/') . ')?' . $langprefix .'/'.$m;
+                    $regk = '@href=["\']('.$perm_url.')["\']@i'; 
+                    if ($anchor){
+                        $anchor = "#".$anchor;
+                    } else {
+                        $anchor = "";
+                    }
+                    
+                    $regv = 'href="' . '/' . ltrim($url_parts['path'],'/') . '?' . $tax_type . '=' . $tax_name.$anchor.'"';
+                    $def_url[$regk] = $regv;
+                    
                 }
             }
             $post_content = $post->post_content;
@@ -740,10 +821,11 @@ class AbsoluteLinksPlugin{
                 
             }
             
-            $int = preg_match_all('@href=[\'"]('.rtrim(get_option('home'),'/').'/?\?(p|page_id)=([0-9]+)(#.+)?)[\'"]@i',$post_content,$matches2);          
+            $tx_qvs = $this->taxonomies_query_vars ? '|' . join('|',$this->taxonomies_query_vars) : '';                            $post_qvs = $this->taxonomies_query_vars ? '|' . join('|',$this->custom_posts_query_vars) : '';    
+            $int = preg_match_all('@href=[\'"]('.rtrim(get_option('home'),'/').'/?\?(p|page_id'.$tx_qvs.$post_qvs.')=([0-9a-z-]+)(#.+)?)[\'"]@i',$post_content,$matches2);          
             if($int){
                 $url_parts = parse_url(rtrim(get_option('home'),'/').'/');
-                $post_content = preg_replace('@href=[\'"]('. rtrim(get_option('home'),'/') .'/?\?(p|page_id)=([0-9]+)(#.+)?)[\'"]@i', 'href="'.'/' . ltrim($url_parts['path'],'/').'?$2=$3$4"', $post_content);
+                $post_content = preg_replace('@href=[\'"]('. rtrim(get_option('home'),'/') .'/?\?(p|page_id'.$tx_qvs.$post_qvs.')=([0-9a-z-]+)(#.+)?)[\'"]@i', 'href="'.'/' . ltrim($url_parts['path'],'/').'?$2=$3$4"', $post_content);
             }
             
             if($post_content){
@@ -763,7 +845,9 @@ class AbsoluteLinksPlugin{
             $parts = parse_url($home);        
             $abshome = $parts['scheme'] .'://' . $parts['host'];
             $path = ltrim($parts['path'],'/');    
-            $cont = preg_replace_callback('@<a([^>]+)?href="(('.$abshome.')?/'.$path.'/?\?(p|page_id|cat_ID)=([0-9]+))(#?[^"]*)"([^>]+)?>@i',
+            $tx_qvs = join('|',$this->taxonomies_query_vars);           
+            $cont = preg_replace_callback(
+                '@<a([^>]+)?href="(('.$abshome.')?/'.$path.'/?\?(p|page_id|cat_ID|'.$tx_qvs.')=([0-9a-z-]+))(#?[^"]*)"([^>]+)?>@i',
                 array($this,'show_permalinks_cb'),$cont);                    
         }
         return $cont;
@@ -771,12 +855,14 @@ class AbsoluteLinksPlugin{
        
     function show_permalinks_cb($matches){
         if($matches[4]=='cat_ID'){
-            $_func = 'get_category_link';
+            $url = get_category_link($matches[5]);
+        }elseif($tax = array_search($matches[4],$this->taxonomies_query_vars)){
+            $url = get_term_link($matches[5], $tax);
         }else{
-            $_func = 'get_permalink';
+            $url = get_permalink($matches[5]);
         }  
         $fragment = $matches[6];
-        return '<a'.$matches[1]. 'href="'.$_func($matches[5]) . $fragment . '"' . $matches[3] . '>';
+        return '<a'.$matches[1]. 'href="'. $url . $fragment . '"' . $matches[3] . '>';
     }
     
     function get_broken_links(){
