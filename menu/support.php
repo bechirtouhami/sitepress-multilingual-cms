@@ -24,6 +24,7 @@ class SitePress_Support {
 		}
 		if (isset($_POST['icl_support_account']) && $sitepress->icl_account_configured()) {
 			$sitepress->save_settings(array('support_icl_account_created' => 1));
+			echo '<script type="text/javascript">location.href = "admin.php?page=sitepress-multilingual-cms/menu/support.php";</script>';
 		}
 		$this->request = new WP_Http;
 		
