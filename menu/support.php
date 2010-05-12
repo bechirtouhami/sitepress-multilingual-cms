@@ -17,6 +17,7 @@ class SitePress_Support {
 
 	function __construct() {
 		global $sitepress, $sitepress_settings;
+		$sp_settings = get_option('icl_sitepress_settings');
 		if (!$sitepress->icl_account_configured()) {
 			$this->create_account();
 			return;
@@ -25,8 +26,10 @@ class SitePress_Support {
 			$sitepress->save_settings(array('support_icl_account_created' => 1));
 		}
 		$this->request = new WP_Http;
-		$this->site_id = $sitepress_settings['site_id'];
-		$this->access_key = $sitepress_settings['access_key'];
+		//$this->site_id = $sitepress_settings['site_id'];
+		//$this->access_key = $sitepress_settings['access_key'];
+		$this->site_id = $sp_settings['site_id'];
+		$this->access_key = $sp_settings['access_key'];
 		
 		$this->data = get_option('icl_support', $defaults);
 		if (isset($this->data['tickets'])) {
@@ -44,7 +47,11 @@ class SitePress_Support {
 
 	function request($url) {
 		$result = $this->request->request($url);
-		return xml2array($result['body'], 1);
+		if (is_array($result['body'])) {
+			return xml2array($result['body'], 1);
+		} else {
+			return array();
+		}
 	}
 
 	function thickbox($url, $class = null, $id = null) {
@@ -110,7 +117,6 @@ Please choose which support subscription is best for you:
 	}
 
 	function get_tickets() {
-		$request = new WP_Http;
 		$url = ICL_API_ENDPOINT . '/support.xml?wid=' . $this->site_id . '&accesskey=' . $this->access_key;
 		$result = $this->request($url);
 		if (isset($result['info']['support_tickets']['support_ticket'])) {
