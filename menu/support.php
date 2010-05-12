@@ -232,7 +232,7 @@ Please choose which support subscription is best for you:
                                         <div style="text-align:right">
                                             <?php //Hidden button for catching "Enter" key ?>                                            
                                             <input id="icl_content_trans_setup_finish_enter" class="button-primary" name="icl_content_trans_setup_finish_enter" value="<?php echo __('Log in to my account', 'sitepress') ?>" type="submit" style="display:none"/>
-                                            <input id="icl_content_trans_setup_finish" class="button-primary" name="icl_content_trans_setup_finish" value="<?php echo __('Create account and Finish', 'sitepress') ?>" type="submit" />
+                                            <input id="icl_content_trans_setup_finish" class="button-primary" name="icl_content_trans_setup_finish" value="<?php echo __('Create account', 'sitepress') ?>" type="submit" />
                                         </div>
                                     </p>
                                     <div class="icl_progress"><?php _e('Saving. Please wait...', 'sitepress'); ?></div>
