@@ -49,7 +49,7 @@ class SitePress_Support {
 
 	function request($url) {
 		$result = $this->request->request($url);
-		if (is_array($result['body'])) {
+		if (is_array($result) && is_array($result['body'])) {
 			return xml2array($result['body'], 1);
 		} else {
 			return array();
