@@ -188,7 +188,7 @@ Please choose which support subscription is best for you:
 
 	function create_account() {
 		global $sitepress, $sitepress_settings;
-		$icl_account_ready_errors = $sitepress->icl_account_reqs();
+		//$icl_account_ready_errors = $sitepress->icl_account_reqs();
 ?>             
 
                                 <?php if(isset($_POST['icl_form_errors']) || ($icl_account_ready_errors && !$sitepress->icl_account_configured() )):  ?>
