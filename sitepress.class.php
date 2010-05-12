@@ -266,7 +266,7 @@ class SitePress{
             if(!is_admin()){
                 add_action('wp_head', array($this, 'meta_generator_tag'));
             } 
-                                  
+                                              
         } //end if the initial language is set - existing_content_language_verified
         
     }
@@ -1156,7 +1156,7 @@ class SitePress{
     }
     
     function js_scripts_setup(){        
-        global $pagenow, $wpdb;
+        global $pagenow, $wpdb; 
         if(isset($_GET['page'])){
             $page = basename($_GET['page']);
             $page_basename = str_replace('.php','',$page);
@@ -2885,7 +2885,8 @@ class SitePress{
         }elseif($this->this_lang != $this->get_default_language()){
             $this_lang = $this->get_current_language();
         }elseif(isset($_GET['post'])){
-            $element_lang_details = $this->get_element_language_details($_GET['post'],'post');
+            $icl_post_type = isset($_GET['post_type']) ? 'post_' . $_GET['post_type'] : 'post_'. $wpdb->get_var("SELECT post_type FROM {$wpdb->posts} WHERE ID = '".$wpdb->escape($_GET['post'])."'");
+            $element_lang_details = $this->get_element_language_details($_GET['post'],$icl_post_type);
             $this_lang = $element_lang_details->language_code;
         }elseif(isset($_POST['action']) && $_POST['action']=='get-tagcloud'){
             $urlparts = parse_url($_SERVER['HTTP_REFERER']); 
@@ -2893,13 +2894,13 @@ class SitePress{
             $this_lang = $qvars['lang']; 
         }else{
             $this_lang = $this->get_default_language();
-        }  
+        }          
         $exclude =  $wpdb->get_col("
             SELECT tt.term_taxonomy_id FROM {$wpdb->term_taxonomy} tt
             LEFT JOIN {$wpdb->terms} tm ON tt.term_id = tm.term_id 
             LEFT JOIN {$wpdb->prefix}icl_translations t ON (tt.term_taxonomy_id = t.element_id OR t.element_id IS NULL)
             WHERE tt.taxonomy='{$taxonomy}' AND t.element_type='{$icl_element_type}' AND t.language_code <> '{$this_lang}'
-            "); 
+            ");         
         $exclude[] = 0;         
         $exclusions .= ' AND tt.term_taxonomy_id NOT IN ('.join(',',$exclude).')';
         return $exclusions;

@@ -173,10 +173,11 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
     
     $orig_lang_for_server = apply_filters('icl_server_languages_map', $orig_lang);
             
-    if($post_type=='post'){
+    /*if($post_type=='post'){*/
         foreach(wp_get_object_terms($post_id, 'post_tag') as $tag){
             $post_tags[$tag->term_taxonomy_id] = $tag->name;
         }   
+        
         if(is_array($post_tags)){
             //only send tags that don't have a translation
             foreach($post_tags as $term_taxonomy_id=>$pc){
@@ -220,8 +221,11 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
         }
         
         // get custom taxonomies
-        global $wp_taxonomies;
-        $taxonomies = array_diff(array_keys((array)$wp_taxonomies), array('post_tag','category'));
+        $taxonomies = $wpdb->get_col("
+            SELECT DISTINCT tx.taxonomy 
+            FROM {$wpdb->term_taxonomy} tx JOIN {$wpdb->term_relationships} tr ON tx.term_taxonomy_id = tr.term_taxonomy_id
+            WHERE tr.object_id = {$post_id}
+        ");
         foreach($taxonomies as $t){
             if($sitepress_settings['taxonomies_sync_option'][$t] == 1){
                 foreach(wp_get_object_terms($post_id, $t) as $trm){
@@ -243,8 +247,8 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
                     }            
                 }      
             }
-        }
-    }
+        }        
+    /*}*/
     $timestamp = date('Y-m-d H:i:s');
     
     $md5 = icl_translation_calculate_md5($post_id);    
@@ -313,7 +317,7 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
                 
 
         
-        if($post_type=='post'){
+        /*if($post_type=='post'){*/
             if(is_array($categories_to_translate)){
                 $data['contents']['categories'] = array(
                         'translate'=>1,
@@ -354,7 +358,7 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
                         );                            
                 }
             }
-        }
+        /*}*/
         $previous_rid_for_target = $previous_rid[$target[0]];
         if ($previous_rid_for_target == null){
             $previous_rid_for_target = false;
@@ -441,8 +445,13 @@ function icl_translation_calculate_md5($post_id){
             sort($post_categories, SORT_STRING);
         }
         
-        global $wp_taxonomies, $sitepress_settings;
-        $taxonomies = array_diff(array_keys((array)$wp_taxonomies), array('post_tag', 'category', 'nav_menu', 'link_category'));
+        global $wpdb, $sitepress_settings;
+        // get custom taxonomies
+        $taxonomies = $wpdb->get_col("
+            SELECT DISTINCT tx.taxonomy 
+            FROM {$wpdb->term_taxonomy} tx JOIN {$wpdb->term_relationships} tr ON tx.term_taxonomy_id = tr.term_taxonomy_id
+            WHERE tr.object_id = {$post_id}
+        ");
         sort($taxonomies, SORT_STRING);
         foreach($taxonomies as $t){
             if($sitepress_settings['taxonomies_sync_option'][$t] == 1){
@@ -683,9 +692,8 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     _icl_content_fix_image_paths_in_body($translation);
     _icl_content_fix_relative_link_paths_in_body($translation);
     _icl_content_decode_shortcodes($translation);
-    
-    
-    if($original_post_details->post_type=='post'){
+        
+    /*if($original_post_details->post_type=='post'){*/
         
         // deal with tags
         if(isset($translation['tags'])){
@@ -917,16 +925,18 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
                 }
             }
         }
-             
-    }elseif($original_post_details->post_type=='page'){
+                     
+    /*}elseif($original_post_details->post_type=='page'){*/
+    
         // handle the page parent and set it to the translated parent if we have one.
         if($original_post_details->post_parent){
             $post_parent_trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_type='post_{$original_post_details->post_type}' AND element_id='{$original_post_details->post_parent}'");
             if($post_parent_trid){
                 $parent_id = $wpdb->get_var("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE element_type='post_{$original_post_details->post_type}' AND trid='{$post_parent_trid}' AND language_code='{$lang_code}'");
             }            
-        }        
-    }
+        }
+                
+    /*}*/
     
     // determine post id based on trid
     $post_id = $wpdb->get_var("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE element_type='post_{$original_post_details->post_type}' AND trid='{$trid}' AND language_code='{$lang_code}'");
@@ -945,13 +955,15 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     
     $postarr['post_title'] = $translation['title'];
     $postarr['post_content'] = $translation['body'];
-    if($original_post_details->post_type=='post'){
+    if(is_array($translated_tags)){
         $postarr['tags_input'] = join(',',(array)$translated_tags);
-        if(!empty($translated_taxs)){
-            foreach($translated_taxs as $taxonomy=>$values){
-                $postarr['tax_input'][$taxonomy] = join(',',(array)$values);
-            }
+    }
+    if(is_array($translated_taxs)){
+        foreach($translated_taxs as $taxonomy=>$values){
+            $postarr['tax_input'][$taxonomy] = join(',',(array)$values);
         }
+    }            
+    if(isset($translated_cats_ids)){
         $postarr['post_category'] = $translated_cats_ids;        
     }
     $postarr['post_author'] = $original_post_details->post_author;  
