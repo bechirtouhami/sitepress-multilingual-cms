@@ -170,18 +170,18 @@ Please choose which support subscription is best for you:
 				continue;
 			}
 			if (!$this->initial && $v['messages'] != $this->fetched_tickets[$id]['messages']) {
-				$this->data['tickets'][$id]['messages'] = $this->fetched_tickets[$id]['messages'];
-				$update = true;
 				$check_user_message = $this->request(ICL_API_ENDPOINT . '/' . $url . $v['id'] . '.xml?wid=' . $this->site_id . '&accesskey=' . $this->access_key);
 				if ($check_user_message['info']['support_ticket']['attr']['last_message_by_user'] == 'true') {
 					$tickets .= '<tr><td>' . $this->thickbox($url . $v['id']) . $v['subject'] . '</a></td><td>' . date(get_option('date_format'), $v['create_time']) . '</td><td>' . $this->fetched_tickets[$id]['messages'] . '</td></tr>';
-				} else {
-					$add = ' style="background-color: Yellow;"';
-					$add3 = ' icl_support_viewed';
-					$add2 = '<strong><span style="color: Red;">' . __('New message', 'sitepress') . '</span></strong>';
-					$add4 = 'icl_support_ticket_' . $v['id'] . '_' . $this->fetched_tickets[$id]['messages'];
-					$updated_tickets .= '<tr'.$add.'><td>' . $this->thickbox($url . $v['id'], $add3, $add4) . $v['subject'] . '</a></td><td>' . date(get_option('date_format'), $v['create_time']) . '</td><td>' . $this->fetched_tickets[$id]['messages'] . '&nbsp;' . $add2 . '</td></tr>';
+					$this->data['tickets'][$id]['messages'] = $this->fetched_tickets[$id]['messages'];
+					$update = true;
+					continue;
 				}
+				$add = ' style="background-color: Yellow;"';
+				$add3 = ' icl_support_viewed';
+				$add2 = '<strong><span style="color: Red;">' . __('New message', 'sitepress') . '</span></strong>';
+				$add4 = 'icl_support_ticket_' . $v['id'] . '_' . $this->fetched_tickets[$id]['messages'];
+				$updated_tickets .= '<tr'.$add.'><td>' . $this->thickbox($url . $v['id'], $add3, $add4) . $v['subject'] . '</a></td><td>' . date(get_option('date_format'), $v['create_time']) . '</td><td>' . $this->fetched_tickets[$id]['messages'] . '&nbsp;' . $add2 . '</td></tr>';
 			} else {
 				$tickets .= '<tr><td>' . $this->thickbox($url . $v['id']) . $v['subject'] . '</a></td><td>' . date(get_option('date_format'), $v['create_time']) . '</td><td>' . $v['messages'] . '</td></tr>';
 			}
