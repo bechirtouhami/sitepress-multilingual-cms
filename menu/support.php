@@ -208,7 +208,7 @@ Please choose which support subscription is best for you:
                                 <form id="icl_create_account" method="post" action="" <?php if($_POST['icl_acct_option2']):?>style="display:none"<?php endif?>>
                                 <?php wp_nonce_field('icl_create_account', 'icl_create_account_nonce') ?>    
 
-                                <p style="line-height:1.5"><?php _e('To get premium support, you will need to create an account at ICanLocalize. WPML will use this account to create support tickets and connect you with the development team.', 'sitepress'); ?></p>
+                                <p style="line-height:1.5"><?php _e('To get premium support, you will need to create an account at ICanLocalize.<br />WPML will use this account to create support tickets and connect you with the development team.', 'sitepress'); ?></p>
                                 
                                 <table class="form-table icl-account-setup">
                                     <tbody>
