@@ -86,7 +86,7 @@ class SitePress_Support {
 			}
 			foreach($subscriptions as $k => $v) {
 				if ($v['attr']['owner_id'] == $this->site_id && $v['attr']['valid'] == 'true') {
-					printf(__('Your licence is valid until %s', 'sitepress'), date(get_option('date_format'), $v['attr']['expires_date']));
+					printf(__('Your license is valid until %s', 'sitepress'), date(get_option('date_format'), $v['attr']['expires_date']));
 					return true;
 				}
 				if ($v['attr']['owner_id'] == $this->site_id && $v['attr']['valid'] == 'false') {
