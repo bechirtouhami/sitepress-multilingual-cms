@@ -21,6 +21,9 @@ class SitePress_Support {
 			$this->create_account();
 			return;
 		}
+		if (isset($_POST['icl_support_account']) && $sitepress->icl_account_configured()) {
+			$sitepress->save_settings(array('support_icl_account_created' => 1));
+		}
 		$this->request = new WP_Http;
 		$this->site_id = $sitepress_settings['site_id'];
 		$this->access_key = $sitepress_settings['access_key'];
@@ -249,7 +252,8 @@ Please choose which support subscription is best for you:
                                 </form> 
                 <!--admin.php?page=<?php echo ICL_PLUGIN_FOLDER  ?>/menu/content-translation.php#icl_create_account_form-->
                                 <form id="icl_configure_account" action="" method="post" <?php if(!$_POST['icl_acct_option2']):?>style="display:none"<?php endif?>>
-                                <?php wp_nonce_field('icl_configure_account','icl_configure_account_nonce') ?>    
+                                <?php wp_nonce_field('icl_configure_account','icl_configure_account_nonce') ?>
+								<input type="hidden" name="icl_support_account" value="1" />    
                                 <table class="form-table icl-account-setup">
                                     <tbody>
                                     <tr class="form-field">
