@@ -187,9 +187,9 @@ Please choose which support subscription is best for you:
 	}
 
 	function create_account() {
-		global $sitepress, $sitepress_settings; ?>
-                            
-                                <h3 id="icl_create_account_form"><?php echo __('Configure your ICanLocalize account', 'sitepress') ?></h3>             
+		global $sitepress, $sitepress_settings;
+		$icl_account_ready_errors = $sitepress->icl_account_reqs();
+?>             
 
                                 <?php if(isset($_POST['icl_form_errors']) || ($icl_account_ready_errors && !$sitepress->icl_account_configured() )):  ?>
                                 <div class="icl_form_errors">
@@ -208,7 +208,7 @@ Please choose which support subscription is best for you:
                                 <form id="icl_create_account" method="post" action="" <?php if($_POST['icl_acct_option2']):?>style="display:none"<?php endif?>>
                                 <?php wp_nonce_field('icl_create_account', 'icl_create_account_nonce') ?>    
 
-                                <p style="line-height:1.5"><?php _e('Creating an account in ICanLocalize is free. You will only need to pay when sending posts and pages for translation.', 'sitepress'); ?></p>
+                                <p style="line-height:1.5"><?php _e('To get premium support, you will need to create an account at ICanLocalize. WPML will use this account to create support tickets and connect you with the development team.', 'sitepress'); ?></p>
                                 
                                 <table class="form-table icl-account-setup">
                                     <tbody>
@@ -231,10 +231,7 @@ Please choose which support subscription is best for you:
                                         <a href="javascript:;" onclick="jQuery('#icl_create_account').hide();jQuery('#icl_configure_account').fadeIn();"><?php echo __('I already have an account at ICanLocalize', 'sitepress') ?></a>
                                         <div style="text-align:right">
                                             <?php //Hidden button for catching "Enter" key ?>                                            
-                                            <input id="icl_content_trans_setup_finish_enter" class="button-primary" name="icl_content_trans_setup_finish_enter" value="<?php echo __('Add project to my account and finish', 'sitepress') ?>" type="submit" style="display:none"/>
-
-                                            <!--<input class="button" name="icl_content_trans_setup_cancel" value="<?php echo __('Cancel', 'sitepress') ?>" type="button" />
-                                            <input id="icl_content_trans_setup_back_2" class="button-primary" name="icl_content_trans_setup_back_2" value="<?php echo __('Back', 'sitepress') ?>" type="submit" />-->
+                                            <input id="icl_content_trans_setup_finish_enter" class="button-primary" name="icl_content_trans_setup_finish_enter" value="<?php echo __('Log in to my account', 'sitepress') ?>" type="submit" style="display:none"/>
                                             <input id="icl_content_trans_setup_finish" class="button-primary" name="icl_content_trans_setup_finish" value="<?php echo __('Create account and Finish', 'sitepress') ?>" type="submit" />
                                         </div>
                                     </p>
@@ -266,23 +263,23 @@ Please choose which support subscription is best for you:
                                 </table>
                                 <?php if(!$sitepress_settings['content_translation_setup_complete']): ?>        
                                     <p class="submit">                                        
-                                        <a href="javascript:;" onclick="jQuery('#icl_configure_account').hide();jQuery('#icl_create_account').fadeIn();"><?php echo __('Create a new ICanLocalize account', 'sitepress') ?></a>                                        
+                                        <a href="javascript:;" onclick="jQuery('#icl_configure_account').hide();jQuery('#icl_create_account').fadeIn();"><?php echo __('Create account', 'sitepress') ?></a>                                        
                                         <div style="text-align:right">
                                             <?php //Hidden button for catching "Enter" key ?>
-                                            <input id="icl_content_trans_setup_finish_enter" class="button-primary" name="icl_content_trans_setup_finish_enter" value="<?php echo __('Add project to my account and finish', 'sitepress') ?>" type="submit" style="display:none"/>
+                                            <input id="icl_content_trans_setup_finish_enter" class="button-primary" name="icl_content_trans_setup_finish_enter" value="<?php echo __('Log in to my account', 'sitepress') ?>" type="submit" style="display:none"/>
                                             
                                             <!--<input class="button" name="icl_content_trans_setup_cancel" value="<?php echo __('Cancel', 'sitepress') ?>" type="button" />
                                             <input id="icl_content_trans_setup_back_2" class="button-primary" name="icl_content_trans_setup_back_2" value="<?php echo __('Back', 'sitepress') ?>" type="submit" />-->
-                                            <input id="icl_content_trans_setup_finish" class="button-primary" name="icl_content_trans_setup_finish" value="<?php echo __('Add project to my account and finish', 'sitepress') ?>" type="submit" />
+                                            <input id="icl_content_trans_setup_finish" class="button-primary" name="icl_content_trans_setup_finish" value="<?php echo __('Log in to my account', 'sitepress') ?>" type="submit" />
                                         </div>
                                     </p>
                                     <div class="icl_progress"><?php _e('Saving. Please wait...', 'sitepress'); ?></div>                                        
                                 <?php else: ?>
                                     <p class="submit">                                        
                                         <input type="hidden" name="create_account" value="0" />                                        
-                                        <input class="button" name="configure account" value="<?php echo __('Add this project to my account', 'sitepress') ?>" type="submit" 
+                                        <input class="button" name="configure account" value="<?php echo __('Log in to my account', 'sitepress') ?>" type="submit" 
                                             <?php if($icl_account_ready_errors):  ?>disabled="disabled"<?php endif; ?> />
-                                        <a href="javascript:;" onclick="jQuery('#icl_configure_account').hide();jQuery('#icl_create_account').fadeIn();"><?php echo __('Create a new ICanLocalize account', 'sitepress') ?></a>                                        
+                                        <a href="javascript:;" onclick="jQuery('#icl_configure_account').hide();jQuery('#icl_create_account').fadeIn();"><?php echo __('Create account', 'sitepress') ?></a>                                        
                                     </p>                                    
                                     <div class="icl_progress"><?php _e('Saving. Please wait...', 'sitepress'); ?></div>
                                 <?php endif; ?>
