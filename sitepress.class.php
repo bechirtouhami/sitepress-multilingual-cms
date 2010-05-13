@@ -610,6 +610,8 @@ class SitePress{
                         'manage_options', basename(ICL_PLUGIN_PATH).'/menu/content-translation.php');                                                     
             }
 
+			add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Support','sitepress'), __('Support','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/support.php');
+
         }else{
             
             add_menu_page(__('WPML','sitepress'), __('WPML','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/overview.php',null, ICL_PLUGIN_URL . '/res/img/icon16.png');              
@@ -649,6 +651,7 @@ class SitePress{
             add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Compatibility packages','sitepress'), __('Compatibility packages','sitepress'), 
                             'manage_options', basename(ICL_PLUGIN_PATH).'/menu/compatibility-packages.php');             
             
+			add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Support','sitepress'), __('Support','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/support.php');
         }
     }
 
@@ -1147,11 +1150,14 @@ class SitePress{
         exit;
     }
     
-    function create_icl_popup_link($link, $title = null) {
-        if ($title) {
-            return '<a class="icl_thickbox" title="' . $title . '" href="admin.php?page='.ICL_PLUGIN_FOLDER . "/menu/languages.php&icl_action=reminder_popup&target=" . $link .'">';
+    function create_icl_popup_link($link, $title = null, $class = null, $id = null) {
+		if ($id) {
+			$id = ' id="' . $id . '"';
+		}
+		if ($title) {
+            return '<a class="icl_thickbox' . $class . '" title="' . $title . '" href="admin.php?page='.ICL_PLUGIN_FOLDER . "/menu/languages.php&amp;icl_action=reminder_popup&amp;target=" . $link .'"' . $id . '>';
         } else {
-            return '<a class="icl_thickbox" href="admin.php?page='.ICL_PLUGIN_FOLDER . "/menu/languages&icl_action=reminder_popup&target=" . $link .'">';
+            return '<a class="icl_thickbox' . $class . '" href="admin.php?page='.ICL_PLUGIN_FOLDER . "/menu/languages&amp;icl_action=reminder_popup&amp;target=" . $link .'"' . $id . '>';
         }
     }
     

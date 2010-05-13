@@ -63,6 +63,8 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 
 1. Translation controls in posts and pages lists.
 2. Translation controls in edit screen.
+3. String translation panel for translating plugins and themes.
+4. Language setup admin screen.
 
 == Changelog ==
 

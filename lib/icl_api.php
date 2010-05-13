@@ -19,7 +19,10 @@ class ICanLocalizeQuery{
       
     
     function createAccount($data){
-        $request = ICL_API_ENDPOINT . '/websites/create_by_cms.xml';
+		if (isset($_GET['page']) && $_GET['page'] == 'sitepress-multilingual-cms/menu/support.php') {
+			$add = '?ignore_languages=1';
+		}
+        $request = ICL_API_ENDPOINT . '/websites/create_by_cms.xml'.$add;
         $response = $this->_request($request, 'POST', $data);        
         if(!$response){
             return array(0, $this->error);

@@ -53,8 +53,9 @@ function show_messages() {
 function icl_tb_init(domChunk) {
     // copied from thickbox.js
     // add code so we can detect closure of popup
-
+	
     jQuery(domChunk).unbind('click');
+	icl_support_view_ticket();
     
     jQuery(domChunk).click(function(){
     var t = this.title || this.name || "ICanLocalize Reminder";
@@ -75,7 +76,9 @@ function icl_tb_init(domChunk) {
             } else {
                 location.href = url + "&icl_refresh_langs=1"
             }
-        } else {           
+        } else if (url.indexOf('support.php') != -1) {
+			location.href = "admin.php?page=sitepress-multilingual-cms/menu/support.php";
+		} else {           
             if (t == "ICanLocalize Reminder" && do_message_refresh) {
                 
                 // do_message_refresh will only be true if we close the popup.
@@ -155,3 +158,17 @@ function icl_show_hide_reminders() {
     }
     jqthis.children().toggle();    
 }
+
+
+function icl_support_view_ticket() {
+		jQuery('#icl_support_table a.icl_support_viewed').bind('click',function(){
+			jQuery.ajax({
+				type: "POST",
+				url: icl_ajx_url,
+				data: "icl_ajx_action=icl_support_update_ticket&ticket=" + jQuery(this).attr('id'),
+				async: false,
+				success: function(msg){
+				}
+			}); 
+		});
+	}
