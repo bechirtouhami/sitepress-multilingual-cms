@@ -262,18 +262,18 @@ switch($_REQUEST['icl_ajx_action']){
         if (isset($_POST['icl_lang_sel_footer']))
             $iclsettings['icl_lang_sel_footer'] = 1;
         else $iclsettings['icl_lang_sel_footer'] = 0;
-		
-		if (isset($_POST['icl_post_availability']))
+        
+        if (isset($_POST['icl_post_availability']))
             $iclsettings['icl_post_availability'] = 1;
         else $iclsettings['icl_post_availability'] = 0;
-		
-		if (isset($_POST['icl_post_availability_position']))
+        
+        if (isset($_POST['icl_post_availability_position']))
             $iclsettings['icl_post_availability_position'] = $_POST['icl_post_availability_position'];
-		
-		if (isset($_POST['icl_post_availability_text']))
+        
+        if (isset($_POST['icl_post_availability_text']))
             $iclsettings['icl_post_availability_text'] = $_POST['icl_post_availability_text'];
-		
-		$iclsettings['icl_widget_title_show'] = (isset($_POST['icl_widget_title_show'])) ? 1 : 0;
+        
+        $iclsettings['icl_widget_title_show'] = (isset($_POST['icl_widget_title_show'])) ? 1 : 0;
         
         if(!$iclsettings['icl_lso_flags'] && !$iclsettings['icl_lso_native_lang'] && !$iclsettings['icl_lso_display_lang']){
             echo '0|';
@@ -866,6 +866,25 @@ if (function_exists('wpml_register_admin_strings')) {
         }
         $this->save_settings($iclsettings);
         echo '1|';
+        break;
+    case 'icl_support_update_ticket':
+        if (isset($_POST['ticket'])) {
+            $temp = str_replace('icl_support_ticket_', '', $_POST['ticket']);
+            $temp = explode('_', $temp);
+            $id = (int)$temp[0];
+            $num = (int)$temp[1];
+            if ($id && $num) {
+                $icl_support = get_option('icl_support');
+                $tickets = $icl_support['tickets'];
+                if (isset($tickets[$id])) {
+                    $icl_support['tickets'][$id]['messages'] = $num;
+                    $changed = true;
+                }
+                if ($changed) {
+                    update_option('icl_support', $icl_support);
+                }
+            }
+        }
         break;
 
     case 'icl_custom_posts_sync_options':
