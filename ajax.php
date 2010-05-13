@@ -394,11 +394,11 @@ switch($_REQUEST['icl_ajx_action']){
     case 'send_translation_request':
         $post_ids = explode(',',$_POST['post_ids']);
         $target_languages = explode('#', $_POST['target_languages']);
-        $post_type = $_POST['type'];
+        $post_types = $_POST['icl_post_type'];
         foreach($post_ids as $post_id){            
             $resp[] = array(
                 'post_id'=>$post_id, 
-                'status'=>icl_translation_send_post($post_id, $target_languages, $post_type)
+                'status'=>icl_translation_send_post($post_id, $target_languages, $post_types[$post_id])
             );
         }
         echo json_encode($resp);
@@ -867,25 +867,15 @@ if (function_exists('wpml_register_admin_strings')) {
         $this->save_settings($iclsettings);
         echo '1|';
         break;
-    case 'icl_support_update_ticket':
-        if (isset($_POST['ticket'])) {
-			$temp = str_replace('icl_support_ticket_', '', $_POST['ticket']);
-			$temp = explode('_', $temp);
-			$id = (int)$temp[0];
-			$num = (int)$temp[1];
-			if ($id && $num) {
-				$icl_support = get_option('icl_support');
-				$tickets = $icl_support['tickets'];
-				if (isset($tickets[$id])) {
-					$icl_support['tickets'][$id]['messages'] = $num;
-					$changed = true;
-				}
-				if ($changed) {
-					update_option('icl_support', $icl_support);
-				}
-			}
-		}
+
+    case 'icl_custom_posts_sync_options':
+        foreach($_POST['icl_sync_custom_posts'] as $k=>$v){
+            $iclsettings['custom_posts_sync_option'][$k] = $v;
+        }
+        $this->save_settings($iclsettings);
+        echo '1|';
         break;
+        
     default:
         do_action('icl_ajx_custom_call', $_REQUEST['icl_ajx_action'], $_REQUEST);
 }    

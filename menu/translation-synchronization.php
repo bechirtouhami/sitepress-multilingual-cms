@@ -7,16 +7,36 @@
     if(isset($_POST['icl_pt_file_upload'])){            
         $csv_file_upload_error = icl_pt_handle_upload();    
     }
+    
+    $notice = '';
+    
+    $cposts = array();
+    foreach($wp_post_types as $k=>$v){
+        if(!in_array($k, array('post','page','attachment','revision','nav_menu_item'))){
+            $cposts[$k] = $v;        
+        }
+    }
+    foreach($cposts as $k=>$cpost){
+        if(!isset($sitepress_settings['custom_posts_sync_option'][$k])){
+            $cposts_sync_not_set[] = $cpost->label;
+        }    
+    }    
+    if(!empty($cposts_sync_not_set)){
+        $notice = '<div class="updated below-h2"><p>';
+        $notice .= sprintf(__("You haven't set your synchronization preferences for these custom posts: %s. Default value was selected.", 'sitepress'), 
+            '<i>'.join('</i>, <i>', $cposts_sync_not_set) . '</i>');
+        $notice .= '</p></div>';
+    }
+    
     global $wp_taxonomies;
     $ctaxonomies = array_diff(array_keys((array)$wp_taxonomies), array('post_tag','category', 'nav_menu', 'link_category'));    
-    
     foreach($ctaxonomies as $ctax){
         if(!isset($sitepress_settings['taxonomies_sync_option'][$ctax])){
             $tax_sync_not_set[] = $wp_taxonomies[$ctax]->label;
         }    
     }
     if(!empty($tax_sync_not_set)){
-        $notice = '<div class="updated below-h2"><p>';
+        $notice .= '<div class="updated below-h2"><p>';
         $notice .= sprintf(__("You haven't set your synchronization preferences for these taxonomies: %s. Default value was selected.", 'sitepress'), 
             '<i>'.join('</i>, <i>', $tax_sync_not_set) . '</i>');
         $notice .= '</p></div>';
@@ -144,13 +164,49 @@
         </tbody>
     </table>
     
-    <?php if(!empty($ctaxonomies)): ?>
     <br />
+    <?php if(!empty($cposts)): ?>    
+    <form id="icl_custom_posts_sync_options" name="icl_custom_posts_sync_options" action="">        
+    <table class="widefat">
+        <thead>
+            <tr>
+                <th width="60%"><?php _e('Custom posts', 'sitepress');?></th>
+                <th>&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach($cposts as $k=>$cpost): ?>
+            <tr>
+                <td><?php echo $cpost->label; ?></td>
+                <td>
+                    <label><input type="radio" name="icl_sync_custom_posts[<?php echo $k ?>]" value="1" <?php
+                        if($sitepress_settings['custom_posts_sync_option'][$k]==1) echo ' checked="checked"'
+                    ?> />&nbsp;<?php _e('Translate', 'sitepress') ?></label>&nbsp;
+                    <label><input type="radio" name="icl_sync_custom_posts[<?php echo $k ?>]" value="0" <?php
+                        if($sitepress_settings['custom_posts_sync_option'][$k]==0) echo ' checked="checked"'
+                    ?> />&nbsp;<?php _e('Do nothing', 'sitepress') ?></label>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+            <tr>
+                <td colspan="2">
+                <p>
+                    <input type="submit" class="button" value="<?php _e('Save', 'sitepress') ?>" />
+                    <span class="icl_ajx_response" id="icl_ajx_response_cp"></span>
+                </p>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    </form>    
+    
+    <?php endif; ?>     
+    <?php if(!empty($ctaxonomies)): ?>
     <form id="icl_custom_tax_sync_options" name="icl_custom_tax_sync_options" action="">        
     <table class="widefat">
         <thead>
             <tr>
-                <th><?php _e('Custom taxonomies (other than categories and tags)', 'sitepress');?></th>
+                <th width="60%"><?php _e('Custom taxonomies (other than categories and tags)', 'sitepress');?></th>
                 <th>&nbsp;</th>
             </tr>
         </thead>
@@ -162,9 +218,6 @@
                     <label><input type="radio" name="icl_sync_tax[<?php echo $ctax ?>]" value="1" <?php
                         if($sitepress_settings['taxonomies_sync_option'][$ctax]==1) echo ' checked="checked"'
                     ?> />&nbsp;<?php _e('Translate', 'sitepress') ?></label>&nbsp;
-                    <label><input type="radio" name="icl_sync_tax[<?php echo $ctax ?>]" value="2" <?php
-                        if($sitepress_settings['taxonomies_sync_option'][$ctax]==2) echo ' checked="checked"'
-                    ?> />&nbsp;<?php _e('Synchronize', 'sitepress') ?></label>&nbsp;
                     <label><input type="radio" name="icl_sync_tax[<?php echo $ctax ?>]" value="0" <?php
                         if($sitepress_settings['taxonomies_sync_option'][$ctax]==0) echo ' checked="checked"'
                     ?> />&nbsp;<?php _e('Do nothing', 'sitepress') ?></label>
@@ -184,6 +237,7 @@
     </form>    
     
     <?php endif; ?> 
+    <br clear="all" />
      
     <?php do_action('icl_menu_footer'); ?>       
 </div>

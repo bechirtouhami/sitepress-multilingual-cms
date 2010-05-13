@@ -1,6 +1,6 @@
 <?php $this->noscript_notice() ?>
 <p style="float:left;">
-<?php echo __('Language of this post', 'sitepress') ?>&nbsp;
+<?php printf(__('Language of this %s', 'sitepress'), strtolower($wp_post_types[$post->post_type]->singular_label)); ?>&nbsp;
 <select name="icl_post_language" id="icl_post_language">
 <?php foreach($active_languages as $lang):?>
 <?php if(isset($translations[$lang['code']]->element_id) && $translations[$lang['code']]->element_id != $post->ID) continue ?>
@@ -10,7 +10,7 @@
 
 <input type="hidden" name="icl_trid" value="<?php echo $trid ?>" />
 
-<input type="hidden" name="icl_is_page" value="<?php echo $is_page ?>" />
+<?php /*<input type="hidden" name="icl_is_page" value="<?php echo $is_page ?>" /> */?>
 
 </p>
 

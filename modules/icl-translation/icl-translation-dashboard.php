@@ -48,11 +48,8 @@
         'draft'     =>__('Draft', 'sitepress'),
         'pending'   =>__('Pending Review', 'sitepress'),
         'future'    =>__('Scheduled', 'sitepress')
-    );
-    $icl_post_types = array(
-        'page'  =>__('Page', 'sitepress'),
-        'post'  =>__('Post', 'sitepress')
-    );       
+    );    
+    $icl_post_types = $sitepress->get_translatable_documents();
 ?>
 <?php $sitepress->noscript_notice() ?>
 
@@ -129,7 +126,7 @@
                     Type:</label> 
                     <select name="filter[type]">
                         <?php foreach($icl_post_types as $k=>$v):?>
-                        <option value="<?php echo $k ?>" <?php if(isset($icl_translation_filter['type_on']) && $icl_translation_filter['type']==$k):?>selected="selected"<?php endif?>><?php echo $v ?></option>
+                        <option value="<?php echo $k ?>" <?php if(isset($icl_translation_filter['type_on']) && $icl_translation_filter['type']==$k):?>selected="selected"<?php endif?>><?php echo $v->singular_label ?></option>
                         <?php endforeach; ?>
                     </select>
                                         
@@ -187,7 +184,7 @@
             ?>            
             <tr<?php if($oddcolumn): ?> class="alternate"<?php endif;?>>
                 <td scope="col">
-                    <input type="checkbox" value="<?php echo $doc->post_id ?>" name="post[]" <?php if(isset($_GET['post_id'])) echo 'checked="checked"'?> />
+                    <input type="checkbox" value="<?php echo $doc->post_id ?>" name="post[]" <?php if(isset($_GET['post_id'])) echo 'checked="checked"'?> />                    
                 </td>
                 <td scope="col" class="post-title column-title">
                     <a href="<?php echo get_edit_post_link($doc->post_id) ?>"><?php echo $doc->post_title ?></a>
@@ -199,7 +196,7 @@
                     <span class="icl-tr-details">&nbsp;</span>
                     <div class="icl_post_note" id="icl_post_note_<?php echo $doc->post_id ?>">
                         <?php 
-                            if($wpdb->get_var("SELECT source_language_code FROM {$wpdb->prefix}icl_translations WHERE element_type='post' AND element_id={$doc->post_id}")){
+                            if($wpdb->get_var("SELECT source_language_code FROM {$wpdb->prefix}icl_translations WHERE element_type='post_{$doc->post_type}' AND element_id={$doc->post_id}")){
                                 $_is_translation = true;
                             }else{
                                 $_is_translation = false;
@@ -232,7 +229,10 @@
                     <a title="<?php echo $note_text ?>" href="#"><img src="<?php echo ICL_PLUGIN_URL ?>/res/img/<?php echo $note_icon ?>" width="16" height="16" /></a>
                     <?php endif; ?>
                 </td>
-                <td scope="col"><?php echo $icl_post_types[$doc->post_type]; ?></td>
+                <td scope="col">
+                    <?php echo $icl_post_types[$doc->post_type]->singular_label; ?>
+                    <input class="icl_td_post_type" name="icl_post_type[<?php echo $doc->post_id ?>]" type="hidden" value="<?php echo $doc->post_type ?>" />
+                </td>
                 <td scope="col"><?php echo $icl_post_statuses[$doc->post_status]; ?></td>
                 <td scope="col" id="icl-tr-status-<?php echo $doc->post_id ?>">
                     <?php if($doc->rid[0]): ?>

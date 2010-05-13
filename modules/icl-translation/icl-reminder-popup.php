@@ -7,23 +7,18 @@
     global $wpdb;
     
     $iclq = new ICanLocalizeQuery($this->settings['site_id'], $this->settings['access_key']);       
-	
+
     $target = $_GET['target'];
     $session_id = $iclq->get_current_session(true);
     
     $admin_lang = $this->get_admin_language();
     
-	
-	if (isset($_GET['code'])) {
-		$add = '&code=' . $_GET['code'];
-	}
-	
     if (strpos($target, '?') === false) {
         $target .= '?';
     } else {
         $target .= '&';
     }
-    $target .= "session=" . $session_id . "&lc=" . $admin_lang . $add;
+    $target .= "session=" . $session_id . "&lc=" . $admin_lang;
     
 
     $on_click = 'parent.dismiss_message(' . $_GET['message_id'] . ');';
