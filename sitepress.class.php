@@ -3883,7 +3883,16 @@ class SitePress{
             if(isset($q->query_vars['post_parent']) && !empty($q->query_vars['post_parent']) && $q->query_vars['post_type']!='attachment'){
                 $q->query_vars['post_parent'] = icl_object_id($q->query_vars['post_parent'], 'post', true);
             } 
-                     
+            
+            // custom taxonomies
+            if(isset($q->query_vars['taxonomy'])){
+                $tax_id = $wpdb->get_var("SELECT term_id FROM {$wpdb->terms} WHERE slug='".$wpdb->escape($q->query_vars['term'])."'");
+                if($tax_id){
+                    $translated_tax_id = icl_object_id($tax_id, $q->query_vars['taxonomy'], true);
+                }
+                $q->query_vars['term'] = $wpdb->get_var("SELECT slug FROM {$wpdb->terms} WHERE term_id = " . $translated_tax_id);
+                $q->query[$q->query_vars['taxonomy']] = $q->query_vars['term'];
+            }                     
         }
                 
         return $q;
