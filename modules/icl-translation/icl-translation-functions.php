@@ -2267,7 +2267,7 @@ function update_icl_account(){
         $data['create_account'] = 0;
         $data['url'] = get_option('home');
         $data['title'] = get_option('blogname');
-        $data['description'] = get_option('blogdescription');
+        $data['description'] = $iclsettings['icl_site_description'];
         $data['project_kind'] = $iclsettings['website_kind'];
         $data['pickup_type'] = $iclsettings['translation_pickup_method'];
         $data['interview_translators'] = $iclsettings['interview_translators'];

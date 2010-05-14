@@ -1407,8 +1407,7 @@ class SitePress{
         if( (isset($_POST['icl_create_account_nonce']) && $_POST['icl_create_account_nonce']==wp_create_nonce('icl_create_account')) || (isset($_POST['icl_configure_account_nonce']) && $_POST['icl_configure_account_nonce']==wp_create_nonce('icl_configure_account'))){
             if (isset($_POST['icl_content_trans_setup_back_2'])) {
                 // back button in wizard mode.
-                $this->settings['content_translation_languages_setup'] = 0;
-                $this->settings['content_translation_setup_wizard_step'] = 1;
+                $this->settings['content_translation_setup_wizard_step'] = 2;
                 $this->save_settings();
                 
             } else {
@@ -1419,7 +1418,7 @@ class SitePress{
                 $user['blogid'] = $wpdb->blogid?$wpdb->blogid:1;
                 $user['url'] = get_option('home');
                 $user['title'] = get_option('blogname');
-                $user['description'] = get_option('blogdescription');
+                $user['description'] = $this->settings['icl_site_description'];
                 $user['is_verified'] = 1;
                 
                if($user['create_account'] && defined('ICL_AFFILIATE_ID') && defined('ICL_AFFILIATE_KEY')){
@@ -1539,35 +1538,46 @@ class SitePress{
             $this->get_active_languages(true); //refresh active languages list
             do_action('icl_initial_language_set');
         }elseif(isset($_POST['icl_change_website_access_data_nonce']) && $_POST['icl_change_website_access_data_nonce']==wp_create_nonce('icl_change_website_access_data')){
-            $iclsettings['access_key'] = $_POST['access']['access_key'];
-            $iclsettings['site_id'] = $_POST['access']['website_id'];
-            $this->save_settings($iclsettings);
-
-            // Now try to access ICL server                
-            $icl_query = new ICanLocalizeQuery($iclsettings['site_id'], $iclsettings['access_key']);
-            $res = $icl_query->get_website_details();
-            
-            if(isset($res['attr']['id']) and $res['attr']['id'] == $iclsettings['site_id']){
-                $_POST['icl_form_success'] = __('Your ICanLocalize account details have been confirmed and saved','sitepress');
+            $description = $_POST['icl_description'];
+            if ($description == "") {
+                $_POST['icl_form_errors'] = __('Please provide a short description of the website so that translators know what background is required from them.','sitepress');
             } else {
-                $message = __('The ICanLocalize access details are not correct.','sitepress') . '<br />';
-                $message .= __('Log on to the ICanLocalize server to get your access details. ','sitepress');
-                $message .= '<a href="'. ICL_API_ENDPOINT . '">' . ICL_API_ENDPOINT . '</a>';
-                $_POST['icl_form_errors'] = $message;
+
+                $iclsettings['icl_site_description'] = $description;
+                
+                $iclsettings['access_key'] = $_POST['access']['access_key'];
+                $iclsettings['site_id'] = $_POST['access']['website_id'];
+                $this->save_settings($iclsettings);
+    
+                // Now try to access ICL server                
+                $icl_query = new ICanLocalizeQuery($iclsettings['site_id'], $iclsettings['access_key']);
+                $res = $icl_query->get_website_details();
+                
+                if(isset($res['attr']['id']) and $res['attr']['id'] == $iclsettings['site_id']){
+                    $_POST['icl_form_success'] = __('Your ICanLocalize account details have been confirmed and saved','sitepress');
+                    
+                    // update the account with the new site description.
+                    update_icl_account();
+                } else {
+                    $message = __('The ICanLocalize access details are not correct.','sitepress') . '<br />';
+                    $message .= __('Log on to the ICanLocalize server to get your access details. ','sitepress');
+                    $message .= '<a href="'. ICL_API_ENDPOINT . '">' . ICL_API_ENDPOINT . '</a>';
+                    $_POST['icl_form_errors'] = $message;
+                }            
             }            
-            
         }elseif(isset($_POST['icl_language_pairs_formnounce']) && $_POST['icl_language_pairs_formnounce'] == wp_create_nonce('icl_language_pairs_form')) {
             $this->save_language_pairs();
 
             $this->settings['content_translation_languages_setup'] = 1;
-            $this->settings['content_translation_setup_wizard_step'] = 3;
+            // Move onto the site description page
+            $this->settings['content_translation_setup_wizard_step'] = 2;
             
             $this->settings['website_kind'] = 2;
             $this->settings['interview_translators'] = 1;
             
             $this->save_settings();
             
-        }elseif(isset($_POST['icl_more_options_wizardnounce']) && $_POST['icl_more_options_wizardnounce'] == wp_create_nonce('icl_more_options_wizard')) {
+        }elseif(isset($_POST['icl_site_description_wizardnounce']) && $_POST['icl_site_description_wizardnounce'] == wp_create_nonce('icl_site_description_wizard')) {
             if(isset($_POST['icl_content_trans_setup_back_2'])){
                 // back button.
                 $this->settings['content_translation_languages_setup'] = 0;
@@ -1575,9 +1585,14 @@ class SitePress{
                 $this->save_settings();
             }elseif(isset($_POST['icl_content_trans_setup_next_2']) || isset($_POST['icl_content_trans_setup_next_2_enter'])){
                 // next button.
-                $this->update_icl_more_options();
-                $this->settings['content_translation_setup_wizard_step'] = 3;
-                $this->save_settings();
+                $description = $_POST['icl_description'];
+                if ($description == "") {
+                    $_POST['icl_form_errors'] = __('Please provide a short description of the website so that translators know what background is required from them.','sitepress');               
+                } else {
+                    $this->settings['icl_site_description'] = $description;
+                    $this->settings['content_translation_setup_wizard_step'] = 3;
+                    $this->save_settings();
+                }
             }
         }
     }

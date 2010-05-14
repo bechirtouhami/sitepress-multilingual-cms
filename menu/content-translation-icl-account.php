@@ -132,6 +132,13 @@
                                         <th scope="row"><?php echo __('Access key', 'sitepress') ?></th>
                                         <td><input name="access[access_key]" type="text" value="<?php echo  $_POST['access']['access_key']?$_POST['access']['access_key']:$sitepress_settings['access_key'] ?>"/></td>
                                     </tr>        
+                                    <tr class="form-field">
+                                        <th scope="row"><?php echo __('Project description', 'sitepress') ?></th>
+                                        <td>
+                                            <textarea name="icl_description" type="textarea" cols="60" rows="5"><?php echo  $_POST['icl_description']?$_POST['icl_description']:$sitepress_settings['icl_site_description'] ?></textarea>
+                                            <p>Provide a short description of the website so that translators know what background is required from them.</p>
+                                        </td>
+                                    </tr>        
                                     </tbody>
                                 </table>
                                 <p class="submit">                                         

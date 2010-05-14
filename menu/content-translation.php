@@ -164,38 +164,16 @@
                 <a style="float:right;" href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/content-translation.php&amp;debug_action=reset_pro_translation_configuration&amp;nonce=<?php echo wp_create_nonce('reset_pro_translation_configuration')?>" class="button">Reset pro translation configuration</a>
                 <?php endif; ?>
                 
-                <?php 
-                    if(!$sitepress_settings['content_translation_setup_complete']): /* setup wizard */ 
-                        if(!$sitepress_settings['content_translation_languages_setup']){
-                            $sw_width = 10;
-                        }elseif($sitepress_settings['content_translation_setup_wizard_step'] == 2){
-                            $sw_width = 45;
-                        }else{          
-                            $sw_width = 64;
-                        }
-                        ?>
-                        <div id="icl_setup_wizard_wrap">
-                            <h3><?php _e('Before you can start using Professional translation, it needs to be set up', 'sitepress') ?></h3>
-                            <br style="clear:both;" />
-                            <div id="icl_setup_wizard_2">
-                                <div class="icl_setup_wizard_step"><strong><?php _e('1. Translation Languages', 'sitepress')?></strong></div>
-                                <div class="icl_setup_wizard_step"><strong><?php _e('2. ICanLocalize account setup', 'sitepress')?></strong></div>            
-                            </div>        
-                            <br clear="all" />
-                            <div id="icl_setup_wizard_progress"><div id="icl_setup_wizard_progress_bar" style="width:<?php echo $sw_width ?>%">&nbsp;</div></div>
-                        </div>
-                        <br />
-                <?php endif; /* setup wizard */ ?>
-        
-        
                 <?php if(count($active_languages) > 1): ?>
 
                     <?php if(!$sitepress_settings['content_translation_setup_complete']): /* setup wizard */ ?>
                     
+                        <?php include ICL_PLUGIN_PATH . '/menu/content-translation-wizard-steps.php';?>
+        
                         <?php if(!$sitepress_settings['content_translation_languages_setup']): ?>
                             <?php include ICL_PLUGIN_PATH . '/menu/content-translation-langs.php';?>
                         <?php elseif($sitepress_settings['content_translation_setup_wizard_step'] == 2): ?>
-                            <?php include ICL_PLUGIN_PATH . '/menu/content-translation-options.php';?>
+                            <?php include ICL_PLUGIN_PATH . '/menu/content-translation-site-description.php';?>
                         <?php else: ?>
                             <?php include ICL_PLUGIN_PATH . '/menu/content-translation-icl-account.php';?>
                         <?php endif;?>
@@ -241,7 +219,7 @@
                     <p><img src="<?php echo ICL_PLUGIN_URL ?>/res/img/documents.png" width="16" height="16" alt="documents" 
                         style="vertical-align:middle; margin-right: 3px;" />
                         <?php printf(__("To see the status of pending translations or to cancel translation requests, go to the %sproject page</a> in ICanLocalize.",'sitepress'), 
-                        $sitepress->create_icl_popup_link(ICL_API_ENDPOINT.'/websites/'.$sitepress_settings['site_id'].'/cms_requests', 'ICanLocalize')) ?>
+                        $sitepress->create_icl_popup_link(ICL_API_ENDPOINT.'/websites/'.$sitepress_settings['site_id'], 'ICanLocalize')) ?>
                     </p>
                     <p>
                         <img src="<?php echo ICL_PLUGIN_URL ?>/res/img/question1.png" width="16" height="16" alt="need help" 
