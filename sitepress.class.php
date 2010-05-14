@@ -2866,8 +2866,10 @@ class SitePress{
     }    
     
     function exclude_other_terms($exclusions, $args){                
+        // get_terms doesn't seem to hava a filter that can be used efficiently in order to filter the terms by language
+        // in addition the taxonomy name is not being passed to this filter we're using 'list_terms_exclusions'
+        // getting the taxonomy name from debug_backtrace
         global $wpdb, $pagenow;    
-        
         /* preWP3 compatibility  - start */
         if(ICL_PRE_WP3){
             $taxonomy = isset($_GET['taxonomy']) ? $_GET['taxonomy'] : $args['type'];
@@ -2888,13 +2890,14 @@ class SitePress{
                 $taxonomy = $_POST['tax'];    
             }else{
                 if(in_array($pagenow, array('post-new.php','post.php', 'edit.php'))){
-                    $taxonomy = 'category';    
-                }else{
-                    
+                    $dbt = debug_backtrace();                    
+                    $taxonomy = $dbt[3]['args'][0];    
+                }else{                    
                     $taxonomy = 'post_tag';
                 }
             }
         }
+        
         $icl_element_type = 'tax_' . $taxonomy;
         
         if($_GET['lang']=='all'){
@@ -3107,7 +3110,10 @@ class SitePress{
                 $tag_id = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id={$tag_id} AND taxonomy='post_tag'");
                 $trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id='{$tag_id}' AND element_type='tax_post_tag'");                
                 $skip_empty = true;
-                $translations = $this->get_element_translations($trid,'tax_post_tag', $skip_empty);                
+                $translations = $this->get_element_translations($trid,'tax_post_tag', $skip_empty);             
+            }elseif(is_tax()){
+                $trid = $this->get_element_trid($wp_query->get_queried_object_id(), 'tax_' . get_query_var('taxonomy'));
+                $translations = $this->get_element_translations($trid,'tax_' . get_query_var('taxonomy'), $skip_empty);                
             }elseif(is_archive() && !empty($wp_query->posts)){                      
                 $translations = array();
             }elseif( 'page' == get_option('show_on_front') && ($this->wp_query->queried_object_id == get_option('page_on_front') || $this->wp_query->queried_object_id == get_option('page_for_posts')) ){
@@ -3146,6 +3152,23 @@ class SitePress{
                                 $skip_lang = true;
                             }                        
                         }
+                    }
+                }elseif(is_tax()){                     
+                    if(isset($translations[$lang['code']])){
+                        if($this->settings['auto_adjust_ids']){
+                            global $icl_adjust_id_url_filter_off;  // force  the category_link_adjust_id to not modify this
+                            $icl_adjust_id_url_filter_off = true;
+                        }
+                        $lang['translated_url'] = get_term_link((int)$translations[$lang['code']]->term_id, get_query_var('taxonomy'));     
+                        if($this->settings['auto_adjust_ids']){
+                            $icl_adjust_id_url_filter_off = false; // restore default bahavior
+                        }                                                
+                    }else{  
+                        if($icl_lso_link_empty){
+                            $lang['translated_url'] = $this->language_url($lang['code']);
+                        }else{
+                            $skip_lang = true;
+                        }                        
                     }
                 }elseif(is_category()){                      
                     if(isset($translations[$lang['code']])){

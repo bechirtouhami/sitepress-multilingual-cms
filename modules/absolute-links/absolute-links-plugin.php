@@ -821,7 +821,8 @@ class AbsoluteLinksPlugin{
                 
             }
             
-            $tx_qvs = $this->taxonomies_query_vars ? '|' . join('|',$this->taxonomies_query_vars) : '';                            $post_qvs = $this->taxonomies_query_vars ? '|' . join('|',$this->custom_posts_query_vars) : '';    
+            $tx_qvs = is_array($this->taxonomies_query_vars) && !empty($this->taxonomies_query_vars) ? '|' . join('|',$this->taxonomies_query_vars) : '';                            
+            $post_qvs = is_array($this->custom_posts_query_vars) && !empty($this->custom_posts_query_vars) ? '|' . join('|',$this->custom_posts_query_vars) : '';    
             $int = preg_match_all('@href=[\'"]('.rtrim(get_option('home'),'/').'/?\?(p|page_id'.$tx_qvs.$post_qvs.')=([0-9a-z-]+)(#.+)?)[\'"]@i',$post_content,$matches2);          
             if($int){
                 $url_parts = parse_url(rtrim(get_option('home'),'/').'/');
