@@ -415,10 +415,9 @@ class SitePress{
         /* preWP3 compatibility  - start */
         if(ICL_PRE_WP3 && $pagenow == 'edit-pages.php'){
             $pagenow_ = $pagenow;
-            $_GET['post_type'] = 'page';    
+            $_REQUEST['post_type'] = 'page';    
         } 
-        /* preWP3 compatibility  - end */            
-        
+        /* preWP3 compatibility  - end */                    
         if(($pagenow == 'edit.php' || $pagenow_ == 'edit-pages.php' || ($pagenow == 'admin-ajax.php' && $_POST['action']=='inline-save'))  
             && !$this->settings['hide_translation_controls_on_posts_lists']){
             $post_type = isset($_REQUEST['post_type']) ? $_REQUEST['post_type'] : 'post';    
