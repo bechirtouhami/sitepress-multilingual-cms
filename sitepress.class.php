@@ -204,6 +204,7 @@ class SitePress{
                 add_filter('author_link', array($this,'convert_url'));            
             }
             /* preWP3 compatibility  - end */                        
+            add_filter('author_link', array($this,'author_link'));            
             
             add_filter('home_url', array($this, 'home_url'), 1, 4) ;
                         
@@ -3242,15 +3243,11 @@ class SitePress{
                     JOIN {$wpdb->prefix}icl_translations t ON p.ID=t.element_id AND t.element_type = 'post_{$post_type}' 
                     WHERE p.post_author='{$authordata->ID}' AND post_type='{$post_type}' AND post_status='publish' AND language_code='{$lang['code']}'")
                     ){
-                        remove_filter('author_link', array($this,'convert_url'));            
-                        $lang['translated_url'] = $this->convert_url(get_author_posts_url($authordata->ID), $lang['code']);                                     
+                        remove_filter('home_url', array($this,'home_url'), 1, 4);          
+                        $author_url = get_author_posts_url($authordata->ID);
+                        add_filter('home_url', array($this,'home_url'), 1, 4);          
+                        $lang['translated_url'] = $this->convert_url($author_url, $lang['code']);                                     
                         
-                        /*                        
-                        echo get_author_posts_url($authordata->ID) . "|" . $lang['code'];
-                        echo '<br>';
-                        */
-                        
-                        add_filter('author_link', array($this,'convert_url'));
                     }else{
                         if($icl_lso_link_empty){
                             $lang['translated_url'] = $this->language_url($lang['code']);
@@ -3664,7 +3661,11 @@ class SitePress{
         $url = $this->convert_url($url, $lang);
         return $url;
     }
-   
+    
+    function author_link($url){
+        return preg_replace('#^http://(.+)//(.+)$#','http://$1/$2', $url);
+    }
+       
     // Navigation
     // removed since WPML 1.7.7
     //function get_pagenum_link_filter($url){
