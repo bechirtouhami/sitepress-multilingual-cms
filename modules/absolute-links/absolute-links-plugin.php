@@ -469,7 +469,7 @@ class AbsoluteLinksPlugin{
                 
                 if($post_name){                    
                     $name = $wpdb->escape($post_name);
-                    $post_type = isset($perma_query_vars['pagename']) ? 'page' : 'post';
+                    //$post_type = isset($perma_query_vars['pagename']) ? 'page' : 'post';
                     $p = $wpdb->get_row("SELECT ID, post_type FROM {$wpdb->posts} WHERE post_name='{$name}' AND post_type ='{$post_type}'");
                     if($p){
                         if($post_type=='page'){
@@ -502,7 +502,7 @@ class AbsoluteLinksPlugin{
                     $name = $wpdb->escape($category_name);                    
                     $c = $wpdb->get_row("SELECT term_id FROM {$wpdb->terms} WHERE slug='{$name}'");                    
                     if($c){
-                        $perm_url = '(' . rtrim(get_option('home'),'/') . ')?' .'/'.$m;
+                        $perm_url = '('.rtrim($home_url,'/') . ')?' . $langprefix .'/'.$m;
                         $regk = '@href=[\'"]('.$perm_url.')[\'"]@i';
                         $url_parts = parse_url(rtrim(get_option('home'),'/').'/');
                         $regv = 'href="' . '/' . ltrim($url_parts['path'],'/') . '?cat_ID=' . $c->term_id.'"';
@@ -607,7 +607,7 @@ class AbsoluteLinksPlugin{
         for($i = 0; $i < 6; $i++){
             $alp_matches[$i] = array_merge((array)$alp_matches1[$i], (array)$alp_matches2[$i]); 
         }
-                 
+        
         $sitepress_settings = $sitepress->get_settings();
         
         if($int1 || $int2){   
@@ -697,7 +697,7 @@ class AbsoluteLinksPlugin{
                         break;
                     }
                 }  
-                
+                                                
                 $post_name = $category_name = $tax_name = false;
                 if(isset($perma_query_vars['pagename'])){
                     $post_name = basename($perma_query_vars['pagename']); 
@@ -724,18 +724,18 @@ class AbsoluteLinksPlugin{
                         }
                     }                    
                 }
-                
+                                
                 if($post_name){                    
                     $name = $wpdb->escape($post_name);
-                    $post_type = isset($perma_query_vars['pagename']) ? 'page' : 'post';
+                    //$post_type = isset($perma_query_vars['pagename']) ? 'page' : 'post';
                     $p = $wpdb->get_row("SELECT ID, post_type FROM {$wpdb->posts} WHERE post_name='{$name}' AND post_type ='{$post_type}'");
+                    
                     if($p){
                         if($post_type=='page'){
                             $qvid = 'page_id';
                         }else{
                             $qvid = 'p';
                         }
-                        
                         if($sitepress_settings['language_negotiation_type']==1 && $lang){
                             $langprefix = '/' . $lang;
                         }else{
@@ -774,9 +774,16 @@ class AbsoluteLinksPlugin{
                     }
                 }elseif($category_name){
                     $name = $wpdb->escape($category_name);                    
-                    $c = $wpdb->get_row("SELECT term_id FROM {$wpdb->terms} WHERE slug='{$name}'");                    
+                    $c = $wpdb->get_row("SELECT term_id FROM {$wpdb->terms} WHERE slug='{$name}'");                                        
                     if($c){
-                        $perm_url = '(' . rtrim(get_option('home'),'/') . ')?' .'/'.$m;
+                        /* not used ?? */
+                        if($sitepress_settings['language_negotiation_type']==1 && $lang){ 
+                            $langprefix = '/' . $lang;                                  
+                        }else{
+                            $langprefix = '';
+                        }
+                        /* not used ?? */
+                        $perm_url = '('.rtrim($home_url,'/') . ')?' . $langprefix .'/'.$m;
                         $regk = '@href=[\'"]('.$perm_url.')[\'"]@i';
                         $url_parts = parse_url(rtrim(get_option('home'),'/').'/');
                         $regv = 'href="' . '/' . ltrim($url_parts['path'],'/') . '?cat_ID=' . $c->term_id.'"';

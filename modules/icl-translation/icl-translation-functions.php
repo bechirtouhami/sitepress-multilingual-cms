@@ -1707,8 +1707,9 @@ function _icl_content_make_links_sticky($element_id, $element_type='post', $stri
     }
 }
 
+
 function _icl_content_fix_links_to_translated_content($element_id, $target_lang_code, $element_type='post'){
-    global $wpdb, $sitepress, $sitepress_settings;
+    global $wpdb, $sitepress, $sitepress_settings, $wp_taxonomies;
     _icl_content_make_links_sticky($element_id, $element_type);
     
     
@@ -1723,7 +1724,6 @@ function _icl_content_fix_links_to_translated_content($element_id, $target_lang_
     $base_url_parts = parse_url(get_option('home'));
     
     $links = _icl_content_get_link_paths($body);
-    
     $all_links_fixed = 1;
     
     foreach($links as $link) {
@@ -1740,35 +1740,58 @@ function _icl_content_fix_links_to_translated_content($element_id, $target_lang_
                 
                 list($key, $value) = split('=', $query);
                 $translations = NULL;
+                $is_tax = false;
                 if($key == 'p'){
                     $kind = 'post_' . $wpdb->get_var("SELECT post_type FROM {$wpdb->posts} WHERE ID='{$value}'");
                 } else if($key == "page_id"){
                     $kind = 'post_page';
-                } else if($key == 'cat'){
+                } else if($key == 'cat' || $key == 'cat_ID'){
                     $kind = 'tax_category';
                 } else if($key == 'tag'){
-                    $kind = 'tax_post_tag';
+                    $is_tax = true;
+                    $taxonomy = 'post_tag';
+                    $kind = 'tax_' . $taxonomy;                    
+                    $value = $wpdb->get_var("SELECT term_taxonomy_id FROM {$wpdb->terms} t 
+                        JOIN {$wpdb->term_taxonomy} x ON t.term_id = x.term_id WHERE x.taxonomy='{$taxonomy}' AND t.slug='{$value}'");
                 } else {
-                    continue;
+                    $found = false;
+                    foreach($wp_taxonomies as $ktax => $tax){
+                        if($tax->query_var && $key == $tax->query_var){
+                            $found = true;
+                            $is_tax = true;
+                            $kind = 'tax_' . $ktax;                            
+                            $value = $wpdb->get_var("
+                                SELECT term_taxonomy_id FROM {$wpdb->terms} t 
+                                    JOIN {$wpdb->term_taxonomy} x ON t.term_id = x.term_id WHERE x.taxonomy='{$ktax}' AND t.slug='{$value}'");                            
+                        }                        
+                    }
+                    if(!$found) continue;
                 }
 
-                $link_id = (int)$value;
-                if ($sitepress->get_language_for_element($link_id, $kind) == $target_lang_code) {
+                $link_id = (int)$value;  
+                
+                if (!$link_id || $sitepress->get_language_for_element($link_id, $kind) == $target_lang_code) {
                     // link already points to the target language.
                     continue;
                 }
 
                 $trid = $sitepress->get_element_trid($link_id, $kind);
+                if(!$trid){
+                    continue;
+                }
                 if($trid !== NULL){
                     $translations = $sitepress->get_element_translations($trid, $kind);
                 }
-                
                 if(isset($translations[$target_lang_code])){
                     
                     // use the new translated id in the link path.
                     
                     $translated_id = $translations[$target_lang_code]->element_id;
                     
+                    if($is_tax){
+                        $translated_id = $wpdb->get_var("SELECT slug FROM {$wpdb->terms} t JOIN {$wpdb->term_taxonomy} x ON t.term_id=x.term_id WHERE x.term_taxonomy_id=$translated_id");    
+                    }
+
                     $replace = $key . '=' . $translated_id;
                     
                     $new_link = str_replace($query, $replace, $link[0]);
