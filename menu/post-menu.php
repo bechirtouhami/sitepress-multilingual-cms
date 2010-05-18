@@ -81,7 +81,7 @@
         <a id="icl_show_page_estimate_hint" href="#" title="<?php _e('Show translation cost estimate', 'sitepress') ?>" <?php if(!$this->settings['dismiss_page_estimate_hint']):?>style="display:none"<?php endif; ?>><img src="<?php echo ICL_PLUGIN_URL ?>/res/img/icon16.png" width="16" height="16" style="margin:-5px 0 0px 7px;" /></a>
         <p class="icl_sidebar" style="width:auto;<?php if($this->settings['dismiss_page_estimate_hint']):?>display:none;<?php endif; ?>"><img align="baseline" 
             src="<?php echo ICL_PLUGIN_URL ?>/res/img/icon16.png" width="16" height="16" style="margin-bottom:-4px" />&nbsp;<?php 
-            printf(__('This page can be professionally translated for %s USD.<br /><a href="%s">Learn more</a> <a %s>dismiss</a>','sitepress'),
+            printf(__('This page can be professionally translated for %s USD.<br /><a href="%s">Learn more</a> <a %s>hide</a>','sitepress'),
             $estimate, 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php', 'id="icl_dismiss_page_estimate_hint" href="#"')?></p><br clear="all" /><?php
     }
     do_action('icl_post_languages_options_before', $post->ID);

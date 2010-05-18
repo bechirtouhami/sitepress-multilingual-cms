@@ -4962,7 +4962,7 @@ class SitePress{
         echo $notice;        
     }
     function dashboard_widget_setup(){
-        $dashboard_widgets_order = get_user_option( "meta-box-order_dashboard" );
+        $dashboard_widgets_order = (array)get_user_option( "meta-box-order_dashboard" );
         $all_widgets = array();
         foreach($dashboard_widgets_order as $k=>$v){
             $all_widgets = array_merge($all_widgets, explode(',', $v));
