@@ -4936,7 +4936,7 @@ class SitePress{
         }
         foreach($cposts as $k=>$cpost){
             if(!isset($sitepress_settings['custom_posts_sync_option'][$k])){
-                $cposts_sync_not_set[] = $cpost->label;
+                $cposts_sync_not_set[] = $cpost->label ? $cpost->label : $cpost->labels['name'];
             }    
         }    
         if(!empty($cposts_sync_not_set)){
