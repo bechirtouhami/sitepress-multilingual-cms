@@ -8,7 +8,8 @@ require_once ICL_PLUGIN_PATH . '/lib/xml2array.php';
 class SitePress_Support {
 
 	var $data;
-	var $site_ID = 0;
+	var $site_id = 0;
+	var $access_key = 0;
 	var $tickets = array();
 	var $fetched_tickets = array();
 	var $defaults = array();
@@ -71,6 +72,11 @@ class SitePress_Support {
 		return $sitepress->create_icl_popup_link(ICL_API_ENDPOINT . '/' . $url, 'ICanLocalize', $class, $id);
 	}
 
+	function thickbox2($url, $class = null, $id = null) {
+		global $sitepress;
+		return $sitepress->create_icl_popup_link($url, 'ICanLocalize', $class, $id);
+	}
+
 	function process_tickets($tickets) {
 		if (isset($tickets['support_ticket'][0])) {
 			$tickets = $tickets['support_ticket'];
@@ -109,16 +115,71 @@ class SitePress_Support {
 	}
 
 	function offer_subscription() {
-		echo '<p>';
-		printf(__('In order to get premium support, you need to create a support subscription.
+		$subscription_rows = array(
+			array(__('24h support', 'sitepress'), 'http://wpml.org'),
+			array('test')
+		);
+?>
+
+<?php _e('In order to get premium support, you need to create a support subscription.
+<br />A support subscription gives you 24h response directly from WPML\'s developers.', 'sitepress'); ?>
+<br /><br />
+<table id="icl_support_subscriptions" cellspacing="0" cellpadding="0" border="0">
+<!--<tr class="description">
+    <td colspan="4"><?php _e('In order to get premium support, you need to create a support subscription.
+<br />A support subscription gives you 24h response directly from WPML\'s developers.', 'sitepress'); ?></td>
+</tr>-->
+<tr class="title">
+    <td class="first">&nbsp;</td>
+	<td class="smaller-heading"><h2><?php _e('Community Support', 'sitepress'); ?></h2></td>
+    <td><h2><?php _e('Single site support', 'sitepress'); ?></h2></td>
+    <td class="last"><h2><?php _e('Developer support', 'sitepress'); ?></h2></td>
+</tr>
+<tr class="info">
+    <td class="first"><?php printf(__('Community support via %s WPML\'s technical forum %s', 'sitepress'), $this->thickbox2('http://forum.wpml.org/'), '</a>'); ?></td>
+	<td><?php _e('Free', 'sitepress'); ?></td>
+    <td><?php _e('Free', 'sitepress'); ?></td>
+    <td class="last"><?php _e('Free', 'sitepress'); ?></td>
+</tr>
+<?php foreach ($subscription_rows as $row) { ?>
+<tr class="info">
+    <td class="first"><?php 
+	if (isset($row[1])) {
+		echo $this->thickbox2($row[1]);
+	}
+	echo $row[0];
+	if (isset($row[1])) {
+		echo '</a>';
+	}
+	?></td>
+	<td><?php _e('Not included', 'sitepress'); ?></td>
+    <td><?php _e('Included', 'sitepress'); ?></td>
+    <td class="last"><?php _e('Included', 'sitepress'); ?></td>
+</tr>
+<?php } ?>
+<tr class="info">
+    <td class="first"><?php _e('Number of sites', 'sitepress'); ?></td>
+	<td>&nbsp;</td>
+    <td><?php _e('One site', 'sitepress'); ?></td>
+    <td class="last"><?php _e('Unlimited sites', 'sitepress'); ?></td>
+</tr>
+<tr class="buy-link">
+    <td class="first">&nbsp;</td>
+	<td>&nbsp;</td>
+    <td><?php echo $this->thickbox('subscriptions/new?wid=' . $this->site_id . '&amp;code=1' . '&amp;support=1'); printf(__('Buy %s / year', 'sitepress'), '$50'); ?></a></td>
+    <td class="last"><?php echo $this->thickbox('subscriptions/new?wid=' . $this->site_id . '&amp;code=2' . '&amp;support=1'); printf(__('Buy %s / year', 'sitepress'), '$200'); ?></a></td>
+</tr>
+</table>
+
+<?php
+/*printf(__('In order to get premium support, you need to create a support subscription.
 <br />A support subscription gives you 24h response directly from WPML\'s developers.
 <br /><br />
 Please choose which support subscription is best for you:
 <br /><br />
 %s Single site support %s - $50 / year (good for this site only)
 <br />
-%s Developer support (unlimited sites) %s - $200 / year (good for any site you build)', 'sitepress'), $this->thickbox('subscriptions/new?wid=' . $this->site_id . '&amp;code=1' . '&amp;support=1'), '</a>', $this->thickbox('subscriptions/new?wid=' . $this->site_id . '&amp;code=2' . '&amp;support=1'), '</a>');
-		echo '</p>';
+%s Developer support (unlimited sites) %s - $200 / year (good for any site you build)', 'sitepress'), $this->thickbox('subscriptions/new?wid=' . $this->site_id . '&amp;code=1' . '&amp;support=1'), '</a>', $this->thickbox('subscriptions/new?wid=' . $this->site_id . '&amp;code=2' . '&amp;support=1'), '</a>');*/
 	}
 
 	function offer_renewal() {
