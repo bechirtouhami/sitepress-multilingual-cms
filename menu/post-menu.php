@@ -74,10 +74,12 @@
     $translations_count = count($translations) - 1;
     $language_count = count($active_languages) - 1;        
     
-    if($post->ID && !$this->get_icl_translation_enabled() && !$this->settings['dismiss_page_estimate_hint'] && $post->post_type == 'page'
-        && $language_count - $translations_count > 0){
+    if($post->ID && !$this->get_icl_translation_enabled() && $post->post_type == 'page'
+        && $language_count - $translations_count > 0){    
         $estimate = ICL_PRO_TRANSLATION_COST_PER_WORD * count(explode(' ', strip_tags($post->post_content)));
-        ?><p class="icl_sidebar" style="width:auto;"><img align="baseline" 
+        ?>
+        <a id="icl_show_page_estimate_hint" href="#" title="<?php _e('Show translation cost estimate', 'sitepress') ?>" <?php if(!$this->settings['dismiss_page_estimate_hint']):?>style="display:none"<?php endif; ?>><img src="<?php echo ICL_PLUGIN_URL ?>/res/img/icon16.png" width="16" height="16" style="margin:-5px 0 0px 7px;" /></a>
+        <p class="icl_sidebar" style="width:auto;<?php if($this->settings['dismiss_page_estimate_hint']):?>display:none;<?php endif; ?>"><img align="baseline" 
             src="<?php echo ICL_PLUGIN_URL ?>/res/img/icon16.png" width="16" height="16" style="margin-bottom:-4px" />&nbsp;<?php 
             printf(__('This page can be professionally translated for %s USD.<br /><a href="%s">Learn more</a> <a %s>dismiss</a>','sitepress'),
             $estimate, 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php', 'id="icl_dismiss_page_estimate_hint" href="#"')?></p><br clear="all" /><?php

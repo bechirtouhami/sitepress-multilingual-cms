@@ -8,6 +8,7 @@ jQuery(document).ready(function(){
     jQuery('#icl_dismiss_help').click(iclDismissHelp);
     jQuery('#icl_dismiss_upgrade_notice').click(iclDismissUpgradeNotice);
     jQuery('#icl_dismiss_page_estimate_hint').click(iclDismissPageEstimateHint);
+    jQuery('#icl_show_page_estimate_hint').click(iclShowPageEstimateHint);
     jQuery('a.icl_toggle_show_translations').click(iclToggleShowTranslations);
     
     icl_tn_initial_value   = jQuery('#icl_post_note textarea').val();
@@ -271,18 +272,35 @@ function iclDismissUpgradeNotice(){
     return false;
 }
 
+var iclShowPageEstimateHint_img = false;
 function iclDismissPageEstimateHint(){
     var thisa = jQuery(this);
+    jQuery('#icl_show_page_estimate_hint').find('img').attr('src', iclShowPageEstimateHint_img);
     jQuery.ajax({
             type: "POST",
             url: icl_ajx_url,
             data: "icl_ajx_action=dismiss_page_estimate_hint",
             success: function(msg){
-                thisa.parent().fadeOut();                    
+                thisa.parent().fadeOut(function(){jQuery('#icl_show_page_estimate_hint').fadeIn()});                    
             }
     });    
     return false;
 } 
+
+function iclShowPageEstimateHint(){
+    var thisa = jQuery(this);
+    iclShowPageEstimateHint_img = thisa.find('img').attr('src');
+    thisa.find('img').attr('src', icl_ajxloaderimg_src);
+    jQuery.ajax({
+            type: "POST",
+            url: icl_ajx_url,
+            data: "icl_ajx_action=dismiss_page_estimate_hint",
+            success: function(msg){
+                thisa.fadeOut(function(){jQuery('#icl_dismiss_page_estimate_hint').parent().fadeIn();});                    
+            }
+    });    
+    return false;    
+}
 
 function iclToggleShowTranslations(){
     jQuery('a.icl_toggle_show_translations').toggle();

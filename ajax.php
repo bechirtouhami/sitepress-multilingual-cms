@@ -572,7 +572,7 @@ switch($_REQUEST['icl_ajx_action']){
         $this->save_settings($iclsettings);
         break;
     case 'dismiss_page_estimate_hint':
-        $iclsettings['dismiss_page_estimate_hint'] = true;
+        $iclsettings['dismiss_page_estimate_hint'] = !$this->settings['dismiss_page_estimate_hint'];
         $this->save_settings($iclsettings);
         break;        
     case 'dismiss_upgrade_notice':
