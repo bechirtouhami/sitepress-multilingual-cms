@@ -50,7 +50,7 @@ if($sitepress_settings['existing_content_language_verified']){
                         <p><b><?php _e('Your site\'s languages are not set up yet.', 'sitepress'); ?></b></p>              
                         <?php else: ?>
                         <p>
-                            <?php _e('Currently configured languages:', 'sitepress')?>
+                            <?php _e('Currently configured languages:', 'sitepress')?> 
                             <b><?php echo join(', ', (array)$alanguages_links)?></b>
                         </p>
                         <?php endif; ?>

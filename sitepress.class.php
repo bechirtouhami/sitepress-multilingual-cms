@@ -254,6 +254,10 @@ class SitePress{
                                               
         } //end if the initial language is set - existing_content_language_verified
         
+        add_action('wp_dashboard_setup', array($this, 'dashboard_widget_setup'));
+        if(is_admin() && $pagenow == 'index.php'){
+            add_action('icl_dashboard_widget_notices', array($this, 'print_translatable_custom_content_status'));    
+        }
     }
     
     
@@ -402,6 +406,7 @@ class SitePress{
             add_action('xmlrpc_call', array($this, 'xmlrpc_call_actions'));
             add_filter('xmlrpc_methods',array($this, 'xmlrpc_methods'));
         }
+        
         
     }
     
@@ -4917,6 +4922,80 @@ class SitePress{
             }        
         }
         return $icl_post_types;        
+    }
+    
+    function print_translatable_custom_content_status(){
+        global $wp_post_types, $wp_taxonomies;
+        $cposts = array();
+        $notice = '';
+        foreach($wp_post_types as $k=>$v){
+            if(!in_array($k, array('post','page','attachment','revision','nav_menu_item'))){
+                $cposts[$k] = $v;        
+            }
+        }
+        foreach($cposts as $k=>$cpost){
+            if(!isset($sitepress_settings['custom_posts_sync_option'][$k])){
+                $cposts_sync_not_set[] = $cpost->label;
+            }    
+        }    
+        if(!empty($cposts_sync_not_set)){
+            $notice = '<p class="updated fade">';
+            $notice .= sprintf(__("You haven't set your <a %s>synchronization preferences</a> for these custom posts: %s. Default value was selected.", 'sitepress'), 
+                'href="admin.php?page='. ICL_PLUGIN_FOLDER . '/menu/translation-synchronization.php"' , '<i>'.join('</i>, <i>', $cposts_sync_not_set) . '</i>');
+            $notice .= '</p>';
+        }
+        
+        $ctaxonomies = array_diff(array_keys((array)$wp_taxonomies), array('post_tag','category', 'nav_menu', 'link_category'));    
+        foreach($ctaxonomies as $ctax){
+            if(!isset($sitepress_settings['taxonomies_sync_option'][$ctax])){
+                $tax_sync_not_set[] = $wp_taxonomies[$ctax]->label;
+            }    
+        }
+        if(!empty($tax_sync_not_set)){
+            $notice .= '<p class="updated">';
+            $notice .= sprintf(__("You haven't set your <a %s>synchronization preferences</a> for these taxonomies: %s. Default value was selected.", 'sitepress'), 
+                'href="admin.php?page='. ICL_PLUGIN_FOLDER . '/menu/translation-synchronization.php"', '<i>'.join('</i>, <i>', $tax_sync_not_set) . '</i>');
+            $notice .= '</p>';
+        }
+        
+        echo $notice;        
+    }
+    function dashboard_widget_setup(){
+        $dashboard_widgets_order = get_user_option( "meta-box-order_dashboard" );
+        $all_widgets = array();
+        foreach($dashboard_widgets_order as $k=>$v){
+            $all_widgets = array_merge($all_widgets, explode(',', $v));
+        }        
+        if(!in_array('icl_dashboard_widget', $all_widgets)){
+            $install = true;
+        }else{$install = false;}
+        wp_add_dashboard_widget('icl_dashboard_widget', __('WPML Status', 'sitepress'), array($this, 'dashboard_widget'), null);
+        if($install){
+            $dashboard_widgets_order['side'] = 'icl_dashboard_widget,' . $dashboard_widgets_order['side'];   
+            $user = wp_get_current_user();
+            update_user_option($user->ID, 'meta-box-order_dashboard', $dashboard_widgets_order);
+        }
+    }
+    function dashboard_widget(){        
+        do_action('icl_dashboard_widget_notices');        
+        $active_languages = $this->get_active_languages();    
+        foreach($active_languages as $lang){
+            if($default_language != $lang['code']){$default = '';}else{$default = ' ('.__('default','sitepress').')';}
+            $alanguages_links[] = $lang['display_name'] . $default;
+        }
+        ?>
+        <p><?php echo sprintf(__('WPML version: %s'), '<strong>' . ICL_SITEPRESS_VERSION . '</strong>'); ?></p>        
+        <p><?php _e('Currently configured languages:', 'sitepress')?> <b><?php echo join(', ', (array)$alanguages_links)?></b> (<a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/languages.php"><?php _e('edit', 'sitepress'); ?></a>)</p>
+        <?php do_action('icl_dashboard_widget_content'); ?>
+        <?php if(!$this->settings['basic_menu']):?>
+        <p><a href="admin.php?page=<?php echo icl_PLUGIN_FOLDER ?>/menu/overview.php"><?php _e('more', 'sitepress')?></a></p>
+        <?php else: 
+            if($this->settings['setup_complete']){
+                echo '<br />';
+                include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php'; 
+            }                            
+        endif; ?>
+        <?php
     }
        
 }

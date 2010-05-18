@@ -2,7 +2,7 @@
     require_once ICL_PLUGIN_PATH . '/inc/plugins-texts-functions.php';     
     $sitepress_settings = $sitepress->get_settings();     
     $icl_plugins_texts = icl_pt_get_texts();
-    icl_get_posts_translatable_fields();
+    //icl_get_posts_translatable_fields();
     
     if(isset($_POST['icl_pt_file_upload'])){            
         $csv_file_upload_error = icl_pt_handle_upload();    
