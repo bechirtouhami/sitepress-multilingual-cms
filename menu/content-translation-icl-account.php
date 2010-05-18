@@ -19,7 +19,7 @@ $wizard = new ICL_account_wizard();
                               
                             <?php if(!$sitepress->icl_account_configured()): ?>
                             
-                                <h3 id="icl_create_account_form"><?php echo __('Configure your ICanLocalize account', 'sitepress') ?></h3>             
+                                <h3 id="icl_create_account_form"><?php echo __('Translation jobs go through an account at ICanLocalize.', 'sitepress') ?></h3>             
 
                                 <?php if(isset($_POST['icl_form_errors']) || ($icl_account_ready_errors && !$sitepress->icl_account_configured() )):  ?>
                                 <div class="icl_form_errors">
@@ -37,6 +37,8 @@ $wizard = new ICL_account_wizard();
                             
                                 <ul>
                                     <?php if($sitepress->icl_support_configured()): ?>
+                                    <p>You already have an ICanLocalize account for technical support. <br /><br />
+                                    You can continue using this account, create a new account for translations or transfer this project to another account.</p>
                                     <li>
                                         <label><input id="icl_existing" type="radio" value="0" onclick="<?php echo $wizard->on_click(0);?>" <?php if($sitepress->icl_support_configured()): ?>checked="checked"<?php endif; ?>/>
                                             <?php echo sprintf(__('Use my existing ICanLocalize account - <b>%s</b>', 'sitepress'), $sitepress_settings['support_icl_account_email']); ?>

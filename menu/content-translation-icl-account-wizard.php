@@ -10,7 +10,10 @@ class ICL_account_wizard {
             global $sitepress;
         ?>
             <form class="icl_account_form" id="icl_use_account" method="post" action="admin.php?page=<?php echo ICL_PLUGIN_FOLDER  ?>/menu/content-translation.php#icl_create_account_form" <?php if(!$sitepress->icl_support_configured()): ?>style="display:none"<?php endif; ?>>
-            <?php wp_nonce_field('icl_use_account', 'icl_use_account_nonce') ?>    
+            <?php wp_nonce_field('icl_use_account', 'icl_use_account_nonce') ?>
+			
+            <p style="line-height:1.5"><?php _e('Choose this option if you want to pay for translation work through your existing account.', 'sitepress'); ?></p>
+			
             <p class="submit">                                        
                 <div style="text-align:right">
                     <?php //Hidden button for catching "Enter" key ?>                                            
@@ -35,12 +38,17 @@ class ICL_account_wizard {
             <?php
 				if ($transfer_after_create) {
 					wp_nonce_field('icl_create_account_and_transfer', 'icl_create_account_and_transfer_nonce');
+					?>
+		            <p style="line-height:1.5"><?php _e('Choose this option to create a new account, which would be responsible for paying for translation work.', 'sitepress'); ?></p>
+					<?php
 				} else {
 					wp_nonce_field('icl_create_account', 'icl_create_account_nonce');
+					?>
+		            <p style="line-height:1.5"><?php _e('Creating an account in ICanLocalize is free. You will only need to pay when sending posts and pages for translation.', 'sitepress'); ?></p>
+					<?php
 				}
 			?>    
 
-            <p style="line-height:1.5"><?php _e('Creating an account in ICanLocalize is free. You will only need to pay when sending posts and pages for translation.', 'sitepress'); ?></p>
             
             <table class="form-table icl-account-setup">
                 <tbody>
@@ -129,7 +137,10 @@ class ICL_account_wizard {
         
             ?>
             <form class="icl_account_form" id="icl_transfer_account" action="admin.php?page=<?php echo ICL_PLUGIN_FOLDER  ?>/menu/content-translation.php#icl_create_account_form" method="post" style="display:none">
-            <?php wp_nonce_field('icl_transfer_account','icl_transfer_account_nonce') ?>    
+            <?php wp_nonce_field('icl_transfer_account','icl_transfer_account_nonce') ?>
+			
+		    <p style="line-height:1.5"><?php _e('Choose this option to transfer this project to another ICanLocalize account, which will be responsible for paying for translation work.', 'sitepress'); ?></p>
+
             <table class="form-table icl-account-setup">
                 <tbody>
                 <tr class="form-field">
