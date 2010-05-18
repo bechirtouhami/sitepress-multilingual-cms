@@ -4962,7 +4962,7 @@ class SitePress{
         echo $notice;        
     }
     function dashboard_widget_setup(){        
-        $dashboard_widgets_order = (array)get_user_option( "meta-box-order_dashboard" );
+        $dashboard_widgets_order = (array)get_user_option( "meta-box-order_dashboard" );        
         $icl_dashboard_widget_id = 'icl_dashboard_widget';
         $all_widgets = array();
         foreach($dashboard_widgets_order as $k=>$v){
@@ -4976,6 +4976,11 @@ class SitePress{
             $dashboard_widgets_order['side'] = $icl_dashboard_widget_id . ',' . $dashboard_widgets_order['side'];   
             $user = wp_get_current_user();            
             update_user_option($user->ID, 'meta-box-order_dashboard', $dashboard_widgets_order);
+            /* preWP3 compatibility  - start */
+            // bug with WP 2.9 reading the correct data after update_user_option
+            header("Location: index.php");
+            exit;
+            /* preWP3 compatibility  - end   */
         }
     }
     function dashboard_widget(){        
@@ -4987,10 +4992,14 @@ class SitePress{
         }
         ?>
         <p><?php echo sprintf(__('WPML version: %s'), '<strong>' . ICL_SITEPRESS_VERSION . '</strong>'); ?></p>        
+        <?php if(!$this->settings['setup_complete']): ?>
+        <p class="updated" style="padding:4px"><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/languages.php"><strong><?php _e('Finish the WPML setup.', 'sitepress') ?></strong></a></p>
+        <?php else: ?>
         <p><?php _e('Currently configured languages:', 'sitepress')?> <b><?php echo join(', ', (array)$alanguages_links)?></b> (<a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/languages.php"><?php _e('edit', 'sitepress'); ?></a>)</p>
+        <?php endif; ?>
         <?php do_action('icl_dashboard_widget_content'); ?>
         <?php if(!$this->settings['basic_menu']):?>
-        <p><a href="admin.php?page=<?php echo icl_PLUGIN_FOLDER ?>/menu/overview.php"><?php _e('more', 'sitepress')?></a></p>
+        <p><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/overview.php"><?php _e('more', 'sitepress')?></a></p>
         <?php else: 
             if($this->settings['setup_complete']){
                 echo '<br />';
