@@ -4961,19 +4961,20 @@ class SitePress{
         
         echo $notice;        
     }
-    function dashboard_widget_setup(){
+    function dashboard_widget_setup(){        
         $dashboard_widgets_order = (array)get_user_option( "meta-box-order_dashboard" );
+        $icl_dashboard_widget_id = 'icl_dashboard_widget';
         $all_widgets = array();
         foreach($dashboard_widgets_order as $k=>$v){
             $all_widgets = array_merge($all_widgets, explode(',', $v));
         }        
-        if(!in_array('icl_dashboard_widget', $all_widgets)){
+        if(!in_array($icl_dashboard_widget_id, $all_widgets)){
             $install = true;
-        }else{$install = false;}
-        wp_add_dashboard_widget('icl_dashboard_widget', __('WPML Status', 'sitepress'), array($this, 'dashboard_widget'), null);
+        }else{$install = false;}        
+        wp_add_dashboard_widget($icl_dashboard_widget_id, __('WPML Status', 'sitepress'), array($this, 'dashboard_widget'), null);
         if($install){
-            $dashboard_widgets_order['side'] = 'icl_dashboard_widget,' . $dashboard_widgets_order['side'];   
-            $user = wp_get_current_user();
+            $dashboard_widgets_order['side'] = $icl_dashboard_widget_id . ',' . $dashboard_widgets_order['side'];   
+            $user = wp_get_current_user();            
             update_user_option($user->ID, 'meta-box-order_dashboard', $dashboard_widgets_order);
         }
     }
