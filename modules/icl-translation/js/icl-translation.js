@@ -76,7 +76,7 @@ jQuery(document).ready(function(){
             type: "POST",
             url: icl_ajx_url,
             dataType: 'json',
-            data: "icl_ajx_action=send_translation_request&post_ids="+post_ids+'&'+post_types.join('')+'&target_languages='+target_languages.join('#'),
+            data: "icl_ajx_action=send_translation_request&post_ids="+post_ids+'&'+post_types.join('&')+'&target_languages='+target_languages.join('#'),
             success: function(msg){
                 var all_ok = true;
                 for(i in msg){
