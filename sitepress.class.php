@@ -2830,18 +2830,23 @@ class SitePress{
     }
     
     function create_term($cat_id, $tt_id){        
-        global $wpdb;
+        global $wpdb, $wp_taxonomies;
         
         // case of ajax inline category creation
-        if(isset($_POST['_ajax_nonce']) && $_POST['action']=='add-category'){
+        // ajax actions
+        foreach($wp_taxonomies as $ktx=>$tx){
+            $ajx_actions[] = 'add-' . $ktx;
+        }        
+        if(isset($_POST['_ajax_nonce']) && in_array($_POST['action'], $ajx_actions)){
             $referer = $_SERVER['HTTP_REFERER'];
             $url_pieces = parse_url($referer);
             parse_str($url_pieces['query'], $qvars);
             if($qvars['post']>0){
-                $lang_details = $this->get_element_language_details($qvars['post'],'post');
+                $post_type = $wpdb->get_var("SELECT post_type FROM {$wpdb->posts} WHERE ID = '{$qvars['post']}'");
+                $lang_details = $this->get_element_language_details($qvars['post'],'post_' . $post_type);
                 $term_lang = $lang_details->language_code;
             }else{
-                $term_lang = $this->get_default_language();
+                $term_lang = isset($qvars['lang']) ? $qvars : $this->get_default_language();
             }
         }
 
