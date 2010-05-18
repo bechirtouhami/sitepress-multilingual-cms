@@ -6,10 +6,17 @@
 
     global $wpdb;
     
-    $iclq = new ICanLocalizeQuery($this->settings['site_id'], $this->settings['access_key']);       
 	
     $target = $_GET['target'];
-    $session_id = $iclq->get_current_session(true);
+    
+    $support_mode = $_GET['support'];
+    
+    if ($support_mode == '1') {
+        $iclq = new ICanLocalizeQuery($this->settings['support_site_id'], $this->settings['support_access_key']);
+    } else {
+        $iclq = new ICanLocalizeQuery($this->settings['site_id'], $this->settings['access_key']);
+    }
+    $session_id = $iclq->get_current_session(true, $support_mode == '1');
     
     $admin_lang = $this->get_admin_language();
     

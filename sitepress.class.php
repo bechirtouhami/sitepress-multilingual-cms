@@ -618,6 +618,12 @@ class SitePress{
     function administration_menu(){
         add_action('admin_print_scripts', array($this,'js_scripts_setup'));
         add_action('admin_print_styles', array($this,'css_setup'));
+        
+        if ($this->icl_support_configured()) {
+            $support_menu = __('Support','sitepress');
+        } else {
+            $support_menu = __('Support<span class="icl_new_feature">New</span>','sitepress');
+        }
         if($this->settings['basic_menu']){        
             
             add_menu_page(__('WPML','sitepress'), __('WPML','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/languages.php',null, ICL_PLUGIN_URL . '/res/img/icon16.png');    
@@ -627,8 +633,7 @@ class SitePress{
                 add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Pro translation','sitepress'), __('Pro translation','sitepress'), 
                         'manage_options', basename(ICL_PLUGIN_PATH).'/menu/content-translation.php');                                                     
             }
-
-			add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Support','sitepress'), __('Support','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/support.php');
+			add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', $support_menu, $support_menu, 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/support.php');
 
         }else{
             
@@ -669,7 +674,7 @@ class SitePress{
             add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Compatibility packages','sitepress'), __('Compatibility packages','sitepress'), 
                             'manage_options', basename(ICL_PLUGIN_PATH).'/menu/compatibility-packages.php');             
             
-			add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Support','sitepress'), __('Support','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/support.php');
+			add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', $support_menu, $support_menu, 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/support.php');
         }
     }
 
@@ -1163,6 +1168,10 @@ class SitePress{
         return $this->settings['site_id'] && $this->settings['access_key'];
     }
 
+    function icl_support_configured(){
+        return $this->settings['support_site_id'] && $this->settings['support_access_key'];
+    }
+
     function reminders_popup(){
         include ICL_PLUGIN_PATH . '/modules/icl-translation/icl-reminder-popup.php';
         exit;
@@ -1396,7 +1405,29 @@ class SitePress{
         }
         
     }
-    
+
+    function transfer_icl_account($create_account_and_transfer) {
+        $user = $_POST['user'];
+        $user['site_id'] = $this->settings['site_id'];
+        $user['accesskey'] = $this->settings['access_key'];
+        $user['create_account'] = $create_account_and_transfer ? '1' : '0';
+        $icl_query = new ICanLocalizeQuery();                
+        list($success, $access_key) = $icl_query->transfer_account($user);
+        if ($success) {
+            $this->settings['access_key'] = $access_key;
+            // set the support data the same.
+            $this->settings['support_access_key'] = $access_key;
+            $this->save_settings();
+            return true;
+        } else {
+            $_POST['icl_form_errors'] = $access_key;
+            $this->settings['site_id'] = null;
+            $this->settings['access_key'] = null;
+
+            $this->save_settings();
+            return false;
+        }
+    }        
     function process_forms(){
         global $wpdb;
         require_once ICL_PLUGIN_PATH . '/lib/Snoopy.class.php';
@@ -1422,7 +1453,14 @@ class SitePress{
             }
             return;
         }
-        if( (isset($_POST['icl_create_account_nonce']) && $_POST['icl_create_account_nonce']==wp_create_nonce('icl_create_account')) || (isset($_POST['icl_configure_account_nonce']) && $_POST['icl_configure_account_nonce']==wp_create_nonce('icl_configure_account'))){
+        $create_account = isset($_POST['icl_create_account_nonce']) && $_POST['icl_create_account_nonce']==wp_create_nonce('icl_create_account');
+        $create_account_and_transfer = isset($_POST['icl_create_account_and_transfer_nonce']) && $_POST['icl_create_account_and_transfer_nonce']==wp_create_nonce('icl_create_account_and_transfer');
+        $config_account = isset($_POST['icl_configure_account_nonce']) && $_POST['icl_configure_account_nonce']==wp_create_nonce('icl_configure_account');
+        $create_support_account = isset($_POST['icl_create_support_account_nonce']) && $_POST['icl_create_support_account_nonce']==wp_create_nonce('icl_create_support_account');
+        $config_support_account = isset($_POST['icl_configure_support_account_nonce']) && $_POST['icl_configure_support_account_nonce']==wp_create_nonce('icl_configure_support_account');
+        $use_existing_account = isset($_POST['icl_use_account_nonce']) && $_POST['icl_use_account_nonce']==wp_create_nonce('icl_use_account');
+        $transfer_to_account = isset($_POST['icl_transfer_account_nonce']) && $_POST['icl_transfer_account_nonce']==wp_create_nonce('icl_transfer_account');
+        if( $create_account || $config_account || $create_support_account || $config_support_account){
             if (isset($_POST['icl_content_trans_setup_back_2'])) {
                 // back button in wizard mode.
                 $this->settings['content_translation_setup_wizard_step'] = 2;
@@ -1430,7 +1468,8 @@ class SitePress{
                 
             } else {
                 $user = $_POST['user'];
-                $user['create_account'] = isset($_POST['icl_create_account_nonce']) ? 1 : 0;
+                $user['create_account'] = (isset($_POST['icl_create_account_nonce']) ||
+                                           isset($_POST['icl_create_support_account_nonce'])) ? 1 : 0;
                 $user['platform_kind'] = 2;
                 $user['cms_kind'] = 1;
                 $user['blogid'] = $wpdb->blogid?$wpdb->blogid:1;
@@ -1494,9 +1533,19 @@ class SitePress{
                         update_option('_force_mp_post_http', 1);
                     }
                 }else{                    
-                    $iclsettings['site_id'] = $site_id;
-                    $iclsettings['access_key'] = $access_key;
-                    $iclsettings['icl_account_email'] = $user['email'];
+                    if ($create_account || $config_account) {
+                        $iclsettings['site_id'] = $site_id;
+                        $iclsettings['access_key'] = $access_key;
+                        $iclsettings['icl_account_email'] = $user['email'];
+                        // set the support data the same.
+                        $iclsettings['support_site_id'] = $site_id;
+                        $iclsettings['support_access_key'] = $access_key;
+                        $iclsettings['support_icl_account_email'] = $user['email'];
+                    } else {
+                        $iclsettings['support_site_id'] = $site_id;
+                        $iclsettings['support_access_key'] = $access_key;
+                        $iclsettings['support_icl_account_email'] = $user['email'];
+                    }
                     $this->save_settings($iclsettings);
                     if($user['create_account']==1){
                         $_POST['icl_form_success'] = __('A project on ICanLocalize has been created.', 'sitepress') . '<br />';
@@ -1506,9 +1555,12 @@ class SitePress{
                     }
                     $this->get_icl_translator_status($iclsettings);
                     $this->save_settings($iclsettings);
+                    
                 }
 
-                if (intval($site_id) > 0 &&
+                if (!$create_support_account &&
+                            !$config_support_account &&
+                            intval($site_id) > 0 &&
                             $access_key &&
                             $this->settings['content_translation_setup_complete'] == 0 && 
                             $this->settings['content_translation_setup_wizard_step'] == 3 && 
@@ -1519,6 +1571,42 @@ class SitePress{
                     $this->save_settings();
                     
                 }
+                
+            }
+        }
+        elseif ($use_existing_account || $transfer_to_account || $create_account_and_transfer) {
+
+            if (isset($_POST['icl_content_trans_setup_back_2'])) {
+                // back button in wizard mode.
+                $this->settings['content_translation_setup_wizard_step'] = 2;
+                $this->save_settings();
+            } else {
+                // we will be using the support account for the icl_account
+                $this->settings['site_id'] = $this->settings['support_site_id'];
+                $this->settings['access_key'] = $this->settings['support_access_key'];
+                $this->settings['icl_account_email'] = $this->settings['support_icl_account_email'];
+    
+                $this->save_settings();
+    
+                update_icl_account();
+
+                if ($transfer_to_account || $create_account_and_transfer) {
+                    if (!$this->transfer_icl_account($create_account_and_transfer)) {
+                        return;
+                    }
+                    
+                }
+                
+                // we are running the wizard, so we can finish it now.
+                $this->settings['content_translation_setup_complete'] = 1;
+                $this->settings['content_translation_setup_wizard_step'] = 0;
+                $this->save_settings();
+
+                $iclsettings['site_id'] = $this->settings['site_id'];
+                $iclsettings['access_key'] = $this->settings['access_key'];
+                $this->get_icl_translator_status($iclsettings);
+                $this->save_settings($iclsettings);
+    
                 
             }
         }

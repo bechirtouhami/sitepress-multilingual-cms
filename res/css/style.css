@@ -166,3 +166,17 @@
 }
 
 .icl_cyan_box H3 { margin-top: 2px; }
+
+.icl_new_feature {
+	margin: 5px;
+	padding: 3px 5px;
+	border-width: 1px;
+	border-style: solid;
+	-moz-border-radius: 5px;
+	-khtml-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+        border-color: #D54E21;
+        background-color: #D54E21;
+        color: #FFFFFF;
+}

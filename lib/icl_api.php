@@ -44,6 +44,21 @@ class ICanLocalizeQuery{
         }
     }
 
+    function transfer_account($data) {
+        $request = ICL_API_ENDPOINT . '/websites/'.$data['site_id'].'/transfer_account.xml';
+        $response = $this->_request($request, 'POST', $data);        
+        if(!$response){
+            return array(false, $this->error);
+        }else{
+            $error_code = $response['info']['status']['attr']['err_code'];
+	    if ($error_code == 0) {
+		  $access_key = $response['info']['website']['attr']['accesskey'];
+                  return array(true, $access_key);
+	    } else {
+		  return array(false, $response['info']['status']['value']);
+	    }
+        }
+    }
     function get_website_details(){
         $request_url = ICL_API_ENDPOINT . '/websites/' . $this->site_id . '.xml?accesskey=' . $this->access_key;
         $res = $this->_request($request_url);
@@ -329,7 +344,7 @@ class ICanLocalizeQuery{
         
     }
     
-    function get_session_id() {
+    function get_session_id($support_mode) {
         global $sitepress;
         $sitepress_settigs = $sitepress->get_settings();
         $request_url = ICL_API_ENDPOINT . '/login/login.xml';    
@@ -337,12 +352,17 @@ class ICanLocalizeQuery{
         $request_url .= '&wid=' . $this->site_id;
         $request_url .= '&usertype=Client';
         $request_url .= '&compact=1';
-        if (!isset($sitepress_settigs['icl_account_email'])) {
-            $current_user = wp_get_current_user();
-            $email = $current_user->data->user_email;
-        } else {
-            $email = $sitepress_settigs['icl_account_email'];
-        }
+		if ($support_mode) {
+			$email_setting = 'support_icl_account_email';
+		} else {
+			$email_setting = 'icl_account_email';
+		}
+		if (!isset($sitepress_settigs[$email_setting])) {
+			$current_user = wp_get_current_user();
+			$email = $current_user->data->user_email;
+		} else {
+			$email = $sitepress_settigs[$email_setting];
+		}
         $request_url .= '&email=' . $email;
         
         $res = $this->_request($request_url, 'GET');        
@@ -438,17 +458,19 @@ class ICanLocalizeQuery{
         
     }
 
-    function get_current_session($refresh = false) {
+    function get_current_session($refresh = false, $support_mode = false) {
         global $sitepress;
     
         // see if we need to refresh the reminders from ICanLocalize
         $icl_settings = $sitepress->get_settings();
         $last_time = $icl_settings['last_icl_reminder_fetch'];
-        if ($refresh && (time() - $last_time > 30 * 60)) {
-            $session_id = $this->get_session_id();
+        if (($refresh || $support_mode) && (time() - $last_time > 30 * 60)) {
+            $session_id = $this->get_session_id($support_mode);
     
             $last_time = time();
-            $sitepress->save_settings(array('icl_current_session' => $session_id));
+            if (!$support_mode) {
+				$sitepress->save_settings(array('icl_current_session' => $session_id));
+			}
             return $session_id;
         } else {
             return $icl_settings['icl_current_session'];
