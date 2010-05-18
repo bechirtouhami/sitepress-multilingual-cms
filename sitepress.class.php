@@ -1356,7 +1356,7 @@ class SitePress{
             wp_enqueue_script('sitepress-' . $page_basename, ICL_PLUGIN_URL . '/res/js/comments-translation.js', array(), ICL_SITEPRESS_VERSION);
         }
         
-        if (is_admin() && $this->icl_account_configured()) {
+        if (is_admin() && ($this->icl_account_configured() || $this->icl_support_configured())) {
             wp_enqueue_script('thickbox');
             wp_enqueue_script( 'theme-preview' );
             
