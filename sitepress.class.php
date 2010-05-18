@@ -4596,8 +4596,9 @@ class SitePress{
                 $iclsettings['promote_wpml_footer_version'] = $this->settings['promote_wpml_footer_version'] = rand(1,5);
                 $this->save_settings($iclsettings);
             }
-            
-            echo '<p id="wpml_credit_footer"><a href="http://wpml.org">' . $footers[$this->settings['promote_wpml_footer_version']] . '</a></p>';
+            $wpml_in_other_langs = array('es','de','ja','zh-hans');
+            $cl = in_array(ICL_LANGUAGE_CODE, $wpml_in_other_langs) ? '/' . ICL_LANGUAGE_CODE . '/' : ''; 
+            echo '<p id="wpml_credit_footer"><a href="http://wpml.org'.$cl.'">' . $footers[$this->settings['promote_wpml_footer_version']] . '</a></p>';
         }
     }
     
