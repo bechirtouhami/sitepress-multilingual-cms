@@ -77,7 +77,7 @@ function icl_tb_init(domChunk) {
                 location.href = url + "&icl_refresh_langs=1"
             }
         } else if (url.indexOf('support.php') != -1) {
-			location.href = "admin.php?page=sitepress-multilingual-cms/menu/support.php";
+			location.href = url;
 		} else {           
             if (t == "ICanLocalize Reminder" && do_message_refresh) {
                 

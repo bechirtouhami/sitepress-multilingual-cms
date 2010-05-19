@@ -19,38 +19,63 @@ class SitePress_Support {
 	function __construct() {
 		global $sitepress, $sitepress_settings;
 		$sp_settings = get_option('icl_sitepress_settings');
-		if (!$sitepress->icl_support_configured()) {
-			$this->create_account();
+		$this->data = get_option('icl_support', $defaults);
+		
+		if (isset($_POST['icl_support_account']) && $sitepress->icl_support_configured()) {
+			$sitepress->save_settings(array('support_icl_account_created' => 1));
+			if ($_POST['icl_support_account'] == 'create') {
+				if (!isset($_POST['icl_support_account_type'])) {
+					$_POST['icl_support_subscription_type'] = 1;
+				}
+				$this->data['subscription_type'] = $_POST['icl_support_subscription_type'];
+				update_option('icl_support', $this->data);
+			}
+			echo '<script type="text/javascript">location.href = "admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/support.php";</script>';
+		} else if ((isset($_POST['icl_support_account']) && $_POST['icl_support_account'] == 'create') || isset($_GET['subscription'])) {
+			$this->create_account_form();
 			return;
 		}
-		if (isset($_POST['icl_support_account']) && $sitepress->icl_account_configured()) {
-			$sitepress->save_settings(array('support_icl_account_created' => 1));
-			echo '<script type="text/javascript">location.href = "admin.php?page=sitepress-multilingual-cms/menu/support.php";</script>';
-		}
+		
 		$this->request = new WP_Http;
 		
-		//$this->site_id = $sitepress_settings['site_id'];
-		//$this->access_key = $sitepress_settings['access_key'];
+		if ($sitepress->icl_support_configured()) {
+			
+			if (isset($sp_settings['site_id'])) {
+				$this->site_id = $sp_settings['site_id'];
+			} else {
+				$this->site_id = $sp_settings['support_site_id'];
+			}
+			
+			if (isset($sp_settings['access_key'])) {
+				$this->access_key = $sp_settings['access_key'];
+			} else {
+				$this->access_key = $sp_settings['support_access_key'];
+			}
+		}
 		
-		if (isset($sp_settings['site_id'])) {
-			$this->site_id = $sp_settings['site_id'];
+		if (!$this->check_subscription()) {
+			if ($this->site_id && isset($this->data['subscription_type'])) {
+				_e('Your password is sent to your e-mail.', 'sitepress');
+				echo '<br /><br />';
+				switch ($this->data['subscription_type']) {
+					case 2:
+						echo $this->thickbox('subscriptions/new?wid=' . $this->site_id . '&amp;code=2', ' icl_support_buy_link'); printf(__('Buy \'developer\' subscription %s / year', 'sitepress'), '$200'); echo '</a>';
+						break;
+					default:
+						echo $this->thickbox('subscriptions/new?wid=' . $this->site_id . '&amp;code=1', ' icl_support_buy_link'); printf(__('Buy \'single site\' subscription %s / year', 'sitepress'), '$50'); echo '</a>';
+				}
+				return;
+			}
+			$this->offer_subscription();
+			if (!$this->site_id) {
+				$this->login_to_account_form();
+			}
 		} else {
-			$this->site_id = $sp_settings['support_site_id'];
-		}
-		
-		if (isset($sp_settings['access_key'])) {
-			$this->access_key = $sp_settings['access_key'];
-		} else {
-			$this->access_key = $sp_settings['support_access_key'];
-		}
-		
-		$this->data = get_option('icl_support', $defaults);
-		if (isset($this->data['tickets'])) {
-			$this->tickets = $this->data['tickets'];
-		}
-		if ($this->check_subscription()) {
+			if (isset($this->data['tickets'])) {
+				$this->tickets = $this->data['tickets'];
+			}
 			$url = 'websites/' . $this->site_id . '/new_ticket';
-			echo '<p>' . $this->thickbox($url) . __('Create new ticket', 'sitepress') . '</a></p>';
+			echo '<p>' . $this->thickbox($url, ' icl_support_create_ticket_link') . __('Create new ticket', 'sitepress') . '</a></p>';
 			$this->get_tickets();
 			if (!empty($this->tickets)) {
 				$this->render_tickets();
@@ -68,8 +93,15 @@ class SitePress_Support {
 	}
 
 	function thickbox($url, $class = null, $id = null) {
+		if (!$this->site_id) {
+			parse_str(htmlspecialchars_decode($url), $var);
+			if (!isset($var['code'])) {
+				$var['code'] = 1;
+			}
+			return '<a href="admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/support.php&amp;subscription=' . $var['code'] . '&amp;support=1">';
+		}
 		global $sitepress;
-		return $sitepress->create_icl_popup_link(ICL_API_ENDPOINT . '/' . $url, 'ICanLocalize', $class, $id);
+		return $sitepress->create_icl_popup_link(ICL_API_ENDPOINT . '/' . $url . '&amp;support=1', 'ICanLocalize', $class, $id);
 	}
 
 	function thickbox2($url, $class = null, $id = null) {
@@ -93,7 +125,6 @@ class SitePress_Support {
 		$subscriptions = $result['info']['subscriptions'];
 		
 		if (empty($subscriptions)) {
-			$this->offer_subscription();
 			return false;
 		} else {
 			if (isset($subscriptions['subscription'][0])) {
@@ -105,11 +136,11 @@ class SitePress_Support {
 					return true;
 				}
 				if ($v['attr']['owner_id'] == $this->site_id && $v['attr']['valid'] == 'false') {
+					// TODO
 					$this->offer_renewal();
 					return false;
 				}
 			}
-			$this->offer_subscription();
 			return false;
 		}
 	}
@@ -125,10 +156,6 @@ class SitePress_Support {
 <br />A support subscription gives you 24h response directly from WPML\'s developers.', 'sitepress'); ?>
 <br /><br />
 <table id="icl_support_subscriptions" cellspacing="0" cellpadding="0" border="0">
-<!--<tr class="description">
-    <td colspan="4"><?php _e('In order to get premium support, you need to create a support subscription.
-<br />A support subscription gives you 24h response directly from WPML\'s developers.', 'sitepress'); ?></td>
-</tr>-->
 <tr class="title">
     <td class="first">&nbsp;</td>
 	<td class="smaller-heading"><h2><?php _e('Community Support', 'sitepress'); ?></h2></td>
@@ -166,27 +193,19 @@ class SitePress_Support {
 <tr class="buy-link">
     <td class="first">&nbsp;</td>
 	<td>&nbsp;</td>
-    <td><?php echo $this->thickbox('subscriptions/new?wid=' . $this->site_id . '&amp;code=1' . '&amp;support=1'); printf(__('Buy %s / year', 'sitepress'), '$50'); ?></a></td>
-    <td class="last"><?php echo $this->thickbox('subscriptions/new?wid=' . $this->site_id . '&amp;code=2' . '&amp;support=1'); printf(__('Buy %s / year', 'sitepress'), '$200'); ?></a></td>
+    <td><?php echo $this->thickbox('subscriptions/new?wid=' . $this->site_id . '&amp;code=1'); printf(__('Buy %s / year', 'sitepress'), '$50'); ?></a></td>
+    <td class="last"><?php echo $this->thickbox('subscriptions/new?wid=' . $this->site_id . '&amp;code=2'); printf(__('Buy %s / year', 'sitepress'), '$200'); ?></a></td>
 </tr>
 </table>
 
 <?php
-/*printf(__('In order to get premium support, you need to create a support subscription.
-<br />A support subscription gives you 24h response directly from WPML\'s developers.
-<br /><br />
-Please choose which support subscription is best for you:
-<br /><br />
-%s Single site support %s - $50 / year (good for this site only)
-<br />
-%s Developer support (unlimited sites) %s - $200 / year (good for any site you build)', 'sitepress'), $this->thickbox('subscriptions/new?wid=' . $this->site_id . '&amp;code=1' . '&amp;support=1'), '</a>', $this->thickbox('subscriptions/new?wid=' . $this->site_id . '&amp;code=2' . '&amp;support=1'), '</a>');*/
 	}
 
 	function offer_renewal() {
 		echo '<p>';
 		printf(__('Renew your licence', 'sitepress'));
 		echo '</p>';
-		$this->offer_subscription();
+		//$this->offer_subscription();
 	}
 
 	function get_tickets() {
@@ -268,30 +287,29 @@ Please choose which support subscription is best for you:
 <?php
 	}
 
-	function create_account() {
-		global $sitepress, $sitepress_settings;
-		//$icl_account_ready_errors = $sitepress->icl_account_reqs();
-?>             
+	function form_errors() {
+		if (isset($_POST['icl_form_errors'])) { ?>
+			<div class="icl_form_errors">
+			<?php echo $_POST['icl_form_errors'] ?>
+			</div>
+		<?php }
+	}
 
-                                <?php if(isset($_POST['icl_form_errors']) || ($icl_account_ready_errors && !$sitepress->icl_account_configured() )):  ?>
-                                <div class="icl_form_errors">
-                                    <?php echo $_POST['icl_form_errors'] ?>
-                                    <?php if($icl_account_ready_errors):  ?>
-                                    <?php echo __('Before you create an ICanLocalize account you need to fix these:', 'sitepress'); ?>
-                                    <ul>
-                                    <?php foreach($icl_account_ready_errors as $err):?>        
-                                    <li><?php echo $err ?></li>    
-                                    <?php endforeach ?>
-                                    </ul>   
-                                    <?php endif; ?>
-                                </div>
-                                <?php endif; ?>
-                            <!--admin.php?page=<?php echo ICL_PLUGIN_FOLDER  ?>/menu/content-translation.php#icl_create_account_form-->
-                                <form id="icl_create_account" method="post" action="" <?php if($_POST['icl_acct_option2']):?>style="display:none"<?php endif?>>
-                                <?php wp_nonce_field('icl_create_support_account', 'icl_create_support_account_nonce') ?>    
-								<input type="hidden" name="icl_support_account" value="1" />
-
-                                <p style="line-height:1.5"><?php _e('To get premium support, you will need to create an account at ICanLocalize.<br />WPML will use this account to create support tickets and connect you with the development team.', 'sitepress'); ?></p>
+	function create_account_form() {
+		//global $sitepress, $sitepress_settings;
+		global $current_user;
+		$this->form_errors();
+?>
+			<form id="icl_create_account" method="post" action="">
+				<?php wp_nonce_field('icl_create_support_account', 'icl_create_support_account_nonce') ?>    
+				<input type="hidden" name="icl_support_account" value="create" />
+<?php
+				if (!isset($_REQUEST['subscription'])) {
+					$_REQUEST['subscription'] = 1;
+				}
+?>
+				<input type="hidden" name="icl_support_subscription_type" value="<?php echo $_REQUEST['subscription']; ?>" />
+				<p style="line-height:1.5"><?php _e('To get premium support, you will need to create an account at ICanLocalize.<br />WPML will use this account to create support tickets and connect you with the development team.', 'sitepress'); ?></p>
                                 
                                 <table class="form-table icl-account-setup">
                                     <tbody>
@@ -309,30 +327,28 @@ Please choose which support subscription is best for you:
                                     </tr>
                                     </tbody>
                                 </table>
-                                <?php if(!$sitepress_settings['content_translation_setup_complete']): ?>        
-                                    <p class="submit">                                        
-                                        <a href="javascript:;" onclick="jQuery('#icl_create_account').hide();jQuery('#icl_configure_account').fadeIn();"><?php echo __('I already have an account at ICanLocalize', 'sitepress') ?></a><br /><br />
-
-                                            <?php //Hidden button for catching "Enter" key ?>                                            
-                                            <input id="icl_content_trans_setup_finish_enter" class="button-primary" name="icl_content_trans_setup_finish_enter" value="<?php echo __('Log in to my account', 'sitepress') ?>" type="submit" style="display:none"/>
-                                            <input id="icl_content_trans_setup_finish" class="button-primary" name="icl_content_trans_setup_finish" value="<?php echo __('Create account', 'sitepress') ?>" type="submit" />
-
-                                    </p>
-                                    <div class="icl_progress"><?php _e('Saving. Please wait...', 'sitepress'); ?></div>
-                                <?php else: ?>
                                     <p class="submit">
                                         <input type="hidden" name="create_account" value="1" />
-                                        <input class="button" name="create account" value="<?php echo __('Create account', 'sitepress') ?>" type="submit" 
-                                            <?php if($icl_account_ready_errors):  ?>disabled="disabled"<?php endif; ?> />
-                                        <a href="javascript:;" onclick="jQuery('#icl_create_account').hide();jQuery('#icl_configure_account').fadeIn();"><?php echo __('I already have an account at ICanLocalize', 'sitepress') ?></a>                                        
-                                    </p>
+                                        <input class="button" name="create account" value="<?php echo __('Create account', 'sitepress') ?>" type="submit" />
+									</p>
                                     <div class="icl_progress"><?php _e('Saving. Please wait...', 'sitepress'); ?></div>
-                                <?php endif; ?>
-                                </form> 
-                <!--admin.php?page=<?php echo ICL_PLUGIN_FOLDER  ?>/menu/content-translation.php#icl_create_account_form-->
-                                <form id="icl_configure_account" action="" method="post" <?php if(!$_POST['icl_acct_option2']):?>style="display:none"<?php endif?>>
-                                <?php wp_nonce_field('icl_configure_support_account','icl_configure_support_account_nonce') ?>
-								<input type="hidden" name="icl_support_account" value="1" />    
+                                </form>
+
+								
+<?php
+	}
+	
+	function login_to_account_form() {
+		$this->form_errors();
+		global $current_user;
+		//global $sitepress, $sitepress_settings;
+?>
+		<br /><br />
+		<a href="javascript:;" onclick="jQuery('#icl_support_form_show').slideToggle();" class="icl_support_toggle_link"><?php _e('I already have ICanLocalize account', 'sitepress'); ?></a>
+		<div id="icl_support_form_show" style="display:none;">
+			<form id="icl_configure_account" action="" method="post">
+				<?php wp_nonce_field('icl_configure_support_account','icl_configure_support_account_nonce') ?>
+				<input type="hidden" name="icl_support_account" value="configure" />    
                                 <table class="form-table icl-account-setup">
                                     <tbody>
                                     <tr class="form-field">
@@ -345,29 +361,13 @@ Please choose which support subscription is best for you:
                                     </tr>        
                                     </tbody>
                                 </table>
-                                <?php if(!$sitepress_settings['content_translation_setup_complete']): ?>        
-                                    <p class="submit">                                        
-                                        <a href="javascript:;" onclick="jQuery('#icl_configure_account').hide();jQuery('#icl_create_account').fadeIn();"><?php echo __('I don\'t have an ICanLocalize account - Create account', 'sitepress') ?></a><br /><br />                                        
-
-                                            <?php //Hidden button for catching "Enter" key ?>
-                                            <input id="icl_content_trans_setup_finish_enter" class="button-primary" name="icl_content_trans_setup_finish_enter" value="<?php echo __('Log in to my account', 'sitepress') ?>" type="submit" style="display:none"/>
-                                            
-                                            <!--<input class="button" name="icl_content_trans_setup_cancel" value="<?php echo __('Cancel', 'sitepress') ?>" type="button" />
-                                            <input id="icl_content_trans_setup_back_2" class="button-primary" name="icl_content_trans_setup_back_2" value="<?php echo __('Back', 'sitepress') ?>" type="submit" />-->
-                                            <input id="icl_content_trans_setup_finish" class="button-primary" name="icl_content_trans_setup_finish" value="<?php echo __('Log in to my account', 'sitepress') ?>" type="submit" />
-
-                                    </p>
-                                    <div class="icl_progress"><?php _e('Saving. Please wait...', 'sitepress'); ?></div>                                        
-                                <?php else: ?>
-                                    <p class="submit">                                        
+								<p class="submit">                                        
                                         <input type="hidden" name="create_account" value="0" />                                        
-                                        <input class="button" name="configure account" value="<?php echo __('Log in to my account', 'sitepress') ?>" type="submit" 
-                                            <?php if($icl_account_ready_errors):  ?>disabled="disabled"<?php endif; ?> />
-                                        <a href="javascript:;" onclick="jQuery('#icl_configure_account').hide();jQuery('#icl_create_account').fadeIn();"><?php echo __('Create account', 'sitepress') ?></a>                                        
+                                        <input class="button" name="configure account" value="<?php echo __('Log in to my account', 'sitepress') ?>" type="submit" />
                                     </p>                                    
                                     <div class="icl_progress"><?php _e('Saving. Please wait...', 'sitepress'); ?></div>
-                                <?php endif; ?>
                                 </form>
+		</div>
 <?php
 	}
 }

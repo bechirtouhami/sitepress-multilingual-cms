@@ -39,7 +39,10 @@
 #icl_support_subscriptions .buy-link td {
 	height: 60px;
 }
-#icl_support_subscriptions .buy-link a, #icl_support_subscriptions .buy-link a:visited {
+#icl_support_subscriptions .buy-link a, #icl_support_subscriptions .buy-link a:visited,
+.icl_support_toggle_link, .icl_support_toggle_link:visited,
+.icl_support_create_ticket_link, .icl_support_create_ticket_link:visited,
+.icl_support_buy_link, .icl_support_buy_link:visited {
 	background-color: #F96C10;
 	color: #fff;
 	-moz-border-radius: 10px;
@@ -50,7 +53,11 @@
 	text-decoration: none;
 	font-weight: bold;
 }
-#icl_support_subscriptions .buy-link a:hover {
+#icl_support_subscriptions .buy-link a:hover,
+.icl_support_toggle_link:hover,
+.icl_support_create_ticket_link:hover,
+.icl_support_buy_link:hover {
 	background-color: #F9AD11;
 	text-decoration: none;
+	color: #fff;
 }
