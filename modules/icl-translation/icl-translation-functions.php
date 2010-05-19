@@ -1400,7 +1400,7 @@ function icl_get_post_translation_status($post_id){
 
 function icl_display_post_translation_status($post_id, &$post_translation_statuses, $short = false){
     global $wpdb, $sitepress;                    
-    $post_type = $wpdb->get_var("SELECT post_type RFOM {$wpdb->posts} WHERE ID={$post_id}");                                                                                           
+    $post_type = $wpdb->get_var("SELECT post_type FROM {$wpdb->posts} WHERE ID={$post_id}");                                                                                           
     $trid = $sitepress->get_element_trid($post_id, 'post_' . $post_type);
     $translations = $sitepress->get_element_translations($trid, 'post_' . $post_type);
     
