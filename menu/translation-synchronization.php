@@ -11,7 +11,8 @@
     $notice = '';
     
     $cposts = array();
-    $icl_post_types = $sitepress->get_translatable_documents();
+    $icl_post_types = $sitepress->get_translatable_documents(true);    
+    
     foreach($icl_post_types as $k=>$v){
         if(!in_array($k, array('post','page'))){
             $cposts[$k] = $v;        
@@ -20,7 +21,7 @@
     
     foreach($cposts as $k=>$cpost){
         if(!isset($sitepress_settings['custom_posts_sync_option'][$k])){
-            $cposts_sync_not_set[] = $cpost->label->name;
+            $cposts_sync_not_set[] = $cpost->labels->name;
         }    
     }    
     if(!empty($cposts_sync_not_set)){
