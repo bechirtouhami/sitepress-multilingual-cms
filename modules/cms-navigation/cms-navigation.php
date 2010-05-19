@@ -250,7 +250,7 @@ class CMSNavigation{
             // exclude some pages                                                                                                            
             $excluded_pages = $wpdb->get_col("
                 SELECT post_id 
-                FROM {$wpdb->postmeta} pm LEFT JOIN {$wpdb->prefix}icl_translations tr ON pm.post_id = tr.element_id AND element_type='post'
+                FROM {$wpdb->postmeta} pm LEFT JOIN {$wpdb->prefix}icl_translations tr ON pm.post_id = tr.element_id AND element_type='post_page'
                 WHERE meta_key='_top_nav_excluded' AND meta_value <> '' AND tr.language_code = '{$sitepress->get_current_language()}'
                 ");        
             $excluded_pages[] = 0; //add this so we don't have an empty array
@@ -272,7 +272,7 @@ class CMSNavigation{
             if($sitepress_settings['existing_content_language_verified'] && 'all' != $sitepress->get_current_language()){   // user has initialized 
                 $pages = $wpdb->get_col("
                     SELECT p.ID FROM {$wpdb->posts} p
-                        JOIN {$wpdb->prefix}icl_translations tr ON p.ID = tr.element_id AND element_type='post' 
+                        JOIN {$wpdb->prefix}icl_translations tr ON p.ID = tr.element_id AND element_type='post_page' 
                     WHERE post_type='page' AND (post_status='publish' {$private})
                         AND post_parent=0 AND p.ID NOT IN ({$excluded_pages})  AND tr.language_code = '{$sitepress->get_current_language()}'
                     ORDER BY {$order}");   
