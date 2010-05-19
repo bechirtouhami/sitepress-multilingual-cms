@@ -183,6 +183,8 @@
                         <?php /* Not using the setup wizard */?>
                         <?php include ICL_PLUGIN_PATH . '/menu/content-translation-langs.php';?>
                         <br clear="all" />
+                        <?php include ICL_PLUGIN_PATH . '/menu/content-translation-site-description.php';?>
+                        <br clear="all" />
                         <?php include ICL_PLUGIN_PATH . '/menu/content-translation-options.php';?>
                         <br clear="all" />
                         <?php include ICL_PLUGIN_PATH . '/menu/content-translation-icl-account.php';?>

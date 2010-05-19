@@ -5,6 +5,7 @@ addLoadEvent(function(){
     jQuery('.icl_language_pairs .icl_tr_from').change(iclShowNextButtonStep1);
     jQuery('.icl_tr_to').change(iclShowNextButtonStep1);
     jQuery('#icl_save_language_pairs').click(saveLanguagePairs);    
+    jQuery('#icl_save_site_description').click(saveSiteDescription);    
     jQuery('form[name="icl_more_options"]').submit(iclSaveForm);
     jQuery('form[name="icl_more_options"]').submit(iclSaveMoreOptions);
     jQuery('form[name="icl_editor_account"]').submit(iclSaveForm);    
@@ -139,6 +140,25 @@ function saveLanguagePairs(){
                 location.href = url;
             }else{                        
                 fadeInAjxResp('#icl_ajx_response',icl_ajx_error + spl[1],true);
+            }  
+        }
+    }); 
+    
+}
+
+function saveSiteDescription(){
+    fadeInAjxResp('#icl_ajx_response_site', icl_ajxloaderimg);
+    var qargs = new Array();
+    jQuery.ajax({
+        type: "POST",
+        url: icl_ajx_url,
+        data: "icl_ajx_action=save_site_description&"+jQuery('#icl_site_description').serialize(),
+        success: function(msg){
+            spl = msg.split('|');
+            if(spl[0]=='1'){
+                fadeInAjxResp('#icl_ajx_response_site',spl[1],true);
+            }else{                        
+                fadeInAjxResp('#icl_ajx_response_site',icl_ajx_error + spl[1],true);
             }  
         }
     }); 

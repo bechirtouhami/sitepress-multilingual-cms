@@ -9,6 +9,9 @@
         <?php if(!$sitepress_settings['content_translation_setup_complete']): /* run wizard */?>        
             <form id="icl_more_options_wizard" method="post" action="<?php echo $_SERVER['REQUEST_URI'] ?>">
             <?php wp_nonce_field('icl_site_description_wizard','icl_site_description_wizardnounce') ?>
+        <?php else: ?>
+            <form id="icl_more_options_wizard" name="icl_more_options_wizard" action="">
+            <?php wp_nonce_field('icl_site_description_wizard','icl_site_description_wizardnounce') ?>
         <?php endif; ?>
 
             <table class="widefat">
@@ -21,8 +24,13 @@
                     <tr>
                         <td>
                             <h4><?php echo __('Describe your website', 'sitepress') ?></h4>             
-                            <textarea name="icl_description" type="textarea" cols="60" rows="5"><?php echo  $sitepress_settings['icl_site_description'] ?></textarea>
+                            <textarea id="icl_site_description" name="icl_description" type="textarea" cols="60" rows="5"><?php echo  $sitepress_settings['icl_site_description'] ?></textarea>
                             <p>Provide a short description of the website so that translators know what background is required from them.</p>
+
+                            <?php if($sitepress_settings['content_translation_setup_complete']): ?>
+                                <input id="icl_save_site_description" type="button" class="button-secondary action" value="<?php echo __('Save', 'sitepress') ?>" />
+                                <span class="icl_ajx_response" id="icl_ajx_response_site"></span>
+                            <?php endif; ?>
                         </td>
                     </tr>
                 </tbody>
@@ -37,5 +45,6 @@
                 <input id="icl_content_trans_setup_back_2" class="button-primary" name="icl_content_trans_setup_back_2" value="<?php echo __('Back', 'sitepress') ?>" type="submit" />
                 <input id="icl_content_trans_setup_next_2" class="button-primary" name="icl_content_trans_setup_next_2" value="<?php echo __('Next', 'sitepress') ?>" type="submit" />
             </div>
-            </form>
         <?php endif; ?>
+        </form>
+ 

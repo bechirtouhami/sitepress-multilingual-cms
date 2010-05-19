@@ -139,6 +139,18 @@ switch($_REQUEST['icl_ajx_action']){
         }
         echo "1|" . $result;
         break;
+    case 'save_site_description':                
+        
+        $iclsettings['icl_site_description'] = $_POST['icl_description'];
+        $this->save_settings($iclsettings);
+        $ret = update_icl_account();
+        if($ret){
+            echo '1| ('. __('Not updated on ICanLocalize: ', 'sitepress') . $ret . ')';
+            break;
+        }
+        
+        echo '1|' . __('Your site description has been saved.', 'sitepress');
+        break;
     case 'toggle_content_translation':
         $redir = '';
         $iclsettings['enable_icl_translations'] = $_POST['new_val'];

@@ -1649,32 +1649,25 @@ class SitePress{
             $this->get_active_languages(true); //refresh active languages list
             do_action('icl_initial_language_set');
         }elseif(isset($_POST['icl_change_website_access_data_nonce']) && $_POST['icl_change_website_access_data_nonce']==wp_create_nonce('icl_change_website_access_data')){
-            $description = $_POST['icl_description'];
-            if ($description == "") {
-                $_POST['icl_form_errors'] = __('Please provide a short description of the website so that translators know what background is required from them.','sitepress');
-            } else {
+            
+            $iclsettings['access_key'] = $_POST['access']['access_key'];
+            $iclsettings['site_id'] = $_POST['access']['website_id'];
+            $this->save_settings($iclsettings);
 
-                $iclsettings['icl_site_description'] = $description;
+            // Now try to access ICL server                
+            $icl_query = new ICanLocalizeQuery($iclsettings['site_id'], $iclsettings['access_key']);
+            $res = $icl_query->get_website_details();
+            
+            if(isset($res['attr']['id']) and $res['attr']['id'] == $iclsettings['site_id']){
+                $_POST['icl_form_success'] = __('Your ICanLocalize account details have been confirmed and saved','sitepress');
                 
-                $iclsettings['access_key'] = $_POST['access']['access_key'];
-                $iclsettings['site_id'] = $_POST['access']['website_id'];
-                $this->save_settings($iclsettings);
-    
-                // Now try to access ICL server                
-                $icl_query = new ICanLocalizeQuery($iclsettings['site_id'], $iclsettings['access_key']);
-                $res = $icl_query->get_website_details();
-                
-                if(isset($res['attr']['id']) and $res['attr']['id'] == $iclsettings['site_id']){
-                    $_POST['icl_form_success'] = __('Your ICanLocalize account details have been confirmed and saved','sitepress');
-                    
-                    // update the account with the new site description.
-                    update_icl_account();
-                } else {
-                    $message = __('The ICanLocalize access details are not correct.','sitepress') . '<br />';
-                    $message .= __('Log on to the ICanLocalize server to get your access details. ','sitepress');
-                    $message .= '<a href="'. ICL_API_ENDPOINT . '">' . ICL_API_ENDPOINT . '</a>';
-                    $_POST['icl_form_errors'] = $message;
-                }            
+                // update the account with the new site description.
+                update_icl_account();
+            } else {
+                $message = __('The ICanLocalize access details are not correct.','sitepress') . '<br />';
+                $message .= __('Log on to the ICanLocalize server to get your access details. ','sitepress');
+                $message .= '<a href="'. ICL_API_ENDPOINT . '">' . ICL_API_ENDPOINT . '</a>';
+                $_POST['icl_form_errors'] = $message;
             }            
         }elseif(isset($_POST['icl_language_pairs_formnounce']) && $_POST['icl_language_pairs_formnounce'] == wp_create_nonce('icl_language_pairs_form')) {
             $this->save_language_pairs();
