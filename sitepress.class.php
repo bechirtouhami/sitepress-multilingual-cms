@@ -4957,9 +4957,11 @@ class SitePress{
             $user = wp_get_current_user();            
             update_user_option($user->ID, 'meta-box-order_dashboard', $dashboard_widgets_order);
             /* preWP3 compatibility  - start */
-            // bug with WP 2.9 reading the correct data after update_user_option
-            header("Location: index.php");
-            exit;
+            if(ICL_PRE_WP3){
+                // bug with WP 2.9 reading the correct data after update_user_option
+                header("Location: index.php");
+                exit;
+            }
             /* preWP3 compatibility  - end   */
         }
     }
