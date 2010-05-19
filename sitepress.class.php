@@ -4900,11 +4900,6 @@ class SitePress{
             $icl_post_types['page']->labels['name'] = 'Pages';
         }
         /* preWP3 compatibility  - end */
-        // backward compatibility like WP does until WP 3.1
-        foreach($icl_post_types as $k=>$v){            
-            if(!isset($v->singular_name)) $icl_post_types[$k]->singular_name = $v->labels['singular_name'];
-            if(!isset($v->name)) $icl_post_types[$k]->singular_name = $v->labels['name'];
-        }
         return $icl_post_types;        
     }
     
