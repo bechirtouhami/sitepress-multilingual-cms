@@ -1,8 +1,10 @@
-        <?php if(isset($_POST['icl_form_errors'])):  ?>
-        <div class="icl_form_errors">
-            <?php echo $_POST['icl_form_errors'] ?>
-        </div>
-        <br />
+        <?php if(!$sitepress_settings['content_translation_setup_complete']): /* run wizard */?>        
+            <?php if(isset($_POST['icl_form_errors'])):  ?>
+            <div class="icl_form_errors">
+                <?php echo $_POST['icl_form_errors'] ?>
+            </div>
+            <br />
+            <?php endif; ?>
         <?php endif; ?>
 
 

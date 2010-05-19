@@ -6,6 +6,14 @@ $wizard = new ICL_account_wizard();
 
 ?>
 
+        <?php if($sitepress->icl_account_configured()): /* run wizard */?>        
+            <?php if(isset($_POST['icl_form_errors'])):  ?>
+            <div class="icl_form_errors">
+                <?php echo $_POST['icl_form_errors'] ?>
+            </div>
+            <br />
+            <?php endif; ?>
+        <?php endif; ?>
 
             <table class="widefat">
                 <thead>
@@ -35,11 +43,11 @@ $wizard = new ICL_account_wizard();
                                 </div>
                                 <?php endif; ?>
                             
+                                <?php if($sitepress->icl_support_configured()): ?>
+                                <p style="line-height:1.5">You already have an ICanLocalize account for technical support. <br />
+                                You can continue using this account, create a new account for translations or transfer this project to another account.</p>
+                                <br />
                                 <ul>
-                                    <?php if($sitepress->icl_support_configured()): ?>
-                                    <p style="line-height:1.5">You already have an ICanLocalize account for technical support. <br />
-                                    You can continue using this account, create a new account for translations or transfer this project to another account.</p>
-                                    <br />
                                     <li>
                                         <label><input id="icl_existing" type="radio" value="0" onclick="<?php echo $wizard->on_click(0);?>" <?php if($sitepress->icl_support_configured()): ?>checked="checked"<?php endif; ?>/>
                                             <?php echo sprintf(__('Use my existing ICanLocalize account - <b>%s</b>', 'sitepress'), $sitepress_settings['support_icl_account_email']); ?>
@@ -76,34 +84,46 @@ $wizard = new ICL_account_wizard();
                                 
                             <?php else: // if account configured ?>   
 
-                                <form id="icl_create_account" method="post" action="admin.php?page=<?php echo ICL_PLUGIN_FOLDER  ?>/menu/content-translation.php#icl_create_account_form" <?php if($_POST['icl_acct_option2']):?>style="display:none"<?php endif?>>
-                                <?php wp_nonce_field('icl_view_website_access_data','icl_view_website_access_data_nonce') ?>    
+                                <form id="icl_transfer_this_account" method="post" action="admin.php?page=<?php echo ICL_PLUGIN_FOLDER  ?>/menu/content-translation.php#icl_create_account_form" <?php if($_POST['icl_acct_option2']):?>style="display:none"<?php endif?>>
+                                <?php wp_nonce_field('icl_transfer_this_account','icl_transfer_this_accountnonce') ?>    
                                 <p class="submit">                                    
-                                    <?php echo __('Your ICanLocalize account is configured.', 'sitepress')?>
-                                    <a href="javascript:;" onclick="jQuery('#icl_create_account').hide();jQuery('#icl_configure_account').fadeIn();"><?php echo __('Show access settings &raquo;', 'sitepress') ?></a>
+                                    <?php echo __('You can transfer this site to another ICanLocalize account.', 'sitepress')?>
+                                    <a href="javascript:;" onclick="jQuery('#icl_transfer_this_account').hide();jQuery('#icl_configure_account_transfer').fadeIn();"><?php echo __('Show settings &raquo;', 'sitepress') ?></a>
                                 </p>
                                 </form> 
                 
-                                <form id="icl_configure_account" action="admin.php?page=<?php echo ICL_PLUGIN_FOLDER  ?>/menu/content-translation.php#icl_create_account_form" method="post" <?php if(!$_POST['icl_acct_option2']):?>style="display:none"<?php endif?>>
+                                <form id="icl_configure_account_transfer" action="">
                                 <?php wp_nonce_field('icl_change_website_access_data','icl_change_website_access_data_nonce') ?>
-                                <?php echo __('Your ICanLocalize account access settings:', 'sitepress')?>
-                                <table class="form-table icl-account-setup">
-                                    <tbody>
-                                    <tr class="form-field">
-                                        <th scope="row"><?php echo __('Website ID', 'sitepress') ?></th>
-                                        <td><input name="access[website_id]" type="text" value="<?php echo  $_POST['access']['website_id']?$_POST['access']['website_id']:$sitepress_settings['site_id'] ?>" /></td>
-                                    </tr>
-                                    <tr class="form-field">
-                                        <th scope="row"><?php echo __('Access key', 'sitepress') ?></th>
-                                        <td><input name="access[access_key]" type="text" value="<?php echo  $_POST['access']['access_key']?$_POST['access']['access_key']:$sitepress_settings['access_key'] ?>"/></td>
-                                    </tr>        
-                                    </tbody>
-                                </table>
+
+                                <?php echo __('You can transfer this site to another ICanLocalize account.', 'sitepress')?>
+                                <br />
+                                <br />
+                                <ul>
+                                    <li>
+                                        <label><input id="icl_new" name="icl_new" type="radio" value="1" onclick="<?php echo $wizard->on_click(1);?>" checked="checked" />
+                                            <?php echo __('Create a new account in ICanLocalize', 'sitepress'); ?>
+                                        </label>
+                                        <?php $wizard->create_account(true); ?>
+                                    </li>
+                                    <li>
+                                        <label><input id="icl_transfer" name="icl_transfer" type="radio" value="3" onclick="<?php echo $wizard->on_click(3);?>" />
+                                            <?php echo __('Transfer to an existing account at ICanLocalize', 'sitepress'); ?>
+                                        </label>
+                                            
+                                        <?php $wizard->transfer_to_account(); ?>
+                                    </li>
+                                </ul>
+                                    
+                                <div class="icl_form_errors" id="icl_account_errors" style="display:none">
+                                </div>
+                                <div class="icl_form_success" id="icl_account_success" style="display:none">
+                                </div>
+                                    
                                 <p class="submit">                                         
                                     <input type="hidden" name="create_account" value="0" />
-                                    <input class="button" name="configure account" value="<?php echo __('Save', 'sitepress') ?>" type="submit" 
-                                        <?php if($icl_account_ready_errors):  ?>disabled="disabled"<?php endif; ?> />
-                                    <a href="javascript:;" onclick="jQuery('#icl_configure_account').hide();jQuery('#icl_create_account').fadeIn();"><?php echo __('These access settings are OK.', 'sitepress') ?></a>
+                                    <input id="icl_save_account_transfer" type="button" class="button-secondary action" value="<?php echo __('Transfer', 'sitepress') ?>" />
+                                    <span class="icl_ajx_response" id="icl_ajx_response_account"></span>
+                                    <a href="javascript:;" onclick="jQuery('#icl_configure_account_transfer').hide();jQuery('#icl_transfer_this_account').fadeIn();"><?php echo __('I don\'t want to transfer this site.', 'sitepress') ?></a>
                                 </p>
                                 </form>    
                 

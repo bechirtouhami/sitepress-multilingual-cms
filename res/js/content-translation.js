@@ -6,6 +6,7 @@ addLoadEvent(function(){
     jQuery('.icl_tr_to').change(iclShowNextButtonStep1);
     jQuery('#icl_save_language_pairs').click(saveLanguagePairs);    
     jQuery('#icl_save_site_description').click(saveSiteDescription);    
+    jQuery('#icl_save_account_transfer').click(doAccountTransfer);    
     jQuery('form[name="icl_more_options"]').submit(iclSaveForm);
     jQuery('form[name="icl_more_options"]').submit(iclSaveMoreOptions);
     jQuery('form[name="icl_editor_account"]').submit(iclSaveForm);    
@@ -32,6 +33,9 @@ addLoadEvent(function(){
     
     if (location.href.indexOf("show_config=1") != -1) {
         icl_toggle_account_setup();
+        location.href = location.href.replace("&show_config=1", "")
+        location.href = location.href.replace("?show_config=1&", "&")
+        location.href = location.href.replace("?show_config=1", "")
         location.href = location.href + '#icl_account_setup';
     }
 
@@ -159,6 +163,33 @@ function saveSiteDescription(){
                 fadeInAjxResp('#icl_ajx_response_site',spl[1],true);
             }else{                        
                 fadeInAjxResp('#icl_ajx_response_site',icl_ajx_error + spl[1],true);
+            }  
+        }
+    }); 
+    
+}
+
+function doAccountTransfer(){
+    fadeInAjxResp('#icl_ajx_response_account', icl_ajxloaderimg);
+    jQuery('#icl_account_errors').hide();
+    jQuery('#icl_account_success').hide();
+    var qargs = new Array();
+    jQuery.ajax({
+        type: "POST",
+        url: icl_ajx_url,
+        data: "icl_ajx_action=do_account_transfer&"+jQuery('#icl_configure_account_transfer').serialize(),
+        success: function(msg){
+            alert(msg);
+            spl = msg.split('|');
+            if(spl[0]=='1'){
+                fadeInAjxResp('#icl_ajx_response_account',spl[1],true);
+                jQuery('#icl_account_success').text(spl[1]);
+                jQuery('#icl_account_success').fadeIn();
+            }else{
+                jQuery('#icl_account_errors').text(spl[1]);
+                jQuery('#icl_account_errors').fadeIn();
+                
+                fadeInAjxResp('#icl_ajx_response_account',spl[1],true);
             }  
         }
     }); 

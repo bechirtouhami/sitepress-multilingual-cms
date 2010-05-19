@@ -151,6 +151,31 @@ switch($_REQUEST['icl_ajx_action']){
         
         echo '1|' . __('Your site description has been saved.', 'sitepress');
         break;
+    case 'do_account_transfer':
+        
+        if ($_POST['icl_new'] != '1') {
+            $_POST['user']['email'] = $_POST['user']['email2'];
+        }
+        
+        if ($_POST['user']['email'] == '') {
+            echo '0|' . __('Please enter an email address');
+            break;
+        }
+        if (!$this->transfer_icl_account($_POST['icl_new'] == '1')) {
+            echo '0|' . $_POST['icl_form_errors'];
+        } else {
+            $iclsettings['icl_account_email'] = $_POST['user']['email'];
+            $iclsettings['support_icl_account_email'] = $_POST['user']['email'];
+            $this->save_settings($iclsettings);
+            
+            if ($_POST['icl_new'] == '1') {
+                echo '1|' . sprintf(__('An account for %s has been created at ICanLocalize. This site has been transfered to the new account.', 'sitepress'), $_POST['user']['email']);
+            } else {
+                echo '1|' . sprintf(__('This site has been transfered to the ICanLocalize account of %s.', 'sitepress'), $_POST['user']['email']);
+            }
+        }
+        break;
+    
     case 'toggle_content_translation':
         $redir = '';
         $iclsettings['enable_icl_translations'] = $_POST['new_val'];

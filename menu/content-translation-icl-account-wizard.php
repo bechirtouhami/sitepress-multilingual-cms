@@ -34,20 +34,25 @@ class ICL_account_wizard {
         
         ?>
         
-            <form class="icl_account_form" id="icl_create_account" method="post" action="admin.php?page=<?php echo ICL_PLUGIN_FOLDER  ?>/menu/content-translation.php#icl_create_account_form" <?php if($sitepress->icl_support_configured()): ?>style="display:none"<?php endif; ?>>
-            <?php
-				if ($transfer_after_create) {
-					wp_nonce_field('icl_create_account_and_transfer', 'icl_create_account_and_transfer_nonce');
-					?>
-		            <p style="line-height:1.5"><?php _e('Choose this option to create a new account, which would be responsible for paying for translation work.', 'sitepress'); ?></p>
-					<?php
-				} else {
-					wp_nonce_field('icl_create_account', 'icl_create_account_nonce');
-					?>
-		            <p style="line-height:1.5"><?php _e('Creating an account in ICanLocalize is free. You will only need to pay when sending posts and pages for translation.', 'sitepress'); ?></p>
-					<?php
-				}
-			?>    
+            <?php if(!$sitepress->icl_account_configured()): ?>        
+				<form class="icl_account_form" id="icl_create_account" method="post" action="admin.php?page=<?php echo ICL_PLUGIN_FOLDER  ?>/menu/content-translation.php#icl_create_account_form" <?php if($sitepress->icl_support_configured()): ?>style="display:none"<?php endif; ?>>
+				<?php
+					if ($transfer_after_create) {
+						wp_nonce_field('icl_create_account_and_transfer', 'icl_create_account_and_transfer_nonce');
+						?>
+						<p style="line-height:1.5"><?php _e('Choose this option to create a new account, which would be responsible for paying for translation work.', 'sitepress'); ?></p>
+						<?php
+					} else {
+						wp_nonce_field('icl_create_account', 'icl_create_account_nonce');
+						?>
+						<p style="line-height:1.5"><?php _e('Creating an account in ICanLocalize is free. You will only need to pay when sending posts and pages for translation.', 'sitepress'); ?></p>
+						<?php
+					}
+				?>
+			<?php else: ?>
+	            <div class="icl_account_form" id="icl_create_account" <?php if($_POST['icl_transfer'] == '3'): ?>style="display:none"<?php endif;?>>
+				<p style="line-height:1.5"><?php _e('Choose this option to create a new account, which would be responsible for paying for translation work.', 'sitepress'); ?></p>
+			<?php endif; ?>
 
             
             <table class="form-table icl-account-setup">
@@ -66,7 +71,7 @@ class ICL_account_wizard {
                 </tr>
                 </tbody>
             </table>
-            <?php if(!$sitepress_settings['content_translation_setup_complete']): ?>        
+            <?php if(!$sitepress->icl_account_configured()): ?>        
                 <p class="submit">                                        
                     <div style="text-align:right">
                         <?php //Hidden button for catching "Enter" key ?>                                            
@@ -78,16 +83,10 @@ class ICL_account_wizard {
                     </div>
                 </p>
                 <div class="icl_progress"><?php _e('Saving. Please wait...', 'sitepress'); ?></div>
-            <?php else: ?>
-                <p class="submit">
-                    <input type="hidden" name="create_account" value="1" />
-                    <input class="button" name="create account" value="<?php echo __('Create account', 'sitepress') ?>" type="submit" 
-                        <?php if($icl_account_ready_errors):  ?>disabled="disabled"<?php endif; ?> />
-                    <a href="javascript:;" onclick="jQuery('#icl_create_account').hide();jQuery('#icl_configure_account').fadeIn();"><?php echo __('I already have an account at ICanLocalize', 'sitepress') ?></a>                                        
-                </p>
-                <div class="icl_progress"><?php _e('Saving. Please wait...', 'sitepress'); ?></div>
-            <?php endif; ?>
-            </form>
+	            </form>
+			<?php else: ?>
+	            </div>
+			<?php endif; ?>
         <?php                                
         }
         
@@ -134,10 +133,15 @@ class ICL_account_wizard {
         }
   
         function transfer_to_account() {
+			global $sitepress;
         
             ?>
-            <form class="icl_account_form" id="icl_transfer_account" action="admin.php?page=<?php echo ICL_PLUGIN_FOLDER  ?>/menu/content-translation.php#icl_create_account_form" method="post" style="display:none">
-            <?php wp_nonce_field('icl_transfer_account','icl_transfer_account_nonce') ?>
+            <?php if(!$sitepress->icl_account_configured()): ?>        
+	            <form class="icl_account_form" id="icl_transfer_account" action="admin.php?page=<?php echo ICL_PLUGIN_FOLDER  ?>/menu/content-translation.php#icl_create_account_form" method="post" style="display:none">
+	            <?php wp_nonce_field('icl_transfer_account','icl_transfer_account_nonce') ?>
+			<?php else: ?>
+	            <div class="icl_account_form" id="icl_transfer_account" <?php if($_POST['icl_transfer'] != '3'): ?>style="display:none"<?php endif;?>>
+			<?php endif; ?>
 			
 		    <p style="line-height:1.5"><?php _e('Choose this option to transfer this project to another ICanLocalize account, which will be responsible for paying for translation work.', 'sitepress'); ?></p>
 
@@ -145,7 +149,7 @@ class ICL_account_wizard {
                 <tbody>
                 <tr class="form-field">
                     <th scope="row"><?php echo __('Email', 'sitepress')?></th>
-                    <td><input name="user[email]" type="text" value="<?php echo  $_POST['user']['email']?$_POST['user']['email']:$current_user->data->user_email ?>" /></td>
+                    <td><input name="user[email2]" type="text" value="<?php echo  $_POST['user']['email']?$_POST['user']['email']:$current_user->data->user_email ?>" /></td>
                 </tr>
                 <tr class="form-field">
                     <th scope="row"><?php echo __('Password', 'sitepress')?></th>
@@ -153,7 +157,7 @@ class ICL_account_wizard {
                 </tr>        
                 </tbody>
             </table>
-            <?php if(!$sitepress_settings['content_translation_setup_complete']): ?>        
+            <?php if(!$sitepress->icl_account_configured()): ?>        
                 <p class="submit">                                        
                     <div style="text-align:right">
                         <?php //Hidden button for catching "Enter" key ?>
@@ -165,16 +169,10 @@ class ICL_account_wizard {
                     </div>
                 </p>
                 <div class="icl_progress"><?php _e('Saving. Please wait...', 'sitepress'); ?></div>                                        
-            <?php else: ?>
-                <p class="submit">                                        
-                    <input type="hidden" name="create_account" value="0" />                                        
-                    <input class="button" name="configure account" value="<?php echo __('Add this project to my account', 'sitepress') ?>" type="submit" 
-                        <?php if($icl_account_ready_errors):  ?>disabled="disabled"<?php endif; ?> />
-                    <a href="javascript:;" onclick="jQuery('#icl_configure_account').hide();jQuery('#icl_create_account').fadeIn();"><?php echo __('Create a new ICanLocalize account', 'sitepress') ?></a>                                        
-                </p>                                    
-                <div class="icl_progress"><?php _e('Saving. Please wait...', 'sitepress'); ?></div>
-            <?php endif; ?>
-            </form>    
+	            </form>
+			<?php else: ?>
+	            </div>
+			<?php endif; ?>
         <?php                                
         }
   
