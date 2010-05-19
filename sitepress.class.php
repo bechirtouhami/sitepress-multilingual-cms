@@ -4886,16 +4886,19 @@ class SitePress{
     
     function get_translatable_documents(){
         global $wp_post_types;
+        $icl_post_types = array();
         foreach($wp_post_types as $k=>$v){
             if(!in_array($k, array('attachment','revision','nav_menu_item')) && ($this->settings['custom_posts_sync_option'][$k] == 1 || in_array($k, array('post','page')))){
                 $icl_post_types[$k] = $v;
             }        
         }
         /* preWP3 compatibility  - start */
-        $icl_post_types['post']->labels['singular_name'] = 'Post';
-        $icl_post_types['post']->labels['name'] = 'Posts';
-        $icl_post_types['page']->labels['singular_name'] = 'Page';
-        $icl_post_types['page']->labels['name'] = 'Pages';
+        if(ICL_PRE_WP3){
+            $icl_post_types['post']->labels['singular_name'] = 'Post';
+            $icl_post_types['post']->labels['name'] = 'Posts';
+            $icl_post_types['page']->labels['singular_name'] = 'Page';
+            $icl_post_types['page']->labels['name'] = 'Pages';
+        }
         /* preWP3 compatibility  - end */
         // backward compatibility like WP does until WP 3.1
         foreach($icl_post_types as $k=>$v){            
