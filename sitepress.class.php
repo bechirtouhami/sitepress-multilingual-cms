@@ -4904,7 +4904,7 @@ class SitePress{
             }
         }
         foreach($cposts as $k=>$cpost){
-            if(!isset($sitepress_settings['custom_posts_sync_option'][$k])){
+            if(!isset($this->settings['custom_posts_sync_option'][$k])){
                 $cposts_sync_not_set[] = $cpost->label ? $cpost->label : $cpost->labels['name'];
             }    
         }    
@@ -4917,7 +4917,7 @@ class SitePress{
         
         $ctaxonomies = array_diff(array_keys((array)$wp_taxonomies), array('post_tag','category', 'nav_menu', 'link_category'));    
         foreach($ctaxonomies as $ctax){
-            if(!isset($sitepress_settings['taxonomies_sync_option'][$ctax])){
+            if(!isset($this->settings['taxonomies_sync_option'][$ctax])){
                 $tax_sync_not_set[] = $wp_taxonomies[$ctax]->label;
             }    
         }
