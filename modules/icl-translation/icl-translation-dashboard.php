@@ -126,7 +126,7 @@
                     Type:</label> 
                     <select name="filter[type]">
                         <?php foreach($icl_post_types as $k=>$v):?>
-                        <option value="<?php echo $k ?>" <?php if(isset($icl_translation_filter['type_on']) && $icl_translation_filter['type']==$k):?>selected="selected"<?php endif?>><?php echo $v->singular_label ?></option>
+                        <option value="<?php echo $k ?>" <?php if(isset($icl_translation_filter['type_on']) && $icl_translation_filter['type']==$k):?>selected="selected"<?php endif?>><?php echo $v->labels['singular_name'] ?></option>
                         <?php endforeach; ?>
                     </select>
                                         
@@ -230,7 +230,7 @@
                     <?php endif; ?>
                 </td>
                 <td scope="col">
-                    <?php echo $icl_post_types[$doc->post_type]->singular_label; ?>
+                    <?php echo $icl_post_types[$doc->post_type]->labels['singular_name']; ?>
                     <input class="icl_td_post_type" name="icl_post_type[<?php echo $doc->post_id ?>]" type="hidden" value="<?php echo $doc->post_type ?>" />
                 </td>
                 <td scope="col"><?php echo $icl_post_statuses[$doc->post_status]; ?></td>

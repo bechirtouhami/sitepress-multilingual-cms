@@ -4891,6 +4891,17 @@ class SitePress{
                 $icl_post_types[$k] = $v;
             }        
         }
+        /* preWP3 compatibility  - start */
+        $icl_post_types['post']->labels['singular_name'] = 'Post';
+        $icl_post_types['post']->labels['name'] = 'Posts';
+        $icl_post_types['page']->labels['singular_name'] = 'Page';
+        $icl_post_types['page']->labels['name'] = 'Pages';
+        /* preWP3 compatibility  - end */
+        // backward compatibility like WP does until WP 3.1
+        foreach($icl_post_types as $k=>$v){            
+            if(!isset($v->singular_name)) $icl_post_types[$k]->singular_name = $v->labels['singular_name'];
+            if(!isset($v->name)) $icl_post_types[$k]->singular_name = $v->labels['name'];
+        }
         return $icl_post_types;        
     }
     
@@ -4905,7 +4916,7 @@ class SitePress{
         }
         foreach($cposts as $k=>$cpost){
             if(!isset($this->settings['custom_posts_sync_option'][$k])){
-                $cposts_sync_not_set[] = $cpost->label ? $cpost->label : $cpost->labels['name'];
+                $cposts_sync_not_set[] = $cpost->labels['name'];
             }    
         }    
         if(!empty($cposts_sync_not_set)){
@@ -4959,6 +4970,11 @@ class SitePress{
             if($default_language != $lang['code']){$default = '';}else{$default = ' ('.__('default','sitepress').')';}
             $alanguages_links[] = $lang['display_name'] . $default;
         }
+        $pss_status = array(
+            'valid'     => true,
+            'expires'   => 1305204975,
+            'amount'    => 50
+        );
         ?>
         <p><?php echo sprintf(__('WPML version: %s'), '<strong>' . ICL_SITEPRESS_VERSION . '</strong>'); ?></p>        
         <?php if(!$this->settings['setup_complete']): ?>
@@ -4966,15 +4982,14 @@ class SitePress{
         <?php else: ?>
         <p><?php _e('Currently configured languages:', 'sitepress')?> <b><?php echo join(', ', (array)$alanguages_links)?></b> (<a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/languages.php"><?php _e('edit', 'sitepress'); ?></a>)</p>
         <?php endif; ?>
+        <p><?php printf(__('Support Licence - %s', 'sitepress'), $pss_status['valid'] ? sprintf(__('Valid! (amount: %d - until %s)', 'sitepress'),$pss_status['amount'], date('d/m/Y', $pss_status['expires'])) : __('Invalid', 'sitepress')); ?> 
+            <?php if(!$pss_status['valid']):?><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/support.php"><?php _e('purchase', 'sitepress'); ?></a><?php endif; ?></p>
+        <p><?php printf(__('Professional Translation - %s', 'sitepress'), $this->get_icl_translation_enabled() ? __('Enabled','sitepress') : _e('Dissabled','sitepress')); ?> 
+            <a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/content-translation.php"><?php _e('configure', 'sitepress'); ?></a></p>
         <?php do_action('icl_dashboard_widget_content'); ?>
         <?php if(!$this->settings['basic_menu']):?>
         <p><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/overview.php"><?php _e('more', 'sitepress')?></a></p>
-        <?php else: 
-            if($this->settings['setup_complete']){
-                echo '<br />';
-                include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php'; 
-            }                            
-        endif; ?>
+        <?php endif; ?>
         <?php
     }
        

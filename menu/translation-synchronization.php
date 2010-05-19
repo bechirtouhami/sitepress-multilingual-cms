@@ -18,7 +18,7 @@
     }
     foreach($cposts as $k=>$cpost){
         if(!isset($sitepress_settings['custom_posts_sync_option'][$k])){
-            $cposts_sync_not_set[] = $cpost->label ? $cpost->label : $cpost->labels['name'];
+            $cposts_sync_not_set[] = $cpost->labels['name'];
         }    
     }    
     if(!empty($cposts_sync_not_set)){
@@ -177,7 +177,7 @@
         <tbody>
             <?php foreach($cposts as $k=>$cpost): ?>
             <tr>
-                <td><?php echo $cpost->label ? $cpost->label : $cpost->labels['name'];; ?></td>
+                <td><?php echo $cpost->labels['name'];; ?></td>
                 <td>
                     <label><input type="radio" name="icl_sync_custom_posts[<?php echo $k ?>]" value="1" <?php
                         if($sitepress_settings['custom_posts_sync_option'][$k]==1) echo ' checked="checked"'
@@ -206,7 +206,7 @@
     <table class="widefat">
         <thead>
             <tr>
-                <th width="60%"><?php _e('Custom taxonomies (other than categories and tags)', 'sitepress');?></th>
+                <th width="60%"><?php _e('Custom taxonomies', 'sitepress');?></th>
                 <th>&nbsp;</th>
             </tr>
         </thead>
