@@ -11,14 +11,16 @@
     $notice = '';
     
     $cposts = array();
-    foreach($wp_post_types as $k=>$v){
-        if(!in_array($k, array('post','page','attachment','revision','nav_menu_item'))){
+    $icl_post_types = $sitepress->get_translatable_documents();
+    foreach($icl_post_types as $k=>$v){
+        if(!in_array($k, array('post','page'))){
             $cposts[$k] = $v;        
         }
     }
+    
     foreach($cposts as $k=>$cpost){
         if(!isset($sitepress_settings['custom_posts_sync_option'][$k])){
-            $cposts_sync_not_set[] = $cpost->labels['name'];
+            $cposts_sync_not_set[] = $cpost->label->name;
         }    
     }    
     if(!empty($cposts_sync_not_set)){
@@ -177,7 +179,7 @@
         <tbody>
             <?php foreach($cposts as $k=>$cpost): ?>
             <tr>
-                <td><?php echo $cpost->labels['name'];; ?></td>
+                <td><?php echo $cpost->labels->name; ?></td>
                 <td>
                     <label><input type="radio" name="icl_sync_custom_posts[<?php echo $k ?>]" value="1" <?php
                         if($sitepress_settings['custom_posts_sync_option'][$k]==1) echo ' checked="checked"'
