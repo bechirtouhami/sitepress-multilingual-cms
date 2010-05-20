@@ -146,7 +146,7 @@ class SitePress_Support {
 			foreach($subscriptions as $k => $v) {
 				if ($v['attr']['owner_id'] == $this->site_id) {
 					$valid = ($v['attr']['valid'] == 'true') ? true : false;
-					array(
+					return array(
 						'valid' => $valid,
 						'expires' => $v['attr']['expires_date'],
 						'amount' => $v['attr']['amount']
