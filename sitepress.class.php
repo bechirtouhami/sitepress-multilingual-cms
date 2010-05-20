@@ -4116,7 +4116,7 @@ class SitePress{
         if (@$page_on_front_sc[$this->this_lang] === null || ICL_DISABLE_CACHE) {
             $page_on_front_sc[$this->this_lang] = false;
             $page_on_front = $wpdb->get_var("SELECT option_value FROM {$wpdb->options} WHERE option_name='page_on_front'");
-            $trid = $this->get_element_language_details($page_on_front, 'post')->trid;
+            $trid = $this->get_element_language_details($page_on_front, 'post_page')->trid;
             if($trid){            
                 $translations = $wpdb->get_results("SELECT element_id, language_code FROM {$wpdb->prefix}icl_translations WHERE trid={$trid}");
                 foreach($translations as $t){
