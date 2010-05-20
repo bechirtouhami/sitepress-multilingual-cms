@@ -239,9 +239,8 @@ class SitePress_Support {
 
 	function offer_renewal() {
 		echo '<p>';
-		printf(__('Renew your licence', 'sitepress'));
+		_e('Renew your licence', 'sitepress');
 		echo '</p>';
-		//$this->offer_subscription();
 	}
 
 	function get_tickets() {
@@ -334,7 +333,6 @@ class SitePress_Support {
 	}
 
 	function create_account_form() {
-		//global $sitepress, $sitepress_settings;
 		global $current_user;
 		$this->form_errors();
 ?>
@@ -379,7 +377,6 @@ class SitePress_Support {
 	function login_to_account_form() {
 		$this->form_errors();
 		global $current_user;
-		//global $sitepress, $sitepress_settings;
 ?>
 		<br /><br />
 		<a href="javascript:;" onclick="jQuery('#icl_support_form_show').slideToggle();" class="icl_support_toggle_link"><?php _e('I already have ICanLocalize account', 'sitepress'); ?></a>
