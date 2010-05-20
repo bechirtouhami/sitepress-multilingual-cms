@@ -103,8 +103,13 @@ if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQ
     
     // Comments translation
     if($sitepress_settings['existing_content_language_verified']){
-        require ICL_PLUGIN_PATH . '/inc/comments-translation/functions.php';    
+        require ICL_PLUGIN_PATH . '/inc/comments-translation/functions.php';
     }
+	
+	if (is_admin() && isset($_GET['page']) && $_GET['page'] == ICL_PLUGIN_FOLDER . '/menu/support.php'){
+		require_once ICL_PLUGIN_PATH . '/inc/support.php';
+		$icl_support = new SitePress_Support();
+	}
     
     require ICL_PLUGIN_PATH . '/inc/compatibility-packages/init-packages.php';
     require ICL_PLUGIN_PATH . '/modules/cache-plugins-integration/cache-plugins-integration.php';
