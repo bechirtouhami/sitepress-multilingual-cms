@@ -911,14 +911,9 @@ if (function_exists('wpml_register_admin_strings')) {
             $id = (int)$temp[0];
             $num = (int)$temp[1];
             if ($id && $num) {
-                $icl_support = get_option('icl_support');
-                $tickets = $icl_support['tickets'];
-                if (isset($tickets[$id])) {
-                    $icl_support['tickets'][$id]['messages'] = $num;
-                    $changed = true;
-                }
-                if ($changed) {
-                    update_option('icl_support', $icl_support);
+                if (isset($iclsettings['icl_support']['tickets'][$id])) {
+                    $iclsettings['icl_support']['tickets'][$id]['messages'] = $num;
+                    $this->save_settings($iclsettings);
                 }
             }
         }
