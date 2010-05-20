@@ -1583,6 +1583,9 @@ class SitePress{
                 $this->settings['content_translation_setup_wizard_step'] = 2;
                 $this->save_settings();
             } else {
+                if ($transfer_to_account) {
+                    $_POST['user']['email'] = $_POST['user']['email2'];
+                }
                 // we will be using the support account for the icl_account
                 $this->settings['site_id'] = $this->settings['support_site_id'];
                 $this->settings['access_key'] = $this->settings['support_access_key'];
