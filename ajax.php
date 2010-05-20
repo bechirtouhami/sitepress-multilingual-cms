@@ -169,9 +169,9 @@ switch($_REQUEST['icl_ajx_action']){
             $this->save_settings($iclsettings);
             
             if ($_POST['icl_new'] == '1') {
-                echo '1|' . sprintf(__('An account for %s has been created at ICanLocalize. This site has been transfered to the new account.', 'sitepress'), $_POST['user']['email']);
+                echo '1|' . sprintf(__('An account for %s has been created at ICanLocalize. This site has been transferred to the new account.', 'sitepress'), $_POST['user']['email']);
             } else {
-                echo '1|' . sprintf(__('This site has been transfered to the ICanLocalize account of %s.', 'sitepress'), $_POST['user']['email']);
+                echo '1|' . sprintf(__('This site has been transferred to the ICanLocalize account of %s.', 'sitepress'), $_POST['user']['email']);
             }
         }
         break;

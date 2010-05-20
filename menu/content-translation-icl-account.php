@@ -92,7 +92,7 @@ $wizard = new ICL_account_wizard();
                                 </p>
                                 </form> 
                 
-                                <form id="icl_configure_account_transfer" action="">
+                                <form id="icl_configure_account_transfer" action="" style="display:none">
                                 <?php wp_nonce_field('icl_change_website_access_data','icl_change_website_access_data_nonce') ?>
 
                                 <?php echo __('You can transfer this site to another ICanLocalize account.', 'sitepress')?>
@@ -121,7 +121,7 @@ $wizard = new ICL_account_wizard();
                                     
                                 <p class="submit">                                         
                                     <input type="hidden" name="create_account" value="0" />
-                                    <input id="icl_save_account_transfer" type="button" class="button-secondary action" value="<?php echo __('Transfer', 'sitepress') ?>" />
+                                    <input id="icl_save_account_transfer" type="button" class="button-secondary action" value="<?php echo __('Transfer this site', 'sitepress') ?>" />
                                     <span class="icl_ajx_response" id="icl_ajx_response_account"></span>
                                     <a href="javascript:;" onclick="jQuery('#icl_configure_account_transfer').hide();jQuery('#icl_transfer_this_account').fadeIn();"><?php echo __('I don\'t want to transfer this site.', 'sitepress') ?></a>
                                 </p>

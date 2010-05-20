@@ -179,7 +179,6 @@ function doAccountTransfer(){
         url: icl_ajx_url,
         data: "icl_ajx_action=do_account_transfer&"+jQuery('#icl_configure_account_transfer').serialize(),
         success: function(msg){
-            alert(msg);
             spl = msg.split('|');
             if(spl[0]=='1'){
                 fadeInAjxResp('#icl_ajx_response_account',spl[1],true);
