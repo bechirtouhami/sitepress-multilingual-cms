@@ -17,10 +17,6 @@ class SitePress_Support {
 	var $initial;
 
 	function __construct() {
-		add_action('init', array(&$this, 'init'));
-	}
-
-	function init() {
 		global $sitepress, $sitepress_settings;
 		$sp_settings = get_option('icl_sitepress_settings');
 		$this->data = $sp_settings['icl_support'];
