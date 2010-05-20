@@ -23,7 +23,7 @@ class SitePress_Support {
 	function init() {
 		global $sitepress, $sitepress_settings;
 		$sp_settings = get_option('icl_sitepress_settings');
-		$this->data = get_option('icl_support', $defaults);
+		$this->data = $sp_settings['icl_support'];
 		$this->request = new WP_Http;
 		
 		if ($sitepress->icl_support_configured()) {
@@ -55,7 +55,8 @@ class SitePress_Support {
 					$_POST['icl_support_subscription_type'] = 1;
 				}
 				$this->data['subscription_type'] = $_POST['icl_support_subscription_type'];
-				update_option('icl_support', $this->data);
+				global $sitepress;
+				$sitepress->save_settings($this->data);
 			}
 			echo '<script type="text/javascript">location.href = "admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/support.php";</script>';
 		} else if ((isset($_POST['icl_support_account']) && $_POST['icl_support_account'] == 'create') || isset($_GET['subscription'])) {
@@ -244,6 +245,7 @@ class SitePress_Support {
 	}
 
 	function get_tickets() {
+		global $sitepress;
 		$url = ICL_API_ENDPOINT . '/support.xml?wid=' . $this->site_id . '&accesskey=' . $this->access_key;
 		$result = $this->request($url);
 		if (isset($result['info']['support_tickets']['support_ticket'])) {
@@ -253,13 +255,13 @@ class SitePress_Support {
 		}
 		if (empty($this->tickets)) {
 			$this->data['tickets'] = $this->tickets = $this->fetched_tickets;
-			update_option('icl_support', $this->data);
+			$sitepress->save_settings($this->data);
 			$this->initial = true;
 		}
 		foreach ($this->fetched_tickets as $id => $v) {
 			if (!isset($this->tickets[$id]) && $v['status'] !== 0) {
 				$this->data['tickets'][$id] = $this->tickets[$id] = $this->fetched_tickets[$id];
-				update_option('icl_support', $this->data);
+				$sitepress->save_settings($this->data);
 			}
 		}
 	}
@@ -314,7 +316,8 @@ class SitePress_Support {
 		
 		echo $updated_tickets . $tickets;
 		if ($update) {
-			update_option('icl_support', $this->data);
+			global $sitepress;
+			$sitepress->save_settings($this->data);
 		}
 ?>
 			</tbody>
