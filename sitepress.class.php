@@ -2380,9 +2380,10 @@ class SitePress{
 
     function comment_feed_join($join){
         global $wpdb, $wp_query;        
+        $type = $wp_query->query_vars['post_type'] ? $wp_query->query_vars['post_type'] : 'post';
         $wp_query->query_vars['is_comment_feed'] = true;
         $join .= " JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->comments}.comment_post_ID = t.element_id 
-                    AND t.element_type='post' {$cond} AND t.language_code='{$wpdb->escape($this->this_lang)}'";
+                    AND t.element_type='post_{$type}' {$cond} AND t.language_code='{$wpdb->escape($this->this_lang)}'";
         return $join;
     }
     
@@ -4135,7 +4136,7 @@ class SitePress{
         if (@$page_for_posts_sc[$this->this_lang] === null || ICL_DISABLE_CACHE) {
             $page_for_posts_sc[$this->this_lang] = false;
             $page_for_posts = $wpdb->get_var("SELECT option_value FROM {$wpdb->options} WHERE option_name='page_for_posts'");            
-            $trid = $this->get_element_language_details($page_for_posts, 'post')->trid;
+            $trid = $this->get_element_language_details($page_for_posts, 'post_page')->trid;
             if($trid){
                 $translations = $wpdb->get_results("SELECT element_id, language_code FROM {$wpdb->prefix}icl_translations WHERE trid={$trid}");
                 foreach($translations as $t){
@@ -4153,8 +4154,8 @@ class SitePress{
         $warn_home = $warn_posts = '';
         if( 'page' == get_option('show_on_front') && get_option('page_on_front')){
             $page_on_front = get_option('page_on_front');
-            $page_home_trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id={$page_on_front} AND element_type='post'");
-            $page_home_translations = $this->get_element_translations($page_home_trid, 'post');                 
+            $page_home_trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id={$page_on_front} AND element_type='post_page'");
+            $page_home_translations = $this->get_element_translations($page_home_trid, 'post_page');                 
             $missing_home = array();               
             foreach($this->active_languages as $lang){
              if(!isset($page_home_translations[$lang['code']])){
@@ -4173,8 +4174,8 @@ class SitePress{
         }
         if(get_option('page_for_posts')){
             $page_for_posts = get_option('page_for_posts');
-            $page_posts_trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id={$page_for_posts} AND element_type='post'");
-            $page_posts_translations = $this->get_element_translations($page_posts_trid, 'post');                 
+            $page_posts_trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id={$page_for_posts} AND element_type='post_page'");
+            $page_posts_translations = $this->get_element_translations($page_posts_trid, 'post_page');                 
             $missing_posts = array();               
             foreach($this->active_languages as $lang){
              if(!isset($page_posts_translations[$lang['code']])){
@@ -4600,7 +4601,7 @@ class SitePress{
             case 'blogger.getPost': // yet this doesn't return custom fields
                 if(isset($params['methodCall']['params']['param'][1]['value']['int']['value'])){
                     $page_id = $params['methodCall']['params']['param'][1]['value']['int']['value'];
-                    $lang_details = $this->get_element_language_details($page_id, 'post');
+                    $lang_details = $this->get_element_language_details($page_id, 'post_post');
                     update_post_meta($page_id, '_wpml_language', $lang_details->language_code);
                     update_post_meta($page_id, '_wpml_trid', $lang_details->trid);
                     $active_languages = $this->get_active_languages();
@@ -4617,7 +4618,7 @@ class SitePress{
             case 'metaWeblog.getPost':
                 if(isset($params['methodCall']['params']['param'][0]['value']['int']['value'])){
                     $page_id = $params['methodCall']['params']['param'][0]['value']['int']['value'];
-                    $lang_details = $this->get_element_language_details($page_id, 'post');
+                    $lang_details = $this->get_element_language_details($page_id, 'post_post');
                     update_post_meta($page_id, '_wpml_language', $lang_details->language_code);
                     update_post_meta($page_id, '_wpml_trid', $lang_details->trid);
                     $active_languages = $this->get_active_languages();
