@@ -374,6 +374,9 @@ class SitePress{
             // experimental
             if( $this->settings['language_negotiation_type']==1  && $this->get_current_language()!=$this->get_default_language()){
                 add_filter('option_rewrite_rules', array($this, 'rewrite_rules_filter'));              
+                if(version_compare($GLOBALS['wp_version'], '2.8.4', '<=')){
+                    add_filter('transient_rewrite_rules', array($this, 'rewrite_rules_filter'));              
+                }
             }            
                 
             $this->set_language_cookie();  
@@ -4131,7 +4134,7 @@ class SitePress{
         static $page_for_posts_sc = array();
         if (@$page_for_posts_sc[$this->this_lang] === null || ICL_DISABLE_CACHE) {
             $page_for_posts_sc[$this->this_lang] = false;
-            $page_for_posts = $wpdb->get_var("SELECT option_value FROM {$wpdb->options} WHERE option_name='page_for_posts'");
+            $page_for_posts = $wpdb->get_var("SELECT option_value FROM {$wpdb->options} WHERE option_name='page_for_posts'");            
             $trid = $this->get_element_language_details($page_for_posts, 'post')->trid;
             if($trid){
                 $translations = $wpdb->get_results("SELECT element_id, language_code FROM {$wpdb->prefix}icl_translations WHERE trid={$trid}");
