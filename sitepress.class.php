@@ -4985,11 +4985,18 @@ class SitePress{
             if($default_language != $lang['code']){$default = '';}else{$default = ' ('.__('default','sitepress').')';}
             $alanguages_links[] = $lang['display_name'] . $default;
         }
-        $pss_status = array(
-            'valid'     => true,
-            'expires'   => 1305204975,
-            'amount'    => 50
-        );
+        require_once(ICL_PLUGIN_PATH . '/inc/support.php');
+        $SitePress_Support = new SitePress_Support;
+        $pss_status = $SitePress_Support->get_subscription();
+        if(!isset($pss_status)){
+            $pss_string_status = __('None', 'sitepress'); 
+        }else{
+            if($pss_status['valid']){
+                $pss_string_status = '<span class="icl_valid_text">' . sprintf(__('Valid! (amount: $%d - until %s)', 'sitepress'), $pss_status['amount'], date('d/m/Y', $pss_status['expires'])) . '</span>';
+            }else{
+                $pss_string_status = '<span class="icl_error_text">' . sprintf(__('Expired! - since %s', 'sitepress'), date('d/m/Y', $pss_status['expires'])) . '</span>';
+            }
+        }
         ?>
         <p><?php echo sprintf(__('WPML version: %s'), '<strong>' . ICL_SITEPRESS_VERSION . '</strong>'); ?></p>        
         <?php if(!$this->settings['setup_complete']): ?>
@@ -4997,7 +5004,7 @@ class SitePress{
         <?php else: ?>
         <p><?php _e('Currently configured languages:', 'sitepress')?> <b><?php echo join(', ', (array)$alanguages_links)?></b> (<a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/languages.php"><?php _e('edit', 'sitepress'); ?></a>)</p>
         <?php endif; ?>
-        <p><?php printf(__('Support Licence - %s', 'sitepress'), $pss_status['valid'] ? sprintf(__('Valid! (amount: %d - until %s)', 'sitepress'),$pss_status['amount'], date('d/m/Y', $pss_status['expires'])) : __('Invalid', 'sitepress')); ?> 
+        <p><?php printf(__('Support Licence - %s', 'sitepress'), $pss_string_status); ?> 
             <?php if(!$pss_status['valid']):?><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/support.php"><?php _e('purchase', 'sitepress'); ?></a><?php endif; ?></p>
         <p><?php printf(__('Professional Translation - %s', 'sitepress'), $this->get_icl_translation_enabled() ? __('Enabled','sitepress') : _e('Dissabled','sitepress')); ?> 
             <a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/content-translation.php"><?php _e('configure', 'sitepress'); ?></a></p>
