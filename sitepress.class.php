@@ -2843,7 +2843,8 @@ class SitePress{
             $lang_details = $this->get_element_language_details($tt_id, $icl_el_type);
             $term_lang = $lang_details->language_code;
         }elseif($_POST['action']=='inline-save'){
-            $lang_details = $this->get_element_language_details($_POST['post_ID'], 'post');
+            $post_type = $wpdb->get_var("SELECT post_type FROM {$wpdb->posts} WHERE ID=" . $_POST['post_ID']);
+            $lang_details = $this->get_element_language_details($_POST['post_ID'], 'post_' . $post_type);
             $term_lang = $lang_details->language_code;
         }
 
