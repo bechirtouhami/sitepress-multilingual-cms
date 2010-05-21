@@ -4859,14 +4859,16 @@ class SitePress{
     }
     
     function set_language_cookie(){ 
-        if(preg_match('@\.(css|js|png|jpg|gif|jpeg|bmp)@i',basename(preg_replace('@\?.*$@','',$_SERVER['REQUEST_URI']))) ||
-            isset($_POST['icl_ajx_action']) || isset($_POST['_ajax_nonce'])){
-            return;
+        if (!headers_sent()){
+            if(preg_match('@\.(css|js|png|jpg|gif|jpeg|bmp)@i',basename(preg_replace('@\?.*$@','',$_SERVER['REQUEST_URI']))) ||
+                isset($_POST['icl_ajx_action']) || isset($_POST['_ajax_nonce'])){
+                return;
+            }
+            
+            $cookie_domain = defined('COOKIE_DOMAIN') ? COOKIE_DOMAIN : $_SERVER['HTTP_HOST'];
+            $cookie_path = defined('COOKIEPATH') ? COOKIEPATH : '/';                
+            setcookie('_icl_current_language', $this->get_current_language(), time()+86400, $cookie_path, $cookie_domain);
         }
-        
-        $cookie_domain = defined('COOKIE_DOMAIN') ? COOKIE_DOMAIN : $_SERVER['HTTP_HOST'];
-        $cookie_path = defined('COOKIEPATH') ? COOKIEPATH : '/';                
-        setcookie('_icl_current_language', $this->get_current_language(), time()+86400, $cookie_path, $cookie_domain);
     }
     
     function get_language_cookie(){
