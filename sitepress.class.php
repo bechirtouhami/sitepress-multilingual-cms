@@ -4989,7 +4989,7 @@ class SitePress{
         require_once(ICL_PLUGIN_PATH . '/inc/support.php');
         $SitePress_Support = new SitePress_Support;
         $pss_status = $SitePress_Support->get_subscription();
-        if(!isset($pss_status)){
+        if(!isset($pss_status['valid'])){
             $pss_string_status = __('None', 'sitepress'); 
         }else{
             if($pss_status['valid']){
@@ -5006,9 +5006,9 @@ class SitePress{
         <p><?php _e('Currently configured languages:', 'sitepress')?> <b><?php echo join(', ', (array)$alanguages_links)?></b> (<a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/languages.php"><?php _e('edit', 'sitepress'); ?></a>)</p>
         <?php endif; ?>
         <p><?php printf(__('Support Licence - %s', 'sitepress'), $pss_string_status); ?> 
-            <?php if(!$pss_status['valid']):?><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/support.php"><?php _e('purchase', 'sitepress'); ?></a><?php endif; ?></p>
+            <?php if(!$pss_status['valid']):?>(<a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/support.php"><?php _e('purchase', 'sitepress'); ?></a>)<?php endif; ?></p>
         <p><?php printf(__('Professional Translation - %s', 'sitepress'), $this->get_icl_translation_enabled() ? __('Enabled','sitepress') : _e('Dissabled','sitepress')); ?> 
-            <a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/content-translation.php"><?php _e('configure', 'sitepress'); ?></a></p>
+            (<a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/content-translation.php"><?php _e('configure', 'sitepress'); ?></a>)</p>
         <?php do_action('icl_dashboard_widget_content'); ?>
         <?php if(!$this->settings['basic_menu']):?>
         <p><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/overview.php"><?php _e('more', 'sitepress')?></a></p>
