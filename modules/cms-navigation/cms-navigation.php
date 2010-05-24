@@ -146,7 +146,7 @@ class CMSNavigation{
             
             $post_types = $sitepress->get_translatable_documents(true);
             unset($post_types['post'],$post_types['page']);
-            if(($pn = get_query_var('pagename')) && isset($post_types[$pn])){
+            if((($pn = get_query_var('pagename')) || (($pn = get_query_var('post_type')) && !get_query_var('p') && !get_query_var($pn))) && isset($post_types[$pn])){
                 echo $post_type_name  = $post_types[$pn]->labels->name;
             }elseif(($post_type = get_query_var('post_type')) && get_query_var($post_type)){                
                 $post_type_name  = $post_types[$post_type]->labels->name;
@@ -161,7 +161,8 @@ class CMSNavigation{
                 ?><a href="<?php echo get_permalink($page_for_posts); ?>"><?php echo get_the_title($page_for_posts) ?></a><?php 
                     echo $this->settings['breadcrumbs_separator'];
             }
-            if(is_home() && $page_for_posts){                
+            
+            if(is_home() && $page_for_posts && !isset($post_type_name)){                
                 echo get_the_title($page_for_posts);
             }elseif(($post_type = get_query_var('post_type')) && get_query_var($post_type)){                
                 the_post();
