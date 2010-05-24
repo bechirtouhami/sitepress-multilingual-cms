@@ -99,7 +99,7 @@ class CMSNavigation{
     }
         
     function cms_navigation_breadcrumb(){
-        global $post, $sitepress, $current_user, $wpdb, $sitepress_settings;
+        global $post, $sitepress, $current_user, $wpdb, $sitepress_settings, $wp_rewrite;
         
         if(func_num_args()){
             $args = func_get_args();
@@ -144,14 +144,30 @@ class CMSNavigation{
                 }
             }
             
-            if(!is_page() && !is_home() && $page_for_posts){
+            $post_types = $sitepress->get_translatable_documents(true);
+            unset($post_types['post'],$post_types['page']);
+            if(($pn = get_query_var('pagename')) && isset($post_types[$pn])){
+                echo $post_type_name  = $post_types[$pn]->labels->name;
+            }elseif(($post_type = get_query_var('post_type')) && get_query_var($post_type)){                
+                $post_type_name  = $post_types[$post_type]->labels->name;
+                if($wp_rewrite->using_permalinks()){
+                    $post_type_url  =  trailingslashit($sitepress->convert_url(get_option('home') .'/' . $post_types[$post_type]->rewrite['slug'])) ;    
+                }else{
+                    $post_type_url  =  $sitepress->convert_url(get_option('home') . '/?post_type=' . $post_types[$post_type]->query_var);
+                }
+                ?><a href="<?php echo $post_type_url ?>"><?php echo htmlspecialchars($post_type_name) ?></a><?php
+                echo $this->settings['breadcrumbs_separator'];
+            }elseif(!is_page() && !is_home() && $page_for_posts){
                 ?><a href="<?php echo get_permalink($page_for_posts); ?>"><?php echo get_the_title($page_for_posts) ?></a><?php 
                     echo $this->settings['breadcrumbs_separator'];
             }
-            
-            if(is_home() && $page_for_posts){
+            if(is_home() && $page_for_posts){                
                 echo get_the_title($page_for_posts);
-            }elseif(is_page() && $page_on_front!=$post->ID){        
+            }elseif(($post_type = get_query_var('post_type')) && get_query_var($post_type)){                
+                the_post();
+                echo get_the_title();
+                rewind_posts();
+            }elseif(is_page() && $page_on_front!=$post->ID){                        
                 the_post();
                 if(is_array($post->ancestors)){            
                     $ancestors = array_reverse($post->ancestors);
@@ -164,7 +180,7 @@ class CMSNavigation{
                 }    
                 echo get_the_title();
                 rewind_posts();
-            }elseif(is_single()){
+            }elseif(is_single()){                
                 the_post();
                 $cat = get_the_category($id);
                 $cat = $cat[0]->cat_ID;                
@@ -174,17 +190,17 @@ class CMSNavigation{
                 }
                 the_title();   
                 rewind_posts();         
-            }elseif (is_category()) {
+            }elseif (is_category()) {                
                 $cat = get_term(intval( get_query_var('cat')), 'category', OBJECT, 'display');
                 if($cat->category_parent){
                     echo get_category_parents($cat->category_parent, TRUE, $this->settings['breadcrumbs_separator']);                 
                 }
                 single_cat_title();
-            }elseif(is_tag()){
+            }elseif(is_tag()){                
                 echo __('Articles tagged ', 'sitepress') ,'&#8216;'; 
                 single_tag_title();
                 echo '&#8217;';    
-            }elseif (is_month()){
+            }elseif (is_month()){                
                 echo the_time('F, Y');
             }elseif (is_search()){
                 echo __('Search for: ', 'sitepress'), strip_tags(get_query_var('s'));
