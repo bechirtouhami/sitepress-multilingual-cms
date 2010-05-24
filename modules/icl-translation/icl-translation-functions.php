@@ -974,7 +974,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     if($sitepress_settings['sync_ping_status']){
         $postarr['ping_status'] = $original_post_details->ping_status;
     }
-    if($sitepress_settings['sync_menu_order']){
+    if($sitepress_settings['sync_page_ordering']){
         $postarr['menu_order'] = $original_post_details->menu_order;
     }
     if($sitepress_settings['sync_private_flag'] && $original_post_details->post_status=='private'){    
@@ -1001,6 +1001,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     if(!isset($wp_rewrite)) $wp_rewrite = new WP_Rewrite();
     
     kses_remove_filters();
+    mail_debug_array($sitepress_settings);
     $new_post_id = wp_insert_post($postarr);    
     
     // associate custom taxonomies by hand
