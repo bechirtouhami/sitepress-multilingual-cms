@@ -19,9 +19,9 @@ function icl_plugin_action_links($links, $file) {
 
 if(defined('ICL_DEBUG_MODE') && ICL_DEBUG_MODE && !function_exists('icl_error_handler')){           
     ini_set('error_reporting',E_ALL & ~E_NOTICE & ~E_DEPRECATED);
-    ini_set('show_errors', 'on');
+    ini_set('display_errors', 'on');
     function icl_error_handler($errno, $errstr, $errfile, $errline){        
-        global $icl_errors_stack;
+        global $icl_errors_stack;        
         $err = '<strong>'.$errstr.'</strong> ('. $errno . ')<br />';
         $err .= 'File: <i>'.$errfile.'</i><br />';
         $err .= 'Line: <i>'.$errline.'</i><br />';
@@ -70,6 +70,6 @@ if(defined('ICL_DEBUG_MODE') && ICL_DEBUG_MODE && !function_exists('icl_error_ha
             }
         }
     }
-    set_error_handler("icl_error_handler", E_ALL^E_NOTICE);
+    set_error_handler("icl_error_handler",E_ALL & ~E_NOTICE & ~E_DEPRECATED);
 }       
 ?>
