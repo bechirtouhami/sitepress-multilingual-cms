@@ -3119,7 +3119,7 @@ class SitePress{
         if(is_feed()){
             $p = str_replace("&lang=", "&#038;lang=", $p);
         }
-        return $p.get_option('page_on_front');
+        return $p;
     }    
     
     function category_permalink_filter($p, $cat_id){
