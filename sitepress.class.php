@@ -3102,6 +3102,9 @@ class SitePress{
         if(is_object($pid)){                        
             $pid = $pid->ID;
         }
+        if($pid == (int)get_option('page_on_front')){
+            return $p;
+        }                
         $post_type = $wpdb->get_var("SELECT post_type FROM {$wpdb->posts} WHERE ID={$pid}");
         $element_lang_details = $this->get_element_language_details($pid,'post_'.$post_type);                
         if($element_lang_details->language_code && $this->get_default_language() != $element_lang_details->language_code){
@@ -3116,7 +3119,7 @@ class SitePress{
         if(is_feed()){
             $p = str_replace("&lang=", "&#038;lang=", $p);
         }
-        return $p;
+        return $p.get_option('page_on_front');
     }    
     
     function category_permalink_filter($p, $cat_id){
