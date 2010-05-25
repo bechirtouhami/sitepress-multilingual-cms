@@ -149,14 +149,30 @@ class CMSNavigation{
             if((($pn = get_query_var('pagename')) || (($pn = get_query_var('post_type')) && !get_query_var('p') && !get_query_var($pn))) && isset($post_types[$pn])){
                 echo $post_type_name  = $post_types[$pn]->labels->name;
             }elseif(($post_type = get_query_var('post_type')) && get_query_var($post_type)){                
-                $post_type_name  = $post_types[$post_type]->labels->name;
-                if($wp_rewrite->using_permalinks()){
-                    $post_type_url  =  trailingslashit($sitepress->convert_url(get_option('home') .'/' . $post_types[$post_type]->rewrite['slug'])) ;    
-                }else{
-                    $post_type_url  =  $sitepress->convert_url(get_option('home') . '/?post_type=' . $post_types[$post_type]->query_var);
+                $custom_post_tax = $post_types[$post_type]->taxonomies[0];                
+                $terms = wp_get_post_terms($GLOBALS['wp_query']->get_queried_object_id(), $custom_post_tax);
+                // pick the first item with a empty parent
+                foreach($terms as $t){
+                    if($t->parent == 0){
+                        $allterms[] = $t;
+                        $cur_parent = $t->term_id;
+                    }
                 }
-                ?><a href="<?php echo $post_type_url ?>"><?php echo htmlspecialchars($post_type_name) ?></a><?php
-                echo $this->settings['breadcrumbs_separator'];
+                do{
+                    $loop = 0;    
+                    foreach($terms as $t){
+                        if($t->parent == $cur_parent){
+                            $allterms[] = $t;
+                            $cur_parent = $t->term_id;
+                            $loop = 1;
+                            break;
+                        }
+                    }                            
+                }while($loop);
+                foreach($allterms as $term){
+                    ?><a href="<?php echo get_term_link($term, $custom_post_tax) ?>"><?php echo htmlspecialchars($term->name) ?></a><?php
+                    echo $this->settings['breadcrumbs_separator'];
+                }
             }elseif(!is_page() && !is_home() && $page_for_posts){
                 ?><a href="<?php echo get_permalink($page_for_posts); ?>"><?php echo get_the_title($page_for_posts) ?></a><?php 
                     echo $this->settings['breadcrumbs_separator'];
@@ -201,6 +217,22 @@ class CMSNavigation{
                 echo __('Articles tagged ', 'sitepress') ,'&#8216;'; 
                 single_tag_title();
                 echo '&#8217;';    
+            }elseif (is_tax()){   
+                $term = get_term($GLOBALS['wp_query']->get_queried_object_id(), get_query_var('taxonomy'));                
+                $term_name = $term->name;
+                $term_parent = $term->parent;
+                while($term_parent){
+                    $term = get_term($term_parent, get_query_var('taxonomy'));                    
+                    $term_parent = $term->parent;
+                    $term_parents[] = array('name'=>$term->name, 'url'=>get_term_link((int)$term->term_id, get_query_var('taxonomy')));
+                }
+                if(!empty($term_parents)){
+                    $term_parents = array_reverse($term_parents);
+                    foreach($term_parents as $term){
+                        echo '<a href="'.$term['url'].'">'.$term['name'].'</a> ' . $this->settings['breadcrumbs_separator']; 
+                    };
+                }
+                echo $term_name;
             }elseif (is_month()){                
                 echo the_time('F, Y');
             }elseif (is_search()){
