@@ -52,7 +52,6 @@ class SitePress_Support {
 					$_POST['icl_support_subscription_type'] = 1;
 				}
 				$this->data['subscription_type'] = $_POST['icl_support_subscription_type'];
-				global $sitepress;
 				$sitepress->save_settings($this->data);
 			}
 			echo '<script type="text/javascript">location.href = "admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/support.php";</script>';
