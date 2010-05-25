@@ -19,6 +19,9 @@ jQuery(document).ready(function(){
     }
     show_messages();    
     do_message_refresh = false;
+	
+	// Added box resize for regular 'thickbox'
+	icl_tb_set_size('a.icl_regular_thickbox');
 });
 
 var do_message_refresh = false;

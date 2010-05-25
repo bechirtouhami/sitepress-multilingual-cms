@@ -113,8 +113,12 @@ class SitePress_Support {
 	}
 
 	function thickbox2($url, $class = null, $id = null) {
-		global $sitepress;
-		return $sitepress->create_icl_popup_link($url, 'ICanLocalize', $class, $id);
+		if (strpos($url, '?') !== false) {
+			$add = '&amp;';
+		} else {
+			$add = '?';
+		}
+		return '<a href="' . $url . $add . 'TB_iframe=true" class="thickbox icl_regular_thickbox" title="' . $url . '">';
 	}
 
 	function process_tickets($tickets) {
