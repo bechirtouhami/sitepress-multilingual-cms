@@ -376,7 +376,7 @@ class SitePress_Support {
 		global $current_user;
 ?>
 		<br /><br />
-		<a href="javascript:;" onclick="jQuery('#icl_support_form_show').slideToggle();" class="icl_support_toggle_link"><?php _e('I already have ICanLocalize account', 'sitepress'); ?></a>
+		<a href="javascript:;" onclick="jQuery('#icl_support_form_show').slideToggle();" class="button"><?php _e('I already have ICanLocalize account', 'sitepress'); ?></a>
 		<div id="icl_support_form_show" style="display:none;">
 			<form id="icl_configure_account" action="" method="post">
 				<?php wp_nonce_field('icl_configure_support_account','icl_configure_support_account_nonce') ?>
