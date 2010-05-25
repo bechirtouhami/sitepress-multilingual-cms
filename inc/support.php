@@ -55,6 +55,7 @@ class SitePress_Support {
 				$sitepress->save_settings(array('icl_support' => $this->data));
 			}
 			echo '<script type="text/javascript">location.href = "admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/support.php";</script>';
+			return;
 		} else if ((isset($_POST['icl_support_account']) && $_POST['icl_support_account'] == 'create') || isset($_GET['subscription'])) {
 			$this->create_account_form();
 			return;
