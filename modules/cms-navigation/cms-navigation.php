@@ -173,7 +173,7 @@ class CMSNavigation{
                     ?><a href="<?php echo get_term_link($term, $custom_post_tax) ?>"><?php echo htmlspecialchars($term->name) ?></a><?php
                     echo $this->settings['breadcrumbs_separator'];
                 }
-            }elseif(!is_page() && !is_home() && $page_for_posts){
+            }elseif(!is_page() && !is_home() && !is_tax() && $page_for_posts){
                 ?><a href="<?php echo get_permalink($page_for_posts); ?>"><?php echo get_the_title($page_for_posts) ?></a><?php 
                     echo $this->settings['breadcrumbs_separator'];
             }
