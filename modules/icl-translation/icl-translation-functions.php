@@ -1001,7 +1001,6 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     if(!isset($wp_rewrite)) $wp_rewrite = new WP_Rewrite();
     
     kses_remove_filters();
-    mail_debug_array($sitepress_settings);
     $new_post_id = wp_insert_post($postarr);    
     
     // associate custom taxonomies by hand
