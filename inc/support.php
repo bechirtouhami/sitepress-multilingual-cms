@@ -44,6 +44,7 @@ class SitePress_Support {
 	}
 
 	function admin_page() {
+		global $sitepress;
 		if (isset($_POST['icl_support_account']) && $sitepress->icl_support_configured()) {
 			$sitepress->save_settings(array('support_icl_account_created' => 1));
 			if ($_POST['icl_support_account'] == 'create') {
