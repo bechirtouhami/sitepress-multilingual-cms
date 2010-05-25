@@ -334,7 +334,7 @@ class SitePress_Support {
 		$this->form_errors();
 ?>
 			<form id="icl_create_account" method="post" action="">
-				<?php wp_nonce_field('icl_create_support_account', 'icl_create_support_account_nonce') ?>    
+				<?php wp_nonce_field('icl_create_support_account', 'icl_create_support_account_nonce'); ?>    
 				<input type="hidden" name="icl_support_account" value="create" />
 <?php
 				if (!isset($_REQUEST['subscription'])) {
@@ -347,22 +347,23 @@ class SitePress_Support {
                                 <table class="form-table icl-account-setup">
                                     <tbody>
                                     <tr class="form-field">
-                                        <th scope="row"><?php echo __('First name', 'sitepress')?></th>
-                                        <td><input name="user[fname]" type="text" value="<?php echo $_POST['user']['fname']?$_POST['user']['fname']:$current_user->first_name ?>" /></td>
+                                        <th scope="row"><?php _e('First name', 'sitepress'); ?></th>
+                                        <td><input name="user[fname]" type="text" value="<?php echo $_POST['user']['fname']?$_POST['user']['fname']:$current_user->first_name; ?>" /></td>
                                     </tr>
                                     <tr class="form-field">
-                                        <th scope="row"><?php echo __('Last name', 'sitepress')?></th>
-                                        <td><input name="user[lname]" type="text" value="<?php echo  $_POST['user']['lname']?$_POST['user']['lname']:$current_user->last_name ?>" /></td>
+                                        <th scope="row"><?php _e('Last name', 'sitepress'); ?></th>
+                                        <td><input name="user[lname]" type="text" value="<?php echo  $_POST['user']['lname']?$_POST['user']['lname']:$current_user->last_name; ?>" /></td>
                                     </tr>        
                                     <tr class="form-field">
-                                        <th scope="row"><?php echo __('Email', 'sitepress')?></th>
-                                        <td><input name="user[email]" type="text" value="<?php echo  $_POST['user']['email']?$_POST['user']['email']:$current_user->data->user_email ?>" /></td>
+                                        <th scope="row"><?php _e('Email', 'sitepress'); ?></th>
+                                        <td><input name="user[email]" type="text" value="<?php echo  $_POST['user']['email']?$_POST['user']['email']:$current_user->data->user_email; ?>" /></td>
                                     </tr>
                                     </tbody>
                                 </table>
                                     <p class="submit">
                                         <input type="hidden" name="create_account" value="1" />
-                                        <input class="button" name="create account" value="<?php echo __('Create account', 'sitepress') ?>" type="submit" />
+										 <a href="#" onclick="javascript:location.href='<?php echo 'admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/support.php'; ?>'" class="button"><?php _e('Cancel', 'sitepress'); ?></a>
+                                        <input class="button" name="create account" value="<?php _e('Create account', 'sitepress'); ?>" type="submit" />
 									</p>
                                     <div class="icl_progress"><?php _e('Saving. Please wait...', 'sitepress'); ?></div>
                                 </form>
@@ -379,23 +380,24 @@ class SitePress_Support {
 		<a href="javascript:;" onclick="jQuery('#icl_support_form_show').slideToggle();" class="button"><?php _e('I already have ICanLocalize account', 'sitepress'); ?></a>
 		<div id="icl_support_form_show" style="display:none;">
 			<form id="icl_configure_account" action="" method="post">
-				<?php wp_nonce_field('icl_configure_support_account','icl_configure_support_account_nonce') ?>
+				<?php wp_nonce_field('icl_configure_support_account','icl_configure_support_account_nonce'); ?>
 				<input type="hidden" name="icl_support_account" value="configure" />    
                                 <table class="form-table icl-account-setup">
                                     <tbody>
                                     <tr class="form-field">
-                                        <th scope="row"><?php echo __('Email', 'sitepress')?></th>
-                                        <td><input name="user[email]" type="text" value="<?php echo  $_POST['user']['email']?$_POST['user']['email']:$current_user->data->user_email ?>" /></td>
+                                        <th scope="row"><?php _e('Email', 'sitepress'); ?></th>
+                                        <td><input name="user[email]" type="text" value="<?php echo  $_POST['user']['email']?$_POST['user']['email']:$current_user->data->user_email; ?>" /></td>
                                     </tr>
                                     <tr class="form-field">
-                                        <th scope="row"><?php echo __('Password', 'sitepress')?></th>
+                                        <th scope="row"><?php _e('Password', 'sitepress'); ?></th>
                                         <td><input name="user[password]" type="password" /></td>
                                     </tr>        
                                     </tbody>
                                 </table>
 								<p class="submit">                                        
-                                        <input type="hidden" name="create_account" value="0" />                                        
-                                        <input class="button" name="configure account" value="<?php echo __('Log in to my account', 'sitepress') ?>" type="submit" />
+                                        <input type="hidden" name="create_account" value="0" />
+										<a href="#" onclick="javascript:location.href='<?php echo 'admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/support.php'; ?>'" class="button"><?php _e('Cancel', 'sitepress'); ?></a>                                        
+                                        <input class="button" name="configure account" value="<?php _e('Log in to my account', 'sitepress'); ?>" type="submit" />
                                     </p>                                    
                                     <div class="icl_progress"><?php _e('Saving. Please wait...', 'sitepress'); ?></div>
                                 </form>
