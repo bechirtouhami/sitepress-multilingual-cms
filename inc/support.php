@@ -118,7 +118,8 @@ class SitePress_Support {
 		} else {
 			$add = '?';
 		}
-		return '<a href="' . $url . $add . 'TB_iframe=true" class="thickbox icl_regular_thickbox" title="' . $url . '">';
+		$id = ($id) ? ' id="'. $id . '"' : '';
+		return '<a href="' . $url . $add . 'TB_iframe=true" class="thickbox icl_regular_thickbox' . $class . '" title="' . $url . '"' . $id . '>';
 	}
 
 	function process_tickets($tickets) {
