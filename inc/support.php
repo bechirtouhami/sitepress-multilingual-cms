@@ -52,7 +52,7 @@ class SitePress_Support {
 					$_POST['icl_support_subscription_type'] = 1;
 				}
 				$this->data['subscription_type'] = $_POST['icl_support_subscription_type'];
-				$sitepress->save_settings($this->data);
+				$sitepress->save_settings(array('icl_support' => $this->data));
 			}
 			echo '<script type="text/javascript">location.href = "admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/support.php";</script>';
 		} else if ((isset($_POST['icl_support_account']) && $_POST['icl_support_account'] == 'create') || isset($_GET['subscription'])) {
@@ -255,13 +255,13 @@ class SitePress_Support {
 		}
 		if (empty($this->tickets)) {
 			$this->data['tickets'] = $this->tickets = $this->fetched_tickets;
-			$sitepress->save_settings($this->data);
+			$sitepress->save_settings(array('icl_support' => $this->data));
 			$this->initial = true;
 		}
 		foreach ($this->fetched_tickets as $id => $v) {
 			if (!isset($this->tickets[$id]) && $v['status'] !== 0) {
 				$this->data['tickets'][$id] = $this->tickets[$id] = $this->fetched_tickets[$id];
-				$sitepress->save_settings($this->data);
+				$sitepress->save_settings(array('icl_support' => $this->data));
 			}
 		}
 	}
@@ -317,7 +317,7 @@ class SitePress_Support {
 		echo $updated_tickets . $tickets;
 		if ($update) {
 			global $sitepress;
-			$sitepress->save_settings($this->data);
+			$sitepress->save_settings(array('icl_support' => $this->data));
 		}
 ?>
 			</tbody>
