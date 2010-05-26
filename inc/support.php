@@ -185,8 +185,10 @@ class SitePress_Support {
 
 	function offer_subscription() {
 		$subscription_rows = array(
-			array(__('24h support', 'sitepress'), 'http://wpml.org'),
-			array('test')
+			array(__('24h support', 'sitepress'), 'http://wpml.org/?page_id=3933'),
+			array(__('Support tickets to WPML developers', 'sitepress'), 'http://wpml.org/?page_id=4799'),
+			array(__('Consultation and planning', 'sitepress'), 'http://wpml.org/?page_id=4802'),
+			array(__('Help troubleshooting', 'sitepress'), 'http://wpml.org/?page_id=4806')
 		);
 ?>
 
