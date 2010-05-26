@@ -124,7 +124,7 @@ function wpml_get_object_id($element_id, $element_type='post', $return_original_
 }
 
 function wpml_default_link($anchor){
-    
+    global $sitepress;
     $qv = false;
     
     if(is_single()){
@@ -144,6 +144,8 @@ function wpml_default_link($anchor){
         $qv = 'm=' . get_query_var('year') . sprintf('%02d', get_query_var('monthnum')) . sprintf('%02d', get_query_var('day'));
     }elseif(is_search()){        
         $qv = 's=' . get_query_var('s');
+    }elseif(is_tax()){
+        $qv = get_query_var('taxonomy') . '=' . get_query_var('term');        
     }
     
     if(false !== strpos(wpml_get_home_url(),'?')){
@@ -153,7 +155,7 @@ function wpml_default_link($anchor){
     }
     
     if($qv){
-        $link = '<a href="' . wpml_get_home_url() . $url_glue . $qv . '" rel="nofollow">' . $anchor . '</a>';
+        $link = '<a href="' .  $sitepress->language_url($sitepress->get_default_language()) . $url_glue . $qv . '" rel="nofollow">' . $anchor . '</a>';
     }else{
         $link = '';
     } 
