@@ -5011,7 +5011,7 @@ class SitePress{
         <?php else: ?>
         <p><?php _e('Currently configured languages:', 'sitepress')?> <b><?php echo join(', ', (array)$alanguages_links)?></b> (<a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/languages.php"><?php _e('edit', 'sitepress'); ?></a>)</p>
         <?php endif; ?>
-        <p><?php printf(__('Support Licence - %s', 'sitepress'), $pss_string_status); ?> 
+        <p><?php printf(__('Support Subscription - %s', 'sitepress'), $pss_string_status); ?> 
             <?php if(!$pss_status['valid']):?>(<a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/support.php"><?php _e('purchase', 'sitepress'); ?></a>)<?php endif; ?></p>
         <p><?php printf(__('Professional Translation - %s', 'sitepress'), $this->get_icl_translation_enabled() ? __('Enabled','sitepress') : _e('Dissabled','sitepress')); ?> 
             (<a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/content-translation.php"><?php _e('configure', 'sitepress'); ?></a>)</p>

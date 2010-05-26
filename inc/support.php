@@ -190,15 +190,15 @@ class SitePress_Support {
 		);
 ?>
 
-<?php _e('In order to get premium support, you need to create a support subscription.
-<br />A support subscription gives you 24h response directly from WPML\'s developers.', 'sitepress'); ?>
+<p style="line-height:1.5"><?php _e('In order to get premium support, you need to create a support subscription.','sitepress'); ?>
+<br /><?php _e('A support subscription gives you 24h response directly from WPML\'s developers.', 'sitepress'); ?></p>
 <br /><br />
 <table id="icl_support_subscriptions" cellspacing="0" cellpadding="0" border="0">
 <tr class="title">
     <td class="first">&nbsp;</td>
 	<td class="smaller-heading"><h2><?php _e('Community Support', 'sitepress'); ?></h2></td>
-    <td><h2><?php _e('Single site support', 'sitepress'); ?></h2></td>
-    <td class="last"><h2><?php _e('Developer support', 'sitepress'); ?></h2></td>
+    <td><h2><?php _e('Single Site Support', 'sitepress'); ?></h2></td>
+    <td class="last"><h2><?php _e('Developer Support', 'sitepress'); ?></h2></td>
 </tr>
 <tr class="info">
     <td class="first"><?php printf(__('Community support via %s WPML\'s technical forum %s', 'sitepress'), $this->thickbox2('http://forum.wpml.org/'), '</a>'); ?></td>
@@ -241,7 +241,7 @@ class SitePress_Support {
 
 	function offer_renewal() {
 		echo '<p>';
-		_e('Renew your licence', 'sitepress');
+		_e('Renew your subscription', 'sitepress');
 		echo '</p>';
 	}
 
@@ -347,7 +347,8 @@ class SitePress_Support {
 				}
 ?>
 				<input type="hidden" name="icl_support_subscription_type" value="<?php echo $_REQUEST['subscription']; ?>" />
-				<p style="line-height:1.5"><?php _e('To get premium support, you will need to create an account at ICanLocalize.<br />WPML will use this account to create support tickets and connect you with the development team.', 'sitepress'); ?></p>
+				<p style="line-height:1.5"><?php _e('Premium support is provided by ICanLocalize. You will need to create an account to get started.', 'sitepress'); ?><br />
+				<?php _e('WPML will use this account to create support tickets and connect you with the development team.', 'sitepress'); ?></p>
                                 
                                 <table class="form-table icl-account-setup">
                                     <tbody>
@@ -382,7 +383,7 @@ class SitePress_Support {
 		global $current_user;
 ?>
 		<br /><br />
-		<a href="javascript:;" onclick="jQuery('#icl_support_form_show').slideToggle();" class="button"><?php _e('I already have ICanLocalize account', 'sitepress'); ?></a>
+		<a href="javascript:;" onclick="jQuery('#icl_support_form_show').slideToggle();" class="button"><?php _e('I already have an ICanLocalize account', 'sitepress'); ?></a>
 		<div id="icl_support_form_show" style="display:none;">
 			<form id="icl_configure_account" action="" method="post">
 				<?php wp_nonce_field('icl_configure_support_account','icl_configure_support_account_nonce'); ?>
