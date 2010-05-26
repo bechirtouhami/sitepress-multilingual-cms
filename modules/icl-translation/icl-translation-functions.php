@@ -1721,7 +1721,6 @@ function _icl_content_make_links_sticky($element_id, $element_type='post', $stri
     }
 }
 
-
 function _icl_content_fix_links_to_translated_content($element_id, $target_lang_code, $element_type='post'){
     global $wpdb, $sitepress, $sitepress_settings, $wp_taxonomies;
     _icl_content_make_links_sticky($element_id, $element_type);

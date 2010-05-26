@@ -66,8 +66,11 @@ class AbsoluteLinksPlugin{
             $this->plugin_url = str_replace('http://', 'https://', $this->plugin_url);
         }        
         
-        add_action('init', array($this, 'init_query_vars'), 30);
-        
+        if(defined('ICL_LANGUAGE_CODE')){ // init already fired
+            $this->init_query_vars();    
+        }else{
+            add_action('init', array($this, 'init_query_vars'), 30);    
+        }
     }
     
     function init_query_vars(){
@@ -81,7 +84,7 @@ class AbsoluteLinksPlugin{
             if($v->query_var){
                 $this->custom_post_query_vars[$k] = $v->query_var;    
             }            
-        }
+        }        
         //taxonomies query vars
         foreach($wp_taxonomies as $k=>$v){
             if(in_array($k, array('category'))){
@@ -599,15 +602,14 @@ class AbsoluteLinksPlugin{
         $rewrite = $wp_rewrite->wp_rewrite_rules();
         
         delete_post_meta($post_id,'_alp_broken_links');
-         
+
         $post = $wpdb->get_row("SELECT * FROM {$wpdb->posts} WHERE ID={$post_id}"); 
         $home_url = $sitepress->language_url($_POST['icl_post_language']);
         $int1  = preg_match_all('@<a([^>]*)href="(('.rtrim($home_url,'/').')?/([^"^>^#]+))"([^>]*)>@i',$post->post_content,$alp_matches1);        
         $int2 = preg_match_all('@<a([^>]*)href=\'(('.rtrim($home_url,'/').')?/([^\'^>^#]+))\'([^>]*)>@i',$post->post_content,$alp_matches2);        
         for($i = 0; $i < 6; $i++){
             $alp_matches[$i] = array_merge((array)$alp_matches1[$i], (array)$alp_matches2[$i]); 
-        }
-        
+        }        
         $sitepress_settings = $sitepress->get_settings();
         
         if($int1 || $int2){   
@@ -631,13 +633,13 @@ class AbsoluteLinksPlugin{
                 }
 
                 $pathinfo = '';
-                $req_uri = '/' . $m;                                
+                $req_uri = '/' . $m;                                                                
                 $req_uri_array = explode('?', $req_uri);
                 $req_uri = $req_uri_array[0];
                 // separate anchor
-                $req_uri_array = explode('#', $req_uri);
+                $req_uri_array = explode('#', $req_uri);                
                 $req_uri = $req_uri_array[0];
-                $anchor = $req_uri_array[1];
+                $anchor = $req_uri_array[1];                
                 $self = '/index.php';
                 $home_path = parse_url(get_option('home'));
                 if ( isset($home_path['path']) )
@@ -697,7 +699,8 @@ class AbsoluteLinksPlugin{
                         break;
                     }
                 }  
-                                                
+                
+                
                 $post_name = $category_name = $tax_name = false;
                 if(isset($perma_query_vars['pagename'])){
                     $post_name = basename($perma_query_vars['pagename']); 
@@ -723,8 +726,7 @@ class AbsoluteLinksPlugin{
                             break;
                         }
                     }                    
-                }
-                                
+                }                
                 if($post_name){                    
                     $name = $wpdb->escape($post_name);
                     //$post_type = isset($perma_query_vars['pagename']) ? 'page' : 'post';

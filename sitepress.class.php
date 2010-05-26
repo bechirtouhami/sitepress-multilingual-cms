@@ -255,7 +255,7 @@ class SitePress{
         } //end if the initial language is set - existing_content_language_verified
         
         add_action('wp_dashboard_setup', array($this, 'dashboard_widget_setup'));
-        if(is_admin() && $pagenow == 'index.php'){
+        if(is_admin() && $pagenow == 'index.php' && !$this->settings['basic_menu']){
             add_action('icl_dashboard_widget_notices', array($this, 'print_translatable_custom_content_status'));    
         }
     }
