@@ -275,6 +275,9 @@ function iclDismissUpgradeNotice(){
 var iclShowPageEstimateHint_img = false;
 function iclDismissPageEstimateHint(){
     var thisa = jQuery(this);
+    if(!iclShowPageEstimateHint_img){
+        iclShowPageEstimateHint_img = jQuery('#icl_dismiss_page_estimate_hint').parent().find('img').attr('src');        
+    }
     jQuery('#icl_show_page_estimate_hint').find('img').attr('src', iclShowPageEstimateHint_img);
     jQuery.ajax({
             type: "POST",
