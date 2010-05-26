@@ -393,7 +393,7 @@ class ICanLocalizeQuery{
             $res = $this->_request($request_url, 'GET');        
             if($res['info']['status']['attr']['err_code']=='3'){
                 // not logged in get a new session_id
-                $session_id = $this->get_session_id();
+                $session_id = $this->get_session_id(FALSE);
         
                 $request_url = ICL_API_ENDPOINT . '/reminders.xml?session='.$session_id;    
         
@@ -493,7 +493,7 @@ class ICanLocalizeQuery{
             
             if($res['info']['status']['attr']['err_code']=='3'){
                 // not logged in get a new session_id
-                $session_id = $this->get_session_id();
+                $session_id = $this->get_session_id(FALSE);
 
                 $res = $this->_request($request_url, 'POST', $data);
             }
