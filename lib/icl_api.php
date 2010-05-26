@@ -388,14 +388,14 @@ class ICanLocalizeQuery{
         if (((time() - $last_time) > 10 * 60) || $refresh) {
             $session_id = $this->get_current_session();
     
-            $request_url = ICL_API_ENDPOINT . '/reminders.xml?session='.$session_id;    
+            $request_url = ICL_API_ENDPOINT . '/reminders.xml?session='.$session_id.'&wid=' . $this->site_id;
     
             $res = $this->_request($request_url, 'GET');        
             if($res['info']['status']['attr']['err_code']=='3'){
                 // not logged in get a new session_id
                 $session_id = $this->get_session_id(FALSE);
         
-                $request_url = ICL_API_ENDPOINT . '/reminders.xml?session='.$session_id;    
+                $request_url = ICL_API_ENDPOINT . '/reminders.xml?session='.$session_id.'&wid=' . $this->site_id;
         
                 $res = $this->_request($request_url, 'GET');
             }
