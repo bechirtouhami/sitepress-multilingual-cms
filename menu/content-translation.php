@@ -220,8 +220,15 @@
                 <?php endif; ?>
                     <p><img src="<?php echo ICL_PLUGIN_URL ?>/res/img/documents.png" width="16" height="16" alt="documents" 
                         style="vertical-align:middle; margin-right: 3px;" />
-                        <?php printf(__("To see the status of pending translations or to cancel translation requests, go to the %sproject page</a> in ICanLocalize.",'sitepress'), 
-                        $sitepress->create_icl_popup_link(ICL_API_ENDPOINT.'/websites/'.$sitepress_settings['site_id'], 'ICanLocalize')) ?>
+                        <?php
+                            if ($sitepress->are_waiting_for_translators($selected_language)) {
+                                printf(__("To invite translators to your project and view all translation jobs, visit the %sproject page on ICanLocalize</a>.",'sitepress'), 
+                                $sitepress->create_icl_popup_link(ICL_API_ENDPOINT.'/websites/'.$sitepress_settings['site_id'], 'ICanLocalize'));
+                            } else {
+                                printf(__("To view all translation jobs visit the %sproject page on ICanLocalize</a>.",'sitepress'), 
+                                $sitepress->create_icl_popup_link(ICL_API_ENDPOINT.'/websites/'.$sitepress_settings['site_id'], 'ICanLocalize'));
+                            }
+                        ?>
                     </p>
                     <p>
                         <img src="<?php echo ICL_PLUGIN_URL ?>/res/img/question1.png" width="16" height="16" alt="need help" 
