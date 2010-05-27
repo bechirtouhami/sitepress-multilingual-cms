@@ -169,11 +169,11 @@ class SitePress_Support {
 				$subscriptions = $subscriptions['subscription'];
 			}
 			foreach($subscriptions as $k => $v) {
-				if ($v['attr']['owner_id'] == $this->site_id && $v['attr']['valid'] == 'true') {
+				if (($v['attr']['owner_id'] === '' || $v['attr']['owner_id'] == $this->site_id) && $v['attr']['valid'] == 'true') {
 					printf(__('Your subscription is valid until %s', 'sitepress'), date(get_option('date_format'), $v['attr']['expires_date']));
 					return true;
 				}
-				if ($v['attr']['owner_id'] == $this->site_id && $v['attr']['valid'] == 'false') {
+				if (($v['attr']['owner_id'] === '' || $v['attr']['owner_id'] == $this->site_id) && $v['attr']['valid'] == 'false') {
 					// TODO
 					$this->offer_renewal();
 					return false;
