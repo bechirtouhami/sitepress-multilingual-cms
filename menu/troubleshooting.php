@@ -33,7 +33,9 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
         update_option('recently_activated', $ra);        
         echo '<script type="text/javascript">location.href=\''.admin_url('plugins.php?deactivate=true').'\'</script>';
     }
-}
+}                                    
+
+
 ?>
 <div class="wrap">
     <div id="icon-options-general" class="icon32 icon32_adv" style="background: transparent url(<?php echo ICL_PLUGIN_URL; ?>/res/img/icon_adv.png) no-repeat;"><br /></div>
@@ -123,7 +125,7 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
     </form>
        
     <h3><?php _e('Database dump', 'sitepress')?></h3>
-    <a class="button" href="admin.php?page=<?php ICL_PLUGIN_FOLDER ?>/menu/troublehooting.php&icl_action=dbdump"><?php _e('Download', 'sitepress') ?></a>
+    <a class="button" href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/troubleshooting.php&amp;icl_action=dbdump"><?php _e('Download', 'sitepress') ?></a>
     <?php
     
     echo '<br /><hr /><h3 id="wpml-settings"> ' . __('Reset', 'sitepress') . '</h3>';
