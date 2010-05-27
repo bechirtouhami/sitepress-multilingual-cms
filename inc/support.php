@@ -48,7 +48,7 @@ class SitePress_Support {
 		if (isset($_POST['icl_support_account']) && $sitepress->icl_support_configured()) {
 			$sitepress->save_settings(array('support_icl_account_created' => 1));
 			if ($_POST['icl_support_account'] == 'create') {
-				if (!isset($_POST['icl_support_account_type'])) {
+				if (!isset($_POST['icl_support_subscription_type'])) {
 					$_POST['icl_support_subscription_type'] = 1;
 				}
 				$this->data['subscription_type'] = $_POST['icl_support_subscription_type'];
@@ -61,16 +61,21 @@ class SitePress_Support {
 			return;
 		}
 		
+		if (isset($_GET['reset']) && isset($this->data['subscription_type'])) {
+			unset($this->data['subscription_type']);
+			$sitepress->save_settings(array('icl_support' => $this->data));
+		}
+		
 		if (!$this->check_subscription()) {
 			if ($this->site_id && isset($this->data['subscription_type'])) {
 				_e('Your password is sent to your e-mail.', 'sitepress');
 				echo '<br /><br />';
 				switch ($this->data['subscription_type']) {
 					case 2:
-						echo $this->thickbox('subscriptions/new?wid=' . $this->site_id . '&amp;code=2', ' icl_support_buy_link'); printf(__('Buy \'developer\' subscription %s / year', 'sitepress'), '$200'); echo '</a>';
+						echo '<a href="#" onclick="javascript:location.href=\'admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/support.php&amp;reset=1\'" class="button">'. __('Cancel', 'sitepress') . '</a>&nbsp;&nbsp;&nbsp;&nbsp;' . $this->thickbox('subscriptions/new?wid=' . $this->site_id . '&amp;code=2', ' icl_support_buy_link'); printf(__('Buy \'developer\' subscription %s / year', 'sitepress'), '$200'); echo '</a>';
 						break;
 					default:
-						echo $this->thickbox('subscriptions/new?wid=' . $this->site_id . '&amp;code=1', ' icl_support_buy_link'); printf(__('Buy \'single site\' subscription %s / year', 'sitepress'), '$50'); echo '</a>';
+						echo '<a href="#" onclick="javascript:location.href=\'admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/support.php&amp;reset=1\'" class="button">'. __('Cancel', 'sitepress') . '</a>&nbsp;&nbsp;&nbsp;&nbsp;' . $this->thickbox('subscriptions/new?wid=' . $this->site_id . '&amp;code=1', ' icl_support_buy_link'); printf(__('Buy \'single site\' subscription %s / year', 'sitepress'), '$50'); echo '</a>';
 				}
 				return;
 			}
@@ -404,8 +409,8 @@ class SitePress_Support {
                                 </table>
 								<p class="submit">                                        
                                         <input type="hidden" name="create_account" value="0" />
-										<a href="#" onclick="javascript:location.href='<?php echo 'admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/support.php'; ?>'" class="button"><?php _e('Cancel', 'sitepress'); ?></a>                                        
-                                        <input class="button" name="configure account" value="<?php _e('Log in to my account', 'sitepress'); ?>" type="submit" />
+										<a href="#" onclick="javascript:location.href='<?php echo 'admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/support.php'; ?>'" class="button"><?php _e('Cancel', 'sitepress'); ?></a>
+										<input class="button" name="configure account" value="<?php _e('Log in to my account', 'sitepress'); ?>" type="submit" />
                                     </p>                                    
                                     <div class="icl_progress"><?php _e('Saving. Please wait...', 'sitepress'); ?></div>
                                 </form>
