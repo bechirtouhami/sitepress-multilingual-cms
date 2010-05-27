@@ -5012,7 +5012,7 @@ class SitePress{
         <?php endif; ?>
         <p><?php printf(__('Support Subscription - %s', 'sitepress'), $pss_string_status); ?> 
             <?php if(!$pss_status['valid']):?>(<a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/support.php"><?php _e('purchase', 'sitepress'); ?></a>)<?php endif; ?></p>
-        <p><?php printf(__('Professional Translation - %s', 'sitepress'), $this->get_icl_translation_enabled() ? __('Enabled','sitepress') : _e('Dissabled','sitepress')); ?> 
+        <p><?php printf(__('Professional Translation - %s', 'sitepress'), $this->get_icl_translation_enabled() ? __('Enabled','sitepress') : __('Disabled','sitepress')); ?> 
             (<a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/content-translation.php"><?php _e('configure', 'sitepress'); ?></a>)</p>
         <?php do_action('icl_dashboard_widget_content'); ?>
         <?php if(!$this->settings['basic_menu']):?>
