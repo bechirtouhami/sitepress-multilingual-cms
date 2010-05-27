@@ -35,6 +35,7 @@ function icl_troubleshooting_dumpdb(){
 
 function _icl_ts_mysqldump($mysql_database)
 {
+    global $wpdb;
     $upload_folder = wp_upload_dir();
     $dump_tmp_file = $upload_folder['path'] . '/' . '__icl_mysqldump.sql';
     
@@ -44,7 +45,7 @@ function _icl_ts_mysqldump($mysql_database)
         ob_start();
     }
     
-    $sql="show tables;";
+    $sql="SHOW TABLES LIKE '".str_replace('_','\_',$wpdb->prefix)."%';";
     
     $result= mysql_query($sql);
     if( $result)
