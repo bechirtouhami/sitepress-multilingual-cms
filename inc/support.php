@@ -12,7 +12,6 @@ class SitePress_Support {
 	var $access_key = 0;
 	var $tickets = array();
 	var $fetched_tickets = array();
-	var $defaults = array();
 	var $request;
 	var $initial;
 
@@ -61,13 +60,14 @@ class SitePress_Support {
 			return;
 		}
 		
-		if (isset($_GET['reset']) && isset($this->data['subscription_type'])) {
-			unset($this->data['subscription_type']);
+		if (isset($_GET['reset'])) {
+			$this->data['subscription_type'] = 0;
 			$sitepress->save_settings(array('icl_support' => $this->data));
+			echo '<script type="text/javascript">location.href = "admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/support.php";</script>';
 		}
 		
 		if (!$this->check_subscription()) {
-			if ($this->site_id && isset($this->data['subscription_type'])) {
+			if ($this->site_id && $this->data['subscription_type']) {
 				_e('Your password is sent to your e-mail.', 'sitepress');
 				echo '<br /><br />';
 				switch ($this->data['subscription_type']) {
