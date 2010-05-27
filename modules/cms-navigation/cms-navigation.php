@@ -132,7 +132,8 @@ class CMSNavigation{
             }
             if($page_on_front!=$post->ID){ 
                 if($page_on_front){
-                    $permalink = get_permalink($page_on_front);
+                    //$permalink = get_permalink($page_on_front);
+                    $permalink = $sitepress->language_url();
                     if($sitepress_settings['language_negotiation_type'] != 3){
                         $permalink = trailingslashit($permalink);
                     }                    

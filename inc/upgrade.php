@@ -464,6 +464,17 @@ function icl_plugin_upgrade(){
                 mysql_query("UPDATE {$wpdb->prefix}icl_translations SET element_type='post_{$type}' WHERE element_type='post' AND element_id IN(".join(',',$ids).")");    
             }
         }
+        
+        // fix categories & tags in icl_translations
+        $res = mysql_query("SELECT term_taxonomy_id, taxonomy FROM {$wpdb->term_taxonomy}");
+        while($row = mysql_fetch_object($res)) {
+            $icltr = $wpdb->get_row("SELECT translation_id, element_type FROM {$wpdb->prefix}icl_translations WHERE element_id='{$row->term_taxonomy_id}' AND element_type LIKE 'tax\\_%'");
+            if('tax_' . $row->taxonomy != $icltr->element_type){
+                $wpdb->update($wpdb->prefix . 'icl_translations', array('element_type'=>'tax_'.$row->taxonomy), array('translation_id'=>$icltr->translation_id));
+            }
+        }
+        
+        
         if($mig_debug) fwrite($mig_debug, "Upgraded to 1.7.8 \n");
     }
     
