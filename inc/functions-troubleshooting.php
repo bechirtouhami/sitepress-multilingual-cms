@@ -19,7 +19,6 @@ function icl_troubleshooting_dumpdb(){
 
     $dump = _icl_ts_mysqldump(DB_NAME);
     $gzdump = gzencode($dump, 9);
-    //$gzdump = $dump;
     
     header("Content-Type: application/force-download");
     header("Content-Type: application/octet-stream");
