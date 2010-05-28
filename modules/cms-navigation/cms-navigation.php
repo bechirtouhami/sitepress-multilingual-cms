@@ -401,10 +401,14 @@ class CMSNavigation{
                         $has_subages =  $subpages || ($page_for_posts == $p && $this->settings['cat_menu_contents'] != 'nothing');
                         if($p==$post->ID){
                             $permalink = '#';
-                        }else{
-                            $permalink = get_permalink($p);
-                            if($p == $page_on_front && $sitepress_settings['language_negotiation_type'] != 3){
-                                $permalink = trailingslashit($permalink);
+                        }else{                            
+                            if($p == $page_on_front){
+                                $permalink = $sitepress->language_url();
+                                if($sitepress_settings['language_negotiation_type'] != 3){
+                                    $permalink = trailingslashit($permalink);
+                                }
+                            }else{
+                                $permalink = get_permalink($p);
                             }
                         }
                         ?><li<?php if(!empty($main_li_classes)):?> class="<?php echo join(' ' , $main_li_classes)?>"<?php endif?>><a href="<?php echo $permalink; ?>" class="<?php if($has_subages):?>trigger<?php endif?>"><?php echo $page_name_html ?><?php if(!isset($cms_nav_ie_ver) || $cms_nav_ie_ver > 6): ?></a><?php endif; ?>
