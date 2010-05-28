@@ -1027,7 +1027,12 @@ class SitePress{
             require_once ICL_PLUGIN_PATH . '/lib/xml2array.php';
             require_once ICL_PLUGIN_PATH . '/lib/icl_api.php';
             
-            $icl_query = new ICanLocalizeQuery($iclsettings['site_id'], $iclsettings['access_key']);
+            if ($iclsettings['site_id'] == NULL) {
+                // Must be for support
+                $icl_query = new ICanLocalizeQuery($iclsettings['support_site_id'], $iclsettings['support_access_key']);
+            } else {
+                $icl_query = new ICanLocalizeQuery($iclsettings['site_id'], $iclsettings['access_key']);
+            }
             $res = $icl_query->get_website_details();
         }
         
