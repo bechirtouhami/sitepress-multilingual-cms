@@ -68,6 +68,14 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 
 == Changelog ==
 
+= 1.7.8 =
+* Added full support for WordPress custom posts.
+* Added option to subscribe to paid support.
+* Updated the CMS navigation to support custom posts and custom taxonomies.
+* Fixed bug with 'menu_order' flag not being synced when using the PRO translation
+* More bug fixes and better compatibility with WP 3.0
+
+
 = 1.7.7 =
 * Added full support for WordPress custom taxonomies.
 * Fixed bugs with category and tag translation.
