@@ -5,7 +5,7 @@
 ?>
 <?php $sitepress->noscript_notice() ?>
 <script type="text/javascript">        
-var icl_ajx_cache_cleared = '<?php echo __('The cache has been cleared.','sitepress') ?>';
+var icl_ajx_cache_cleared = '<?php echo addslashes(__('The cache has been cleared.','sitepress')); ?>';
 </script>        
 <div class="wrap">
     <div id="icon-options-general" class="icon32 icon32_adv"><br /></div>

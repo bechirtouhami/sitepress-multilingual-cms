@@ -736,11 +736,11 @@ class CMSNavigation{
                 jQuery("select[name='cms_nav_section']").show();
                 jQuery("input[name='cms_nav_section_new']").hide();
                 jQuery("input[name='cms_nav_section_new']").attr('value','');
-                jQuery(this).html('<?php echo __('enter new', 'sitepress') ?>');                                    
+                jQuery(this).html('<?php echo addslashes(__('enter new', 'sitepress')); ?>');                                    
             }else{
                 jQuery("select[name='cms_nav_section']").hide();
                 jQuery("input[name='cms_nav_section_new']").show();            
-                jQuery(this).html('<?php echo __('cancel', 'sitepress') ?>');
+                jQuery(this).html('<?php echo addslashes(__('cancel', 'sitepress')); ?>');
             }
             
         }

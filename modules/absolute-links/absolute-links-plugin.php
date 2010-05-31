@@ -211,9 +211,9 @@ class AbsoluteLinksPlugin{
                 if(!alp_scan_started){  
                     alp_send_request(0); 
                     jQuery('#alp_ajx_ldr_1').fadeIn();
-                    jQuery('#alp_re_scan_but').attr('value','<?php echo __('Running', 'sitepress') ?>');    
+                    jQuery('#alp_re_scan_but').attr('value','<?php echo addslashes(__('Running', 'sitepress')) ?>');    
                 }else{
-                    jQuery('#alp_re_scan_but').attr('value','<?php echo __('Scan', 'sitepress') ?>');    
+                    jQuery('#alp_re_scan_but').attr('value','<?php echo addslashes(__('Scan', 'sitepress')); ?>');    
                     window.clearTimeout(req_timer);
                     jQuery('#alp_ajx_ldr_1').fadeOut();
                     location.reload();
@@ -275,7 +275,7 @@ class AbsoluteLinksPlugin{
                     data: "alp_ajx_action=use_suggestion&amp;sug_id="+sug_id+"&amp;post_id="+post_id+"&amp;orig_url="+orig_url,
                     success: function(msg){                                                    
                         spl = msg.split('|');
-                        jqthis.parent().html('<?php echo __('fixed', 'sitepress')?> - ' + spl[1]);
+                        jqthis.parent().html('<?php echo addslashes(__('fixed', 'sitepress')); ?> - ' + spl[1]);
                     },
                     error: function (msg){
                         alert('Something went wrong');
@@ -288,7 +288,7 @@ class AbsoluteLinksPlugin{
             var req_rev_timer = '';
             function alp_do_revert_urls(){
                 jQuery('#alp_revert_urls').attr('disabled','disabled');
-                jQuery('#alp_revert_urls').attr('value','<?php echo __('Running', 'sitepress') ?>');
+                jQuery('#alp_revert_urls').attr('value','<?php echo addslashes(__('Running', 'sitepress')); ?>');
                 jQuery.ajax({
                     type: "POST",
                     url: "<?php echo htmlentities($_SERVER['REQUEST_URI']) ?>",
@@ -299,10 +299,10 @@ class AbsoluteLinksPlugin{
                             jQuery('#alp_rev_items_left').html('');
                             window.clearTimeout(req_rev_timer);
                             jQuery('#alp_revert_urls').removeAttr('disabled');                            
-                            jQuery('#alp_revert_urls').attr('value','<?php echo __('Start', 'sitepress')?>');                            
+                            jQuery('#alp_revert_urls').attr('value','<?php echo addslashes(__('Start', 'sitepress')); ?>');                            
                             location.reload();
                         }else{
-                            jQuery('#alp_rev_items_left').html(msg + ' <?php echo __('items left', 'sitepress')?>');
+                            jQuery('#alp_rev_items_left').html(msg + ' <?php echo addslashes(__('items left', 'sitepress')); ?>');
                             req_rev_timer = window.setTimeout(alp_do_revert_urls,3000);
                             jQuery('#alp_ajx_ldr_2').fadeIn();
                         }                            
