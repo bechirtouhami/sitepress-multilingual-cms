@@ -897,13 +897,6 @@ if (function_exists('wpml_register_admin_strings')) {
         
         icl_cache_clear();
         break;
-    case 'icl_custom_tax_sync_options':
-        foreach($_POST['icl_sync_tax'] as $k=>$v){
-            $iclsettings['taxonomies_sync_option'][$k] = $v;
-        }
-        $this->save_settings($iclsettings);
-        echo '1|';
-        break;
     case 'icl_support_update_ticket':
         if (isset($_POST['ticket'])) {
             $temp = str_replace('icl_support_ticket_', '', $_POST['ticket']);
@@ -918,10 +911,22 @@ if (function_exists('wpml_register_admin_strings')) {
             }
         }
         break;
-
-    case 'icl_custom_posts_sync_options':
-        foreach($_POST['icl_sync_custom_posts'] as $k=>$v){
+    case 'icl_custom_tax_sync_options':
+        foreach($_POST['icl_sync_tax'] as $k=>$v){
+            $iclsettings['taxonomies_sync_option'][$k] = $v;
+            if($v){
+                $this->verify_taxonomy_translations($k);        
+            }            
+        }
+        $this->save_settings($iclsettings);
+        echo '1|';
+        break;
+    case 'icl_custom_posts_sync_options':    
+        foreach($_POST['icl_sync_custom_posts'] as $k=>$v){            
             $iclsettings['custom_posts_sync_option'][$k] = $v;
+            if($v){
+                $this->verify_post_translations($k);                
+            }            
         }
         $this->save_settings($iclsettings);
         echo '1|';

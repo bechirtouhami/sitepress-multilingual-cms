@@ -2333,7 +2333,7 @@ class SitePress{
         include ICL_PLUGIN_PATH . '/menu/post-menu.php';
     }
     
-    function posts_join_filter($join){
+    function posts_join_filter($join){        
         global $wpdb, $pagenow;
         
         //exceptions
@@ -2356,11 +2356,20 @@ class SitePress{
         //$join .= " {$ljoin} JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->posts}.ID = t.element_id 
         //            AND t.element_type='post' {$cond} JOIN {$wpdb->prefix}icl_languages l ON t.language_code=l.code AND l.active=1";        
         $post_type = get_query_var('post_type');
-        if(!$post_type) $post_type = 'post';
-        if($this->is_translated_post_type($post_type)){
-            $join .= " {$ljoin} JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->posts}.ID = t.element_id 
-                    AND t.element_type = 'post_{$post_type}' {$cond} JOIN {$wpdb->prefix}icl_languages l ON t.language_code=l.code AND l.active=1";                
-        }
+        if($post_type){
+            if($this->is_translated_post_type($post_type)){
+                $join .= " {$ljoin} JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->posts}.ID = t.element_id 
+                        AND t.element_type = 'post_{$post_type}' {$cond} JOIN {$wpdb->prefix}icl_languages l ON t.language_code=l.code AND l.active=1";                
+            }
+        }else{
+            $ttypes = array_keys($this->get_translatable_documents(false));
+            if(!empty($ttypes)){
+                foreach($ttypes as $k=>$v) $ttypes[$k] = 'post_' . $v;
+                $post_types = "'" . join("','",$ttypes) . "'";    
+                $join .= " {$ljoin} JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->posts}.ID = t.element_id 
+                        AND t.element_type IN ({$post_types}) JOIN {$wpdb->prefix}icl_languages l ON t.language_code=l.code AND l.active=1";                                
+            }
+        }        
         return $join;
     }
     
@@ -5081,6 +5090,33 @@ class SitePress{
         <?php endif; ?>
         <?php
     }
+    
+    function verify_post_translations($post_type){
+        global $wpdb;
+        $post_ids = $wpdb->get_col("SELECT ID FROM {$wpdb->posts} WHERE post_type='{$post_type}' AND post_status <> 'auto-draft'");
+        if(!empty($post_ids)){
+            foreach($post_ids as $id){
+                $translation_id = $wpdb->get_var("SELECT translation_id FROM {$wpdb->prefix}_icl_translations WHERE element_id='{$id}' AND element_type='post_{$post_type}'");
+                if(!$translation_id){
+                    $this->set_element_language_details($id, 'post_' . $post_type , false, $this->get_default_language());
+                }
+            }
+        }
+    }
+    
+    function verify_taxonomy_translations($taxonomy){
+        global $wpdb;
+        $element_ids = $wpdb->get_col("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE taxonomy='{$taxonomy}'");
+        if(!empty($element_ids)){
+            foreach($element_ids as $id){
+                $translation_id = $wpdb->get_var("SELECT translation_id FROM {$wpdb->prefix}_icl_translations WHERE element_id='{$id}' AND element_type='tax_{$taxonomy}'");
+                if(!$translation_id){
+                    $this->set_element_language_details($id, 'tax_' . $taxonomy , false, $this->get_default_language());
+                }
+            }
+        }
+    }
+    
        
 }
 ?>
