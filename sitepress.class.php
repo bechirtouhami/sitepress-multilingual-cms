@@ -130,19 +130,21 @@ class SitePress{
                 add_action('admin_footer', array($this,'terms_language_filter'));
             } 
             /* preWP3 compatibility  - end */            
-            
+                        
             // tags language selection
-            if($pagenow == 'edit-tags.php'){
+            if($pagenow == 'edit-tags.php'){                
                 $taxonomy = isset($_GET['taxonomy']) ? $wpdb->escape($_GET['taxonomy']) : 'post_tag';
-                add_action('admin_print_scripts-edit-tags.php', array($this,'js_scripts_tags'));   
-                if($taxonomy == 'category'){                    
-                    add_action('edit_category_form', array($this, 'edit_term_form'));
-                }else{
-                    add_action('add_tag_form', array($this, 'edit_term_form'));
-                    add_action('edit_tag_form', array($this, 'edit_term_form'));                    
-                }                
-                add_action('admin_footer', array($this,'terms_language_filter'));                
-                add_filter('wp_dropdown_cats', array($this, 'wp_dropdown_cats_select_parent'));
+                if($this->is_translated_taxonomy($taxonomy)){
+                    add_action('admin_print_scripts-edit-tags.php', array($this,'js_scripts_tags'));   
+                    if($taxonomy == 'category'){                    
+                        add_action('edit_category_form', array($this, 'edit_term_form'));
+                    }else{
+                        add_action('add_tag_form', array($this, 'edit_term_form'));
+                        add_action('edit_tag_form', array($this, 'edit_term_form'));                    
+                    }                
+                    add_action('admin_footer', array($this,'terms_language_filter'));                
+                    add_filter('wp_dropdown_cats', array($this, 'wp_dropdown_cats_select_parent'));
+                }
             }
             
             // custom hook for adding the language selector to the template
@@ -370,7 +372,6 @@ class SitePress{
             // filter some queries
             add_filter('query', array($this, 'filter_queries'));                
                 
-            // experimental
             if( $this->settings['language_negotiation_type']==1  && $this->get_current_language()!=$this->get_default_language()){
                 add_filter('option_rewrite_rules', array($this, 'rewrite_rules_filter'));              
                 if(version_compare($GLOBALS['wp_version'], '2.8.4', '<=')){
@@ -1920,10 +1921,10 @@ class SitePress{
         global $wpdb;        
         
         list($post_type, $post_status) = $wpdb->get_row("SELECT post_type, post_status FROM {$wpdb->posts} WHERE ID = " . $pidd, ARRAY_N);
-        
         // exceptions
-        if( 
-               $_POST['autosave'] 
+        if(     
+               !$this->is_translated_post_type($post_type) 
+            || $_POST['autosave'] 
             || $_POST['skip_sitepress_actions'] 
             || (isset($_POST['post_ID']) && $_POST['post_ID']!=$pidd) || $_POST['post_type']=='revision' 
             || $post_type == 'revision' 
@@ -2354,14 +2355,24 @@ class SitePress{
         }
         //$join .= " {$ljoin} JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->posts}.ID = t.element_id 
         //            AND t.element_type='post' {$cond} JOIN {$wpdb->prefix}icl_languages l ON t.language_code=l.code AND l.active=1";        
-        $join .= " {$ljoin} JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->posts}.ID = t.element_id 
-                    AND t.element_type LIKE 'post\\_%' {$cond} JOIN {$wpdb->prefix}icl_languages l ON t.language_code=l.code AND l.active=1";                
+        $post_type = get_query_var('post_type');
+        if(!$post_type) $post_type = 'post';
+        if($this->is_translated_post_type($post_type)){
+            $join .= " {$ljoin} JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->posts}.ID = t.element_id 
+                    AND t.element_type = 'post_{$post_type}' {$cond} JOIN {$wpdb->prefix}icl_languages l ON t.language_code=l.code AND l.active=1";                
+        }
         return $join;
     }
     
     function posts_where_filter($where){
         global $wpdb, $pagenow;
         //exceptions
+        $post_type = get_query_var('post_type');
+        if(!$post_type) $post_type = 'post';
+        if(!$this->is_translated_post_type($post_type)){
+            return $where;
+        }
+        
         if(isset($_POST['wp-preview']) && $_POST['wp-preview']=='dopreview' || is_preview()){
             $is_preview = true;
         }else{
@@ -2836,6 +2847,11 @@ class SitePress{
         }
 
         $el_type = $wpdb->get_var("SELECT taxonomy FROM {$wpdb->term_taxonomy} WHERE term_taxonomy_id={$tt_id}");
+        
+        if(!$this->is_translated_taxonomy($el_type)){
+            return;
+        };
+        
         $icl_el_type = 'tax_' . $el_type; 
         
         // case of adding a tag via post save
@@ -3009,6 +3025,10 @@ class SitePress{
                     $taxonomy = 'post_tag';
                 }
             }
+        }
+        
+        if(!$this->is_translated_taxonomy($taxonomy)){
+            return $exclusions;
         }
         
         $icl_element_type = 'tax_' . $taxonomy;
@@ -3481,7 +3501,19 @@ class SitePress{
         return $flag;
     }
                       
-    function language_selector(){
+    function language_selector(){        
+        if(is_single()){
+            $post_type = get_query_var('post_type');
+            if(!$post_type) $post_type = 'post';
+            if(!$this->is_translated_post_type($post_type)){
+                return;
+            }
+        }elseif(is_tax()){
+            $tax = get_query_var('taxonomy');
+            if(!$this->is_translated_taxonomy($tax)){
+                return;
+            }            
+        }
         $active_languages = $this->get_ls_languages();
         foreach($active_languages as $k=>$al){
             if($al['active']==1){
@@ -4926,6 +4958,30 @@ class SitePress{
         }
         /* preWP3 compatibility  - end */                
         return $icl_post_types;        
+    }
+    
+    function is_translated_taxonomy($tax){
+        switch($tax){
+            case 'category':
+            case 'post_tag':
+                $ret = true;
+                break;
+            default:
+                $ret = $this->settings['taxonomies_sync_option'][$tax]; 
+        }
+        return $ret;
+    }
+
+    function is_translated_post_type($type){
+        switch($type){
+            case 'post':
+            case 'page':
+                $ret = true;
+                break;
+            default:
+                $ret = $this->settings['custom_posts_sync_option'][$type]; 
+        }
+        return $ret;
     }
     
     function print_translatable_custom_content_status(){
