@@ -53,9 +53,6 @@ function icl_link_to_element($element_id, $element_type='post', $link_text='',
     $post_types = array_keys((array)$wp_post_types);
     $taxonomies = array_keys((array)$wp_taxonomies);
     
-    
-    
-    
     /* preWP3 compatibility  - start */
     if(ICL_PRE_WP3){
         if($element_type == 'post_tag'){
@@ -79,7 +76,7 @@ function icl_link_to_element($element_id, $element_type='post', $link_text='',
     if(in_array($element_type, $taxonomies)){
         $icl_element_type = 'tax_' . $element_type;
     }elseif(in_array($element_type, $post_types)){
-        $icl_element_type = 'post';
+        $icl_element_type = 'post_' . $wpdb->get_var("SELECT post_type FROM {$wpdb->posts} WHERE ID='{$element_id}'");
     }
     
     

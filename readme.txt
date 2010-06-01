@@ -68,6 +68,10 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 
 == Changelog ==
 
+= 1.7.8.1 =
+* Fixed bug with some js strings causing errors
+* Fixed bug in icl_link_to_element (for pages)
+
 = 1.7.8 =
 * Added full support for WordPress custom posts.
 * Added option to subscribe to paid support.

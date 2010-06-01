@@ -71,5 +71,11 @@ if(defined('ICL_DEBUG_MODE') && ICL_DEBUG_MODE && !function_exists('icl_error_ha
         }
     }
     set_error_handler("icl_error_handler",E_ALL & ~E_NOTICE & ~E_DEPRECATED);
+}
+
+function icl_js_escape($str){
+    $str = esc_js($str);
+    $str = htmlspecialchars_decode($str);
+    return $str;
 }       
 ?>
