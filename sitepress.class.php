@@ -3253,8 +3253,10 @@ class SitePress{
                 $trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id='{$tag_id}' AND element_type='tax_post_tag'");                
                 $skip_empty = true;
                 $translations = $this->get_element_translations($trid,'tax_post_tag', $skip_empty);             
-            }elseif(is_tax()){
-                $trid = $this->get_element_trid($wp_query->get_queried_object_id(), 'tax_' . get_query_var('taxonomy'));
+            }elseif(is_tax()){                
+                $tax_id = $wpdb->get_var("SELECT term_taxonomy_id 
+                    FROM {$wpdb->term_taxonomy} WHERE term_id='".$wp_query->get_queried_object_id()."' AND taxonomy='".$wpdb->escape(get_query_var('taxonomy'))."'");                
+                $trid = $this->get_element_trid($tax_id, 'tax_' . get_query_var('taxonomy'));
                 $translations = $this->get_element_translations($trid,'tax_' . get_query_var('taxonomy'), $skip_empty);                
             }elseif(is_archive() && !empty($wp_query->posts)){                      
                 $translations = array();
@@ -5096,7 +5098,7 @@ class SitePress{
         $post_ids = $wpdb->get_col("SELECT ID FROM {$wpdb->posts} WHERE post_type='{$post_type}' AND post_status <> 'auto-draft'");
         if(!empty($post_ids)){
             foreach($post_ids as $id){
-                $translation_id = $wpdb->get_var("SELECT translation_id FROM {$wpdb->prefix}_icl_translations WHERE element_id='{$id}' AND element_type='post_{$post_type}'");
+                $translation_id = $wpdb->get_var("SELECT translation_id FROM {$wpdb->prefix}icl_translations WHERE element_id='{$id}' AND element_type='post_{$post_type}'");
                 if(!$translation_id){
                     $this->set_element_language_details($id, 'post_' . $post_type , false, $this->get_default_language());
                 }
@@ -5109,7 +5111,7 @@ class SitePress{
         $element_ids = $wpdb->get_col("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE taxonomy='{$taxonomy}'");
         if(!empty($element_ids)){
             foreach($element_ids as $id){
-                $translation_id = $wpdb->get_var("SELECT translation_id FROM {$wpdb->prefix}_icl_translations WHERE element_id='{$id}' AND element_type='tax_{$taxonomy}'");
+                $translation_id = $wpdb->get_var("SELECT translation_id FROM {$wpdb->prefix}icl_translations WHERE element_id='{$id}' AND element_type='tax_{$taxonomy}'");
                 if(!$translation_id){
                     $this->set_element_language_details($id, 'tax_' . $taxonomy , false, $this->get_default_language());
                 }
