@@ -3723,7 +3723,9 @@ class SitePress{
     // adiacent posts links
     function get_adiacent_post_join($join){
         global $wpdb;
-        $join .= " JOIN {$wpdb->prefix}icl_translations t ON t.element_id = p.ID AND t.element_type = 'post_post'";        
+        $post_type = get_query_var('post_type');
+        if(!$post_type) $post_type = 'post';
+        $join .= " JOIN {$wpdb->prefix}icl_translations t ON t.element_id = p.ID AND t.element_type = 'post_{$post_type}'";        
         return $join;
     }    
     
