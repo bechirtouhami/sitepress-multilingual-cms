@@ -68,6 +68,10 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 
 == Changelog ==
 
+= 1.7.9 (?) =
+* Fixed bug with pagination not showing on custom posts archive pages
+* Fixed bug for search results
+
 = 1.7.8.1 =
 * Fixed bug with some js strings causing errors
 * Fixed bug in icl_link_to_element (for pages)

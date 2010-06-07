@@ -2335,7 +2335,6 @@ class SitePress{
     
     function posts_join_filter($join){        
         global $wpdb, $pagenow;
-        
         //exceptions
         if(isset($_POST['wp-preview']) && $_POST['wp-preview']=='dopreview' || is_preview()){
             $is_preview = true;
@@ -2360,9 +2359,12 @@ class SitePress{
             if($this->is_translated_post_type($post_type)){
                 $join .= " {$ljoin} JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->posts}.ID = t.element_id 
                         AND t.element_type = 'post_{$post_type}' {$cond} JOIN {$wpdb->prefix}icl_languages l ON t.language_code=l.code AND l.active=1";                
+            }elseif($post_type == 'any'){
+                $join .= " {$ljoin} JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->posts}.ID = t.element_id 
+                        AND t.element_type LIKE 'post\\_%' {$cond} JOIN {$wpdb->prefix}icl_languages l ON t.language_code=l.code AND l.active=1";                                    
             }
         }else{
-            $ttypes = array_keys($this->get_translatable_documents(false));
+            $ttypes = array_keys($this->get_translatable_documents(false));            
             if(!empty($ttypes)){
                 foreach($ttypes as $k=>$v) $ttypes[$k] = 'post_' . $v;
                 $post_types = "'" . join("','",$ttypes) . "'";    
@@ -2378,7 +2380,7 @@ class SitePress{
         //exceptions
         $post_type = get_query_var('post_type');
         if(!$post_type) $post_type = 'post';
-        if(!$this->is_translated_post_type($post_type)){
+        if(!$this->is_translated_post_type($post_type) && 'any' != $post_type){
             return $where;
         }
         
