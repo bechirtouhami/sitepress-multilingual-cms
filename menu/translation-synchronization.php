@@ -118,17 +118,17 @@
     </div>
     </div>
     
+    <form id="icl_page_sync_options" name="icl_page_sync_options" action="">        
     <table class="widefat">
         <thead>
             <tr>
-                <th><?php _e('Posts and pages synchronization', 'sitepress');?></th>
+                <th colspan="2"><?php _e('Posts and pages synchronization', 'sitepress');?></th>
             </tr>
         </thead>
         <tbody>
             <tr>
                 <td>
-                    <br />
-                    <form id="icl_page_sync_options" name="icl_page_sync_options" action="">        
+                    <br />                    
                     <p>
                         <label><input type="checkbox" id="icl_sync_page_ordering" name="icl_sync_page_ordering" <?php if($sitepress_settings['sync_page_ordering']): ?>checked="checked"<?php endif; ?> value="1" />
                         <?php echo __('Synchronize page order for translations.', 'sitepress') ?></label>                        
@@ -160,13 +160,19 @@
                     <p>
                         <input class="button" name="save" value="<?php echo __('Save','sitepress') ?>" type="submit" />
                         <span class="icl_ajx_response" id="icl_ajx_response_mo"></span>
-                    </p>
-                    </form>                
+                    </p>                    
+                </td>
+                <td>
+                    <br />                    
+                    <p>
+                        <label><input type="checkbox" name="icl_sync_delete" <?php if($sitepress_settings['sync_delete']): ?>checked="checked"<?php endif; ?> value="1" />
+                        <?php echo __('When deleting a post, delete translations as well.', 'sitepress') ?></label>                        
+                    </p>                                                                                
                 </td>
             </tr>
         </tbody>
     </table>
-    
+    </form>                
     <br />
     <?php if(!empty($cposts)): ?>    
     <form id="icl_custom_posts_sync_options" name="icl_custom_posts_sync_options" action="">        

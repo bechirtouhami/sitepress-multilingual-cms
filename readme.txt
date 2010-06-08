@@ -73,6 +73,7 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 * Fixed bug for search results
 * Fixed bug for thinkbox popups
 * Fixed bug for auto adjusting IDs (e.g. post_parent)
+* Fixed bug related to using WPML as a site wide activated plugin on WPMU
 
 = 1.7.8.1 =
 * Fixed bug with some js strings causing errors

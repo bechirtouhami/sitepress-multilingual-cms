@@ -725,6 +725,7 @@ class SitePress{
             'sync_comment_status' => 1,
             'sync_sticky_flag' => 1,
             'sync_private_flag' => 1,
+            'sync_delete' => 0,            
             'translated_document_status' => 0,
             'translation_pickup_method' => 0,
             'notify_complete' => 1,
@@ -2161,49 +2162,51 @@ class SitePress{
     }
 
     function trash_post_actions($post_id){
-        global $wpdb;
-        static $trashed_posts = array();
-        $post_type = $wpdb->get_var("SELECT post_type FROM {$wpdb->posts} WHERE ID={$post_id}");
-        if(isset($trashed_posts[$post_id])){
-            return; // avoid infinite loop
-        }
-        
-        $trashed_posts[$post_id] = $post_id;
-        
-        $trid = $this->get_element_trid($post_id, 'post_' . $post_type);
-        $translations = $this->get_element_translations($trid, 'post_' . $post_type);
-        foreach($translations as $t){
-            if($t->element_id != $post_id){
-                wp_trash_post($t->element_id);
+        if($this->settings['sync_delete']){
+            global $wpdb;        
+            static $trashed_posts = array();
+            $post_type = $wpdb->get_var("SELECT post_type FROM {$wpdb->posts} WHERE ID={$post_id}");
+            if(isset($trashed_posts[$post_id])){
+                return; // avoid infinite loop
             }
+            
+            $trashed_posts[$post_id] = $post_id;
+            
+            $trid = $this->get_element_trid($post_id, 'post_' . $post_type);
+            $translations = $this->get_element_translations($trid, 'post_' . $post_type);
+            foreach($translations as $t){
+                if($t->element_id != $post_id){
+                    wp_trash_post($t->element_id);
+                }
+            }
+            require_once ICL_PLUGIN_PATH . '/inc/cache.php';                
+            icl_cache_clear($post_type.'s_per_language');        
         }
-        require_once ICL_PLUGIN_PATH . '/inc/cache.php';                
-        icl_cache_clear($post_type.'s_per_language');        
     }
 
     function untrashed_post_actions($post_id){
-        global $wpdb;        
-        static $untrashed_posts = array();
-        $post_type = $wpdb->get_var("SELECT post_type FROM {$wpdb->posts} WHERE ID={$post_id}");
-        
-        if(isset($untrashed_posts[$post_id])){
-            return; // avoid infinite loop
-        }
-        
-        $untrashed_posts[$post_id] = $post_id;
-        
-        $trid = $this->get_element_trid($post_id, 'post_' . $post_type);
-        $translations = $this->get_element_translations($trid, 'post_' . $post_type);
-        foreach($translations as $t){
-            if($t->element_id != $post_id){
-                wp_untrash_post($t->element_id);
+        if($this->settings['sync_delete']){
+            global $wpdb;        
+            static $untrashed_posts = array();
+            $post_type = $wpdb->get_var("SELECT post_type FROM {$wpdb->posts} WHERE ID={$post_id}");
+            
+            if(isset($untrashed_posts[$post_id])){
+                return; // avoid infinite loop
             }
+            
+            $untrashed_posts[$post_id] = $post_id;
+            
+            $trid = $this->get_element_trid($post_id, 'post_' . $post_type);
+            $translations = $this->get_element_translations($trid, 'post_' . $post_type);
+            foreach($translations as $t){
+                if($t->element_id != $post_id){
+                    wp_untrash_post($t->element_id);
+                }
+            }
+            require_once ICL_PLUGIN_PATH . '/inc/cache.php';        
+            
+            icl_cache_clear($post_type.'s_per_language');        
         }
-        require_once ICL_PLUGIN_PATH . '/inc/cache.php';        
-        
-        icl_cache_clear($post_type.'s_per_language');        
-        
-        
     }
     
     function get_element_translations($trid, $el_type='post_post', $skip_empty = false){        
