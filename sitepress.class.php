@@ -1195,9 +1195,9 @@ class SitePress{
 			$id = ' id="' . $id . '"';
 		}
 		if ($title) {
-            return '<a class="icl_thickbox' . $class . '" title="' . $title . '" href="admin.php?page='.ICL_PLUGIN_FOLDER . "/menu/languages.php&amp;icl_action=reminder_popup&amp;target=" . $link .'"' . $id . '>';
+            return '<a class="icl_thickbox' . $class . '" title="' . $title . '" href="admin.php?page='.ICL_PLUGIN_FOLDER . "/menu/languages.php&amp;icl_action=reminder_popup&amp;target=" . urlencode($link) .'"' . $id . '>';
         } else {
-            return '<a class="icl_thickbox' . $class . '" href="admin.php?page='.ICL_PLUGIN_FOLDER . "/menu/languages&amp;icl_action=reminder_popup&amp;target=" . $link .'"' . $id . '>';
+            return '<a class="icl_thickbox' . $class . '" href="admin.php?page='.ICL_PLUGIN_FOLDER . "/menu/languages&amp;icl_action=reminder_popup&amp;target=" . urlencode($link) .'"' . $id . '>';
         }
     }
     
@@ -4005,6 +4005,7 @@ class SitePress{
                
                
             // POST & PAGES
+            $post_type = isset($q->query_vars['post_type']) ? $q->query_vars['post_type'] : 'post';
             // page_id                        
             if(isset($q->query_vars['page_id']) && !empty($q->query_vars['page_id'])){
                 $q->query_vars['page_id'] = icl_object_id($q->query_vars['page_id'], 'page', true);
@@ -4013,11 +4014,10 @@ class SitePress{
             
             // p
             if(isset($q->query_vars['p']) && !empty($q->query_vars['p'])){
-                $q->query_vars['p'] = icl_object_id($q->query_vars['p'], 'post', true);
+                $q->query_vars['p'] = icl_object_id($q->query_vars['p'], $post_type, true);
             }
             // name
-            if(isset($q->query_vars['name']) && !empty($q->query_vars['name'])){
-                $post_type = isset($q->query_vars['post_type']) ? $q->query_vars['post_type'] : 'post';
+            if(isset($q->query_vars['name']) && !empty($q->query_vars['name'])){                
                 $pid = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_name='".urlencode($wpdb->escape($q->query_vars['name']))."'");    
                 $q->query_vars['p'] = icl_object_id($pid, $post_type, true);
                 unset($q->query_vars['name']);
@@ -4034,7 +4034,7 @@ class SitePress{
             if(isset($q->query_vars['post__in']) && !empty($q->query_vars['post__in'])){
                 $pid = array();
                 foreach($q->query_vars['post__in'] as $p){
-                    $pid[] = icl_object_id($p, 'post', true);                    
+                    $pid[] = icl_object_id($p, $post_type, true);                    
                 }
                 $q->query_vars['post__in'] = $pid;
             }
@@ -4042,13 +4042,13 @@ class SitePress{
             if(isset($q->query_vars['post__not_in']) && !empty($q->query_vars['post__not_in'])){
                 $pid = array();
                 foreach($q->query_vars['post__not_in'] as $p){
-                    $pid[] = icl_object_id($p, 'post', true);                    
+                    $pid[] = icl_object_id($p, $post_type, true);                    
                 }
                 $q->query_vars['post__not_in'] = $pid;
             }
             // post_parent
             if(isset($q->query_vars['post_parent']) && !empty($q->query_vars['post_parent']) && $q->query_vars['post_type']!='attachment'){
-                $q->query_vars['post_parent'] = icl_object_id($q->query_vars['post_parent'], 'post', true);
+                $q->query_vars['post_parent'] = icl_object_id($q->query_vars['post_parent'], $post_type, true);
             } 
             
             // custom taxonomies

@@ -71,6 +71,8 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 = 1.7.9 (?) =
 * Fixed bug with pagination not showing on custom posts archive pages
 * Fixed bug for search results
+* Fixed bug for thinkbox popups
+* Fixed bug for auto adjusting IDs (e.g. post_parent)
 
 = 1.7.8.1 =
 * Fixed bug with some js strings causing errors
