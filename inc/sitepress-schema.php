@@ -18,7 +18,7 @@ function icl_sitepress_activate(){
     }    
     
     // languages table
-    $table_name = $wpdb->prefix.'icl_languages';        
+    $table_name = $wpdb->prefix.'icl_languages';            
     if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
         $sql = " 
         CREATE TABLE `{$table_name}` (
@@ -343,7 +343,7 @@ function icl_sitepress_activate(){
 		}
 	}
 	
-    if(defined('ICL_DEBUG_MODE') && ICL_DEBUG_MODE){
+    if(defined('ICL_DEBUG_MODE') && ICL_DEBUG_MODE && false === strpos($_SERVER['REQUEST_URI'], '/wpmu-edit.php')){
         require_once ICL_PLUGIN_PATH . '/inc/functions.php';
         icl_display_errors_stack(true);
     } 

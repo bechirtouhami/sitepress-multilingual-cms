@@ -46,6 +46,21 @@ if(!empty($icl_ncp_plugins)){
 
 
 if(isset($_REQUEST['action']) && $_REQUEST['action']=='addblog' && false !== strpos($_SERVER['REQUEST_URI'], '/wpmu-edit.php')){
+    /**
+    * Activate the plugin for WPMU new blogs when WPML is enabled sitewide
+    * 
+    */
+    add_action('wpmu_new_blog', 'icl_wpmu_new_blog');
+    function icl_wpmu_new_blog($blog_id){
+        $wpmu_sitewide_plugins = (array) maybe_unserialize( get_site_option( 'active_sitewide_plugins' ) );
+        if(isset($wpmu_sitewide_plugins[ICL_PLUGIN_FOLDER.'/'.basename(__FILE__)])){
+            require ICL_PLUGIN_PATH . '/inc/sitepress-schema.php';
+            switch_to_blog($blog_id);
+            icl_sitepress_activate();
+            restore_current_blog();            
+            remove_action('admin_footer', 'icl_display_errors_stack');
+        }
+    }
     return;
 } 
 
@@ -69,6 +84,8 @@ require ICL_PLUGIN_PATH . '/inc/compatibility-packages/wpml-package.class.php';
 require ICL_PLUGIN_PATH . '/inc/affiliate-info.php';
 require ICL_PLUGIN_PATH . '/inc/language-switcher.php';
 require ICL_PLUGIN_PATH . '/inc/import-xml.php';
+
+
 
 if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQUEST['action']!='activate-selected') 
     || (($_REQUEST['plugin'] != basename(ICL_PLUGIN_PATH).'/'.basename(__FILE__)) 
@@ -121,6 +138,5 @@ register_activation_hook( __FILE__, 'icl_sitepress_activate' );
 register_deactivation_hook(__FILE__, 'icl_sitepress_deactivate');
 
 add_filter('plugin_action_links', 'icl_plugin_action_links', 10, 2); 
-
 
 ?>
