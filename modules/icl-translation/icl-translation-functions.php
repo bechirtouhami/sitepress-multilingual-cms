@@ -2082,6 +2082,8 @@ function icl_translation_send_strings($string_ids, $target_languages) {
 function _icl_translation_send_strings($string_ids, $target) {
     global $wpdb, $sitepress, $sitepress_settings;
     
+    if(!$sitepress_settings['st']['strings_language']) $sitepress_settings['st']['strings_language'] = $sitepress->get_default_language();
+    
     $target_code = $sitepress->get_language_code($target);
     
     // get all the untranslated strings
@@ -2125,12 +2127,7 @@ function _icl_translation_send_strings($string_ids, $target) {
 
         $iclq = new ICanLocalizeQuery($sitepress_settings['site_id'], $sitepress_settings['access_key']);
         
-        $orig_lang = $wpdb->get_var("
-            SELECT language 
-            FROM {$wpdb->prefix}icl_strings
-            WHERE id={$untranslated[0]}"
-            );
-        $orig_lang = $sitepress->get_language_details($orig_lang);
+        $orig_lang = $sitepress->get_language_details($sitepress_settings['st']['strings_language']);
         $orig_lang_for_server = apply_filters('icl_server_languages_map', $orig_lang['english_name']);
 
         $timestamp = date('Y-m-d H:i:s');

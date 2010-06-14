@@ -493,6 +493,7 @@ switch($_REQUEST['icl_ajx_action']){
         }
         echo icl_add_string_translation($_POST['icl_st_string_id'], $_POST['icl_st_language'], stripslashes($_POST['icl_st_translation']), $icl_st_complete);
         echo '|';
+        global $icl_st_string_translation_statuses;
         echo $icl_st_string_translation_statuses[icl_update_string_status($_POST['icl_st_string_id'])];
         break;
     case 'icl_st_delete_strings':

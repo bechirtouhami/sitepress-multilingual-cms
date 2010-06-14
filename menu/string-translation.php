@@ -41,6 +41,10 @@ if(is_array($sitepress_settings['st']['theme_localization_domains'])){
     }
 }
 $available_contexts = array_unique($available_contexts);
+if(!$sitepress_settings['st']['strings_language']){
+    $iclsettings['st']['strings_language'] = $sitepress_settings['st']['strings_language'] = $sitepress->get_default_language();
+    $sitepress->save_settings($iclsettings);
+}
 ?>
 <div class="wrap">
     <div id="icon-options-general" class="icon32 icon32_adv"><br /></div>
@@ -250,8 +254,8 @@ $available_contexts = array_unique($available_contexts);
                             <a href="#icl-st-toggle-translations"><?php echo __('translations','sitepress') ?></a>
                         </div>
                         <br clear="all" />
-                        <div class="icl-st-inline">                        
-                            <?php foreach($active_languages as $lang): if($lang['code'] == $sitepress->get_current_language()) continue;  ?>
+                        <div class="icl-st-inline">          
+                            <?php foreach($active_languages as $lang): if($lang['code'] == $sitepress_settings['st']['strings_language']) continue;  ?>
                             <form class="icl_st_form" name="icl_st_form_<?php echo $lang['code'] . '_' . $string_id ?>" action="">
                             <input type="hidden" name="icl_st_language" value="<?php echo $lang['code'] ?>" />                        
                             <input type="hidden" name="icl_st_string_id" value="<?php echo $string_id ?>" />                        
@@ -324,7 +328,7 @@ $available_contexts = array_unique($available_contexts);
 
             <div class="tablenav-pages"> 
                 <?php if ( $page_links ): ?>               
-                <?php $page_links_text = sprintf( '<span class="displaying-num">' . __( 'Displaying %s&#8211;%s of %s', 'sitepress' ) . '</span>%s',
+                <?php $page_links_text = sprintf( '<span class="displaying-num">' . __( 'Displaying %s&#8211;%s of %s', 'sitepress' ) . '</span></i>%s',   // needs this closing </i>
                     number_format_i18n( ( $_GET['paged'] - 1 ) * $wp_query->query_vars['posts_per_page'] + 1 ),
                     number_format_i18n( min( $_GET['paged'] * $wp_query->query_vars['posts_per_page'], $wp_query->found_posts ) ),
                     number_format_i18n( $wp_query->found_posts ),
@@ -375,8 +379,8 @@ $available_contexts = array_unique($available_contexts);
                     }
                 ?>
                 <?php $_one_lang_enabled = false; ?>
-                <?php foreach($active_languages as $lang): if($sitepress->get_current_language()==$lang['code']) continue; ?>
-                    <?php if($sitepress_settings['language_pairs'] && isset($sitepress_settings['language_pairs'][$sitepress->get_current_language()][$lang['code']])): ?>
+                <?php foreach($active_languages as $lang): if($sitepress_settings['st']['strings_language']==$lang['code']) continue; ?>
+                    <?php if($sitepress_settings['language_pairs'] && isset($sitepress_settings['language_pairs'][$sitepress_settings['st']['strings_language']][$lang['code']])): ?>
                         <?php if(isset($target_status[$lang['code']]) && $target_status[$lang['code']] == 1): $_one_lang_enabled = true;?>
                             <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" checked="checked" />&nbsp;<?php printf(__('Translate to %s %s','sitepress'), $lang['display_name'], $sitepress->get_language_status_text($sitepress->get_current_language(), $lang['code'])); ?></label></li>
                         <?php else:  ?>
@@ -475,6 +479,17 @@ $available_contexts = array_unique($available_contexts);
                                 <form id="icl_st_sw_form" name="icl_st_sw_form" method="post" action="">
                                     <p class="icl_form_errors" style="display:none"></p>
                                     <ul>
+                                        <li>
+                                            <label>
+                                                <?php echo __('Strings Language', 'sitepress'); ?>                                                
+                                                <select name="icl_st_sw[strings_language]"> 
+                                                <?php foreach($sitepress->get_languages($sitepress->get_admin_language()) as $l): ?>
+                                                <option value="<?php echo $l['code'] ?>" <?php 
+                                                    if($l['code'] == $sitepress_settings['st']['strings_language']): ?>selected="selected"<?php endif; ?>><?php echo $l['display_name'] ?></option>
+>                                                <?php endforeach; ?>
+                                                </select>
+                                            </label>
+                                        </li>
                                         <li><label><input type="checkbox" name="icl_st_sw[blog_title]" value="1" <?php if($sitepress_settings['st']['sw']['blog_title']): ?>checked="checked"<?php endif ?> /> 
                                             <?php echo __('Blog Title', 'sitepress'); ?></label></li>
                                         <li><label><input type="checkbox" name="icl_st_sw[tagline]" value="1" <?php if($sitepress_settings['st']['sw']['tagline']): ?>checked="checked"<?php endif ?> /> 

@@ -46,7 +46,13 @@
                                         <div id="icl_languages_disabled" style="display:none;">
                                         <ul class="icl_language_pairs">
                                     <?php endif; ?>
-                                    <?php foreach($active_languages as $lang): ?>            
+                                    <?php 
+                                        if($sitepress_settings['st']['strings_language']){
+                                            $active_languages[$sitepress_settings['st']['strings_language']] = $sitepress->get_language_details($sitepress_settings['st']['strings_language']);
+                                        }
+                                        
+                                    ?>
+                                    <?php foreach($active_languages as $lang): ?>                                                    
                                         <?php
                                             $enabled = $sitepress->get_icl_translation_enabled($lang['code']);
                                             if ($enable_default && $lang['code'] == $default_language){
@@ -62,6 +68,10 @@
                                                 <?php printf(__('Translate from %s to these languages','sitepress'), $lang['display_name']) ?></label>
                                                 <ul id="icl_tr_pair_sub_<?php echo $lang['code'] ?>" <?php if(!$enabled): ?>style="display:none"<?php endif?>>
                                                 <?php foreach($active_languages as $langto): if($lang['code']==$langto['code']) continue; ?>        
+                                                    <?php 
+                                                    if($langto['code'] == $sitepress_settings['st']['strings_language'] 
+                                                        && !in_array($sitepress_settings['st']['strings_language'], array_keys($sitepress->get_active_languages()))) continue;
+                                                    ?>
                                                     <li style="<?php echo $lang_to_style?>">
                                                         <label><input class="icl_tr_to" type="checkbox" name="icl_lng_to_<?php echo $lang['code']?>_<?php echo $langto['code']?>" id="icl_lng_from_<?php echo $lang['code']?>_<?php echo $langto['code']?>" <?php if($sitepress->get_icl_translation_enabled($lang['code'],$langto['code'])): ?>checked="checked"<?php endif?> />
                                                             <?php echo $langto['display_name'] . ' '?>
