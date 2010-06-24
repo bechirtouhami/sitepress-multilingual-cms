@@ -48,21 +48,21 @@ $wizard = new ICL_account_wizard();
                                 You can continue using this account, create a new account for translations or transfer this project to another account.</p>
                                 <br />
                                 <ul>
-                                    <li>
+                                    <li style="list-style: none;">
                                         <label><input id="icl_existing" type="radio" value="0" onclick="<?php echo $wizard->on_click(0);?>" <?php if($sitepress->icl_support_configured()): ?>checked="checked"<?php endif; ?>/>
                                             <?php echo sprintf(__('Use my existing ICanLocalize account - <b>%s</b>', 'sitepress'), $sitepress_settings['support_icl_account_email']); ?>
                                         </label>
                                         <?php $wizard->use_existing_support_account(); ?>
                                     </li>
                                     <?php endif; ?>
-                                    <li>
+                                    <li style="list-style: none;">
                                         <label><input id="icl_new" type="radio" value="1" onclick="<?php echo $wizard->on_click(1);?>" <?php if(!$sitepress->icl_support_configured()): ?>checked="checked"<?php endif;?> />
                                             <?php echo __('Create a new account in ICanLocalize', 'sitepress'); ?>
                                         </label>
                                         <?php $wizard->create_account($sitepress->icl_support_configured()); ?>
                                     </li>
                                     <?php if(!$sitepress->icl_support_configured()): ?>
-                                    <li>
+                                    <li style="list-style: none;">
                                         <label><input id="icl_add" type="radio" value="2" onclick="<?php echo $wizard->on_click(2);?>" />
                                             <?php echo __('Add to an existing account at ICanLocalize', 'sitepress'); ?>
                                         </label>
@@ -71,7 +71,7 @@ $wizard = new ICL_account_wizard();
                                     </li>
                                     <?php endif; ?>
                                     <?php if($sitepress->icl_support_configured()): ?>
-                                    <li>
+                                    <li style="list-style: none;">
                                         <label><input id="icl_transfer" type="radio" value="3" onclick="<?php echo $wizard->on_click(3);?>" />
                                             <?php echo __('Transfer to an existing account at ICanLocalize', 'sitepress'); ?>
                                         </label>
