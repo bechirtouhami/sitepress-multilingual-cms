@@ -1004,11 +1004,13 @@ function icl_st_scan_plugin_files($plugin, $recursion = 0){
     
     if(!$recursion){
         $icl_st_p_scan_plugin_id = str_replace(WP_PLUGIN_DIR .'/', '', $plugin);
+        $icl_st_p_scan_plugin_id = str_replace(WPMU_PLUGIN_DIR .'/', '', $plugin);
     }
     
     if(is_file($plugin) && !$recursion){ // case of one-file plugins
-        $scan_stats = sprintf(__('Scanning file: %s', 'sitepress'), $plugin);
-        _potx_process_file($plugin, 0, '__icl_st_scan_plugin_files_store_results','_potx_save_version', POTX_API_7);            
+        $scan_stats = sprintf(__('Scanning file: %s', 'sitepress'), $plugin) . PHP_EOL;
+        _potx_process_file($plugin, 0, '__icl_st_scan_plugin_files_store_results','_potx_save_version', POTX_API_7);                    
+        $scanned_files[] = $plugin;
     }else{
         $dh = opendir($plugin);    
         while(false !== ($file = readdir($dh))){
@@ -1031,7 +1033,9 @@ function icl_st_scan_plugin_files($plugin, $recursion = 0){
     
     if(!$recursion){
         global $__icl_registered_strings;
-        $__icl_registered_strings = array();
+        if(is_null($__icl_registered_strings)){
+            $__icl_registered_strings = array();    
+        }        
         $scan_stats .= __('Done scanning files', 'sitepress') . PHP_EOL;                    
         
         /*
@@ -1048,9 +1052,15 @@ function icl_st_scan_plugin_files($plugin, $recursion = 0){
         
         unset($icl_st_p_scan_plugin_id);        
         $scan_stats = '<textarea style="width:100%;height:150px;font-size:10px;">' . $scan_stats . "\n" .
-                       count($scanned_files) . ' scanned files' . "\n" .    
-                       sprintf(__('WPML found %s strings. They were added to the string translation table.','sitepress'),count($__icl_registered_strings)) . "\n" .
-                       '</textarea>';
+                       count($scanned_files) . ' scanned files' . "\n";    
+        if(count($__icl_registered_strings)){
+            $scan_stats .=  sprintf(__('WPML found %s strings. They were added to the string translation table.','sitepress'),count($__icl_registered_strings)) . "\n";
+        }else{
+            $scan_stats .=  __('No strings found.','sitepress') . "\n";
+        }
+        $scan_stats .= '</textarea>';
+                        
+                       
         
         return $scan_stats;
     }    

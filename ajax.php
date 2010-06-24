@@ -546,16 +546,30 @@ switch($_REQUEST['icl_ajx_action']){
         break;
     case 'icl_tl_rescan_p':
         set_time_limit(0);
-        ini_set('memory_limit', '128M');
+        if(preg_replace('#M$#', '', ini_get('memory_limit')) < 128) ini_set('memory_limit', '128M');        
+        $plugins = array();
+        foreach((array)$_POST['plugin'] as $plugin){
+            $plugins[] = array('file'=>$plugin, 'mu'=>0); // regular plugins
+        }
+        foreach((array)$_POST['mu-plugin'] as $plugin){
+            $plugins[] = array('file'=>$plugin, 'mu'=>1); //mu plugins
+        }    
         $scan_stats = '';
-        foreach($_POST['plugin'] as $plugin){
-            if(false !== strpos($plugin, '/')){
+        foreach($plugins as $p){
+            $plugin = $p['file'];
+            
+            if(false !== strpos($plugin, '/') && !$p['mu']){
                 $plugin = dirname($plugin);
             }
-            $plugin_path = WP_PLUGIN_DIR . '/' . $plugin;
+            if($p['mu']){
+                $plugin_path = WPMU_PLUGIN_DIR . '/' . $plugin;    
+            }else{
+                $plugin_path = WP_PLUGIN_DIR . '/' . $plugin;    
+            }
+            
             $scan_stats .= icl_st_scan_plugin_files($plugin_path);                
             
-            if($_POST['icl_load_mo']){
+            if($_POST['icl_load_mo'] && !$p['mu']){
                 $mo_files = icl_st_get_mo_files($plugin_path);
                 foreach($mo_files as $m){
                     $i = preg_match('#[-]([a-z_]+)\.mo$#i', $m, $matches);

@@ -190,6 +190,13 @@ $plugin_localization_stats = get_plugin_localization_stats();
         <?php 
         $plugins = get_plugins();
         $active_plugins = get_option('active_plugins'); 
+        $mu_plugins = wp_get_mu_plugins();
+        foreach($mu_plugins as $p){
+            $pfile = basename($p);
+            $plugins[$pfile] = array('Name' => 'MU :: ' . $pfile);
+            $mu_plugins_base[$pfile] = true;
+        }
+        $wpmu_sitewide_plugins = (array) maybe_unserialize( get_site_option( 'active_sitewide_plugins' ) );
         ?>
         <form id="icl_tl_rescan_p" action="">
             <div id="icl_strings_in_plugins_wrap">
@@ -228,12 +235,24 @@ $plugin_localization_stats = get_plugin_localization_stats();
                                 $_tmpcomp = $_tmpinco = $_tmptotal =  __('n/a', 'sitepress');
                                 $_tmplink = false;
                             }
+                            $is_mu_plugin = false;
+                            if(in_array($file, $active_plugins)){
+                                $plugin_active_status = __('Yes', 'sitepress');    
+                            }elseif(isset($wpmu_sitewide_plugins[$file])){
+                                $plugin_active_status = __('Network', 'sitepress');    
+                            }elseif(isset($mu_plugins_base[$file])){
+                                $plugin_active_status = __('MU', 'sitepress');    
+                                $is_mu_plugin = true;
+                            }else{
+                                $plugin_active_status = __('No', 'sitepress');    
+                            } 
+                            
                             
                         ?>
                         <tr>
-                            <td><input type="checkbox" value="<?php echo $file ?>" name="plugin[]" /></td>
+                            <td><input type="checkbox" value="<?php echo $file ?>" name="<?php if($is_mu_plugin):?>mu-plugin[]<?php else:?>plugin[]<?php endif; ?>" /></td>
                             <td><?php echo $plugin['Name'] ?></td>
-                            <td align="center"><?php echo in_array($file, $active_plugins) ? __('Yes', 'sitepress') :  __('No', 'sitepress'); ?></td>
+                            <td align="center"><?php echo $plugin_active_status ?></td>
                             <td>
                                 <table width="100%" cellspacing="0">
                                     <tr>
