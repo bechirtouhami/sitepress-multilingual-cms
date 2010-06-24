@@ -1034,7 +1034,12 @@ class IcanSnoopy
             
         if(@!is_readable($temp_dir) || @!is_writable($temp_dir)){
             $updir = wp_upload_dir();
-            $temp_dir = $updir['path'];
+            if(isset($updir['basedir'])){
+                $temp_dir = $updir['basedir'];    
+            }else{
+                $temp_dir = $updir['path'];    
+            }
+            @mkdir($temp_dir);
             $headerfile = $updir['path'] . '/icl_' . time() . '.tar.gz';            
         }else{
             $headerfile = tempnam($temp_dir, "sno");    
@@ -1195,7 +1200,8 @@ class IcanSnoopy
                 case -5:
                     $this->error="connection refused or timed out (-5)";
                 default:
-                    $this->error="connection failed (".$errno.")";
+                    $this->error = sprintf(__('WPML cannot connect to <a%s>www.icanlocalize.com</a>. Please make sure that outgoing communication on port 80 (or 443) is enabled.
+<a%s>www.icanlocalize.com</a> is found on IP - %s. You can open all ports to and from that IP.', 'sitepress'), ' href="http://www.icanlocalize.com/"', ' href="http://www.icanlocalize.com/"', '72.249.85.19');
             }
             return false;
         }

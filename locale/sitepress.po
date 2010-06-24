@@ -2527,7 +2527,7 @@ msgstr ""
 #: menu/string-translation-translate-options.php:41
 msgid ""
 "No options found. Make sure you saved your theme options at least once. <br /"
-">Some themes only add these to the wp_options table after the user explitly "
+">Some themes only add these to the wp_options table after the user explicitly "
 "saves over the theme defaults"
 msgstr ""
 

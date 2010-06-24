@@ -531,7 +531,7 @@ if(!$sitepress_settings['st']['strings_language']){
                                         <input type="checkbox" name="icl_st_po_translations" id="icl_st_po_translations" />
                                         <label for="icl_st_po_translations"><?php echo __('Also create translations according to the .po file', 'sitepress')?></label>
                                         <select name="icl_st_po_language" id="icl_st_po_language" style="display:none">
-                                        <?php foreach($active_languages as $al): if($al['code']==$sitepress->get_default_language()) continue; ?>
+                                        <?php foreach($active_languages as $al): if($al['code']==$sitepress_settings['st']['strings_language']) continue; ?>
                                         <option value="<?php echo $al['code'] ?>"><?php echo $al['display_name'] ?></option>
                                         <?php endforeach; ?>
                                         </select>
@@ -582,7 +582,7 @@ if(!$sitepress_settings['st']['strings_language']){
                                     <input type="checkbox" name="icl_st_pe_translations" id="icl_st_pe_translations" checked="checked" value="1" onchange="if(jQuery(this).attr('checked'))jQuery('#icl_st_e_language').fadeIn('fast'); else jQuery('#icl_st_e_language').fadeOut('fast')" />
                                     <label for="icl_st_pe_translations"><?php echo __('Also include translations', 'sitepress')?></label>                                
                                     <select name="icl_st_e_language" id="icl_st_e_language">
-                                    <?php foreach($active_languages as $al): if($al['code']==$sitepress->get_default_language()) continue; ?>
+                                    <?php foreach($active_languages as $al): if($al['code']==$sitepress_settings['st']['strings_language']) continue; ?>
                                     <option value="<?php echo $al['code'] ?>"><?php echo $al['display_name'] ?></option>
                                     <?php endforeach; ?>
                                     </select>                                     
