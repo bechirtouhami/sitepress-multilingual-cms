@@ -328,7 +328,7 @@ if(!$sitepress_settings['st']['strings_language']){
 
             <div class="tablenav-pages"> 
                 <?php if ( $page_links ): ?>               
-                <?php $page_links_text = sprintf( '<span class="displaying-num">' . __( 'Displaying %s&#8211;%s of %s', 'sitepress' ) . '</span></i>%s',   // needs this closing </i>
+                <?php $page_links_text = sprintf( '<span class="displaying-num">' . __( 'Displaying %s&#8211;%s of %s', 'sitepress' ) . '</span>%s',   
                     number_format_i18n( ( $_GET['paged'] - 1 ) * $wp_query->query_vars['posts_per_page'] + 1 ),
                     number_format_i18n( min( $_GET['paged'] * $wp_query->query_vars['posts_per_page'], $wp_query->found_posts ) ),
                     number_format_i18n( $wp_query->found_posts ),
