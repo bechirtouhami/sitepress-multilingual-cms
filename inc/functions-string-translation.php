@@ -1004,7 +1004,7 @@ function icl_st_scan_plugin_files($plugin, $recursion = 0){
     
     if(!$recursion){
         $icl_st_p_scan_plugin_id = str_replace(WP_PLUGIN_DIR .'/', '', $plugin);
-        $icl_st_p_scan_plugin_id = str_replace(WPMU_PLUGIN_DIR .'/', '', $plugin);
+        $icl_st_p_scan_plugin_id = str_replace(WPMU_PLUGIN_DIR .'/', '', $icl_st_p_scan_plugin_id);
     }
     
     if(is_file($plugin) && !$recursion){ // case of one-file plugins
