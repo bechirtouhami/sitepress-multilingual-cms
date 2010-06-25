@@ -193,7 +193,7 @@ if(!$sitepress_settings['st']['strings_language']){
         
         <?php if($search_filter): ?>
         <span style="white-space:nowrap">
-        <?php printf(__('Showing only strings that contain %s', 'sitepress'), '<i>' . htmlspecialchars($search_filter)) . '</i>'; ?>
+        <?php printf(__('Showing only strings that contain %s', 'sitepress'), '<i>' . htmlspecialchars($search_filter). '</i>') ; ?>
         <input class="button" type="button" value="<?php _e('Exit search', 'sitepress')?>" id="icl_st_filter_search_remove" />
         </span>
         <?php endif; ?>
