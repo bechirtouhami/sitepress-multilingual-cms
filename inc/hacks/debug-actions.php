@@ -17,7 +17,8 @@ switch($_GET['debug_action']){
         unset($sitepress_settings['icl_current_session']);
         unset($sitepress_settings['last_get_translator_status_call']);
         unset($sitepress_settings['last_icl_reminder_fetch']);
-        
+        unset($sitepress_settings['icl_account_email']);
+
         update_option('icl_sitepress_settings', $sitepress_settings);
         
         mysql_query("TRUNCATE TABLE {$wpdb->prefix}icl_core_status");
