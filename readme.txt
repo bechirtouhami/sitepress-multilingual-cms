@@ -26,7 +26,14 @@ Allows building complete multilingual sites with WordPress.
 * Translations are grouped together and not mixed in the database.
 * CMS navigation elements provide accurate and easy to use site-wide navigation.
 * Simple CSS for easy [customization](http://wpml.org/?page_id=909).
-* An active [community](http://forum.wpml.org) of developers building professional multilingual sites.
+
+= Commercial Support =
+
+While WPML boast a lively [community](http://forum.wpml.org), it's great to get fast an accurate support when you need it.
+
+[ICanLocalize](http://www.icanlocalize.com/site/) offers reliable [commercial support](http://wpml.org/partners/) for WPML. This support option is meant for professional web developers who need timely and dependable support directly from the developers.
+
+= In a Nutshell =
 
 WPML makes it possible to turn WordPress blogs multilingual in a few minutes with no knowledge of PHP or WordPress.
 Its advanced features allow professional web developers to build full multilingual websites.
@@ -69,16 +76,16 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 == Changelog ==
 
 = 1.7.9 =
-* Fixed bug with pagination not showing on custom posts archive pages
-* Fixed bug for search results
-* Fixed bug for thinkbox popups
-* Fixed bug for auto adjusting IDs (e.g. post_parent)
-* Fixed bug related to using WPML as a site wide activated plugin on WPMU
-* Added option to set strings language to be different than the default language
-* Option to scan WPMU plugins
-* Fixed bug related to http communication (Snoopy) with the translation server
-* Option to delete only specific translations 
-* More bug fixes
+* Fixed bug with pagination not showing on custom posts archive pages.
+* Fixed bug for search results.
+* Fixed bug for thinkbox popups.
+* Fixed bug for auto adjusting IDs (e.g. post_parent).
+* Fixed bug related to using WPML as a site wide activated plugin on WPMU.
+* Added option to set strings language to be different than the default language.
+* Option to scan WPMU plugins.
+* Fixed bug related to http communication (Snoopy) with the translation server.
+* Option to delete only specific translations.
+* More bug fixes.
 
 = 1.7.8.1 =
 * Fixed bug with some js strings causing errors
@@ -336,6 +343,9 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 * First public release
 
 == Upgrade Notice ==
+
+= 1.7.9 =
+Added support for MultiSite, theme localization from any language and bug fixes.
 
 = 1.7.1 =
 Home page auto adjusts per language.
