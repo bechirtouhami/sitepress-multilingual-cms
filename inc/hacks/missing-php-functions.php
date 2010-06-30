@@ -18,4 +18,23 @@ if(!function_exists('_cleanup_header_comment')){
         return trim(preg_replace("/\s*(?:\*\/|\?>).*/", '', $str));
     } 
 }
+
+/* remove this when we stop supporting WP versions below 3.0 */
+if(!function_exists('wp_get_mu_plugins')){
+    function wp_get_mu_plugins() {
+        $mu_plugins = array();
+        if ( !is_dir( WPMU_PLUGIN_DIR ) )
+            return $mu_plugins;
+        if ( ! $dh = opendir( WPMU_PLUGIN_DIR ) )
+            return $mu_plugins;
+        while ( ( $plugin = readdir( $dh ) ) !== false ) {
+            if ( substr( $plugin, -4 ) == '.php' )
+                $mu_plugins[] = WPMU_PLUGIN_DIR . '/' . $plugin;
+        }
+        closedir( $dh );
+        sort( $mu_plugins );
+
+        return $mu_plugins;
+    }
+}
 ?>

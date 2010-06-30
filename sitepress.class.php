@@ -252,6 +252,11 @@ class SitePress{
             if(!is_admin()){
                 add_action('wp_head', array($this, 'meta_generator_tag'));
             } 
+            
+            if(!ICL_PRE_WP3){
+                require_once ICL_PLUGIN_PATH . '/inc/wp-nav-menus/iclNavMenu.class.php';
+                $iclNavMenu = new iclNavMenu;
+            }
                                               
         } //end if the initial language is set - existing_content_language_verified
         
@@ -3668,8 +3673,11 @@ class SitePress{
         static $__run_once = false; // only run for calls that have 'include' as an argument. ant only run once.
         if($args['include'] && !$__run_once && $this->get_current_language() != $this->get_default_language()){
             $__run_once = true;
-            
-            $include = array_map('trim', explode(',', $args['include']));
+            if(is_array($args['include'])){
+                $include = $args['include'];
+            }else{
+                $include = array_map('trim', explode(',', $args['include']));
+            }            
             $tr_include = array();
             foreach($include as $i){
                 $t = icl_object_id($i, $taxonomies[0],true);
