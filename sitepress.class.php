@@ -3017,6 +3017,7 @@ class SitePress{
         // get_terms doesn't seem to hava a filter that can be used efficiently in order to filter the terms by language
         // in addition the taxonomy name is not being passed to this filter we're using 'list_terms_exclusions'
         // getting the taxonomy name from debug_backtrace
+                
         global $wpdb, $pagenow;    
         /* preWP3 compatibility  - start */
         if(ICL_PRE_WP3){

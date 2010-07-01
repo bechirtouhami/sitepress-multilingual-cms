@@ -154,9 +154,9 @@ function icl_link_to_element($element_id, $element_type='post', $link_text='',
 function icl_object_id($element_id, $element_type='post', $return_original_if_missing=false, $ulanguage_code=null){
     global $sitepress, $wpdb, $wp_post_types, $wp_taxonomies;
     
-    static $fcache = array();
+    static $fcache = array();    
     $fcache_key = $element_id . '#' . $element_type . '#' . intval($return_original_if_missing) . '#' .  intval($ulanguage_code);
-    if(isset($fcache[$fcache_key])){        
+    if(isset($fcache[$fcache_key])){                
         return $fcache[$fcache_key];
     }
     
@@ -205,8 +205,7 @@ function icl_object_id($element_id, $element_type='post', $return_original_if_mi
     $translations = $sitepress->get_element_translations($trid, $icl_element_type);
     if(is_null($ulanguage_code)){
         $ulanguage_code = $sitepress->get_current_language();
-    }
-    
+    }    
     if(isset($translations[$ulanguage_code]->element_id)){
         $ret_element_id = $translations[$ulanguage_code]->element_id;
         if(in_array($element_type, $taxonomies)){
