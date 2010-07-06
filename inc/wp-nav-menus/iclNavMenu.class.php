@@ -61,7 +61,10 @@ class iclNavMenu{
         $this->get_current_menu();
         
         if($this->current_menu['language']){
-            $this->current_lang = $this->current_menu['language'];    
+            $this->current_lang = $this->current_menu['language'];   
+            if($this->current_lang != $sitepress->get_default_language() && !isset($_GET['lang'])){
+                wp_redirect(admin_url('nav-menus.php').'?lang='.$this->current_lang);
+            } 
         }elseif(isset($_REQUEST['lang'])){
             $this->current_lang = $_REQUEST['lang'];    
         }else{
@@ -206,6 +209,8 @@ class iclNavMenu{
     }
     
     function wp_update_nav_menu_item($menu_id, $menu_item_db_id, $args){
+        // TBD
+        // TBD
         global $sitepress;
         
         // deal with the case of auto-added pages
@@ -217,10 +222,9 @@ class iclNavMenu{
                 return;
             }
         }
-        */
-        
+        */        
         $trid = null;
-        $language_code = $sitepress->get_default_language();
+        $language_code = $this->current_lang;
         $sitepress->set_element_language_details($menu_item_db_id, 'post_nav_menu_item', $trid, $language_code);
     }
     
@@ -254,8 +258,9 @@ class iclNavMenu{
             foreach($sitepress->get_active_languages() as $lang){            
                 if($lang['code'] == $this->current_menu['language']) continue;
                 if(isset($this->current_menu['translations'][$lang['code']])){
+                    $lang_suff = $lang['code'] != $sitepress->get_default_language() ? '&lang=' . $lang['code'] :  '';
                     $tr_link = '<a style="text-decoration:none" title="'. esc_attr(__('edit translation', 'sitepress')).'" href="'.admin_url('nav-menus.php').
-                        '?menu='.$this->current_menu['translations'][$lang['code']]->element_id.'">'.
+                        '?menu='.$this->current_menu['translations'][$lang['code']]->element_id. $lang_suff .'">'.
                         $lang['display_name'] . '&nbsp;<img src="'.ICL_PLUGIN_URL.'/res/img/edit_translation.png" alt="'. esc_attr(__('edit', 'sitepress')).
                         '" width="12" height="12" /></a>';
                 }else{
@@ -319,7 +324,7 @@ class iclNavMenu{
             jQuery('#side-sortables').before('<?php $this->languages_menu() ?>');
             <?php if($this->current_lang != $sitepress->get_default_language()): echo "\n"; ?>
             jQuery('.menu-add-new').attr('href', jQuery('.menu-add-new').attr('href')+'&lang=<?php echo $this->current_lang ?>');            
-            <?php endif; ?>
+            <?php endif; ?>            
         });
         </script>
         <?php            
