@@ -62,15 +62,15 @@ class iclNavMenu{
         
         if($this->current_menu['language']){
             $this->current_lang = $this->current_menu['language'];   
-            if($this->current_lang != $sitepress->get_default_language() && !isset($_GET['lang'])){
-                wp_redirect(admin_url('nav-menus.php').'?lang='.$this->current_lang);
-            } 
+            //if($this->current_lang != $sitepress->get_default_language() && !isset($_GET['lang'])){
+            //    wp_redirect(admin_url('nav-menus.php').'?lang='.$this->current_lang);
+            //} 
         }elseif(isset($_REQUEST['lang'])){
             $this->current_lang = $_REQUEST['lang'];    
         }else{
             $this->current_lang = $sitepress->get_default_language();
         }
-        
+
         if(isset($_POST['icl_wp_nav_menu_ajax'])){
             $this->ajax($_POST);
         }
@@ -324,6 +324,7 @@ class iclNavMenu{
             jQuery('#side-sortables').before('<?php $this->languages_menu() ?>');
             <?php if($this->current_lang != $sitepress->get_default_language()): echo "\n"; ?>
             jQuery('.menu-add-new').attr('href', jQuery('.menu-add-new').attr('href')+'&lang=<?php echo $this->current_lang ?>');            
+            jQuery('#update-nav-menu').attr('ACTION', jQuery('#update-nav-menu').attr('ACTION')+'?lang=<?php echo $this->current_lang ?>');            
             <?php endif; ?>            
         });
         </script>
