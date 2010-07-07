@@ -540,7 +540,7 @@ class iclNavMenu{
     
     function _set_custom_status_in_theme_location_switcher(){
         global $sitepress;
-        $tl = get_theme_mod('nav_menu_locations');
+        $tl = (array)get_theme_mod('nav_menu_locations');
         $menus_not_translated = array();
         foreach($tl as $k=>$menu){
             $menu_trid = $sitepress->get_element_trid($menu, 'tax_nav_menu');
