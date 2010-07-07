@@ -257,6 +257,7 @@ class SitePress{
                 require_once ICL_PLUGIN_PATH . '/inc/wp-nav-menus/iclNavMenu.class.php';
                 $iclNavMenu = new iclNavMenu;
             }
+            //$iclTranslationManagement = new TranslationManagement;
                                               
         } //end if the initial language is set - existing_content_language_verified
         

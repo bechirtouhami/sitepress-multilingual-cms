@@ -323,7 +323,9 @@ class iclNavMenu{
             jQuery('#update-nav-menu .publishing-action').before('<?php echo addslashes($langsel); ?>');
             jQuery('#side-sortables').before('<?php $this->languages_menu() ?>');
             <?php if($this->current_lang != $sitepress->get_default_language()): echo "\n"; ?>
-            jQuery('.menu-add-new').attr('href', jQuery('.menu-add-new').attr('href')+'&lang=<?php echo $this->current_lang ?>');            
+            jQuery('.nav-tabs .nav-tab').each(function(){
+                jQuery(this).attr('href', jQuery(this).attr('href')+'&lang=<?php echo $this->current_lang ?>');
+            });        
             jQuery('#update-nav-menu').attr('ACTION', jQuery('#update-nav-menu').attr('ACTION')+'?lang=<?php echo $this->current_lang ?>');            
             <?php endif; ?>            
         });

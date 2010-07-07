@@ -73,6 +73,7 @@ if(defined('ICL_DEBUG_DEVELOPMENT') && ICL_DEBUG_DEVELOPMENT){
 require ICL_PLUGIN_PATH . '/inc/pre-wp3-compatibility.php';
 require ICL_PLUGIN_PATH . '/inc/sitepress-schema.php';
 require ICL_PLUGIN_PATH . '/inc/template-functions.php';
+//require ICL_PLUGIN_PATH . '/inc/translation-management/translation-management.class.php';
 require ICL_PLUGIN_PATH . '/inc/icl-recent-comments-widget.php';
 require ICL_PLUGIN_PATH . '/sitepress.class.php';
 require ICL_PLUGIN_PATH . '/inc/functions.php';
