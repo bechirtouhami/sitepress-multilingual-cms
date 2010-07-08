@@ -75,6 +75,11 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 
 == Changelog ==
 
+= 1.8.0 =
+* Added support for multilingual menus. Each language gets a different menus, linked as translations.
+* Fixed bug with tag translations that have the same value.
+* Fixed bug causing page order to change when adding translations.
+
 = 1.7.9 =
 * Fixed bug with pagination not showing on custom posts archive pages.
 * Fixed bug for search results.
@@ -343,6 +348,9 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 * First public release
 
 == Upgrade Notice ==
+
+= 1.8.0 =
+Added support for multilingual menus.
 
 = 1.7.9 =
 Added support for MultiSite, theme localization from any language and bug fixes.

@@ -15,7 +15,8 @@ $upgrade_lines =  array(
     '1.7.4' => __('Works with WordPress 3','sitepress'),
     '1.7.6' => __('Works with WordPress 3','sitepress'),
     '1.7.7' => __('Supports custom taxonomies and lots of bug fixes for tags and categories','sitepress'),
-    '1.7.8' => __('Supports custom post types','sitepress')
+    '1.7.8' => __('Supports custom post types','sitepress'),
+    '1.8.0' => __('Supports multilingual menus','sitepress')
 );
 
 $short_v = implode('.', array_slice(explode('.', ICL_SITEPRESS_VERSION), 0, 3));
