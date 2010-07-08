@@ -257,6 +257,7 @@ class SitePress{
                 require_once ICL_PLUGIN_PATH . '/inc/wp-nav-menus/iclNavMenu.class.php';
                 $iclNavMenu = new iclNavMenu;
             }
+            
             //$iclTranslationManagement = new TranslationManagement;
                                               
         } //end if the initial language is set - existing_content_language_verified
@@ -266,9 +267,6 @@ class SitePress{
             add_action('icl_dashboard_widget_notices', array($this, 'print_translatable_custom_content_status'));    
         }
     }
-    
-    
-
              
     function init(){ 
 
@@ -1344,12 +1342,13 @@ class SitePress{
                 </script>
             <?php endif; ?>               
             <?php
-        }elseif('page-new.php' == $pagenow || ('post-new.php' == $pagenow && $_GET['post_type']=='page')){
+        }
+        if('page-new.php' == $pagenow || ('post-new.php' == $pagenow && $_GET['post_type']=='page')){            
             if(isset($_GET['trid']) && ($this->settings['sync_page_template'] || $this->settings['sync_page_ordering'])){
                 $res = $wpdb->get_row("
                     SELECT p.ID, p.menu_order FROM {$wpdb->prefix}icl_translations t
                     JOIN {$wpdb->posts} p ON t.element_id = p.ID
-                    WHERE t.trid='{$_GET['trid']}' AND p.post_type='page' AND t.element_type='post_post'
+                    WHERE t.trid='{$_GET['trid']}' AND p.post_type='page' AND t.element_type='post_page'
                 "); 
                 if($this->settings['sync_page_ordering']){
                     $menu_order = $res->menu_order;                   
@@ -1941,7 +1940,7 @@ class SitePress{
         ){
             return;
         }
-
+        
         if($_POST['action']=='post-quickpress-publish'){
             $post_id = $pidd;            
             $language_code = $this->get_default_language();
@@ -2997,12 +2996,14 @@ class SitePress{
             if($lang['code']== $this->this_lang){
                 $px = '<strong>'; 
                 $sx = ' ('. intval($langs[$lang['code']]) .')<\/strong>';
+            /*
             }elseif(!isset($langs[$lang['code']])){
                 $px = '<span>';
                 $sx = '<\/span>';
+            */
             }else{
                 $px = '<a href="?taxonomy='.$taxonomy.'&amp;lang='.$lang['code'].'">';
-                $sx = '<\/a> ('. $langs[$lang['code']] .')';
+                $sx = '<\/a> ('. intval($langs[$lang['code']]) .')';
             }
             $as[] =  $px . $lang['display_name'] . $sx;
         }
@@ -3047,7 +3048,7 @@ class SitePress{
                 }
             }
         }
-        
+                
         if(!$this->is_translated_taxonomy($taxonomy)){
             return $exclusions;
         }
@@ -3080,7 +3081,7 @@ class SitePress{
             WHERE tt.taxonomy='{$taxonomy}' AND t.element_type='{$icl_element_type}' AND t.language_code <> '{$this_lang}'
             ");        
         $exclude[] = 0;         
-        $exclusions .= ' AND tt.term_taxonomy_id NOT IN ('.join(',',$exclude).')';
+        $exclusions .= ' AND tt.term_taxonomy_id NOT IN ('.join(',',$exclude).')';        
         return $exclusions;
     }
   
@@ -4371,6 +4372,9 @@ class SitePress{
                 .' AS tt INNER JOIN '.$wpdb->terms.' AS t ON tt.term_id = t.term_id WHERE tt.taxonomy = \''. $wpdb->escape($_GET['tax'])
                 .'\' AND t.name LIKE (\'%' . $wpdb->escape($_GET['q']) . '%\')';            
             if($sql == $search){
+                $parts = parse_url($_SERVER['HTTP_REFERER']);
+                parse_str($parts['query'], $query);
+                $lang = isset($query['lang']) ? $query['lang'] : $this->get_language_cookie();
                 $element_type = 'tax_' . $_GET['tax'];
                 $sql = 
                     'SELECT t.name FROM '. $wpdb->term_taxonomy
@@ -4378,7 +4382,7 @@ class SitePress{
                     INNER JOIN '.$wpdb->terms.' AS t ON tt.term_id = t.term_id 
                     JOIN '.$wpdb->prefix.'icl_translations tr ON tt.term_taxonomy_id = tr.element_id
                     WHERE tt.taxonomy = \''. $wpdb->escape($_GET['tax'])
-                    .'\' AND tr.language_code=\''.$this->get_language_cookie().'\' AND element_type=\''.$element_type.'\'
+                    .'\' AND tr.language_code=\''.$lang.'\' AND element_type=\''.$element_type.'\'
                     AND t.name LIKE (\'%' . $wpdb->escape($_GET['q']) . '%\')                
                 ';
             }
