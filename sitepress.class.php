@@ -258,7 +258,9 @@ class SitePress{
                 $iclNavMenu = new iclNavMenu;
             }
             
-            //$iclTranslationManagement = new TranslationManagement;
+            if(is_admin()){
+                $iclTranslationManagement = new TranslationManagement;
+            }
                                               
         } //end if the initial language is set - existing_content_language_verified
         
