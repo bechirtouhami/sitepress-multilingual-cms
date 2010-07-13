@@ -32,3 +32,14 @@
     -moz-border-radius: 4px;
     margin-bottom: 5px;
 }
+
+.nav-tab{
+    background-color: #efefef;
+}
+.nav-tab:hover{
+    background-color: #fff;
+}
+.nav-tab-active{
+    font-weight: bold;        
+    background-color: #fff;
+}

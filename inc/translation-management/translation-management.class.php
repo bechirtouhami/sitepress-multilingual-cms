@@ -77,7 +77,7 @@ class TranslationManagement{
         $user->add_cap('translate');
         update_user_meta($user_id, $wpdb->prefix . 'language_pairs',  $language_pairs);
         
-        wp_redirect('admin.php?page='.ICL_PLUGIN_PATH.'/menu/translation-management.php&icl_tm_message='.urlencode(sprintf(__('%s has been added as a translator for this site.','sitepress'),$user->data->display_name)).'&icl_tm_message_type=updated');
+        wp_redirect('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translation-management.php&sm=translators&icl_tm_message='.urlencode(sprintf(__('%s has been added as a translator for this site.','sitepress'),$user->data->display_name)).'&icl_tm_message_type=updated');
         
     }
     
@@ -86,7 +86,7 @@ class TranslationManagement{
         $user = new WP_User($user_id);
         $user->remove_cap('translate');
         delete_user_meta($user_id, $wpdb->prefix . 'language_pairs');
-        wp_redirect('admin.php?page='.ICL_PLUGIN_PATH.'/menu/translation-management.php&icl_tm_message='.urlencode(sprintf(__('%s has been removed as a translator for this site.','sitepress'),$user->data->display_name)).'&icl_tm_message_type=updated');
+        wp_redirect('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translation-management.php&sm=translators&icl_tm_message='.urlencode(sprintf(__('%s has been removed as a translator for this site.','sitepress'),$user->data->display_name)).'&icl_tm_message_type=updated');
     }
     
     public function get_blog_not_translators(){
