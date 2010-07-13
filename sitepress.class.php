@@ -259,6 +259,7 @@ class SitePress{
             }
             
             if(is_admin()){
+                global $iclTranslationManagement;
                 $iclTranslationManagement = new TranslationManagement;
             }
                                               
@@ -4429,11 +4430,11 @@ class SitePress{
     
     function _allow_calling_template_file_directly(){
         if(is_404()){  
-            global $wp_query, $wpdb;
-            $wp_query->is_404 = false;
+            global $wp_query, $wpdb;            
             $parts = parse_url(get_bloginfo('home'));
             $req = str_replace($parts['path'], '', $_SERVER['REQUEST_URI']);
             if(file_exists(ABSPATH . $req) && !is_dir(ABSPATH . $req)){
+                $wp_query->is_404 = false;
                 header('HTTP/1.1 200 OK');
                 include ABSPATH . $req;
                 exit;

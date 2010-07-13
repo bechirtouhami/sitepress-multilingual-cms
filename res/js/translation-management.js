@@ -1,13 +1,10 @@
 jQuery(document).ready(function(){
-    jQuery('#icl_tm_adduser :checkbox').attr('disabled','disabled');
     
     jQuery('#icl_tm_selected_user').change(function(){
         if(jQuery(this).val()){
             jQuery('.icl_tm_lang_pairs').slideDown();
-            jQuery('#icl_tm_adduser :checkbox').removeAttr('disabled');    
         }else{
             jQuery('.icl_tm_lang_pairs').slideUp();
-            jQuery('#icl_tm_adduser :checkbox').attr('disabled','disabled').removeAttr('checked');    
             jQuery('#icl_tm_adduser .icl_tm_lang_pairs_to').hide();
             jQuery('#icl_tm_add_user_errors span').hide();
         }

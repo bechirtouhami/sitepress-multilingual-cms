@@ -2,6 +2,7 @@
   
 class TranslationManagement{
     
+    private $selected_translator = array('ID'=>0);
     public $messages = array();
     
     function __construct(){
@@ -54,6 +55,9 @@ class TranslationManagement{
                 if(wp_create_nonce('remove_translator') == $data['remove_translator_nonce']){
                     $this->remove_translator($data['user_id']);
                 }
+                break;
+            case 'edit':
+                $this->selected_translator['ID'] = intval($_GET['user_id']);
                 break;
         }
     }
@@ -115,6 +119,19 @@ class TranslationManagement{
             }
         }
         return $users;
+    }
+    
+    function get_selected_translator(){
+        global $wpdb;
+        if($this->selected_translator['ID']){
+            $user = new WP_User($this->selected_translator['ID']);
+            $this->selected_translator['display_name'] =  $user->data->display_name;
+            $this->selected_translator['user_login'] =  $user->data->user_login;
+            $this->selected_translator['language_pairs'] = get_user_meta($this->selected_translator['ID'], $wpdb->prefix.'language_pairs', true);
+        }else{
+            $this->selected_translator['ID'] = 0;
+        }
+        return (object)$this->selected_translator;    
     }
     
     function user_has_cap($allcaps, $caps, $args){
