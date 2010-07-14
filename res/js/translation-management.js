@@ -27,5 +27,36 @@ jQuery(document).ready(function(){
             return false;    
         }
     });
+    
+    jQuery('a[href="#hide-advanced-filters"]').click(function(){        
+        athis = jQuery(this);        
+        icl_save_dashboard_setting('advanced_filters',0,function(f){
+            jQuery('#icl_dashboard_advanced_filters').slideUp()
+            athis.hide();
+            jQuery('a[href="#show-advanced-filters"]').show();
+        });
+    })
+    
+    jQuery('a[href="#show-advanced-filters"]').click(function(){
+        athis = jQuery(this);        
+        icl_save_dashboard_setting('advanced_filters',1,function(f){
+            jQuery('#icl_dashboard_advanced_filters').slideDown()
+            athis.hide();
+            jQuery('a[href="#hide-advanced-filters"]').show();
+        });
+    })
+    
+    function icl_save_dashboard_setting(setting, value, callback){
+        jQuery('#icl_dashboard_ajax_working').fadeIn();
+        jQuery.ajax({
+            type: "POST",
+            url: icl_ajx_url,
+            data: 'icl_ajx_action=save_dashboard_setting&setting='+setting+'&value='+value,
+            success: function(msg){
+                jQuery('#icl_dashboard_ajax_working').fadeOut();
+                callback(msg);                
+            }
+        });         
+    }
             
 })

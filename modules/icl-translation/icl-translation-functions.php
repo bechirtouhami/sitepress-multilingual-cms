@@ -499,9 +499,11 @@ function icl_translation_calculate_md5($post_id){
 }
 
 function icl_translation_get_documents($lang,
+                                       $to_lang = '', 
                                        $tstatus,
                                        $status=false,
                                        $type=false,
+                                       $title_match = '',
                                        $limit = 20,
                                        $from_date = false,
                                        $to_date = false){
@@ -529,6 +531,10 @@ function icl_translation_get_documents($lang,
             }
             $icl_el_type_where .= " AND t.element_type IN ('".join("','",$t_el_types)."')";
         }  
+        
+        if($title_match){
+            $where .= " AND p.post_title LIKE '%".$wpdb->escape($title_match)."%'";
+        }
         
         if($status){
             $where .= " AND p.post_status = '{$status}'";

@@ -947,7 +947,14 @@ if (function_exists('wpml_register_admin_strings')) {
         $this->save_settings($iclsettings);
         echo '1|';
         break;
-        
+    
+    case 'save_dashboard_setting':
+        $iclsettings['dashboard'] = $this->settings['dashboard'];
+        if(isset($_POST['setting']) && isset($_POST['value'])){
+            $iclsettings['dashboard'][$_POST['setting']] = $_POST['value'];
+            $this->save_settings($iclsettings);    
+        }
+        break;    
     default:
         do_action('icl_ajx_custom_call', $_REQUEST['icl_ajx_action'], $_REQUEST);
 }    

@@ -3021,8 +3021,7 @@ class SitePress{
     function exclude_other_terms($exclusions, $args){                
         // get_terms doesn't seem to hava a filter that can be used efficiently in order to filter the terms by language
         // in addition the taxonomy name is not being passed to this filter we're using 'list_terms_exclusions'
-        // getting the taxonomy name from debug_backtrace
-                
+        // getting the taxonomy name from debug_backtrace                
         global $wpdb, $pagenow;    
         /* preWP3 compatibility  - start */
         if(ICL_PRE_WP3){
@@ -3051,7 +3050,7 @@ class SitePress{
                 }
             }
         }
-                
+        
         if(!$this->is_translated_taxonomy($taxonomy)){
             return $exclusions;
         }
@@ -3076,7 +3075,8 @@ class SitePress{
             $this_lang = $qvars['lang']; 
         }else{
             $this_lang = $this->get_default_language();
-        }          
+        }  
+        
         $exclude =  $wpdb->get_col("
             SELECT tt.term_taxonomy_id FROM {$wpdb->term_taxonomy} tt
             LEFT JOIN {$wpdb->terms} tm ON tt.term_id = tm.term_id 
@@ -3532,6 +3532,17 @@ class SitePress{
         
         return $flag;
     }
+    
+    function get_flag_url($code){
+        $flag = $this->get_flag($code);
+        if($flag->from_template){
+            $flag_url = get_bloginfo('template_directory') . '/images/flags/'.$flag->flag;
+        }else{
+            $flag_url = ICL_PLUGIN_URL . '/res/flags/'.$flag->flag;
+        }                 
+        
+        return $flag_url;   
+    } 
                       
     function language_selector(){        
         if(is_single()){

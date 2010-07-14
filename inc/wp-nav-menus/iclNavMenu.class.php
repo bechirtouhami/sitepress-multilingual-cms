@@ -475,7 +475,7 @@ class iclNavMenu{
     function theme_mod_nav_menu_locations($val){
         global $sitepress;
         if($sitepress->get_default_language() != $this->current_lang){
-            foreach($val as $k=>$v){
+            foreach((array)$val as $k=>$v){
                 $val[$k] = icl_object_id($val[$k], 'nav_menu', true, $this->current_lang);       
             }
         }
