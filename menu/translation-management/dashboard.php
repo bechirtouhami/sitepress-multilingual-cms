@@ -10,6 +10,10 @@ if(isset($icl_translation_filter['lang'])){
 }
 $selected_language_to = $icl_translation_filter['lang_to'] ? $icl_translation_filter['lang_to'] : ''; 
 
+if($selected_language_to == $selected_language){
+    $selected_language_to = '';
+}
+
 
 if(isset($icl_translation_filter['tstatus'])){
     $tstatus = $icl_translation_filter['tstatus']; 
@@ -68,7 +72,7 @@ $icl_post_types = $sitepress->get_translatable_documents();
 
 $icl_dashboard_settings = $sitepress_settings['dashboard'];
 
-$icl_documents = icl_translation_get_documents($selected_language, $selected_language_to, $tstatus, $status, $type, $title);
+$icl_documents = $iclTranslationManagement->get_documents($selected_language, $selected_language_to, $tstatus, $status, $type, $title);
 
 ?>
 
@@ -165,13 +169,12 @@ $icl_documents = icl_translation_get_documents($selected_language, $selected_lan
                 <img title="<?php _e('Note for translators', 'sitepress') ?>" src="<?php echo ICL_PLUGIN_URL ?>/res/img/notes.png" alt="note" width="16" height="16" /></th>
             <th scope="col" class="manage-column column-date"><?php echo __('Type', 'sitepress') ?></th>
             <th scope="col" class="manage-column column-date"><?php echo __('Status', 'sitepress') ?></th>        
-            <th scope="col" class="manage-column column-date"><?php echo __('Translation', 'sitepress') ?></th>        
             <?php if($selected_language_to): ?>
             <th scope="col" class="manage-column column-cb check-column">
                 <img src="<?php echo $sitepress->get_flag_url($selected_language_to) ?>" width="16" height="12" alt="<?php echo $selected_language_to ?>" />
                 </th>        
             <?php else: ?> 
-                <?php if($selected_language) foreach($sitepress->get_active_languages() as $lang): if($lang['code']==$selected_language) continue;?>
+                <?php foreach($sitepress->get_active_languages() as $lang): if($lang['code']==$selected_language) continue;?>
                 <th scope="col" class="manage-column column-cb check-column">
                     <img src="<?php echo $sitepress->get_flag_url($lang['code']) ?>" width="16" height="12" alt="<?php echo $lang['code'] ?>" />
                 </th>        
@@ -188,13 +191,12 @@ $icl_documents = icl_translation_get_documents($selected_language, $selected_lan
                 <img title="<?php _e('Note for translators', 'sitepress') ?>" src="<?php echo ICL_PLUGIN_URL ?>/res/img/notes.png" alt="note" width="16" height="16" /></th>
             <th scope="col" class="manage-column column-date"><?php echo __('Type', 'sitepress') ?></th>
             <th scope="col" class="manage-column column-date"><?php echo __('Status', 'sitepress') ?></th>        
-            <th scope="col" class="manage-column column-date"><?php echo __('Translation', 'sitepress') ?></th>        
             <?php if($selected_language_to): ?>
             <th scope="col" class="manage-column column-cb check-column">
                 <img src="<?php echo $sitepress->get_flag_url($selected_language_to) ?>" width="16" height="12" alt="<?php echo $selected_language_to ?>" />
                 </th>        
             <?php else: ?> 
-                <?php if($selected_language) foreach($sitepress->get_active_languages() as $lang): if($lang['code']==$selected_language) continue;?>
+                <?php foreach($sitepress->get_active_languages() as $lang): if($lang['code']==$selected_language) continue;?>
                 <th scope="col" class="manage-column column-cb check-column">
                     <img src="<?php echo $sitepress->get_flag_url($lang['code']) ?>" width="16" height="12" alt="<?php echo $lang['code'] ?>" />
                 </th>        
@@ -205,24 +207,11 @@ $icl_documents = icl_translation_get_documents($selected_language, $selected_lan
         <tbody>
             <?php if(!$icl_documents): ?>
             <tr>
-                <td scope="col" colspan="6" align="center"><?php echo __('No documents found', 'sitepress') ?></td>
+                <td scope="col" colspan="<?php 
+                    echo 5 + ($selected_language_to ? 1 : count($sitepress->get_active_languages())-1); ?>" align="center"><?php _e('No documents found', 'sitepress') ?></td>
             </tr>                
             <?php else: $oddcolumn = false; ?>
             <?php foreach($icl_documents as $doc): $oddcolumn=!$oddcolumn; ?>
-            <?php 
-            if($doc->rid[0] != null){
-                if(isset($doc->in_progress) && $doc->in_progress > 0){                        
-                    $tr_status = __('In progress', 'sitepress');
-                }elseif($doc->updated){                            
-                    $tr_status = __('Needs update', 'sitepress');
-                }else{
-                    $tr_status = __('Complete', 'sitepress');
-                }
-            }else{
-                $tr_status = __('Not Translated', 'sitepress');
-            }
-            
-            ?>            
             <tr<?php if($oddcolumn): ?> class="alternate"<?php endif;?>>
                 <td scope="col">
                     <input type="checkbox" value="<?php echo $doc->post_id ?>" name="post[]" <?php if(isset($_GET['post_id'])) echo 'checked="checked"'?> />                    
@@ -275,22 +264,18 @@ $icl_documents = icl_translation_get_documents($selected_language, $selected_lan
                     <input class="icl_td_post_type" name="icl_post_type[<?php echo $doc->post_id ?>]" type="hidden" value="<?php echo $doc->post_type ?>" />
                 </td>
                 <td scope="col"><?php echo $icl_post_statuses[$doc->post_status]; ?></td>
-                <td scope="col" id="icl-tr-status-<?php echo $doc->post_id ?>">
-                    <?php if($doc->rid[0]): ?>
-                    <a href="#translation-details-<?php echo implode('-', $doc->rid) ; ?>" class="translation_details_but">
-                    <?php endif; ?>
-                    <?php echo $tr_status ?>
-                    <?php if($doc->rid[0]): ?></a><?php endif; ?>
-                </td>
-                
                 <?php if($selected_language_to): ?>
                 <td scope="col" class="manage-column column-cb check-column">
-                    <img style="margin-top:4px;" src="<?php echo ICL_PLUGIN_URL ?>/res/img/complete.png" width="16" height="16" alt="complete" />
+                    <img style="margin-top:4px;" 
+                        src="<?php echo ICL_PLUGIN_URL ?>/res/img/<?php echo $_st = TranslationManagement::status2img_filename($doc->language_status[$selected_language_to])?>" 
+                        width="16" height="16" alt="<?php echo $_st ?>" />
                     </td>        
                 <?php else: ?> 
-                    <?php if($selected_language) foreach($sitepress->get_active_languages() as $lang): if($lang['code']==$selected_language) continue;?>
+                    <?php foreach($sitepress->get_active_languages() as $lang): if($lang['code']==$selected_language) continue;?>
                     <td scope="col" class="manage-column column-cb check-column">
-                        <img style="margin-top:4px;" src="<?php echo ICL_PLUGIN_URL ?>/res/img/in-progress.png" width="16" height="16" alt="in-progress" />
+                        <img style="margin-top:4px;" 
+                            src="<?php echo ICL_PLUGIN_URL ?>/res/img/<?php echo $_st = TranslationManagement::status2img_filename($doc->language_status[$lang['code']])?>" 
+                            width="16" height="16" alt="<?php echo $st ?>" />
                     </td>        
                     <?php endforeach; ?>                
                 <?php endif; ?>

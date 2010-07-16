@@ -567,7 +567,8 @@ function icl_translation_get_documents($lang,
         {$order} 
     ";    
     $results = $wpdb->get_results($sql);    
-        
+    
+    
     // only use the latest rids for each language.
     
     $latested_per_language = array();
@@ -667,6 +668,8 @@ function icl_translation_get_documents($lang,
     $wp_query->found_posts = $count;
     $wp_query->query_vars['posts_per_page'] = $limit;
     $wp_query->max_num_pages = ceil($wp_query->found_posts/$limit);
+      
+    //debug_array($documents);    
       
     return $documents;
     

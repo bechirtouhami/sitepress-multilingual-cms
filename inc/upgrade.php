@@ -478,6 +478,17 @@ function icl_plugin_upgrade(){
         if($mig_debug) fwrite($mig_debug, "Upgraded to 1.7.8 \n");
     }
     
+    
+    if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.9.0', '<')){    
+        if($mig_debug) fwrite($mig_debug, "Upgrading to 1.9.0 \n");
+        // importing content from icl_node, icl_content_status, icl_core_status to icl_translaiton_status
+        include_once ICL_PLUGIN_PATH . '/inc/upgrade-functions/upgrade-1.7.9.php';
+        
+        // update icl_core_status codes
+        
+        if($mig_debug) fwrite($mig_debug, "Upgraded to 1.9.0 \n");
+    }
+    
     if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '<')){
         if($mig_debug) fwrite($mig_debug, "Update plugin version in the database \n");
         update_option('icl_sitepress_version', ICL_SITEPRESS_VERSION);
