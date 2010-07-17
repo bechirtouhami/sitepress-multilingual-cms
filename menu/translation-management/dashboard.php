@@ -38,7 +38,9 @@ if(isset($icl_translation_filter['type_on'])){
     $type = $icl_translation_filter['type'];
 }else{
     if(isset($_GET['type_on']) && isset($_GET['type'])){
-        $type = $_GET['type'];
+        $icl_translation_filter['type_on'] = true;
+        $icl_translation_filter['type'] = $_GET['type'];
+        $type = $icl_translation_filter['type'];
     }else{
         $type = false;
         if(isset($icl_translation_filter)){
@@ -76,7 +78,7 @@ $icl_documents = $iclTranslationManagement->get_documents($selected_language, $s
 
 ?>
 
-    <form method="post" name="translation-dashboard-filter" action="">
+    <form method="post" name="translation-dashboard-filter" action="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/translation-management.php&amp;sm=dashboard">
     <table class="form-table widefat fixed">
         <thead>
         <tr>
@@ -226,10 +228,7 @@ $icl_documents = $iclTranslationManagement->get_documents($selected_language, $s
                     <span class="icl-tr-details">&nbsp;</span>
                     <div class="icl_post_note" id="icl_post_note_<?php echo $doc->post_id ?>">
                         <?php 
-                            if($wpdb->get_var("SELECT source_language_code FROM {$wpdb->prefix}icl_translations WHERE element_type='post_{$doc->post_type}' AND element_id={$doc->post_id}")){
-                                $_is_translation = true;
-                            }else{
-                                $_is_translation = false;
+                            if(!$doc->is_translation){
                                 $note = get_post_meta($doc->post_id, '_icl_translator_note', true); 
                                 if($note){
                                     $note_text = __('Edit note for the translators', 'sitepress');
@@ -253,7 +252,7 @@ $icl_documents = $iclTranslationManagement->get_documents($selected_language, $s
                     </div>
                 </td>
                 <td scope="col" class="icl_tn_link" id="icl_tn_link_<?php echo $doc->post_id ?>">
-                    <?php if($_is_translation):?>
+                    <?php if($doc->is_translation):?>
                     &nbsp;
                     <?php else: ?>
                     <a title="<?php echo $note_text ?>" href="#"><img src="<?php echo ICL_PLUGIN_URL ?>/res/img/<?php echo $note_icon ?>" width="16" height="16" /></a>
@@ -265,16 +264,23 @@ $icl_documents = $iclTranslationManagement->get_documents($selected_language, $s
                 </td>
                 <td scope="col"><?php echo $icl_post_statuses[$doc->post_status]; ?></td>
                 <?php if($selected_language_to): ?>
+                <?php $docst = $doc->needs_update ? ICL_TM_NEEDS_UPDATE : intval($doc->status); ?>
                 <td scope="col" class="manage-column column-cb check-column">
                     <img style="margin-top:4px;" 
-                        src="<?php echo ICL_PLUGIN_URL ?>/res/img/<?php echo $_st = TranslationManagement::status2img_filename($doc->language_status[$selected_language_to])?>" 
+                        src="<?php echo ICL_PLUGIN_URL ?>/res/img/<?php echo $_st = TranslationManagement::status2img_filename($docst)?>" 
                         width="16" height="16" alt="<?php echo $_st ?>" />
                     </td>        
                 <?php else: ?> 
                     <?php foreach($sitepress->get_active_languages() as $lang): if($lang['code']==$selected_language) continue;?>
+                    <?php 
+                        $_suffix = str_replace('-','_',$lang['code']);                        
+                        $_prop_up = 'needs_update_'.$_suffix;
+                        $_prop_st = 'status_'.$_suffix;
+                        $docst = $doc->$_prop_up ? ICL_TM_NEEDS_UPDATE : intval($doc->$_prop_st); 
+                    ?>
                     <td scope="col" class="manage-column column-cb check-column">
                         <img style="margin-top:4px;" 
-                            src="<?php echo ICL_PLUGIN_URL ?>/res/img/<?php echo $_st = TranslationManagement::status2img_filename($doc->language_status[$lang['code']])?>" 
+                            src="<?php echo ICL_PLUGIN_URL ?>/res/img/<?php echo $_st = TranslationManagement::status2img_filename($docst)?>" 
                             width="16" height="16" alt="<?php echo $st ?>" />
                     </td>        
                     <?php endforeach; ?>                
@@ -286,3 +292,29 @@ $icl_documents = $iclTranslationManagement->get_documents($selected_language, $s
             <?php endif;?>
         </tbody> 
     </table>    
+    
+    
+    <?php 
+    // pagination  
+    $page_links = paginate_links( array(
+        'base' => add_query_arg('paged', '%#%' ),
+        'format' => '',
+        'prev_text' => '&laquo;',
+        'next_text' => '&raquo;',
+        'total' => $wp_query->max_num_pages,
+        'current' => $_GET['paged'],
+        'add_args' => isset($icl_translation_filter)?$icl_translation_filter:array() 
+    ));         
+    ?>
+    <?php if ( $page_links ) { ?>
+    <div class="tablenav">
+        <div class="tablenav-pages"><?php $page_links_text = sprintf( '<span class="displaying-num">' . __( 'Displaying %s&#8211;%s of %s', 'sitepress' ) . '</span>%s',
+            number_format_i18n( ( $_GET['paged'] - 1 ) * $wp_query->query_vars['posts_per_page'] + 1 ),
+            number_format_i18n( min( $_GET['paged'] * $wp_query->query_vars['posts_per_page'], $wp_query->found_posts ) ),
+            number_format_i18n( $wp_query->found_posts ),
+            $page_links
+        ); echo $page_links_text; ?></div>
+        <?php } ?>
+        </div>
+    </div>
+    <?php // pagination - end ?>

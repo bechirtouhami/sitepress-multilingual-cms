@@ -1,10 +1,10 @@
 <?php
 
 define ( 'ICL_TM_NOT_TRANSLATED', 0);
-define ( 'ICL_TM_ASSIGNED', 1);
+define ( 'ICL_TM_WAITING_FOR_TRANSLATOR', 1);
 define ( 'ICL_TM_IN_PROGRESS', 2);
-define ( 'ICL_TM_NEEDS_UPDATE', 3);
-define ( 'ICL_TM_COMPLETE', 4);
+define ( 'ICL_TM_NEEDS_UPDATE', 3);  //virt. status code (based on needs_update)
+define ( 'ICL_TM_COMPLETE', 10);
 
   
 class TranslationManagement{
@@ -274,117 +274,133 @@ class TranslationManagement{
     * @param string $from_date
     * @param string $to_date
     */
-    function get_documents($lang, $to_lang = '', $tstatus, $status=false, $type=false, $title_match = '', $limit = 20, $from_date = false,$to_date = false){
+    function get_documents($from_lang, $to_lang = '', $tstatus, $status=false, $type=false, $title_match = '', $limit_no = 20, $from_date = false,$to_date = false){
         global $wpdb, $wp_query, $sitepress;
         
-        $where = "WHERE c.active = 1";
-        $order = "ORDER BY p.post_date DESC";
-        $join = '';
+        $t_el_types = array_keys($sitepress->get_translatable_documents());
         
-        if(isset($_GET['post_id'])){ // this overrides the others
-            $where .= " AND p.ID=" . (int)$_GET['post_id'];  
+        // SELECT
+        $select = " p.ID AS post_id, p.post_title, p.post_content, p.post_type, post_status, t.source_language_code <> '' AS is_translation";
+        if($to_lang){
+            $select .= ", iclts.status, iclts.needs_update";
         }else{
-            
-            if(!$to_lang){
-                switch($tstatus){
-                    case 'not':
-                        $where .= " AND (c.status IS NULL OR c.status = ".ICL_TM_NOT_TRANSLATED." OR c.status = ".ICL_TM_NEEDS_UPDATE.")";
-                        break;
-                    case 'in_progress':
-                        $where .= " AND (c.status = ".ICL_TM_IN_PROGRESS.")";
-                        break;
-                    case 'complete':
-                        $where .= " AND (c.status = ".ICL_TM_COMPLETE.")";
-                        break;                    
-                }
-            }else{
-                $join .= "LEFT JOIN {$wpdb->prefix}icl_core_status cr ON cr.rid = c.rid";    
-                $where .= " AND cr.target = '{$to_lang}' ";    
-                switch($tstatus){
-                    case 'not':
-                        $where .= " AND (cr.status IS NULL OR cr.status = ".ICL_TM_NOT_TRANSLATED." OR cr.status = ".ICL_TM_NEEDS_UPDATE.")";
-                        break;
-                    case 'in_progress':
-                        $where .= " AND (cr.status = ".ICL_TM_IN_PROGRESS.")";
-                        break;
-                    case 'complete':
-                        $where .= " AND (cr.status = ".ICL_TM_COMPLETE.")";
-                        break;                    
-                }
-            }
-            
-            $t_el_types = array_keys($sitepress->get_translatable_documents());
-            if($type){
-                $where .= " AND p.post_type = '{$type}'";
-                $icl_el_type_where = " AND t.element_type = 'post_{$type}'";
-            }else{
-                $where .= " AND p.post_type IN ('".join("','",$t_el_types)."')";
-                foreach($t_el_types as $k=>$v){
-                    $t_el_types[$k] = 'post_' . $v;
-                }
-                $icl_el_type_where .= " AND t.element_type IN ('".join("','",$t_el_types)."')";
-            }  
-            
-            if($title_match){
-                $where .= " AND p.post_title LIKE '%".$wpdb->escape($title_match)."%'";
-            }
-            
-            if($status){
-                $where .= " AND p.post_status = '{$status}'";
-            }        
-            
-            $where .= " AND t.language_code='{$lang}'";
-            
-            if($from_date and $to_date){
-                $where .= " AND p.post_date > '{$from_date}' AND p.post_date < '{$to_date}'";
+            foreach($sitepress->get_active_languages() as $lang){
+                if($lang['code'] == $from_lang) continue;
+                $tbl_alias_suffix = str_replace('-','_',$lang['code']);                
+                $select .= ", iclts_{$tbl_alias_suffix}.status AS status_{$tbl_alias_suffix}, iclts_{$tbl_alias_suffix}.needs_update AS needs_update_{$tbl_alias_suffix}";
             }
         }
-            
-        if(!isset($_GET['paged'])) $_GET['paged'] = 1;
-        $offset = ($_GET['paged']-1)*$limit;
-        $limit_str = "LIMIT " . $offset . ',' . $limit;
         
-        // exclude trashed posts
-        $where .= " AND p.post_status <> 'trash'";
+        // FROM
+        $from   = " {$wpdb->posts} p";
+        
+        // JOIN
+        $join = "";        
+        $join   .= " LEFT JOIN {$wpdb->prefix}icl_translations t ON t.element_id=p.ID\n";    
+        if($to_lang){
+            $tbl_alias_suffix = str_replace('-','_',$to_lang);
+            $join .= " LEFT JOIN {$wpdb->prefix}icl_translations iclt_{$tbl_alias_suffix} 
+                        ON iclt_{$tbl_alias_suffix}.trid=t.trid AND iclt_{$tbl_alias_suffix}.language_code='{$to_lang}'\n";    
+            $join   .= " LEFT JOIN {$wpdb->prefix}icl_translation_status iclts ON iclts.translation_id=iclt_{$tbl_alias_suffix}.translation_id\n";    
+        }else{
+            foreach($sitepress->get_active_languages() as $lang){
+                if($lang['code'] == $from_lang) continue;
+                $tbl_alias_suffix = str_replace('-','_',$lang['code']);
+                $join .= " LEFT JOIN {$wpdb->prefix}icl_translations iclt_{$tbl_alias_suffix} 
+                        ON iclt_{$tbl_alias_suffix}.trid=t.trid AND iclt_{$tbl_alias_suffix}.language_code='{$lang['code']}'\n";    
+                $join   .= " LEFT JOIN {$wpdb->prefix}icl_translation_status iclts_{$tbl_alias_suffix} 
+                        ON iclts_{$tbl_alias_suffix}.translation_id=iclt_{$tbl_alias_suffix}.translation_id\n";    
+            }
+        }
+        
+        
+        // WHERE
+        $where = " t.language_code = '{$from_lang}' AND p.post_status <> 'trash' \n";        
+        if($type){
+            $where .= " AND p.post_type = '{$type}'";
+            $where .= " AND t.element_type = 'post_{$type}'\n";
+        }else{
+            $where .= " AND p.post_type IN ('".join("','",$t_el_types)."')\n";
+            foreach($t_el_types as $k=>$v){
+                $t_el_types[$k] = 'post_' . $v;
+            }
+            $where .= " AND t.element_type IN ('".join("','",$t_el_types)."')\n";
+        }  
+        if($title_match){
+            $where .= " AND p.post_title LIKE '%".$wpdb->escape($title_match)."%'\n";
+        }
+        
+        if($status){
+            $where .= " AND p.post_status = '{$status}'\n";
+        }        
+        
+        if($tstatus){
+            if($to_lang){
+                if($tstatus == 'not'){
+                    $where .= " AND (iclts.status IS NULL OR iclts.needs_update = 1)\n";    
+                }elseif($tstatus == 'in_progress'){
+                    $where .= " AND iclts.status = ".ICL_TM_IN_PROGRESS." AND iclts.needs_update = 0\n";    
+                }elseif($tstatus == 'complete'){
+                    $where .= " AND iclts.status = ".ICL_TM_COMPLETE." AND iclts.needs_update = 0\n";    
+                }
+                
+            }else{
+                if($tstatus == 'not'){
+                    $where .= " AND (";
+                    $wheres = array();
+                    foreach($sitepress->get_active_languages() as $lang){
+                        if($lang['code'] == $from_lang) continue;
+                        $tbl_alias_suffix = str_replace('-','_',$lang['code']);
+                        $wheres[] = "iclts_{$tbl_alias_suffix}.status IS NULL OR iclts_{$tbl_alias_suffix}.needs_update = 1\n";    
+                    }
+                    $where .= join(' OR ', $wheres) . ")";
+                }elseif($tstatus == 'in_progress'){
+                    $where .= " AND (";
+                    $wheres = array();
+                    foreach($sitepress->get_active_languages() as $lang){
+                        if($lang['code'] == $from_lang) continue;
+                        $tbl_alias_suffix = str_replace('-','_',$lang['code']);
+                        $wheres[] = "iclts_{$tbl_alias_suffix}.status = ".ICL_TM_IN_PROGRESS." AND iclts_{$tbl_alias_suffix}.needs_update = 0\n";    
+                    }
+                    $where .= join(' OR ', $wheres)  . ")";
+                }elseif($tstatus == 'complete'){
+                    foreach($sitepress->get_active_languages() as $lang){
+                        if($lang['code'] == $from_lang) continue;
+                        $tbl_alias_suffix = str_replace('-','_',$lang['code']);
+                        $where .= " AND iclts_{$tbl_alias_suffix}.status = ".ICL_TM_COMPLETE." AND iclts_{$tbl_alias_suffix}.needs_update = 0\n";    
+                    }
+                }
+            }
+        }
+        
+        // ORDER
+        $order = " p.post_date DESC";
+        
+        // LIMIT
+        if(!isset($_GET['paged'])) $_GET['paged'] = 1;
+        $offset = ($_GET['paged']-1)*$limit_no;
+        $limit = " " . $offset . ',' . $limit_no;
+        
         
         $sql = "
-            SELECT SQL_CALC_FOUND_ROWS p.ID as post_id, p.post_title, p.post_type, p.post_status, post_content, 
-                n.md5 <> c.md5 AS updated, c.rid
-            FROM {$wpdb->posts} p
-                LEFT JOIN {$wpdb->prefix}icl_translations t ON p.ID = t.element_id {$icl_el_type_where}
-                LEFT JOIN {$wpdb->prefix}icl_node n ON p.ID = n.nid
-                LEFT JOIN {$wpdb->prefix}icl_content_status c ON c.nid=p.ID            
-                {$join}
-            {$where}                
-            {$order} 
-            {$limit_str}
-        ";    
+            SELECT SQL_CALC_FOUND_ROWS {$select} 
+            FROM {$from}
+            {$join}
+            WHERE {$where}
+            ORDER BY {$order}
+            LIMIT {$limit}
+        ";
+        
+        //debug_array($sql);
+        
         $results = $wpdb->get_results($sql);    
         
+        
         $count = $wpdb->get_var("SELECT FOUND_ROWS()");
-        
-        if(!empty($results)){
-            foreach($results as $k=>$v){
-                $rids[$k] = $v->rid;
-            }
-            if(!$to_lang){
-                $rids = array_unique($rids);
-                $res = $wpdb->get_results("SELECT rid, target, status FROM {$wpdb->prefix}icl_core_status WHERE rid IN ('".join(',',$rids)."')");
-            }else{
-                $res = $wpdb->get_results($wpdb->prepare("SELECT rid, target, status FROM {$wpdb->prefix}icl_core_status WHERE target=%s AND rid IN (".join(',',$rids).")",$to_lang));
-            }
-            foreach($res as $row){
-                $language_status_by_rid[$row->rid][$row->target] = $row->status;
-            }
-            foreach($results as $k=>$v){
-                $results[$k]->language_status = $language_status_by_rid[$v->rid];
-            }            
-        }
-        
 
         $wp_query->found_posts = $count;
-        $wp_query->query_vars['posts_per_page'] = $limit;
-        $wp_query->max_num_pages = ceil($wp_query->found_posts/$limit);
+        $wp_query->query_vars['posts_per_page'] = $limit_no;
+        $wp_query->max_num_pages = ceil($wp_query->found_posts/$limit_no);
           
           
         return $results;
