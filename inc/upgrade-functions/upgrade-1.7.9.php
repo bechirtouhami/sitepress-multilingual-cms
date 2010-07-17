@@ -2,6 +2,11 @@
 function icl_upgrade_1_7_9(){
     global $wpdb;
     
+    if(defined('icl_upgrade_1_7_9_runonce')){
+        return;
+    }
+    define('icl_upgrade_1_7_9_runonce', true);
+    
     // if the table is missing, call the plugin activation routine
     $table_name = $wpdb->prefix.'icl_translation_status';
     if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
@@ -28,10 +33,14 @@ function icl_upgrade_1_7_9(){
                 WHERE source_language_code='' AND language_code<>'{$source->language_code}'");
         }
         
+        // get max rid 
+        $max_rid = 1+$wpdb->get_var("SELECT MAX(rid) FROM {$wpdb->prefix}icl_content_status");
+        $rid_incr = 0;
+        
         $originals = $wpdb->get_results("
             SELECT t.*, p.post_author FROM {$wpdb->prefix}icl_translations t
                 JOIN {$wpdb->posts} p ON p.ID = t.element_id
-            WHERE element_type LIKE 'post\\_%' AND source_language_code = '' ORDER BY translation_id DESC");        
+            WHERE element_type LIKE 'post\\_%' AND source_language_code = ''");        
         foreach($originals as $original){
             $node_record = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}icl_node WHERE nid = {$original->element_id}");
             
@@ -76,10 +85,9 @@ function icl_upgrade_1_7_9(){
             }
             
             
-            $used_rids = array(); // used for - // fix duplicate rids
-            
+            $used_rids = array(); // used for - // fix duplicate rids            
             foreach($ntd_st as $lang=>$status){
-                
+                $rid_incr++;
                 $ts_record = array();
                 
                 
@@ -92,6 +100,8 @@ function icl_upgrade_1_7_9(){
                 
                 if($status->rid){
                     $ts_record['rid'] = $status->rid;    
+                }else{
+                    $ts_record['rid'] = $max_rid + $rid_incr;                    
                 }
                                 
                 if($node_translations[$status->target]){
@@ -124,12 +134,12 @@ function icl_upgrade_1_7_9(){
                 $ts_record['links_fixed'] = 0;     // ????
                 $ts_record['timestamp'] = $status->timestamp;    
                 
+                
                 $wpdb->insert($wpdb->prefix.'icl_translation_status', $ts_record);    
             }
             
         }
         
     }
-    
 }  
 ?>

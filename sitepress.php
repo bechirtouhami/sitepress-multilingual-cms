@@ -5,7 +5,7 @@ Plugin URI: http://wpml.org/
 Description: WPML Multilingual CMS. <a href="http://wpml.org">Documentation</a>.
 Author: OnTheGoSystems
 Author URI: http://www.onthegosystems.com
-Version: 1.8.0
+Version: 1.9.0
 */
 
 /*
@@ -26,7 +26,7 @@ Version: 1.8.0
 */
 
 if(defined('ICL_SITEPRESS_VERSION')) return;
-define('ICL_SITEPRESS_VERSION', '1.8.0');
+define('ICL_SITEPRESS_VERSION', '1.9.0');
 define('ICL_PLUGIN_PATH', dirname(__FILE__));
 define('ICL_PLUGIN_FOLDER', basename(ICL_PLUGIN_PATH));
 
@@ -141,11 +141,13 @@ register_deactivation_hook(__FILE__, 'icl_sitepress_deactivate');
 add_filter('plugin_action_links', 'icl_plugin_action_links', 10, 2); 
 
 // TMP
+/*
 if(!defined('ICLRUNONCE')){
     mysql_query("TRUNCATE TABLE {$wpdb->prefix}icl_translation_status");        
     include_once ICL_PLUGIN_PATH . '/inc/upgrade-functions/upgrade-1.7.9.php';
     icl_upgrade_1_7_9();
     define('ICLRUNONCE', true);
 }
+*/
 
 ?>
