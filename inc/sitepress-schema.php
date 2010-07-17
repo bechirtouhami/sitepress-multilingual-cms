@@ -117,6 +117,7 @@ function icl_sitepress_activate(){
              UNIQUE KEY `translation_id` (`translation_id`)
             ) ENGINE=MyISAM {$charset_collate}    
         ";
+        mysql_query($sql);
     } 
     
     

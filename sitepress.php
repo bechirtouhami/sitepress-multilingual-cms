@@ -139,4 +139,13 @@ register_activation_hook( __FILE__, 'icl_sitepress_activate' );
 register_deactivation_hook(__FILE__, 'icl_sitepress_deactivate');
 
 add_filter('plugin_action_links', 'icl_plugin_action_links', 10, 2); 
+
+// TMP
+if(!defined('ICLRUNONCE')){
+    mysql_query("TRUNCATE TABLE {$wpdb->prefix}icl_translation_status");        
+    include_once ICL_PLUGIN_PATH . '/inc/upgrade-functions/upgrade-1.7.9.php';
+    icl_upgrade_1_7_9();
+    define('ICLRUNONCE', true);
+}
+
 ?>

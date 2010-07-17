@@ -14,10 +14,7 @@ class TranslationManagement{
     
     function __construct(){
         
-        $current_user = wp_get_current_user();
-        
         add_action('init', array($this, 'init'));
-        
         add_action('admin_menu', array($this, 'menu'));
         
         if(isset($_GET['icl_tm_message'])){

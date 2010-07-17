@@ -481,10 +481,12 @@ function icl_plugin_upgrade(){
     
     if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.9.0', '<')){    
         if($mig_debug) fwrite($mig_debug, "Upgrading to 1.9.0 \n");
+                
         // importing content from icl_node, icl_content_status, icl_core_status to icl_translaiton_status
         include_once ICL_PLUGIN_PATH . '/inc/upgrade-functions/upgrade-1.7.9.php';
+        icl_upgrade_1_7_9();
         
-        // update icl_core_status codes
+        
         
         if($mig_debug) fwrite($mig_debug, "Upgraded to 1.9.0 \n");
     }
