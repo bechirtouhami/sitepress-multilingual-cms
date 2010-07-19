@@ -25,6 +25,8 @@ class TranslationManagement{
         }
         
         add_action('save_post', array($this, 'save_post_actions'), 11, 2); // calling *after* the Sitepress actions
+        
+        if(isset($_GET['sm']) && $_GET['sm'] == 'dashboard'){session_start();}
                 
     }
     
@@ -54,6 +56,18 @@ class TranslationManagement{
             case 'edit':
                 $this->selected_translator['ID'] = intval($_GET['user_id']);
                 break;
+            case 'dashboard_filter':
+                $_SESSION['translation_dashboard_filter'] = $_POST['filter'];
+                debug_array($_SESSION['translation_dashboard_filter']);
+                wp_redirect('admin.php?page='.ICL_PLUGIN_FOLDER . '/menu/translation-management.php&sm=dashboard');
+                break;  
+           case 'sort':
+                if(isset($_GET['sort_by'])) $_SESSION['translation_dashboard_filter']['sort_by'] = $_GET['sort_by'];
+                if(isset($_GET['sort_order'])) $_SESSION['translation_dashboard_filter']['sort_order'] = $_GET['sort_order'];
+                break;
+           case 'reset_filters':
+                unset($_SESSION['translation_dashboard_filter']);
+                break;                                          
         }
     }
     
@@ -264,23 +278,18 @@ class TranslationManagement{
     /**
     * get documents
     * 
-    * @param string $lang
-    * @param string $to_lang
-    * @param srting $tstatus
-    * @param string $status
-    * @param string $type
-    * @param string $title_match
-    * @param int $limit
-    * @param string $from_date
-    * @param string $to_date
+    * @param array $args
     */
-    function get_documents($from_lang, $to_lang = '', $tstatus, $status=false, $type=false, $title_match = '', $limit_no = 20, $from_date = false,$to_date = false){
+    function get_documents($args){
+        
+        extract($args);
+        
         global $wpdb, $wp_query, $sitepress;
         
         $t_el_types = array_keys($sitepress->get_translatable_documents());
         
         // SELECT
-        $select = " p.ID AS post_id, p.post_title, p.post_content, p.post_type, post_status, t.source_language_code <> '' AS is_translation";
+        $select = " p.ID AS post_id, p.post_title, p.post_content, p.post_type, p.post_status, p.post_date, t.source_language_code <> '' AS is_translation";
         if($to_lang){
             $select .= ", iclts.status, iclts.needs_update";
         }else{
@@ -326,8 +335,8 @@ class TranslationManagement{
             }
             $where .= " AND t.element_type IN ('".join("','",$t_el_types)."')\n";
         }  
-        if($title_match){
-            $where .= " AND p.post_title LIKE '%".$wpdb->escape($title_match)."%'\n";
+        if($title){
+            $where .= " AND p.post_title LIKE '%".$wpdb->escape($title)."%'\n";
         }
         
         if($status){
@@ -360,7 +369,7 @@ class TranslationManagement{
                     foreach($sitepress->get_active_languages() as $lang){
                         if($lang['code'] == $from_lang) continue;
                         $tbl_alias_suffix = str_replace('-','_',$lang['code']);
-                        $wheres[] = "iclts_{$tbl_alias_suffix}.status = ".ICL_TM_IN_PROGRESS." AND iclts_{$tbl_alias_suffix}.needs_update = 0\n";    
+                        $wheres[] = "iclts_{$tbl_alias_suffix}.status = ".ICL_TM_IN_PROGRESS."\n";    
                     }
                     $where .= join(' OR ', $wheres)  . ")";
                 }elseif($tstatus == 'complete'){
@@ -374,7 +383,18 @@ class TranslationManagement{
         }
         
         // ORDER
-        $order = " p.post_date DESC";
+        if($sort_by){
+            $order = " $sort_by ";    
+        }else{
+            $order = " p.post_date DESC";
+        }
+        if($sort_order){
+            $order .= $sort_order;    
+        }else{
+            $order .= 'DESC';    
+        }
+        
+        
         
         // LIMIT
         if(!isset($_GET['paged'])) $_GET['paged'] = 1;

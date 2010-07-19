@@ -1,68 +1,54 @@
 <?php //included from menu translation-management.php ?>
 <?php 
-if(isset($_POST['translation_dashboard_filter'])){
-    $icl_translation_filter = $_POST['filter'];
-}
-if(isset($icl_translation_filter['lang'])){
-    $selected_language = $icl_translation_filter['lang']; 
-}else{
-    $selected_language = isset($_GET['lang'])?$_GET['lang']:$default_language;
-}
-$selected_language_to = $icl_translation_filter['lang_to'] ? $icl_translation_filter['lang_to'] : ''; 
 
-if($selected_language_to == $selected_language){
-    $selected_language_to = '';
+if(isset($_SESSION['translation_dashboard_filter'])){
+    $icl_translation_filter = $_SESSION['translation_dashboard_filter'];
 }
 
+if(!isset($icl_translation_filter['from_lang'])){
+    $icl_translation_filter['from_lang'] = isset($_GET['lang'])?$_GET['lang']:$sitepress->get_default_language();
+}
 
-if(isset($icl_translation_filter['tstatus'])){
-    $tstatus = $icl_translation_filter['tstatus']; 
-}else{
-    $tstatus = isset($_GET['tstatus'])?$_GET['tstatus']:'all';
-}     
-if(isset($icl_translation_filter['status_on'])){
-    $status = $icl_translation_filter['status'];
-}else{
-    if(isset($_GET['status_on']) && isset($_GET['status'])){
-        $status = $_GET['status'];
-    }else{
-        $status = false;
-        if(isset($icl_translation_filter)){
-            unset($icl_translation_filter['status_on']);
-            unset($icl_translation_filter['status']);                
-        }
+if(!isset($icl_translation_filter['to_lang'])){
+    $icl_translation_filter['to_lang'] = isset($_GET['to_lang'])?$_GET['to_lang']:'';
+}
+
+if($icl_translation_filter['to_lang'] == $icl_translation_filter['from_lang']){
+   $icl_translation_filter['to_lang'] = false; 
+}
+
+if(!isset($icl_translation_filter['tstatus'])){
+    $icl_translation_filter['tstatus'] = isset($_GET['tstatus'])?$_GET['tstatus']:'not';
+}
+     
+
+if(!isset($icl_translation_filter['status_on']) || !$icl_translation_filter['status_on']){
+    $icl_translation_filter['status_on'] = isset($_GET['status_on']) ? $_GET['status_on'] : false;
+    if(!$icl_translation_filter['status_on']){
+        unset($icl_translation_filter['status']);        
     }
 }
 
-if(isset($icl_translation_filter['type_on'])){
-    $type = $icl_translation_filter['type'];
-}else{
-    if(isset($_GET['type_on']) && isset($_GET['type'])){
-        $icl_translation_filter['type_on'] = true;
-        $icl_translation_filter['type'] = $_GET['type'];
-        $type = $icl_translation_filter['type'];
-    }else{
-        $type = false;
-        if(isset($icl_translation_filter)){
-            unset($icl_translation_filter['type_on']);
-            unset($icl_translation_filter['type']);
-        }
-    }
-}   
-
-if(isset($icl_translation_filter['title_on'])){
-    $title = $icl_translation_filter['title'];
-}else{
-    if(isset($_GET['title_on']) && isset($_GET['title'])){
-        $title = $_GET['title'];
-    }else{
-        $title = false;
-        if(isset($icl_translation_filter)){
-            unset($icl_translation_filter['title_on']);
-            unset($icl_translation_filter['title']);                
-        }
+if(!isset($icl_translation_filter['type_on']) || !$icl_translation_filter['type_on']){
+    $icl_translation_filter['type_on'] = isset($_GET['type_on']) ? $_GET['type_on'] : false;
+    if(!$icl_translation_filter['type_on']){
+        unset($icl_translation_filter['type']);        
     }
 }
+
+if(!isset($icl_translation_filter['title_on']) || !$icl_translation_filter['title_on']){
+    $icl_translation_filter['title_on'] = isset($_GET['title_on']) ? $_GET['title_on'] : false;
+    if(!$icl_translation_filter['title_on']){
+        unset($icl_translation_filter['title']);        
+    }
+}
+
+
+if(!isset($icl_translation_filter['sort_by']) || !$icl_translation_filter['sort_by']){ $icl_translation_filter['sort_by'] = 'p.post_date';}
+if(!isset($icl_translation_filter['sort_order']) || !$icl_translation_filter['sort_order']){ $icl_translation_filter['sort_order'] = 'DESC';}
+$sort_order_next = $icl_translation_filter['sort_order'] == 'ASC' ? 'DESC' : 'ASC'; 
+$title_sort_link = 'admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translation-management.php&sm=dashboard&icl_tm_action=sort&sort_by=p.post_title&sort_order='.$sort_order_next;
+$date_sort_link = 'admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translation-management.php&sm=dashboard&icl_tm_action=sort&sort_by=p.post_date&sort_order='.$sort_order_next;
 
 $icl_post_statuses = array(
     'publish'   =>__('Published', 'sitepress'),
@@ -74,11 +60,12 @@ $icl_post_types = $sitepress->get_translatable_documents();
 
 $icl_dashboard_settings = $sitepress_settings['dashboard'];
 
-$icl_documents = $iclTranslationManagement->get_documents($selected_language, $selected_language_to, $tstatus, $status, $type, $title);
-
+$icl_translation_filter['limit_no'] = 20;
+$icl_documents = $iclTranslationManagement->get_documents($icl_translation_filter);
 ?>
 
     <form method="post" name="translation-dashboard-filter" action="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/translation-management.php&amp;sm=dashboard">
+    <input type="hidden" name="icl_tm_action" value="dashboard_filter" />
     <table class="form-table widefat fixed">
         <thead>
         <tr>
@@ -90,20 +77,21 @@ $icl_documents = $iclTranslationManagement->get_documents($selected_language, $s
                 <img id="icl_dashboard_ajax_working" align="right" src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" style="display: none;" width="16" height="16" alt="loading..." />
                 <label>
                     <strong><?php echo __('Show documents in:', 'sitepress') ?></strong>
-                    <select name="filter[lang]">                
+                    <select name="filter[from_lang]">                
                     <!--<option value=""><?php _e('All languages', 'sitepress') ?></option>-->
                     <?php foreach($sitepress->get_active_languages() as $lang): ?>                    
-                        <option value="<?php echo $lang['code'] ?>" <?php if($selected_language==$lang['code']): ?>selected="selected"<?php endif;?>><?php echo $lang['display_name'] ?></option>
+                        <option value="<?php echo $lang['code'] ?>" <?php if($icl_translation_filter['from_lang']==$lang['code']): ?>selected="selected"<?php endif;?>>
+                            <?php echo $lang['display_name'] ?></option>
                     <?php endforeach; ?>
                     </select>
                 </label>
                 &nbsp;
                 <label>
                     <strong><?php _e('Translated to:', 'sitepress');?></strong>
-                    <select name="filter[lang_to]">                
+                    <select name="filter[to_lang]">                
                     <option value=""><?php _e('All languages', 'sitepress') ?></option>
                     <?php foreach($sitepress->get_active_languages() as $lang): ?>                    
-                        <option value="<?php echo $lang['code'] ?>" <?php if($selected_language_to==$lang['code']): ?>selected="selected"<?php endif;?>><?php echo $lang['display_name'] ?></option>
+                        <option value="<?php echo $lang['code'] ?>" <?php if($icl_translation_filter['to_lang']==$lang['code']): ?>selected="selected"<?php endif;?>><?php echo $lang['display_name'] ?></option>
                     <?php endforeach; ?>
                     </select>
                 </label>
@@ -119,7 +107,7 @@ $icl_documents = $iclTranslationManagement->get_documents($selected_language, $s
                                                    'complete' => __('Translation complete', 'sitepress'));
                         ?>
                         <?php foreach($option_status as $k=>$v):?>
-                        <option value="<?php echo $k ?>" <?php if($tstatus==$k):?>selected="selected"<?php endif?>><?php echo $v ?></option>
+                        <option value="<?php echo $k ?>" <?php if($icl_translation_filter['tstatus']==$k):?>selected="selected"<?php endif?>><?php echo $v ?></option>
                         <?php endforeach; ?>
                     </select>
                 </label>                
@@ -132,7 +120,7 @@ $icl_documents = $iclTranslationManagement->get_documents($selected_language, $s
         <tr id="icl_dashboard_advanced_filters" valign="top" <?php if(!$icl_dashboard_settings['advanced_filters']): ?>style="display: none;"<?php endif; ?>>
             <td>                
                 <strong><?php echo __('Filters:', 'sitepress') ?></strong><br />
-                <label><input type="checkbox" name="filter[status_on]" <?php if(isset($icl_translation_filter['status_on'])):?>checked="checked"<?php endif?> />&nbsp;
+                <label><input type="checkbox" name="filter[status_on]" <?php if($icl_translation_filter['status_on']):?>checked="checked"<?php endif?> />&nbsp;
                     <?php _e('Status:', 'sitepress')?></label> 
                 <select name="filter[status]">
                     <?php foreach($icl_post_statuses as $k=>$v):?>
@@ -140,7 +128,7 @@ $icl_documents = $iclTranslationManagement->get_documents($selected_language, $s
                     <?php endforeach; ?>
                 </select>
                 <br />
-                <label><input type="checkbox" name="filter[type_on]" <?php if(isset($icl_translation_filter['type_on'])):?>checked="checked"<?php endif?> />&nbsp;
+                <label><input type="checkbox" name="filter[type_on]" <?php if($icl_translation_filter['type_on']):?>checked="checked"<?php endif?> />&nbsp;
                     <?php _e('Type:', 'sitepress')?></label> 
                 <select name="filter[type]">
                     <?php foreach($icl_post_types as $k=>$v):?>
@@ -148,14 +136,16 @@ $icl_documents = $iclTranslationManagement->get_documents($selected_language, $s
                     <?php endforeach; ?>
                 </select>                
                 <br />
-                <label><input type="checkbox" name="filter[title_on]" <?php if(isset($icl_translation_filter['title_on'])):?>checked="checked"<?php endif?> />&nbsp;
+                <label><input type="checkbox" name="filter[title_on]" <?php if($icl_translation_filter['title_on']):?>checked="checked"<?php endif?> />&nbsp;
                     <?php _e('Title:', 'sitepress')?></label> 
                     <input type="text" name="filter[title]" value="<?php echo $icl_translation_filter['title'] ?>" />
-                
             </td>
         </tr>
         <tr>
-            <td align="right"><input name="translation_dashboard_filter" class="button" type="submit" value="<?php echo __('Display','sitepress')?>" /></td>
+            <td align="right">
+                <a class="submitdelete deletion" href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/translation-management.php&sm=dashboard&icl_tm_action=reset_filters"><?php _e('Reset filters', '&nbsp;'); ?></a>&nbsp;
+                <input name="translation_dashboard_filter" class="button" type="submit" value="<?php echo __('Display','sitepress')?>" />
+            </td>
         </tr>
     </table>
     </form>
@@ -166,17 +156,20 @@ $icl_documents = $iclTranslationManagement->get_documents($selected_language, $s
         <thead>
         <tr>
             <th scope="col" class="manage-column column-cb check-column"><input type="checkbox" <?php if(isset($_GET['post_id'])) echo 'checked="checked"'?>/></th>
-            <th scope="col"><?php echo __('Title', 'sitepress') ?></th>
+            <th scope="col"><a href="<?php echo $title_sort_link ?>"><?php echo __('Title', 'sitepress') ?>&nbsp;
+                <?php if($icl_translation_filter['sort_by']=='p.post_title') echo $icl_translation_filter['sort_order']=='ASC' ? '&uarr;' : '&darr;' ?></a></th>
+            <th scope="col" class="manage-column column-date"><a href="<?php echo $date_sort_link ?>"><?php echo __('Date', 'sitepress') ?>&nbsp;
+                <?php if($icl_translation_filter['sort_by']=='p.post_date') echo $icl_translation_filter['sort_order']=='ASC' ? '&uarr;' : '&darr;' ?></a></th>
             <th scope="col" class="manage-column column-date">
                 <img title="<?php _e('Note for translators', 'sitepress') ?>" src="<?php echo ICL_PLUGIN_URL ?>/res/img/notes.png" alt="note" width="16" height="16" /></th>
             <th scope="col" class="manage-column column-date"><?php echo __('Type', 'sitepress') ?></th>
             <th scope="col" class="manage-column column-date"><?php echo __('Status', 'sitepress') ?></th>        
-            <?php if($selected_language_to): ?>
+            <?php if($icl_translation_filter['to_lang']): ?>
             <th scope="col" class="manage-column column-cb check-column">
-                <img src="<?php echo $sitepress->get_flag_url($selected_language_to) ?>" width="16" height="12" alt="<?php echo $selected_language_to ?>" />
+                <img src="<?php echo $sitepress->get_flag_url($icl_translation_filter['to_lang']) ?>" width="16" height="12" alt="<?php echo $icl_translation_filter['to_lang'] ?>" />
                 </th>        
             <?php else: ?> 
-                <?php foreach($sitepress->get_active_languages() as $lang): if($lang['code']==$selected_language) continue;?>
+                <?php foreach($sitepress->get_active_languages() as $lang): if($lang['code']==$icl_translation_filter['from_lang']) continue;?>
                 <th scope="col" class="manage-column column-cb check-column">
                     <img src="<?php echo $sitepress->get_flag_url($lang['code']) ?>" width="16" height="12" alt="<?php echo $lang['code'] ?>" />
                 </th>        
@@ -188,17 +181,20 @@ $icl_documents = $iclTranslationManagement->get_documents($selected_language, $s
         <tfoot>
         <tr>
             <th scope="col" class="manage-column column-cb check-column"><input type="checkbox" <?php if(isset($_GET['post_id'])) echo 'checked="checked"'?>/></th>
-            <th scope="col"><?php echo __('Title', 'sitepress') ?></th>
+            <th scope="col"><a href="<?php echo $title_sort_link ?>"><?php echo __('Title', 'sitepress') ?>&nbsp;
+                <?php if($icl_translation_filter['sort_by']=='p.post_title') echo $icl_translation_filter['sort_order']=='ASC' ? '&uarr;' : '&darr;' ?></a></th>
+            <th scope="col" class="manage-column column-date"><a href="<?php echo $date_sort_link ?>"><?php echo __('Date', 'sitepress') ?>&nbsp;
+                <?php if($icl_translation_filter['sort_by']=='p.post_date') echo $icl_translation_filter['sort_order']=='ASC' ? '&uarr;' : '&darr;' ?></a></th>
             <th scope="col" class="manage-column column-date">
                 <img title="<?php _e('Note for translators', 'sitepress') ?>" src="<?php echo ICL_PLUGIN_URL ?>/res/img/notes.png" alt="note" width="16" height="16" /></th>
             <th scope="col" class="manage-column column-date"><?php echo __('Type', 'sitepress') ?></th>
             <th scope="col" class="manage-column column-date"><?php echo __('Status', 'sitepress') ?></th>        
-            <?php if($selected_language_to): ?>
+            <?php if($icl_translation_filter['to_lang']): ?>
             <th scope="col" class="manage-column column-cb check-column">
-                <img src="<?php echo $sitepress->get_flag_url($selected_language_to) ?>" width="16" height="12" alt="<?php echo $selected_language_to ?>" />
+                <img src="<?php echo $sitepress->get_flag_url($icl_translation_filter['to_lang']) ?>" width="16" height="12" alt="<?php echo $icl_translation_filter['to_lang'] ?>" />
                 </th>        
             <?php else: ?> 
-                <?php foreach($sitepress->get_active_languages() as $lang): if($lang['code']==$selected_language) continue;?>
+                <?php foreach($sitepress->get_active_languages() as $lang): if($lang['code']==$icl_translation_filter['from_lang']) continue;?>
                 <th scope="col" class="manage-column column-cb check-column">
                     <img src="<?php echo $sitepress->get_flag_url($lang['code']) ?>" width="16" height="12" alt="<?php echo $lang['code'] ?>" />
                 </th>        
@@ -210,7 +206,7 @@ $icl_documents = $iclTranslationManagement->get_documents($selected_language, $s
             <?php if(!$icl_documents): ?>
             <tr>
                 <td scope="col" colspan="<?php 
-                    echo 5 + ($selected_language_to ? 1 : count($sitepress->get_active_languages())-1); ?>" align="center"><?php _e('No documents found', 'sitepress') ?></td>
+                    echo 6 + ($icl_translation_filter['to_lang'] ? 1 : count($sitepress->get_active_languages())-1); ?>" align="center"><?php _e('No documents found', 'sitepress') ?></td>
             </tr>                
             <?php else: $oddcolumn = false; ?>
             <?php foreach($icl_documents as $doc): $oddcolumn=!$oddcolumn; ?>
@@ -221,8 +217,8 @@ $icl_documents = $iclTranslationManagement->get_documents($selected_language, $s
                 <td scope="col" class="post-title column-title">
                     <a href="<?php echo get_edit_post_link($doc->post_id) ?>"><?php echo $doc->post_title ?></a>
                     <?php
-                        $wc = icl_estimate_word_count($doc, $selected_language);
-                        $wc += icl_estimate_custom_field_word_count($doc->post_id, $selected_language);
+                        $wc = icl_estimate_word_count($doc, $icl_translation_filter['from_lang']);
+                        $wc += icl_estimate_custom_field_word_count($doc->post_id, $icl_translation_filter['from_lang']);
                     ?>
                     <span id="icl-cw-<?php echo $doc->post_id ?>" style="display:none"><?php echo $wc; $wctotal+=$wc; ?></span>
                     <span class="icl-tr-details">&nbsp;</span>
@@ -251,6 +247,9 @@ $icl_documents = $iclTranslationManagement->get_documents($selected_language, $s
                         </tr></table>
                     </div>
                 </td>
+                <td scope="col" class="post-date column-date">
+                    <?php if($doc->post_date) echo date('Y-m-d', strtotime($doc->post_date)); ?>
+                </td>
                 <td scope="col" class="icl_tn_link" id="icl_tn_link_<?php echo $doc->post_id ?>">
                     <?php if($doc->is_translation):?>
                     &nbsp;
@@ -263,7 +262,7 @@ $icl_documents = $iclTranslationManagement->get_documents($selected_language, $s
                     <input class="icl_td_post_type" name="icl_post_type[<?php echo $doc->post_id ?>]" type="hidden" value="<?php echo $doc->post_type ?>" />
                 </td>
                 <td scope="col"><?php echo $icl_post_statuses[$doc->post_status]; ?></td>
-                <?php if($selected_language_to): ?>
+                <?php if($icl_translation_filter['to_lang']): ?>
                 <?php $docst = $doc->needs_update ? ICL_TM_NEEDS_UPDATE : intval($doc->status); ?>
                 <td scope="col" class="manage-column column-cb check-column">
                     <img style="margin-top:4px;" 
@@ -271,15 +270,26 @@ $icl_documents = $iclTranslationManagement->get_documents($selected_language, $s
                         width="16" height="16" alt="<?php echo $_st ?>" />
                     </td>        
                 <?php else: ?> 
-                    <?php foreach($sitepress->get_active_languages() as $lang): if($lang['code']==$selected_language) continue;?>
+                    <?php foreach($sitepress->get_active_languages() as $lang): if($lang['code']==$icl_translation_filter['from_lang']) continue;?>
                     <?php 
                         $_suffix = str_replace('-','_',$lang['code']);                        
                         $_prop_up = 'needs_update_'.$_suffix;
                         $_prop_st = 'status_'.$_suffix;
-                        $docst = $doc->$_prop_up ? ICL_TM_NEEDS_UPDATE : intval($doc->$_prop_st); 
+                        switch(intval($doc->$_prop_st)){
+                            case ICL_TM_NOT_TRANSLATED : $tst_title = esc_attr(__('Not translated','sitepress')); break;
+                            case ICL_TM_WAITING_FOR_TRANSLATOR : $tst_title = esc_attr(__('Waiting for translator','sitepress')); break;
+                            case ICL_TM_IN_PROGRESS : $tst_title = esc_attr(__('In progress','sitepress')); break;
+                            case ICL_TM_COMPLETE : $tst_title = esc_attr(__('Complete','sitepress')); break;
+                            default: $tst_title = 'XX';
+                        }
+                        $docst = ($doc->$_prop_up && $icl_translation_filter['tstatus']=='not') ? ICL_TM_NEEDS_UPDATE : intval($doc->$_prop_st); 
+                        if($doc->$_prop_up){
+                            $tst_title .= ' - ' . esc_attr(__('needs update','sitepress'));    
+                        }
+                          
                     ?>
                     <td scope="col" class="manage-column column-cb check-column">
-                        <img style="margin-top:4px;" 
+                        <img style="margin-top:4px;" title="<?php echo $tst_title ?>"
                             src="<?php echo ICL_PLUGIN_URL ?>/res/img/<?php echo $_st = TranslationManagement::status2img_filename($docst)?>" 
                             width="16" height="16" alt="<?php echo $st ?>" />
                     </td>        
