@@ -43,3 +43,7 @@
     font-weight: bold;        
     background-color: #fff;
 }
+
+.form-table td, .form-table th{
+    border-bottom:none;
+}

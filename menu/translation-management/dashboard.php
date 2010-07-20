@@ -60,10 +60,13 @@ $icl_post_types = $sitepress->get_translatable_documents();
 
 $icl_dashboard_settings = $sitepress_settings['dashboard'];
 
-$icl_translation_filter['limit_no'] = 20;
+$icl_translation_filter['limit_no'] = 5; // replace with 20
 $icl_documents = $iclTranslationManagement->get_documents($icl_translation_filter);
+$icl_translators = $iclTranslationManagement->get_blog_translators();
 ?>
 
+
+    
     <form method="post" name="translation-dashboard-filter" action="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/translation-management.php&amp;sm=dashboard">
     <input type="hidden" name="icl_tm_action" value="dashboard_filter" />
     <table class="form-table widefat fixed">
@@ -152,6 +155,8 @@ $icl_documents = $iclTranslationManagement->get_documents($icl_translation_filte
     
     <br />
     
+    <form method="post">
+    <input type="hidden" name="icl_tm_action" value="send_jobs" />
     <table class="widefat fixed" id="icl-translation-dashboard" cellspacing="0">
         <thead>
         <tr>
@@ -217,8 +222,8 @@ $icl_documents = $iclTranslationManagement->get_documents($icl_translation_filte
                 <td scope="col" class="post-title column-title">
                     <a href="<?php echo get_edit_post_link($doc->post_id) ?>"><?php echo $doc->post_title ?></a>
                     <?php
-                        $wc = icl_estimate_word_count($doc, $icl_translation_filter['from_lang']);
-                        $wc += icl_estimate_custom_field_word_count($doc->post_id, $icl_translation_filter['from_lang']);
+                        $wc = $iclTranslationManagement->estimate_word_count($doc, $icl_translation_filter['from_lang']);
+                        $wc += $iclTranslationManagement->estimate_custom_field_word_count($doc->post_id, $icl_translation_filter['from_lang']);
                     ?>
                     <span id="icl-cw-<?php echo $doc->post_id ?>" style="display:none"><?php echo $wc; $wctotal+=$wc; ?></span>
                     <span class="icl-tr-details">&nbsp;</span>
@@ -315,16 +320,58 @@ $icl_documents = $iclTranslationManagement->get_documents($icl_translation_filte
         'current' => $_GET['paged'],
         'add_args' => isset($icl_translation_filter)?$icl_translation_filter:array() 
     ));         
-    ?>
-    <?php if ( $page_links ) { ?>
-    <div class="tablenav">
+    ?> 
+    <span id="icl-cw-total" style="display:none"><?php echo $wctotal; ?></span>       
+    <div class="tablenav">    
+        <div style="float:left;margin-top:4px;">
+            <strong><?php echo __('Word count estimate:', 'sitepress') ?></strong> <?php printf(__('%s words', 'sitepress'), '<span id="icl-estimated-words-count">0</span>')?>
+        </div>    
+        <?php if ( $page_links ) { ?>
         <div class="tablenav-pages"><?php $page_links_text = sprintf( '<span class="displaying-num">' . __( 'Displaying %s&#8211;%s of %s', 'sitepress' ) . '</span>%s',
             number_format_i18n( ( $_GET['paged'] - 1 ) * $wp_query->query_vars['posts_per_page'] + 1 ),
             number_format_i18n( min( $_GET['paged'] * $wp_query->query_vars['posts_per_page'], $wp_query->found_posts ) ),
             number_format_i18n( $wp_query->found_posts ),
             $page_links
-        ); echo $page_links_text; ?></div>
-        <?php } ?>
+        ); echo $page_links_text; ?>
         </div>
-    </div>
+        <?php } ?>
+    </div>    
     <?php // pagination - end ?>
+    
+
+    <table class="widefat fixed" cellspacing="0" style="width:100%">
+        <thead>
+            <tr>
+                <th><?php _e('Translation options', 'sitepress')?></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <ul id="icl_tm_languages">
+                    <?php foreach($sitepress->get_active_languages()as $lang):?>
+                    <?php 
+                        if($lang['code'] == $icl_translation_filter['from_lang']) continue;
+                    ?>
+                    <li>
+                        <label><input type="checkbox" name="translate_to[<?php echo $lang['code'] ?>]" value="1" />
+                            &nbsp;<?php printf(__('Translate to %s', 'sitepress'),$lang['display_name'])?></label>
+                        - <label><?php _e('Use translator', 'sitepress')?>
+                        <select name="translator[<?php echo $lang['code'] ?>]">
+                            <option value="0"><?php _e('First available (Local)', 'sitepress')?></option>
+                            <?php foreach($icl_translators as $translator): if($translator->language_pairs[$icl_translation_filter['from_lang']][$lang['code']]):?>
+                            <option value="<?php echo $translator->ID ?>"><?php echo esc_html($translator->display_name) . ' (' . __('Local', 'sitepress') . ')'?></option>                            
+                            <?php endif; endforeach;?>
+                        </select>                        
+                        </label>
+                        &nbsp;<a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/translation-management.php&sm=translators"><?php _e('Manage translators', 'sitepress'); ?></a>
+                    </li>
+                    <?php endforeach; ?>
+                    </ul>
+                    <input id="icl_tm_jobs_submit" class="button-primary" type="submit" value="<?php _e('Translate documents', 'sitepress') ?>" disabled="disabled" />
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    
+    </form>

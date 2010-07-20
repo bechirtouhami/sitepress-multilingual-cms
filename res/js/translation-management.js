@@ -58,5 +58,43 @@ jQuery(document).ready(function(){
             }
         });         
     }
+    
+    /* word count estimate */
+    jQuery('#icl-translation-dashboard td :checkbox').click(icl_tm_update_word_count_estimate);
+    jQuery('#icl-translation-dashboard th :checkbox').click(icl_tm_select_all_documents);
+    jQuery('#icl_tm_languages :checkbox').click(icl_tm_enable_sumit);
+    
             
 })
+
+function icl_tm_update_word_count_estimate(){
+    icl_tm_enable_sumit();
+    var id = jQuery(this).val();
+    var val = parseInt(jQuery('#icl-cw-'+id).html());
+    var curval = parseInt(jQuery('#icl-estimated-words-count').html());
+    if(jQuery(this).attr('checked')){
+        var newval = curval + val;        
+    }else{
+        var newval = curval - val;        
+    }    
+    jQuery('#icl-estimated-words-count').html(newval);
+}
+
+function icl_tm_select_all_documents(){
+    if(jQuery(this).attr('checked')){
+        jQuery('#icl-translation-dashboard :checkbox').attr('checked','checked');    
+        jQuery('#icl-estimated-words-count').html(parseInt(jQuery('#icl-cw-total').html()));
+    }else{
+        jQuery('#icl-translation-dashboard :checkbox').removeAttr('checked');    
+        jQuery('#icl-estimated-words-count').html('0');
+    }
+    icl_tm_enable_sumit();
+}
+
+function icl_tm_enable_sumit(){
+    if( jQuery('#icl-translation-dashboard td :checkbox:checked').length > 0 && jQuery('#icl_tm_languages :checkbox:checked').length >  0){
+        jQuery('#icl_tm_jobs_submit').removeAttr('disabled');
+    }else{
+        jQuery('#icl_tm_jobs_submit').attr('disabled','disabled');
+    }
+}

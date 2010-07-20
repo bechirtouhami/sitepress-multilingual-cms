@@ -120,8 +120,9 @@ class iclNavMenu{
     }
     
     function _get_menu_language($menu_id){
-        global $sitepress;
-        $lang = $sitepress->get_element_language_details($menu_id, 'tax_nav_menu');
+        global $sitepress, $wpdb;
+        $menu_tt_id = $wpdb->get_var($wpdb->prepare("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id=%d AND taxonomy='nav_menu'",$menu_id));
+        $lang = $sitepress->get_element_language_details($menu_tt_id, 'tax_nav_menu');
         return $lang;
     }
     
@@ -133,19 +134,18 @@ class iclNavMenu{
     */
     function _get_first_menu($lang){
         global $wpdb;
-        $id = $wpdb->get_var("SELECT MIN(element_id) FROM {$wpdb->prefix}icl_translations WHERE element_type='tax_nav_menu' AND language_code='".$wpdb->escape($lang)."'");    
-        return (int) $id;
+        $menu_tt_id = $wpdb->get_var("SELECT MIN(element_id) FROM {$wpdb->prefix}icl_translations WHERE element_type='tax_nav_menu' AND language_code='".$wpdb->escape($lang)."'");    
+        $menu_id = $wpdb->get_var($wpdb->prepare("SELECT term_id FROM {$wpdb->term_taxonomy} WHERE term_taxonomy_id=%d",$menu_tt_id));
+        return (int) $menu_id;
     }
     
     function get_current_menu(){
         global $sitepress;
-        
-        $nav_menu_recently_edited = get_user_option( 'nav_menu_recently_edited' );
-        $nav_menu_recently_edited_lang = $this->_get_menu_language($nav_menu_recently_edited);
-                
-        if( !isset( $_REQUEST['menu'] ) && isset($_GET['lang']) && $nav_menu_recently_edited_lang->language_code != $_GET['lang']){
+        $nav_menu_recently_edited = get_user_option( 'nav_menu_recently_edited' );        
+        $nav_menu_recently_edited_lang = $this->_get_menu_language($nav_menu_recently_edited);                
+        if( !isset( $_REQUEST['menu'] ) && isset($_GET['lang']) && $nav_menu_recently_edited_lang->language_code != $_GET['lang']){            
             // if no menu is specified and the language is set override nav_menu_recently_edited
-            $nav_menu_selected_id = $this->_get_first_menu($_GET['lang']);    
+            $nav_menu_selected_id = $this->_get_first_menu($_GET['lang']);                            
             update_user_option(get_current_user_id(), 'nav_menu_recently_edited', $nav_menu_selected_id);
         }elseif( !isset( $_REQUEST['menu'] ) && !isset($_GET['lang']) && $nav_menu_recently_edited_lang->language_code != $sitepress->get_default_language() && $_POST['action']!='update'){
             // if no menu is specified, no language is set, override nav_menu_recently_edited if its language is different than default           
@@ -157,7 +157,7 @@ class iclNavMenu{
             $nav_menu_selected_id = $nav_menu_recently_edited;
         }
         
-        $this->current_menu['id'] = $nav_menu_selected_id;
+        $this->current_menu['id'] = $nav_menu_selected_id;        
         if($this->current_menu['id']){
             $this->_load_menu($this->current_menu['id']);
         }else{
@@ -174,22 +174,26 @@ class iclNavMenu{
     }
     
     function _load_menu($menu_id){
-        global $sitepress;
-        $this->current_menu['trid'] = $sitepress->get_element_trid($this->current_menu['id'], 'tax_nav_menu');
+        global $sitepress, $wpdb;
+        
+        $menu_tt_id = $wpdb->get_var($wpdb->prepare("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id=%d AND taxonomy='nav_menu'",$this->current_menu['id']));        
+        $this->current_menu['trid'] = $sitepress->get_element_trid($menu_tt_id, 'tax_nav_menu');        
+        
         if($this->current_menu['trid']){
             $this->current_menu['translations'] = $sitepress->get_element_translations($this->current_menu['trid'], 'tax_nav_menu');    
         }else{
             $this->current_menu['translations'] = array();
         }
+        
         foreach($this->current_menu['translations'] as $tr){
-            if($this->current_menu['id'] == $tr->element_id){
+            if($menu_tt_id == $tr->element_id){
                 $this->current_menu['language'] = $tr->language_code;                    
             }
         }
     }
     
     function wp_update_nav_menu($menu_id, $menu_data = null){
-        global $sitepress;
+        global $sitepress, $wpdb;
         if($menu_data){
             if($_POST['icl_translation_of']){
                 $trid = $sitepress->get_element_trid($_POST['icl_translation_of'], 'tax_nav_menu');
@@ -197,7 +201,8 @@ class iclNavMenu{
                 $trid = isset($_POST['icl_nav_menu_trid']) ? intval($_POST['icl_nav_menu_trid']) : null;                 
             }        
             $language_code = isset($_POST['icl_nav_menu_language']) ? $_POST['icl_nav_menu_language'] : $sitepress->get_default_language(); 
-            $sitepress->set_element_language_details($menu_id, 'tax_nav_menu', $trid, $language_code);
+            $menu_id_tt = $wpdb->get_var($wpdb->prepare("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id=%d AND taxonomy='nav_menu'",$menu_id));
+            $sitepress->set_element_language_details($menu_id_tt, 'tax_nav_menu', $trid, $language_code);
         }
         $this->current_menu['id'] = $menu_id;
         $this->_load_menu($this->current_menu['id']);
@@ -205,7 +210,8 @@ class iclNavMenu{
     
     function wp_delete_nav_menu($id){
         global $wpdb;
-        $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE element_id='$id' AND element_type='tax_nav_menu' LIMIT 1");
+        $menu_id_tt = $wpdb->get_var($wpdb->prepare("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id=%d AND taxonomy='nav_menu'",$id));
+        $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE element_id='{$menu_id_tt}' AND element_type='tax_nav_menu' LIMIT 1");
     }
     
     function wp_update_nav_menu_item($menu_id, $menu_item_db_id, $args){
@@ -428,6 +434,7 @@ class iclNavMenu{
         }
           
         if(!empty($terms)){
+           
             foreach($taxonomies as $t){
                 $txs[] = 'tax_' . $t;
             }
@@ -442,7 +449,7 @@ class iclNavMenu{
                     $tt[] = $t;
                 }
             }
-            // filter the one in the current language
+            // filter the ones in the current language
             if(!empty($tt)){
                 $ftt = $wpdb->get_col("SELECT element_id FROM {$wpdb->prefix}icl_translations 
                     WHERE element_type IN ({$el_types}) AND element_id IN (".join(',',$tt).") AND language_code='{$this->current_lang}'");
@@ -452,7 +459,7 @@ class iclNavMenu{
                     unset($terms[$k]);
                 }
             }
-        }        
+        }                
         return $terms;        
     }
     
@@ -472,26 +479,30 @@ class iclNavMenu{
         return $q;
     }
         
-    function theme_mod_nav_menu_locations($val){
-        global $sitepress;
+    function theme_mod_nav_menu_locations($val){        
+        global $sitepress, $wpdb;
         if($sitepress->get_default_language() != $this->current_lang){
-            foreach((array)$val as $k=>$v){
-                $val[$k] = icl_object_id($val[$k], 'nav_menu', true, $this->current_lang);       
+            if(!empty($val)){
+                foreach($val as $k=>$v){
+                    $val[$k] = icl_object_id($val[$k], 'nav_menu', true, $this->current_lang);       
+                }
             }
         }
         return $val;
     }
     
     function pre_update_theme_mods_theme($val){
-        global $sitepress;
-        foreach($val['nav_menu_locations'] as $k=>$v){
-            if(!$v && $this->current_lang != $sitepress->get_default_language()){
-                $tl = get_theme_mod('nav_menu_locations');
-                $val['nav_menu_locations'][$k] = $tl[$k]; 
-            }else{
-                $val['nav_menu_locations'][$k] = icl_object_id($val['nav_menu_locations'][$k], 'nav_menu',true, $sitepress->get_default_language());           
-            }            
-        }        
+        global $sitepress, $wpdb;
+        if(!empty($val['nav_menu_locations'])){
+            foreach($val['nav_menu_locations'] as $k=>$v){
+                if(!$v && $this->current_lang != $sitepress->get_default_language()){
+                    $tl = get_theme_mod('nav_menu_locations');
+                    $val['nav_menu_locations'][$k] = $tl[$k]; 
+                }else{
+                    $val['nav_menu_locations'][$k] = icl_object_id($val['nav_menu_locations'][$k], 'nav_menu',true, $sitepress->get_default_language());           
+                }            
+            }        
+        }
         return $val;
     }
     
@@ -541,11 +552,12 @@ class iclNavMenu{
     }
     
     function _set_custom_status_in_theme_location_switcher(){
-        global $sitepress;
+        global $sitepress, $wpdb;
         $tl = (array)get_theme_mod('nav_menu_locations');
         $menus_not_translated = array();
         foreach($tl as $k=>$menu){
-            $menu_trid = $sitepress->get_element_trid($menu, 'tax_nav_menu');
+            $menu_tt_id = $wpdb->get_var($wpdb->prepare("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id=%d AND taxonomy='nav_menu'",$menu));
+            $menu_trid = $sitepress->get_element_trid($menu_tt_id, 'tax_nav_menu');
             $menu_translations = $sitepress->get_element_translations($menu_trid, 'tax_nav_menu');
             if(!$menu_translations[$this->current_lang]){
                 $menus_not_translated[] = $k;                

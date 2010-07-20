@@ -6,11 +6,12 @@ define ( 'ICL_TM_IN_PROGRESS', 2);
 define ( 'ICL_TM_NEEDS_UPDATE', 3);  //virt. status code (based on needs_update)
 define ( 'ICL_TM_COMPLETE', 10);
 
+$asian_languages = array('ja', 'ko', 'zh-hans', 'zh-hant', 'mn', 'ne', 'hi', 'pa', 'ta', 'th');
   
 class TranslationManagement{
     
     private $selected_translator = array('ID'=>0);
-    public $messages = array();
+    public $messages = array();    
     
     function __construct(){
         
@@ -67,7 +68,10 @@ class TranslationManagement{
                 break;
            case 'reset_filters':
                 unset($_SESSION['translation_dashboard_filter']);
-                break;                                          
+                break;          
+           case 'send_jobs':
+                $this->send_jobs($_POST);
+                break;                                
         }
     }
     
@@ -123,6 +127,7 @@ class TranslationManagement{
         foreach($res as $row){
             $user = new WP_User($row->ID);
             $caps = @unserialize($row->caps);
+            $row->language_pairs = get_usermeta($row->ID, $wpdb->prefix.'language_pairs', true);
             if(isset($caps['translate'])){
                 $users[] = $row;    
             }
@@ -442,6 +447,73 @@ class TranslationManagement{
         }
         return $img_file;
     } 
+    
+    public function estimate_word_count($data, $lang_code){
+        global $asian_languages;
+        
+        $words = 0;
+        if(isset($data->post_title)){
+            if(in_array($lang_code, $asian_languages)){
+                $words += strlen(strip_tags($data->post_title)) / 6;
+            } else {
+                $words += count(explode(' ',$data->post_title));
+            }
+        }
+        if(isset($data->post_content)){
+            if(in_array($lang_code, $asian_languages)){
+                $words += strlen(strip_tags($data->post_content)) / 6;
+            } else {
+                $words += count(explode(' ',strip_tags($data->post_content)));
+            }
+        }
+        
+        return (int)$words;
+        
+    }
+    
+    public function estimate_custom_field_word_count($post_id, $lang_code) {
+        global $asian_languages;
+
+        include_once ICL_PLUGIN_PATH . '/inc/plugins-texts-functions.php';
+        
+        $words = 0;
+        $custom_fields = icl_get_posts_translatable_fields();
+        foreach($custom_fields as $id => $cf){
+            if ($cf->translate) {
+                $custom_fields_value = get_post_meta($post_id, $cf->attribute_name, true);
+                if ($custom_fields_value != "") {
+                    if(in_array($lang_code, $asian_languages)){
+                        $words += strlen(strip_tags($custom_fields_value)) / 6;
+                    } else {
+                        $words += count(explode(' ',strip_tags($custom_fields_value)));
+                    }
+                }
+            }
+        }
+        
+        return (int)$words;
+    }
+    
+    function send_jobs($data){
+        debug_array($data);
+        // no language selected ?
+        if(isset($data['language_to']) || empty($data['language_to'])){
+            $this->messages[] = array(
+                'type'=>'error',
+                'text' => __('Please select at least one language to translate into.', 'sitepress')
+            );
+            return;
+        }
+        // no post selected ?
+        if(isset($data['post']) || empty($data['post'])){
+            $this->messages[] = array(
+                'type'=>'error',
+                'text' => __('Please select at least one document to translate.', 'sitepress')
+            );
+            return;
+        }
+        
+    }    
     
 }
   
