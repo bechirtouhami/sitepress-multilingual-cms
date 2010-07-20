@@ -75,6 +75,9 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 
 == Changelog ==
 
+= 1.8.1 =
+* Bugfixes for the WP Nav Menus
+
 = 1.8.0 =
 * Added support for multilingual menus. Each language gets a different menus, linked as translations.
 * Fixed bug with tag translations that have the same value.
