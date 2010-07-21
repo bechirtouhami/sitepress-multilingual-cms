@@ -2253,7 +2253,7 @@ class SitePress{
     
     function get_language_for_element($element_id, $el_type='post_post'){
         global $wpdb;   
-        return $wpdb->get_var("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE element_id='{$element_id}' AND element_type='post_{$el_type}'");
+        return $wpdb->get_var("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE element_id='{$element_id}' AND element_type='{$el_type}'");
     }
 
     function get_elements_without_translations($el_type, $target_lang, $source_lang){
