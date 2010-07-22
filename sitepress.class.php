@@ -370,8 +370,10 @@ class SitePress{
                 }
             }
             
-            // removed since WPML 1.7.7
-            // add_filter('get_pagenum_link', array($this,'get_pagenum_link_filter'));        
+            if($this->settings['language_negotiation_type']==3){
+               // fix pagenum links for when using the language as a parameter 
+               add_filter('get_pagenum_link', array($this,'get_pagenum_link_filter'));         
+            }
             
             // filter some queries
             add_filter('query', array($this, 'filter_queries'));                
@@ -3814,10 +3816,13 @@ class SitePress{
     }
        
     // Navigation
-    // removed since WPML 1.7.7
-    //function get_pagenum_link_filter($url){
-    //    return $this->convert_url($url, $this->this_lang);    
-    //}
+    function get_pagenum_link_filter($url){
+        // fix pagenum links for when using the language as a parameter 
+        // remove language query string appended by WP
+        // WPML adds the language parameter after the url is built
+        $url = str_replace(get_option('home') . '?lang=' . $this->get_current_language(), get_option('home'), $url);
+        return $url;
+    }
     
     function pre_option_home(){                              
         $dbbt = debug_backtrace();                                     
