@@ -2364,8 +2364,30 @@ class SitePress{
         }
         //$join .= " {$ljoin} JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->posts}.ID = t.element_id 
         //            AND t.element_type='post' {$cond} JOIN {$wpdb->prefix}icl_languages l ON t.language_code=l.code AND l.active=1";        
-        $post_type = get_query_var('post_type');
-        if($post_type){
+        
+        //$post_type = get_query_var('post_type');        
+        
+        // determine post type
+        $db = debug_backtrace();
+        foreach($db as $o){
+            if($o['function']=='apply_filters_ref_array' && $o['args'][0]=='posts_join'){
+                $post_type =  $o['args'][1][1]->query_vars['post_type'];
+                break;       
+            }
+        }            
+        
+        if(is_array($post_type)){
+            $ptypes = array();
+            foreach($post_type as $ptype){                
+                if($this->is_translated_post_type($ptype)){
+                    $ptypes[] = 'post_' . $ptype;
+                }
+            }                
+            if(!empty($ptypes)){
+                $join .= " {$ljoin} JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->posts}.ID = t.element_id 
+                        AND t.element_type IN ('".join("','", $ptypes)."') {$cond} JOIN {$wpdb->prefix}icl_languages l ON t.language_code=l.code AND l.active=1";                
+            }            
+        }elseif($post_type){
             if($this->is_translated_post_type($post_type)){
                 $join .= " {$ljoin} JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->posts}.ID = t.element_id 
                         AND t.element_type = 'post_{$post_type}' {$cond} JOIN {$wpdb->prefix}icl_languages l ON t.language_code=l.code AND l.active=1";                
@@ -2388,10 +2410,32 @@ class SitePress{
     function posts_where_filter($where){
         global $wpdb, $pagenow;
         //exceptions
-        $post_type = get_query_var('post_type');
+        
+        //$post_type = get_query_var('post_type');
+        
+        // determine post type
+        $db = debug_backtrace();
+        foreach($db as $o){
+            if($o['function']=='apply_filters_ref_array' && $o['args'][0]=='posts_where'){
+                $post_type =  $o['args'][1][1]->query_vars['post_type'];
+                break;       
+            }
+        }            
+        
         if(!$post_type) $post_type = 'post';
-        if(!$this->is_translated_post_type($post_type) && 'any' != $post_type){
-            return $where;
+        
+        if(is_array($post_type)){
+            $none_translated = true;
+            foreach($post_type as $ptype){
+                if($this->is_translated_post_type($ptype)){
+                    $none_translated = false;
+                }
+            }    
+            if($none_translated) return $where;
+        }else{
+            if(!$this->is_translated_post_type($post_type) && 'any' != $post_type){
+                return $where;
+            }
         }
         
         if(isset($_POST['wp-preview']) && $_POST['wp-preview']=='dopreview' || is_preview()){
