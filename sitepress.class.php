@@ -3154,7 +3154,10 @@ class SitePress{
         if($code && $code != $this->get_default_language()){
             $abshome = preg_replace('@\?lang=' . $code . '@i','',get_option('home'));
             switch($this->settings['language_negotiation_type']){
-                case '1':                 
+                case '1':            
+                    if(0 === strpos($url, 'https://')){
+                        $abshome = preg_replace('#^http://#', 'https://', $abshome);
+                    }
                     if($abshome==$url) $url .= '/';
                     $url = str_replace($abshome, $abshome . '/' . $code, $url);
                     break;
