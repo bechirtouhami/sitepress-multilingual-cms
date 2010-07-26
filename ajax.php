@@ -266,7 +266,11 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings['icl_lso_native_lang'] = intval($_POST['icl_lso_native_lang']);
         $iclsettings['icl_lso_display_lang'] = intval($_POST['icl_lso_display_lang']);
         
-        $iclsettings['setup_wizard_step'] = 4;
+        if(!$iclsettings['setup_complete']){
+            $iclsettings['setup_wizard_step'] = 3;
+            $iclsettings['setup_complete'] = 1;
+        }
+
         
         /*
         if(!$iclsettings['setup_complete']){

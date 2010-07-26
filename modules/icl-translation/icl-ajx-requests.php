@@ -41,11 +41,11 @@ switch($_REQUEST['icl_ajx_req']){
                     $language_status[$lang]['words'] = sprintf(__('Job size: %s words', 'sitepress'), number_format($l['attr']['word_count']));
                     $language_status[$lang]['status'] = icl_decode_translation_status_id($l['attr']['status']);
                     if($l['translator']['attr']['id']){
-                        $language_status[$lang]['translator'] = $sitepress->create_icl_popup_link(ICL_API_ENDPOINT .'/websites/'.$iclq->setting('site_id').'/cms_requests/'.$rid.'/chat?lang='.str_replace(' ','%20',$lang_server), 'ICanLocalize').$l['translator']['attr']['nickname'].'</a>';
+                        $language_status[$lang]['translator'] = $sitepress->create_icl_popup_link(ICL_API_ENDPOINT .'/websites/'.$iclq->setting('site_id').'/cms_requests/'.$rid.'/chat?lang='.str_replace(' ','%20',$lang_server), array('title'=>'ICanLocalize')).$l['translator']['attr']['nickname'].'</a>';
                     } else {
                         $language_status[$lang]['translator'] = __('None assigned', 'sitepress');
                     }
-                    $language_status[$lang]['project'] = $sitepress->create_icl_popup_link(ICL_API_ENDPOINT.'/websites/'.$iclq->setting('site_id').'/cms_requests/'.$rid, 'ICanLocalize') . __('Project page on ICanLocalize.com', 'sitepress').'</a>';
+                    $language_status[$lang]['project'] = $sitepress->create_icl_popup_link(ICL_API_ENDPOINT.'/websites/'.$iclq->setting('site_id').'/cms_requests/'.$rid, array('title'=>'ICanLocalize')) . __('Project page on ICanLocalize.com', 'sitepress').'</a>';
                     $language_status[$lang]['sent'] = sprintf(__('Sent for translation: %s', 'sitepress'), date('m/d/Y H:i', $details['attr']['created_at']));
                 }
             }

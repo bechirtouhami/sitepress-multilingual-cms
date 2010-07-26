@@ -60,15 +60,7 @@
         <div class="icl_form_success"><?php echo __('All documents sent to translation', 'sitepress')?></div>
     <?php endif;?>
          
-    
-    <?php if(!$sitepress->icl_account_configured() || !$sitepress->get_icl_translation_enabled()): ?>
-    <div class="icl_yellow_box">
-    <p><?php _e('To calculate the cost of translation, select the pages and posts from the table below. The total cost for translation appears at the bottom of the table.','sitepress') ?></p>
-
-    <p><?php printf(__('To send documents to translation, you first need to set up professional translation.' , 'sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php'); ?></p>
-    </div>
-    <?php endif; ?>    
-    
+        
     <?php if(isset($_GET['post_id'])): ?>
     <a href="admin.php?page=<?php echo $_GET['page']?>"><?php echo __('Show all documents', 'sitepress')?></a> / <a href="post.php?action=edit&amp;post=<?php echo $_GET['post_id'] ?>"><?php printf(__("Back to editing '%s'", 'sitepress'),$documents[$_GET['post_id']]->post_title); ?></a>
     <script type="text/javascript">
@@ -270,7 +262,6 @@
     <?php } ?>
     </div>
     
-    <?php if($sitepress->get_icl_translation_enabled() && !empty($active_pairs)): ?>
         <ul id="icl-tr-opt">
             <?php                            
                 if (isset($icl_lang_status)){
@@ -282,11 +273,12 @@
                 }
             ?>
             <?php foreach($active_languages as $lang): if($selected_language==$lang['code']) continue; ?>
-                <?php if($language_pairs and isset($language_pairs[$selected_language][$lang['code']])): ?>
-                    <?php if(isset($target_status[$lang['code']]) and $target_status[$lang['code']] == 1): ?>
-                        <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" checked="checked" />&nbsp;<?php printf(__('Translate to %s %s','sitepress'), $lang['display_name'], $sitepress->get_language_status_text($selected_language, $lang['code'])); ?></label></li>
-                    <?php endif; ?>
-                <?php endif; ?>
+            <?php 
+                //if($icl_lang_status)
+            ?>
+            <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" checked="checked" />
+                &nbsp;<?php printf(__('Translate to %s %s','sitepress'), $lang['display_name'], $sitepress->get_language_status_text($selected_language, $lang['code'])); ?></label>
+            </li>
             <?php endforeach; ?>    
             <li>
                 <input  <?php if(!isset($_GET['post_id'])): ?>disabled="disabled"<?php endif; ?> type="submit" class="button-primary" id="icl-tr-sel-doc" value="<?php echo __('Translate selected documents', 'sitepress') ?>" />
@@ -296,6 +288,3 @@
         <span id="icl_message_1" style="display:none"><?php echo __('All documents sent to translation', 'sitepress')?></span>
         <span id="icl_message_error" style="display:none"><?php echo __('Error sending some documents to translation', 'sitepress')?></span>
         <span id="icl_message_2" style="display:none"><?php echo __('Translation in progress', 'sitepress')?></span>
-    <?php elseif($sitepress->get_icl_translation_enabled()): ?>
-        <p><i><?php _e('You cannot send documents to translation because no translator has been assigned to this project yet.', 'sitepress')?></i></p>    
-    <?php endif; ?>

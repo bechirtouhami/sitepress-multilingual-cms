@@ -96,7 +96,7 @@ jQuery(document).ready(function(){
                     message = 'icl_message_error';
                 }
                 jQuery('#icl_ajx_response_td').html(jQuery('#'+message).html());
-                location.href = location.href + "&message="+message;
+                //location.href = location.href + "&message="+message;
             }
         });
     });

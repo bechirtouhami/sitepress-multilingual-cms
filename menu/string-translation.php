@@ -403,7 +403,7 @@ if(!$sitepress_settings['st']['strings_language']){
             <p>
                 <?php echo sprintf(__('Your balance with ICanLocalize is %s. Visit your %sICanLocalize finance%s page to deposit additional funds.', 'sitepress'),
                                       '$'.$sitepress_settings['icl_balance'],
-                                      $sitepress->create_icl_popup_link(ICL_API_ENDPOINT.ICL_FINANCE_LINK, 'ICanLocalize'),
+                                      $sitepress->create_icl_popup_link(ICL_API_ENDPOINT.ICL_FINANCE_LINK, array('title'=>'ICanLocalize')),
                                       '</a>',
                                       'sitepress')?>
             </p>
