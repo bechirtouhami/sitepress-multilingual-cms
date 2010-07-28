@@ -164,6 +164,11 @@
 
 .icl_cyan_box H3 { margin-top: 2px; }
 
+.icl_cyan_box ul{
+    margin-top:5px;
+    font-size: 11px;
+}
+
 .icl_new_feature {
 	margin: 5px;
 	padding: 3px 5px;

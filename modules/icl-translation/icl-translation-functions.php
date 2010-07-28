@@ -1377,12 +1377,7 @@ function setTranslationStatus($args){
                 _icl_throw_exception_for_mysql_errors();
                 return 4;
             }
-            
-            if ( !$sitepress->get_icl_translation_enabled() ) {
-                _icl_throw_exception_for_mysql_errors();
-                return 5;
-            }            
-        
+                    
             if (icl_process_translated_document($request_id, $language) === true){
                 _icl_throw_exception_for_mysql_errors();
                 return 1;

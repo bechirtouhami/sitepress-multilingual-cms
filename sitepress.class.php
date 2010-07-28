@@ -633,21 +633,16 @@ class SitePress{
         add_action('admin_print_scripts', array($this,'js_scripts_setup'));
         add_action('admin_print_styles', array($this,'css_setup'));
         
-        if ($this->icl_support_configured()) {
-            $support_menu = __('Support','sitepress');
-        } else {
-            $support_menu = __('Support<span class="icl_new_feature">New</span>','sitepress');
-        }
         if($this->settings['basic_menu']){        
             
             add_menu_page(__('WPML','sitepress'), __('WPML','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/languages.php',null, ICL_PLUGIN_URL . '/res/img/icon16.png');    
             add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Languages','sitepress'), __('Languages','sitepress'), 
                         'manage_options', basename(ICL_PLUGIN_PATH).'/menu/languages.php');             
             if(1 < count($this->get_active_languages())){                        
-                add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Pro translation','sitepress'), __('Pro translation','sitepress'), 
+                add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Professional translation','sitepress'), __('Professional translation','sitepress'), 
                         'manage_options', basename(ICL_PLUGIN_PATH).'/menu/content-translation.php');                                                     
             }
-			add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', $support_menu, $support_menu, 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/support.php');
+			add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Support','sitepress'), __('Support','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/support.php');
 
         }else{
             
@@ -666,9 +661,9 @@ class SitePress{
                             'manage_options', basename(ICL_PLUGIN_PATH).'/menu/translation-synchronization.php');                             
                 add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Comments translation','sitepress'), __('Comments translation','sitepress'), 
                             'manage_options', basename(ICL_PLUGIN_PATH).'/menu/comments-translation.php'); 
-                add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Pro translation','sitepress'), __('Pro translation','sitepress'), 
+                add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Professional translation','sitepress'), __('Professional translation','sitepress'), 
                             'manage_options', basename(ICL_PLUGIN_PATH).'/menu/content-translation.php');                 
-                add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/content-translation.php', __('Pro translation','sitepress'), __('Pro translation','sitepress'), 
+                add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/content-translation.php', __('Professional translation','sitepress'), __('Professional translation','sitepress'), 
                             'manage_options', basename(ICL_PLUGIN_PATH).'/menu/content-translation-how-it-works.php');
             }
             
@@ -688,7 +683,7 @@ class SitePress{
             add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Compatibility packages','sitepress'), __('Compatibility packages','sitepress'), 
                             'manage_options', basename(ICL_PLUGIN_PATH).'/menu/compatibility-packages.php');             
             
-			add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', $support_menu, $support_menu, 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/support.php');
+			add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Support','sitepress'), __('Support','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/support.php');
         }
     }
 
@@ -1042,6 +1037,7 @@ class SitePress{
                 $icl_query = new ICanLocalizeQuery($iclsettings['site_id'], $iclsettings['access_key']);
             }
             $res = $icl_query->get_website_details();
+            
         }
         
         if(isset($res['translation_languages']['translation_language'])){
@@ -1051,6 +1047,21 @@ class SitePress{
                 $translation_languages = array(0 => $target);
             }
             foreach($translation_languages as $lang){
+                $translators = $_tr = array();
+                $max_rate = false;     
+                if(isset($lang['translators']) && !empty($lang['translators'])){
+                    if(!isset($lang['translators']['translator'][0])){
+                        $_tr[0] = $lang['translators']['translator'];
+                    }else{
+                        $_tr = $lang['translators']['translator'];
+                    }                                   
+                    foreach($_tr as $t){
+                        if($max_rate === false || $t['attr']['amount'] > $max_rate){
+                            $max_rate = $t['attr']['amount'];
+                        }
+                        $translators[] = array('id'=>$t['attr']['id'], 'nickname'=>$t['attr']['nickname'], 'contract_id' => $t['attr']['contract_id']);
+                    }                    
+                }                
                 $target[] = array('from' => $this->get_language_code(apply_filters('icl_server_languages_map', $lang['attr']['from_language_name'], true)),
                                   'to' => $this->get_language_code(apply_filters('icl_server_languages_map', $lang['attr']['to_language_name'], true)),
                                   'have_translators' => $lang['attr']['have_translators'],
@@ -1058,6 +1069,8 @@ class SitePress{
                                   'applications' => $lang['attr']['applications'],
                                   'contract_id' => $lang['attr']['contract_id'],
                                   'id' => $lang['attr']['id'],
+                                  'translators' => $translators,
+                                  'max_rate' => $max_rate
                                   );
             }
             $iclsettings['icl_lang_status'] = $target;
@@ -1066,12 +1079,22 @@ class SitePress{
         if(isset($res['client']['attr'])){
             $iclsettings['icl_balance'] = $res['client']['attr']['balance'];
         }
+        if(isset($res['html_status']['value'])){
+            $iclsettings['icl_html_status'] = html_entity_decode($res['html_status']['value']);
+            $iclsettings['icl_html_status'] = preg_replace_callback('#<a([^>]*)href="([^"]+)"([^>]*)>#i', create_function(
+                '$matches',
+                'global $sitepress; return $sitepress->create_icl_popup_link($matches[2]);'
+            ) ,$iclsettings['icl_html_status']);
+        }
+        
+        
         
         $iclsettings['icl_support_ticket_id'] = $res['attr']['support_ticket_id'];
     }
 
     function get_language_status_text($from_lang, $to_lang) {
         $lang_status = $this->settings['icl_lang_status'];        
+        //debug_array($lang_status);
         $response = '';
         //if ($lang_status && $this->icl_account_configured() && isset($this->settings['language_pairs'][$from_lang][$to_lang])) {
             foreach ($lang_status as $lang) {                
@@ -1093,20 +1116,28 @@ class SitePress{
                             
                         } else if (!$lang['applications']) {
                             // No translators have applied for this language pair.
-                            //$response = sprintf(__('- (Waiting for translators to apply)', 'sitepress'));
-                            $response = sprintf(__('- (Translators available)', 'sitepress')); 
+                            $response = sprintf(__(' | %sSelect translators%s', 'sitepress'), $this->create_icl_popup_link("@select-translators;{$from_lang};{$to_lang}@"), '</a>');
                         } else if (!$lang['have_translators']) {
                             // translators have applied but none selected yet
+                            $response = ' | ' . sprintf(__('%sSelect translators%s', 'sitepress'), $this->create_icl_popup_link("@select-translators;{$from_lang};{$to_lang}@"), '</a>');
+                            /*
                             $response = sprintf(__('- (%s translators applied - %schoose your translator%s)', 'sitepress'),
                                                 $lang['applications'],
                                                 $this->create_icl_popup_link(ICL_API_ENDPOINT. '/websites/' . $this->settings['site_id'] . '/website_translation_offers/' .  $lang['id'], 
                                                     array('title'=>'ICanLocalize')),
                                                 '</a>');
+                            */
                         } else {
                             // there are translators ready to translate
-                            $response = sprintf(__('- (Translator selected - %scommunicate with your translator%s)', 'sitepress'),
-                                                $this->create_icl_popup_link(ICL_API_ENDPOINT. '/websites/' . $this->settings['site_id'] . '/website_translation_offers/' .  $lang['id'] . '/website_translation_contracts/' . $lang['contract_id'], array('title'=>'ICanLocalize')),
-                                                '</a>');
+                            $translators = array();
+                            foreach($lang['translators'] as $translator){
+                                $link = $this->create_icl_popup_link(ICL_API_ENDPOINT. '/websites/' . $this->settings['site_id'] . '/website_translation_offers/' .  
+                                                $lang['id'] . '/website_translation_contracts/' . $translator['contract_id'], array('title'=>'ICanLocalize'));
+                                $translators[] = $link . esc_html($translator['nickname']) . '</a>';
+                            }
+                            $response = ' | ' . sprintf(__('%sSelect translators%s', 'sitepress'), $this->create_icl_popup_link("@select-translators;{$from_lang};{$to_lang}@"), '</a>');
+                            $response .= ' | ' . sprintf(__('Communicate with %s', 'sitepress'), join(', ', $translators));
+                                                
                         }
     
                         return $response;
@@ -1118,7 +1149,7 @@ class SitePress{
             }
         //}
         
-        $response = sprintf(__(' - %sSelect translators%s.', 'sitepress'), $this->create_icl_popup_link("@select-translators;{$from_lang};{$to_lang}@"), '</a>');
+        $response = sprintf(__(' | %sSelect translators%s', 'sitepress'), $this->create_icl_popup_link("@select-translators;{$from_lang};{$to_lang}@"), '</a>');
         
         // no status found        
         return $response;
@@ -4869,51 +4900,40 @@ class SitePress{
     function get_current_action_step() {
         global $wpdb;
         
-        if (!$this->icl_account_configured()) {
-            return 0;
+        $icl_lang_status = $this->settings['icl_lang_status'];
+        $has_translators = false;
+        foreach((array)$icl_lang_status as $k => $lang){
+            if(!is_numeric($k)) continue;
+            if(!empty($lang['translators'])){
+                $has_translators = true;
+                break;
+            }
         }
-
-        $cms_count = $wpdb->get_var("SELECT COUNT(rid) FROM {$wpdb->prefix}icl_core_status WHERE status=3");
-        if($cms_count > 0) {
-            return 5;
-        }
+        if(!$has_translators){ return 0; }
         
+        $cms_count = $wpdb->get_var("SELECT COUNT(rid) FROM {$wpdb->prefix}icl_core_status WHERE status=3");
+        
+        if($cms_count > 0) {
+            return 4;
+        }        
         $cms_count = $wpdb->get_var("SELECT COUNT(rid) FROM {$wpdb->prefix}icl_core_status WHERE 1");
         if($cms_count == 0) {
             // No documents sent yet
             return 1;
         }
         
-        $icl_lang_status = $this->settings['icl_lang_status'];
-        
-        $waiting_for_translators = true;
-        foreach ($icl_lang_status as $lang) {
-            if ($lang['have_translators'] == 0 && $lang['applications'] > 0) {
-                return 2;
-            }
-            if ($lang['have_translators'] > 0 || $lang['applications'] > 0) {
-                $waiting_for_translators = false;
-            }
-        }
-
-        if ($waiting_for_translators) {
+        if ($this->settings['icl_balance'] <= 0) {
             return 2;
         }
 
-        $balance = $this->settings['icl_balance'];
-        if ($balance < 0) {
-            return 3;
-        }
-
         
-        return 4;
+        return 3;
         
     }
     
     function show_action_list() {
-        $steps = array(__('Set up a project in ICanLocalize', 'sitepress'),
-                        __('Send documents for translation', 'sitepress'),
-                        __('Choose your translators', 'sitepress'),
+        $steps = array(__('Choose translators', 'sitepress'),
+                        __('Send documents to translation', 'sitepress'),
                         __('Deposit payment', 'sitepress'),
                         __('Translations will be returned to your site', 'sitepress'));
 
@@ -5178,8 +5198,6 @@ class SitePress{
         <?php endif; ?>
         <p><?php printf(__('Support Subscription - %s', 'sitepress'), $pss_string_status); ?> 
             <?php if(!$pss_status['valid']):?>(<a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/support.php"><?php _e('purchase', 'sitepress'); ?></a>)<?php endif; ?></p>
-        <p><?php printf(__('Professional Translation - %s', 'sitepress'), $this->get_icl_translation_enabled() ? __('Enabled','sitepress') : __('Disabled','sitepress')); ?> 
-            (<a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/content-translation.php"><?php _e('configure', 'sitepress'); ?></a>)</p>
         <?php do_action('icl_dashboard_widget_content'); ?>
         <?php if(!$this->settings['basic_menu']):?>
         <p><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/overview.php"><?php _e('more', 'sitepress')?></a></p>

@@ -5,14 +5,12 @@ if($sitepress_settings['existing_content_language_verified']){
     foreach($active_languages as $lang){
         if($default_language != $lang['code']){$default = '';}else{$default = ' ('.__('default','sitepress').')';}
         $alanguages_links[] = $lang['display_name'] . $default;
-    }
+    }    
     if(isset($sitepress_settings['language_pairs']) && !empty($sitepress_settings['language_pairs'])){
-        foreach($active_languages as $lang){
-            foreach($active_languages as $langto){ 
-                if($lang['code']==$langto['code']) continue; 
-                if(isset($sitepress_settings['language_pairs'][$lang['code']][$langto['code']])){
-                    $lpairs[] = sprintf('%s to %s', $lang['display_name'], $langto['display_name']);
-                }
+        foreach((array)$sitepress_settings['icl_lang_status'] as $k => $lang){
+            if(!is_numeric($k)) continue;
+            if(!empty($lang['translators'])){
+                $lpairs[] = sprintf('%s to %s', $active_languages[$lang['from']]['display_name'], $active_languages[$lang['to']]['display_name']);
             }
         }
     }    
@@ -119,21 +117,15 @@ if($sitepress_settings['existing_content_language_verified']){
                 <tr>
                     <td><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/content-translation.php"><?php _e('Professional translation', 'sitepress')?></a></td>
                     <td>
-                        <?php if($sitepress_settings['enable_icl_translations']): ?>
-                            <?php if(!$sitepress->icl_account_configured()): ?>
-                                <p><b><?php _e('Translation by ICanLocalize is not available yet because your ICanLocalize account is not set up.', 'sitepress')?></b></p>
-                            <?php elseif (!isset($sitepress_settings['language_pairs']) || empty($sitepress_settings['language_pairs'])): ?>
-                                <p><b><?php _e('Professional translation is not yet enabled because you didn\'t select between which languages to translate.', 'sitepress'); ?></b></p>
-                            <?php else:?>
-                                <p><b><?php _e('Professional translation is enabled.', 'sitepress'); ?></b></p>
-                                <p><?php echo(sprintf(__('Translating: %s', 'sitepress'),'<b>'.join(', ', $lpairs).'</b>')); ?></b></p>
-                            <?php endif; ?>                            
-                        <?php else: ?>
-                            <p><b><?php _e('ICanLocalize can translate your site\'s contents professionally.', 'sitepress'); ?></b></p>
-                            <p><?php _e('WPML will send the documents that need translation to ICanLocalize and then create the translated posts and pages.','sitepress'); ?></p>
-                            <p><i><?php _e("* You can always translate yourself by clicking on the 'add translation' links when editing.", 'sitepress') ?></i></p>
-                            <p><b><?php echo __('Professional translation is disabled' , 'sitepress')?></b></p>
-                        <?php endif;?>                        
+                        <?php if (!isset($sitepress_settings['language_pairs']) || empty($sitepress_settings['language_pairs'])): ?>
+                            <p><b><?php _e('Professional translation is not yet enabled because you didn\'t select between which languages to translate.', 'sitepress'); ?></b></p>
+                        <?php else:?>
+                            <p><?php echo(sprintf(__('Translating: %s', 'sitepress'),'<b>'.join(', ', $lpairs).'</b>')); ?></b></p>
+                        <?php endif; ?>                            
+                    
+                        <p><b><?php _e('ICanLocalize can translate your site\'s contents professionally.', 'sitepress'); ?></b></p>
+                        <p><?php _e('WPML will send the documents that need translation to ICanLocalize and then create the translated posts and pages.','sitepress'); ?></p>
+                        
                         <p><a class="button secondary" href="<?php echo 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php' ?>"><?php echo __('Manage professional translation', 'sitepress') ?></a>
                         </p>
                     </td>

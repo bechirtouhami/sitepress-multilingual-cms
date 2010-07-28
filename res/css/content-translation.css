@@ -68,3 +68,9 @@
     margin-left: 10px;
     margin-top: 10px;
 }
+
+.icl_status_jobs{padding-left:20px;background: url(../img/documents.png) no-repeat;}
+.icl_status_project{padding-left:20px;background: url(../img/documents.png) no-repeat;}
+.icl_status_balance{padding-left:20px;background: url(../img/dollar1.png) no-repeat;}
+.icl_status_help{padding-left:20px;background: url(../img/question1.png) no-repeat;}
+

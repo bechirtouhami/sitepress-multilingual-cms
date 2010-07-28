@@ -81,14 +81,13 @@
         }
         $icl_query = new ICanLocalizeQuery($this->settings['site_id'], $this->settings['access_key']);                
         $website_details = $icl_query->get_website_details();
-        $translation_languages = $website_details['translation_languages']['translation_language'];
+        $translation_languages = $website_details['translation_languages']['translation_language'];        
         if(isset($translation_languages['attr'])){
-            $buf = $translation_languages;
+            $buff = $translation_languages;
             unset($translation_languages);
             $translation_languages[0] = $buff;
             unset($buff);
         }
-        
         foreach($translation_languages as $lpair){
             if($lpair['attr']['from_language_name'] == $lang_server[$from_lang] && $lpair['attr']['to_language_name'] == $lang_server[$to_lang]){
                 $lang_pair_id = $lpair['attr']['id']; 

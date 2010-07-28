@@ -111,7 +111,7 @@
                             
                                 <input id="icl_translation_options_save" class="button" name="create account" value="<?php echo __('Save', 'sitepress') ?>" type="submit" />
                                 <span class="icl_ajx_response" id="icl_ajx_response2"></span>    
-                                <input class="button" type="button" value="<?php _e('Cancel', 'sitepress')?>" onclick="jQuery('#icl_account_setup').hide();jQuery('.icl_account_setup_toggle').show();jQuery('#icl_languages_translators_stats').show()" />
+                                <input class="button" type="button" value="<?php _e('Cancel', 'sitepress')?>" onclick="jQuery('#icl_account_setup').slideUp(function(){jQuery('.icl_account_setup_toggle').show();jQuery('#icl_languages_translators_stats').show()});" />
                                 </form>
                           
                         </td>

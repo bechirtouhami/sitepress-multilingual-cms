@@ -50,6 +50,7 @@
         'future'    =>__('Scheduled', 'sitepress')
     );    
     $icl_post_types = $sitepress->get_translatable_documents();
+    
 ?>
 <?php $sitepress->noscript_notice() ?>
 
@@ -240,7 +241,7 @@
     </table>
     <span id="icl-cw-total" style="display:none"><?php echo $wctotal; ?></span>    
     <div class="tablenav">
-    <div style="float:left;margin-top:4px;"><strong><?php echo __('Translation Cost Estimate:', 'sitepress') ?></strong> <?php printf(__('%s words, %s USD to each language at 0.07 USD/word. <span id="icl-estimated-all" style="display:none;"> (%s USD to all selected languages)</span>', 'sitepress'), '<span id="icl-estimated-words-count">0</span>', '<strong><span id="icl-estimated-quote">0.00</span></strong>', '<strong><span id="icl-estimated-quote-all">0.00</span></strong>')?></div>
+    <div style="float:left;margin-top:4px;"><strong><?php echo __('Translation Cost Estimate:', 'sitepress') ?></strong> <?php printf(__('%s words, %s USD. <span id="icl-estimated-all" style="display:none;"></span>', 'sitepress'), '<span id="icl-estimated-words-count">0</span>', '<strong><span id="icl-estimated-quote">0.00</span></strong>', '<strong><span id="icl-estimated-quote-all">0.00</span></strong>')?></div>
     <?php   
         $page_links = paginate_links( array(
             'base' => add_query_arg('paged', '%#%' ),
@@ -263,28 +264,43 @@
     </div>
     
         <ul id="icl-tr-opt">
-            <?php                            
+            <?php   
                 if (isset($icl_lang_status)){
                     foreach($icl_lang_status as $lang){
                         if($lang['from'] == $selected_language) {
-                            $target_status[$lang['to']] = $lang['available_translators'];
+                            $target_status[$lang['to']] = !empty($lang['translators']);
+                            $target_rate[$lang['to']] = $lang['max_rate'];
                         }
                     }
                 }
             ?>
             <?php foreach($active_languages as $lang): if($selected_language==$lang['code']) continue; ?>
-            <?php 
-                //if($icl_lang_status)
-            ?>
-            <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" checked="checked" />
-                &nbsp;<?php printf(__('Translate to %s %s','sitepress'), $lang['display_name'], $sitepress->get_language_status_text($selected_language, $lang['code'])); ?></label>
-            </li>
+                <?php 
+                    if($target_status[$lang['code']]){
+                        $disabled =  ''; 
+                        $checked='checked="checked"';
+                    }else{
+                        $disabled =  ' disabled="disabled"'; 
+                        $checked='';
+                    }
+                ?>
+                <li>
+                    <label>
+                        <input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>"<?php echo $checked ?><?php echo $disabled ?> />&nbsp;
+                        <?php printf(__('Translate to %s %s','sitepress'), $lang['display_name'], $sitepress->get_language_status_text($selected_language, $lang['code'])); ?>
+                    </label>
+                    <input type="hidden" id="icl_tr_rate_<?php echo $lang['code'] ?>" value="<?php echo $target_rate[$lang['code']] ?>" />
+                </li>
             <?php endforeach; ?>    
+            
             <li>
-                <input  <?php if(!isset($_GET['post_id'])): ?>disabled="disabled"<?php endif; ?> type="submit" class="button-primary" id="icl-tr-sel-doc" value="<?php echo __('Translate selected documents', 'sitepress') ?>" />
-                <span class="icl_ajx_response" id="icl_ajx_response_td"><?php echo __('Sending translation requests. Please wait!', 'sitepress') ?>&nbsp;<img src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" alt="" /></span>
+                <input<?php if(!isset($_GET['post_id'])): ?> disabled="disabled"<?php endif; ?> type="submit" class="button-primary" id="icl-tr-sel-doc" value="<?php 
+                    echo __('Translate selected documents', 'sitepress') ?>" />
+                <span class="icl_ajx_response" id="icl_ajx_response_td"><?php 
+                    echo __('Sending translation requests. Please wait!', 'sitepress') ?>&nbsp;<img src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" alt="" /></span>
             </li>
         </ul>
+        
         <span id="icl_message_1" style="display:none"><?php echo __('All documents sent to translation', 'sitepress')?></span>
         <span id="icl_message_error" style="display:none"><?php echo __('Error sending some documents to translation', 'sitepress')?></span>
         <span id="icl_message_2" style="display:none"><?php echo __('Translation in progress', 'sitepress')?></span>

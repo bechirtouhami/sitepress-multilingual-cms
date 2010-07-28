@@ -632,6 +632,10 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings['dismiss_page_estimate_hint'] = !$this->settings['dismiss_page_estimate_hint'];
         $this->save_settings($iclsettings);
         break;        
+    case 'toggle_pt_controls':
+        $iclsettings['hide_professional_translation_controls'] = $_POST['value'];
+        $this->save_settings($iclsettings);
+        break;                
     case 'dismiss_upgrade_notice':
         $iclsettings['hide_upgrade_notice'] = implode('.', array_slice(explode('.', ICL_SITEPRESS_VERSION), 0, 3));
         $this->save_settings($iclsettings);

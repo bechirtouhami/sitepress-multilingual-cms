@@ -17,6 +17,8 @@ jQuery(document).ready(function(){
     jQuery('#icl_tn_clear').click(function(){jQuery('#icl_post_note textarea').val(''); jQuery(this).attr('disabled','disabled')});
     jQuery('#icl_tn_save').click(iclTnCloseNoteBox);
     
+    jQuery('#icl_pt_hide').click(iclHidePTControls);
+    jQuery('#icl_pt_show').click(iclShowPTControls);
 });
 
 var icl_tn_initial_value   = '';
@@ -336,4 +338,32 @@ function iclTnCloseNoteBox(){
             jQuery('#icl_tn_not_saved').fadeOut();
         }
     });
+}
+
+function iclShowPTControls(){
+    var thisa = jQuery(this);
+    jQuery.ajax({
+            type: "POST",
+            url: icl_ajx_url,
+            data: "icl_ajx_action=toggle_pt_controls&value=0",
+            success: function(msg){
+                jQuery('#icl_pt_controls').slideDown();
+                thisa.fadeOut(function(){jQuery('#icl_pt_hide').fadeIn();});                    
+            }
+    });
+    return false;    
+}
+
+function iclHidePTControls(){
+    var thisa = jQuery(this);
+    jQuery.ajax({
+            type: "POST",
+            url: icl_ajx_url,
+            data: "icl_ajx_action=toggle_pt_controls&value=1",
+            success: function(msg){
+                jQuery('#icl_pt_controls').slideUp();
+                thisa.fadeOut(function(){jQuery('#icl_pt_show').fadeIn();});                    
+            }
+    }); 
+    return false;   
 }

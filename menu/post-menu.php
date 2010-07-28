@@ -74,27 +74,51 @@
     $translations_count = count($translations) - 1;
     $language_count = count($active_languages) - 1;        
     
-    if($post->ID && !$this->get_icl_translation_enabled() && $post->post_type == 'page'
-        && $language_count - $translations_count > 0){    
-        $estimate = ICL_PRO_TRANSLATION_COST_PER_WORD * count(explode(' ', strip_tags($post->post_content)));
-        ?>
-        <a id="icl_show_page_estimate_hint" href="#" title="<?php _e('Show translation cost estimate', 'sitepress') ?>" <?php if(!$this->settings['dismiss_page_estimate_hint']):?>style="display:none"<?php endif; ?>><img src="<?php echo ICL_PLUGIN_URL ?>/res/img/icon16.png" width="16" height="16" style="margin:-5px 0 0px 7px;" /></a>
-        <p class="icl_sidebar" style="width:auto;<?php if($this->settings['dismiss_page_estimate_hint']):?>display:none;<?php endif; ?>"><img align="baseline" 
-            src="<?php echo ICL_PLUGIN_URL ?>/res/img/icon16.png" width="16" height="16" style="margin-bottom:-4px" />&nbsp;<?php 
-            printf(__('This page can be professionally translated for %s USD.<br /><a href="%s">Learn more</a> <a %s>hide</a>','sitepress'),
-            $estimate, 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php', 'id="icl_dismiss_page_estimate_hint" href="#"')?></p><br clear="all" /><?php
+    // get languages with translators
+    $languages_translated = $languages_not_translated = array();
+    foreach($this->settings['icl_lang_status'] as $k=>$language_pair){
+        if(!is_numeric($k)) continue;
+        if($language_pair['from'] == $selected_language && !empty($language_pair['translators'])){
+            $languages_translated[] = $language_pair['to'];
+        }
     }
-    do_action('icl_post_languages_options_before', $post->ID);
-?>
+    $languages_not_translated = array_diff(array_keys($active_languages), array_merge(array($selected_language), $languages_translated));
+    ?>
+    <div class="icl_cyan_box">
+    <strong><?php _e('Professional translation', 'sitepress'); ?></strong>
+    <div id="icl_pt_controls" <?php if($this->settings['hide_professional_translation_controls']):?>style="display:none;"<?php endif; ?>>
+    <?php 
+        if(!empty($languages_translated)){ 
+            echo '<ul>';
+            foreach($languages_translated as $lang){
+                echo '<li><label>';
+                echo '<input type="checkbox" />&nbsp;';
+                printf(__('Translate to %s', 'sitepress'), $active_languages[$lang]['display_name']);
+                echo '</label></li>';
+            }    
+            echo '</ul>';
+        }
+        if(!empty($languages_not_translated)){ 
+            echo '<ul>';
+            foreach($languages_not_translated as $lang){
+                echo '<li>'.$this->create_icl_popup_link("@select-translators;{$selected_language};{$lang}@"); // <a> included
+                printf(__('Get %s translators', 'sitepress'), $active_languages[$lang]['display_name']);
+                echo '</a></li>';
+            }    
+            echo '</ul>';            
+        }
+    ?>
+    <input type="button" class="button-primary alignright" value="<?php echo esc_html(__('Send to translation', 'sitepress')) ?>"/>
+    </div>
+    <a id="icl_pt_hide" href="#" style="position:relative;top:12px;<?php if($this->settings['hide_professional_translation_controls']):?>display:none;<?php endif; ?>"><?php _e('hide', 'sitepress') ?></a>
+    <a id="icl_pt_show" href="#" style="float:right;<?php if(!$this->settings['hide_professional_translation_controls']):?>display:none;<?php endif; ?>"><?php _e('show', 'sitepress') ?></a>
+    <div class="clear" style="font-size: 0px">&nbsp;</div>
+    </div>    
+    
+    <?php do_action('icl_post_languages_options_before', $post->ID);?>
 
 <?php if($_GET['action'] == 'edit' && $trid): ?>
     <div id="icl_translate_options">
-    <?php if($this->get_icl_translation_enabled() && current_user_can('manage_options')):?>
-        <p class="icl_cyan_box"><img align="baseline" 
-            src="<?php echo ICL_PLUGIN_URL ?>/res/img/icon16.png" width="16" height="16" style="margin-bottom:-4px" />&nbsp;
-        <a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH); ?>/menu/content-translation.php&post_id=<?php echo $post->ID ?><?php if($this->get_current_language() != $this->get_default_language()) echo '&amp;lang=' . $this->get_current_language(); ?>"><?php _e('Translate by ICanLocalize')?></a></p>
-    <?php endif; ?>
-
     <?php
         // count number of translated and un-translated pages.
         $translations_found = 0;
