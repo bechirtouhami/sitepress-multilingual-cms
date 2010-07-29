@@ -23,10 +23,7 @@ class ICanLocalizeQuery{
 			$add = '?ignore_languages=1';
 		}
         $request = ICL_API_ENDPOINT . '/websites/create_by_cms.xml'.$add;
-        echo '<pre>';
-        print_r($data);
         $response = $this->_request($request, 'POST', $data);        
-        echo '</pre>';
         if(!$response){
             return array(0, $this->error);
         }else{
