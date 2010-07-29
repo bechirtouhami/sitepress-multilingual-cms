@@ -1245,6 +1245,8 @@ class SitePress{
         
         extract($args, EXTR_OVERWRITE);
         
+        $link .= '&accesskey=' . $this->settings['access_key'] . '&compact=1';
+        
 		if ($id) {
 			$id = ' id="' . $id . '"';
 		}
