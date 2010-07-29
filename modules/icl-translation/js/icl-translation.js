@@ -216,7 +216,11 @@ function iclUpdateTranslationEstimate(){
             estimate += words * rate;
         }
     )
-    precision = Math.floor(estimate).toString().length + 2;
+    if(estimate < 1){
+        precision = Math.floor(estimate).toString().length + 1;    
+    }else{
+        precision = Math.floor(estimate).toString().length + 2;
+    }
     jQuery('#icl-estimated-quote').html(estimate.toPrecision(precision));
     
 }

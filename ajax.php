@@ -438,6 +438,11 @@ switch($_REQUEST['icl_ajx_action']){
         $target_languages = explode('#', $_POST['target_languages']);
         $post_types = $_POST['icl_post_type'];
         foreach($post_ids as $post_id){            
+            
+            if(isset($_POST['tn_note_'.$post_id]) && trim($_POST['tn_note_'.$post_id])){
+                update_post_meta($post_id, '_icl_translator_note', $_POST['tn_note_'.$post_id]);
+            }
+            
             $resp[] = array(
                 'post_id'=>$post_id, 
                 'status'=>icl_translation_send_post($post_id, $target_languages, $post_types[$post_id])

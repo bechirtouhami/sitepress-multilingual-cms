@@ -80,20 +80,69 @@
         if(!is_numeric($k)) continue;
         if($language_pair['from'] == $selected_language && !empty($language_pair['translators'])){
             $languages_translated[] = $language_pair['to'];
+            $lang_rates[$language_pair['to']] = $language_pair['max_rate'];
         }
     }
     $languages_not_translated = array_diff(array_keys($active_languages), array_merge(array($selected_language), $languages_translated));
+    
+    // previous translations
+    foreach($languages_translated as $l){
+        $language_names[] = $active_languages[$l]['english_name'];    
+    }    
+    $previous_rid = icl_get_request_ids_for_post($post->ID, $selected_language, apply_filters('icl_server_languages_map', $language_names));
+    
+    if(!empty($previous_rid)){
+        foreach($previous_rid as $serverlang => $pr){
+            $_target_lang = $wpdb->get_var("SELECT code FROM {$wpdb->prefix}icl_languages WHERE english_name='".$wpdb->escape(apply_filters('icl_server_languages_map', $serverlang, true))."'");
+            $status = $wpdb->get_var("SELECT status FROM {$wpdb->prefix}icl_core_status WHERE rid={$pr}");
+            $was_translated = $wpdb->get_var("
+                        SELECT cr.status 
+                        FROM {$wpdb->prefix}icl_content_status cs 
+                            JOIN {$wpdb->prefix}icl_core_status cr ON cr.rid = cs.rid 
+                        WHERE 
+                            cr.rid <> {$pr} 
+                            AND cr.origin ='{$selected_language}'
+                            AND target = '{$_target_lang}'
+                            AND cs.nid = {$post->ID} 
+                            AND cr.status = ".CMS_TARGET_LANGUAGE_DONE."
+                        LIMIT 1");
+            if($was_translated){
+                $langs_done[apply_filters('icl_server_languages_map', $serverlang, true)] = 1;
+            }            
+            if($status != CMS_TARGET_LANGUAGE_DONE){
+                // translation is still in progress for one or more languages.
+                $langs_in_progress[apply_filters('icl_server_languages_map', $serverlang, true)] = 1;
+            }
+            
+            // needs update ?
+            if($wpdb->get_var("SELECT n.md5<>c.md5 FROM {$wpdb->prefix}icl_node n JOIN {$wpdb->prefix}icl_content_status c ON n.nid = c.nid WHERE n.nid={$post->ID} AND c.rid={$pr}")){
+                $langs_need_update[apply_filters('icl_server_languages_map', $serverlang, true)] = 1;
+            }
+            
+        }        
+    }
+    
     ?>
     <div class="icl_cyan_box">
-    <strong><?php _e('Professional translation', 'sitepress'); ?></strong>
+    <strong><?php _e('Professional translation', 'sitepress'); ?></strong>    
     <div id="icl_pt_controls" <?php if($this->settings['hide_professional_translation_controls']):?>style="display:none;"<?php endif; ?>>
     <?php 
         if(!empty($languages_translated)){ 
             echo '<ul>';
             foreach($languages_translated as $lang){
+                if(isset($langs_in_progress[$active_languages[$lang]['english_name']]) || !isset($langs_need_update[$active_languages[$lang]['english_name']])){
+                    $disabled = ' disabled="disabled"';
+                }else{
+                    $disabled = '';
+                }
                 echo '<li><label>';
-                echo '<input type="checkbox" />&nbsp;';
-                printf(__('Translate to %s', 'sitepress'), $active_languages[$lang]['display_name']);
+                echo '<input type="hidden" id="icl_pt_rate_'.$lang.'" value="'.$lang_rates[$lang].'" />';
+                echo '<input type="checkbox" id="icl_pt_to_'.$lang.'" value="'.$active_languages[$lang]['english_name'].'"'.$disabled.'/>&nbsp;';
+                if(isset($langs_done[$active_languages[$lang]['english_name']])){
+                    printf(__('Update %s translation', 'sitepress'), $active_languages[$lang]['display_name']);
+                }else{
+                    printf(__('Translate to %s', 'sitepress'), $active_languages[$lang]['display_name']);
+                }
                 echo '</label></li>';
             }    
             echo '</ul>';
@@ -107,12 +156,36 @@
             }    
             echo '</ul>';            
         }
+        
+        $note = trim(get_post_meta($post->ID, '_icl_translator_note', true));
     ?>
-    <input type="button" class="button-primary alignright" value="<?php echo esc_html(__('Send to translation', 'sitepress')) ?>"/>
+    <div id="icl_post_add_notes">
+        <h4><a href="#"><?php _e('Note for the translators', 'sitepress')?></a></h4>
+        <div id="icl_post_note">
+            <textarea id="icl_pt_tn_note" name="icl_tn_note" rows="5"><?php echo $note ?></textarea> 
+            <table width="100%"><tr>
+            <td><input id="icl_tn_clear" type="button" class="button" value="<?php _e('Clear', 'sitepress')?>" <?php if(!$note): ?>disabled="disabled"<?php endif; ?> /></td>            <td align="right"><input id="icl_tn_save"  type="button" class="button-primary" value="<?php _e('Close', 'sitepress')?>" /></td>
+            </tr></table>
+            <input id="icl_tn_cancel_confirm" type="hidden" value="<?php _e('Your changes to the note for the translators are not saved.', 'sitepress') ?>" />
+        </div>
+        <div id="icl_tn_not_saved"><?php _e('Note not saved yet', 'sitepress'); ?></div>
+    </div>    
+    
+    <div style="text-align: right;margin:0 5px 5px 0;"><?php _e('Cost:', 'sitepress')?>&nbsp;<span id="icl_pt_cost_estimate">0.00</span> USD</div>
+    
+    <input type="hidden" id="icl_pt_wc" value="<?php echo icl_estimate_word_count($post, $selected_language) + icl_estimate_custom_field_word_count($post->ID, $selected_language) ?>" />
+    <input type="hidden" id="icl_pt_post_id" value="<?php echo $post->ID ?>" />
+    <input type="hidden" id="icl_pt_post_type" value="<?php echo $post->post_type ?>" />
+    <input type="button" disabled="disabled" id="icl_pt_send" class="button-primary alignright" value="<?php echo esc_html(__('Send to translation', 'sitepress')) ?>"/>
     </div>
     <a id="icl_pt_hide" href="#" style="position:relative;top:12px;<?php if($this->settings['hide_professional_translation_controls']):?>display:none;<?php endif; ?>"><?php _e('hide', 'sitepress') ?></a>
     <a id="icl_pt_show" href="#" style="float:right;<?php if(!$this->settings['hide_professional_translation_controls']):?>display:none;<?php endif; ?>"><?php _e('show', 'sitepress') ?></a>
     <div class="clear" style="font-size: 0px">&nbsp;</div>
+    
+    <div id="icl_pt_error" class="icl_error_text" style="display: none;margin-top: 4px;"><?php _e('Failed sending to translation.', 'sitepress') ?></div>    
+    <?php if(isset($_GET['icl_message']) && $_GET['icl_message']=='success'):?>
+    <div class="icl_valid_text" style="margin-top: 8px;"><?php _e('Sent to translation.', 'sitepress') ?></div>    
+    <?php endif; ?>
     </div>    
     
     <?php do_action('icl_post_languages_options_before', $post->ID);?>
@@ -137,7 +210,7 @@
         <?php if($this->get_icl_translation_enabled()):?>
             <p style="clear:both;"><b><?php _e('or, translate manually:', 'sitepress'); ?> </b>
         <?php else: ?>
-            <p style="clear:both;"><b><?php _e('Translate', 'sitepress'); ?></b>
+            <p style="clear:both;"><b><?php _e('Translate yourself', 'sitepress'); ?></b>
         <?php endif; ?>
         <table>
         <?php foreach($active_languages as $lang): if($selected_language==$lang['code']) continue; ?>
@@ -202,20 +275,6 @@
 <?php if($this->get_icl_translation_enabled() 
         && !$wpdb->get_var("SELECT source_language_code FROM {$wpdb->prefix}icl_translations WHERE element_type='post' AND element_id={$post->ID}") 
         && !isset($_GET['source_lang'])):?>
-<?php 
-    $note = trim(get_post_meta($post->ID, '_icl_translator_note', true));
-?>
-<div id="icl_post_add_notes">
-    <h4><a href="#"><?php _e('Note for the translators', 'sitepress')?></a></h4>
-    <div id="icl_post_note">
-        <textarea name="icl_tn_note" rows="5"><?php echo $note ?></textarea> 
-        <table width="100%"><tr>
-        <td><input id="icl_tn_clear" type="button" class="button" value="<?php _e('Clear', 'sitepress')?>" <?php if(!$note): ?>disabled="disabled"<?php endif; ?> /></td>            <td align="right"><input id="icl_tn_save"  type="button" class="button-primary" value="<?php _e('Close', 'sitepress')?>" /></td>
-        </tr></table>
-        <input id="icl_tn_cancel_confirm" type="hidden" value="<?php _e('Your changes to the note for the translators are not saved.', 'sitepress') ?>" />
-    </div>
-    <div id="icl_tn_not_saved"><?php _e('Note not saved yet', 'sitepress'); ?></div>
-</div>    
 <?php endif; ?>
 
 <?php do_action('icl_post_languages_options_after') ?>

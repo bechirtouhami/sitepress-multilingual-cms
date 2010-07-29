@@ -19,6 +19,17 @@ jQuery(document).ready(function(){
     
     jQuery('#icl_pt_hide').click(iclHidePTControls);
     jQuery('#icl_pt_show').click(iclShowPTControls);
+    
+    jQuery('#icl_pt_controls ul li :checkbox').change(function(){
+        if(jQuery('#icl_pt_controls ul li :checkbox:checked').length){
+            jQuery('#icl_pt_send').removeAttr('disabled');
+        }else{
+            jQuery('#icl_pt_send').attr('disabled', 'disabled');
+        }
+        iclPtCostEstimate();
+    });
+    jQuery('#icl_pt_send').click(iclPTSend);
+    
 });
 
 var icl_tn_initial_value   = '';
@@ -361,9 +372,64 @@ function iclHidePTControls(){
             url: icl_ajx_url,
             data: "icl_ajx_action=toggle_pt_controls&value=1",
             success: function(msg){
-                jQuery('#icl_pt_controls').slideUp();
-                thisa.fadeOut(function(){jQuery('#icl_pt_show').fadeIn();});                    
+                thisa.fadeOut(function(){
+                    jQuery('#icl_pt_controls').slideUp(function(){
+                        jQuery('#icl_pt_show').fadeIn()
+                    });
+                });
             }
     }); 
     return false;   
+}
+
+function iclPtCostEstimate(){    
+    var estimate = 0;
+    var words = parseInt(jQuery('#icl_pt_wc').val());
+    jQuery('#icl_pt_controls ul li :checkbox:checked').each(
+        function(){
+            lang = jQuery(this).attr('id').replace(/^icl_pt_to_/,'');
+            rate = jQuery('#icl_pt_rate_'+lang).val();
+            estimate += words * rate;
+        }
+    )
+    if(estimate < 1){
+        precision = Math.floor(estimate).toString().length + 1;    
+    }else{
+        precision = Math.floor(estimate).toString().length + 2;
+    }
+    
+    jQuery('#icl_pt_cost_estimate').html(estimate.toPrecision(precision));
+}
+
+function iclPTSend(){
+    jQuery('#icl_pt_error').hide();
+    
+    if(jQuery('#icl_pt_controls ul li :checkbox:checked').length==0) return false;
+    
+    target_languages = new Array();
+    jQuery('#icl_pt_controls ul li :checkbox:checked').each(function(){
+        target_languages.push(jQuery(this).val());
+    });
+    
+    jQuery.ajax({
+        type: "POST",
+        url: icl_ajx_url,
+        dataType: 'json',
+        data: "icl_ajx_action=send_translation_request&post_ids=" + jQuery('#icl_pt_post_id').val() 
+            + '&icl_post_type['+ jQuery('#icl_pt_post_id').val() + ']=' + jQuery('#icl_pt_post_type').val() 
+            + '&target_languages='+target_languages.join('#')
+            + '&tn_note_'+jQuery('#icl_pt_post_id').val()+'=' + jQuery('#icl_pt_tn_note').val(),
+        success: function(msg){
+            for(i in msg){
+                p = msg[i];    
+            }
+            if(p.status > 0){
+                location.href = location.href.replace(/#(.+)/,'')+'&icl_message=success';
+            }else{
+                jQuery('#icl_pt_error').fadeIn();
+            }
+        }
+    });
+    
+    
 }

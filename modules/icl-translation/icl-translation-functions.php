@@ -142,7 +142,7 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
         }
         
     }
-        
+            
     if (sizeof($targets_available) == 0){
         return false;
     }
