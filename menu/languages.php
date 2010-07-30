@@ -706,7 +706,7 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
     
     <img align="left" src="<?php echo ICL_PLUGIN_URL ?>/res/img/icon16.png" width="16" height="16" style="margin-right:7px" />
     
-    <p><?php printf(__('Try WPML&#8217;s <a href="%s">professional translation</a> and get excellent translations at an affordable rate. <a href="%s">Learn more</a>.','sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php', 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php'); ?></p>
+    <p><?php printf(__('Try WPML&#8217;s <a href="%s">professional translation</a> and get excellent translations at an affordable rate. <a href="%s">Learn more</a>.','sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php', 'http://wpml.org/content-translation/" target="_blank'); ?></p>
     <br />
     <input id="icl_dismiss_translate_help" type="button" class="button secondary" value="<?php _e('Hide this message', 'sitepress');?>" />
     </div> 

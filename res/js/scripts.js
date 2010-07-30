@@ -12,15 +12,15 @@ jQuery(document).ready(function(){
     jQuery('a.icl_toggle_show_translations').click(iclToggleShowTranslations);
     
     icl_tn_initial_value   = jQuery('#icl_post_note textarea').val();
-    jQuery('#icl_post_add_notes h4 a').click(iclTnOpenNoteBox);
-    jQuery('#icl_post_note textarea').keyup(iclTnClearButtonState);
-    jQuery('#icl_tn_clear').click(function(){jQuery('#icl_post_note textarea').val(''); jQuery(this).attr('disabled','disabled')});
-    jQuery('#icl_tn_save').click(iclTnCloseNoteBox);
+    jQuery('#icl_post_add_notes h4 a').live('click', iclTnOpenNoteBox);
+    jQuery('#icl_post_note textarea').live('keyup', iclTnClearButtonState);
+    jQuery('#icl_tn_clear').live('click', function(){jQuery('#icl_post_note textarea').val(''); jQuery(this).attr('disabled','disabled')});
+    jQuery('#icl_tn_save').live('click', iclTnCloseNoteBox);
     
     jQuery('#icl_pt_hide').click(iclHidePTControls);
     jQuery('#icl_pt_show').click(iclShowPTControls);
     
-    jQuery('#icl_pt_controls ul li :checkbox').change(function(){
+    jQuery('#icl_pt_controls ul li :checkbox').live('change', function(){
         if(jQuery('#icl_pt_controls ul li :checkbox:checked').length){
             jQuery('#icl_pt_send').removeAttr('disabled');
         }else{
@@ -28,7 +28,7 @@ jQuery(document).ready(function(){
         }
         iclPtCostEstimate();
     });
-    jQuery('#icl_pt_send').click(iclPTSend);
+    jQuery('#icl_pt_send').live('click', iclPTSend);
     
 });
 
@@ -402,7 +402,8 @@ function iclPtCostEstimate(){
 }
 
 function iclPTSend(){
-    jQuery('#icl_pt_error').hide();
+    jQuery('#icl_pt_error, #icl_pt_success').hide();
+    jQuery('#icl_pt_send').attr('disabled', 'disabled');
     
     if(jQuery('#icl_pt_controls ul li :checkbox:checked').length==0) return false;
     
@@ -433,3 +434,29 @@ function iclPTSend(){
     
     
 }
+
+function icl_pt_reload_translation_box(){
+    jQuery.ajax({
+        type: "POST",
+        url: icl_ajx_url,
+        dataType: 'json',
+        data: "icl_ajx_action=get_translator_status",
+        success: function(){
+            jQuery('#icl_pt_hide').hide();
+            jQuery('#icl_pt_controls').html(icl_ajxloaderimg+'<br class="clear" />');    
+            jQuery.get(location.href, {rands:Math.random()}, function(data){
+                jQuery('#icl_pt_controls').html(jQuery(data).find('#icl_pt_controls').html());
+                icl_tb_init('a.icl_thickbox');
+                icl_tb_set_size('a.icl_thickbox');
+                jQuery('#icl_pt_hide').show();
+                
+            })
+        }
+    });
+    
+}
+
+//jQuery('#TB_window').live('unload', function(){
+//    console.log(jQuery(this).find('iframe').attr('src'));
+//});
+

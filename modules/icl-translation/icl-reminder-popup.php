@@ -5,9 +5,10 @@
     // NOTE: this is also used for other popup links to ICanLocalize
 
     global $wpdb;
-    
-	
+    	
     $target = $_GET['target'];
+    $auto_resize = isset($_GET['auto_resize']) && $_GET['auto_resize'];
+    $unload_cb = isset($_GET['unload_cb']) ? $_GET['unload_cb'] : false;
     if(preg_match('|^@select-translators;([^;]+);([^;]+)@|', $target, $matches)){
         $from_lang = $matches[1];
         $to_lang = $matches[2];
@@ -49,11 +50,11 @@
             
             $user['from_language1'] = $lang_server[$from_lang]; 
             $user['to_language1'] = $lang_server[$to_lang]; 
-            
+
             list($site_id, $access_key) = $icl_query->createAccount($user);                
             if($site_id && $access_key){
-                $iclsettings['site_id'] = $site_id;
-                $iclsettings['access_key'] = $access_key;
+                $this->settings['site_id'] = $iclsettings['site_id'] = $site_id;
+                $this->settings['access_key'] = $iclsettings['access_key'] = $access_key;
                 $iclsettings['language_pairs'][$from_lang][$to_lang] = 1;
                 $this->save_settings($iclsettings);
             }
@@ -79,8 +80,10 @@
             $icl_query->updateAccount($data);
             
         }
+        
         $icl_query = new ICanLocalizeQuery($this->settings['site_id'], $this->settings['access_key']);                
         $website_details = $icl_query->get_website_details();
+        
         $translation_languages = $website_details['translation_languages']['translation_language'];        
         if(isset($translation_languages['attr'])){
             $buff = $translation_languages;
@@ -133,14 +136,9 @@
 
 
 <?php if($can_delete): ?>
-    <a id="icl_reminder_dismiss" href="#" onclick="<?php echo $on_click?>">Dismiss</a>
+    <a id="icl_reminder_dismiss" href="#" onclick="<?php echo $on_click?>"><?php _e('Dismiss', 'sitepress')?></a>
     <br />
     <br />
-    <iframe src="<?php echo $target;?>" style="width:99%; height:80%">
-
-<?php else: ?>
-    
-    <iframe src="<?php echo $target;?>" style="width:99%; height:90%">
-    
 <?php endif; ?>
+<iframe src="<?php echo $target;?>" style="width:95%; height:90%" onload="<?php if($auto_resize):?>jQuery('#TB_window').css('width','90%').css('margin-left', '-45%');<?php endif; ?><?php if($unload_cb):?>jQuery('#TB_window').bind('unload', <?php echo $unload_cb ?>);<?php endif; ?>">
 

@@ -1240,20 +1240,35 @@ class SitePress{
         $defaults = array(
             'title' => null,
             'class' => null,
-            'id'    => null
+            'id'    => null,
+            'ar'    => 0,  // auto_resize
+            'unload_cb' => false, // onunload callback
         );
         
         extract($args, EXTR_OVERWRITE);
         
-        $link .= '&accesskey=' . $this->settings['access_key'] . '&compact=1';
+        if($ar){
+            $auto_resize = '&amp;auto_resize=1';
+        }else{
+            $auto_resize = '';
+        }
+        
+        $unload_cb = $unload_cb ? '&amp;unload_cb=' . $unload_cb : '';
+        
+        if($this->settings['access_key']){
+            $link .= '&accesskey=' . $this->settings['access_key'];    
+        }
+        $link .= '&compact=1';            
         
 		if ($id) {
 			$id = ' id="' . $id . '"';
 		}
 		if ($title) {
-            return '<a class="icl_thickbox' . $class . '" title="' . $title . '" href="admin.php?page='.ICL_PLUGIN_FOLDER . "/menu/languages.php&amp;icl_action=reminder_popup&amp;target=" . urlencode($link) .'"' . $id . '>';
+            return '<a class="icl_thickbox' . $class . '" title="' . $title . '" href="admin.php?page='.ICL_PLUGIN_FOLDER . 
+                "/menu/languages.php&amp;icl_action=reminder_popup{$auto_resize}{$unload_cb}&amp;target=" . urlencode($link) .'"' . $id . '>';
         } else {
-            return '<a class="icl_thickbox' . $class . '" href="admin.php?page='.ICL_PLUGIN_FOLDER . "/menu/languages&amp;icl_action=reminder_popup&amp;target=" . urlencode($link) .'"' . $id . '>';
+            return '<a class="icl_thickbox' . $class . '" href="admin.php?page='.ICL_PLUGIN_FOLDER . 
+                "/menu/languages&amp;icl_action=reminder_popup{$auto_resize}&amp;target=" . urlencode($link) .'"' . $id . '>';
         }
     }
     

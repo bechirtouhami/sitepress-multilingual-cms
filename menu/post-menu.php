@@ -69,7 +69,8 @@
 </div><!--//translation_of_wrap-->
 
 <div style="clear:both;font-size:1px">&nbsp;</div>
-       
+
+<?php if($_GET['action'] == 'edit' && $trid): ?>       
 <?php 
     $translations_count = count($translations) - 1;
     $language_count = count($active_languages) - 1;        
@@ -100,16 +101,16 @@
                         FROM {$wpdb->prefix}icl_content_status cs 
                             JOIN {$wpdb->prefix}icl_core_status cr ON cr.rid = cs.rid 
                         WHERE 
-                            cr.rid <> {$pr} 
-                            AND cr.origin ='{$selected_language}'
+                            
+                            cr.origin ='{$selected_language}'
                             AND target = '{$_target_lang}'
                             AND cs.nid = {$post->ID} 
                             AND cr.status = ".CMS_TARGET_LANGUAGE_DONE."
                         LIMIT 1");
             if($was_translated){
                 $langs_done[apply_filters('icl_server_languages_map', $serverlang, true)] = 1;
-            }            
-            if($status != CMS_TARGET_LANGUAGE_DONE){
+            }         
+            if(!is_null($status) && $status != CMS_TARGET_LANGUAGE_DONE){
                 // translation is still in progress for one or more languages.
                 $langs_in_progress[apply_filters('icl_server_languages_map', $serverlang, true)] = 1;
             }
@@ -118,10 +119,8 @@
             if($wpdb->get_var("SELECT n.md5<>c.md5 FROM {$wpdb->prefix}icl_node n JOIN {$wpdb->prefix}icl_content_status c ON n.nid = c.nid WHERE n.nid={$post->ID} AND c.rid={$pr}")){
                 $langs_need_update[apply_filters('icl_server_languages_map', $serverlang, true)] = 1;
             }
-            
         }        
     }
-    
     ?>
     <div class="icl_cyan_box">
     <strong><?php _e('Professional translation', 'sitepress'); ?></strong>    
@@ -130,7 +129,8 @@
         if(!empty($languages_translated)){ 
             echo '<ul>';
             foreach($languages_translated as $lang){
-                if(isset($langs_in_progress[$active_languages[$lang]['english_name']]) || !isset($langs_need_update[$active_languages[$lang]['english_name']])){
+                if(isset($langs_in_progress[$active_languages[$lang]['english_name']]) || 
+                    ($langs_done[$active_languages[$lang]['english_name']] && !isset($langs_need_update[$active_languages[$lang]['english_name']]))){
                     $disabled = ' disabled="disabled"';
                 }else{
                     $disabled = '';
@@ -150,7 +150,13 @@
         if(!empty($languages_not_translated)){ 
             echo '<ul>';
             foreach($languages_not_translated as $lang){
-                echo '<li>'.$this->create_icl_popup_link("@select-translators;{$selected_language};{$lang}@"); // <a> included
+                echo '<li>'.$this->create_icl_popup_link("@select-translators;{$selected_language};{$lang}@", 
+                    array(
+                        'ar'=>1, 
+                        'title'=>__('Select translators', 'sitepress'),
+                        'unload_cb' => 'icl_pt_reload_translation_box'
+                    )
+                ); // <a> included
                 printf(__('Get %s translators', 'sitepress'), $active_languages[$lang]['display_name']);
                 echo '</a></li>';
             }    
@@ -184,13 +190,12 @@
     
     <div id="icl_pt_error" class="icl_error_text" style="display: none;margin-top: 4px;"><?php _e('Failed sending to translation.', 'sitepress') ?></div>    
     <?php if(isset($_GET['icl_message']) && $_GET['icl_message']=='success'):?>
-    <div class="icl_valid_text" style="margin-top: 8px;"><?php _e('Sent to translation.', 'sitepress') ?></div>    
+    <div id="icl_pt_success" class="icl_valid_text" style="margin-top: 8px;"><?php _e('Sent to translation.', 'sitepress') ?></div>    
     <?php endif; ?>
     </div>    
     
     <?php do_action('icl_post_languages_options_before', $post->ID);?>
 
-<?php if($_GET['action'] == 'edit' && $trid): ?>
     <div id="icl_translate_options">
     <?php
         // count number of translated and un-translated pages.

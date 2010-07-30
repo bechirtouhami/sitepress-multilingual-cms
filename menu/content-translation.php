@@ -48,14 +48,20 @@
             <h3><?php _e('Translation management', 'sitepress')?></h3>
             <?php include ICL_PLUGIN_PATH . '/modules/icl-translation/icl-translation-dashboard.php'; ?>
         
-            <?php if($sitepress_settings['icl_html_status']): ?>
+            
             <div class="icl_cyan_box">
+                <?php if($sitepress->icl_account_configured() && $sitepress_settings['icl_html_status']): ?>
                 <h3><?php _e('ICanLocalize account status', 'sitepress')?></h3>
                 <?php echo $sitepress_settings['icl_html_status']; ?>
-            </div>                    
-            <?php endif; ?>
-
+                <?php else: ?> 
+                <?php printf(__('For help getting started, %scontact ICanLocalize%s', 'sitepress'), 
+                    '<a href="https://www.icanlocalize.com/site/about-us/contact-us/" target="_blank">', '</a>'); ?>                          
+                <?php endif; ?>
+            </div>         
             
+            
+
+            <?php if($sitepress->icl_account_configured()): ?>
             <div class="icl_cyan_box">
                  <h3><?php _e('Professional translation setup', 'sitepress')?></h3>
             
@@ -76,6 +82,7 @@
             
                 </div> <?php // <div id="icl_account_setup"> ?>
             </div> <?php // <div class="icl_cyan_box"> ?>            
+            <?php endif; ?>
             
     </div>    
 
