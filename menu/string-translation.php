@@ -97,7 +97,6 @@ if(!$sitepress_settings['st']['strings_language']){
         </form>
         
     <?php elseif(isset($icl_st_preview_strings) && !empty($icl_st_preview_strings)): ?>
-        <?php $total_langs = count(explode(",",$_POST['langs'])); ?>
         <h3><?php echo __('Preview strings','sitepress') ?></h3>
         <form name="icl_st_do_send_strings" id="icl_st_do_send_strings" method="post" action="">
         <input type="hidden" name="strings" value="<?php echo $_POST['strings'] ?>" />
@@ -107,31 +106,29 @@ if(!$sitepress_settings['st']['strings_language']){
                 <tr>                    
                     <th><?php echo __('String', 'sitepress') ?></th>
                     <th scope="col" style="text-align:right"><?php echo __('Word count', 'sitepress') ?></th>
-                    <?php if(1 < $total_langs): ?>
-                    <th scope="col" style="text-align:right"><?php printf(__('Cost per language (at $%s per word)', 'sitepress'),'0.7'); ?></th>
-                    <?php endif; ?>
-                    <th scope="col" style="text-align:right"><?php printf(__('Cost (at $%s per word)', 'sitepress'),'0.7'); ?></th>
+                    <th scope="col" style="text-align:right"><?php _e('Cost', 'sitepress'); ?></th>
                 </tr>
             </thead>
             <tbody>
                 <?php 
-                    $total_cost = $total_wc = $total_cost_pl = 0; 
-                    $total_langs = count(explode(",",$_POST['langs']));                    
+                    $total_cost = $total_wc = $total_rate = 0; 
+                    $languages_to = explode(",",$_POST['langs']);
+                    $total_langs = count($languages_to);         
+                    foreach($_POST['icl_tr_rate'] as $k=>$v){
+                        if(in_array($k, $languages_to)){
+                            $total_rate += $v;
+                        }
+                    }                               
                 ?>
                 <?php foreach($icl_st_preview_strings as $string): ?>
                     <?php 
                         $wc = count(explode(' ',$string->value)); $total_wc += $wc;
-                        $cost_pl = $wc * 0.07;
-                        $cost = $wc * 0.07 * $total_langs;
+                        $cost = $wc * $total_rate;
                         $total_cost += $cost;
-                        $total_cost_pl += $cost_pl;
                     ?>
                     <tr>                        
                         <td><?php echo htmlspecialchars($string->value) ?></td>
                         <td align="right"><?php echo $wc ?></td>
-                        <?php if(1 < $total_langs): ?>
-                        <td align="right"><?php echo '$'; echo money_format($cost_pl, 2); ?></td>
-                        <?php endif; ?>
                         <td align="right"><?php echo '$'; echo money_format($cost, 2); ?></td>
                     </tr>
                 <?php endforeach; ?>
@@ -140,9 +137,6 @@ if(!$sitepress_settings['st']['strings_language']){
                 <tr>
                     <th><?php echo __('Total', 'sitepress'); ?></th>
                     <th style="text-align:right"><?php echo $total_wc; ?></th>
-                    <?php if(1 < $total_langs): ?>
-                    <th style="text-align:right"><?php echo '$'; echo money_format($total_cost_pl,2); ?></th>
-                    <?php endif; ?>
                     <th style="text-align:right"><?php echo '$'; echo money_format($total_cost,2); ?></th>
                 </tr>
             </tfoot>                    
@@ -359,67 +353,62 @@ if(!$sitepress_settings['st']['strings_language']){
         
         <br clear="all" />    
         
-        <?php if($icl_st_translation_enabled): ?>
-            <h4><?php _e('Translation by ICanLocalize', 'sitepress') ?></h4>
-            <p><?php _e('You can send all the untranslated strings for translation by ICanLocalize.', 'sitepress') ?></p>
-            <form method="post" id="icl_st_review_strings" name="icl_st_review_strings" action="">
-            <input type="hidden" name="icl_st_action" value="preview" />
-            <input type="hidden" name="strings" value="" />
-            <input type="hidden" name="langs" value="" />            
-            <input type="hidden" name="icl-tr-from" value="<?php echo $sitepress->get_current_language()?>" />
-            <ul id="icl-tr-opt">
-                <?php
-                    $icl_lang_status = $sitepress_settings['icl_lang_status'];
-                    if (isset($icl_lang_status)){
-                        foreach($icl_lang_status as $lang){
-                            if($lang['from'] == $sitepress->get_current_language()) {
-                                $target_status[$lang['to']] = $lang['have_translators'];
-                            }
+        <h4><?php _e('Translation by ICanLocalize', 'sitepress') ?></h4>
+        <p><?php _e('You can send all the untranslated strings for translation by ICanLocalize.', 'sitepress') ?></p>
+        <form method="post" id="icl_st_review_strings" name="icl_st_review_strings" action="">
+        <input type="hidden" name="icl_st_action" value="preview" />
+        <input type="hidden" name="strings" value="" />
+        <input type="hidden" name="langs" value="" />            
+        <input type="hidden" name="icl-tr-from" value="<?php echo $sitepress->get_current_language()?>" />
+        <ul id="icl-tr-opt">
+            <?php
+                $icl_lang_status = $sitepress_settings['icl_lang_status'];
+                if (isset($icl_lang_status)){
+                    foreach($icl_lang_status as $lang){
+                        if($lang['from'] == $sitepress->get_current_language()) {
+                            $target_status[$lang['to']] = $lang['have_translators'];
+                            $target_rate[$lang['to']] = $lang['max_rate'];
                         }
                     }
+                }
+            ?>
+            <?php $_one_lang_enabled = false; ?>
+            <?php foreach($active_languages as $lang): if($sitepress_settings['st']['strings_language']==$lang['code']) continue; ?>
+                <?php 
+                    if($target_status[$lang['code']]){
+                        $disabled =  ''; 
+                        $checked='checked="checked"';
+                    }else{
+                        $disabled =  ' disabled="disabled"'; 
+                        $checked='';
+                    }
                 ?>
-                <?php $_one_lang_enabled = false; ?>
-                <?php foreach($active_languages as $lang): if($sitepress_settings['st']['strings_language']==$lang['code']) continue; ?>
-                    <?php if($sitepress_settings['language_pairs'] && isset($sitepress_settings['language_pairs'][$sitepress_settings['st']['strings_language']][$lang['code']])): ?>
-                        <?php if(isset($target_status[$lang['code']]) && $target_status[$lang['code']] == 1): $_one_lang_enabled = true;?>
-                            <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" checked="checked" />&nbsp;<?php printf(__('Translate to %s %s','sitepress'), $lang['display_name'], $sitepress->get_language_status_text($sitepress->get_current_language(), $lang['code'])); ?></label></li>
-                        <?php else:  ?>
-                            <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name'], $lang['code']); ?><span class="icl-tr-not-avail-to" id="icl-tr-not-avail-to-<?php echo $lang['code']?>"><?php echo $sitepress->get_language_status_text($sitepress->get_current_language(), $lang['code']); ?></span></label></li>
-                        <?php endif; ?>
-                    <?php else:  ?>
-                        <li><label><input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" disabled="disabled" />&nbsp;<?php printf(__('Translate to %s','sitepress'), $lang['display_name'] . __(' - This language has not been selected for translation by ICanLocalize', 'sitepress')); ?></label></li>
-                    <?php endif; ?>
-                <?php endforeach; ?>    
-            </ul>  
+                <li><label>
+                    <input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" <?php echo $checked ?> <?php echo $disabled ?> />
+                        &nbsp;<?php printf(__('Translate to %s %s','sitepress'), $lang['display_name'], $sitepress->get_language_status_text($sitepress->get_current_language(), $lang['code'])); ?>
+                    <input type="hidden" name="icl_tr_rate[<?php echo $lang['english_name']?>]" value="<?php echo $target_rate[$lang['code']] ?>" />
+                </label></li>
+            <?php endforeach; ?>    
+        </ul>  
 
-            <span class="subsubsub">                
-                <input type="submit" class="button-secondary" id="icl_st_send_selected" value="<?php echo __('Send selected strings to ICanLocalize', 'sitepress') ?>" disabled="disabled" />                    
-                <input type="button" class="button-primary" id="icl_st_send_need_translation" value="<?php echo __('Send all strings that need update to ICanLocalize', 'sitepress') ?>" <?php if(!$_one_lang_enabled):?>disabled="disabled"<?php endif;?> />                                     
-            </span><br />
-            <span id="icl_st_send_progress" class="icl_ajx_response" style="display:none;float:left;"><?php echo __('Sending translation requests. Please wait!', 'sitepress') ?>&nbsp;<img src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" alt="loading" /></span>
-                        
-            <?php if(isset($sitepress_settings['icl_balance'])): ?>
-            <br clear="all" />
-            <p>
-                <?php echo sprintf(__('Your balance with ICanLocalize is %s. Visit your %sICanLocalize finance%s page to deposit additional funds.', 'sitepress'),
-                                      '$'.$sitepress_settings['icl_balance'],
-                                      $sitepress->create_icl_popup_link(ICL_API_ENDPOINT.ICL_FINANCE_LINK, array('title'=>'ICanLocalize')),
-                                      '</a>',
-                                      'sitepress')?>
-            </p>
-            <br />
-            <?php endif; ?>
+        <span class="subsubsub">                
+            <input type="submit" class="button-secondary" id="icl_st_send_selected" value="<?php echo __('Send selected strings to ICanLocalize', 'sitepress') ?>" disabled="disabled" />                    
+            <input type="button" class="button-primary" id="icl_st_send_need_translation" value="<?php echo __('Send all strings that need update to ICanLocalize', 'sitepress') ?>" <?php if(!$_one_lang_enabled):?>disabled="disabled"<?php endif;?> />                                     
+        </span><br />
+        <span id="icl_st_send_progress" class="icl_ajx_response" style="display:none;float:left;"><?php echo __('Sending translation requests. Please wait!', 'sitepress') ?>&nbsp;<img src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" alt="loading" /></span>
+                    
+        <?php if(isset($sitepress_settings['icl_balance'])): ?>
+        <br clear="all" />
+        <p>
+            <?php echo sprintf(__('Your balance with ICanLocalize is %s. Visit your %sICanLocalize finance%s page to deposit additional funds.', 'sitepress'),
+                                  '$'.$sitepress_settings['icl_balance'],
+                                  $sitepress->create_icl_popup_link(ICL_API_ENDPOINT.ICL_FINANCE_LINK, array('title'=>'ICanLocalize')),
+                                  '</a>',
+                                  'sitepress')?>
+        </p>
+        <br />
+        <?php endif; ?>
         </form>    
-        <?php else: ?>
-    
-            <div class="error" style="margin: 1em;">
-            <p><?php _e('To translate yourself, click on the <b>Translation</b> link next to each strings.','sitepress') ?></p>
-            <?php if ( current_user_can('manage_options') ): ?>
-            <p><?php printf(__('To send these strings to translation by ICanLocalize you first need to set up <a href="%s">professional translation</a>.' , 'sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php'); ?></p>
-            <?php endif; ?>
-            </div>
-    
-        <?php endif; ?>    
     
         <br style="clear:both;" />
         <div id="dashboard-widgets-wrap">

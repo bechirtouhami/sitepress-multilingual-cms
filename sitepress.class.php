@@ -1092,63 +1092,53 @@ class SitePress{
         $iclsettings['icl_support_ticket_id'] = $res['attr']['support_ticket_id'];
     }
 
-    function get_language_status_text($from_lang, $to_lang) {
+    function get_language_status_text($from_lang, $to_lang) {        
         $lang_status = $this->settings['icl_lang_status'];        
-        //debug_array($lang_status);
         $response = '';
-        //if ($lang_status && $this->icl_account_configured() && isset($this->settings['language_pairs'][$from_lang][$to_lang])) {
-            foreach ($lang_status as $lang) {                
-                if ($from_lang == $lang['from'] && $to_lang == $lang['to']) {
-                    if (isset($lang['available_translators'])) {
-                        if (!$lang['available_translators']) {
-                            if ($this->settings['icl_support_ticket_id'] == '') {
-                                // No translators available on icanlocalize for this language pair.
-                                $response = sprintf(__('- (No translators available - please %sprovide more information about your site%s)', 'sitepress'),
-                                                    $this->create_icl_popup_link(ICL_API_ENDPOINT. '/websites/' . $this->settings['site_id'] . '/explain?after=refresh_langs', 
-                                                        array('title'=>'ICanLocalize')),
-                                                    '</a>');
-                            } else {
-                                $response = sprintf(__('- (No translators available - %scheck progress%s)', 'sitepress'),
-                                                    $this->create_icl_popup_link(ICL_API_ENDPOINT. '/support/show/' . $this->settings['icl_support_ticket_id'] . '?after=refresh_langs', 
-                                                        array('title'=>'ICanLocalize')),
-                                                    '</a>');
-                            }
-                            
-                        } else if (!$lang['applications']) {
-                            // No translators have applied for this language pair.
-                            $response = ' | ' . $this->create_icl_popup_link("@select-translators;{$from_lang};{$to_lang}@") .
-                                        __('Select translators', 'sitepress') .  '</a>';
-                        } else if (!$lang['have_translators']) {
-                            // translators have applied but none selected yet
-                            $response = ' | ' . $this->create_icl_popup_link("@select-translators;{$from_lang};{$to_lang}@") . __('Select translators', 'sitepress') . '</a>';
-                            /*
-                            $response = sprintf(__('- (%s translators applied - %schoose your translator%s)', 'sitepress'),
-                                                $lang['applications'],
-                                                $this->create_icl_popup_link(ICL_API_ENDPOINT. '/websites/' . $this->settings['site_id'] . '/website_translation_offers/' .  $lang['id'], 
+        foreach ($lang_status as $lang) {                
+            if ($from_lang == $lang['from'] && $to_lang == $lang['to']) {
+                if (isset($lang['available_translators'])) {
+                    if (!$lang['available_translators']) {
+                        if ($this->settings['icl_support_ticket_id'] == '') {
+                            // No translators available on icanlocalize for this language pair.
+                            $response = sprintf(__('- (No translators available - please %sprovide more information about your site%s)', 'sitepress'),
+                                                $this->create_icl_popup_link(ICL_API_ENDPOINT. '/websites/' . $this->settings['site_id'] . '/explain?after=refresh_langs', 
                                                     array('title'=>'ICanLocalize')),
                                                 '</a>');
-                            */
                         } else {
-                            // there are translators ready to translate
-                            $translators = array();
-                            foreach($lang['translators'] as $translator){
-                                $link = $this->create_icl_popup_link(ICL_API_ENDPOINT. '/websites/' . $this->settings['site_id'] . '/website_translation_offers/' .  
-                                                $lang['id'] . '/website_translation_contracts/' . $translator['contract_id'], array('title'=>'ICanLocalize'));
-                                $translators[] = $link . esc_html($translator['nickname']) . '</a>';
-                            }
-                            $response = ' | ' . $this->create_icl_popup_link("@select-translators;{$from_lang};{$to_lang}@") . __('Select translators', 'sitepress') . '</a>';
-                            $response .= ' | ' . sprintf(__('Communicate with %s', 'sitepress'), join(', ', $translators));
-                                                
+                            $response = sprintf(__('- (No translators available - %scheck progress%s)', 'sitepress'),
+                                                $this->create_icl_popup_link(ICL_API_ENDPOINT. '/support/show/' . $this->settings['icl_support_ticket_id'] . '?after=refresh_langs', 
+                                                    array('title'=>'ICanLocalize')),
+                                                '</a>');
                         }
-    
-                        return $response;
                         
+                    } else if (!$lang['applications']) {
+                        // No translators have applied for this language pair.
+                        $response = ' | ' . $this->create_icl_popup_link("@select-translators;{$from_lang};{$to_lang}@") .
+                                    __('Select translators', 'sitepress') .  '</a>';
+                    } else if (!$lang['have_translators']) {
+                        // translators have applied but none selected yet
+                        $response = ' | ' . $this->create_icl_popup_link("@select-translators;{$from_lang};{$to_lang}@") . __('Select translators', 'sitepress') . '</a>';
+                    } else {
+                        // there are translators ready to translate
+                        $translators = array();
+                        foreach($lang['translators'] as $translator){
+                            $link = $this->create_icl_popup_link(ICL_API_ENDPOINT. '/websites/' . $this->settings['site_id'] . '/website_translation_offers/' .  
+                                            $lang['id'] . '/website_translation_contracts/' . $translator['contract_id'], array('title'=>'ICanLocalize'));
+                            $translators[] = $link . esc_html($translator['nickname']) . '</a>';
+                        }
+                        $response = ' | ' . $this->create_icl_popup_link("@select-translators;{$from_lang};{$to_lang}@") . __('Select translators', 'sitepress') . '</a>';
+                        $response .= ' | ' . sprintf(__('Communicate with %s', 'sitepress'), join(', ', $translators));
+                                            
                     }
-                break;
+
+                    return $response;
+                    
                 }
-                                           
+            break;
             }
-        //}
+                                       
+        }
         
         $response = ' | ' . $this->create_icl_popup_link("@select-translators;{$from_lang};{$to_lang}@") . __('Select translators', 'sitepress') .  '</a>';
         
@@ -1257,7 +1247,8 @@ class SitePress{
         $unload_cb = $unload_cb ? '&amp;unload_cb=' . $unload_cb : '';
         
         if($this->settings['access_key']){
-            $link .= '&accesskey=' . $this->settings['access_key'];    
+            $url_glue = false !== strpos($link,'?') ? '&' : '?';
+            $link .= $url_glue . 'accesskey=' . $this->settings['access_key'];    
         }
         $link .= '&compact=1';            
         

@@ -105,7 +105,7 @@ jQuery(document).ready(function(){
     jQuery('a.translation_details_but').click(toogleTranslationDetails);
     
     var cache = '&cache=1';
-    if (location.href.indexOf("content-translation.php") != -1) {
+    if (location.href.indexOf("content-translation.php") != -1 || location.href.indexOf('string-translation.php') != -1) {
         cache = '';
     }
     
