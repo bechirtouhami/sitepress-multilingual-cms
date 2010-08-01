@@ -46,7 +46,7 @@
                 $notifications += 2;
             }
             $user['notifications'] = $notifications;
-            $user['ignore_languages'] = 1;
+            $user['ignore_languages'] = 0;
             
             $user['from_language1'] = $lang_server[$from_lang]; 
             $user['to_language1'] = $lang_server[$to_lang]; 

@@ -1116,10 +1116,11 @@ class SitePress{
                             
                         } else if (!$lang['applications']) {
                             // No translators have applied for this language pair.
-                            $response = sprintf(__(' | %sSelect translators%s', 'sitepress'), $this->create_icl_popup_link("@select-translators;{$from_lang};{$to_lang}@"), '</a>');
+                            $response = ' | ' . $this->create_icl_popup_link("@select-translators;{$from_lang};{$to_lang}@") .
+                                        __('Select translators', 'sitepress') .  '</a>';
                         } else if (!$lang['have_translators']) {
                             // translators have applied but none selected yet
-                            $response = ' | ' . sprintf(__('%sSelect translators%s', 'sitepress'), $this->create_icl_popup_link("@select-translators;{$from_lang};{$to_lang}@"), '</a>');
+                            $response = ' | ' . $this->create_icl_popup_link("@select-translators;{$from_lang};{$to_lang}@") . __('Select translators', 'sitepress') . '</a>';
                             /*
                             $response = sprintf(__('- (%s translators applied - %schoose your translator%s)', 'sitepress'),
                                                 $lang['applications'],
@@ -1135,7 +1136,7 @@ class SitePress{
                                                 $lang['id'] . '/website_translation_contracts/' . $translator['contract_id'], array('title'=>'ICanLocalize'));
                                 $translators[] = $link . esc_html($translator['nickname']) . '</a>';
                             }
-                            $response = ' | ' . sprintf(__('%sSelect translators%s', 'sitepress'), $this->create_icl_popup_link("@select-translators;{$from_lang};{$to_lang}@"), '</a>');
+                            $response = ' | ' . $this->create_icl_popup_link("@select-translators;{$from_lang};{$to_lang}@") . __('Select translators', 'sitepress') . '</a>';
                             $response .= ' | ' . sprintf(__('Communicate with %s', 'sitepress'), join(', ', $translators));
                                                 
                         }
@@ -1149,7 +1150,7 @@ class SitePress{
             }
         //}
         
-        $response = sprintf(__(' | %sSelect translators%s', 'sitepress'), $this->create_icl_popup_link("@select-translators;{$from_lang};{$to_lang}@"), '</a>');
+        $response = ' | ' . $this->create_icl_popup_link("@select-translators;{$from_lang};{$to_lang}@") . __('Select translators', 'sitepress') .  '</a>';
         
         // no status found        
         return $response;
@@ -4949,7 +4950,7 @@ class SitePress{
     }
     
     function show_action_list() {
-        $steps = array(__('Choose translators', 'sitepress'),
+        $steps = array(__('Select translators', 'sitepress'),
                         __('Send documents to translation', 'sitepress'),
                         __('Deposit payment', 'sitepress'),
                         __('Translations will be returned to your site', 'sitepress'));
