@@ -3,8 +3,8 @@ Contributors: ICanLocalize
 Donate link: http://wpml.org/?page_id=2312
 Tags: CMS, navigation, menus, menu, dropdown, css, sidebar, pages, i18n, translation, localization, language, multilingual, WPML
 Requires at least: 2.7
-Tested up to: 3.0
-Stable tag: 1.8.0
+Tested up to: 3.0.1
+Stable tag: 1.8.1
 
 Allows building complete multilingual sites with WordPress.
 
