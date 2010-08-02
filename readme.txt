@@ -77,6 +77,11 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 
 = 1.8.1 =
 * Bugfixes for the WP Nav Menus
+* Improved translaiton interface
+* Fixed bug with custom post type in WP_Query
+* Fixed navigation url issues when using language added as a parameter
+* Filter multiple post types
+* Fixes for supporting https urls
 
 = 1.8.0 =
 * Added support for multilingual menus. Each language gets a different menus, linked as translations.
@@ -351,6 +356,9 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 * First public release
 
 == Upgrade Notice ==
+
+= 1.8.1 =
+Multilingual menus bug fixes and improved translation interface
 
 = 1.8.0 =
 Added support for multilingual menus.
