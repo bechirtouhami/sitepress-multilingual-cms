@@ -478,6 +478,14 @@ function icl_plugin_upgrade(){
         if($mig_debug) fwrite($mig_debug, "Upgraded to 1.7.8 \n");
     }
     
+    if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.8.1', '<')){    
+        if($mig_debug) fwrite($mig_debug, "Upgrading to 1.8.1 \n");        
+        $sitepress->get_icl_translator_status($iclsettings);
+        $sitepress->save_settings($iclsettings);
+        if($mig_debug) fwrite($mig_debug, "Upgraded to 1.8.1 \n");
+    }
+    
+    
     if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '<')){
         if($mig_debug) fwrite($mig_debug, "Update plugin version in the database \n");
         update_option('icl_sitepress_version', ICL_SITEPRESS_VERSION);

@@ -453,8 +453,26 @@ function icl_pt_reload_translation_box(){
             })
         }
     });
+}
+
+function icl_pt_reload_translation_options(){
+    jQuery.ajax({
+        type: "POST",
+        url: icl_ajx_url,
+        dataType: 'json',
+        data: "icl_ajx_action=get_translator_status",
+        success: function(){
+            jQuery('#icl-tr-opt').html(icl_ajxloaderimg+'<br class="clear" />');    
+            jQuery.get(location.href, {rands:Math.random()}, function(data){
+                jQuery('#icl-tr-opt').html(jQuery(data).find('#icl-tr-opt').html());
+                icl_tb_init('a.icl_thickbox');
+                icl_tb_set_size('a.icl_thickbox');
+            })
+        }
+    });
     
 }
+
 
 //jQuery('#TB_window').live('unload', function(){
 //    console.log(jQuery(this).find('iframe').attr('src'));

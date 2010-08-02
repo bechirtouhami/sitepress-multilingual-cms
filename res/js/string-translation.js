@@ -51,7 +51,7 @@ jQuery(document).ready(function(){
         var set = jQuery(this).offset();
            jQuery("#colorPickerDiv").css({"top":set.top-180,"left":set.left, "z-index":99});
     });
-        
+    
 });
 
 function icl_st_toggler(){

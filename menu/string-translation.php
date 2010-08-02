@@ -385,7 +385,8 @@ if(!$sitepress_settings['st']['strings_language']){
                 ?>
                 <li><label>
                     <input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>" <?php echo $checked ?> <?php echo $disabled ?> />
-                        &nbsp;<?php printf(__('Translate to %s %s','sitepress'), $lang['display_name'], $sitepress->get_language_status_text($sitepress->get_current_language(), $lang['code'])); ?>
+                        &nbsp;<?php printf(__('Translate to %s %s','sitepress'), $lang['display_name'], 
+                            $sitepress->get_language_status_text($sitepress->get_current_language(), $lang['code'], 'icl_pt_reload_translation_options')); ?>
                     <input type="hidden" name="icl_tr_rate[<?php echo $lang['english_name']?>]" value="<?php echo $target_rate[$lang['code']] ?>" />
                 </label></li>
             <?php endforeach; ?>    

@@ -1092,7 +1092,13 @@ class SitePress{
         $iclsettings['icl_support_ticket_id'] = $res['attr']['support_ticket_id'];
     }
 
-    function get_language_status_text($from_lang, $to_lang) {        
+    function get_language_status_text($from_lang, $to_lang, $popclose_cb = false) {        
+        
+        $popargs = array('title'=>'ICanLocalize');
+        if($popclose_cb){
+            $popargs['unload_cb'] =  $popclose_cb;   
+        }
+                
         $lang_status = $this->settings['icl_lang_status'];        
         $response = '';
         foreach ($lang_status as $lang) {                
@@ -1103,31 +1109,31 @@ class SitePress{
                             // No translators available on icanlocalize for this language pair.
                             $response = sprintf(__('- (No translators available - please %sprovide more information about your site%s)', 'sitepress'),
                                                 $this->create_icl_popup_link(ICL_API_ENDPOINT. '/websites/' . $this->settings['site_id'] . '/explain?after=refresh_langs', 
-                                                    array('title'=>'ICanLocalize')),
+                                                    $popargs),
                                                 '</a>');
                         } else {
                             $response = sprintf(__('- (No translators available - %scheck progress%s)', 'sitepress'),
                                                 $this->create_icl_popup_link(ICL_API_ENDPOINT. '/support/show/' . $this->settings['icl_support_ticket_id'] . '?after=refresh_langs', 
-                                                    array('title'=>'ICanLocalize')),
+                                                    $popargs),
                                                 '</a>');
                         }
                         
                     } else if (!$lang['applications']) {
-                        // No translators have applied for this language pair.
-                        $response = ' | ' . $this->create_icl_popup_link("@select-translators;{$from_lang};{$to_lang}@") .
+                        // No translators have applied for this language pair.                        
+                        $response = ' | ' . $this->create_icl_popup_link("@select-translators;{$from_lang};{$to_lang}@", $popargs) .
                                     __('Select translators', 'sitepress') .  '</a>';
                     } else if (!$lang['have_translators']) {
                         // translators have applied but none selected yet
-                        $response = ' | ' . $this->create_icl_popup_link("@select-translators;{$from_lang};{$to_lang}@") . __('Select translators', 'sitepress') . '</a>';
+                        $response = ' | ' . $this->create_icl_popup_link("@select-translators;{$from_lang};{$to_lang}@", $popargs) . __('Select translators', 'sitepress') . '</a>';
                     } else {
                         // there are translators ready to translate
                         $translators = array();
                         foreach($lang['translators'] as $translator){
                             $link = $this->create_icl_popup_link(ICL_API_ENDPOINT. '/websites/' . $this->settings['site_id'] . '/website_translation_offers/' .  
-                                            $lang['id'] . '/website_translation_contracts/' . $translator['contract_id'], array('title'=>'ICanLocalize'));
+                                            $lang['id'] . '/website_translation_contracts/' . $translator['contract_id'], $popargs);
                             $translators[] = $link . esc_html($translator['nickname']) . '</a>';
                         }
-                        $response = ' | ' . $this->create_icl_popup_link("@select-translators;{$from_lang};{$to_lang}@") . __('Select translators', 'sitepress') . '</a>';
+                        $response = ' | ' . $this->create_icl_popup_link("@select-translators;{$from_lang};{$to_lang}@", $popargs) . __('Select translators', 'sitepress') . '</a>';
                         $response .= ' | ' . sprintf(__('Communicate with %s', 'sitepress'), join(', ', $translators));
                                             
                     }
@@ -1140,7 +1146,7 @@ class SitePress{
                                        
         }
         
-        $response = ' | ' . $this->create_icl_popup_link("@select-translators;{$from_lang};{$to_lang}@") . __('Select translators', 'sitepress') .  '</a>';
+        $response = ' | ' . $this->create_icl_popup_link("@select-translators;{$from_lang};{$to_lang}@", $popargs) . __('Select translators', 'sitepress') .  '</a>';
         
         // no status found        
         return $response;
@@ -1433,7 +1439,7 @@ class SitePress{
             wp_enqueue_script('sitepress-' . $page_basename, ICL_PLUGIN_URL . '/res/js/comments-translation.js', array(), ICL_SITEPRESS_VERSION);
         }
         
-        if (is_admin() && ($this->icl_account_configured() || $this->icl_support_configured())) {
+        if (is_admin()) {
             wp_enqueue_script('thickbox');
             wp_enqueue_script( 'theme-preview' );
             

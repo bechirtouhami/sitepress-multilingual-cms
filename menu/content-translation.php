@@ -26,8 +26,7 @@
     $sitepress_settings = $sitepress->get_settings();    
     $icl_account_ready_errors = $sitepress->icl_account_reqs();
     
-    $icl_lang_status = $sitepress_settings['icl_lang_status'];
-    
+    $icl_lang_status = $sitepress_settings['icl_lang_status'];    
 ?>
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap" id="icl_wrap" style="float:left;width:98%;">
