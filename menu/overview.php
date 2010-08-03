@@ -6,14 +6,6 @@ if($sitepress_settings['existing_content_language_verified']){
         if($default_language != $lang['code']){$default = '';}else{$default = ' ('.__('default','sitepress').')';}
         $alanguages_links[] = $lang['display_name'] . $default;
     }    
-    if(isset($sitepress_settings['language_pairs']) && !empty($sitepress_settings['language_pairs'])){
-        foreach((array)$sitepress_settings['icl_lang_status'] as $k => $lang){
-            if(!is_numeric($k)) continue;
-            if(!empty($lang['translators'])){
-                $lpairs[] = sprintf('%s to %s', $active_languages[$lang['from']]['display_name'], $active_languages[$lang['to']]['display_name']);
-            }
-        }
-    }    
     
     if(2 <= count($sitepress->get_active_languages())){
         $strings_need_update = $wpdb->get_var("SELECT COUNT(id) FROM {$wpdb->prefix}icl_strings WHERE status <> 1");            
@@ -117,12 +109,6 @@ if($sitepress_settings['existing_content_language_verified']){
                 <tr>
                     <td><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/content-translation.php"><?php _e('Professional translation', 'sitepress')?></a></td>
                     <td>
-                        <?php if (!isset($sitepress_settings['language_pairs']) || empty($sitepress_settings['language_pairs'])): ?>
-                            <p><b><?php _e('Professional translation is not yet enabled because you didn\'t select between which languages to translate.', 'sitepress'); ?></b></p>
-                        <?php else:?>
-                            <p><?php echo(sprintf(__('Translating: %s', 'sitepress'),'<b>'.join(', ', $lpairs).'</b>')); ?></b></p>
-                        <?php endif; ?>                            
-                    
                         <p><b><?php _e('ICanLocalize can translate your site\'s contents professionally.', 'sitepress'); ?></b></p>
                         <p><?php _e('WPML will send the documents that need translation to ICanLocalize and then create the translated posts and pages.','sitepress'); ?></p>
                         

@@ -1099,7 +1099,7 @@ class SitePress{
             $popargs['unload_cb'] =  $popclose_cb;   
         }
                 
-        $lang_status = $this->settings['icl_lang_status'];        
+        $lang_status = (array)$this->settings['icl_lang_status'];        
         $response = '';
         foreach ($lang_status as $lang) {                
             if ($from_lang == $lang['from'] && $to_lang == $lang['to']) {

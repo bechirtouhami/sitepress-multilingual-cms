@@ -7,7 +7,7 @@ function icl_translation_js(){
 function icl_get_request_ids_for_post($post_id, $source_language, $target_languages){
     global $sitepress;
     
-    foreach($target_languages as $target){
+    foreach((array)$target_languages as $target){
         $target_code = $sitepress->get_language_code($target);
         
         $rid[$target] = icl_get_latest_request_id($post_id, $source_language, $target_code);

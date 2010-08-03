@@ -77,7 +77,7 @@
     
     // get languages with translators
     $languages_translated = $languages_not_translated = array();
-    foreach($this->settings['icl_lang_status'] as $k=>$language_pair){
+    foreach((array)$this->settings['icl_lang_status'] as $k=>$language_pair){
         if(!is_numeric($k)) continue;
         if($language_pair['from'] == $selected_language && !empty($language_pair['translators'])){
             $languages_translated[] = $language_pair['to'];
@@ -90,34 +90,37 @@
     foreach($languages_translated as $l){
         $language_names[] = $active_languages[$l]['english_name'];    
     }    
-    $previous_rid = icl_get_request_ids_for_post($post->ID, $selected_language, apply_filters('icl_server_languages_map', $language_names));
-    
+    if(!empty($language_names)){
+        $previous_rid = icl_get_request_ids_for_post($post->ID, $selected_language, apply_filters('icl_server_languages_map', $language_names));
+    }
     if(!empty($previous_rid)){
         foreach($previous_rid as $serverlang => $pr){
-            $_target_lang = $wpdb->get_var("SELECT code FROM {$wpdb->prefix}icl_languages WHERE english_name='".$wpdb->escape(apply_filters('icl_server_languages_map', $serverlang, true))."'");
-            $status = $wpdb->get_var("SELECT status FROM {$wpdb->prefix}icl_core_status WHERE rid={$pr}");
-            $was_translated = $wpdb->get_var("
-                        SELECT cr.status 
-                        FROM {$wpdb->prefix}icl_content_status cs 
-                            JOIN {$wpdb->prefix}icl_core_status cr ON cr.rid = cs.rid 
-                        WHERE 
-                            
-                            cr.origin ='{$selected_language}'
-                            AND target = '{$_target_lang}'
-                            AND cs.nid = {$post->ID} 
-                            AND cr.status = ".CMS_TARGET_LANGUAGE_DONE."
-                        LIMIT 1");
-            if($was_translated){
-                $langs_done[apply_filters('icl_server_languages_map', $serverlang, true)] = 1;
-            }         
-            if(!is_null($status) && $status != CMS_TARGET_LANGUAGE_DONE){
-                // translation is still in progress for one or more languages.
-                $langs_in_progress[apply_filters('icl_server_languages_map', $serverlang, true)] = 1;
-            }
-            
-            // needs update ?
-            if($wpdb->get_var("SELECT n.md5<>c.md5 FROM {$wpdb->prefix}icl_node n JOIN {$wpdb->prefix}icl_content_status c ON n.nid = c.nid WHERE n.nid={$post->ID} AND c.rid={$pr}")){
-                $langs_need_update[apply_filters('icl_server_languages_map', $serverlang, true)] = 1;
+            if(!empty($pr)){
+                $_target_lang = $wpdb->get_var("SELECT code FROM {$wpdb->prefix}icl_languages WHERE english_name='".$wpdb->escape(apply_filters('icl_server_languages_map', $serverlang, true))."'");
+                $status = $wpdb->get_var("SELECT status FROM {$wpdb->prefix}icl_core_status WHERE rid={$pr}");
+                $was_translated = $wpdb->get_var("
+                            SELECT cr.status 
+                            FROM {$wpdb->prefix}icl_content_status cs 
+                                JOIN {$wpdb->prefix}icl_core_status cr ON cr.rid = cs.rid 
+                            WHERE 
+                                
+                                cr.origin ='{$selected_language}'
+                                AND target = '{$_target_lang}'
+                                AND cs.nid = {$post->ID} 
+                                AND cr.status = ".CMS_TARGET_LANGUAGE_DONE."
+                            LIMIT 1");
+                if($was_translated){
+                    $langs_done[apply_filters('icl_server_languages_map', $serverlang, true)] = 1;
+                }         
+                if(!is_null($status) && $status != CMS_TARGET_LANGUAGE_DONE){
+                    // translation is still in progress for one or more languages.
+                    $langs_in_progress[apply_filters('icl_server_languages_map', $serverlang, true)] = 1;
+                }
+                
+                // needs update ?
+                if($wpdb->get_var("SELECT n.md5<>c.md5 FROM {$wpdb->prefix}icl_node n JOIN {$wpdb->prefix}icl_content_status c ON n.nid = c.nid WHERE n.nid={$post->ID} AND c.rid={$pr}")){
+                    $langs_need_update[apply_filters('icl_server_languages_map', $serverlang, true)] = 1;
+                }
             }
         }        
     }

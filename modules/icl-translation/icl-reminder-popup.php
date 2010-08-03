@@ -91,7 +91,7 @@
             $translation_languages[0] = $buff;
             unset($buff);
         }
-        foreach($translation_languages as $lpair){
+        foreach((array)$translation_languages as $lpair){
             if($lpair['attr']['from_language_name'] == $lang_server[$from_lang] && $lpair['attr']['to_language_name'] == $lang_server[$to_lang]){
                 $lang_pair_id = $lpair['attr']['id']; 
             }    

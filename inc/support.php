@@ -114,7 +114,7 @@ class SitePress_Support {
 			return '<a href="admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/support.php&amp;subscription=' . $var['code'] . '&amp;support=1">';
 		}
 		global $sitepress;
-		return $sitepress->create_icl_popup_link(ICL_API_ENDPOINT . '/' . $url . '&amp;support=1', 'ICanLocalize', array('class'=>$class, 'id'=>$id));
+		return $sitepress->create_icl_popup_link(ICL_API_ENDPOINT . '/' . $url . '&amp;support=1', array('title'=>'ICanLocalize', 'class'=>$class, 'id'=>$id));
 	}
 
 	function thickbox2($url, $class = null, $id = null) {
