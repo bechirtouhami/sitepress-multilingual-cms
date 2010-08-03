@@ -36,9 +36,8 @@
                 $user['affiliate_key'] = ICL_AFFILIATE_KEY;
             }
             $user['interview_translators'] = $this->settings['interview_translators'];
-            $user['project_kind'] = $this->settings['website_kind'];
+            $user['project_kind'] = 2;
             $user['pickup_type'] = intval($this->settings['translation_pickup_method']);
-            $user['create_by_cms'] = 2;
             $notifications = 0;
             if ( $this->settings['icl_notify_complete']){
                 $notifications += 1;
