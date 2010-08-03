@@ -7,11 +7,14 @@ function icl_upgrade_1_7_9(){
     }
     define('icl_upgrade_1_7_9_runonce', true);
     
-    // if the table is missing, call the plugin activation routine
+    // if the tables are missing, call the plugin activation routine
     $table_name = $wpdb->prefix.'icl_translation_status';
     if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
         icl_sitepress_activate();
     }
+    
+    $wpdb->query("ALTER TABLE `{$wpdb->prefix}icl_translations` CHANGE `element_type` `element_type` VARCHAR( 32 ) NOT NULL DEFAULT 'post_post'");
+    $wpdb->query("ALTER TABLE `{$wpdb->prefix}icl_translations` CHANGE `element_id` `element_id` BIGINT( 20 ) NULL DEFAULT NULL ");
     
     // if pro translation tables exist
     $table_name = $wpdb->prefix.'icl_node';

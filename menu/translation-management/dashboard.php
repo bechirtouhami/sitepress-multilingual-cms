@@ -63,6 +63,12 @@ $icl_dashboard_settings = $sitepress_settings['dashboard'];
 $icl_translation_filter['limit_no'] = 5; // replace with 20
 $icl_documents = $iclTranslationManagement->get_documents($icl_translation_filter);
 $icl_translators = $iclTranslationManagement->get_blog_translators();
+
+if(!empty($iclTranslationManagement->dashboard_select)){
+    $icl_selected_posts = (array)$iclTranslationManagement->dashboard_select['post'];
+    $icl_selected_languages = (array)$iclTranslationManagement->dashboard_select['translate_to'];
+    $icl_selected_translators = (array)$iclTranslationManagement->dashboard_select['translator'];
+}
 ?>
 
 
@@ -157,6 +163,7 @@ $icl_translators = $iclTranslationManagement->get_blog_translators();
     
     <form method="post">
     <input type="hidden" name="icl_tm_action" value="send_jobs" />
+    <input type="hidden" name="translate_from" value="<?php echo $icl_translation_filter['from_lang'] ?>" />
     <table class="widefat fixed" id="icl-translation-dashboard" cellspacing="0">
         <thead>
         <tr>
@@ -217,7 +224,8 @@ $icl_translators = $iclTranslationManagement->get_blog_translators();
             <?php foreach($icl_documents as $doc): $oddcolumn=!$oddcolumn; ?>
             <tr<?php if($oddcolumn): ?> class="alternate"<?php endif;?>>
                 <td scope="col">
-                    <input type="checkbox" value="<?php echo $doc->post_id ?>" name="post[]" <?php if(isset($_GET['post_id'])) echo 'checked="checked"'?> />                    
+                    <input type="checkbox" value="<?php echo $doc->post_id ?>" name="post[]" <?php 
+                        if(isset($_GET['post_id']) || (is_array($icl_selected_posts) && in_array($doc->post_id, $icl_selected_posts))) echo 'checked="checked"'?> />                    
                 </td>
                 <td scope="col" class="post-title column-title">
                     <a href="<?php echo get_edit_post_link($doc->post_id) ?>"><?php echo $doc->post_title ?></a>
@@ -354,13 +362,16 @@ $icl_translators = $iclTranslationManagement->get_blog_translators();
                         if($lang['code'] == $icl_translation_filter['from_lang']) continue;
                     ?>
                     <li>
-                        <label><input type="checkbox" name="translate_to[<?php echo $lang['code'] ?>]" value="1" />
+                        <label><input type="checkbox" name="translate_to[<?php echo $lang['code'] ?>]" value="1" 
+                            <?php if(isset($icl_selected_languages[$lang['code']])):?>checked="checked"<?php endif;?> />
                             &nbsp;<?php printf(__('Translate to %s', 'sitepress'),$lang['display_name'])?></label>
                         - <label><?php _e('Use translator', 'sitepress')?>
                         <select name="translator[<?php echo $lang['code'] ?>]">
                             <option value="0"><?php _e('First available (Local)', 'sitepress')?></option>
                             <?php foreach($icl_translators as $translator): if($translator->language_pairs[$icl_translation_filter['from_lang']][$lang['code']]):?>
-                            <option value="<?php echo $translator->ID ?>"><?php echo esc_html($translator->display_name) . ' (' . __('Local', 'sitepress') . ')'?></option>                            
+                            <option value="<?php echo $translator->ID ?>"
+                            <?php if(is_array($icl_selected_translators) && $icl_selected_translators[$lang['code']]==$translator->ID):?>selected="selected"<?php endif?>
+                            ><?php echo esc_html($translator->display_name) . ' (' . __('Local', 'sitepress') . ')'?></option>                            
                             <?php endif; endforeach;?>
                         </select>                        
                         </label>
@@ -368,7 +379,8 @@ $icl_translators = $iclTranslationManagement->get_blog_translators();
                     </li>
                     <?php endforeach; ?>
                     </ul>
-                    <input id="icl_tm_jobs_submit" class="button-primary" type="submit" value="<?php _e('Translate documents', 'sitepress') ?>" disabled="disabled" />
+                    <input id="icl_tm_jobs_submit" class="button-primary" type="submit" value="<?php _e('Translate documents', 'sitepress') ?>" 
+                        <?php if(empty($icl_selected_languages) && empty($icl_selected_posts)):?>disabled="disabled" <?php endif; ?> />
                 </td>
             </tr>
         </tbody>

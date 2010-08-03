@@ -120,6 +120,43 @@ function icl_sitepress_activate(){
         mysql_query($sql);
     } 
     
+    // translation jobs
+    $table_name = $wpdb->prefix.'icl_translate_job';
+    if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
+        $sql = "
+            CREATE TABLE `{$table_name}` (
+            `job_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+            `rid` BIGINT UNSIGNED NOT NULL ,
+            `translator_id` INT UNSIGNED NOT NULL ,
+            `translated` TINYINT UNSIGNED NOT NULL ,
+            `manager_id` INT UNSIGNED NOT NULL ,
+            INDEX ( `rid` , `translator_id` )
+            ) ENGINE = MYISAM ;    
+        ";
+        mysql_query($sql);
+    }
+    
+    // translate table
+    $table_name = $wpdb->prefix.'icl_translate';
+    if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
+            $sql = "
+            CREATE TABLE `{$table_name}` (
+            `tid` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+            `job_id` BIGINT UNSIGNED NOT NULL ,
+            `content_id` BIGINT UNSIGNED NOT NULL ,
+            `type` VARCHAR( 16 ) NOT NULL ,
+            `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+            `field_type` VARCHAR( 16 ) NOT NULL ,
+            `field_format` VARCHAR( 16 ) NOT NULL ,
+            `field_translate` TINYINT NOT NULL ,
+            `field_data` TEXT NOT NULL ,
+            `field_data_translated` TEXT NOT NULL ,
+            `field_finished` TINYINT NOT NULL ,
+            INDEX ( `job_id` )
+            ) ENGINE = MYISAM ;
+        ";
+        mysql_query($sql);
+    }
     
     // languages locale file names
     $table_name = $wpdb->prefix.'icl_locale_map';

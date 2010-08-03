@@ -146,7 +146,12 @@ class iclNavMenu{
         if( !isset( $_REQUEST['menu'] ) && isset($_GET['lang']) && $nav_menu_recently_edited_lang->language_code != $_GET['lang']){            
             // if no menu is specified and the language is set override nav_menu_recently_edited
             $nav_menu_selected_id = $this->_get_first_menu($_GET['lang']);                            
-            update_user_option(get_current_user_id(), 'nav_menu_recently_edited', $nav_menu_selected_id);
+            if($nav_menu_selected_id){
+                update_user_option(get_current_user_id(), 'nav_menu_recently_edited', $nav_menu_selected_id);    
+            }else{
+                $_REQUEST['menu'] = 0;
+            }
+            
         }elseif( !isset( $_REQUEST['menu'] ) && !isset($_GET['lang']) && $nav_menu_recently_edited_lang->language_code != $sitepress->get_default_language() && $_POST['action']!='update'){
             // if no menu is specified, no language is set, override nav_menu_recently_edited if its language is different than default           
             $nav_menu_selected_id = $this->_get_first_menu($sitepress->get_default_language());    
@@ -170,7 +175,7 @@ class iclNavMenu{
                 $this->current_menu['language'] = $sitepress->get_default_language();   
             }            
             $this->current_menu['translations'] = array();
-        }   
+        }
     }
     
     function _load_menu($menu_id){
@@ -243,7 +248,7 @@ class iclNavMenu{
     }
     
     function nav_menu_language_controls(){
-        global $sitepress;
+        global $sitepress, $wpdb;
         if($this->current_menu['language'] != $sitepress->get_default_language()){
             $menus_wout_translation = $this->get_menus_without_translation($this->current_menu['language']);    
         }
@@ -265,8 +270,9 @@ class iclNavMenu{
                 if($lang['code'] == $this->current_menu['language']) continue;
                 if(isset($this->current_menu['translations'][$lang['code']])){
                     $lang_suff = $lang['code'] != $sitepress->get_default_language() ? '&lang=' . $lang['code'] :  '';
+                    $menu_id = $wpdb->get_var($wpdb->prepare("SELECT term_id FROM {$wpdb->term_taxonomy} WHERE term_taxonomy_id=%d",$this->current_menu['translations'][$lang['code']]->element_id));
                     $tr_link = '<a style="text-decoration:none" title="'. esc_attr(__('edit translation', 'sitepress')).'" href="'.admin_url('nav-menus.php').
-                        '?menu='.$this->current_menu['translations'][$lang['code']]->element_id. $lang_suff .'">'.
+                        '?menu='.$menu_id. $lang_suff .'">'.
                         $lang['display_name'] . '&nbsp;<img src="'.ICL_PLUGIN_URL.'/res/img/edit_translation.png" alt="'. esc_attr(__('edit', 'sitepress')).
                         '" width="12" height="12" /></a>';
                 }else{
@@ -404,6 +410,15 @@ class iclNavMenu{
     function languages_menu($echo = true){
         global $sitepress;
         $langs = $this->get_menus_by_language();
+        // include empty languages
+        foreach($sitepress->get_active_languages() as $lang){
+            if(!isset($langs[$lang['code']])){
+                $langs[$lang['code']] = new stdClass();
+                $langs[$lang['code']]->language_name = $lang['display_name'];
+                $langs[$lang['code']]->lang = $lang['code'];
+                $langs[$lang['code']]->c = 0;
+            }            
+        }
         $url = admin_url('nav-menus.php');
         foreach($langs as $l){
             $class = $l->lang == $this->current_lang ? ' class="current"' : '';
@@ -480,7 +495,7 @@ class iclNavMenu{
     }
         
     function theme_mod_nav_menu_locations($val){        
-        global $sitepress, $wpdb;
+        global $sitepress;
         if($sitepress->get_default_language() != $this->current_lang){
             if(!empty($val)){
                 foreach($val as $k=>$v){
@@ -492,7 +507,7 @@ class iclNavMenu{
     }
     
     function pre_update_theme_mods_theme($val){
-        global $sitepress, $wpdb;
+        global $sitepress;
         if(!empty($val['nav_menu_locations'])){
             foreach($val['nav_menu_locations'] as $k=>$v){
                 if(!$v && $this->current_lang != $sitepress->get_default_language()){

@@ -379,6 +379,9 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
         
         $note = get_post_meta($post_id, '_icl_translator_note', true);
         
+        print_r($data);
+        exit;
+        
         $xml = $iclq->build_cms_request_xml($data, $orig_lang_for_server, $previous_rid_for_target);
         
         $res = $iclq->send_request($xml, $post->post_title, $target_for_server, $orig_lang_for_server, $permlink, $note);
