@@ -5124,6 +5124,21 @@ class SitePress{
         return $icl_post_types;        
     }
     
+    function get_translatable_taxonomies($include_not_synced = false, $object_type = 'post'){
+        global $wp_taxonomies;
+        $t_taxonomies = array();
+        if($include_not_synced){
+            if(in_array($object_type, $wp_taxonomies['post_tag']->object_type)) $t_taxonomies[] = 'post_tag';    
+            if(in_array($object_type, $wp_taxonomies['category']->object_type)) $t_taxonomies[] = 'category';            
+        }
+        foreach($wp_taxonomies as $taxonomy_name => $taxonomy){
+            if(in_array($object_type, $taxonomy->object_type) && !empty($this->settings['taxonomies_sync_option'][$taxonomy_name])){
+                $t_taxonomies[] = $taxonomy_name;    
+            }    
+        }    
+        return $t_taxonomies;
+    }
+    
     function is_translated_taxonomy($tax){
         switch($tax){
             case 'category':

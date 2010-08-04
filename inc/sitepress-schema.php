@@ -128,7 +128,7 @@ function icl_sitepress_activate(){
             `job_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
             `rid` BIGINT UNSIGNED NOT NULL ,
             `translator_id` INT UNSIGNED NOT NULL ,
-            `translated` TINYINT UNSIGNED NOT NULL ,
+            `translated` TINYINT UNSIGNED NOT NULL DEFAULT 0,
             `manager_id` INT UNSIGNED NOT NULL ,
             INDEX ( `rid` , `translator_id` )
             ) ENGINE = MYISAM ;    
@@ -151,7 +151,7 @@ function icl_sitepress_activate(){
             `field_translate` TINYINT NOT NULL ,
             `field_data` TEXT NOT NULL ,
             `field_data_translated` TEXT NOT NULL ,
-            `field_finished` TINYINT NOT NULL ,
+            `field_finished` TINYINT NOT NULL DEFAULT 0,
             INDEX ( `job_id` )
             ) ENGINE = MYISAM ;
         ";
