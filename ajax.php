@@ -960,7 +960,9 @@ if (function_exists('wpml_register_admin_strings')) {
         $this->save_settings($iclsettings);
         echo '1|';
         break;
-        
+    
+    break;    
+                
     default:
         do_action('icl_ajx_custom_call', $_REQUEST['icl_ajx_action'], $_REQUEST);
 }    

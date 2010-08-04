@@ -258,7 +258,10 @@ class SitePress{
                 $iclNavMenu = new iclNavMenu;
             }
             
-            //$iclTranslationManagement = new TranslationManagement;
+            if(is_admin()){
+                global $iclTranslationManagement;
+                $iclTranslationManagement = new TranslationManagement;
+            }
                                               
         } //end if the initial language is set - existing_content_language_verified
         
@@ -1817,6 +1820,7 @@ class SitePress{
         }
     }
     
+
     function set_element_language_details($el_id, $el_type='post_post', $trid, $language_code, $src_language_code = null){
         global $wpdb;
         
@@ -1828,18 +1832,21 @@ class SitePress{
                 WHERE   trid = '{$trid}' 
                     AND language_code = '{$language_code}' 
                     AND element_id <> '{$el_id}'
-            ");            
+            "); 
+                       
             if($translation_id){
                 $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id={$translation_id}");
                 $this->icl_translations_cache->clear();
             }
             
-            if($translation_id = $wpdb->get_var("SELECT translation_id FROM {$wpdb->prefix}icl_translations WHERE element_type='{$el_type}' AND element_id='{$el_id}' AND trid='{$trid}'")){
+            if($translation_id = $wpdb->get_var("SELECT translation_id FROM {$wpdb->prefix}icl_translations 
+                WHERE element_type='{$el_type}' AND element_id='{$el_id}' AND trid='{$trid}' AND element_id IS NOT NULL")){
                 //case of language change
                 $wpdb->update($wpdb->prefix.'icl_translations', 
                     array('language_code'=>$language_code), 
                     array('translation_id'=>$translation_id));                
-            } elseif($existing_trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_type='{$el_type}' AND element_id='{$el_id}'")){                
+            } elseif($translation_id = $wpdb->get_var("SELECT translation_id FROM {$wpdb->prefix}icl_translations 
+                WHERE element_type='{$el_type}' AND element_id='{$el_id}' AND element_id IS NOT NULL ")){                
                 //case of changing the "translation of"
                 $wpdb->update($wpdb->prefix.'icl_translations', 
                     array('trid'=>$trid, 'language_code'=>$language_code, 'source_language_code'=>$src_language_code), 
@@ -1849,36 +1856,42 @@ class SitePress{
                 //get source
                 $src_language_code = $wpdb->get_var("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE trid={$trid} AND source_language_code IS NULL"); 
                 // case of adding a new language                
-                $wpdb->insert($wpdb->prefix.'icl_translations', 
-                    array(
+                $new = array(
                         'trid'=>$trid, 
                         'element_type'=>$el_type, 
-                        'element_id'=>$el_id, 
                         'language_code'=>$language_code,
                         'source_language_code'=>$src_language_code
-                        )
-                );
+                        );
+                if($el_id){
+                    $new['element_id'] = $el_id;    
+                }
+                $wpdb->insert($wpdb->prefix.'icl_translations', $new);
+                $translation_id = $wpdb->insert_id;
                 $this->icl_translations_cache->clear();
                 
             }
         }else{ // it's a new element or we are removing it from a trid
-            if($translation_id = $wpdb->get_var("SELECT translation_id FROM {$wpdb->prefix}icl_translations WHERE element_type='{$el_type}' AND element_id='{$el_id}'")){
+            if($translation_id = $wpdb->get_var("SELECT translation_id FROM {$wpdb->prefix}icl_translations WHERE element_type='{$el_type}' AND element_id='{$el_id}' AND element_id IS NOT NULL")){
                 $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id={$translation_id}");    
                 $this->icl_translations_cache->clear();
             } 
         
             $trid = 1 + $wpdb->get_var("SELECT MAX(trid) FROM {$wpdb->prefix}icl_translations");
-            $wpdb->insert($wpdb->prefix.'icl_translations', 
-                array(
-                    'trid'=>$trid,
+            
+            $new = array(
+                    'trid'=>$trid, 
                     'element_type'=>$el_type, 
-                    'element_id'=>$el_id,
-                    'language_code'=>$language_code
-                )
+                    'language_code'=>$language_code                    
             );
+            if($el_id){
+                $new['element_id'] = $el_id;    
+            }
+            
+            $wpdb->insert($wpdb->prefix.'icl_translations', $new);
+            $translation_id = $wpdb->insert_id;
         }
-        return $trid;
-    }
+        return $translation_id;
+    }    
     
     function delete_element_translation($trid, $el_type, $language_code = false){
         global $wpdb;
@@ -2296,7 +2309,7 @@ class SitePress{
             $where_add = " AND t.trid='{$trid}'"; 
         }   
         $query = "
-            SELECT t.language_code, t.element_id, t.source_language_code IS NULL AS original {$sel_add}
+            SELECT t.translation_id, t.language_code, t.element_id, t.source_language_code IS NULL AS original {$sel_add}
             FROM {$wpdb->prefix}icl_translations t
                  {$join_add}                 
             WHERE 1 {$where_add}
@@ -3640,6 +3653,17 @@ class SitePress{
         
         return $flag;
     }
+    
+    function get_flag_url($code){
+        $flag = $this->get_flag($code);
+        if($flag->from_template){
+            $flag_url = get_bloginfo('template_directory') . '/images/flags/'.$flag->flag;
+        }else{
+            $flag_url = ICL_PLUGIN_URL . '/res/flags/'.$flag->flag;
+        }                 
+        
+        return $flag_url;   
+    } 
                       
     function language_selector(){        
         if(is_single()){

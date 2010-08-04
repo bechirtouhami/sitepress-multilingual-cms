@@ -5,7 +5,7 @@ Plugin URI: http://wpml.org/
 Description: WPML Multilingual CMS. <a href="http://wpml.org">Documentation</a>.
 Author: OnTheGoSystems
 Author URI: http://www.onthegosystems.com
-Version: 1.8.1.1
+Version: 1.9.0
 */
 
 /*
@@ -26,7 +26,7 @@ Version: 1.8.1.1
 */
 
 if(defined('ICL_SITEPRESS_VERSION')) return;
-define('ICL_SITEPRESS_VERSION', '1.8.1.1');
+define('ICL_SITEPRESS_VERSION', '1.9.0');
 define('ICL_PLUGIN_PATH', dirname(__FILE__));
 define('ICL_PLUGIN_FOLDER', basename(ICL_PLUGIN_PATH));
 
@@ -73,7 +73,6 @@ if(defined('ICL_DEBUG_DEVELOPMENT') && ICL_DEBUG_DEVELOPMENT){
 require ICL_PLUGIN_PATH . '/inc/pre-wp3-compatibility.php';
 require ICL_PLUGIN_PATH . '/inc/sitepress-schema.php';
 require ICL_PLUGIN_PATH . '/inc/template-functions.php';
-//require ICL_PLUGIN_PATH . '/inc/translation-management/translation-management.class.php';
 require ICL_PLUGIN_PATH . '/inc/icl-recent-comments-widget.php';
 require ICL_PLUGIN_PATH . '/sitepress.class.php';
 require ICL_PLUGIN_PATH . '/inc/functions.php';
@@ -85,6 +84,9 @@ require ICL_PLUGIN_PATH . '/inc/compatibility-packages/wpml-package.class.php';
 require ICL_PLUGIN_PATH . '/inc/affiliate-info.php';
 require ICL_PLUGIN_PATH . '/inc/language-switcher.php';
 require ICL_PLUGIN_PATH . '/inc/import-xml.php';
+if(is_admin()){
+    require ICL_PLUGIN_PATH . '/inc/translation-management/translation-management.class.php';
+}
 
 
 

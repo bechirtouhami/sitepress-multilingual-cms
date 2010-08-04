@@ -688,7 +688,7 @@ class IclCommentsTranslation{
         if(!$lang){
             $lang = $this->user_language;
         }
-        $trid = $sitepress->set_element_language_details($comment_id, 'comment', null, $lang);        
+        $translation_id = $sitepress->set_element_language_details($comment_id, 'comment', null, $lang);        
     }
     
     function send_comment_to_translation($comment_id, $to_language){

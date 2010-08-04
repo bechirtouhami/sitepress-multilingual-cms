@@ -98,6 +98,66 @@ function icl_sitepress_activate(){
         mysql_query($sql);
     } 
 
+    // translation_status table
+    $table_name = $wpdb->prefix.'icl_translation_status';
+    if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
+        $sql = "
+            CREATE TABLE `{$table_name}` (
+             `rid` bigint(20) NOT NULL AUTO_INCREMENT,
+             `translation_id` bigint(20) NOT NULL,
+             `status` tinyint(4) NOT NULL,
+             `translator_id` bigint(20) NOT NULL,
+             `needs_update` tinyint(4) NOT NULL,
+             `md5` varchar(32) NOT NULL,
+             `translation_service` varchar(16) NOT NULL,
+             `translation_package` text NOT NULL,
+             `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+             `links_fixed` tinyint(4) NOT NULL DEFAULT 0,
+             PRIMARY KEY (`rid`),
+             UNIQUE KEY `translation_id` (`translation_id`)
+            ) ENGINE=MyISAM {$charset_collate}    
+        ";
+        mysql_query($sql);
+    } 
+    
+    // translation jobs
+    $table_name = $wpdb->prefix.'icl_translate_job';
+    if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
+        $sql = "
+            CREATE TABLE `{$table_name}` (
+            `job_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+            `rid` BIGINT UNSIGNED NOT NULL ,
+            `translator_id` INT UNSIGNED NOT NULL ,
+            `translated` TINYINT UNSIGNED NOT NULL ,
+            `manager_id` INT UNSIGNED NOT NULL ,
+            INDEX ( `rid` , `translator_id` )
+            ) ENGINE = MYISAM ;    
+        ";
+        mysql_query($sql);
+    }
+    
+    // translate table
+    $table_name = $wpdb->prefix.'icl_translate';
+    if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
+            $sql = "
+            CREATE TABLE `{$table_name}` (
+            `tid` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+            `job_id` BIGINT UNSIGNED NOT NULL ,
+            `content_id` BIGINT UNSIGNED NOT NULL ,
+            `type` VARCHAR( 16 ) NOT NULL ,
+            `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+            `field_type` VARCHAR( 16 ) NOT NULL ,
+            `field_format` VARCHAR( 16 ) NOT NULL ,
+            `field_translate` TINYINT NOT NULL ,
+            `field_data` TEXT NOT NULL ,
+            `field_data_translated` TEXT NOT NULL ,
+            `field_finished` TINYINT NOT NULL ,
+            INDEX ( `job_id` )
+            ) ENGINE = MYISAM ;
+        ";
+        mysql_query($sql);
+    }
+        
     // languages locale file names
     $table_name = $wpdb->prefix.'icl_locale_map';
     if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
