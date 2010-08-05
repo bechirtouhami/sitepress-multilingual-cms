@@ -719,6 +719,8 @@ switch($_REQUEST['icl_ajx_action']){
             } else {
                 echo '0|';
             }
+        }else{
+            echo '0|';
         }
             
         break;
