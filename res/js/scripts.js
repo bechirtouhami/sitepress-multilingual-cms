@@ -66,6 +66,7 @@ var icl_ajxloaderimg = '<img src="'+icl_ajxloaderimg_src+'" alt="loading" width=
 var iclHaltSave = false; // use this for multiple 'submit events'
 var iclSaveForm_success_cb = new Array();
 function iclSaveForm(){
+    
     if(iclHaltSave){
         return false;
     }
@@ -79,7 +80,7 @@ function iclSaveForm(){
         data: "icl_ajx_action="+jQuery(this).attr('name')+"&"+jQuery(this).serialize(),
         success: function(msg){
             spl = msg.split('|');
-            if(spl[0]=='1'){
+            if(parseInt(spl[0]) == 1){
                 fadeInAjxResp('#'+ajx_resp, icl_ajx_saved);                                         
                 for(i=0;i<iclSaveForm_success_cb.length;i++){
                     iclSaveForm_success_cb[i](jQuery('form[name="'+formname+'"]'), spl);    
