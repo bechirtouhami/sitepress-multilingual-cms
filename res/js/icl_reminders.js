@@ -38,6 +38,7 @@ function show_messages() {
         cache: false,
         success: function(msg){
             spl = msg.split('|');
+            console.log(spl);
             if(spl[0]!='0'){
                 jQuery('#icl_show_text').html(spl[0]);
                 
@@ -45,8 +46,10 @@ function show_messages() {
                 jQuery('#icl_reminder_message').fadeIn();
                 icl_tb_init('a.icl_thickbox');
                 icl_tb_set_size('a.icl_thickbox');
+                alert('SHOW REMONDER BOX');
             } else {
                 jQuery('#icl_reminder_message').fadeOut();
+                alert('DONT SHOW REMONDER BOX');
             }  
         }
     }); 
