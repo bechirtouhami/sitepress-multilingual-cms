@@ -1446,9 +1446,8 @@ class SitePress{
         if (is_admin()) {
             wp_enqueue_script('thickbox');
             wp_enqueue_script( 'theme-preview' );
-            if($this->settings['site_id'] && $this->settings['access_key'] && empty($this->settings['icl_anonymous_user'])){
-                wp_enqueue_script('sitepress-icl_reminders', ICL_PLUGIN_URL . '/res/js/icl_reminders.js', array(), ICL_SITEPRESS_VERSION);
-            }
+            wp_enqueue_script('sitepress-icl_reminders', ICL_PLUGIN_URL . '/res/js/icl_reminders.js', array(), ICL_SITEPRESS_VERSION);
+            
         }
 
         if('content-translation' == $page_basename) {        

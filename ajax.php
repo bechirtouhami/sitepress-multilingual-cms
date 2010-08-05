@@ -670,53 +670,57 @@ switch($_REQUEST['icl_ajx_action']){
         break;
     case 'icl_messages':
         $iclsettings = $this->get_settings();
-        $iclq = new ICanLocalizeQuery($iclsettings['site_id'], $iclsettings['access_key']);       
-
-        $output = '';
-
-        if (isset($_POST['refresh']) && $_POST['refresh'] == 1) {
-            $reminders = $iclq->get_reminders(true);
-        } else {
-            $reminders = $iclq->get_reminders();
-        }
         
-        $count = 0;
-        foreach($reminders as $r) {
-            $message = $r->message;
-            $message = str_replace('[', '<', $message);
-            $message = str_replace(']', '>', $message);
-            $url = $r->url;
-            $anchor_pos = strpos($url, '#');
-            if ($anchor_pos !== false) {
-                $url = substr($url, 0, $anchor_pos);
-            }
-            $output .= $message . ' - ' . $this->create_icl_popup_link(ICL_API_ENDPOINT. $url . '&message_id=' . $r->id. '&TB_iframe=true') . __('View', 'sitepress') . '</a>';
+        if($iclsettings['site_id'] && $iclsettings['access_key'] && empty($iclsettings['icl_anonymous_user'])){
+            $iclq = new ICanLocalizeQuery($iclsettings['site_id'], $iclsettings['access_key']);       
 
-            if ($r->can_delete == '1') {
-                $on_click = 'dismiss_message(' . $r->id . ');';
-                
-                $output .= ' - <a href="#" onclick="'. $on_click . '">Dismiss</a>';
-            }
-            $output .= '<br />';
-            
-            $count += 1;
-            if ($count > 5) {
-                break;
-            }
-            
-        }
-        
-        if ($output != '') {
-            $reminder_count = sizeof($reminders);
-            if ($reminder_count == 1){
-                $reminder_text = __('Show 1 reminder', 'sitepress');
+            $output = '';
+
+            if (isset($_POST['refresh']) && $_POST['refresh'] == 1) {
+                $reminders = $iclq->get_reminders(true);
             } else {
-                $reminder_text = sprintf(__('Show %d reminders', 'sitepress'), $reminder_count);
+                $reminders = $iclq->get_reminders();
             }
-            echo $reminder_text.'|'.$output;
-        } else {
-            echo '0|';
+            
+            $count = 0;
+            foreach($reminders as $r) {
+                $message = $r->message;
+                $message = str_replace('[', '<', $message);
+                $message = str_replace(']', '>', $message);
+                $url = $r->url;
+                $anchor_pos = strpos($url, '#');
+                if ($anchor_pos !== false) {
+                    $url = substr($url, 0, $anchor_pos);
+                }
+                $output .= $message . ' - ' . $this->create_icl_popup_link(ICL_API_ENDPOINT. $url . '&message_id=' . $r->id. '&TB_iframe=true') . __('View', 'sitepress') . '</a>';
+
+                if ($r->can_delete == '1') {
+                    $on_click = 'dismiss_message(' . $r->id . ');';
+                    
+                    $output .= ' - <a href="#" onclick="'. $on_click . '">Dismiss</a>';
+                }
+                $output .= '<br />';
+                
+                $count += 1;
+                if ($count > 5) {
+                    break;
+                }
+                
+            }
+            
+            if ($output != '') {
+                $reminder_count = sizeof($reminders);
+                if ($reminder_count == 1){
+                    $reminder_text = __('Show 1 reminder', 'sitepress');
+                } else {
+                    $reminder_text = sprintf(__('Show %d reminders', 'sitepress'), $reminder_count);
+                }
+                echo $reminder_text.'|'.$output;
+            } else {
+                echo '0|';
+            }
         }
+            
         break;
 
     case 'icl_delete_message':
