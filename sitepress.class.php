@@ -1043,6 +1043,9 @@ class SitePress{
             
         }
         
+        // reset $this->settings['icl_lang_status']
+        $this->settings['icl_lang_status'] = array();
+        
         if(isset($res['translation_languages']['translation_language'])){
             $translation_languages = $res['translation_languages']['translation_language'];
             if(!isset($translation_languages[0])){
@@ -1081,6 +1084,7 @@ class SitePress{
         
         if(isset($res['client']['attr'])){
             $iclsettings['icl_balance'] = $res['client']['attr']['balance'];
+            $iclsettings['icl_anonymous_user'] = $res['client']['attr']['anon'];
         }
         if(isset($res['html_status']['value'])){
             $iclsettings['icl_html_status'] = html_entity_decode($res['html_status']['value']);
@@ -1445,7 +1449,6 @@ class SitePress{
         if (is_admin()) {
             wp_enqueue_script('thickbox');
             wp_enqueue_script( 'theme-preview' );
-            
             wp_enqueue_script('sitepress-icl_reminders', ICL_PLUGIN_URL . '/res/js/icl_reminders.js', array(), ICL_SITEPRESS_VERSION);
         }
 

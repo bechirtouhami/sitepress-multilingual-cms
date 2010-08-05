@@ -36,8 +36,8 @@ class SitePress_Support {
 			}
 		}
 		
-		if (isset($_GET['page']) && $_GET['page'] == ICL_PLUGIN_FOLDER . '/menu/support.php'){
-			wp_enqueue_script('sitepress-icl_reminders', ICL_PLUGIN_URL . '/res/js/icl_reminders.js', array('jquery'), ICL_SITEPRESS_VERSION);
+		if (isset($_GET['page']) && $_GET['page'] == ICL_PLUGIN_FOLDER . '/menu/support.php'){            
+		    wp_enqueue_script('sitepress-icl_reminders', ICL_PLUGIN_URL . '/res/js/icl_reminders.js', array('jquery'), ICL_SITEPRESS_VERSION);            
 			add_action('icl_support_admin_page', array(&$this, 'admin_page'));
 		}
 	}
