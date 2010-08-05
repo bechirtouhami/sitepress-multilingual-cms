@@ -38,7 +38,7 @@ function show_messages() {
         cache: false,
         success: function(msg){
             spl = msg.split('|');
-            console.log(spl);
+            
             if(spl[0]!='0'){
                 jQuery('#icl_show_text').html(spl[0]);
                 
