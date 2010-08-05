@@ -46,10 +46,10 @@ function show_messages() {
                 jQuery('#icl_reminder_message').fadeIn();
                 icl_tb_init('a.icl_thickbox');
                 icl_tb_set_size('a.icl_thickbox');
-                alert('SHOW REMONDER BOX');
+                alert('SHOW REMINDER BOX');
             } else {
                 jQuery('#icl_reminder_message').fadeOut();
-                alert('DONT SHOW REMONDER BOX');
+                alert('DONT SHOW REMINDER BOX');
             }  
         }
     }); 
