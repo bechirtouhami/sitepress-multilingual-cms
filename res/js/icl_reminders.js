@@ -39,6 +39,8 @@ function show_messages() {
         success: function(msg){
             spl = msg.split('|');
             
+            alert('Comparing ' + spl[0] + '( type ' + typeof(spl[0]) + ')' + ' to \'0\'' + ' --> ');
+            alert(spl[0]!='0');
             if(spl[0]!='0'){
                 jQuery('#icl_show_text').html(spl[0]);
                 
@@ -46,7 +48,8 @@ function show_messages() {
                 jQuery('#icl_reminder_message').fadeIn();
                 icl_tb_init('a.icl_thickbox');
                 icl_tb_set_size('a.icl_thickbox');
-                alert('SHOW REMINDER BOX');
+                alert('SHOW REMINDER BOX');                
+                
             } else {
                 jQuery('#icl_reminder_message').fadeOut();
                 alert('DONT SHOW REMINDER BOX');
