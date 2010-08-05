@@ -714,15 +714,15 @@ switch($_REQUEST['icl_ajx_action']){
                     $reminder_text = __('Show 1 reminder', 'sitepress');
                 } else {
                     $reminder_text = sprintf(__('Show %d reminders', 'sitepress'), $reminder_count);
-                }
-                echo $reminder_text.'|'.$output;
+                }                
+                $resp = array('messages'=>$reminder_count, 'reminder_text' => $reminder_text, 'output'=>$output);
             } else {
-                echo '0|';
+                $resp = array('messages'=>0);
             }
         }else{
-            echo '0|';
+            $resp = array('messages'=>0);
         }
-            
+        echo json_encode($resp);    
         break;
 
     case 'icl_delete_message':
