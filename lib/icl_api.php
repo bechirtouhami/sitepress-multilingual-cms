@@ -386,16 +386,15 @@ class ICanLocalizeQuery{
         }
         
         if (((time() - $last_time) > 10 * 60) || $refresh) {
-            $session_id = $this->get_current_session();
     
-            $request_url = ICL_API_ENDPOINT . '/reminders.xml?session='.$session_id.'&wid=' . $this->site_id;
+            $request_url = ICL_API_ENDPOINT . '/reminders.xml?accesskey='.$this->access_key.'&wid=' . $this->site_id;
     
             $res = $this->_request($request_url, 'GET');        
             if($res['info']['status']['attr']['err_code']=='3'){
                 // not logged in get a new session_id
                 $session_id = $this->get_session_id(FALSE);
         
-                $request_url = ICL_API_ENDPOINT . '/reminders.xml?session='.$session_id.'&wid=' . $this->site_id;
+                $request_url = ICL_API_ENDPOINT . '/reminders.xml?accesskey='.$this->access_key.'&wid=' . $this->site_id;
         
                 $res = $this->_request($request_url, 'GET');
             }
@@ -439,8 +438,7 @@ class ICanLocalizeQuery{
                     }
                 }
                 $last_time = time();
-                $sitepress->save_settings(array('last_icl_reminder_fetch' => $last_time,
-                                                'icl_current_session' => $session_id));
+                $sitepress->save_settings(array('last_icl_reminder_fetch' => $last_time));
             }
         }
 
