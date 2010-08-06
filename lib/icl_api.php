@@ -482,13 +482,12 @@ class ICanLocalizeQuery{
         if ((int)$message_id >= 0) {
             $session_id = $this->get_current_session();
     
-            $request_url = ICL_API_ENDPOINT . '/reminders/' . $message_id . '.xml';
+            $request_url = ICL_API_ENDPOINT . '/reminders/' . $message_id . '.xml?wid='.$this->site_id.'&accesskey=' . $this->access_key;
             
-            $data = array('session' => $session_id,
+            $data = array('session' => $session_id, 'accesskey' => $this->access_key, 
                           '_method' => 'DELETE');
     
             $res = $this->_request($request_url, 'POST', $data);
-            
             if($res['info']['status']['attr']['err_code']=='3'){
                 // not logged in get a new session_id
                 $session_id = $this->get_session_id(FALSE);
