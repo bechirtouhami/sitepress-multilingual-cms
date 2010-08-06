@@ -58,7 +58,7 @@ class AbsoluteLinksPlugin{
             add_filter('pre_update_option_widget_text', array($this,'pre_update_option_widget_text'), 5, 2);
         }
         
-        $path = dirname(substr(__FILE__, strpos(__FILE__,'wp-content')));
+        $path = dirname(substr(__FILE__, strpos(__FILE__, basename(WP_CONTENT_DIR))));
         $path = str_replace('\\','/',$path);
         $this->plugin_url = rtrim(get_option('siteurl'),'/') .'/' . $path;
 
@@ -357,7 +357,7 @@ class AbsoluteLinksPlugin{
         if($int1 || $int2){   
             $url_parts = parse_url(rtrim(get_option('home'),'/').'/');                                                    
             foreach($alp_matches[4] as $k=>$m){
-                if(0===strpos($m,'wp-content')) continue;
+                if(0===strpos($m, basename(WP_CONTENT_DIR))) continue;
                 
                 if($sitepress_settings['language_negotiation_type']==1){
                         $m_orig = $m;
@@ -615,7 +615,7 @@ class AbsoluteLinksPlugin{
         if($int1 || $int2){   
             $url_parts = parse_url(rtrim(get_option('home'),'/').'/');                                                    
             foreach($alp_matches[4] as $k=>$m){
-                if(0===strpos($m,'wp-content')) continue;
+                if(0===strpos($m, basename(WP_CONTENT_DIR))) continue;
                 
                 if($sitepress_settings['language_negotiation_type']==1){
                         $m_orig = $m;

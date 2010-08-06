@@ -752,9 +752,6 @@ class CMSNavigation{
         if(defined('ICL_DONT_LOAD_NAVIGATION_CSS') && ICL_DONT_LOAD_NAVIGATION_CSS){
             return;
         }
-        $path = dirname(substr(__FILE__, strpos(__FILE__,'wp-content')));
-        $path = str_replace('\\','/',$path);
-        $stylesheet = rtrim(get_option('siteurl'),'/') . '/' . $path . '/res'; 
         wp_enqueue_style('cms-navigation-style-base', ICL_PLUGIN_URL . '/modules/cms-navigation/css/cms-navigation-base.css', array(), ICL_SITEPRESS_VERSION, 'screen');            
         wp_enqueue_style('cms-navigation-style', ICL_PLUGIN_URL . '/modules/cms-navigation/css/cms-navigation.css', array(), ICL_SITEPRESS_VERSION, 'screen');            
     }

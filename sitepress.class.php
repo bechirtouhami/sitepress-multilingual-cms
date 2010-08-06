@@ -4218,9 +4218,7 @@ class SitePress{
         
     // Localization
     function plugin_localization(){
-        $plugins_dir = basename(dirname(ICL_PLUGIN_PATH));                      
-        $plugin_dir = basename(ICL_PLUGIN_PATH);            
-        load_plugin_textdomain( 'sitepress', 'wp-content/'.$plugins_dir.'/' . $plugin_dir . '/locale', $plugin_dir . '/locale');
+        load_plugin_textdomain( 'sitepress', false, ICL_PLUGIN_FOLDER . '/locale');
     }
     
     function locale(){

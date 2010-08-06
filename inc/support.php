@@ -138,9 +138,13 @@ class SitePress_Support {
 	}
 
 	function get_subscriptions() {
-		$url = ICL_API_ENDPOINT . '/subscriptions.xml?wid=' . $this->site_id . '&accesskey=' . $this->access_key;
-		$result = $this->request($url);
-		return $result['info']['subscriptions'];
+        $subscriptions = array();
+        if($this->site_id && $this->access_key){
+		    $url = ICL_API_ENDPOINT . '/subscriptions.xml?wid=' . $this->site_id . '&accesskey=' . $this->access_key;
+		    $result = $this->request($url);
+		    $subscriptions = $result['info']['subscriptions'];
+        }
+        return $subscriptions;
 	}
 
 	function get_subscription() {

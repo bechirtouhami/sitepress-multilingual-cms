@@ -57,6 +57,11 @@
                 $this->settings['access_key'] = $iclsettings['access_key'] = $access_key;
                 $iclsettings['language_pairs'][$from_lang][$to_lang] = 1;
                 $this->save_settings($iclsettings);
+            }else{
+                echo '<p class="error" style="padding-left:8px;">';
+                printf(__('WPML did not manage to access the server at ICanLocalize. Please <a%s>contact us</a> for support.', 'sitepress'), ' target="_blank" href="http://www.icanlocalize.com/site/about-us/contact-us/"');
+                echo '</p>';
+                exit;
             }
         }else{
             
