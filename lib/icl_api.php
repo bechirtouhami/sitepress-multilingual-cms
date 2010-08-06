@@ -418,7 +418,7 @@ class ICanLocalizeQuery{
                 }
                 // save the translator status
                 $sitepress->get_icl_translator_status($icl_settings, $website_data);
-                $sitepress->save_settings($iclsettings);
+                $sitepress->save_settings($iclsettings);               
                 
                 // Now add the reminders.
                 $reminders_xml = $res['info']['reminders']['reminder'];

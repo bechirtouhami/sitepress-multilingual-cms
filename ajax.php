@@ -668,7 +668,7 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings['show_translations_flag'] = intval(!$iclsettings['show_translations_flag']);
         $this->save_settings($iclsettings);    
         break;
-    case 'icl_messages':
+    case 'icl_messages': 
         $iclsettings = $this->get_settings();
         
         if($iclsettings['site_id'] && $iclsettings['access_key'] && empty($iclsettings['icl_anonymous_user'])){

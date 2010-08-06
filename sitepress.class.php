@@ -1039,15 +1039,16 @@ class SitePress{
             $res = $icl_query->get_website_details();
             
         }
-
-        // reset $this->settings['icl_lang_status']
-        $this->settings['icl_lang_status'] = array();
         
         if(isset($res['translation_languages']['translation_language'])){
+                
+            // reset $this->settings['icl_lang_status']
+            $iclsettings['icl_lang_status'] = array();
+            
             $translation_languages = $res['translation_languages']['translation_language'];
             if(!isset($translation_languages[0])){
-                $target = $translation_languages;
-                $translation_languages = array(0 => $target);
+                $buf = $translation_languages;
+                $translation_languages = array(0 => $buf);
             }
             foreach($translation_languages as $lang){
                 $translators = $_tr = array();
@@ -1065,16 +1066,17 @@ class SitePress{
                         $translators[] = array('id'=>$t['attr']['id'], 'nickname'=>$t['attr']['nickname'], 'contract_id' => $t['attr']['contract_id']);
                     }                    
                 }                
-                $target[] = array('from' => $this->get_language_code(apply_filters('icl_server_languages_map', $lang['attr']['from_language_name'], true)),
-                                  'to' => $this->get_language_code(apply_filters('icl_server_languages_map', $lang['attr']['to_language_name'], true)),
-                                  'have_translators' => $lang['attr']['have_translators'],
-                                  'available_translators' => $lang['attr']['available_translators'],
-                                  'applications' => $lang['attr']['applications'],
-                                  'contract_id' => $lang['attr']['contract_id'],
-                                  'id' => $lang['attr']['id'],
-                                  'translators' => $translators,
-                                  'max_rate' => $max_rate
-                                  );
+                $target[] = array(
+                    'from' => $this->get_language_code(apply_filters('icl_server_languages_map', $lang['attr']['from_language_name'], true)),
+                    'to' => $this->get_language_code(apply_filters('icl_server_languages_map', $lang['attr']['to_language_name'], true)),
+                    'have_translators' => $lang['attr']['have_translators'],
+                    'available_translators' => $lang['attr']['available_translators'],
+                    'applications' => $lang['attr']['applications'],
+                    'contract_id' => $lang['attr']['contract_id'],
+                    'id' => $lang['attr']['id'],
+                    'translators' => $translators,
+                    'max_rate' => $max_rate
+                );
             }
             $iclsettings['icl_lang_status'] = $target;
         }
@@ -1090,8 +1092,6 @@ class SitePress{
                 'global $sitepress; return $sitepress->create_icl_popup_link($matches[2]);'
             ) ,$iclsettings['icl_html_status']);
         }
-        
-        
         
         $iclsettings['icl_support_ticket_id'] = $res['attr']['support_ticket_id'];
     }
@@ -4916,6 +4916,7 @@ class SitePress{
         global $wpdb;
         
         $icl_lang_status = $this->settings['icl_lang_status'];
+        
         $has_translators = false;
         foreach((array)$icl_lang_status as $k => $lang){
             if(!is_numeric($k)) continue;
