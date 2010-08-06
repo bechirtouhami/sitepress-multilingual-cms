@@ -126,7 +126,7 @@ function icl_st_init(){
     }
     
     // handle po file upload
-    if(isset($_POST['icl_po_upload'])){                
+    if(isset($_POST['icl_po_upload'])){
         global $icl_st_po_strings;
         if($_FILES['icl_po_file']['size']==0){
             $icl_st_err_str = __('File upload error', 'sitepress');
@@ -173,7 +173,7 @@ function icl_st_init(){
             }
         }
     }
-    elseif(isset($_POST['icl_st_save_strings'])){
+    elseif(isset($_POST['icl_st_save_strings']) && !empty($_POST['icl_strings_selected'])){
         $arr = array_intersect_key($_POST['icl_strings'], array_flip($_POST['icl_strings_selected']));
         //$arr = array_map('html_entity_decode', $arr);         
         if(isset($_POST['icl_st_po_language'])){
