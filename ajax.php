@@ -698,7 +698,6 @@ switch($_REQUEST['icl_ajx_action']){
                 }else{
                     $url_glue = '?accesskey='.$this->settings['access_key'] . '&compact=1';
                 }
-                $url_glue = false !== strpos($url,'?') ? '&' : '?';
                 $output .= $message . ' - ' . $this->create_icl_popup_link(ICL_API_ENDPOINT. $url . $url_glue . '&message_id=' . $r->id. '&TB_iframe=true') . __('View', 'sitepress') . '</a>';
 
                 if ($r->can_delete == '1') {
