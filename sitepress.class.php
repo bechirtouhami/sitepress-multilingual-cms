@@ -1097,7 +1097,6 @@ class SitePress{
     }
 
     function get_language_status_text($from_lang, $to_lang, $popclose_cb = false) {        
-        
         $popargs = array('title'=>'ICanLocalize');
         if($popclose_cb){
             $popargs['unload_cb'] =  $popclose_cb;   
@@ -1236,7 +1235,6 @@ class SitePress{
     }
     
     function create_icl_popup_link($link, $args = array()) {
-        
         // defaults
         $defaults = array(
             'title' => null,

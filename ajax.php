@@ -692,7 +692,11 @@ switch($_REQUEST['icl_ajx_action']){
                 if ($anchor_pos !== false) {
                     $url = substr($url, 0, $anchor_pos);
                 }
-                $output .= $message . ' - ' . $this->create_icl_popup_link(ICL_API_ENDPOINT. $url . '&message_id=' . $r->id. '&TB_iframe=true') . __('View', 'sitepress') . '</a>';
+                
+                $url_glue = false !== strpos($url,'?') ? '&' : '?';
+                $output .= $message . ' - ' . $this->create_icl_popup_link(ICL_API_ENDPOINT. $url . $url_glue . 
+                'accesskey='.$this->settings['access_key'] . '&compact=1' . 
+                '&message_id=' . $r->id. '&TB_iframe=true') . __('View', 'sitepress') . '</a>';
 
                 if ($r->can_delete == '1') {
                     $on_click = 'dismiss_message(' . $r->id . ');';
