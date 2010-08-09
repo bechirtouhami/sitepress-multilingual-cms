@@ -50,13 +50,16 @@
             
             $user['from_language1'] = $lang_server[$from_lang]; 
             $user['to_language1'] = $lang_server[$to_lang]; 
-
+            
             list($site_id, $access_key) = $icl_query->createAccount($user);                
             if($site_id && $access_key){
                 $this->settings['site_id'] = $iclsettings['site_id'] = $site_id;
                 $this->settings['access_key'] = $iclsettings['access_key'] = $access_key;
                 $iclsettings['language_pairs'][$from_lang][$to_lang] = 1;
                 $this->save_settings($iclsettings);
+            }else{
+                printf(__('WPML did not manage to access the server at ICanLocalize. Please <a%s>contact us</a> for support.', 'sitepress'), ' href="http://www.icanlocalize.com/site/about-us/contact-us/"');
+                exit;
             }
         }else{
             
