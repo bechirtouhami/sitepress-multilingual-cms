@@ -668,7 +668,7 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings['show_translations_flag'] = intval(!$iclsettings['show_translations_flag']);
         $this->save_settings($iclsettings);    
         break;
-    case 'icl_messages':
+    case 'icl_messages': 
         $iclsettings = $this->get_settings();
         
         if($iclsettings['site_id'] && $iclsettings['access_key'] && empty($iclsettings['icl_anonymous_user'])){
@@ -692,7 +692,13 @@ switch($_REQUEST['icl_ajx_action']){
                 if ($anchor_pos !== false) {
                     $url = substr($url, 0, $anchor_pos);
                 }
-                $output .= $message . ' - ' . $this->create_icl_popup_link(ICL_API_ENDPOINT. $url . '&message_id=' . $r->id. '&TB_iframe=true') . __('View', 'sitepress') . '</a>';
+                
+                if(false !== strpos($url,'?')){
+                    $url_glue = '&';
+                }else{
+                    $url_glue = '?accesskey='.$this->settings['access_key'] . '&compact=1';
+                }
+                $output .= $message . ' - ' . $this->create_icl_popup_link(ICL_API_ENDPOINT. $url . $url_glue . '&message_id=' . $r->id. '&TB_iframe=true') . __('View', 'sitepress') . '</a>';
 
                 if ($r->can_delete == '1') {
                     $on_click = 'dismiss_message(' . $r->id . ');';
@@ -714,13 +720,15 @@ switch($_REQUEST['icl_ajx_action']){
                     $reminder_text = __('Show 1 reminder', 'sitepress');
                 } else {
                     $reminder_text = sprintf(__('Show %d reminders', 'sitepress'), $reminder_count);
-                }
-                echo $reminder_text.'|'.$output;
+                }                
+                $resp = array('messages'=>$reminder_count, 'reminder_text' => $reminder_text, 'output'=>$output);
             } else {
-                echo '0|';
+                $resp = array('messages'=>0);
             }
+        }else{
+            $resp = array('messages'=>0);
         }
-        
+        echo json_encode($resp);    
         break;
 
     case 'icl_delete_message':

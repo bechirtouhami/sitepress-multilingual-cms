@@ -36,17 +36,16 @@ function show_messages() {
         url: icl_ajx_url,
         data: command,
         cache: false,
-        success: function(msg){
-            spl = msg.split('|');
-            if(spl[0]!='0'){
-                jQuery('#icl_show_text').html(spl[0]);
-                
-                jQuery('#icl_reminder_list').html(spl[1]);
+        dataType: 'json',                
+        success: function(resp){ 
+            if(resp.messages > 0){
+                jQuery('#icl_show_text').html(resp.reminder_text);
+                jQuery('#icl_reminder_list').html(resp.output);
                 jQuery('#icl_reminder_message').fadeIn();
                 icl_tb_init('a.icl_thickbox');
                 icl_tb_set_size('a.icl_thickbox');
             } else {
-                jQuery('#icl_reminder_message').fadeOut();
+                jQuery('#icl_reminder_message').fadeOut();                
             }  
         }
     }); 

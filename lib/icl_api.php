@@ -386,16 +386,15 @@ class ICanLocalizeQuery{
         }
         
         if (((time() - $last_time) > 10 * 60) || $refresh) {
-            $session_id = $this->get_current_session();
     
-            $request_url = ICL_API_ENDPOINT . '/reminders.xml?session='.$session_id.'&wid=' . $this->site_id;
+            $request_url = ICL_API_ENDPOINT . '/reminders.xml?accesskey='.$this->access_key.'&wid=' . $this->site_id;
     
             $res = $this->_request($request_url, 'GET');        
             if($res['info']['status']['attr']['err_code']=='3'){
                 // not logged in get a new session_id
                 $session_id = $this->get_session_id(FALSE);
         
-                $request_url = ICL_API_ENDPOINT . '/reminders.xml?session='.$session_id.'&wid=' . $this->site_id;
+                $request_url = ICL_API_ENDPOINT . '/reminders.xml?accesskey='.$this->access_key.'&wid=' . $this->site_id;
         
                 $res = $this->_request($request_url, 'GET');
             }
@@ -419,7 +418,7 @@ class ICanLocalizeQuery{
                 }
                 // save the translator status
                 $sitepress->get_icl_translator_status($icl_settings, $website_data);
-                $sitepress->save_settings($iclsettings);
+                $sitepress->save_settings($iclsettings);               
                 
                 // Now add the reminders.
                 $reminders_xml = $res['info']['reminders']['reminder'];
@@ -439,8 +438,7 @@ class ICanLocalizeQuery{
                     }
                 }
                 $last_time = time();
-                $sitepress->save_settings(array('last_icl_reminder_fetch' => $last_time,
-                                                'icl_current_session' => $session_id));
+                $sitepress->save_settings(array('last_icl_reminder_fetch' => $last_time));
             }
         }
 
@@ -484,13 +482,12 @@ class ICanLocalizeQuery{
         if ((int)$message_id >= 0) {
             $session_id = $this->get_current_session();
     
-            $request_url = ICL_API_ENDPOINT . '/reminders/' . $message_id . '.xml';
+            $request_url = ICL_API_ENDPOINT . '/reminders/' . $message_id . '.xml?wid='.$this->site_id.'&accesskey=' . $this->access_key;
             
-            $data = array('session' => $session_id,
+            $data = array('session' => $session_id, 'accesskey' => $this->access_key, 
                           '_method' => 'DELETE');
     
             $res = $this->_request($request_url, 'POST', $data);
-            
             if($res['info']['status']['attr']['err_code']=='3'){
                 // not logged in get a new session_id
                 $session_id = $this->get_session_id(FALSE);
