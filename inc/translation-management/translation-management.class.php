@@ -30,7 +30,7 @@ class TranslationManagement{
         
         add_action('icl_ajx_custom_call', array($this, 'ajax_calls'), 10, 2);
                 
-        if(isset($_GET['sm']) && $_GET['sm'] == 'dashboard'){session_start();}
+        if(isset($_GET['sm']) && ($_GET['sm'] == 'dashboard' || $_GET['sm'] == 'jobs')){session_start();}
                 
     }
     
@@ -74,7 +74,11 @@ class TranslationManagement{
                 break;          
            case 'send_jobs':
                 $this->send_jobs($_POST);
-                break;                                
+                break; 
+           case 'jobs_filter':
+                $_SESSION['translation_jobs_filter'] = $_POST['filter'];
+                wp_redirect('admin.php?page='.ICL_PLUGIN_FOLDER . '/menu/translation-management.php&sm=jobs');
+                break;                               
         }
     }
     
@@ -133,8 +137,12 @@ class TranslationManagement{
         return $users;
     }
 
-    public function get_blog_translators(){
+    public function get_blog_translators($args = array()){
         global $wpdb;
+        $args_default = array('from'=>false, 'to'=>false);
+        extract($args_default);
+        extract($args, EXTR_OVERWRITE);
+        
         $sql = "SELECT u.ID, u.user_login, u.display_name, m.meta_value AS caps  
                 FROM {$wpdb->users} u JOIN {$wpdb->usermeta} m ON u.id=m.user_id AND m.meta_key LIKE '{$wpdb->prefix}capabilities'";
         $res = $wpdb->get_results($sql);
@@ -143,6 +151,10 @@ class TranslationManagement{
             $user = new WP_User($row->ID);
             $caps = @unserialize($row->caps);
             $row->language_pairs = get_usermeta($row->ID, $wpdb->prefix.'language_pairs', true);
+            
+            if(!empty($from) && !empty($to) && (!isset($row->language_pairs[$from][$to]) || !$row->language_pairs[$from][$to])){
+                continue;
+            }
             if(isset($caps['translate'])){
                 $users[] = $row;    
             }
@@ -728,8 +740,6 @@ class TranslationManagement{
         
         // IN PROGRESS
         
-        
-        
         $wpdb->insert($wpdb->prefix . 'icl_translate_job', array(
             'rid' => $rid,
             'translator_id' => $translator_id, 
@@ -739,21 +749,160 @@ class TranslationManagement{
         $job_id = $wpdb->insert_id;
         
         foreach($translation_package['contents'] as $field => $value){
-            //if($value['translate']){
-                $job_translate = array(
-                    'job_id'            => $job_id,
-                    'content_id'        => 0,
-                    'type'              => '',
-                    'field_type'        => '',
-                    'field_format'      => $value['format'],
-                    'field_translate'   => $value['translate'],
-                    'field_data'        => $value['data'],
-                    'field_finished'    => 0      
-                );
-                $wpdb->insert($wpdb->prefix . 'icl_translate', $job_translate);    
-            //}
+            $job_translate = array(
+                'job_id'            => $job_id,
+                'content_id'        => 0,
+                'type'              => $field,
+                'field_type'        => $field,
+                'field_format'      => $value['format'],
+                'field_translate'   => $value['translate'],
+                'field_data'        => $value['data'],
+                'field_finished'    => 0      
+            );
+            $wpdb->insert($wpdb->prefix . 'icl_translate', $job_translate);    
         }
         
+        
+    }
+    
+    /* Translation jobs */
+    public function get_translator_edit_url($translator_id){
+        $url = '';
+        if(!empty($translator_id)){
+            $url = 'admin.php?page='. ICL_PLUGIN_FOLDER .'/menu/translation-management.php&amp;sm=translators&icl_tm_action=edit&amp;user_id='. $translator_id;
+        }
+        return $url;
+    }
+    
+    public function translators_dropdown($args = array()){
+        $args_default = array(
+            'from'=>false, 'to'=>false,
+            'default_name' => __('Any', 'sitepress'),
+            'name'          => 'translator_id',
+            'selected'      => 0
+        );
+        extract($args_default);
+        extract($args, EXTR_OVERWRITE);        
+        $translators = $this->get_blog_translators(array('from'=>$from,'to'=>$to));             
+        ?>
+        <select name="<?php echo $name ?>">
+            <option value="0"><?php echo $default_name ?></option>
+            <?php foreach($translators as $t):?>
+            <option value="<?php echo $t->ID ?>" <?php if($selected==$t->ID):?>selected="selected"<?php endif;?>><?php echo esc_html($t->display_name) ?></option>
+            <?php endforeach; ?>
+        </select>
+        <?php
+    }
+    
+    function get_translation_jobs($args = array()){        
+        global $wpdb, $sitepress;
+        
+        // defaults
+        $args_default = array(
+            'translator_id' => 0,
+            'status' => false
+        );
+        
+        extract($args_default);
+        extract($args, EXTR_OVERWRITE);
+
+        if($uid == false){
+            global $current_user;
+            get_currentuserinfo();    
+            $uid = $current_user->ID;
+        }
+        
+        $where = "";
+        if(!empty($status)){
+            $where .= " AND s.status=" . intval($status);    
+        }
+        if(!empty($translator_id)){
+            $where .= " AND j.translator_id=" . intval($translator_id);    
+        }
+        
+        
+                
+        $jobs = $wpdb->get_results(
+            "SELECT 
+                t.trid, t.language_code, t.source_language_code, s.status, s.translator_id, u.display_name AS translator_name 
+                FROM {$wpdb->prefix}icl_translate_job j
+                    JOIN {$wpdb->prefix}icl_translation_status s ON j.rid = s.rid
+                    JOIN {$wpdb->prefix}icl_translations t ON s.translation_id = t.translation_id
+                    LEFT JOIN {$wpdb->users} u ON s.translator_id = u.ID
+                WHERE j.translated = 0 {$where} 
+            "
+        );
+        
+        foreach($jobs as $k=>$row){
+            //original 
+            $doc = $wpdb->get_row($wpdb->prepare("
+                SELECT p.ID, p.post_title 
+                FROM {$wpdb->prefix}icl_translations t 
+                    JOIN {$wpdb->posts} p ON p.ID = t.element_id
+                WHERE t.trid = %d AND t.language_code = %s", $row->trid, $row->source_language_code));
+            
+            $jobs[$k]->post_title = $doc->post_title;
+            $jobs[$k]->edit_link = get_edit_post_link($doc->ID);
+            $ldt = $sitepress->get_language_details($row->language_code);
+            $ldf = $sitepress->get_language_details($row->source_language_code);
+            $jobs[$k]->lang_text = $ldf['display_name'] . ' &raquo; ' . $ldt['display_name'];
+        }
+       return $jobs; 
+        
+    }
+        
+    function get_user_translation_jobs($args = array()){        
+        global $wpdb, $sitepress;
+        
+        // defaults
+        $args = array(
+            'translator_id' => 0,
+            'status' => false
+        );
+        
+        extract($args, EXTR_OVERWRITE);
+        
+        if($uid == false){
+            global $current_user;
+            get_currentuserinfo();    
+            $uid = $current_user->ID;
+        }
+        
+        $where = "";
+        if(!empty($status)){
+            $where .= " AND s.status=" . intval($status);    
+        }
+        if(!empty($translator_id)){
+            $where .= " AND j.translator_id=" . intval($translator_id);    
+        }
+        
+        
+                
+        $jobs = $wpdb->get_results(
+            "SELECT 
+                t.trid, t.language_code, t.source_language_code, s.status 
+                FROM {$wpdb->prefix}icl_translate_job j
+                    JOIN {$wpdb->prefix}icl_translation_status s ON j.rid = s.rid
+                    JOIN {$wpdb->prefix}icl_translations t ON s.translation_id = t.translation_id
+                WHERE j.translated = 0 {$where} 
+            "
+        );
+        
+        foreach($jobs as $k=>$row){
+            //original 
+            $doc = $wpdb->get_row($wpdb->prepare("
+                SELECT p.ID, p.post_title 
+                FROM {$wpdb->prefix}icl_translations t 
+                    JOIN {$wpdb->posts} p ON p.ID = t.element_id
+                WHERE t.trid = %d AND t.language_code = %s", $row->trid, $row->source_language_code));
+            
+            $jobs[$k]->post_title = $doc->post_title;
+            $jobs[$k]->edit_link = get_edit_post_link($doc->ID);
+            $ldt = $sitepress->get_language_details($row->language_code);
+            $ldf = $sitepress->get_language_details($row->source_language_code);
+            $jobs[$k]->lang_text = $ldf['display_name'] . ' &raquo; ' . $ldt['display_name'];
+        }
+       return $jobs; 
         
     }
     
