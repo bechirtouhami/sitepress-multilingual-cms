@@ -144,7 +144,6 @@ function icl_sitepress_activate(){
             `tid` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
             `job_id` BIGINT UNSIGNED NOT NULL ,
             `content_id` BIGINT UNSIGNED NOT NULL ,
-            `type` VARCHAR( 16 ) NOT NULL ,
             `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
             `field_type` VARCHAR( 16 ) NOT NULL ,
             `field_format` VARCHAR( 16 ) NOT NULL ,

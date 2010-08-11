@@ -47,3 +47,7 @@
 .form-table td, .form-table th{
     border-bottom:none;
 }
+
+.icl_tj_select_translator_controls{
+    display: none;
+}

@@ -62,7 +62,9 @@ jQuery(document).ready(function(){
     /* word count estimate */
     jQuery('#icl-translation-dashboard td :checkbox').click(icl_tm_update_word_count_estimate);
     jQuery('#icl-translation-dashboard th :checkbox').click(icl_tm_select_all_documents);
-    jQuery('#icl_tm_languages :checkbox').click(icl_tm_enable_sumit);
+    jQuery('#icl_tm_languages :checkbox').click(icl_tm_enable_submit);
+    
+    jQuery('.icl_tj_select_translator select').live('change', icl_tm_assign_translator);
     
             
 })
@@ -91,10 +93,48 @@ function icl_tm_select_all_documents(){
     icl_tm_enable_sumit();
 }
 
-function icl_tm_enable_sumit(){
+function icl_tm_enable_submit(){
     if( jQuery('#icl-translation-dashboard td :checkbox:checked').length > 0 && jQuery('#icl_tm_languages :checkbox:checked').length >  0){
         jQuery('#icl_tm_jobs_submit').removeAttr('disabled');
     }else{
         jQuery('#icl_tm_jobs_submit').attr('disabled','disabled');
     }
+}
+
+function icl_tm_assign_translator(){
+    var thiss = jQuery(this);
+    var translator_id = thiss.val();
+    var translation_controls = thiss.parent().parent().find('.icl_tj_select_translator_controls');
+    var job_id = translation_controls.attr('id').replace(/^icl_tj_tc_/,'');
+    if(translator_id > 0){
+        translation_controls.show();    
+        translation_controls.find('.icl_tj_cancel').click(function(){translation_controls.hide()});
+        translation_controls.find('.icl_tj_ok').click(function(){icl_tm_assign_translator_request(job_id, translator_id, thiss)});
+    }else{
+        translation_controls.hide();
+    }
+}
+
+function icl_tm_assign_translator_request(job_id, translator_id, select){
+    var translation_controls = select.parent().parent().find('.icl_tj_select_translator_controls');
+    select.attr('disabled', 'disabled');
+    translation_controls.find('.icl_tj_cancel, .icl_tj_ok').attr('disabled', 'disabled');
+
+    jQuery.ajax({
+        type: "POST",
+        url: icl_ajx_url,
+        dataType: 'json',
+        data: 'icl_ajx_action=assign_translator&job_id='+job_id+'&translator_id='+translator_id,
+        success: function(msg){
+            if(!msg.error){
+                translation_controls.hide();    
+                select.parent().html(msg.message);
+                jQuery('#icl_tj_job_status_'+job_id).html(msg.status);
+            }else{
+                select.removeAttr('disabled');
+                translation_controls.find('.icl_tj_cancel, .icl_tj_ok').removeAttr('disabled');
+            }
+            
+        }
+    });             
 }

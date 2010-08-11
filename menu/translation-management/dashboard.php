@@ -366,14 +366,14 @@ if(!empty($iclTranslationManagement->dashboard_select)){
                             <?php if(isset($icl_selected_languages[$lang['code']])):?>checked="checked"<?php endif;?> />
                             &nbsp;<?php printf(__('Translate to %s', 'sitepress'),$lang['display_name'])?></label>
                         - <label><?php _e('Use translator', 'sitepress')?>
-                        <select name="translator[<?php echo $lang['code'] ?>]">
-                            <option value="0"><?php _e('First available (Local)', 'sitepress')?></option>
-                            <?php foreach($icl_translators as $translator): if($translator->language_pairs[$icl_translation_filter['from_lang']][$lang['code']]):?>
-                            <option value="<?php echo $translator->ID ?>"
-                            <?php if(is_array($icl_selected_translators) && $icl_selected_translators[$lang['code']]==$translator->ID):?>selected="selected"<?php endif?>
-                            ><?php echo esc_html($translator->display_name) . ' (' . __('Local', 'sitepress') . ')'?></option>                            
-                            <?php endif; endforeach;?>
-                        </select>                        
+                        <?php $iclTranslationManagement->translators_dropdown(array(
+                                        'from'          => $icl_translation_filter['from_lang'],
+                                        'to'            => $lang['code'],
+                                        'name'          => 'translator['.$lang['code'].']',
+                                        'default_name'  => __('First available (Local)', 'sitepress'),
+                                        'selected'      =>  $icl_selected_translators[$lang['code']]
+                                        )); 
+                        ?>                        
                         </label>
                         &nbsp;<a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/translation-management.php&sm=translators"><?php _e('Manage translators', 'sitepress'); ?></a>
                     </li>

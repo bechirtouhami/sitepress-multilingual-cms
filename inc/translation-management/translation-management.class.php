@@ -31,6 +31,7 @@ class TranslationManagement{
         add_action('icl_ajx_custom_call', array($this, 'ajax_calls'), 10, 2);
                 
         if(isset($_GET['sm']) && ($_GET['sm'] == 'dashboard' || $_GET['sm'] == 'jobs')){session_start();}
+        elseif(isset($_GET['page']) && $_GET['page'] == ICL_PLUGIN_FOLDER. '/menu/translations-queue.php'){session_start();}
                 
     }
     
@@ -79,11 +80,15 @@ class TranslationManagement{
                 $_SESSION['translation_jobs_filter'] = $_POST['filter'];
                 wp_redirect('admin.php?page='.ICL_PLUGIN_FOLDER . '/menu/translation-management.php&sm=jobs');
                 break;                               
+           case 'ujobs_filter':
+                $_SESSION['translation_ujobs_filter'] = $_POST['filter'];
+                wp_redirect('admin.php?page='.ICL_PLUGIN_FOLDER . '/menu/translations-queue.php');
+                break;                                               
         }
     }
     
     function ajax_calls($call, $data){
-        global $sitepress, $sitepress_settings;
+        global $wpdb, $sitepress, $sitepress_settings;
         switch($call){
             case 'save_dashboard_setting':
                 $iclsettings['dashboard'] = $sitepress_settings['dashboard'];
@@ -91,6 +96,16 @@ class TranslationManagement{
                     $iclsettings['dashboard'][$data['setting']] = $data['value'];
                     $sitepress->save_settings($iclsettings);    
                 }
+                break;
+            case 'assign_translator':
+                if($this->assign_translation_job($data['job_id'], $data['translator_id'])){
+                    $translator_edit_link = '<a href="'.$this->get_translator_edit_url($data['translator_id']).'">' . 
+                    esc_html($wpdb->get_var($wpdb->prepare("SELECT display_name FROM {$wpdb->users} WHERE ID=%d",$data['translator_id']))) . '</a>';
+                    echo json_encode(array('error'=>0, 'message'=>$translator_edit_link, 'status'=>$this->status2text(ICL_TM_IN_PROGRESS)));
+                }else{
+                    echo json_encode(array('error'=>1));
+                }
+                break;
         }
     }
     
@@ -175,6 +190,20 @@ class TranslationManagement{
         return (object)$this->selected_translator;    
     }
     
+    function get_current_translator(){
+        global $wpdb, $current_user;
+        static $ct;
+        if(empty($ct)){
+            get_currentuserinfo();
+            $user = new WP_User($current_user->ID);
+            $ct['translator_id'] =  $current_user->ID;
+            $ct['display_name'] =  $user->data->display_name;
+            $ct['user_login'] =  $user->data->user_login;
+            $ct['language_pairs'] = get_user_meta($current_user->ID, $wpdb->prefix.'language_pairs', true);
+        }        
+        return (object)$ct;        
+    }
+    
     /* MENU */
     function menu(){
         global $sitepress_settings;
@@ -185,6 +214,19 @@ class TranslationManagement{
         }
         add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/'.$top_level_page.'.php', __('Translation Management','sitepress'), __('Translation Management','sitepress'), 
             'manage_options', basename(ICL_PLUGIN_PATH).'/menu/translation-management.php');
+            
+        $current_translator = $this->get_current_translator();
+        
+        if(!empty($current_translator->language_pairs)){            
+            if(current_user_can('manage_options')){            
+                add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/'.$top_level_page.'.php', __('Translations','sitepress'), __('Translations','sitepress'), 
+                'manage_options', basename(ICL_PLUGIN_PATH).'/menu/translations-queue.php');
+            }else{
+                add_menu_page(__('WPML','sitepress'), __('WPML','sitepress'), 0, basename(ICL_PLUGIN_PATH).'/menu/translations-queue.php',null, ICL_PLUGIN_URL . '/res/img/icon16.png');              
+                add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/translations-queue.php', __('Translations','sitepress'), __('Translations','sitepress'), 
+                0, basename(ICL_PLUGIN_PATH).'/menu/translations-queue.php');
+            }
+        }
     }
     
     function save_post_actions($post_id, $post){
@@ -378,7 +420,7 @@ class TranslationManagement{
         if($tstatus){
             if($to_lang){
                 if($tstatus == 'not'){
-                    $where .= " AND (iclts.status IS NULL OR iclts.needs_update = 1)\n";    
+                    $where .= " AND (iclts.status IS NULL OR iclts.status = ".ICL_TM_WAITING_FOR_TRANSLATOR." OR iclts.needs_update = 1)\n";    
                 }elseif($tstatus == 'in_progress'){
                     $where .= " AND iclts.status = ".ICL_TM_IN_PROGRESS." AND iclts.needs_update = 0\n";    
                 }elseif($tstatus == 'complete'){
@@ -392,7 +434,7 @@ class TranslationManagement{
                     foreach($sitepress->get_active_languages() as $lang){
                         if($lang['code'] == $from_lang) continue;
                         $tbl_alias_suffix = str_replace('-','_',$lang['code']);
-                        $wheres[] = "iclts_{$tbl_alias_suffix}.status IS NULL OR iclts_{$tbl_alias_suffix}.needs_update = 1\n";    
+                        $wheres[] = "iclts_{$tbl_alias_suffix}.status IS NULL OR iclts_{$tbl_alias_suffix}.status = ".ICL_TM_WAITING_FOR_TRANSLATOR." OR iclts_{$tbl_alias_suffix}.needs_update = 1\n";    
                     }
                     $where .= join(' OR ', $wheres) . ")";
                 }elseif($tstatus == 'in_progress'){
@@ -474,6 +516,18 @@ class TranslationManagement{
             default: $img_file = '';
         }
         return $img_file;
+    }
+    
+    public function status2text($status){
+        switch($status){
+            case ICL_TM_NOT_TRANSLATED: $text = __('Not translated', 'sitepress'); break;
+            case ICL_TM_WAITING_FOR_TRANSLATOR: $text = __('Waiting for translator', 'sitepress'); break;
+            case ICL_TM_IN_PROGRESS: $img_file = $text = __('In progress', 'sitepress'); break;
+            case ICL_TM_NEEDS_UPDATE: $img_file = $text = __('Needs update', 'sitepress'); break;
+            case ICL_TM_COMPLETE: $img_file = $text = __('Complete', 'sitepress'); break;
+            default: $text = '';
+        }
+        return $text;
     } 
     
     public function estimate_word_count($data, $lang_code){
@@ -581,7 +635,7 @@ class TranslationManagement{
                     'translation_package'   => serialize($translation_package)
                 ));
                 
-                if($selected_translators[$lang] && !$update){
+                if(!$update){
                     $this->add_translation_job($rid, $selected_translators[$lang], $translation_package);
                 }
             }                
@@ -752,7 +806,6 @@ class TranslationManagement{
             $job_translate = array(
                 'job_id'            => $job_id,
                 'content_id'        => 0,
-                'type'              => $field,
                 'field_type'        => $field,
                 'field_format'      => $value['format'],
                 'field_translate'   => $value['translate'],
@@ -763,6 +816,16 @@ class TranslationManagement{
         }
         
         
+    }
+    
+    function assign_translation_job($job_id, $translator_id){
+        global $wpdb;
+        $rid = $wpdb->get_var($wpdb->prepare("SELECT rid FROM {$wpdb->prefix}icl_translate_job WHERE job_id=%d", $job_id));
+        $wpdb->update($wpdb->prefix.'icl_translation_status', 
+            array('translator_id'=>$translator_id, 'status'=>ICL_TM_IN_PROGRESS), 
+            array('rid'=>$rid));
+        $wpdb->update($wpdb->prefix.'icl_translate_job', array('translator_id'=>$translator_id), array('job_id'=>$job_id));
+        return true;
     }
     
     /* Translation jobs */
@@ -788,7 +851,7 @@ class TranslationManagement{
         <select name="<?php echo $name ?>">
             <option value="0"><?php echo $default_name ?></option>
             <?php foreach($translators as $t):?>
-            <option value="<?php echo $t->ID ?>" <?php if($selected==$t->ID):?>selected="selected"<?php endif;?>><?php echo esc_html($t->display_name) ?></option>
+            <option value="<?php echo $t->ID ?>" <?php if($selected==$t->ID):?>selected="selected"<?php endif;?>><?php echo esc_html($t->display_name) ?> (<?php _e('Local')?>)</option>
             <?php endforeach; ?>
         </select>
         <?php
@@ -805,26 +868,24 @@ class TranslationManagement{
         
         extract($args_default);
         extract($args, EXTR_OVERWRITE);
-
-        if($uid == false){
-            global $current_user;
-            get_currentuserinfo();    
-            $uid = $current_user->ID;
-        }
         
         $where = "";
-        if(!empty($status)){
+        if($status != ''){
             $where .= " AND s.status=" . intval($status);    
         }
         if(!empty($translator_id)){
             $where .= " AND j.translator_id=" . intval($translator_id);    
         }
-        
-        
+        if(!empty($from)){
+            $where .= " AND t.source_language_code='".$wpdb->escape($from)."'";    
+        }
+        if(!empty($to)){
+            $where .= " AND t.language_code='".$wpdb->escape($to)."'";    
+        }
                 
         $jobs = $wpdb->get_results(
             "SELECT 
-                t.trid, t.language_code, t.source_language_code, s.status, s.translator_id, u.display_name AS translator_name 
+                j.job_id, t.trid, t.language_code, t.source_language_code, s.status, s.translator_id, u.display_name AS translator_name 
                 FROM {$wpdb->prefix}icl_translate_job j
                     JOIN {$wpdb->prefix}icl_translation_status s ON j.rid = s.rid
                     JOIN {$wpdb->prefix}icl_translations t ON s.translation_id = t.translation_id
@@ -850,61 +911,7 @@ class TranslationManagement{
        return $jobs; 
         
     }
-        
-    function get_user_translation_jobs($args = array()){        
-        global $wpdb, $sitepress;
-        
-        // defaults
-        $args = array(
-            'translator_id' => 0,
-            'status' => false
-        );
-        
-        extract($args, EXTR_OVERWRITE);
-        
-        if($uid == false){
-            global $current_user;
-            get_currentuserinfo();    
-            $uid = $current_user->ID;
-        }
-        
-        $where = "";
-        if(!empty($status)){
-            $where .= " AND s.status=" . intval($status);    
-        }
-        if(!empty($translator_id)){
-            $where .= " AND j.translator_id=" . intval($translator_id);    
-        }
-        
-        
-                
-        $jobs = $wpdb->get_results(
-            "SELECT 
-                t.trid, t.language_code, t.source_language_code, s.status 
-                FROM {$wpdb->prefix}icl_translate_job j
-                    JOIN {$wpdb->prefix}icl_translation_status s ON j.rid = s.rid
-                    JOIN {$wpdb->prefix}icl_translations t ON s.translation_id = t.translation_id
-                WHERE j.translated = 0 {$where} 
-            "
-        );
-        
-        foreach($jobs as $k=>$row){
-            //original 
-            $doc = $wpdb->get_row($wpdb->prepare("
-                SELECT p.ID, p.post_title 
-                FROM {$wpdb->prefix}icl_translations t 
-                    JOIN {$wpdb->posts} p ON p.ID = t.element_id
-                WHERE t.trid = %d AND t.language_code = %s", $row->trid, $row->source_language_code));
-            
-            $jobs[$k]->post_title = $doc->post_title;
-            $jobs[$k]->edit_link = get_edit_post_link($doc->ID);
-            $ldt = $sitepress->get_language_details($row->language_code);
-            $ldf = $sitepress->get_language_details($row->source_language_code);
-            $jobs[$k]->lang_text = $ldf['display_name'] . ' &raquo; ' . $ldt['display_name'];
-        }
-       return $jobs; 
-        
-    }
+   
     
 }
   
