@@ -3,8 +3,8 @@
 if(isset($_SESSION['translation_jobs_filter'])){
     $icl_translation_filter = $_SESSION['translation_jobs_filter'];
 }
+$icl_translation_filter['limit_no'] = 5;
 $translation_jobs = $iclTranslationManagement->get_translation_jobs((array)$icl_translation_filter);
-
 ?>
 <br />
 
@@ -117,3 +117,27 @@ $translation_jobs = $iclTranslationManagement->get_translation_jobs((array)$icl_
     </tbody>    
 </table>
 
+    <?php 
+    // pagination  
+    $page_links = paginate_links( array(
+        'base' => add_query_arg('paged', '%#%' ),
+        'format' => '',
+        'prev_text' => '&laquo;',
+        'next_text' => '&raquo;',
+        'total' => $wp_query->max_num_pages,
+        'current' => $_GET['paged'],
+        'add_args' => isset($icl_translation_filter)?$icl_translation_filter:array() 
+    ));         
+    ?> 
+    <div class="tablenav">    
+        <?php if ( $page_links ) { ?>
+        <div class="tablenav-pages"><?php $page_links_text = sprintf( '<span class="displaying-num">' . __( 'Displaying %s&#8211;%s of %s', 'sitepress' ) . '</span>%s',
+            number_format_i18n( ( $_GET['paged'] - 1 ) * $wp_query->query_vars['posts_per_page'] + 1 ),
+            number_format_i18n( min( $_GET['paged'] * $wp_query->query_vars['posts_per_page'], $wp_query->found_posts ) ),
+            number_format_i18n( $wp_query->found_posts ),
+            $page_links
+        ); echo $page_links_text; ?>
+        </div>
+        <?php } ?>
+    </div>    
+    <?php // pagination - end ?>

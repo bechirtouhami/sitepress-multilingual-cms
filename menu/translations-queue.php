@@ -4,6 +4,7 @@
     }    
     $current_translator = $iclTranslationManagement->get_current_translator();
     $icl_translation_filter['translator_id'] = $current_translator->translator_id;
+    $icl_translation_filter['include_unassigned'] = true;
     if(1 < count($current_translator->language_pairs)){
         foreach($current_translator->language_pairs as $lang=>$to){
             $langs_from[] = $sitepress->get_language_details($lang);
@@ -23,6 +24,7 @@
         $lang_to  = $sitepress->get_language_details(current($_langs_to));             
         $icl_translation_filter['to'] = $lang_to['code'];
     }
+    $icl_translation_filter['limit_no'] = 5;
     $translation_jobs = $iclTranslationManagement->get_translation_jobs((array)$icl_translation_filter);
 ?>
 <div class="wrap">
@@ -48,16 +50,16 @@
                         <strong><?php _e('Status', 'sitepress')?></strong>&nbsp;
                         <select name="filter[status]">
                             <option value=""><?php _e('All', 'sitepress')?></option>
-                            <option value="<?php echo ICL_TM_WAITING_FOR_TRANSLATOR ?>" <?php 
-                                if(strlen($icl_translation_filter['status']) 
-                                    && $icl_translation_filter['status']== ICL_TM_WAITING_FOR_TRANSLATOR):?>selected="selected"<?php endif ;?>><?php 
-                                    echo $iclTranslationManagement->status2text(ICL_TM_WAITING_FOR_TRANSLATOR); ?></option>
-                            <option value="<?php echo ICL_TM_IN_PROGRESS ?>" <?php 
-                                if($icl_translation_filter['status']==ICL_TM_IN_PROGRESS):?>selected="selected"<?php endif ;?>><?php 
-                                    echo $iclTranslationManagement->status2text(ICL_TM_IN_PROGRESS); ?></option>
                             <option value="<?php echo ICL_TM_COMPLETE ?>" <?php 
                                 if($icl_translation_filter['status']==ICL_TM_COMPLETE):?>selected="selected"<?php endif ;?>><?php 
                                     echo $iclTranslationManagement->status2text(ICL_TM_COMPLETE); ?></option>                                                            
+                            <option value="<?php echo ICL_TM_IN_PROGRESS ?>" <?php 
+                                if($icl_translation_filter['status']==ICL_TM_IN_PROGRESS):?>selected="selected"<?php endif ;?>><?php 
+                                    echo $iclTranslationManagement->status2text(ICL_TM_IN_PROGRESS); ?></option>
+                            <option value="<?php echo ICL_TM_WAITING_FOR_TRANSLATOR ?>" <?php 
+                                if(strlen($icl_translation_filter['status']) 
+                                    && $icl_translation_filter['status']== ICL_TM_WAITING_FOR_TRANSLATOR):?>selected="selected"<?php endif ;?>><?php 
+                                    _e('Available to translate', 'sitepress') ?></option>                                    
                         </select>
                     </label>&nbsp;
                     <label>
@@ -106,6 +108,7 @@
                 <th scope="col"><?php _e('Title', 'sitepress')?></th>
                 <th scope="col"><?php _e('Language', 'sitepress')?></th>            
                 <th scope="col" class="manage-column column-date">&nbsp;</th>
+                <th scope="col" class="manage-column column-date" style="width:14px;">&nbsp;</th>
                 <th scope="col" class="manage-column column-date"><?php _e('Status', 'sitepress')?></th>                
             </tr>
         </thead>
@@ -113,6 +116,7 @@
             <tr>
                 <th scope="col"><?php _e('Title', 'sitepress')?></th>
                 <th scope="col"><?php _e('Language', 'sitepress')?></th>
+                <th scope="col">&nbsp;</th>
                 <th scope="col">&nbsp;</th>
                 <th scope="col"><?php _e('Status', 'sitepress')?></th>
             </tr>
@@ -126,11 +130,37 @@
             <tr>
                 <td><a href="<?php echo $job->edit_link ?>"><?php echo $job->post_title ?></a></td>
                 <td><?php echo $job->lang_text ?></td>
-                <td width=""><a href="#"><?php _e('edit', 'sitepress'); ?></td>
+                <td><a href="#"><?php _e('edit', 'sitepress'); ?></td>
+                <td><?php if($job->translator_id): ?><div class="icl_tj_your_job" title="<?php echo esc_html(__('This job is assigned specifically to you.','sitepress')) ?>">!</div><?php endif; ?></td>
                 <td><?php echo $iclTranslationManagement->status2text($job->status)?></td>
             </tr>
             <?php endforeach; endif; ?>
         </tbody>    
     </table>    
+    
+    <?php 
+    // pagination  
+    $page_links = paginate_links( array(
+        'base' => add_query_arg('paged', '%#%' ),
+        'format' => '',
+        'prev_text' => '&laquo;',
+        'next_text' => '&raquo;',
+        'total' => $wp_query->max_num_pages,
+        'current' => $_GET['paged'],
+        'add_args' => isset($icl_translation_filter)?$icl_translation_filter:array() 
+    ));         
+    ?> 
+    <div class="tablenav">    
+        <?php if ( $page_links ) { ?>
+        <div class="tablenav-pages"><?php $page_links_text = sprintf( '<span class="displaying-num">' . __( 'Displaying %s&#8211;%s of %s', 'sitepress' ) . '</span>%s',
+            number_format_i18n( ( $_GET['paged'] - 1 ) * $wp_query->query_vars['posts_per_page'] + 1 ),
+            number_format_i18n( min( $_GET['paged'] * $wp_query->query_vars['posts_per_page'], $wp_query->found_posts ) ),
+            number_format_i18n( $wp_query->found_posts ),
+            $page_links
+        ); echo $page_links_text; ?>
+        </div>
+        <?php } ?>
+    </div>    
+    <?php // pagination - end ?>
     
 </div>

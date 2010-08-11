@@ -858,12 +858,13 @@ class TranslationManagement{
     }
     
     function get_translation_jobs($args = array()){        
-        global $wpdb, $sitepress;
+        global $wpdb, $sitepress, $wp_query;
         
         // defaults
         $args_default = array(
             'translator_id' => 0,
-            'status' => false
+            'status' => false,
+            'include_unassigned' => false
         );
         
         extract($args_default);
@@ -874,7 +875,12 @@ class TranslationManagement{
             $where .= " AND s.status=" . intval($status);    
         }
         if(!empty($translator_id)){
-            $where .= " AND j.translator_id=" . intval($translator_id);    
+            if($include_unassigned){
+                $where .= " AND (j.translator_id=" . intval($translator_id) . " OR j.translator_id=0) ";    
+            }else{
+                $where .= " AND j.translator_id=" . intval($translator_id);        
+            }
+            
         }
         if(!empty($from)){
             $where .= " AND t.source_language_code='".$wpdb->escape($from)."'";    
@@ -882,17 +888,37 @@ class TranslationManagement{
         if(!empty($to)){
             $where .= " AND t.language_code='".$wpdb->escape($to)."'";    
         }
+        
+        // ORDER BY
+        if($include_unassigned){
+            $orderby[] = 'j.translator_id DESC'; 
+        }
+        $orderby[] = ' j.job_id ASC ';
+        $orderby = join(', ', $orderby);
+                
+        // LIMIT
+        if(!isset($_GET['paged'])) $_GET['paged'] = 1;
+        $offset = ($_GET['paged']-1)*$limit_no;
+        $limit = " " . $offset . ',' . $limit_no;
                 
         $jobs = $wpdb->get_results(
-            "SELECT 
+            "SELECT SQL_CALC_FOUND_ROWS 
                 j.job_id, t.trid, t.language_code, t.source_language_code, s.status, s.translator_id, u.display_name AS translator_name 
                 FROM {$wpdb->prefix}icl_translate_job j
                     JOIN {$wpdb->prefix}icl_translation_status s ON j.rid = s.rid
                     JOIN {$wpdb->prefix}icl_translations t ON s.translation_id = t.translation_id
                     LEFT JOIN {$wpdb->users} u ON s.translator_id = u.ID
                 WHERE j.translated = 0 {$where} 
+                ORDER BY {$orderby}
+                LIMIT {$limit}
             "
         );
+        
+        $count = $wpdb->get_var("SELECT FOUND_ROWS()");
+
+        $wp_query->found_posts = $count;
+        $wp_query->query_vars['posts_per_page'] = $limit_no;
+        $wp_query->max_num_pages = ceil($wp_query->found_posts/$limit_no);
         
         foreach($jobs as $k=>$row){
             //original 
