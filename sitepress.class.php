@@ -93,7 +93,6 @@ class SitePress{
             }
             
             
-            //add_filter('wp_list_pages_excludes', array($this, 'exclude_other_language_pages'));
             add_filter('get_pages', array($this, 'exclude_other_language_pages2'));
             add_filter('wp_dropdown_pages', array($this, 'wp_dropdown_pages'));
             
@@ -2426,10 +2425,6 @@ class SitePress{
             //$cond = '';
             $ljoin = "LEFT";
         }
-        //$join .= " {$ljoin} JOIN {$wpdb->prefix}icl_translations t ON {$wpdb->posts}.ID = t.element_id 
-        //            AND t.element_type='post' {$cond} JOIN {$wpdb->prefix}icl_languages l ON t.language_code=l.code AND l.active=1";        
-        
-        //$post_type = get_query_var('post_type');        
         
         // determine post type
         $db = debug_backtrace();
@@ -2609,19 +2604,7 @@ class SitePress{
         </script>
         <?php
     }
-    
-    /*
-    function exclude_other_language_pages($s){
-        global $wpdb;
-        $excl_pages = $wpdb->get_col("
-            SELECT p.ID FROM {$wpdb->posts} p 
-            LEFT JOIN {$wpdb->prefix}icl_translations t ON (p.ID = t.element_id OR t.element_id IS NULL)
-            WHERE t.element_type='post' AND p.post_type='page' AND t.language_code <> '{$wpdb->escape($this->this_lang)}'
-            ");
-        return array_merge($s, $excl_pages);
-    }
-    */
-    
+        
     function exclude_other_language_pages2($arr){
         global $wpdb;
         $filtered_pages = array();
