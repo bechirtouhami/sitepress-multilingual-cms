@@ -4,3 +4,40 @@
     cursor: help;
     font-weight: bold;
 }
+
+.icl-translation-editor p.updated{
+    padding:4px;
+}
+.icl-translation-editor #dashboard-widgets-wrap .inside{
+    padding-left:8px;
+    padding-right:8px;
+}
+
+.icl-translation-editor #dashboard-widgets-wrap .inside p{
+    margin-top:4px;
+    margin-bottom: 4px;        
+}
+
+.icl-translation-editor #dashboard-widgets-wrap .inside input[type=text]{
+    width:99%;
+}
+
+.icl-tj-original{
+    background-color: #efefef;
+    color:#555;
+    border: 1px solid #ddd;
+    padding:8px;
+    -moz-border-radius: 6px;
+    margin-bottom:8px;
+    font-size: 90%;
+}
+
+.icl-translation-editor .postbox-container .meta-box-sortables{min-height: 0;}
+
+.icl-translation-editor .postbox-container{
+    width: 49%;
+}
+.icl-translation-editor .icl-tj-postbox-container-title,
+.icl-translation-editor .icl-tj-postbox-container-body{
+    width: 100%;
+}

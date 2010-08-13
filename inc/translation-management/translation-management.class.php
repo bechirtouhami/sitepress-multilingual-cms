@@ -1,5 +1,5 @@
 <?php
-
+ 
 define ( 'ICL_TM_NOT_TRANSLATED', 0);
 define ( 'ICL_TM_WAITING_FOR_TRANSLATOR', 1);
 define ( 'ICL_TM_IN_PROGRESS', 2);
@@ -11,6 +11,7 @@ $asian_languages = array('ja', 'ko', 'zh-hans', 'zh-hant', 'mn', 'ne', 'hi', 'pa
 class TranslationManagement{
     
     private $selected_translator = array('ID'=>0);
+    private $current_translator = array('ID'=>0);
     public $messages = array();    
     public $dashboard_select = array();
     
@@ -36,11 +37,22 @@ class TranslationManagement{
     }
     
     function init(){
+        global $wpdb, $current_user;
+        
         if(isset($_POST['icl_tm_action'])){
             $this->process_request($_POST['icl_tm_action'], $_POST);
         }elseif(isset($_GET['icl_tm_action'])){
             $this->process_request($_GET['icl_tm_action'], $_GET);
         }
+        
+        
+        get_currentuserinfo();
+        $user = new WP_User($current_user->ID);
+        $ct['translator_id'] =  $current_user->ID;
+        $ct['display_name'] =  $user->data->display_name;
+        $ct['user_login'] =  $user->data->user_login;
+        $ct['language_pairs'] = get_user_meta($current_user->ID, $wpdb->prefix.'language_pairs', true);
+        $this->current_translator = (object)$ct;
         
         add_action('icl_tm_messages', array($this, 'show_messages'));
         
@@ -191,17 +203,7 @@ class TranslationManagement{
     }
     
     function get_current_translator(){
-        global $wpdb, $current_user;
-        static $ct;
-        if(empty($ct)){
-            get_currentuserinfo();
-            $user = new WP_User($current_user->ID);
-            $ct['translator_id'] =  $current_user->ID;
-            $ct['display_name'] =  $user->data->display_name;
-            $ct['user_login'] =  $user->data->user_login;
-            $ct['language_pairs'] = get_user_meta($current_user->ID, $wpdb->prefix.'language_pairs', true);
-        }        
-        return (object)$ct;        
+        return $this->current_translator;
     }
     
     /* MENU */
@@ -937,7 +939,48 @@ class TranslationManagement{
        return $jobs; 
         
     }
-   
+    
+    function get_translation_job($job_id){
+        global $wpdb, $sitepress;
+        
+        $job = $wpdb->get_row($wpdb->prepare("
+            SELECT 
+                j.rid, j.translator_id, j.translated, j.manager_id, 
+                s.status, s.needs_update,
+                t.trid, t.language_code, t.source_language_code             
+            FROM {$wpdb->prefix}icl_translate_job j 
+                JOIN {$wpdb->prefix}icl_translation_status s ON j.rid = s.rid
+                JOIN {$wpdb->prefix}icl_translations t ON s.translation_id = t.translation_id                
+            WHERE j.job_id = %d", $job_id));
+        
+        $original = $wpdb->get_row($wpdb->prepare("
+            SELECT t.element_id, p.post_title
+            FROM {$wpdb->prefix}icl_translations t 
+            JOIN {$wpdb->posts} p ON t.element_id = p.ID AND t.trid = %d", $job->trid));
+
+        $job->original_doc_title = $original->post_title;
+        $job->original_doc_id = $original->element_id;
+
+        $_ld = $sitepress->get_language_details($job->source_language_code);
+        $job->from_language = $_ld['display_name'];
+        $_ld = $sitepress->get_language_details($job->language_code);
+        $job->to_language = $_ld['display_name'];
+        
+        $job->elements = $wpdb->get_results($wpdb->prepare("SELECT * FROM {$wpdb->prefix}icl_translate WHERE job_id = %d", $job_id));
+        
+        if($job->translator_id == 0){
+            $wpdb->update($wpdb->prefix . 'icl_translate_job', array('translator_id' => $this->current_translator->translator_id), array('job_id'=>$job_id));
+            $wpdb->update($wpdb->prefix . 'icl_translation_status', array('translator_id' => $this->current_translator->translator_id), array('rid'=>$job->rid));
+        }elseif($job->translator_id != $this->current_translator->translator_id){
+            $this->messages[] = array(
+                'type' => 'error', 'text' => __("You can't translate this document. It's assigned to a different translator.")
+            );
+            return false;
+        }
+        
+        //debug_array($job);
+        return $job;    
+    }
     
 }
   

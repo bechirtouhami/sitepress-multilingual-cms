@@ -1,4 +1,8 @@
 <?php 
+    if(!isset($job_checked) && isset($_GET['job_id']) && $_GET['job_id'] > 0){
+        include ICL_PLUGIN_PATH . '/menu/translation-editor.php';
+        return;
+    }
     if(isset($_SESSION['translation_ujobs_filter'])){
         $icl_translation_filter = $_SESSION['translation_ujobs_filter'];
     }    
@@ -130,7 +134,7 @@
             <tr>
                 <td><a href="<?php echo $job->edit_link ?>"><?php echo $job->post_title ?></a></td>
                 <td><?php echo $job->lang_text ?></td>
-                <td><a href="#"><?php _e('edit', 'sitepress'); ?></td>
+                <td><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/translations-queue.php&job_id=<?php echo $job->job_id ?>"><?php _e('edit', 'sitepress'); ?></td>
                 <td><?php if($job->translator_id): ?><div class="icl_tj_your_job" title="<?php echo esc_html(__('This job is assigned specifically to you.','sitepress')) ?>">!</div><?php endif; ?></td>
                 <td><?php echo $iclTranslationManagement->status2text($job->status)?></td>
             </tr>
