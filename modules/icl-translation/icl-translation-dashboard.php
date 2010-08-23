@@ -277,12 +277,19 @@
                         }
                     }
                 }
+                $translators_selected = false;
+                foreach($active_languages as $lang){
+                    if($selected_language==$lang['code']) continue;  
+                    if($target_status[$lang['code']]){
+                        $translators_selected = true;
+                    }
+                } 
             ?>
             <?php foreach($active_languages as $lang): if($selected_language==$lang['code']) continue; ?>
                 <?php 
                     if($target_status[$lang['code']]){
                         $disabled =  ''; 
-                        $checked='checked="checked"';
+                        $checked='checked="checked"';                        
                     }else{
                         $disabled =  ' disabled="disabled"'; 
                         $checked='';
@@ -291,7 +298,7 @@
                 <li>
                     <label>
                         <input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>"<?php echo $checked ?><?php echo $disabled ?> />&nbsp;
-                        <?php printf(__('Translate to %s %s','sitepress'), $lang['display_name'], $sitepress->get_language_status_text($selected_language, $lang['code'])); ?>
+                        <?php printf(__('Translate to %s %s','sitepress'), $lang['display_name'], $sitepress->get_language_status_text($selected_language, $lang['code'])); ?><?php if(empty($translators_selected)):?>*<?php endif; ?>
                     </label>
                     <input type="hidden" id="icl_tr_rate_<?php echo $lang['code'] ?>" value="<?php echo $target_rate[$lang['code']] ?>" />
                 </li>
@@ -308,3 +315,10 @@
         <span id="icl_message_1" style="display:none"><?php echo __('All documents sent to translation', 'sitepress')?></span>
         <span id="icl_message_error" style="display:none"><?php echo __('Error sending some documents to translation', 'sitepress')?></span>
         <span id="icl_message_2" style="display:none"><?php echo __('Translation in progress', 'sitepress')?></span>
+        
+        <?php if(empty($translators_selected)):?>
+        <p>
+        *)&nbsp;<?php _e('You must select your translators before you can send documents to translation.', 'sitepress'); ?>
+        <a href="http://www.icanlocalize.com/site/translation-process/how-we-translate-cms-websites/" target="_blank"><?php _e('Learn more.', 'sitepress') ?></a>
+        </p>
+        <?php endif; ?>        

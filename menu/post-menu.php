@@ -165,9 +165,11 @@
             }    
             echo '</ul>';            
         }
-        
-        $note = trim(get_post_meta($post->ID, '_icl_translator_note', true));
+        if(!empty($languages_translated)){
+            $note = trim(get_post_meta($post->ID, '_icl_translator_note', true));
+        }
     ?>
+    <?php if(!empty($languages_translated)): ?>
     <div id="icl_post_add_notes">
         <h4><a href="#"><?php _e('Note for the translators', 'sitepress')?></a></h4>
         <div id="icl_post_note">
@@ -180,14 +182,16 @@
         <div id="icl_tn_not_saved"><?php _e('Note not saved yet', 'sitepress'); ?></div>
     </div>    
     
-    <div style="text-align: right;margin:0 5px 5px 0;"><?php _e('Cost:', 'sitepress')?>&nbsp;<span id="icl_pt_cost_estimate">0.00</span> USD</div>
+    <div style="text-align: right;margin:0 5px 5px 0;white-space:nowrap;"><?php printf(__('Estimated cost: %s USD<br />(<a%s>why estimated?</a>)', 'sitepress'), '<span id="icl_pt_cost_estimate">0.00</span>', ' href="#"');?></div>
     
     <input type="hidden" id="icl_pt_wc" value="<?php echo icl_estimate_word_count($post, $selected_language) + icl_estimate_custom_field_word_count($post->ID, $selected_language) ?>" />
     <input type="hidden" id="icl_pt_post_id" value="<?php echo $post->ID ?>" />
     <input type="hidden" id="icl_pt_post_type" value="<?php echo $post->post_type ?>" />
     <input type="button" disabled="disabled" id="icl_pt_send" class="button-primary alignright" value="<?php echo esc_html(__('Send to translation', 'sitepress')) ?>"/>
+    
+    <?php endif; ?>
     </div>
-    <a id="icl_pt_hide" href="#" style="position:relative;top:12px;<?php if($this->settings['hide_professional_translation_controls']):?>display:none;<?php endif; ?>"><?php _e('hide', 'sitepress') ?></a>
+    <a id="icl_pt_hide" href="#" style="position:relative;top:<?php echo empty($languages_translated)?6:12 ?>px;<?php if($this->settings['hide_professional_translation_controls']):?>display:none;<?php endif; ?>"><?php _e('hide', 'sitepress') ?></a>
     <a id="icl_pt_show" href="#" style="float:right;<?php if(!$this->settings['hide_professional_translation_controls']):?>display:none;<?php endif; ?>"><?php _e('show', 'sitepress') ?></a>
     <div class="clear" style="font-size: 0px">&nbsp;</div>
     

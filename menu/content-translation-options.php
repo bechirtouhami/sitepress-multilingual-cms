@@ -7,7 +7,7 @@
             <table class="widefat">
                 <thead>
                     <tr>
-                        <th><?php _e('Translation options', 'sitepress') ?></th>
+                        <th><?php _e('Advanced translation options', 'sitepress') ?></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -17,6 +17,10 @@
                             <form name="icl_more_options" id="icl_more_options" action="">
                             
                             <div id="icl-content-translation-advanced-options">
+                
+                                    <?php if(defined('ICL_DEBUG_DEVELOPMENT') && ICL_DEBUG_DEVELOPMENT): ?>
+                                    <a style="float:right;" href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/content-translation.php&amp;debug_action=reset_pro_translation_configuration&amp;nonce=<?php echo wp_create_nonce('reset_pro_translation_configuration')?>" class="button">Reset pro translation configuration</a>
+                                    <?php endif; ?>
                 
                                     <h3><?php echo __('Translation delivery','sitepress') ?></h3>    
                                     <ul>

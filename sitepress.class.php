@@ -1122,10 +1122,12 @@ class SitePress{
                         
                     } else if (!$lang['applications']) {
                         // No translators have applied for this language pair.                        
+                        $popargs['class'] = 'icl_hot_link';
                         $response = ' | ' . $this->create_icl_popup_link("@select-translators;{$from_lang};{$to_lang}@", $popargs) .
                                     __('Select translators', 'sitepress') .  '</a>';
                     } else if (!$lang['have_translators']) {
                         // translators have applied but none selected yet
+                        $popargs['class'] = 'icl_hot_link';
                         $response = ' | ' . $this->create_icl_popup_link("@select-translators;{$from_lang};{$to_lang}@", $popargs) . __('Select translators', 'sitepress') . '</a>';
                     } else {
                         // there are translators ready to translate
@@ -1147,7 +1149,7 @@ class SitePress{
             }
                                        
         }
-        
+        $popargs['class'] = 'icl_hot_link';
         $response = ' | ' . $this->create_icl_popup_link("@select-translators;{$from_lang};{$to_lang}@", $popargs) . __('Select translators', 'sitepress') .  '</a>';
         
         // no status found        
@@ -1263,7 +1265,7 @@ class SitePress{
 			$id = ' id="' . $id . '"';
 		}
 		if ($title) {
-            return '<a class="icl_thickbox' . $class . '" title="' . $title . '" href="admin.php?page='.ICL_PLUGIN_FOLDER . 
+            return '<a class="icl_thickbox ' . $class . '" title="' . $title . '" href="admin.php?page='.ICL_PLUGIN_FOLDER . 
                 "/menu/languages.php&amp;icl_action=reminder_popup{$auto_resize}{$unload_cb}&amp;target=" . urlencode($link) .'"' . $id . '>';
         } else {
             return '<a class="icl_thickbox' . $class . '" href="admin.php?page='.ICL_PLUGIN_FOLDER . 
