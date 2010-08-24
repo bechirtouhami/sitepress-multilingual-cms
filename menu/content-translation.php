@@ -61,9 +61,11 @@
             
             <?php if(empty($translators_selected)):?>
             <div class="icl_cyan_box">
-            <b><?php echo $sitepress->create_icl_popup_link('http://www.icanlocalize.com') ?><?php _e('About Our Translators', 'sitepress'); ?></a></b><br />
+            <b><?php echo $sitepress->create_icl_popup_link('http://www.icanlocalize.com', 
+                array('title'=>__('About Our Translators', 'sitepress'), 'unload_cb'=>'icl_prevent_tb_reload')) ?><?php _e('About Our Translators', 'sitepress'); ?></a></b><br />
             <?php _e('ICanLocalize offers expert translators at competitive rates.', 'sitepress'); ?><br />
-            <?php echo $sitepress->create_icl_popup_link('http://www.icanlocalize.com') ?><?php _e('Learn more', 'sitepress'); ?></a>
+            <?php echo $sitepress->create_icl_popup_link('http://www.icanlocalize.com', 
+                array('title'=>__('About Our Translators', 'sitepress'), 'unload_cb'=>'icl_prevent_tb_reload')) ?><?php _e('Learn more', 'sitepress'); ?></a>
             </div>
             <?php endif; ?>                            
             

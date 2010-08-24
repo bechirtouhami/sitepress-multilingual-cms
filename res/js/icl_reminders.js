@@ -69,7 +69,7 @@ function icl_tb_init(domChunk) {
     jQuery('#TB_window').bind('unload', function(){
         url = location.href;
         if (url.indexOf('content-translation.php') != -1) {
-        
+            console.log(jQuery(this));
             url = url.replace(/&icl_refresh_langs=1/g, '');
             url = url.replace(/&show_config=1/g, '');
             url = url.replace(/#.*/,'');
@@ -102,6 +102,10 @@ function icl_tb_init(domChunk) {
     });
 }
 
+function icl_prevent_tb_reload(){
+    // simply not call the default unload event
+    return false;
+}
 
 function icl_tb_set_size(domChunk) {
     if (typeof(tb_getPageSize) != 'undefined') {

@@ -181,15 +181,35 @@
         </div>
         <div id="icl_tn_not_saved"><?php _e('Note not saved yet', 'sitepress'); ?></div>
     </div>    
-    
-    <div style="text-align: right;margin:0 5px 5px 0;white-space:nowrap;"><?php printf(__('Estimated cost: %s USD<br />(<a%s>why estimated?</a>)', 'sitepress'), '<span id="icl_pt_cost_estimate">0.00</span>', ' href="#"');?></div>
-    
+
+    <div style="text-align: right;margin:0 5px 5px 0;"><?php printf(__('Cost: %s USD', 'sitepress'), '<span id="icl_pt_cost_estimate">0.00</span>', ' href="#"');?></div>
     <input type="hidden" id="icl_pt_wc" value="<?php echo icl_estimate_word_count($post, $selected_language) + icl_estimate_custom_field_word_count($post->ID, $selected_language) ?>" />
+
     <input type="hidden" id="icl_pt_post_id" value="<?php echo $post->ID ?>" />
     <input type="hidden" id="icl_pt_post_type" value="<?php echo $post->post_type ?>" />
     <input type="button" disabled="disabled" id="icl_pt_send" class="button-primary alignright" value="<?php echo esc_html(__('Send to translation', 'sitepress')) ?>"/>
+    <?php else:?>
+    <?php 
+        $estimated_cost = sprintf("%.2f", (icl_estimate_word_count($post, $selected_language) + icl_estimate_custom_field_word_count($post->ID, $selected_language)) * 0.07);
+    ?>
+    <div style="text-align: right;margin:0 5px 5px 0;white-space:nowrap;">
+    <?php printf( __('Estimated cost: %s USD', 'sitepress'), $estimated_cost);?><br />
+    (<?php echo $this->create_icl_popup_link('http://www.icanlocalize.com/destinations/go?name=cms-cost-estimate&iso='.$this->get_locale($selected_language).'&src='.$selected_language, 
+        array(
+            'ar'=>1, 
+            'title'=>__('Cost estimate', 'sitepress'),
+        )
+    ) 
+        . __('why estimated?', 'sitepress');?></a>)
+    </div>
+    
+    <br />
+    <p><b><?php echo $this->create_icl_popup_link('http://www.icanlocalize.com', array('title' => __('About Our Translators', 'sitepress'), 'ar' => 1)) ?><?php _e('About Our Translators', 'sitepress'); ?></a></b></p>
+    <p><?php _e('ICanLocalize offers expert translators at competitive rates.', 'sitepress'); ?></p>
+    <p><?php echo $this->create_icl_popup_link('http://www.icanlocalize.com', array('title' => __('About Our Translators', 'sitepress'), 'ar' => 1)) ?><?php _e('Learn more', 'sitepress'); ?></a></p>
     
     <?php endif; ?>
+    
     </div>
     <a id="icl_pt_hide" href="#" style="position:relative;top:<?php echo empty($languages_translated)?6:12 ?>px;<?php if($this->settings['hide_professional_translation_controls']):?>display:none;<?php endif; ?>"><?php _e('hide', 'sitepress') ?></a>
     <a id="icl_pt_show" href="#" style="float:right;<?php if(!$this->settings['hide_professional_translation_controls']):?>display:none;<?php endif; ?>"><?php _e('show', 'sitepress') ?></a>
