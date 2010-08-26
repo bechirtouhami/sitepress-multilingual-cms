@@ -3967,7 +3967,7 @@ class SitePress{
             }
             // category_name
             if(isset($q->query_vars['category_name']) && !empty($q->query_vars['category_name'])){
-                $cat = get_term_by( 'slug', basename($q->query_vars['category_name']), 'category' ); 
+                $cat = get_term_by( 'slug', preg_replace('#((.*)/)#','',$q->query_vars['category_name']), 'category' ); 
                 if(!$cat){
                     $cat = get_term_by( 'name', $q->query_vars['category_name'], 'category' ); 
                 }

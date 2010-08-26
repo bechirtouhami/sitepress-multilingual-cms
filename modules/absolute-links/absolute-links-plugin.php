@@ -539,7 +539,7 @@ class AbsoluteLinksPlugin{
                 
             }
                   
-            $tx_qvs = $this->taxonomies_query_vars ? '|' . join('|',$this->taxonomies_query_vars) : '';                            $post_qvs = $this->taxonomies_query_vars ? '|' . join('|',$this->custom_posts_query_vars) : '';    
+            $tx_qvs = $this->taxonomies_query_vars ? '|' . @join('|',(array)$this->taxonomies_query_vars) : '';                            $post_qvs = $this->taxonomies_query_vars ? '|' . @join('|',(array)$this->custom_posts_query_vars) : '';    
             $int = preg_match_all('@href=[\'"]('.rtrim(get_option('home'),'/').'/?\?(p|page_id'.$tx_qvs.$post_qvs.')=([0-9a-z-]+)(#.+)?)[\'"]@i',$text,$matches2);          
             if($int){
                 $url_parts = parse_url(rtrim(get_option('home'),'/').'/');

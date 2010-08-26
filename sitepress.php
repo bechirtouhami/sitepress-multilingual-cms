@@ -5,7 +5,7 @@ Plugin URI: http://wpml.org/
 Description: WPML Multilingual CMS. <a href="http://wpml.org">Documentation</a>.
 Author: OnTheGoSystems
 Author URI: http://www.onthegosystems.com
-Version: 1.8.2
+Version: 1.8.2beta
 */
 
 /*
