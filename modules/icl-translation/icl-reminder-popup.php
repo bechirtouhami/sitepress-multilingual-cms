@@ -143,5 +143,5 @@
     <br />
     <br />
 <?php endif; ?>
-<iframe src="<?php echo $target;?>" style="width:95%; height:90%" onload="<?php if($auto_resize):?>jQuery('#TB_window').css('width','90%').css('margin-left', '-45%');<?php endif; ?><?php if($unload_cb):?>jQuery('#TB_window').bind('unload', <?php echo $unload_cb ?>);<?php endif; ?>">
+<iframe src="<?php echo $target;?>" style="width:95%; height:90%" onload="<?php if($auto_resize):?>jQuery('#TB_window').css('width','90%').css('margin-left', '-45%');<?php endif; ?><?php if($unload_cb):?>jQuery('#TB_window').unbind('unload').bind('unload', <?php echo $unload_cb ?>);<?php endif; ?>">
 

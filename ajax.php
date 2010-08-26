@@ -821,6 +821,7 @@ switch($_REQUEST['icl_ajx_action']){
         
     case 'icl_hide_languages':
         $iclsettings['hidden_languages'] = $_POST['icl_hidden_languages'];        
+        $this->settings['hidden_languages'] = array(); //reset current value
         $active_languages = $this->get_active_languages();
         if(!empty($iclsettings['hidden_languages'])){
              if(1 == count($iclsettings['hidden_languages'])){

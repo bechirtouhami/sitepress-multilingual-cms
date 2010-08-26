@@ -209,21 +209,21 @@ function icl_sitepress_activate(){
        mysql_query($sql);
        $prepop  = array(
             0 => array(
-                'plugin_name' => 'sitepress-multilingual-cms/sitepress.php',
+                'plugin_name' => ICL_PLUGIN_FOLDER . '/sitepress.php',
                 'attribute_type' => 'custom_field',
                 'attribute_name' => '_top_nav_excluded',
                 'description' => 'Exclude page from top navigation',
                 'translate' => 0
                 ),
             1 => array(
-                'plugin_name' => 'sitepress-multilingual-cms/sitepress.php',
+                'plugin_name' => ICL_PLUGIN_FOLDER . '/sitepress.php',
                 'attribute_type' => 'custom_field',
                 'attribute_name' => '_cms_nav_minihome',
                 'description' => 'Sets page as a mini home in CMS Navigation',
                 'translate' => 0
                 ),
             2 => array(
-                'plugin_name' => 'sitepress-multilingual-cms/sitepress.php',
+                'plugin_name' => ICL_PLUGIN_FOLDER . '/sitepress.php',
                 'attribute_type' => 'custom_field',
                 'attribute_name' => '_cms_nav_section',
                 'description' => 'Defines the section the page belong to',

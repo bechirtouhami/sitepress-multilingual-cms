@@ -102,6 +102,10 @@ function icl_tb_init(domChunk) {
     });
 }
 
+function icl_prevent_tb_reload(){
+    // simply not call the default unload event
+    return false;
+}
 
 function icl_tb_set_size(domChunk) {
     if (typeof(tb_getPageSize) != 'undefined') {

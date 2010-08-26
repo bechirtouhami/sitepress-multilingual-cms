@@ -37,4 +37,6 @@ if(!function_exists('wp_get_mu_plugins')){
         return $mu_plugins;
     }
 }
+
+if(!defined('E_DEPRECATED')){ define(E_DEPRECATED, 8192); }
 ?>

@@ -126,6 +126,9 @@
     }
     ?>
     <div class="icl_cyan_box">
+    <div class="clear" style="font-size: 0px">&nbsp;</div>    
+    <a id="icl_pt_hide" href="#" style="float:right;<?php if($this->settings['hide_professional_translation_controls']):?>display:none;<?php endif; ?>"><?php _e('hide', 'sitepress') ?></a>
+    <a id="icl_pt_show" href="#" style="float:right;<?php if(!$this->settings['hide_professional_translation_controls']):?>display:none;<?php endif; ?>"><?php _e('show', 'sitepress') ?></a>        
     <strong><?php _e('Professional translation', 'sitepress'); ?></strong>    
     <div id="icl_pt_controls" <?php if($this->settings['hide_professional_translation_controls']):?>style="display:none;"<?php endif; ?>>
     <?php 
@@ -165,9 +168,11 @@
             }    
             echo '</ul>';            
         }
-        
-        $note = trim(get_post_meta($post->ID, '_icl_translator_note', true));
+        if(!empty($languages_translated)){
+            $note = trim(get_post_meta($post->ID, '_icl_translator_note', true));
+        }
     ?>
+    <?php if(!empty($languages_translated)): ?>
     <div id="icl_post_add_notes">
         <h4><a href="#"><?php _e('Note for the translators', 'sitepress')?></a></h4>
         <div id="icl_post_note">
@@ -180,16 +185,40 @@
         <div id="icl_tn_not_saved"><?php _e('Note not saved yet', 'sitepress'); ?></div>
     </div>    
     
-    <div style="text-align: right;margin:0 5px 5px 0;"><?php _e('Cost:', 'sitepress')?>&nbsp;<span id="icl_pt_cost_estimate">0.00</span> USD</div>
+    <div style="text-align: right;margin:0 5px 5px 0;"><?php printf(__('Cost: %s USD', 'sitepress'), '<span id="icl_pt_cost_estimate">0.00</span>');?></div>
     
     <input type="hidden" id="icl_pt_wc" value="<?php echo icl_estimate_word_count($post, $selected_language) + icl_estimate_custom_field_word_count($post->ID, $selected_language) ?>" />
     <input type="hidden" id="icl_pt_post_id" value="<?php echo $post->ID ?>" />
     <input type="hidden" id="icl_pt_post_type" value="<?php echo $post->post_type ?>" />
     <input type="button" disabled="disabled" id="icl_pt_send" class="button-primary alignright" value="<?php echo esc_html(__('Send to translation', 'sitepress')) ?>"/>
+    
+    <?php else:?>
+    <?php 
+        $estimated_cost = sprintf("%.2f", (icl_estimate_word_count($post, $selected_language) + icl_estimate_custom_field_word_count($post->ID, $selected_language)) * 0.07);
+    ?>
+    <div style="text-align: right;margin:0 5px 5px 0;white-space:nowrap;">
+    <?php printf( __('Estimated cost: %s USD', 'sitepress'), $estimated_cost);?><br />
+    (<?php echo $this->create_icl_popup_link('http://www.icanlocalize.com/destinations/go?name=cms-cost-estimate&iso='.
+        $this->get_locale($this->get_admin_language()).'&src='.$this->get_admin_language(), 
+        array(
+            'ar'=>1, 
+            'title'=>__('Cost estimate', 'sitepress'),
+        )
+    ) 
+        . __('why estimated?', 'sitepress');?></a>)
     </div>
-    <a id="icl_pt_hide" href="#" style="position:relative;top:12px;<?php if($this->settings['hide_professional_translation_controls']):?>display:none;<?php endif; ?>"><?php _e('hide', 'sitepress') ?></a>
-    <a id="icl_pt_show" href="#" style="float:right;<?php if(!$this->settings['hide_professional_translation_controls']):?>display:none;<?php endif; ?>"><?php _e('show', 'sitepress') ?></a>
-    <div class="clear" style="font-size: 0px">&nbsp;</div>
+        
+    <br />
+    <p><b><?php echo $this->create_icl_popup_link('http://www.icanlocalize.com/destinations/go?name=moreinfo-wp&iso='.
+        $this->get_locale($this->get_admin_language()).'&src='.$this->get_admin_language(), 
+        array('title' => __('About Our Translators', 'sitepress'), 'ar' => 1)) ?><?php _e('About Our Translators', 'sitepress'); ?></a></b></p>
+    <p><?php _e('ICanLocalize offers expert translators at competitive rates.', 'sitepress'); ?></p>
+    <p><?php echo $this->create_icl_popup_link('http://www.icanlocalize.com/destinations/go?name=moreinfo-wp&iso='.
+        $this->get_locale($this->get_admin_language()).'&src='.$this->get_admin_language(), 
+        array('title' => __('About Our Translators', 'sitepress'), 'ar' => 1)) ?><?php _e('Learn more', 'sitepress'); ?></a></p>    
+        
+    <?php endif; ?>
+    </div>
     
     <div id="icl_pt_error" class="icl_error_text" style="display: none;margin-top: 4px;"><?php _e('Failed sending to translation.', 'sitepress') ?></div>    
     <?php if(isset($_GET['icl_message']) && $_GET['icl_message']=='success'):?>

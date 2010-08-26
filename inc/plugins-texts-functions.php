@@ -18,14 +18,14 @@ function icl_pt_get_texts(){
             $fields_list = join(', ', $rs[$ap]);
             $active = 1;
         }else{
-            if($plugin_name_short=='sitepress-multilingual-cms'){
+            if($plugin_name_short==ICL_PLUGIN_FOLDER){
                 continue;
             }
             $fields_list = sprintf(__('WPML doesn\'t know how to translate this plugin. If it has texts that require translation, contact us by opening an issue in our forum: %s', 'sitepress'), '<a href="http://forum.wpml.org">http://forum.wpml.org</a>');
             $active = 0;
         }                
         //exception for WPML
-        if($plugin_name_short=='sitepress-multilingual-cms') $plugin_name_short = 'WPML';
+        if($plugin_name_short==ICL_PLUGIN_FOLDER) $plugin_name_short = 'WPML';
         $texts[] = array(
             'active' => $active,
             'enabled' => intval(in_array($ap, $enabled_plugins)),

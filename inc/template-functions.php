@@ -155,7 +155,7 @@ function icl_object_id($element_id, $element_type='post', $return_original_if_mi
     global $sitepress, $wpdb, $wp_post_types, $wp_taxonomies;
     
     static $fcache = array();    
-    $fcache_key = $element_id . '#' . $element_type . '#' . intval($return_original_if_missing) . '#' .  intval($ulanguage_code);
+    $fcache_key = $element_id . '#' . $element_type . '#' . intval($return_original_if_missing) . '#' .  $ulanguage_code;
     if(isset($fcache[$fcache_key])){                
         return $fcache[$fcache_key];
     }

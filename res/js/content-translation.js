@@ -62,6 +62,7 @@ function icl_toggle_account_setup(){
     }
     jQuery('#icl_account_setup').slideToggle();
     jQuery('.icl_account_setup_toggle_main').toggle();
+    return false;
 };
 
 function iclSaveMoreOptions() {
