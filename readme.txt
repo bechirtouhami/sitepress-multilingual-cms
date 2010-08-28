@@ -12,33 +12,33 @@ Allows building complete multilingual sites with WordPress.
 
 **WPML makes multilingual content management easy, just like running a site in one language.**
 
-= Features =
+= Multilingual Features =
 
- * Turns a single WordPress install into a [multilingual site](http://wpml.org/?page_id=519).
+ * Turns a single WordPress install into a multilingual site.
  * Built-in [theme localization](http://wpml.org/?page_id=2717) without .mo files.
  * [Comments translation](http://wpml.org/?page_id=2755) allows you to moderate and reply to comments in your own language.
- * Integrated [professional translation](http://wpml.org/?page_id=1169) (optional feature for folks who need help translating).
+ * [Professional translation](http://wpml.org/?page_id=1169), connecting expert translators with site owners (optional, you can translate yourself for free).
+
+= CMS Navigation Features =
+
  * Includes [CMS navigation](http://wpml.org/?page_id=527) elements for drop down menus, breadcrumbs trail and sidebar navigation.
  * [Robust links](http://wpml.org/?page_id=594) to posts and pages that never break.
 
-= Highlights =
+= Architecture (for geeks) =
 
 * Translations are grouped together and not mixed in the database.
 * CMS navigation elements provide accurate and easy to use site-wide navigation.
-* Simple CSS for easy [customization](http://wpml.org/?page_id=909).
+* Simple CSS for easy customization. Try [WPML's CSS customization tool](http://wpml.org/?page_id=909).
 
-= Commercial Support =
+= Commercial Support (for professional developers) =
 
 While WPML boast a lively [community](http://forum.wpml.org), it's great to get fast an accurate support when you need it.
 
 [ICanLocalize](http://www.icanlocalize.com/site/) offers reliable [commercial support](http://wpml.org/partners/) for WPML. This support option is meant for professional web developers who need timely and dependable support directly from the developers.
 
-= In a Nutshell =
+= User Guide (for end users) =
 
-WPML makes it possible to turn WordPress blogs multilingual in a few minutes with no knowledge of PHP or WordPress.
-Its advanced features allow professional web developers to build full multilingual websites.
-
-WPML's [showcase](http://wpml.org/showcase/) includes samples of blogs, full websites and even multilingual BuddyPress portals.
+[wpml.org](http://wpml.org) is a resource for theme developers and designers. End users who want to learn about running multilingual WordPress sites should check out the [WordPress Admin Guide](http://wp-admin-guide.com/).
 
 == Installation ==
 
