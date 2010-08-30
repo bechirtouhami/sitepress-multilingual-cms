@@ -149,6 +149,11 @@
                 }else{
                     printf(__('Translate to %s', 'sitepress'), $active_languages[$lang]['display_name']);
                 }
+                if(isset($langs_in_progress[$active_languages[$lang]['english_name']])){
+                    echo '&nbsp;<small>('.__('in progress', 'sitepress').')</small>';
+                }elseif($langs_done[$active_languages[$lang]['english_name']] && !isset($langs_need_update[$active_languages[$lang]['english_name']])){
+                    echo '&nbsp;<small>('.__('up to date', 'sitepress').')</small>';
+                }
                 echo '</label></li>';
             }    
             echo '</ul>';
@@ -191,6 +196,7 @@
     <input type="hidden" id="icl_pt_post_id" value="<?php echo $post->ID ?>" />
     <input type="hidden" id="icl_pt_post_type" value="<?php echo $post->post_type ?>" />
     <input type="button" disabled="disabled" id="icl_pt_send" class="button-primary alignright" value="<?php echo esc_html(__('Send to translation', 'sitepress')) ?>"/>
+    <br clear="all" />
     <?php else:?>
     <?php 
         $estimated_cost = sprintf("%.2f", (icl_estimate_word_count($post, $selected_language) + icl_estimate_custom_field_word_count($post->ID, $selected_language)) * 0.07);

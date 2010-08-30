@@ -126,6 +126,58 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
        
     <h3><?php _e('Database dump', 'sitepress')?></h3>
     <a class="button" href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/troubleshooting.php&amp;icl_action=dbdump"><?php _e('Download', 'sitepress') ?></a>
+    
+    <a name="icl-connection-test"></a>
+    <h3><?php _e('ICanLocalize connection test', 'sitepress')?></h3>
+    <?php if(isset($_GET['icl_action']) && $_GET['icl_action']=='icl-connection-test'): ?>
+    <?php 
+        $icl_query = new ICanLocalizeQuery();        
+        if(isset($_GET['data'])){
+            $user = unserialize(base64_decode($_GET['data']));
+        }else{                
+            $user['create_account'] = 1;
+            $user['anon'] = 1;
+            $user['platform_kind'] = 2;
+            $user['cms_kind'] = 1;
+            $user['blogid'] = $wpdb->blogid?$wpdb->blogid:1;
+            $user['url'] = get_option('siteurl');
+            $user['title'] = get_option('blogname');
+            $user['description'] = $sitepress_settings['icl_site_description'];
+            $user['is_verified'] = 1;                
+           if(defined('ICL_AFFILIATE_ID') && defined('ICL_AFFILIATE_KEY')){
+                $user['affiliate_id'] = ICL_AFFILIATE_ID;
+                $user['affiliate_key'] = ICL_AFFILIATE_KEY;
+            }
+            $user['interview_translators'] = $sitepress_settings['interview_translators'];
+            $user['project_kind'] = 2;
+            $user['pickup_type'] = intval($sitepress_settings['translation_pickup_method']);
+            $notifications = 0;
+            if ( $sitepress_settings['icl_notify_complete']){
+                $notifications += 1;
+            }
+            if ( $sitepress_settings['alert_delay']){
+                $notifications += 2;
+            }
+            $user['notifications'] = $notifications;
+            $user['ignore_languages'] = 0;
+            $user['from_language1'] = isset($_GET['lang_from']) ? $_GET['lang_from'] : 'English';            
+            $user['to_language1'] = isset($_GET['lang_to']) ? $_GET['lang_to'] : 'French';
+        }
+        
+        define('ICL_DEB_SHOW_ICL_RAW_RESPONSE', true);
+        $resp = $icl_query->createAccount($user);                
+        echo '<textarea style="width:100%;height:400px;font-size:9px;">' . 
+            __('Data', 'sitepress') . "\n----------------------------------------\n" . 
+            print_r($user, 1) . 
+            __('Response', 'sitepress') . "\n----------------------------------------\n" .
+            print_r($resp, 1) . 
+        '</textarea>';
+                
+    ?>
+        
+    <?php endif; ?>
+    <a class="button" href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/troubleshooting.php&amp=ts=<?php echo time()?>&amp;icl_action=icl-connection-test#icl-connection-test"><?php _e('Connect', 'sitepress') ?></a>
+    
     <?php
     
     echo '<br /><hr /><h3 id="wpml-settings"> ' . __('Reset', 'sitepress') . '</h3>';
