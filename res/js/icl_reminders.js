@@ -38,7 +38,7 @@ function show_messages() {
         cache: false,
         dataType: 'json',                
         success: function(resp){ 
-            if(resp.messages > 0){
+            if(resp && resp.messages > 0){
                 jQuery('#icl_show_text').html(resp.reminder_text);
                 jQuery('#icl_reminder_list').html(resp.output);
                 jQuery('#icl_reminder_message').fadeIn();
@@ -69,7 +69,6 @@ function icl_tb_init(domChunk) {
     jQuery('#TB_window').bind('unload', function(){
         url = location.href;
         if (url.indexOf('content-translation.php') != -1) {
-            console.log(jQuery(this));
             url = url.replace(/&icl_refresh_langs=1/g, '');
             url = url.replace(/&show_config=1/g, '');
             url = url.replace(/#.*/,'');
