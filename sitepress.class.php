@@ -645,6 +645,11 @@ class SitePress{
                         'manage_options', basename(ICL_PLUGIN_PATH).'/menu/content-translation.php');                                                     
             }
 			add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Support','sitepress'), __('Support','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/support.php');
+            
+            if($_GET['page'] == basename(ICL_PLUGIN_PATH).'/menu/troubleshooting.php'){
+                add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Troubleshooting','sitepress'), __('Troubleshooting','sitepress'), 
+                            'manage_options', basename(ICL_PLUGIN_PATH).'/menu/troubleshooting.php'); 
+            }            
 
         }else{
             
@@ -3992,7 +3997,7 @@ class SitePress{
             }
             // category_name
             if(isset($q->query_vars['category_name']) && !empty($q->query_vars['category_name'])){
-                $cat = get_term_by( 'slug', basename($q->query_vars['category_name']), 'category' ); 
+                $cat = get_term_by( 'slug', preg_replace('#((.*)/)#','',$q->query_vars['category_name']), 'category' ); 
                 if(!$cat){
                     $cat = get_term_by( 'name', $q->query_vars['category_name'], 'category' ); 
                 }

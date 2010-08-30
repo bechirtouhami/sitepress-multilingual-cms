@@ -940,7 +940,7 @@ class TranslationManagement{
         
     }
     
-    function get_translation_job($job_id){
+    function get_translation_job($job_id, $include_non_translatable_elements = false){
         global $wpdb, $sitepress;
         
         $job = $wpdb->get_row($wpdb->prepare("
@@ -966,7 +966,14 @@ class TranslationManagement{
         $_ld = $sitepress->get_language_details($job->language_code);
         $job->to_language = $_ld['display_name'];
         
-        $job->elements = $wpdb->get_results($wpdb->prepare("SELECT * FROM {$wpdb->prefix}icl_translate WHERE job_id = %d", $job_id));
+        if(!$include_non_translatable_elements){
+            $jelq = ' AND field_translate = 1';
+        }else{
+            $jelq = '';
+        }
+        $job->elements = $wpdb->get_results($wpdb->prepare("SELECT * FROM {$wpdb->prefix}icl_translate WHERE job_id = %d {$jelq}", $job_id));
+        
+        
         
         if($job->translator_id == 0){
             $wpdb->update($wpdb->prefix . 'icl_translate_job', array('translator_id' => $this->current_translator->translator_id), array('job_id'=>$job_id));
@@ -980,6 +987,20 @@ class TranslationManagement{
         
         //debug_array($job);
         return $job;    
+    }
+    
+    public function decode_field_data($data, $format){
+        if($format == 'base64'){
+            $data = base64_decode($data);
+        }elseif($format == 'csv_base64'){
+            $exp = explode(',', $data);
+            foreach($exp as $k=>$e){
+                $exp[$k] = base64_decode(trim($e,'"'));
+            }
+            $data = join(',', $exp);
+        }
+        
+        return $data;
     }
     
 }

@@ -58,8 +58,12 @@
                 $iclsettings['language_pairs'][$from_lang][$to_lang] = 1;
                 $this->save_settings($iclsettings);
             }else{
-                printf(__('WPML did not manage to access the server at ICanLocalize. Please <a%s>contact us</a> for support.', 'sitepress'), ' href="http://www.icanlocalize.com/site/about-us/contact-us/"');
-                exit;
+                echo '<p class="error" style="padding-left:8px;">';
+                printf(__('WPML did not manage to access the server at ICanLocalize. Please <a%s>contact us</a> for support. <br />Show <a%s>debug information</a>.', 'sitepress'), 
+                    ' target="_blank" href="http://www.icanlocalize.com/site/about-us/contact-us/"', 
+                    ' a href="admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/troubleshooting.php&icl_action=icl-connection-test&data='.base64_encode(serialize($user)).'#icl-connection-test"');
+                echo '</p>';
+                exit;                
             }
         }else{
             

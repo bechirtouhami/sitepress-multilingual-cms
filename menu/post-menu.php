@@ -149,6 +149,13 @@
                 }else{
                     printf(__('Translate to %s', 'sitepress'), $active_languages[$lang]['display_name']);
                 }
+                
+                if(isset($langs_in_progress[$active_languages[$lang]['english_name']])){
+                    echo '&nbsp;<small>('.__('in progress', 'sitepress').')</small>';
+                }elseif($langs_done[$active_languages[$lang]['english_name']] && !isset($langs_need_update[$active_languages[$lang]['english_name']])){
+                    echo '&nbsp;<small>('.__('up to date', 'sitepress').')</small>';
+                }
+                                
                 echo '</label></li>';
             }    
             echo '</ul>';

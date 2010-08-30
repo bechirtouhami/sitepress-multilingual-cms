@@ -24,6 +24,12 @@ class ICanLocalizeQuery{
 		}
         $request = ICL_API_ENDPOINT . '/websites/create_by_cms.xml'.$add;
         $response = $this->_request($request, 'POST', $data);        
+        
+        if(defined('ICL_DEB_SHOW_ICL_RAW_RESPONSE') && ICL_DEB_SHOW_ICL_RAW_RESPONSE){
+            $response['HTTP_ERROR'] = $this->error();
+            return $response;    
+        }
+                
         if(!$response){
             return array(0, $this->error);
         }else{

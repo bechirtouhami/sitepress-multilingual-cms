@@ -41,3 +41,9 @@
 .icl-translation-editor .icl-tj-postbox-container-body{
     width: 100%;
 }
+
+.icl-translation-editor #editorcontainer textarea{
+    width: 100%;
+    margin:0;
+    border:none;
+}

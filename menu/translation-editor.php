@@ -1,11 +1,14 @@
 <?php 
 
-$job = $iclTranslationManagement->get_translation_job((int)$_GET['job_id']);
+$job = $iclTranslationManagement->get_translation_job((int)$_GET['job_id'], false);
+//debug_array($job);
 if(empty($job)){
     $job_checked = true;
     include ICL_PLUGIN_PATH . '/menu/translations-queue.php';
     return;
 }
+add_filter('user_can_richedit', '_icl_disable_rich_edit');
+function _icl_disable_rich_edit($v){return false;}
 
 ?>
 <div class="wrap icl-translation-editor">
@@ -20,7 +23,9 @@ if(empty($job)){
     
     <div id="dashboard-widgets-wrap">
         <?php foreach($job->elements as $element): ?>    
-        <?php $_iter = !isset($_iter) ? 1 : $_iter + 1; ?>
+        <?php 
+            $_iter = !isset($_iter) ? 1 : $_iter + 1; 
+        ?>
         <div class="metabox-holder" id="icl-tranlstion-job-elements-<?php echo $_iter ?>">
             <div class="postbox-container icl-tj-postbox-container-<?php echo $element->type ?>">
                 <div class="meta-box-sortables ui-sortable" id="icl-tranlstion-job-sortables-<?php echo $_iter ?>">
@@ -30,24 +35,21 @@ if(empty($job)){
                         </div>
                         <h3 class="hndle"><?php echo $element->type  ?></h3>
                         <div class="inside">
-                            <p><label><input type="checkbox" name="" value="1" />&nbsp;<?php _e('This translation is finished.', 'sitepress')?></label></p>
+                            <p><label><input type="checkbox" name="" value="1" <?php if($element->field_finished): ?>checked="checked"<?php endif;?> />&nbsp;<?php 
+                                _e('This translation is finished.', 'sitepress')?></label></p>
                             <p>
                                 <label>
-                                    <?php _e('Translated content'); echo ' - ' . $job->to_language; ?><br />
+                                    <?php _e('Translated content', 'sitepress'); echo ' - ' . $job->to_language; ?><br />
                                     <?php if($element->type=='body'): ?>
-                                    <?php the_editor(''); ?>
+                                    <?php the_editor('', 'icl_wysiwyg_text_' . $_iter, false, false); ?>
                                     <?php else: ?>
-                                    <input type="text" name="" value="" />
+                                    <input type="text" name="" value="<?php echo esc_attr(TranslationManagement::decode_field_data($element->field_data_translated, $element->field_format)); ?>" />
                                     <?php endif; ?>
                                 </label>
                             </p>
                             <p>
-                                <?php _e('Original content'); echo ' - ' . $job->from_language; ?><br />
-                                <?php if($element->type=='body'): ?>
-                                <?php the_editor('Something beautiful'); ?>
-                                <?php else: ?>
-                                <div class="icl-tj-original">Something beautiful</div>
-                                <?php endif; ?>
+                                <?php _e('Original content', 'sitepress'); echo ' - ' . $job->from_language; ?><br />
+                                <div class="icl-tj-original"><?php echo TranslationManagement::decode_field_data($element->field_data, $element->field_format); ?></div>
                             </p>
                         </div>
                     </div>
