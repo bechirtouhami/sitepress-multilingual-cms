@@ -38,7 +38,7 @@ function show_messages() {
         cache: false,
         dataType: 'json',                
         success: function(resp){ 
-            if(resp.messages > 0){
+            if(resp && resp.messages > 0){
                 jQuery('#icl_show_text').html(resp.reminder_text);
                 jQuery('#icl_reminder_list').html(resp.output);
                 jQuery('#icl_reminder_message').fadeIn();

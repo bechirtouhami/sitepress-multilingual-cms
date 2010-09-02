@@ -66,6 +66,32 @@ jQuery(document).ready(function(){
     
     jQuery('.icl_tj_select_translator select').live('change', icl_tm_assign_translator);
     
+    jQuery('#icl_tm_editor .icl_tm_finished').change(icl_tm_update_complete_cb_status);
+    
+    jQuery('.handlediv').click(function(){
+        if(jQuery(this).parent().hasClass('closed')){
+            jQuery(this).parent().removeClass('closed');
+        }else{
+            jQuery(this).parent().addClass('closed');
+        }
+    })
+    
+    jQuery('#icl_tm_toggle_visual').click(function(){
+        jQuery('.icl-tj-original .html').hide();
+        jQuery('.icl-tj-original .visual').show();
+        jQuery('#icl_tm_orig_toggle a').removeClass('active');
+        jQuery(this).addClass('active');        
+        return false;
+    });
+    
+    jQuery('#icl_tm_toggle_html').click(function(){
+        jQuery('.icl-tj-original .html').show();
+        jQuery('.icl-tj-original .visual').hide();
+        jQuery('#icl_tm_orig_toggle a').removeClass('active');
+        jQuery(this).addClass('active');
+        return false;
+    })
+    
             
 })
 
@@ -137,4 +163,12 @@ function icl_tm_assign_translator_request(job_id, translator_id, select){
             
         }
     });             
+}
+
+function icl_tm_update_complete_cb_status(){
+    if(jQuery('#icl_tm_editor .icl_tm_finished:checked').length == jQuery('#icl_tm_editor .icl_tm_finished').length){
+        jQuery('#icl_tm_editor :checkbox[name=complete]').removeAttr('disabled');
+    }else{
+        jQuery('#icl_tm_editor :checkbox[name=complete]').attr('disabled', 'disabled');        
+    }    
 }

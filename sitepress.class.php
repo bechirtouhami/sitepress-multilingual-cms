@@ -2054,7 +2054,7 @@ class SitePress{
                 } 
             }
         }
-        $this->set_element_language_details($post_id, 'post_'.$_POST['post_type'], $trid, $language_code);
+        $this->set_element_language_details($post_id, 'post_'.$post_type, $trid, $language_code);
         
         if(!in_array($post_type, array('post','page')) && $this->settings['custom_posts_sync_option'][$post_type] != 1){
             return;

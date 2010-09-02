@@ -28,7 +28,7 @@
         $lang_to  = $sitepress->get_language_details(current($_langs_to));             
         $icl_translation_filter['to'] = $lang_to['code'];
     }
-    $icl_translation_filter['limit_no'] = 5;
+    $icl_translation_filter['limit_no'] = 20;
     $translation_jobs = $iclTranslationManagement->get_translation_jobs((array)$icl_translation_filter);
 ?>
 <div class="wrap">

@@ -147,5 +147,6 @@
     <br />
     <br />
 <?php endif; ?>
-<iframe src="<?php echo $target;?>" style="width:95%; height:90%" onload="<?php if($auto_resize):?>jQuery('#TB_window').css('width','90%').css('margin-left', '-45%');<?php endif; ?><?php if($unload_cb):?>jQuery('#TB_window').unbind('unload').bind('unload', <?php echo $unload_cb ?>);<?php endif; ?>">
+<?php if(false !== strpos($_SERVER['HTTP_REFERER'], 'content-translation.php')) $ifrwidth='100%'; else $ifrwidth='98%'; ?>
+<iframe src="<?php echo $target;?>" style="width:<?php echo $ifrwidth ?>; height:92%" onload="<?php if($auto_resize):?>jQuery('#TB_window').css('width','90%').css('margin-left', '-45%');<?php endif; ?><?php if($unload_cb):?>jQuery('#TB_window').unbind('unload').bind('unload', <?php echo $unload_cb ?>);<?php endif; ?>">
 
