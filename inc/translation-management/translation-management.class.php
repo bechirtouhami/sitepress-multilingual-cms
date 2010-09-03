@@ -182,7 +182,7 @@ class TranslationManagement{
         extract($args_default);
         extract($args, EXTR_OVERWRITE);
         
-        $sql = "SELECT u.ID, u.user_login, u.display_name, m.meta_value AS caps  
+        $sql = "SELECT u.ID, u.user_login, u.display_name, u.user_email, m.meta_value AS caps  
                 FROM {$wpdb->users} u JOIN {$wpdb->usermeta} m ON u.id=m.user_id AND m.meta_key LIKE '{$wpdb->prefix}capabilities'";
         $res = $wpdb->get_results($sql);
         $users = array();
@@ -802,11 +802,8 @@ class TranslationManagement{
     * @param mixed $translator_id
     */
     function add_translation_job($rid, $translator_id, $translation_package){
-        global $wpdb, $current_user;
+        global $wpdb, $current_user;        
         get_currentuserinfo();
-        
-        
-        // IN PROGRESS
         
         $wpdb->insert($wpdb->prefix . 'icl_translate_job', array(
             'rid' => $rid,
@@ -815,6 +812,16 @@ class TranslationManagement{
             'manager_id'    => $current_user->ID
         ));        
         $job_id = $wpdb->insert_id;
+        
+        require_once ICL_PLUGIN_PATH . '/inc/translation-management/tm-notification.class.php';
+        if($job_id){
+            $tn_notification = new TM_Notification();
+            if(empty($translator_id)){
+                $tn_notification->new_job_any($job_id);    
+            }else{
+                $tn_notification->new_job_translator($job_id, $translator_id);
+            }            
+        }
         
         foreach($translation_package['contents'] as $field => $value){
             $job_translate = array(
@@ -952,7 +959,7 @@ class TranslationManagement{
         
     }
     
-    function get_translation_job($job_id, $include_non_translatable_elements = false){
+    function get_translation_job($job_id, $include_non_translatable_elements = false, $auto_assign = false){
         global $wpdb, $sitepress;
         $job = $wpdb->get_row($wpdb->prepare("
             SELECT 
@@ -984,8 +991,10 @@ class TranslationManagement{
         $job->elements = $wpdb->get_results($wpdb->prepare("SELECT * FROM {$wpdb->prefix}icl_translate WHERE job_id = %d {$jelq}", $job_id));
         
         if($job->translator_id == 0){
-            $wpdb->update($wpdb->prefix . 'icl_translate_job', array('translator_id' => $this->current_translator->translator_id), array('job_id'=>$job_id));
-            $wpdb->update($wpdb->prefix . 'icl_translation_status', array('translator_id' => $this->current_translator->translator_id), array('rid'=>$job->rid));
+            if($auto_assign){
+                $wpdb->update($wpdb->prefix . 'icl_translate_job', array('translator_id' => $this->current_translator->translator_id), array('job_id'=>$job_id));
+                $wpdb->update($wpdb->prefix . 'icl_translation_status', array('translator_id' => $this->current_translator->translator_id), array('rid'=>$job->rid));
+            }
         }elseif($job->translator_id != $this->current_translator->translator_id){
             $this->messages[] = array(
                 'type' => 'error', 'text' => __("You can't translate this document. It's assigned to a different translator.", 'sitepress')
@@ -1158,10 +1167,22 @@ class TranslationManagement{
                         
             if(is_null($element_id)){
                 $wpdb->update($wpdb->prefix.'icl_translations', array('element_id' => $new_post_id), array('translation_id' => $translation_id) );
+                $user_message = __('Translation added: ', 'sitepress') . '<a href="'.get_edit_post_link($new_post_id).'">' . $postarr['post_title'] . '</a>.';
+            }else{
+                $user_message = __('Translation updated: ', 'sitepress') . '<a href="'.get_edit_post_link($new_post_id).'">' . $postarr['post_title'] . '</a>.';                
             }
             
-            // mail admin
-            // tbd
+            $this->messages[] = array(
+                'type'=>'updated',
+                'text' => $user_message
+            );
+
+            require_once ICL_PLUGIN_PATH . '/inc/translation-management/tm-notification.class.php';
+            if($job_id){
+                $tn_notification = new TM_Notification();
+                $tn_notification->work_complete($data['job_id']);
+            }
+            
         }
     }
     

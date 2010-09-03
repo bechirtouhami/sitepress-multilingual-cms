@@ -5,6 +5,11 @@
     background: transparent url(../img/icon_adv.png) no-repeat !important;    
 }
 
+.icl_tm_wrap{
+    border: 1px solid #CCCCCC;
+    padding:10px;    
+}
+
 #icl_tm_adduser{
     margin-top: 4px;
 }

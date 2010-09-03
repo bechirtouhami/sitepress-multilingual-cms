@@ -9,21 +9,23 @@
     
     <?php do_action('icl_tm_messages'); ?>
     
-    <?php if ( current_user_can('list_users') ): ?>
-    <a class="nav-tab<?php if(!isset($_GET['sm']) || $_GET['sm']=='translators'): ?> nav-tab-active<?php endif;?>" 
-        href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/translation-management.php&sm=translators"><?php _e('Translators', 'sitepress') ?></a> 
-    <?php endif;  ?>
-    <a class="nav-tab <?php if(isset($_GET['sm']) && $_GET['sm']=='dashboard'): ?> nav-tab-active<?php endif;?>" 
+    <a class="nav-tab <?php if(!isset($_GET['sm']) || (isset($_GET['sm']) && $_GET['sm']=='dashboard')): ?> nav-tab-active<?php endif;?>" 
         href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/translation-management.php&sm=dashboard"><?php _e('Translation Dashboard', 'sitepress') ?></a>
+    <?php if ( current_user_can('list_users') ): ?>
+    <a class="nav-tab<?php if(isset($_GET['sm']) && $_GET['sm']=='translators'): ?> nav-tab-active<?php endif;?>" 
+        href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/translation-management.php&sm=translators"><?php _e('Translators', 'sitepress') ?></a> 
+    <?php endif;  ?>        
     <a class="nav-tab <?php if(isset($_GET['sm']) && $_GET['sm']=='jobs'): ?> nav-tab-active<?php endif;?>" 
         href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/translation-management.php&sm=jobs"><?php _e('Translation Jobs', 'sitepress') ?></a>
     <a class="nav-tab <?php if(isset($_GET['sm']) && $_GET['sm']=='mcsetup'): ?> nav-tab-active<?php endif;?>" 
         href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/translation-management.php&sm=mcsetup"><?php _e('Multilingual Content Setup', 'sitepress') ?></a>
     
+    <div class="icl_tm_wrap">
+    
     <?php 
         switch($_GET['sm']){
-            case 'dashboard':
-                include dirname(__FILE__) . '/translation-management/dashboard.php';
+            case 'translators':
+                include dirname(__FILE__) . '/translation-management/translators.php';
                 break;
             case 'jobs':
                 include dirname(__FILE__) . '/translation-management/jobs.php';
@@ -32,11 +34,12 @@
                 include dirname(__FILE__) . '/translation-management/mcsetup.php';
                 break;
             default:
-                include dirname(__FILE__) . '/translation-management/translators.php';
+                include dirname(__FILE__) . '/translation-management/dashboard.php';
+                
         }
     ?>
     
-
+    </div>
     
     
 </div>
