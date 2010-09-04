@@ -6,6 +6,11 @@ define ( 'ICL_TM_IN_PROGRESS', 2);
 define ( 'ICL_TM_NEEDS_UPDATE', 3);  //virt. status code (based on needs_update)
 define ( 'ICL_TM_COMPLETE', 10);
 
+define('ICL_TM_NOTIFICATION_NONE', 0);
+define('ICL_TM_NOTIFICATION_IMMEDIATELY', 1);
+define('ICL_TM_NOTIFICATION_DAILY', 2);    
+
+
 $asian_languages = array('ja', 'ko', 'zh-hans', 'zh-hant', 'mn', 'ne', 'hi', 'pa', 'ta', 'th');
   
 class TranslationManagement{
@@ -14,9 +19,9 @@ class TranslationManagement{
     private $current_translator = array('ID'=>0);
     public $messages = array();    
     public $dashboard_select = array();
+    public $settings;
     
     function __construct(){
-        
         add_action('init', array($this, 'init'));
         add_action('admin_menu', array($this, 'menu'));
         
@@ -36,8 +41,22 @@ class TranslationManagement{
                 
     }
     
+    function save_settings(){
+        global $sitepress;
+        $iclsettings['translation-management'] = $this->settings;
+        $sitepress->save_settings($iclsettings);    
+    }
+    
     function init(){
-        global $wpdb, $current_user;
+        global $wpdb, $current_user, $sitepress_settings;
+
+        $this->settings =& $sitepress_settings['translation-management'];
+        // defaults
+        if(!isset($this->settings['notification']['new-job'])) $this->settings['notification']['new-job'] = ICL_TM_NOTIFICATION_IMMEDIATELY;
+        if(!isset($this->settings['notification']['completed'])) $this->settings['notification']['completed'] = ICL_TM_NOTIFICATION_IMMEDIATELY;
+        if(!isset($this->settings['notification']['resigned'])) $this->settings['notification']['resigned'] = ICL_TM_NOTIFICATION_IMMEDIATELY;
+        if(!isset($this->settings['notification']['dashboard'])) $this->settings['notification']['dashboard'] = true;
+        if(!isset($this->settings['notification']['purge-old'])) $this->settings['notification']['purge-old'] = 7;
         
         get_currentuserinfo();
         $user = new WP_User($current_user->ID);
@@ -107,6 +126,14 @@ class TranslationManagement{
                 break;                                               
            case 'save_translation':
                 $this->save_translation($data);
+                break;
+           case 'save_notification_settings':
+                $this->settings['notification'] = $data['notification'];                                
+                $this->save_settings();
+                $this->messages[] = array(
+                    'type'=>'updated',
+                    'text' => __('Preferences saved.', 'sitepress')
+                );
                 break;
         }
     }
@@ -1176,11 +1203,13 @@ class TranslationManagement{
                 'type'=>'updated',
                 'text' => $user_message
             );
-
-            require_once ICL_PLUGIN_PATH . '/inc/translation-management/tm-notification.class.php';
-            if($job_id){
-                $tn_notification = new TM_Notification();
-                $tn_notification->work_complete($data['job_id']);
+            
+            if($iclTranslationManagement->settings['notification']['completed'] != ICL_TM_NOTIFICATION_NONE){
+                require_once ICL_PLUGIN_PATH . '/inc/translation-management/tm-notification.class.php';
+                if($job_id){
+                    $tn_notification = new TM_Notification();
+                    $tn_notification->work_complete($data['job_id']);
+                }
             }
             
         }

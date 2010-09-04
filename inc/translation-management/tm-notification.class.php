@@ -102,11 +102,13 @@ class TM_Notification{
         $tj_url = get_option('siteurl') . '/wp-admin/admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/translation-management.php&sm=jobs';
         $doc_url = get_edit_post_link($job->original_doc_id);
         
-        $mail['to'] = $manager->user_email;
-        $mail['subject'] = sprintf(__('Translator has completed translation job for %s', 'sitepress'), get_bloginfo('name'));
-        $mail['body'] = sprintf(__('Translator (%s) has completed translation of job "%s" for %s to %s.\n%s\n\nView translation jobs: %s', 'sitepress'),
-            $translator->display_name, $job->original_doc_title, $lang_from, $lang_to, $doc_url, $tj_url);            
-        $mail['type'] = 'admin';
+        if($iclTranslationManagement->settings['notification']['completed'] == ICL_TM_NOTIFICATION_IMMEDIATELY){
+            $mail['to'] = $manager->user_email;
+            $mail['subject'] = sprintf(__('Translator has completed translation job for %s', 'sitepress'), get_bloginfo('name'));
+            $mail['body'] = sprintf(__('Translator (%s) has completed translation of job "%s" for %s to %s.\n%s\n\nView translation jobs: %s', 'sitepress'),
+                $translator->display_name, $job->original_doc_title, $lang_from, $lang_to, $doc_url, $tj_url);            
+            $mail['type'] = 'admin';
+        }
     }
     
     function translator_resigned(){

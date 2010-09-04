@@ -19,6 +19,8 @@
         href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/translation-management.php&sm=jobs"><?php _e('Translation Jobs', 'sitepress') ?></a>
     <a class="nav-tab <?php if(isset($_GET['sm']) && $_GET['sm']=='mcsetup'): ?> nav-tab-active<?php endif;?>" 
         href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/translation-management.php&sm=mcsetup"><?php _e('Multilingual Content Setup', 'sitepress') ?></a>
+    <a class="nav-tab <?php if(isset($_GET['sm']) && $_GET['sm']=='notifications'): ?> nav-tab-active<?php endif;?>" 
+        href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/translation-management.php&sm=notifications"><?php _e('Translation Notifications', 'sitepress') ?></a>
     
     <div class="icl_tm_wrap">
     
@@ -32,6 +34,9 @@
                 break;
             case 'mcsetup':
                 include dirname(__FILE__) . '/translation-management/mcsetup.php';
+                break;
+            case 'notifications':
+                include dirname(__FILE__) . '/translation-management/notifications.php';
                 break;
             default:
                 include dirname(__FILE__) . '/translation-management/dashboard.php';
