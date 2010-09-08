@@ -1316,6 +1316,17 @@ class TranslationManagement{
     function resign_translator($job_id){
         global $wpdb;
         list($translator_id, $rid) = $wpdb->get_row($wpdb->prepare("SELECT translator_id, rid FROM {$wpdb->prefix}icl_translate_job WHERE job_id=%d", $job_id), ARRAY_N);
+        
+        if(!empty($translator_id)){
+            if($this->settings['notification']['resigned'] != ICL_TM_NOTIFICATION_NONE){
+                require_once ICL_PLUGIN_PATH . '/inc/translation-management/tm-notification.class.php';
+                if($job_id){
+                    $tn_notification = new TM_Notification();
+                    $tn_notification->translator_resigned($translator_id, $job_id);
+                }
+            }
+        }
+        
         $wpdb->update($wpdb->prefix.'icl_translate_job', array('translator_id'=>0), array('job_id'=>$job_id));
         $wpdb->update($wpdb->prefix.'icl_translation_status', array('translator_id'=>0, 'status'=>ICL_TM_WAITING_FOR_TRANSLATOR), array('rid'=>$rid));
     }
