@@ -63,7 +63,7 @@ jQuery(document).ready(function(){
     jQuery('#icl-translation-dashboard td :checkbox').click(icl_tm_update_word_count_estimate);
     jQuery('#icl-translation-dashboard th :checkbox').click(icl_tm_select_all_documents);
     jQuery('#icl_tm_languages :checkbox').click(icl_tm_enable_submit);
-    
+       
     jQuery('.icl_tj_select_translator select').live('change', icl_tm_assign_translator);
     
     jQuery('#icl_tm_editor .icl_tm_finished').change(icl_tm_update_complete_cb_status);
@@ -91,6 +91,32 @@ jQuery(document).ready(function(){
         jQuery(this).addClass('active');
         return false;
     })
+    
+    jQuery('.icl_tm_finished').change(function(){        
+        var field = jQuery(this).attr('name').replace(/finished/,'data');
+        var data = jQuery('*[name="'+field+'"]').val();
+        if(jQuery('*[name="'+field+'[0]"]').length){
+            return true;
+        }
+        if(jQuery(this).attr('checked') && !data){
+            jQuery(this).removeAttr('checked');    
+        }
+    });
+    
+    jQuery('#icl_tm_editor').submit(function(){
+        jQuery('.icl_tm_finished:checked').each(function(){
+            var field = jQuery(this).attr('name').replace(/finished/,'data');
+            if(jQuery('*[name="'+field+'[0]"]').length){
+                return true;
+            }
+            var data = jQuery('*[name="'+field+'"]').val();
+            if(!data){
+                jQuery(this).removeAttr('checked');    
+                icl_tm_update_complete_cb_status();
+                return false;   
+            }
+        });         
+    });
     
             
 })
@@ -132,13 +158,13 @@ function icl_tm_assign_translator(){
     var translator_id = thiss.val();
     var translation_controls = thiss.parent().parent().find('.icl_tj_select_translator_controls');
     var job_id = translation_controls.attr('id').replace(/^icl_tj_tc_/,'');
-    if(translator_id > 0){
-        translation_controls.show();    
-        translation_controls.find('.icl_tj_cancel').click(function(){translation_controls.hide()});
-        translation_controls.find('.icl_tj_ok').click(function(){icl_tm_assign_translator_request(job_id, translator_id, thiss)});
-    }else{
-        translation_controls.hide();
-    }
+    translation_controls.show();    
+    translation_controls.find('.icl_tj_cancel').click(function(){
+            thiss.val(jQuery('#icl_tj_ov_'+job_id).val());
+            translation_controls.hide()
+    });
+    translation_controls.find('.icl_tj_ok').click(function(){icl_tm_assign_translator_request(job_id, translator_id, thiss)});
+    
 }
 
 function icl_tm_assign_translator_request(job_id, translator_id, select){
@@ -154,12 +180,12 @@ function icl_tm_assign_translator_request(job_id, translator_id, select){
         success: function(msg){
             if(!msg.error){
                 translation_controls.hide();    
-                select.parent().html(msg.message);
-                jQuery('#icl_tj_job_status_'+job_id).html(msg.status);
+                jQuery('#icl_tj_ov_'+job_id).val(translator_id);
             }else{
-                select.removeAttr('disabled');
-                translation_controls.find('.icl_tj_cancel, .icl_tj_ok').removeAttr('disabled');
+                //                
             }
+            select.removeAttr('disabled');
+            translation_controls.find('.icl_tj_cancel, .icl_tj_ok').removeAttr('disabled');
             
         }
     });             

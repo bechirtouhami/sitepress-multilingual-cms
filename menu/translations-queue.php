@@ -3,9 +3,12 @@
         include ICL_PLUGIN_PATH . '/menu/translation-editor.php';
         return;
     }
+    if(!empty($_GET['resigned'])){
+        $iclTranslationManagement->messages[] = array('type'=>'updated', 'text'=>__("You've resigned from this job.", 'sitepress'));    
+    }
     if(isset($_SESSION['translation_ujobs_filter'])){
         $icl_translation_filter = $_SESSION['translation_ujobs_filter'];
-    }    
+    }        
     $current_translator = $iclTranslationManagement->get_current_translator();
     $icl_translation_filter['translator_id'] = $current_translator->translator_id;
     $icl_translation_filter['include_unassigned'] = true;
@@ -114,6 +117,7 @@
                 <th scope="col" class="manage-column column-date">&nbsp;</th>
                 <th scope="col" class="manage-column column-date" style="width:14px;">&nbsp;</th>
                 <th scope="col" class="manage-column column-date"><?php _e('Status', 'sitepress')?></th>                
+                <th scope="col" class="manage-column column-date">&nbsp;</th>                
             </tr>
         </thead>
         <tfoot>
@@ -123,6 +127,7 @@
                 <th scope="col">&nbsp;</th>
                 <th scope="col">&nbsp;</th>
                 <th scope="col"><?php _e('Status', 'sitepress')?></th>
+                <th scope="col" class="manage-column column-date">&nbsp;</th>                
             </tr>
         </tfoot>    
         <tbody>
@@ -137,6 +142,11 @@
                 <td><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/translations-queue.php&job_id=<?php echo $job->job_id ?>"><?php _e('edit', 'sitepress'); ?></td>
                 <td><?php if($job->translator_id): ?><div class="icl_tj_your_job" title="<?php echo esc_html(__('This job is assigned specifically to you.','sitepress')) ?>">!</div><?php endif; ?></td>
                 <td><?php echo $iclTranslationManagement->status2text($job->status)?></td>
+                <td align="right">
+                    <?php if($job->status == ICL_TM_WAITING_FOR_TRANSLATOR || $job->status == ICL_TM_IN_PROGRESS): ?>
+                    <a href="<?php echo admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&icl_tm_action=save_translation&resign=1&job_id='.$job->job_id) ?>" onclick="if(!confirm('<?php echo esc_js(__('Are you sure you want to resign from this job?', 'sitepress')) ?>')) return false;"><?php _e('Resign', 'sitepress')?></a>
+                    <?php endif; ?>
+                </td>
             </tr>
             <?php endforeach; endif; ?>
         </tbody>    

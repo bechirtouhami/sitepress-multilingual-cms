@@ -445,7 +445,7 @@ class AbsoluteLinksPlugin{
                 
                 $post_name = $category_name = $tax_name = false;
                 if(isset($perma_query_vars['pagename'])){
-                    $post_name = basename($perma_query_vars['pagename']); 
+                    $post_name = preg_replace('#((.*)/)#','',$q->query_vars['pagename']); 
                     $post_type = 'page';
                 }elseif(isset($perma_query_vars['name'])){
                     $post_name = $perma_query_vars['name']; 
@@ -703,7 +703,7 @@ class AbsoluteLinksPlugin{
                 
                 $post_name = $category_name = $tax_name = false;
                 if(isset($perma_query_vars['pagename'])){
-                    $post_name = basename($perma_query_vars['pagename']); 
+                    $post_name = preg_replace('#((.*)/)#','',$perma_query_vars['pagename']); 
                     $post_type = 'page';
                 }elseif(isset($perma_query_vars['name'])){
                     $post_name = $perma_query_vars['name']; 

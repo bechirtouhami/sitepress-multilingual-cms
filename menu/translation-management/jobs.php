@@ -3,7 +3,7 @@
 if(isset($_SESSION['translation_jobs_filter'])){
     $icl_translation_filter = $_SESSION['translation_jobs_filter'];
 }
-$icl_translation_filter['limit_no'] = 5;
+$icl_translation_filter['limit_no'] = 20;
 $translation_jobs = $iclTranslationManagement->get_translation_jobs((array)$icl_translation_filter);
 ?>
 <br />
@@ -102,10 +102,12 @@ $translation_jobs = $iclTranslationManagement->get_translation_jobs((array)$icl_
             <td><?php echo $job->lang_text ?></td>            
             <td><span id="icl_tj_job_status_<?php echo $job->job_id ?>"><?php echo $iclTranslationManagement->status2text($job->status) ?></span></td>
             <td>
-                <?php if(!empty($job->translator_id)): ?>
+                <?php if(!empty($job->translator_id) && $job->status != ICL_TM_WAITING_FOR_TRANSLATOR): ?>
                 <a href="<?php echo $iclTranslationManagement->get_translator_edit_url($job->translator_id) ?>"><?php echo esc_html($job->translator_name) ?></a>
                 <?php else: ?>
-                <span class="icl_tj_select_translator"><?php $iclTranslationManagement->translators_dropdown(array('from'=>$job->source_language_code,'to'=>$job->language_code));?></span>
+                <span class="icl_tj_select_translator"><?php $iclTranslationManagement->translators_dropdown(
+                    array('name'=>'icl_tj_translator_for_'.$job->job_id , 'from'=>$job->source_language_code,'to'=>$job->language_code, 'selected'=>@intval($job->translator_id)));?></span>
+                <input type="hidden" id="icl_tj_ov_<?php echo $job->job_id ?>" value="<?php echo @intval($job->translator_id) ?>" />
                 <span class="icl_tj_select_translator_controls" id="icl_tj_tc_<?php echo $job->job_id ?>">
                     <input type="button" class="button-secondary icl_tj_ok" value="<?php _e('Send', 'sitepress') ?>" />&nbsp;
                     <input type="button" class="button-secondary icl_tj_cancel" value="<?php _e('Cancel', 'sitepress') ?>" />

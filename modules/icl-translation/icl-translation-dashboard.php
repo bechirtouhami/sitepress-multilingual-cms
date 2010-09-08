@@ -324,7 +324,7 @@
         *&nbsp;<?php _e('You need to select translators before sending document to translation.', 'sitepress'); ?>
         <?php 
         echo $sitepress->create_icl_popup_link('http://www.icanlocalize.com/destinations/go?name=wp-about-translators&iso='.
-            $sitepress->get_locale($sitepress->get_admin_language()).'&src='.$sitepress->get_admin_language(), 
+            $sitepress->get_locale($sitepress->get_admin_language()).'&src='.get_option('home'), 
             array(
                 'ar'=>1, 
                 'title'=>__('About translators', 'sitepress'),

@@ -125,7 +125,13 @@ class TranslationManagement{
                 wp_redirect('admin.php?page='.ICL_PLUGIN_FOLDER . '/menu/translations-queue.php');
                 break;                                               
            case 'save_translation':
-                $this->save_translation($data);
+                if(!empty($data['resign'])){
+                    $this->resign_translator($data['job_id']);
+                    wp_redirect(admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&resigned='.$data['job_id']));
+                    exit;
+                }else{
+                    $this->save_translation($data);    
+                }                
                 break;
            case 'save_notification_settings':
                 $this->settings['notification'] = $data['notification'];                                
@@ -152,7 +158,7 @@ class TranslationManagement{
                 if($this->assign_translation_job($data['job_id'], $data['translator_id'])){
                     $translator_edit_link = '<a href="'.$this->get_translator_edit_url($data['translator_id']).'">' . 
                     esc_html($wpdb->get_var($wpdb->prepare("SELECT display_name FROM {$wpdb->users} WHERE ID=%d",$data['translator_id']))) . '</a>';
-                    echo json_encode(array('error'=>0, 'message'=>$translator_edit_link, 'status'=>$this->status2text(ICL_TM_IN_PROGRESS)));
+                    echo json_encode(array('error'=>0, 'message'=>$translator_edit_link, 'status'=>$this->status2text(ICL_TM_WAITING_FOR_TRANSLATOR)));
                 }else{
                     echo json_encode(array('error'=>1));
                 }
@@ -659,12 +665,8 @@ class TranslationManagement{
                     $translation_id = $post_translations[$lang]->translation_id;
                 }     
                 
-                if(empty($selected_translators[$lang])){
-                    $_status = ICL_TM_WAITING_FOR_TRANSLATOR;
-                }else{
-                    $_status = ICL_TM_IN_PROGRESS;
-                    
-                } 
+                $_status = ICL_TM_WAITING_FOR_TRANSLATOR;
+                
                 // add translation_status record        
                 list($rid, $update) = $this->update_translation_status(array(
                     'translation_id'        => $translation_id,
@@ -868,9 +870,18 @@ class TranslationManagement{
     
     function assign_translation_job($job_id, $translator_id){
         global $wpdb;
-        $rid = $wpdb->get_var($wpdb->prepare("SELECT rid FROM {$wpdb->prefix}icl_translate_job WHERE job_id=%d", $job_id));
+        list($prev_translator_id, $rid) = $wpdb->get_row($wpdb->prepare("SELECT translator_id, rid FROM {$wpdb->prefix}icl_translate_job WHERE job_id=%d", $job_id), ARRAY_N);
+        if(!empty($prev_translator_id) && $prev_translator_id != $translator_id){
+            if($this->settings['notification']['resigned'] != ICL_TM_NOTIFICATION_NONE){
+                require_once ICL_PLUGIN_PATH . '/inc/translation-management/tm-notification.class.php';
+                if($job_id){
+                    $tn_notification = new TM_Notification();
+                    $tn_notification->translator_removed($prev_translator_id, $job_id);
+                }
+            }
+        }
         $wpdb->update($wpdb->prefix.'icl_translation_status', 
-            array('translator_id'=>$translator_id, 'status'=>ICL_TM_IN_PROGRESS), 
+            array('translator_id'=>$translator_id, 'status'=>ICL_TM_WAITING_FOR_TRANSLATOR), 
             array('rid'=>$rid));
         $wpdb->update($wpdb->prefix.'icl_translate_job', array('translator_id'=>$translator_id), array('job_id'=>$job_id));
         return true;
@@ -890,7 +901,8 @@ class TranslationManagement{
             'from'=>false, 'to'=>false,
             'default_name' => __('Any', 'sitepress'),
             'name'          => 'translator_id',
-            'selected'      => 0
+            'selected'      => 0,
+            'echo'          => true
         );
         extract($args_default);
         extract($args, EXTR_OVERWRITE);        
@@ -1017,10 +1029,13 @@ class TranslationManagement{
         }
         $job->elements = $wpdb->get_results($wpdb->prepare("SELECT * FROM {$wpdb->prefix}icl_translate WHERE job_id = %d {$jelq}", $job_id));
         
-        if($job->translator_id == 0){
+        if($job->translator_id == 0 || $job->status == ICL_TM_WAITING_FOR_TRANSLATOR){
             if($auto_assign){
                 $wpdb->update($wpdb->prefix . 'icl_translate_job', array('translator_id' => $this->current_translator->translator_id), array('job_id'=>$job_id));
-                $wpdb->update($wpdb->prefix . 'icl_translation_status', array('translator_id' => $this->current_translator->translator_id), array('rid'=>$job->rid));
+                $wpdb->update($wpdb->prefix . 'icl_translation_status', 
+                    array('translator_id' => $this->current_translator->translator_id, 'status' => ICL_TM_IN_PROGRESS), 
+                    array('rid'=>$job->rid)
+                );
             }
         }elseif($job->translator_id != $this->current_translator->translator_id){
             $this->messages[] = array(
@@ -1191,6 +1206,73 @@ class TranslationManagement{
             $_POST['skip_sitepress_actions'] = true;
 
             $new_post_id = wp_insert_post($postarr);    
+                       
+            // set stickiness
+            //is the original post a sticky post?
+            remove_filter('option_sticky_posts', array($sitepress,'option_sticky_posts')); // remove filter used to get language relevant stickies. get them all
+            $sticky_posts = get_option('sticky_posts');
+            $is_original_sticky = $original_post_details->post_type=='post' && in_array($original_post->ID, $sticky_posts);
+            
+            if($is_original_sticky && $sitepress_settings['sync_sticky_flag']){
+                stick_post($new_post_id);
+            }else{
+                if($original_post->post_type=='post' && !is_null($element_id)){
+                    unstick_post($new_post_id); //just in case - if this is an update and the original post stckiness has changed since the post was sent to translation
+                }
+            }
+             
+            //sync plugins texts
+            require_once ICL_PLUGIN_PATH . '/inc/plugins-texts-functions.php';
+            $fields_2_sync = icl_get_posts_translatable_fields(true);
+            foreach($fields_2_sync as $f2s){
+                update_post_meta($new_post_id, $f2s->attribute_name, get_post_meta($original_post->ID,$f2s->attribute_name,true));
+            }
+                       
+            // set specific custom fields
+            $copied_custom_fields = array('_top_nav_excluded', '_cms_nav_minihome');    
+            foreach($copied_custom_fields as $ccf){
+                $val = get_post_meta($original_post->ID, $ccf, true);
+                update_post_meta($new_post_id, $ccf, $val);
+            }    
+            
+            // sync _wp_page_template
+            if($sitepress_settings['sync_page_template']){
+                $_wp_page_template = get_post_meta($original_post->ID, '_wp_page_template', true);
+                if(!empty($_wp_page_template)){
+                    update_post_meta($new_post_id, '_wp_page_template', $_wp_page_template);
+                }
+            }
+               
+            // set the translated custom fields if we have any.
+            $custom_fields = icl_get_posts_translatable_fields();
+            foreach($custom_fields as $id => $cf){
+                if ($cf->translate) {
+                    $field_name = $cf->attribute_name;                    
+                    // find it in the translation
+                    foreach($job->elements as $name => $data) {
+                        if ($data->field_data == $field_name) {
+                            if (preg_match("/field-(.*?)-name/", $data->field_type, $match)) {
+                                $field_id = $match[1];                                
+                                foreach($job->elements as $k => $v){
+                                    if($v->field_type=='field-'.$field_id){
+                                        $field_translation = $this->decode_field_data($v->field_data_translated, $v->field_format) ;
+                                    }
+                                    if($v->field_type=='field-'.$field_id.'-type'){
+                                        $field_type = $v->field_data;
+                                    }
+                                }
+                                if ($field_type == 'custom_field') {
+                                    $field_translation = str_replace ( '&#0A;', "\n", $field_translation );
+                                    // always decode html entities  eg decode &amp; to &
+                                    $field_translation = html_entity_decode($field_translation);
+                                    update_post_meta($new_post_id, $field_name, $field_translation);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+                       
                         
             if(is_null($element_id)){
                 $wpdb->update($wpdb->prefix.'icl_translations', array('element_id' => $new_post_id), array('translation_id' => $translation_id) );
@@ -1204,7 +1286,7 @@ class TranslationManagement{
                 'text' => $user_message
             );
             
-            if($iclTranslationManagement->settings['notification']['completed'] != ICL_TM_NOTIFICATION_NONE){
+            if($this->settings['notification']['completed'] != ICL_TM_NOTIFICATION_NONE){
                 require_once ICL_PLUGIN_PATH . '/inc/translation-management/tm-notification.class.php';
                 if($job_id){
                     $tn_notification = new TM_Notification();
@@ -1229,6 +1311,13 @@ class TranslationManagement{
         }
         
         return $translated_elements;
+    }
+    
+    function resign_translator($job_id){
+        global $wpdb;
+        list($translator_id, $rid) = $wpdb->get_row($wpdb->prepare("SELECT translator_id, rid FROM {$wpdb->prefix}icl_translate_job WHERE job_id=%d", $job_id), ARRAY_N);
+        $wpdb->update($wpdb->prefix.'icl_translate_job', array('translator_id'=>0), array('job_id'=>$job_id));
+        $wpdb->update($wpdb->prefix.'icl_translation_status', array('translator_id'=>0, 'status'=>ICL_TM_WAITING_FOR_TRANSLATOR), array('rid'=>$rid));
     }
     
 }

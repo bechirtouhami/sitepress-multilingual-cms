@@ -60,7 +60,7 @@ $icl_post_types = $sitepress->get_translatable_documents();
 
 $icl_dashboard_settings = $sitepress_settings['dashboard'];
 
-$icl_translation_filter['limit_no'] = 5; // replace with 20
+$icl_translation_filter['limit_no'] = 20;
 $icl_documents = $iclTranslationManagement->get_documents($icl_translation_filter);
 $icl_translators = $iclTranslationManagement->get_blog_translators();
 

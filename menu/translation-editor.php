@@ -25,6 +25,7 @@ if(empty($job)){
         <?php $icl_tm_all_finished = true; ?>
         <?php foreach($job->elements as $element): ?>    
         <?php 
+            if(empty($element->field_data)) continue;
             $_iter = !isset($_iter) ? 1 : $_iter + 1; 
             if(!$element->field_finished){
                 $icl_tm_all_finished = false;
@@ -124,7 +125,8 @@ if(empty($job)){
     
     <p class="submit-buttons">
         <input type="submit" class="button-primary" value="<?php _e('Save translation', 'sitepress')?>" />&nbsp;
-        <input type="submit" class="button-secondary" value="<?php _e('Cancel', 'sitepress')?>" />
+        <a class="button-secondary" href="<?php echo admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php') ?>"><?php _e('Cancel', 'sitepress')?></a>
+        <input type="submit" id="icl_tm_resign" class="button-secondary" value="<?php _e('Resign', 'sitepress')?>" onclick="if(confirm('<?php echo esc_js(__('Are you sure you want to resign from this job?', 'sitepress')) ?>')) jQuery(this).next().val(1); else return false;" /><input type="hidden" name="resign" value="0" />
     </p>
     </form>
         

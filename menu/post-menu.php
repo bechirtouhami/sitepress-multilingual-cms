@@ -206,7 +206,7 @@
     <div style="text-align: right;margin:0 5px 5px 0;white-space:nowrap;">
     <?php printf( __('Estimated cost: %s USD', 'sitepress'), $estimated_cost);?><br />
     (<?php echo $this->create_icl_popup_link('http://www.icanlocalize.com/destinations/go?name=cms-cost-estimate&iso='.
-        $this->get_locale($this->get_admin_language()).'&src='.$this->get_admin_language(), 
+        $this->get_locale($this->get_admin_language()).'&src='.get_option('home'), 
         array(
             'ar'=>1, 
             'title'=>__('Cost estimate', 'sitepress'),
@@ -217,11 +217,11 @@
         
     <br />
     <p><b><?php echo $this->create_icl_popup_link('http://www.icanlocalize.com/destinations/go?name=moreinfo-wp&iso='.
-        $this->get_locale($this->get_admin_language()).'&src='.$this->get_admin_language(), 
+        $this->get_locale($this->get_admin_language()).'&src='.get_option('home'), 
         array('title' => __('About Our Translators', 'sitepress'), 'ar' => 1)) ?><?php _e('About Our Translators', 'sitepress'); ?></a></b></p>
     <p><?php _e('ICanLocalize offers expert translators at competitive rates.', 'sitepress'); ?></p>
     <p><?php echo $this->create_icl_popup_link('http://www.icanlocalize.com/destinations/go?name=moreinfo-wp&iso='.
-        $this->get_locale($this->get_admin_language()).'&src='.$this->get_admin_language(), 
+        $this->get_locale($this->get_admin_language()).'&src='.get_option('home'), 
         array('title' => __('About Our Translators', 'sitepress'), 'ar' => 1)) ?><?php _e('Learn more', 'sitepress'); ?></a></p>    
         
     <?php endif; ?>
