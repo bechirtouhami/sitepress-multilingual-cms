@@ -63,7 +63,13 @@ class TranslationManagement{
         $ct['translator_id'] =  $current_user->ID;
         $ct['display_name'] =  $user->data->display_name;
         $ct['user_login'] =  $user->data->user_login;
-        $ct['language_pairs'] = get_user_meta($current_user->ID, $wpdb->prefix.'language_pairs', true);
+        
+        if(ICL_PRE_WP3){ // pre WP3 back compatibility
+            $ct['language_pairs'] = get_usermeta($current_user->ID, $wpdb->prefix.'language_pairs');
+        }else{
+            $ct['language_pairs'] = get_user_meta($current_user->ID, $wpdb->prefix.'language_pairs', true);    
+        }
+        
         $this->current_translator = (object)$ct;
         
         if(isset($_POST['icl_tm_action'])){

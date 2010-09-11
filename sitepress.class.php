@@ -78,10 +78,10 @@ class SitePress{
             
             global $pagenow;
             /* preWP3 compatibility  - start */
-            if(ICL_PRE_WP3){
+            if(ICL_PRE_WP3){                
                 if($pagenow == 'edit.php'){
                     add_action('restrict_manage_posts', array($this,'language_filter'));                            
-                }elseif($pagenow == 'edit-pages.php'){
+                }elseif($pagenow == 'edit-pages.php'){                    
                     add_action('admin_footer', array($this,'language_filter'));
                 }
             }else{
@@ -2557,7 +2557,7 @@ class SitePress{
         return $join;
     }
     
-    function language_filter(){
+    function language_filter(){        
         require_once ICL_PLUGIN_PATH . '/inc/cache.php';        
         global $wpdb, $pagenow;
         
@@ -2567,13 +2567,12 @@ class SitePress{
                 $type = 'post';
             }else{
                 $type = 'page';
-            }
+            }            
         }else{
         /* preWP3 compatibility  - end */
             $type = isset($_GET['post_type'])?$_GET['post_type']:'post';    
-        }
-        
-        if(!in_array($type, array('post','page')) && $this->settings['custom_posts_sync_option'][$type] != 1){
+        }        
+        if(!in_array($type, array('post','page')) && $this->settings['custom_posts_sync_option'][$type] != 1){            
             return;
         }
         
@@ -2630,7 +2629,7 @@ class SitePress{
             $prot_link = '';
         }
         ?>
-        <script type="text/javascript">       
+        <script type="text/javascript">
             jQuery(".subsubsub").append('<br /><span id="icl_subsubsub"><?php echo $allas ?><\/span><br /><?php echo $prot_link ?>');
         </script>
         <?php
@@ -4482,6 +4481,11 @@ class SitePress{
         }
         
         if($pagenow=='edit.php' || $pagenow=='edit-pages.php'){            
+            /* preWP3 compatibility  - start */
+            if(ICL_PRE_WP3 && $pagenow == 'edit-pages.php'){
+                $_GET['post_type'] = 'page';
+            }
+            /* preWP3 compatibility  - end */            
             $element_type = isset($_GET['post_type']) ? 'post_' . $_GET['post_type'] : 'post_post';
             if(preg_match('#SELECT post_status, COUNT\( \* \) AS num_posts FROM '.$wpdb->posts.' WHERE post_type = \'(.+)\' GROUP BY post_status#i',$sql,$matches)){
                 if('all'!=$this->get_current_language()){
