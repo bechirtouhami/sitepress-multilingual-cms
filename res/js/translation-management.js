@@ -94,28 +94,46 @@ jQuery(document).ready(function(){
     
     jQuery('.icl_tm_finished').change(function(){        
         var field = jQuery(this).attr('name').replace(/finished/,'data');
-        var data = jQuery('*[name="'+field+'"]').val();
-        if(jQuery('*[name="'+field+'[0]"]').length){
-            return true;
+        if(field == 'fields[body][data]'){
+            var data = jQuery('*[name="'+field+'"]').val() + tinyMCE.get('fields[body][data]').getContent();
         }
+        else if(jQuery(this).hasClass('icl_tmf_multiple')){
+            var data = 1;
+            jQuery('[name*="'+field+'"]').each(function(){
+                data = data * jQuery(this).val().length;
+            });
+        }else{
+            var data = jQuery('[name="'+field+'"]*').val();    
+        }
+        
         if(jQuery(this).attr('checked') && !data){
             jQuery(this).removeAttr('checked');    
         }
     });
     
     jQuery('#icl_tm_editor').submit(function(){
+        jQuery('#icl_tm_validation_error').hide();
         jQuery('.icl_tm_finished:checked').each(function(){
             var field = jQuery(this).attr('name').replace(/finished/,'data');
-            if(jQuery('*[name="'+field+'[0]"]').length){
-                return true;
+            
+            if(field == 'fields[body][data]'){
+                var data = jQuery('*[name="'+field+'"]').val() + tinyMCE.get('fields[body][data]').getContent();
             }
-            var data = jQuery('*[name="'+field+'"]').val();
+            else if(jQuery(this).hasClass('icl_tmf_multiple')){
+                var data = 1;
+                jQuery('[name*="'+field+'"]').each(function(){
+                    data = data * jQuery(this).val().length;
+                });
+            }else{
+                var data = jQuery('[name="'+field+'"]*').val();    
+            }
             if(!data){
+                jQuery('#icl_tm_validation_error').fadeIn();
                 jQuery(this).removeAttr('checked');    
                 icl_tm_update_complete_cb_status();
                 return false;   
             }
-        });         
+        });  
     });
     
             
@@ -163,7 +181,7 @@ function icl_tm_assign_translator(){
             thiss.val(jQuery('#icl_tj_ov_'+job_id).val());
             translation_controls.hide()
     });
-    translation_controls.find('.icl_tj_ok').click(function(){icl_tm_assign_translator_request(job_id, translator_id, thiss)});
+    translation_controls.find('.icl_tj_ok').unbind('click').click(function(){icl_tm_assign_translator_request(job_id, translator_id, thiss)});
     
 }
 
@@ -188,7 +206,9 @@ function icl_tm_assign_translator_request(job_id, translator_id, select){
             translation_controls.find('.icl_tj_cancel, .icl_tj_ok').removeAttr('disabled');
             
         }
-    });             
+    }); 
+    
+    return false;            
 }
 
 function icl_tm_update_complete_cb_status(){

@@ -99,3 +99,8 @@ input.icl_multiple{
     font-size: 85%;
     font-style: italic;
 }
+
+#icl_tm_validation_error{
+    margin-top: 6px;
+    display: none;
+}

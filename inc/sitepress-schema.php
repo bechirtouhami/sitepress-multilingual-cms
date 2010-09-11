@@ -88,7 +88,7 @@ function icl_sitepress_activate(){
         CREATE TABLE `{$table_name}` (
             `translation_id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
             `element_type` VARCHAR( 32 ) NOT NULL DEFAULT 'post',
-            `element_id` BIGINT NOT NULL ,
+            `element_id` BIGINT NULL DEFAULT NULL ,
             `trid` BIGINT NOT NULL ,
             `language_code` VARCHAR( 7 ) NOT NULL,
             `source_language_code` VARCHAR( 7 ),

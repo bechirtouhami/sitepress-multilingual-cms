@@ -152,6 +152,9 @@ class SitePress{
             // front end js
             add_action('wp_head', array($this, 'front_end_js'));            
             
+            add_action('wp_head', array($this,'rtl_fix'));            
+            add_action('admin_print_styles', array($this,'rtl_fix'));            
+            
             add_action('restrict_manage_posts', array($this, 'restrict_manage_posts'));
             
             /* preWP3 compatibility  - start */
@@ -1482,7 +1485,14 @@ class SitePress{
         wp_enqueue_script('sitepress-tags', ICL_PLUGIN_URL . '/res/js/tags.js', array(), ICL_SITEPRESS_VERSION);
     }
     
-    function css_setup(){
+    function rtl_fix(){
+        global $wp_styles;
+        if($this->is_rtl()){
+            $wp_styles->text_direction = 'rtl';    
+        }
+    }
+    
+    function css_setup(){        
         if($this->settings['basic_menu']){
             echo '<style type="text/css">.icl_advanced_feature{display:none}</style>';       
         }
@@ -5085,7 +5095,11 @@ class SitePress{
     }
     
     function is_rtl(){
-        return in_array($this->get_current_language(), array('ar','he','fa'));
+        if(is_admin()){
+            return in_array($this->get_admin_language(), array('ar','he','fa'));    
+        }else{
+            return in_array($this->get_current_language(), array('ar','he','fa'));    
+        }
     }
     
     function get_translatable_documents($include_not_synced = false){

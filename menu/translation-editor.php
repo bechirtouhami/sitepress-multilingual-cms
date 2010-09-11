@@ -74,7 +74,8 @@ if(empty($job)){
                             <label><input type="text" name="fields[<?php echo $element->field_type ?>][data]" value="<?php 
                                 echo esc_attr($icl_tm_translated_content); ?>" /></label>
                             <?php endif; ?>                                
-                            <p><label><input class="icl_tm_finished" type="checkbox" name="fields[<?php echo $element->field_type ?>][finished]" value="1" <?php 
+                            <p><label><input class="icl_tm_finished<?php if($element->field_format == 'csv_base64'): ?> icl_tmf_multiple<?php endif;
+                                ?>" type="checkbox" name="fields[<?php echo $element->field_type ?>][finished]" value="1" <?php 
                                 if($element->field_finished): ?>checked="checked"<?php endif;?> />&nbsp;<?php 
                                 _e('This translation is finished.', 'sitepress')?></label></p>                            
                             <br />                                                            
@@ -123,6 +124,7 @@ if(empty($job)){
     if($job->translated):?> checked="checked"<?php endif; ?> value="1" />&nbsp;<?php 
         _e('Translation of this document is complete', 'sitepress')?></label>
     
+    <div id="icl_tm_validation_error" class="icl_error_text"><?php _e('Please review the document translation and fill in all the required fields.', 'sitepress') ?></div>
     <p class="submit-buttons">
         <input type="submit" class="button-primary" value="<?php _e('Save translation', 'sitepress')?>" />&nbsp;
         <a class="button-secondary" href="<?php echo admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php') ?>"><?php _e('Cancel', 'sitepress')?></a>

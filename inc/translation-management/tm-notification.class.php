@@ -82,7 +82,7 @@ class TM_Notification{
         $this->send_mail($mail);
     }
     
-    function work_complete($job_id){
+    function work_complete($job_id, $update = false){
         global $iclTranslationManagement, $sitepress, $wpdb;
         $job = $iclTranslationManagement->get_translation_job($job_id);    
         if($job->manager_id == $job->translator_id) return;
@@ -104,9 +104,15 @@ class TM_Notification{
         
         if($iclTranslationManagement->settings['notification']['completed'] == ICL_TM_NOTIFICATION_IMMEDIATELY){
             $mail['to'] = $manager->user_email;
-            $mail['subject'] = sprintf(__('Translator has completed translation job for %s', 'sitepress'), get_bloginfo('name'));
-            $mail['body'] = sprintf(__('Translator (%s) has completed translation of job "%s" for %s to %s.\n%s\n\nView translation jobs: %s', 'sitepress'),
-                $translator->display_name, $job->original_doc_title, $lang_from, $lang_to, $doc_url, $tj_url);            
+            if($update){
+                $mail['subject'] = sprintf(__('Translator has updated translation job for %s', 'sitepress'), get_bloginfo('name'));
+                $mail['body'] = sprintf(__("Translator (%s) has updated translation of job \"%s\" for %s to %s.\n%s\n\nView translation jobs: %s", 'sitepress'),
+                    $translator->display_name, $job->original_doc_title, $lang_from, $lang_to, $doc_url, $tj_url);            
+            }else{
+                $mail['subject'] = sprintf(__('Translator has completed translation job for %s', 'sitepress'), get_bloginfo('name'));
+                $mail['body'] = sprintf(__("Translator (%s) has completed translation of job \"%s\" for %s to %s.\n%s\n\nView translation jobs: %s", 'sitepress'),
+                    $translator->display_name, $job->original_doc_title, $lang_from, $lang_to, $doc_url, $tj_url);            
+            }
             $mail['type'] = 'admin';
             $this->send_mail($mail);
         }
@@ -123,11 +129,21 @@ class TM_Notification{
         
         $tj_url = get_option('siteurl') . '/wp-admin/admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/translation-management.php&sm=jobs';
         
+        // get current user admin language
+        $user_language = $sitepress->get_user_admin_language($manager->ID);
+        if(empty($user_language)){
+            $user_language = $sitepress->get_admin_language();
+        }
+        $lang_from = $wpdb->get_var($wpdb->prepare("SELECT name FROM {$wpdb->prefix}icl_languages_translations WHERE language_code=%s AND display_language_code=%s",
+            $job->source_language_code, $user_language));
+        $lang_to = $wpdb->get_var($wpdb->prepare("SELECT name FROM {$wpdb->prefix}icl_languages_translations WHERE language_code=%s AND display_language_code=%s",
+            $job->language_code, $user_language));        
+        
         if($iclTranslationManagement->settings['notification']['resigned'] == ICL_TM_NOTIFICATION_IMMEDIATELY){
             $mail['to'] = $manager->user_email;
             $mail['subject'] = sprintf(__('Translator has resigned from job on %s', 'sitepress'), get_bloginfo('name'));
-            $mail['body'] = sprintf(__('Translator %s has resigned from the translation job "%s" for %s to %s\nView translation jobs: %s', 'sitepress'),
-            $translator->display_name, $job->original_doc_title, $lang_from, $lang_to, $tj_url);            
+            $mail['body'] = sprintf(__('Translator %s has resigned from the translation job "%s" for %s to %s.%sView translation jobs: %s', 'sitepress'),
+            $translator->display_name, $job->original_doc_title, $lang_from, $lang_to, "\n", $tj_url);            
             $mail['type'] = 'admin';
             
             $this->send_mail($mail);
@@ -145,8 +161,8 @@ class TM_Notification{
         
         $mail['to'] = $manager->user_email;
         $mail['subject'] = sprintf(__('Removed from translation job on %s', 'sitepress'), get_bloginfo('name'));
-        $mail['body'] = sprintf(__('You have been removed from the translation job "%s" for %s to %s\nView translation jobs: %s', 'sitepress'),
-        $job->original_doc_title, $lang_from, $lang_to, $tj_url);            
+        $mail['body'] = sprintf(__('You have been removed from the translation job "%s" for %s to %s.%sView translation jobs: %s', 'sitepress'),
+        $job->original_doc_title, $lang_from, $lang_to, "\n",  $tj_url);            
         $mail['type'] = 'translator';
             
         $this->send_mail($mail);
@@ -160,7 +176,7 @@ class TM_Notification{
             $footer = sprintf(__("This message was automatically sent by Translation Management running on %s. To stop receiving these notifications, go to Notification Settings, or contact the system administrator at %s.\n\nThis email is not monitored for replies."), get_bloginfo('name'), get_option('home'));        
         }
         
-        $mail['body'] .= "\n\n" . $footer;
+        $mail['body'] .= "\n\n" . $footer . "\n\n" . sprintf(__('- The folks at ICanLocalize%s','sitepress'), "\n101 Convention Center Dr., Las Vegas, Nevada, 89109, USA");
         
         wp_mail($mail['to'], $mail['subject'], $mail['body']);
         

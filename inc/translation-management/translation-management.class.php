@@ -660,7 +660,7 @@ class TranslationManagement{
             
             foreach($selected_languages as $lang=>$one){
                 if(empty($post_translations[$lang])){
-                    $translation_id = $sitepress->set_element_language_details(0 , 'post_' . $post->post_type, $post_trid, $lang, $data['translate_from']);
+                    $translation_id = $sitepress->set_element_language_details(null , 'post_' . $post->post_type, $post_trid, $lang, $data['translate_from']);
                 }else{
                     $translation_id = $post_translations[$lang]->translation_id;
                 }     
@@ -871,15 +871,20 @@ class TranslationManagement{
     function assign_translation_job($job_id, $translator_id){
         global $wpdb;
         list($prev_translator_id, $rid) = $wpdb->get_row($wpdb->prepare("SELECT translator_id, rid FROM {$wpdb->prefix}icl_translate_job WHERE job_id=%d", $job_id), ARRAY_N);
+        
+        require_once ICL_PLUGIN_PATH . '/inc/translation-management/tm-notification.class.php';
+        $tn_notification = new TM_Notification();
         if(!empty($prev_translator_id) && $prev_translator_id != $translator_id){
-            if($this->settings['notification']['resigned'] != ICL_TM_NOTIFICATION_NONE){
-                require_once ICL_PLUGIN_PATH . '/inc/translation-management/tm-notification.class.php';
-                if($job_id){
-                    $tn_notification = new TM_Notification();
-                    $tn_notification->translator_removed($prev_translator_id, $job_id);
-                }
+            if($job_id){
+                $tn_notification->translator_removed($prev_translator_id, $job_id);
             }
         }
+        if(empty($translator_id)){
+            $tn_notification->new_job_any($job_id);    
+        }else{
+            $tn_notification->new_job_translator($job_id, $translator_id);
+        }            
+        
         $wpdb->update($wpdb->prefix.'icl_translation_status', 
             array('translator_id'=>$translator_id, 'status'=>ICL_TM_WAITING_FOR_TRANSLATOR), 
             array('rid'=>$rid));
@@ -1288,9 +1293,9 @@ class TranslationManagement{
             
             if($this->settings['notification']['completed'] != ICL_TM_NOTIFICATION_NONE){
                 require_once ICL_PLUGIN_PATH . '/inc/translation-management/tm-notification.class.php';
-                if($job_id){
+                if($data['job_id']){
                     $tn_notification = new TM_Notification();
-                    $tn_notification->work_complete($data['job_id']);
+                    $tn_notification->work_complete($data['job_id'], !is_null($element_id));
                 }
             }
             
