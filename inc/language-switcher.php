@@ -241,7 +241,7 @@ class SitePressLanguageSwitcher {
 											
 		<?php if(!defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') || !ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS): ?>
                                             <br />
-                                            <a href="#" onclick="jQuery(this).next().slideToggle();return false;"><?php _e('Edit the language switcher widget colors', 'sitepress')?></a>                                            
+                                            <a href="#" onclick="jQuery(this).next().slideToggle();return false;"><?php _e('Edit the language switcher widget colors', 'sitepress')?></a>                            
                                             <div style="display:none">                                          
                                                 <table id="icl_lang_preview_config" style="width:auto;">
                                                     <thead>

@@ -197,8 +197,8 @@
     <input type="hidden" id="icl_pt_wc" value="<?php echo icl_estimate_word_count($post, $selected_language) + icl_estimate_custom_field_word_count($post->ID, $selected_language) ?>" />
     <input type="hidden" id="icl_pt_post_id" value="<?php echo $post->ID ?>" />
     <input type="hidden" id="icl_pt_post_type" value="<?php echo $post->post_type ?>" />
-    <input type="button" disabled="disabled" id="icl_pt_send" class="button-primary alignright" value="<?php echo esc_html(__('Send to translation', 'sitepress')) ?>"/>
-    
+    <input type="button" disabled="disabled" id="icl_pt_send" class="button-primary alignright" value="<?php echo esc_html(__('Send to translation', 'sitepress')) ?>" style="clear: right;"/>
+    <br clear="all" />
     <?php else:?>
     <?php 
         $estimated_cost = sprintf("%.2f", (icl_estimate_word_count($post, $selected_language) + icl_estimate_custom_field_word_count($post->ID, $selected_language)) * 0.07);
@@ -220,7 +220,7 @@
         $this->get_locale($this->get_admin_language()).'&src='.get_option('home'), 
         array('title' => __('About Our Translators', 'sitepress'), 'ar' => 1)) ?><?php _e('About Our Translators', 'sitepress'); ?></a></b></p>
     <p><?php _e('ICanLocalize offers expert translators at competitive rates.', 'sitepress'); ?></p>
-    <p><?php echo $this->create_icl_popup_link('http://www.icanlocalize.com/destinations/go?name=moreinfo-wp&iso='.
+    <p><?php echo $this->create_icl_popup_link('http://www.icanlocalize.com/destinations/go?name=wp-about-translators&iso='.
         $this->get_locale($this->get_admin_language()).'&src='.get_option('home'), 
         array('title' => __('About Our Translators', 'sitepress'), 'ar' => 1)) ?><?php _e('Learn more', 'sitepress'); ?></a></p>    
         

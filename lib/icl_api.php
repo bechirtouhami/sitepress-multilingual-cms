@@ -81,7 +81,19 @@ class ICanLocalizeQuery{
         
         $request = str_replace(" ", "%20", $request);
         $c = new IcanSnoopy();
-
+        
+        $debugvars =  array(
+            'debug_cms' => 'WordPress',
+            'debug_module' => 'WPML ' . ICL_SITEPRESS_VERSION,
+            'debug_url'     => get_bloginfo('siteurl')
+        );
+        
+        if($method == 'GET'){
+            $request .= '&' . http_build_query($debugvars);    
+        }else{
+            $formvars += $debugvars;
+        }
+        
         // disable error reporting
         // needed for open_basedir restrictions (is_readable)
         $_display_errors = ini_get('display_errors');
