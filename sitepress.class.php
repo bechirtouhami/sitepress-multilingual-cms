@@ -447,14 +447,13 @@ class SitePress{
                     break;
                 default:
                     if($this->settings['custom_posts_sync_option'][$post_type] == 1){
-                        
                         add_filter('manage_'.$post_type.'_posts_columns',array($this,'add_posts_management_column'));
                         if($wp_post_types[$post_type]->hierarchical){
-                            add_action('manage_pages_custom_column',array($this,'add_content_for_posts_management_column'));    
+                            add_action('manage_pages_custom_column',array($this,'add_content_for_posts_management_column'));
+                            add_action('manage_posts_custom_column',array($this,'add_content_for_posts_management_column')); // add this too - for more types plugin
                         }else{
                             add_action('manage_posts_custom_column',array($this,'add_content_for_posts_management_column'));
                         }
-                        
                     }
             }                                            
             add_action('admin_print_scripts', array($this, '__set_posts_management_column_width'));
@@ -4571,10 +4570,10 @@ class SitePress{
     function _allow_calling_template_file_directly(){
         if(is_404()){  
             global $wp_query, $wpdb;
-            $wp_query->is_404 = false;
+            $wp_query->is_404 = false;            
             $parts = parse_url(get_bloginfo('home'));
             $req = str_replace($parts['path'], '', $_SERVER['REQUEST_URI']);
-            if(file_exists(ABSPATH . $req) && !is_dir(ABSPATH . $req)){
+            if(file_exists(ABSPATH . $req) && !is_dir(ABSPATH . $req)){                
                 header('HTTP/1.1 200 OK');
                 include ABSPATH . $req;
                 exit;
