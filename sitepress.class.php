@@ -666,8 +666,6 @@ class SitePress{
                             'manage_options', basename(ICL_PLUGIN_PATH).'/menu/theme-localization.php'); 
                             icl_st_administration_menu();
             //if(1 < count($this->get_active_languages())){                
-                add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Translation sync','sitepress'), __('Translation sync','sitepress'), 
-                            'manage_options', basename(ICL_PLUGIN_PATH).'/menu/translation-synchronization.php');                             
                 add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Comments translation','sitepress'), __('Comments translation','sitepress'), 
                             'manage_options', basename(ICL_PLUGIN_PATH).'/menu/comments-translation.php'); 
                 add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Professional translation','sitepress'), __('Professional translation','sitepress'), 
@@ -2132,12 +2130,8 @@ class SitePress{
                 }            
             }
         }        
-        
-        require_once ICL_PLUGIN_PATH . '/inc/plugins-texts-functions.php';
-        if(function_exists('icl_pt_sync_pugins_texts')){
-            icl_pt_sync_pugins_texts($post_id, $trid);
-        }
-        
+                
+        $this->sync_custom_fields($post_id);
                 
         //sync posts stcikiness
         if($_POST['post_type']=='post' && $_POST['action']!='post-quickpress-publish' && $this->settings['sync_sticky_flag']){ //not for quick press
@@ -2230,24 +2224,35 @@ class SitePress{
         }
     }    
     
-    function sync_custom_fields($post_id, $field_names, $single = true){
+    function sync_custom_fields($post_id, $single = true){
         global $wpdb;
-        $field_names = (array)$field_names;
-        $post_type = $wpdb->get_var("SELECT post_type FROM {$wpdb->posts} WHERE ID={$post_id}");
-        $trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_type='post_{$post_type}' AND element_id={$post_id}");
-        if(!$trid){
-            return;
-        }        
-        $translations = $wpdb->get_col("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid='{$trid}' AND element_id <> {$post_id}");        
-        foreach($field_names as $field_name){
-            $field_value = get_post_meta($post_id, $field_name, $single);
-            foreach($translations as $t){
-                if($post_id == $t->element_id) continue;
-                if(!$field_value){
-                    delete_post_meta($t, $field_name);
-                }else{
-                    update_post_meta($t, $field_name, $field_value);
-                }                
+        
+        $field_names = array();
+        
+        if(!empty($this->settings['translation-management']['custom_fields_translation']))
+        foreach($this->settings['translation-management']['custom_fields_translation'] as $cf => $op){
+            if($op == 1){
+                $field_names[] = $cf;        
+            }
+        }
+        
+        if(!empty($field_names)){
+            $post_type = $wpdb->get_var("SELECT post_type FROM {$wpdb->posts} WHERE ID={$post_id}");
+            $trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_type='post_{$post_type}' AND element_id={$post_id}");
+            if(!$trid){
+                return;
+            }        
+            $translations = $wpdb->get_col("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid='{$trid}' AND element_id <> {$post_id}");        
+            foreach($field_names as $field_name){
+                $field_value = get_post_meta($post_id, $field_name, $single);
+                foreach($translations as $t){
+                    if($post_id == $t->element_id) continue;
+                    if(!$field_value){
+                        delete_post_meta($t, $field_name);
+                    }else{
+                        update_post_meta($t, $field_name, $field_value);
+                    }                
+                }
             }
         }
     } 

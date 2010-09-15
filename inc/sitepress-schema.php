@@ -145,7 +145,7 @@ function icl_sitepress_activate(){
             `job_id` BIGINT UNSIGNED NOT NULL ,
             `content_id` BIGINT UNSIGNED NOT NULL ,
             `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
-            `field_type` VARCHAR( 16 ) NOT NULL ,
+            `field_type` VARCHAR( 128 ) NOT NULL ,
             `field_format` VARCHAR( 16 ) NOT NULL ,
             `field_translate` TINYINT NOT NULL ,
             `field_data` TEXT NOT NULL ,
@@ -192,71 +192,7 @@ function icl_sitepress_activate(){
             $wpdb->insert($wpdb->prefix.'icl_flags', array('lang_code'=>$code, 'flag'=>$file, 'from_template'=>0));
         }
     } 
-    
-    // plugins texts table
-    $table_name = $wpdb->prefix.'icl_plugins_texts';
-    if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
-        $sql = "
-            CREATE TABLE `{$table_name}` (
-            `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
-            `plugin_name` VARCHAR( 128 ) NOT NULL ,
-            `attribute_type` VARCHAR( 64 ) NOT NULL ,
-            `attribute_name` VARCHAR( 128 ) NOT NULL ,
-            `description` TEXT NOT NULL ,
-            `translate` TINYINT NOT NULL DEFAULT 0,
-            UNIQUE KEY `plugin_name` (`plugin_name`,`attribute_type`,`attribute_name`)            
-            ) ENGINE=MyISAM {$charset_collate}"; 
-       mysql_query($sql);
-       $prepop  = array(
-            0 => array(
-                'plugin_name' => ICL_PLUGIN_FOLDER . '/sitepress.php',
-                'attribute_type' => 'custom_field',
-                'attribute_name' => '_top_nav_excluded',
-                'description' => 'Exclude page from top navigation',
-                'translate' => 0
-                ),
-            1 => array(
-                'plugin_name' => ICL_PLUGIN_FOLDER . '/sitepress.php',
-                'attribute_type' => 'custom_field',
-                'attribute_name' => '_cms_nav_minihome',
-                'description' => 'Sets page as a mini home in CMS Navigation',
-                'translate' => 0
-                ),
-            2 => array(
-                'plugin_name' => ICL_PLUGIN_FOLDER . '/sitepress.php',
-                'attribute_type' => 'custom_field',
-                'attribute_name' => '_cms_nav_section',
-                'description' => 'Defines the section the page belong to',
-                'translate' => 1
-                ),
-            3 => array(
-                'plugin_name' => 'all-in-one-seo-pack/all_in_one_seo_pack.php',
-                'attribute_type' => 'custom_field',
-                'attribute_name' => 'title',
-                'description' => 'Custom title for post/page',
-                'translate' => 1
-                ),
-            4 => array(
-                'plugin_name' => 'all-in-one-seo-pack/all_in_one_seo_pack.php',
-                'attribute_type' => 'custom_field',
-                'attribute_name' => 'description',
-                'description' => 'Custom description for post/page',
-                'translate' => 1
-                ),
-            5 => array(
-                'plugin_name' => 'all-in-one-seo-pack/all_in_one_seo_pack.php',
-                'attribute_type' => 'custom_field',
-                'attribute_name' => 'keywords',
-                'description' => 'Custom keywords for post/page',
-                'translate' => 1
-                )
-       );   
        
-       foreach($prepop as $pre){
-           $wpdb->insert($table_name, $pre);
-       }         
-   }   
-   
    /* general string translation */
     $table_name = $wpdb->prefix.'icl_strings';
     if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
@@ -364,7 +300,17 @@ function icl_sitepress_activate(){
         $short_v = implode('.', array_slice(explode('.', ICL_SITEPRESS_VERSION), 0, 3));
         $settings = array(
             'hide_upgrade_notice' => $short_v,
-            'basic_menu'          => 1  
+            'basic_menu'          => 1,
+            'translation-management' => array(
+                'custom_fields_translation' => array(
+                    '_top_nav_excluded' => 1,
+                    '_cms_nav_minihome' => 1,
+                    '_cms_nav_section'  => 2,
+                    'title' => 2,
+                    'description' => 2,
+                    'keywords' => 2,
+                ) 
+            )  
         );
         add_option('icl_sitepress_settings', $settings, '', true);        
     }else{

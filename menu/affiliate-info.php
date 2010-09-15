@@ -1,5 +1,4 @@
 <?php        
-    require_once ICL_PLUGIN_PATH . '/inc/plugins-texts-functions.php';     
     if(defined('ICL_AFFILIATE_ID')){
         $icl_affiliate_id = ICL_AFFILIATE_ID;
     }else{

@@ -1,6 +1,229 @@
 <?php //included from menu translation-management.php ?>
 <?php
   
+  
+    $cposts = array();
+    $icl_post_types = $sitepress->get_translatable_documents(true);    
+    
+    foreach($icl_post_types as $k=>$v){
+        if(!in_array($k, array('post','page'))){
+            $cposts[$k] = $v;        
+        }
+    }
+    
+    foreach($cposts as $k=>$cpost){
+        if(!isset($sitepress_settings['custom_posts_sync_option'][$k])){
+            $cposts_sync_not_set[] = $cpost->labels->name;
+        }    
+    }    
+    if(!empty($cposts_sync_not_set)){
+        $notice = '<div class="updated below-h2"><p>';
+        $notice .= sprintf(__("You haven't set your synchronization preferences for these custom posts: %s. Default value was selected.", 'sitepress'), 
+            '<i>'.join('</i>, <i>', $cposts_sync_not_set) . '</i>');
+        $notice .= '</p></div>';
+    }
+    
+    global $wp_taxonomies;
+    $ctaxonomies = array_diff(array_keys((array)$wp_taxonomies), array('post_tag','category', 'nav_menu', 'link_category'));    
+    foreach($ctaxonomies as $ctax){
+        if(!isset($sitepress_settings['taxonomies_sync_option'][$ctax])){
+            $tax_sync_not_set[] = $wp_taxonomies[$ctax]->label;
+        }    
+    }
+    if(!empty($tax_sync_not_set)){
+        $notice .= '<div class="updated below-h2"><p>';
+        $notice .= sprintf(__("You haven't set your synchronization preferences for these taxonomies: %s. Default value was selected.", 'sitepress'), 
+            '<i>'.join('</i>, <i>', $tax_sync_not_set) . '</i>');
+        $notice .= '</p></div>';
+    }
+    
+    $cf_keys_limit = 1000; // jic
+    $cf_keys = $wpdb->get_col( "
+        SELECT meta_key
+        FROM $wpdb->postmeta
+        GROUP BY meta_key
+        ORDER BY meta_key
+        LIMIT $cf_keys_limit" );
+    if ( $cf_keys )
+        natcasesort($cf_keys);
+    
+    $cf_keys_exceptions = array('_edit_last', '_edit_lock', '_wp_page_template', '_wp_attachment_metadata', '_icl_translator_note');
+    // '_wp_attached_file'
+    $cf_keys = array_diff($cf_keys, $cf_keys_exceptions);
+    $cf_settings = $iclTranslationManagement->settings['custom_fields_translation'];  
+    
 ?>
-<br />
-M C  S E T U P
+
+    <?php if(isset($notice)) echo $notice ?>
+    
+    <form id="icl_cf_translation" name="icl_cf_translation" action="">        
+    <table class="widefat">
+        <thead>
+            <tr>
+                <th colspan="2"><?php _e('Custom fields translation', 'sitepress');?></th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if(empty($cf_keys)): ?>
+            <tr>
+                <td colspan="2">
+                    <?php _e('No custom fields found. It is possible that they will only show up here after you add more posts after installing a new plugin', 'sitepress'); ?>
+                </td>
+            </tr>
+            <?php else: foreach($cf_keys as $cf_key): ?>
+            <tr>
+                <td><?php echo $cf_key ?></td>
+                <td align="right">
+                    <label><input type="radio" name="cf[<?php echo base64_encode($cf_key) ?>]" value="0"
+                        <?php if($cf_settings[$cf_key]==0):?>checked="checked"<?php endif;?> />&nbsp;<?php _e("Don't translate", 'sitepress')?></label>&nbsp;
+                    <label><input type="radio" name="cf[<?php echo base64_encode($cf_key) ?>]" value="1"
+                        <?php if($cf_settings[$cf_key]==1):?>checked="checked"<?php endif;?> />&nbsp;<?php _e("Copy from original to translation", 'sitepress')?></label>&nbsp;
+                    <label><input type="radio" name="cf[<?php echo base64_encode($cf_key) ?>]" value="2"
+                        <?php if($cf_settings[$cf_key]==2):?>checked="checked"<?php endif;?> />&nbsp;<?php _e("Translate", 'sitepress')?></label>&nbsp;
+                </td>
+            </tr>
+            <?php endforeach; ?>
+            <tr>
+                <td colspan="2">
+                    <p>
+                        <input type="submit" class="button" value="<?php _e('Save', 'sitepress') ?>" />
+                        <span class="icl_ajx_response" id="icl_ajx_response_cf"></span>
+                    </p>    
+                </td>
+            </tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
+    </form>                    
+    <br />
+    
+    <form id="icl_page_sync_options" name="icl_page_sync_options" action="">        
+    <table class="widefat">
+        <thead>
+            <tr>
+                <th colspan="2"><?php _e('Posts and pages synchronization', 'sitepress');?></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <br />                    
+                    <p>
+                        <label><input type="checkbox" id="icl_sync_page_ordering" name="icl_sync_page_ordering" <?php if($sitepress_settings['sync_page_ordering']): ?>checked="checked"<?php endif; ?> value="1" />
+                        <?php echo __('Synchronize page order for translations.', 'sitepress') ?></label>                        
+                    </p>
+                    <p>
+                        <label><input type="checkbox" id="icl_sync_page_parent" name="icl_sync_page_parent" <?php if($sitepress_settings['sync_page_parent']): ?>checked="checked"<?php endif; ?> value="1" />
+                        <?php echo __('Set page parent for translation according to page parent of the original language.', 'sitepress') ?></label>                        
+                    </p>
+                    <p>
+                        <label><input type="checkbox" name="icl_sync_page_template" <?php if($sitepress_settings['sync_page_template']): ?>checked="checked"<?php endif; ?> value="1" />
+                        <?php echo __('Synchronize page template.', 'sitepress') ?></label>                        
+                    </p>                    
+                    <p>
+                        <label><input type="checkbox" name="icl_sync_comment_status" <?php if($sitepress_settings['sync_comment_status']): ?>checked="checked"<?php endif; ?> value="1" />
+                        <?php echo __('Synchronize comment status.', 'sitepress') ?></label>                        
+                    </p>                    
+                    <p>
+                        <label><input type="checkbox" name="icl_sync_ping_status" <?php if($sitepress_settings['sync_ping_status']): ?>checked="checked"<?php endif; ?> value="1" />
+                        <?php echo __('Synchronize ping status.', 'sitepress') ?></label>                        
+                    </p>                                        
+                    <p>
+                        <label><input type="checkbox" name="icl_sync_sticky_flag" <?php if($sitepress_settings['sync_sticky_flag']): ?>checked="checked"<?php endif; ?> value="1" />
+                        <?php echo __('Synchronize sticky flag.', 'sitepress') ?></label>                        
+                    </p>                                                            
+                    <p>
+                        <label><input type="checkbox" name="icl_sync_private_flag" <?php if($sitepress_settings['sync_private_flag']): ?>checked="checked"<?php endif; ?> value="1" />
+                        <?php echo __('Synchronize private flag.', 'sitepress') ?></label>                        
+                    </p>                                                                                
+                    <p>
+                        <input class="button" name="save" value="<?php echo __('Save','sitepress') ?>" type="submit" />
+                        <span class="icl_ajx_response" id="icl_ajx_response_mo"></span>
+                    </p>                    
+                </td>
+                <td>
+                    <br />                    
+                    <p>
+                        <label><input type="checkbox" name="icl_sync_delete" <?php if($sitepress_settings['sync_delete']): ?>checked="checked"<?php endif; ?> value="1" />
+                        <?php echo __('When deleting a post, delete translations as well.', 'sitepress') ?></label>                        
+                    </p>                                                                                
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    </form>                
+    
+    
+    <br />
+    <?php if(!empty($cposts)): ?>    
+    <form id="icl_custom_posts_sync_options" name="icl_custom_posts_sync_options" action="">        
+    <table class="widefat">
+        <thead>
+            <tr>
+                <th width="60%"><?php _e('Custom posts', 'sitepress');?></th>
+                <th>&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach($cposts as $k=>$cpost): ?>
+            <tr>
+                <td><?php echo $cpost->labels->name; ?></td>
+                <td>
+                    <label><input type="radio" name="icl_sync_custom_posts[<?php echo $k ?>]" value="1" <?php
+                        if($sitepress_settings['custom_posts_sync_option'][$k]==1) echo ' checked="checked"'
+                    ?> />&nbsp;<?php _e('Translate', 'sitepress') ?></label>&nbsp;
+                    <label><input type="radio" name="icl_sync_custom_posts[<?php echo $k ?>]" value="0" <?php
+                        if($sitepress_settings['custom_posts_sync_option'][$k]==0) echo ' checked="checked"'
+                    ?> />&nbsp;<?php _e('Do nothing', 'sitepress') ?></label>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+            <tr>
+                <td colspan="2">
+                <p>
+                    <input type="submit" class="button" value="<?php _e('Save', 'sitepress') ?>" />
+                    <span class="icl_ajx_response" id="icl_ajx_response_cp"></span>
+                </p>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    </form>        
+    <?php endif; ?>     
+    
+    <?php if(!empty($ctaxonomies)): ?>
+    <form id="icl_custom_tax_sync_options" name="icl_custom_tax_sync_options" action="">        
+    <table class="widefat">
+        <thead>
+            <tr>
+                <th width="60%"><?php _e('Custom taxonomies', 'sitepress');?></th>
+                <th>&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php foreach($ctaxonomies as $ctax): ?>
+            <tr>
+                <td><?php echo $wp_taxonomies[$ctax]->label; ?></td>
+                <td>
+                    <label><input type="radio" name="icl_sync_tax[<?php echo $ctax ?>]" value="1" <?php
+                        if($sitepress_settings['taxonomies_sync_option'][$ctax]==1) echo ' checked="checked"'
+                    ?> />&nbsp;<?php _e('Translate', 'sitepress') ?></label>&nbsp;
+                    <label><input type="radio" name="icl_sync_tax[<?php echo $ctax ?>]" value="0" <?php
+                        if($sitepress_settings['taxonomies_sync_option'][$ctax]==0) echo ' checked="checked"'
+                    ?> />&nbsp;<?php _e('Do nothing', 'sitepress') ?></label>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+            <tr>
+                <td colspan="2">
+                <p>
+                    <input type="submit" class="button" value="<?php _e('Save', 'sitepress') ?>" />
+                    <span class="icl_ajx_response" id="icl_ajx_response_ct"></span>
+                </p>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    </form>        
+    <?php endif; ?>     
+    <br clear="all" />    

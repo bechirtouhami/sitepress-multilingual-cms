@@ -34,6 +34,8 @@ class TranslationManagement{
         
         add_action('save_post', array($this, 'save_post_actions'), 11, 2); // calling *after* the Sitepress actions
         
+        add_action('delete_post', array($this, 'delete_post_actions'), 1, 1); // calling *before* the Sitepress actions
+        
         add_action('icl_ajx_custom_call', array($this, 'ajax_calls'), 10, 2);
                 
         if(isset($_GET['sm']) && ($_GET['sm'] == 'dashboard' || $_GET['sm'] == 'jobs')){session_start();}
@@ -167,6 +169,16 @@ class TranslationManagement{
                     echo json_encode(array('error'=>0, 'message'=>$translator_edit_link, 'status'=>$this->status2text(ICL_TM_WAITING_FOR_TRANSLATOR)));
                 }else{
                     echo json_encode(array('error'=>1));
+                }
+                break;
+            case 'icl_cf_translation':
+                if(!empty($data['cf'])){
+                    foreach($data['cf'] as $k=>$v){
+                        $cft[base64_decode($k)] = $v;
+                    }
+                    $this->settings['custom_fields_translation'] = $cft;
+                    $this->save_settings();
+                    echo '1|';
                 }
                 break;
         }
@@ -326,6 +338,25 @@ class TranslationManagement{
         //die();
     }
     
+    function delete_post_actions($post_id){
+        global $wpdb;
+        $post_type = $wpdb->get_var("SELECT post_type FROM {$wpdb->posts} WHERE ID={$post_id}");
+        if(!empty($post_type)){
+            $translation_id = $wpdb->get_var($wpdb->prepare("SELECT translation_id FROM {$wpdb->prefix}icl_translations WHERE element_id=%d AND element_type=%s", $post_id, 'post_' . $post_type));                
+            if($translation_id){
+                $rid = $wpdb->get_var($wpdb->prepare("SELECT rid FROM {$wpdb->prefix}icl_translation_status WHERE translation_id=%d", $translation_id));
+                $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->prefix}icl_translation_status WHERE translation_id=%d", $translation_id));     
+                if($rid){
+                    $jobs = $wpdb->get_col($wpdb->prepare("SELECT job_id FROM {$wpdb->prefix}icl_translate_job WHERE rid=%d", $rid));
+                    $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->prefix}icl_translate_job WHERE rid=%d", $rid));                                 
+                    if(!empty($jobs)){
+                        $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translate WHERE job_id IN (".join(',', $jobs).")");                                 
+                    }
+                }
+            }
+        }
+    }
+    
     /**
     * calculate post md5
     * 
@@ -378,13 +409,10 @@ class TranslationManagement{
             }
         }
         
-        include_once ICL_PLUGIN_PATH . '/inc/plugins-texts-functions.php';
-
-        $custom_fields = icl_get_posts_translatable_fields();
         $custom_fields_values = array();
-        foreach($custom_fields as $cf){
-            if ($cf->translate) {
-                $custom_fields_values[] = get_post_meta($post->ID, $cf->attribute_name, true);
+        foreach((array)$this->settings['custom_fields_translation'] as $cf => $op){
+            if ($op == 2) {
+                $custom_fields_values[] = get_post_meta($post->ID, $cf, true);
             }
         }
         
@@ -612,16 +640,20 @@ class TranslationManagement{
         include_once ICL_PLUGIN_PATH . '/inc/plugins-texts-functions.php';
         
         $words = 0;
-        $custom_fields = icl_get_posts_translatable_fields();
-        foreach($custom_fields as $id => $cf){
-            if ($cf->translate) {
-                $custom_fields_value = get_post_meta($post_id, $cf->attribute_name, true);
-                if ($custom_fields_value != "") {
-                    if(in_array($lang_code, $asian_languages)){
-                        $words += strlen(strip_tags($custom_fields_value)) / 6;
-                    } else {
-                        $words += count(explode(' ',strip_tags($custom_fields_value)));
-                    }
+        
+        $custom_fields = array();
+        foreach((array)$this->settings['custom_fields_translation'] as $cf => $op){
+            if ($op == 2) {
+                $custom_fields[] = $cf;
+            }
+        }
+        foreach($custom_fields as $cf ){
+            $custom_fields_value = get_post_meta($post_id, $cf, true);
+            if ($custom_fields_value != "") {
+                if(in_array($lang_code, $asian_languages)){
+                    $words += strlen(strip_tags($custom_fields_value)) / 6;
+                } else {
+                    $words += count(explode(' ',strip_tags($custom_fields_value)));
                 }
             }
         }
@@ -732,40 +764,36 @@ class TranslationManagement{
             'format'    => 'base64'
         );
 
-        $package['contents']['excerpt'] = array(
-            'translate' => 1,
-            'data'      => base64_encode($post->post_excerpt),
-            'format'    => 'base64'
-        );
+        if(!empty($post->post_excerpt)){
+            $package['contents']['excerpt'] = array(
+                'translate' => 1,
+                'data'      => base64_encode($post->post_excerpt),
+                'format'    => 'base64'
+            );
+        }
         
         $package['contents']['original_id'] = array(
             'translate' => 0,
             'data'      => $post->ID
         );
         
-        include_once ICL_PLUGIN_PATH . '/inc/plugins-texts-functions.php';
-        $custom_fields = icl_get_posts_translatable_fields();
-        
-        foreach($custom_fields as $id => $cf){
-            if ($cf->translate) {
-                $custom_fields_value = get_post_meta($post->ID, $cf->attribute_name, true);
+        if(!empty($this->settings['custom_fields_translation']))
+        foreach($this->settings['custom_fields_translation'] as $cf => $op){
+            if ($op == 2) { // translate
+                $custom_fields_value = get_post_meta($post->ID, $cf, true);
                 if ($custom_fields_value != '') {
-                    $package['contents']['field-'.$id] = array(
+                    $package['contents']['field-'.$cf] = array(
                         'translate' => 1,
                         'data' => base64_encode($custom_fields_value),
                         'format' => 'base64'
                     );
-                    $package['contents']['field-'.$id.'-name'] = array(
+                    $package['contents']['field-'.$cf.'-name'] = array(
                         'translate' => 0,
-                        'data' => $cf->attribute_name
+                        'data' => $cf
                     );
-                    $package['contents']['field-'.$id.'-type'] = array(
+                    $package['contents']['field-'.$cf.'-type'] = array(
                         'translate' => 0,
-                        'data' => $cf->attribute_type
-                    );
-                    $package['contents']['field-'.$id.'-plugin'] = array(
-                        'translate' => 0,
-                        'data' => $cf->plugin_name
+                        'data' => 'custom_field'
                     );
                 }
             }
@@ -1233,10 +1261,10 @@ class TranslationManagement{
             }
              
             //sync plugins texts
-            require_once ICL_PLUGIN_PATH . '/inc/plugins-texts-functions.php';
-            $fields_2_sync = icl_get_posts_translatable_fields(true);
-            foreach($fields_2_sync as $f2s){
-                update_post_meta($new_post_id, $f2s->attribute_name, get_post_meta($original_post->ID,$f2s->attribute_name,true));
+            foreach((array)$this->settings['custom_fields_translation'] as $cf => $op){
+                if ($op == 1) {
+                    update_post_meta($new_post_id, $cf, get_post_meta($original_post->ID,$cf,true));
+                }
             }
                        
             // set specific custom fields

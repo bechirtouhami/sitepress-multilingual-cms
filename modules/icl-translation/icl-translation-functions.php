@@ -293,31 +293,29 @@ function icl_translation_send_post($post_id, $target_languages, $post_type='post
             'target_languages' => $target_for_server
         );
 
-        include_once ICL_PLUGIN_PATH . '/inc/plugins-texts-functions.php';
+        $custom_fields = array();
+        foreach((array)$sitepress_settings['translation-management']['custom_fields_translation'] as $cf => $op){
+            if ($op == 2) {
+                $custom_fields[] = $cf;
+            }
+        }
         
-        $custom_fields = icl_get_posts_translatable_fields();
-        foreach($custom_fields as $id => $cf){
-            if ($cf->translate) {
-                $custom_fields_value = get_post_meta($post_id, $cf->attribute_name, true);
-                if ($custom_fields_value != '') {
-                    $data['contents']['field-'.$id] = array(
-                        'translate' => 1,
-                        'data' => base64_encode($custom_fields_value),
-                        'format' => 'base64',
-                    );
-                    $data['contents']['field-'.$id.'-name'] = array(
-                        'translate' => 0,
-                        'data' => $cf->attribute_name,
-                    );
-                    $data['contents']['field-'.$id.'-type'] = array(
-                        'translate' => 0,
-                        'data' => $cf->attribute_type,
-                    );
-                    $data['contents']['field-'.$id.'-plugin'] = array(
-                        'translate' => 0,
-                        'data' => $cf->plugin_name,
-                    );
-                }
+        foreach($custom_fields as $cf){
+            $custom_fields_value = get_post_meta($post_id, $cf, true);
+            if ($custom_fields_value != '') {
+                $data['contents']['field-'.$cf] = array(
+                    'translate' => 1,
+                    'data' => base64_encode($custom_fields_value),
+                    'format' => 'base64',
+                );
+                $data['contents']['field-'.$cf.'-name'] = array(
+                    'translate' => 0,
+                    'data' => $cf,
+                );
+                $data['contents']['field-'.$cf.'-type'] = array(
+                    'translate' => 0,
+                    'data' => 'custom_field',
+                );
             }
         }
                 
@@ -435,6 +433,7 @@ function icl_translation_save_md5($p){
 }
 
 function icl_translation_calculate_md5($post_id){
+    global $sitepress_settings;
     $post = get_post($post_id);
     $post_type = $post->post_type;
     
@@ -474,15 +473,13 @@ function icl_translation_calculate_md5($post_id){
         }
     }
     
-    include_once ICL_PLUGIN_PATH . '/inc/plugins-texts-functions.php';
-
-    $custom_fields = icl_get_posts_translatable_fields();
     $custom_fields_values = array();
-    foreach($custom_fields as $cf){
-        if ($cf->translate) {
-            $custom_fields_values[] = get_post_meta($post_id, $cf->attribute_name, true);
+    foreach((array)$sitepress_settings['translation-management']['custom_fields_translation'] as $cf => $op){
+        if ($op == 2) {
+            $custom_fields_values[] = get_post_meta($post_id, $cf, true);
         }
     }
+    
     
     $md5str =         
         $post->post_title . ';' . 
@@ -1034,12 +1031,12 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
         }
     }
     
-    //sync plugins texts
-    require_once ICL_PLUGIN_PATH . '/inc/plugins-texts-functions.php';
-    $fields_2_sync = icl_get_posts_translatable_fields(true);
-    foreach($fields_2_sync as $f2s){
-        update_post_meta($new_post_id, $f2s->attribute_name, get_post_meta($translation['original_id'],$f2s->attribute_name,true));
+    foreach((array)$sitepress_settings['translation-management']['custom_fields_translation'] as $cf => $op){
+        if ($op == 1) {
+            update_post_meta($new_post_id, $cf, get_post_meta($translation['original_id'],$cf,true));
+        }
     }
+    
     
     // set specific custom fields
     $copied_custom_fields = array('_top_nav_excluded', '_cms_nav_minihome');    
@@ -1872,19 +1869,21 @@ function icl_estimate_word_count($data, $lang_code) {
 function icl_estimate_custom_field_word_count($post_id, $lang_code) {
     global $asian_languages;
 
-    include_once ICL_PLUGIN_PATH . '/inc/plugins-texts-functions.php';
-    
     $words = 0;
-    $custom_fields = icl_get_posts_translatable_fields();
-    foreach($custom_fields as $id => $cf){
-        if ($cf->translate) {
-            $custom_fields_value = get_post_meta($post_id, $cf->attribute_name, true);
-            if ($custom_fields_value != "") {
-                if(in_array($lang_code, $asian_languages)){
-                    $words += strlen(strip_tags($custom_fields_value)) / 6;
-                } else {
-                    $words += count(explode(' ',strip_tags($custom_fields_value)));
-                }
+    
+    $custom_fields = array();
+    foreach((array)$sitepress_settings['translation-management']['custom_fields_translation'] as $cf => $op){
+        if ($op == 2) {
+            $custom_fields[] = $cf;
+        }
+    }
+    foreach($custom_fields as $cf){
+        $custom_fields_value = get_post_meta($post_id, $cf, true);
+        if ($custom_fields_value != "") {
+            if(in_array($lang_code, $asian_languages)){
+                $words += strlen(strip_tags($custom_fields_value)) / 6;
+            } else {
+                $words += count(explode(' ',strip_tags($custom_fields_value)));
             }
         }
     }

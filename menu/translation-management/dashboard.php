@@ -164,7 +164,7 @@ if(!empty($iclTranslationManagement->dashboard_select)){
     <form method="post">
     <input type="hidden" name="icl_tm_action" value="send_jobs" />
     <input type="hidden" name="translate_from" value="<?php echo $icl_translation_filter['from_lang'] ?>" />
-    <table class="widefat fixed" id="icl-translation-dashboard" cellspacing="0">
+    <table class="widefat fixed" id="icl-tm-translation-dashboard" cellspacing="0">
         <thead>
         <tr>
             <th scope="col" class="manage-column column-cb check-column"><input type="checkbox" <?php if(isset($_GET['post_id'])) echo 'checked="checked"'?>/></th>
@@ -332,7 +332,7 @@ if(!empty($iclTranslationManagement->dashboard_select)){
     <span id="icl-cw-total" style="display:none"><?php echo $wctotal; ?></span>       
     <div class="tablenav">    
         <div style="float:left;margin-top:4px;">
-            <strong><?php echo __('Word count estimate:', 'sitepress') ?></strong> <?php printf(__('%s words', 'sitepress'), '<span id="icl-estimated-words-count">0</span>')?>
+            <strong><?php echo __('Word count estimate:', 'sitepress') ?></strong> <?php printf(__('%s words', 'sitepress'), '<span id="icl-tm-estimated-words-count">0</span>')?>
         </div>    
         <?php if ( $page_links ) { ?>
         <div class="tablenav-pages"><?php $page_links_text = sprintf( '<span class="displaying-num">' . __( 'Displaying %s&#8211;%s of %s', 'sitepress' ) . '</span>%s',

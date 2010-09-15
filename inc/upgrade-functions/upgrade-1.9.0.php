@@ -1,6 +1,6 @@
 <?php
 function icl_upgrade_1_9_0(){
-    global $wpdb;
+    global $wpdb, $sitepress;
     
     if(defined('icl_upgrade_1_9_0_runonce')){
         return;
@@ -144,5 +144,18 @@ function icl_upgrade_1_9_0(){
         }
         
     }
+    
+    // removing the plugins text table; importing data into a Sitepress setting
+    $results = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}icl_plugins_texts");
+    if(!empty($results)){
+        foreach($results as $row){
+            $cft[$row->attribute_name] = $row->translate + 1;
+        }
+        $iclsettings['translation-management']['custom_fields_translation'] = $cft;
+        $sitepress->save_settings($iclsettings);
+        
+        mysql_query("DROP TABLE {$wpdb->prefix}icl_plugins_texts");
+    }
+    
 }  
 ?>

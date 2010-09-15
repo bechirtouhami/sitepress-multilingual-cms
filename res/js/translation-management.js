@@ -60,10 +60,10 @@ jQuery(document).ready(function(){
     }
     
     /* word count estimate */
-    jQuery('#icl-translation-dashboard td :checkbox').click(icl_tm_update_word_count_estimate);
-    jQuery('#icl-translation-dashboard th :checkbox').click(icl_tm_select_all_documents);
+    jQuery('#icl-tm-translation-dashboard td :checkbox').click(icl_tm_update_word_count_estimate);
+    jQuery('#icl-tm-translation-dashboard th :checkbox').click(icl_tm_select_all_documents);
     jQuery('#icl_tm_languages :checkbox').click(icl_tm_enable_submit);
-       
+    
     jQuery('.icl_tj_select_translator select').live('change', icl_tm_assign_translator);
     
     jQuery('#icl_tm_editor .icl_tm_finished').change(icl_tm_update_complete_cb_status);
@@ -140,31 +140,31 @@ jQuery(document).ready(function(){
 })
 
 function icl_tm_update_word_count_estimate(){
-    icl_tm_enable_sumit();
+    icl_tm_enable_submit();
     var id = jQuery(this).val();
     var val = parseInt(jQuery('#icl-cw-'+id).html());
-    var curval = parseInt(jQuery('#icl-estimated-words-count').html());
+    var curval = parseInt(jQuery('#icl-tm-estimated-words-count').html());
     if(jQuery(this).attr('checked')){
         var newval = curval + val;        
     }else{
         var newval = curval - val;        
     }    
-    jQuery('#icl-estimated-words-count').html(newval);
+    jQuery('#icl-tm-estimated-words-count').html(newval);
 }
 
 function icl_tm_select_all_documents(){
     if(jQuery(this).attr('checked')){
-        jQuery('#icl-translation-dashboard :checkbox').attr('checked','checked');    
-        jQuery('#icl-estimated-words-count').html(parseInt(jQuery('#icl-cw-total').html()));
+        jQuery('#icl-tm-translation-dashboard :checkbox').attr('checked','checked');    
+        jQuery('#icl-tm-estimated-words-count').html(parseInt(jQuery('#icl-cw-total').html()));
     }else{
-        jQuery('#icl-translation-dashboard :checkbox').removeAttr('checked');    
-        jQuery('#icl-estimated-words-count').html('0');
+        jQuery('#icl-tm-translation-dashboard :checkbox').removeAttr('checked');    
+        jQuery('#icl-tm-estimated-words-count').html('0');
     }
     icl_tm_enable_sumit();
 }
 
 function icl_tm_enable_submit(){
-    if( jQuery('#icl-translation-dashboard td :checkbox:checked').length > 0 && jQuery('#icl_tm_languages :checkbox:checked').length >  0){
+    if( jQuery('#icl-tm-translation-dashboard td :checkbox:checked').length > 0 && jQuery('#icl_tm_languages :checkbox:checked').length >  0){
         jQuery('#icl_tm_jobs_submit').removeAttr('disabled');
     }else{
         jQuery('#icl_tm_jobs_submit').attr('disabled','disabled');
@@ -218,3 +218,15 @@ function icl_tm_update_complete_cb_status(){
         jQuery('#icl_tm_editor :checkbox[name=complete]').attr('disabled', 'disabled');        
     }    
 }
+
+
+
+/* MC Setup */
+
+jQuery(document).ready(function(){
+    jQuery('#icl_page_sync_options').submit(iclSaveForm);    
+    jQuery('form[name="icl_plugins_texts"]').submit(iclSaveForm);
+    jQuery('form[name="icl_custom_tax_sync_options"]').submit(iclSaveForm);
+    jQuery('form[name="icl_custom_posts_sync_options"]').submit(iclSaveForm);
+    jQuery('form[name="icl_cf_translation"]').submit(iclSaveForm);
+})

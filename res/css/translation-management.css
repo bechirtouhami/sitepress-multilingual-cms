@@ -56,3 +56,11 @@
 .icl_tj_select_translator_controls{
     display: none;
 }
+
+#icl_custom_posts_sync_options, #icl_custom_tax_sync_options{
+    width:49%;
+    float:left;    
+}
+#icl_custom_posts_sync_options{
+    margin-right:2%;
+}

@@ -69,7 +69,7 @@ function icl_pt_sync_pugins_texts($post_id, $trid){
         }
     } 
     if(!empty($custom_fields)){
-        $sitepress->sync_custom_fields($post_id, $custom_fields, true);
+        $sitepress->sync_custom_fields($post_id);
     }    
 }
 

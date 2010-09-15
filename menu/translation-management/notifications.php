@@ -19,11 +19,13 @@
         <?php if($nsettings['completed']==ICL_TM_NOTIFICATION_IMMEDIATELY):?>checked="checked"<?php endif; ?> />
         <label for="icl_tm_notify_complete1"><?php _e('Notify immediately', 'sitepress'); ?></label>
     </li>
+    <!--
     <li>
         <input name="notification[completed]" type="radio" id="icl_tm_notify_complete2" value="<?php echo ICL_TM_NOTIFICATION_DAILY ?>"
         <?php if($nsettings['completed']==ICL_TM_NOTIFICATION_DAILY):?>checked="checked"<?php endif; ?> />
         <label for="icl_tm_notify_complete2"><?php _e('Daily notifications summary', 'sitepress'); ?></label>
-    </li>
+    </li>    
+    -->
     <li>
         <input name="notification[completed]" type="radio" id="icl_tm_notify_complete0" value="<?php echo ICL_TM_NOTIFICATION_NONE ?>"
         <?php if($nsettings['completed']==ICL_TM_NOTIFICATION_NONE):?>checked="checked"<?php endif; ?> />
@@ -38,11 +40,13 @@
         <?php if($nsettings['resigned']==ICL_TM_NOTIFICATION_IMMEDIATELY):?>checked="checked"<?php endif; ?> />
         <label for="icl_tm_notify_resigned1"><?php _e('Notify immediately', 'sitepress'); ?></label>
     </li>
+    <!--
     <li>
         <input name="notification[resigned]" type="radio" id="icl_tm_notify_resigned2" value="<?php echo ICL_TM_NOTIFICATION_DAILY ?>"
         <?php if($nsettings['resigned']==ICL_TM_NOTIFICATION_DAILY):?>checked="checked"<?php endif; ?> />
         <label for="icl_tm_notify_resigned2"><?php _e('Daily notifications summary', 'sitepress'); ?></label>
     </li>
+    -->
     <li>
         <input name="notification[resigned]" type="radio" id="icl_tm_notify_resigned0" value="<?php echo ICL_TM_NOTIFICATION_NONE ?>"
         <?php if($nsettings['resigned']==ICL_TM_NOTIFICATION_NONE):?>checked="checked"<?php endif; ?> />
@@ -50,12 +54,14 @@
     </li>    
 </ul>
 
-
+<!--
 <input type="hidden" name="notification[dashboard]" value="0" />
 <input type="checkbox" name="notification[dashboard]" id="icl_tm_notify_dashboard" value="1" 
     <?php if($nsettings['dashboard']==ICL_TM_NOTIFICATION_NONE):?>checked="checked"<?php endif; ?> />
 <label for="icl_tm_notify_dashboard"><?php _e('Show notifications on the translation dashboard', 'sitepress') ?></label>
+-->
 
+<!--
 <h4><?php _e('Delete old messages after:', 'sitepress'); ?></h4>
 <ul>    
     <li>
@@ -69,6 +75,7 @@
         </select>        
     </li>
 </ul>
+-->
 
 <p class="submit">
     <input type="submit" class="button-primary" value="<?php _e('Save','sitepress')?>" />
