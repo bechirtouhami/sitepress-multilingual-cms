@@ -25,6 +25,7 @@
     
     global $wp_taxonomies;
     $ctaxonomies = array_diff(array_keys((array)$wp_taxonomies), array('post_tag','category', 'nav_menu', 'link_category'));    
+    
     foreach($ctaxonomies as $ctax){
         if(!isset($sitepress_settings['taxonomies_sync_option'][$ctax])){
             $tax_sync_not_set[] = $wp_taxonomies[$ctax]->label;
@@ -44,58 +45,24 @@
         GROUP BY meta_key
         ORDER BY meta_key
         LIMIT $cf_keys_limit" );
-    if ( $cf_keys )
-        natcasesort($cf_keys);
     
     $cf_keys_exceptions = array('_edit_last', '_edit_lock', '_wp_page_template', '_wp_attachment_metadata', '_icl_translator_note');
     // '_wp_attached_file'
+    
     $cf_keys = array_diff($cf_keys, $cf_keys_exceptions);
+    $cf_keys = array_unique(array_merge($cf_keys, $iclTranslationManagement->settings['custom_fields_readonly_config']));
+    
+    if ( $cf_keys )
+        natcasesort($cf_keys);
+    
     $cf_settings = $iclTranslationManagement->settings['custom_fields_translation'];  
+    $cf_settings_ro = (array)$iclTranslationManagement->settings['custom_fields_readonly_config'];  
+    
+    //debug_array($iclTranslationManagement->settings);
     
 ?>
 
     <?php if(isset($notice)) echo $notice ?>
-    
-    <form id="icl_cf_translation" name="icl_cf_translation" action="">        
-    <table class="widefat">
-        <thead>
-            <tr>
-                <th colspan="2"><?php _e('Custom fields translation', 'sitepress');?></th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php if(empty($cf_keys)): ?>
-            <tr>
-                <td colspan="2">
-                    <?php _e('No custom fields found. It is possible that they will only show up here after you add more posts after installing a new plugin', 'sitepress'); ?>
-                </td>
-            </tr>
-            <?php else: foreach($cf_keys as $cf_key): ?>
-            <tr>
-                <td><?php echo $cf_key ?></td>
-                <td align="right">
-                    <label><input type="radio" name="cf[<?php echo base64_encode($cf_key) ?>]" value="0"
-                        <?php if($cf_settings[$cf_key]==0):?>checked="checked"<?php endif;?> />&nbsp;<?php _e("Don't translate", 'sitepress')?></label>&nbsp;
-                    <label><input type="radio" name="cf[<?php echo base64_encode($cf_key) ?>]" value="1"
-                        <?php if($cf_settings[$cf_key]==1):?>checked="checked"<?php endif;?> />&nbsp;<?php _e("Copy from original to translation", 'sitepress')?></label>&nbsp;
-                    <label><input type="radio" name="cf[<?php echo base64_encode($cf_key) ?>]" value="2"
-                        <?php if($cf_settings[$cf_key]==2):?>checked="checked"<?php endif;?> />&nbsp;<?php _e("Translate", 'sitepress')?></label>&nbsp;
-                </td>
-            </tr>
-            <?php endforeach; ?>
-            <tr>
-                <td colspan="2">
-                    <p>
-                        <input type="submit" class="button" value="<?php _e('Save', 'sitepress') ?>" />
-                        <span class="icl_ajx_response" id="icl_ajx_response_cf"></span>
-                    </p>    
-                </td>
-            </tr>
-            <?php endif; ?>
-        </tbody>
-    </table>
-    </form>                    
-    <br />
     
     <form id="icl_page_sync_options" name="icl_page_sync_options" action="">        
     <table class="widefat">
@@ -152,9 +119,53 @@
         </tbody>
     </table>
     </form>                
-    
-    
     <br />
+    
+    <form id="icl_cf_translation" name="icl_cf_translation" action="">        
+    <table class="widefat">
+        <thead>
+            <tr>
+                <th colspan="2"><?php _e('Custom fields translation', 'sitepress');?></th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if(empty($cf_keys)): ?>
+            <tr>
+                <td colspan="2">
+                    <?php _e('No custom fields found. It is possible that they will only show up here after you add more posts after installing a new plugin', 'sitepress'); ?>
+                </td>
+            </tr>
+            <?php else: foreach($cf_keys as $cf_key): ?>
+            <?php 
+                $rdisabled = in_array($cf_key, $cf_settings_ro) ? 'disabled="disabled"' : '';
+                if($rdisabled && $cf_settings[$cf_key]==0) continue;
+            ?>
+            <tr>
+                <td><?php echo $cf_key ?></td>
+                <td align="right">
+                    <label><input type="radio" name="cf[<?php echo base64_encode($cf_key) ?>]" value="0" <?php echo $rdisabled ?>
+                        <?php if($cf_settings[$cf_key]==0):?>checked="checked"<?php endif;?> />&nbsp;<?php _e("Don't translate", 'sitepress')?></label>&nbsp;
+                    <label><input type="radio" name="cf[<?php echo base64_encode($cf_key) ?>]" value="1" <?php echo $rdisabled ?>
+                        <?php if($cf_settings[$cf_key]==1):?>checked="checked"<?php endif;?> />&nbsp;<?php _e("Copy from original to translation", 'sitepress')?></label>&nbsp;
+                    <label><input type="radio" name="cf[<?php echo base64_encode($cf_key) ?>]" value="2" <?php echo $rdisabled ?>
+                        <?php if($cf_settings[$cf_key]==2):?>checked="checked"<?php endif;?> />&nbsp;<?php _e("Translate", 'sitepress')?></label>&nbsp;
+                </td>
+            </tr>
+            <?php endforeach; ?>
+            <tr>
+                <td colspan="2">
+                    <p>
+                        <input type="submit" class="button" value="<?php _e('Save', 'sitepress') ?>" />
+                        <span class="icl_ajx_response" id="icl_ajx_response_cf"></span>
+                    </p>    
+                </td>
+            </tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
+    </form>                    
+    <br />
+        
     <?php if(!empty($cposts)): ?>    
     <form id="icl_custom_posts_sync_options" name="icl_custom_posts_sync_options" action="">        
     <table class="widefat">
@@ -166,13 +177,16 @@
         </thead>
         <tbody>
             <?php foreach($cposts as $k=>$cpost): ?>
+            <?php 
+                $rdisabled = isset($iclTranslationManagement->settings['custom_types_readonly_config'][$k]) ? 'disabled="disabled"':'';
+            ?>
             <tr>
                 <td><?php echo $cpost->labels->name; ?></td>
                 <td>
-                    <label><input type="radio" name="icl_sync_custom_posts[<?php echo $k ?>]" value="1" <?php
+                    <label><input type="radio" name="icl_sync_custom_posts[<?php echo $k ?>]" value="1" <?php echo $rdisabled; 
                         if($sitepress_settings['custom_posts_sync_option'][$k]==1) echo ' checked="checked"'
                     ?> />&nbsp;<?php _e('Translate', 'sitepress') ?></label>&nbsp;
-                    <label><input type="radio" name="icl_sync_custom_posts[<?php echo $k ?>]" value="0" <?php
+                    <label><input type="radio" name="icl_sync_custom_posts[<?php echo $k ?>]" value="0" <?php echo $rdisabled;
                         if($sitepress_settings['custom_posts_sync_option'][$k]==0) echo ' checked="checked"'
                     ?> />&nbsp;<?php _e('Do nothing', 'sitepress') ?></label>
                 </td>
@@ -202,13 +216,16 @@
         </thead>
         <tbody>
             <?php foreach($ctaxonomies as $ctax): ?>
+            <?php 
+                $rdisabled = isset($iclTranslationManagement->settings['taxonomies_readonly_config'][$ctax]) ? 'disabled="disabled"':'';
+            ?>            
             <tr>
                 <td><?php echo $wp_taxonomies[$ctax]->label; ?></td>
                 <td>
-                    <label><input type="radio" name="icl_sync_tax[<?php echo $ctax ?>]" value="1" <?php
+                    <label><input type="radio" name="icl_sync_tax[<?php echo $ctax ?>]" value="1" <?php echo $rdisabled; 
                         if($sitepress_settings['taxonomies_sync_option'][$ctax]==1) echo ' checked="checked"'
                     ?> />&nbsp;<?php _e('Translate', 'sitepress') ?></label>&nbsp;
-                    <label><input type="radio" name="icl_sync_tax[<?php echo $ctax ?>]" value="0" <?php
+                    <label><input type="radio" name="icl_sync_tax[<?php echo $ctax ?>]" value="0" <?php echo $rdisabled; 
                         if($sitepress_settings['taxonomies_sync_option'][$ctax]==0) echo ' checked="checked"'
                     ?> />&nbsp;<?php _e('Do nothing', 'sitepress') ?></label>
                 </td>

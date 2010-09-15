@@ -80,6 +80,9 @@ class TranslationManagement{
             $this->process_request($_GET['icl_tm_action'], $_GET);
         }        
         
+        $this->load_plugins_wpml_config();
+        $this->load_theme_wpml_config();
+        
         add_action('icl_tm_messages', array($this, 'show_messages'));
         
         wp_enqueue_script('sitepress-translation-management' , ICL_PLUGIN_URL . '/res/js/translation-management.js', null, ICL_SITEPRESS_VERSION, true);
@@ -1369,6 +1372,135 @@ class TranslationManagement{
         $wpdb->update($wpdb->prefix.'icl_translate_job', array('translator_id'=>0), array('job_id'=>$job_id));
         $wpdb->update($wpdb->prefix.'icl_translation_status', array('translator_id'=>0, 'status'=>ICL_TM_WAITING_FOR_TRANSLATOR), array('rid'=>$rid));
     }
+    
+    function _parse_wpml_config($file){
+        global $sitepress_settings;
+        
+        $config = xml2array(file_get_contents($file));    
+        
+        // custom fields
+        if(!empty($config['wpml-config']['custom-fields'])){
+            if(!is_numeric(key(current($config['wpml-config']['custom-fields'])))){
+                $cf[0] = $config['wpml-config']['custom-fields']['custom-field'];
+            }else{
+                $cf = $config['wpml-config']['custom-fields']['custom-field'];
+            }
+            foreach($cf as $c){
+                if($c['attr']['action'] == 'translate'){
+                    $action = 2;
+                }elseif($c['attr']['action'] == 'copy'){
+                    $action = 1;
+                }else{
+                    $action = 0;
+                }
+                $this->settings['custom_fields_translation'][$c['value']] = $action;        
+                $this->settings['custom_fields_readonly_config'][] = $c['value'];
+            }
+        }  
+        
+        // custom types
+        $cf = array();
+        if(!empty($config['wpml-config']['custom-types'])){
+            if(!is_numeric(key(current($config['wpml-config']['custom-types'])))){
+                $cf[0] = $config['wpml-config']['custom-types']['custom-type'];
+            }else{
+                $cf = $config['wpml-config']['custom-types']['custom-type'];
+            }
+            foreach($cf as $c){                
+                $translate = intval($c['attr']['translate']);
+                $this->settings['custom_types_readonly_config'][$c['value']] = $translate;
+                $sitepress_settings['custom_posts_sync_option'][$c['value']] = $translate;
+            }            
+            add_filter('get_translatable_documents', array($this, '_override_get_translatable_documents'));  
+        }
+        
+        
+        // taxonomies
+        $cf = array();
+        if(!empty($config['wpml-config']['taxonomies'])){
+            if(!is_numeric(key(current($config['wpml-config']['taxonomies'])))){
+                $cf[0] = $config['wpml-config']['taxonomies']['taxonomy'];
+            }else{
+                $cf = $config['wpml-config']['taxonomies']['taxonomy'];
+            }
+            foreach($cf as $c){                
+                $translate = intval($c['attr']['translate']);
+                $this->settings['taxonomies_readonly_config'][$c['value']] = $translate;
+                $sitepress_settings['taxonomies_sync_option'][$c['value']] = $translate;
+            }            
+            add_filter('get_translatable_taxonomies', array($this, '_override_get_translatable_taxonomies'));  
+        }  
+        
+    }
+    
+    function _override_get_translatable_documents($types){
+        global $wp_post_types;
+        foreach($types as $k=>$type){
+            if(isset($this->settings['custom_types_readonly_config'][$k]) && !$this->settings['custom_types_readonly_config'][$k]){
+                unset($types[$k]);
+            }
+        }
+        foreach($this->settings['custom_types_readonly_config'] as $cp=>$translate){
+            if($translate && !isset($types[$cp]) && isset($wp_post_types[$cp])){
+                $types[$cp] = $wp_post_types[$cp];
+            }
+        }
+        return $types;
+    }
+
+    function _override_get_translatable_taxonomies($taxs_obj_type){        
+        global $wp_taxonomies;
+        $taxs = $taxs_obj_type['taxs'];
+        $object_type = $taxs_obj_type['object_type'];
+        foreach($taxs as $k=>$tax){
+            if(isset($this->settings['taxonomies_readonly_config'][$tax]) && !$this->settings['custom_types_readonly_config'][$tax]){
+                unset($types[$k]);
+            }
+        }
+        foreach($this->settings['taxonomies_readonly_config'] as $tx=>$translate){
+            if($translate && !in_array($tx, $taxs) && isset($wp_taxonomies[$tx]) && in_array($object_type, $wp_taxonomies[$tx]->object_type)){
+                $taxs[] = $tx;
+            }
+        }
+        return $taxs;
+    }
+    
+    function load_plugins_wpml_config(){
+        $plugins = get_option('active_plugins');
+        foreach($plugins as $p){
+            $config_file = ABSPATH . '/' . PLUGINDIR . '/' . dirname($p) . '/wpml-config.xml';
+            if(trim(dirname($p),'\/.') && file_exists($config_file)){
+                $this->_parse_wpml_config($config_file);
+            }
+        }
+        
+        $mu_plugins = wp_get_mu_plugins();
+        if(!empty($mu_plugins)){
+            foreach($mu_plugins as $mup){
+                if(rtrim(dirname($mup), '/') != WPMU_PLUGIN_DIR){
+                    $config_file = dirname($mup) . '/wpml-config.xml';     
+                    $this->_parse_wpml_config($config_file);
+                }
+            }
+        }        
+    }    
+
+    function load_theme_wpml_config(){
+        if(get_template_directory() != get_stylesheet_directory()){
+            $config_file = get_stylesheet_directory().'/wpml-config.xml';
+            if(file_exists($config_file)){
+                $this->_parse_wpml_config($config_file);
+            }
+        }
+
+        $config_file = get_template_directory().'/wpml-config.xml';
+        if(file_exists($config_file)){
+            $this->_parse_wpml_config($config_file);
+        }
+        
+        
+    }    
+    
     
 }
   

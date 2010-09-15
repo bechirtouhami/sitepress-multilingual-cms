@@ -300,17 +300,7 @@ function icl_sitepress_activate(){
         $short_v = implode('.', array_slice(explode('.', ICL_SITEPRESS_VERSION), 0, 3));
         $settings = array(
             'hide_upgrade_notice' => $short_v,
-            'basic_menu'          => 1,
-            'translation-management' => array(
-                'custom_fields_translation' => array(
-                    '_top_nav_excluded' => 1,
-                    '_cms_nav_minihome' => 1,
-                    '_cms_nav_section'  => 2,
-                    'title' => 2,
-                    'description' => 2,
-                    'keywords' => 2,
-                ) 
-            )  
+            'basic_menu'          => 1
         );
         add_option('icl_sitepress_settings', $settings, '', true);        
     }else{

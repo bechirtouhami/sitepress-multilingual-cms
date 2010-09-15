@@ -5134,6 +5134,7 @@ class SitePress{
             $icl_post_types['page']->labels->name = 'Pages';
         }
         /* preWP3 compatibility  - end */                
+        $icl_post_types = apply_filters('get_translatable_documents', $icl_post_types);
         return $icl_post_types;        
     }
     
@@ -5148,7 +5149,8 @@ class SitePress{
             if(in_array($object_type, $taxonomy->object_type) && !empty($this->settings['taxonomies_sync_option'][$taxonomy_name])){
                 $t_taxonomies[] = $taxonomy_name;    
             }    
-        }    
+        } 
+        list($t_taxonomies, $ot) = apply_filters('get_translatable_taxonomies', array('taxs'=>$t_taxonomies, 'object_type'=>$object_type));   
         return $t_taxonomies;
     }
     
