@@ -20,6 +20,7 @@ class TranslationManagement{
     public $messages = array();    
     public $dashboard_select = array();
     public $settings;
+    public $admin_texts_to_translate;
     
     function __construct(){
         add_action('init', array($this, 'init'));
@@ -1431,8 +1432,106 @@ class TranslationManagement{
             add_filter('get_translatable_taxonomies', array($this, '_override_get_translatable_taxonomies'));  
         }  
         
+        // admin texts
+        $admin_texts = array();
+        if(!empty($config['wpml-config']['admin-texts'])){
+            
+            if(!is_numeric(key(current($config['wpml-config']['admin-texts'])))){
+                $admin_texts[0] = $config['wpml-config']['admin-texts']['key'];
+            }else{
+                $admin_texts = $config['wpml-config']['admin-texts']['key'];
+            }
+            
+            foreach($admin_texts as $a){
+                $keys = array(); 
+                if(!is_numeric(key($a['key']))){
+                    $keys[0] = $a['key'];
+                }else{
+                    $keys = $a['key'];
+                }
+                foreach($keys as $key){                
+                    if(isset($key['key'])){
+                        $arr[$a['attr']['name']][$key['attr']['name']] = $this->_read_admin_texts_recursive($key['key']);
+                    }else{
+                        $arr[$a['attr']['name']][$key['attr']['name']] = 1;                                
+                    }
+                }
+            }
+            
+            foreach($arr as $key => $v){
+                $value = get_option($key);
+                $value = (array)maybe_unserialize($value);
+                if(!empty($value)){
+                    $this->_register_string_recursive($key, $value, $arr[$key]);    
+                }
+            }
+            
+            $this->admin_texts_to_translate =& $arr;
+        }  
     }
     
+    function _read_admin_texts_recursive($keys){
+        if(!is_numeric(key($keys))){
+            $_keys = array($keys);
+            $keys = $_keys;
+            unset($_keys);
+        }
+        foreach($keys as $key){                
+            if(isset($key['key'])){
+                $arr[$key['attr']['name']] = $this->_read_admin_texts_recursive($key['key']);                    
+            }else{
+                $arr[$key['attr']['name']] = 1;                            
+            }
+        }
+        return $arr;
+    }
+    
+    function _register_string_recursive($key, $value, $arr, $prefix = ''){
+        if(is_scalar($value)){
+            if(!empty($value) && $arr == 1){
+                icl_register_string('admin_options_' . get_option('template'), $st_key, $value);
+            }
+        }else{
+            if(!is_null($value)){
+                foreach($value as $sub_key=>$sub_value){
+                    $this->_register_string_recursive($sub_key, $sub_value, $arr[$sub_key], $prefix . '[' . $key .']');    
+                }
+            }
+        }
+    }
+    
+    function render_option_writes($option_name, $option_value, $option_key=''){
+        static $option;
+        if(!$option_key){
+            $option = (array)maybe_unserialize(get_option($option_name));
+        }
+        
+        echo '<ul class="icl_tm_admin_options">';
+        echo '<li>';
+        
+        if(is_scalar($option_value)){
+            $int = preg_match_all('#\[([^\]]+)\]#', $option_key, $matches);
+            if(count($matches[1]) > 1){
+                $value = $option;
+                for($i = 1; $i < count($matches[1]); $i++){
+                    $value = $value[$matches[1][$i]];
+                }
+                $value = $value[$option_name];
+            }else{
+                $value = $option[$option_name];
+            }
+            
+            echo '<li>' . $option_name . ': <i>' . $value . '</i></li>';
+        }else{            
+            echo '<strong>' . $option_name . '</strong>';
+            foreach((array)$option_value as $key=>$value){
+                $this->render_option_writes($key, $value, $option_key . '[' . $option_name . ']');                
+            }            
+        }
+        echo '</li>';
+        echo '</ul>';        
+    }
+        
     function _override_get_translatable_documents($types){
         global $wp_post_types;
         foreach($types as $k=>$type){

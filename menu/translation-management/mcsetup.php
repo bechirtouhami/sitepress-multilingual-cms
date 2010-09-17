@@ -244,3 +244,24 @@
     </form>        
     <?php endif; ?>     
     <br clear="all" />    
+
+    <table class="widefat">
+        <thead>
+            <tr>
+                <th><?php _e('Admin Strings to Translate', 'sitepress');?></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <?php foreach($iclTranslationManagement->admin_texts_to_translate as $option_name=>$option_value): ?>
+                    <?php $iclTranslationManagement->render_option_writes($option_name, $option_value); ?>
+                    <?php endforeach ?>
+                    <br />
+                    <p><a class="button-secondary" href="<?php echo admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/string-translation.php&context=admin_options_'.get_option('template')) ?>"><?php _e('Edit translatable strings', 'sitepress') ?></a></p>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    
+    

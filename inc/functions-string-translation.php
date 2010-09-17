@@ -1420,7 +1420,23 @@ function icl_st_render_option_writes($option_name, $option_value, $option_key=''
         }else{
             $class = 'icl_st_string';
         }
-        if(trim($option_value)===''){
+        
+        global $iclTranslationManagement;
+        
+        $int = preg_match_all('#\[([^\]]+)\]#', $option_key.'['.$option_name.']', $matches);
+        $_v = $iclTranslationManagement->admin_texts_to_translate;
+        if($int){
+            foreach($matches[1] as $m){
+                if(isset($_v[$m])){
+                    $_v = $_v[$m];
+                }else{
+                    $_v = 0;
+                    break;
+                }
+            }
+        }
+        
+        if(trim($option_value)==='' || $_v){
             $disabled = ' disabled="disabled"';
         }else{
             $disabled = '';
@@ -1465,9 +1481,9 @@ function _icl_st_filter_empty_options_out($array){
     return array($array, $empty_found);
 }
 
-function wpml_register_admin_strings($serizlized_array){
+function wpml_register_admin_strings($serialized_array){
     try{
-        icl_register_admin_options(unserialize($serizlized_array));    
+        icl_register_admin_options(unserialize($serialized_array));    
     }catch(Exception $e){
         trigger_error($e->getMessage(), E_USER_WARNING);
     }
