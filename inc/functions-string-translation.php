@@ -1489,11 +1489,25 @@ function wpml_register_admin_strings($serialized_array){
     }
 }
 
-add_action('plugins_loaded', 'icl_st_set_admin_options_filters');
+add_action('plugins_loaded', 'icl_st_set_admin_options_filters', 10);
 function icl_st_set_admin_options_filters(){
     $option_names = get_option('_icl_admin_option_names');
-    foreach((array)$option_names as $option){
-        add_filter('option_'.$option, 'icl_st_translate_admin_string');
+    if(!empty($option_names['theme'])){
+        foreach((array)$option_names['theme'][basename(get_template_directory())] as $option){
+            add_filter('option_'.$option, 'icl_st_translate_admin_string');
+        }
+        if(get_template_directory() != get_stylesheet_directory()){
+            foreach((array)$option_names['theme'][basename(get_stylesheet_directory())] as $option){
+                add_filter('option_'.$option, 'icl_st_translate_admin_string');
+            }
+        }
+    }
+    if(!empty($option_names['plugin'])){
+        foreach((array)$option_names['plugin'] as $plugin => $options){
+            foreach($options as $option){
+                add_filter('option_'.$option, 'icl_st_translate_admin_string');    
+            }            
+        }
     }
 }
 
@@ -1506,6 +1520,7 @@ function icl_st_translate_admin_string($option_value, $key="", $name=""){
         $option_value = @unserialize($option_value);
         $serialized = true;
     }
+    
     
     
     if(is_array($option_value) || is_object($option_value)){
@@ -1522,12 +1537,59 @@ function icl_st_translate_admin_string($option_value, $key="", $name=""){
                 $option_value[$k] = $val;
             }   
         }            
+        
     }else{   
         if(!$name){
             $ob = debug_backtrace();
             $name = preg_replace('@^option_@', '',$ob[2]['args'][0]);
         }
-        $tr = icl_t('admin_options_' . get_option('template'), $key . $name, $option_value);
+                
+        $option_names = get_option('_icl_admin_option_names');                
+        // determine theme/plugin name
+        if(!empty($option_names['theme'])){
+            foreach((array)$option_names['theme'][basename(get_template_directory())] as $ops){
+                
+                if(!empty($key)){
+                    $int = preg_match_all('#\[([^\]]+)\]#', $key, $matches);
+                    if($int) $opname = $matches[1][0];
+                }else{
+                    $opname = $name;
+                }
+                
+                if($ops == $opname){
+                    $key_suff = 'theme_' . basename(get_template_directory());
+                    break;
+                }
+            }
+            if(get_template_directory() != get_stylesheet_directory()){
+                foreach((array)$option_names['theme'][basename(get_stylesheet_directory())] as $ops){
+                    
+                    if(!empty($key)){
+                        $int = preg_match_all('#\[([^\]]+)\]#', $key, $matches);
+                        if($int) $opname = $matches[1][0];
+                    }else{
+                        $opname = $name;
+                    }
+                    
+                    if($ops == $opname){
+                        $key_suff = 'theme_' . get_stylesheet_directory();
+                        break;
+                    }
+                }
+            }
+        }
+        if(!empty($option_names['plugin'])){
+            foreach((array)$option_names['plugin'] as $plugin => $options){
+                foreach($options as $ops){
+                    if($ops == $name){
+                        $key_suff = 'plugin_' . $plugin;
+                        break;
+                    }
+                }            
+            }
+        }
+        
+        $tr = icl_t('admin_texts_' . $key_suff, $key . $name, $option_value);
         if($tr !== null){
             $option_value = $tr;
         }            

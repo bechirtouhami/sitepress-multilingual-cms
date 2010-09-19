@@ -58,8 +58,6 @@
     $cf_settings = $iclTranslationManagement->settings['custom_fields_translation'];  
     $cf_settings_ro = (array)$iclTranslationManagement->settings['custom_fields_readonly_config'];  
     
-    //debug_array($iclTranslationManagement->settings);
-    
 ?>
 
     <?php if(isset($notice)) echo $notice ?>
@@ -244,7 +242,8 @@
     </form>        
     <?php endif; ?>     
     <br clear="all" />    
-
+    
+    <?php if(!empty($iclTranslationManagement->admin_texts_to_translate)): ?>
     <table class="widefat">
         <thead>
             <tr>
@@ -258,10 +257,10 @@
                     <?php $iclTranslationManagement->render_option_writes($option_name, $option_value); ?>
                     <?php endforeach ?>
                     <br />
-                    <p><a class="button-secondary" href="<?php echo admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/string-translation.php&context=admin_options_'.get_option('template')) ?>"><?php _e('Edit translatable strings', 'sitepress') ?></a></p>
+                    <p><a class="button-secondary" href="<?php echo admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/string-translation.php') ?>"><?php _e('Edit translatable strings', 'sitepress') ?></a></p>
                 </td>
             </tr>
         </tbody>
     </table>
-    
+    <?php endif; ?>
     

@@ -20,7 +20,7 @@ class TranslationManagement{
     public $messages = array();    
     public $dashboard_select = array();
     public $settings;
-    public $admin_texts_to_translate;
+    public $admin_texts_to_translate = array();
     
     function __construct(){
         add_action('init', array($this, 'init'));
@@ -338,8 +338,7 @@ class TranslationManagement{
         }
         
         // if this post is a translation of another one add a icl_content_status entry
-        //debug_array($post);
-        //die();
+        // tbd ?
     }
     
     function delete_post_actions($post_id){
@@ -569,8 +568,6 @@ class TranslationManagement{
             ORDER BY {$order}
             LIMIT {$limit}
         ";
-        
-        //debug_array($sql);
         
         $results = $wpdb->get_results($sql);    
         
@@ -1016,7 +1013,6 @@ class TranslationManagement{
                 LIMIT {$limit}
             "
         );
-        //debug_array($wpdb->last_query);
         $count = $wpdb->get_var("SELECT FOUND_ROWS()");
 
         $wp_query->found_posts = $count;
@@ -1436,6 +1432,9 @@ class TranslationManagement{
         $admin_texts = array();
         if(!empty($config['wpml-config']['admin-texts'])){
             
+            $type = (dirname($file) == get_template_directory() || dirname($file) == get_stylesheet_directory()) ? 'theme' : 'plugin';
+            $atid = basename(dirname($file));                                    
+            
             if(!is_numeric(key(current($config['wpml-config']['admin-texts'])))){
                 $admin_texts[0] = $config['wpml-config']['admin-texts']['key'];
             }else{
@@ -1444,11 +1443,15 @@ class TranslationManagement{
             
             foreach($admin_texts as $a){
                 $keys = array(); 
-                if(!is_numeric(key($a['key']))){
+                if(!isset($a['key'])){
+                    $arr[$a['attr']['name']] = 1;                                
+                    continue;
+                }elseif(!is_numeric(key($a['key']))){                    
                     $keys[0] = $a['key'];
                 }else{
                     $keys = $a['key'];
-                }
+                }            
+                
                 foreach($keys as $key){                
                     if(isset($key['key'])){
                         $arr[$a['attr']['name']][$key['attr']['name']] = $this->_read_admin_texts_recursive($key['key']);
@@ -1460,14 +1463,22 @@ class TranslationManagement{
             
             foreach($arr as $key => $v){
                 $value = get_option($key);
-                $value = (array)maybe_unserialize($value);
-                if(!empty($value)){
-                    $this->_register_string_recursive($key, $value, $arr[$key]);    
+                if(is_scalar($value)){
+                    icl_register_string('admin_texts_' . $type . '_' . $atid, $key , $value);    
+                }else{
+                    $value = (array)maybe_unserialize($value);
+                    if(!empty($value)){
+                        $this->_register_string_recursive($key, $value, $arr[$key], '', $type . '_' . $atid);    
+                    }
                 }
             }
+            $this->admin_texts_to_translate = array_merge($this->admin_texts_to_translate, $arr);                        
             
-            $this->admin_texts_to_translate =& $arr;
+            $_icl_admin_option_names = get_option('_icl_admin_option_names');
+            $_icl_admin_option_names[$type][$atid] = array_keys($arr);
+            update_option('_icl_admin_option_names', $_icl_admin_option_names);
         }  
+        
     }
     
     function _read_admin_texts_recursive($keys){
@@ -1486,15 +1497,15 @@ class TranslationManagement{
         return $arr;
     }
     
-    function _register_string_recursive($key, $value, $arr, $prefix = ''){
+    function _register_string_recursive($key, $value, $arr, $prefix = '', $suffix){        
         if(is_scalar($value)){
             if(!empty($value) && $arr == 1){
-                icl_register_string('admin_options_' . get_option('template'), $st_key, $value);
+                icl_register_string('admin_texts_' . $suffix, $prefix . $key , $value);
             }
         }else{
             if(!is_null($value)){
                 foreach($value as $sub_key=>$sub_value){
-                    $this->_register_string_recursive($sub_key, $sub_value, $arr[$sub_key], $prefix . '[' . $key .']');    
+                    $this->_register_string_recursive($sub_key, $sub_value, $arr[$sub_key], $prefix . '[' . $key .']', $suffix);    
                 }
             }
         }
@@ -1503,8 +1514,55 @@ class TranslationManagement{
     function render_option_writes($option_name, $option_value, $option_key=''){
         static $option;
         if(!$option_key){
-            $option = (array)maybe_unserialize(get_option($option_name));
+            $option = maybe_unserialize(get_option($option_name));
         }
+        
+        $option_names = get_option('_icl_admin_option_names');
+        // determine theme/plugin name (string context)
+        if(!empty($option_names['theme'])){
+            foreach((array)$option_names['theme'][basename(get_template_directory())] as $ops){
+                
+                if(!empty($key)){
+                    $int = preg_match_all('#\[([^\]]+)\]#', $key, $matches);
+                    if($int) $opname = $matches[1][0];
+                }else{
+                    $opname = $option_name;
+                }
+                
+                if($ops == $opname){
+                    $es_context = 'admin_texts_theme_' . basename(get_template_directory());
+                    break;
+                }
+            }
+            if(get_template_directory() != get_stylesheet_directory()){
+                foreach((array)$option_names['theme'][basename(get_stylesheet_directory())] as $ops){
+
+                    if(!empty($key)){
+                        $int = preg_match_all('#\[([^\]]+)\]#', $key, $matches);
+                        if($int) $opname = $matches[1][0];
+                    }else{
+                        $opname = $option_name;
+                    }
+                    
+                    if($ops == $opname){
+                        $es_context = 'admin_texts_theme_' . get_stylesheet_directory();
+                        break;
+                    }
+                }
+            }
+        }
+        if(!empty($option_names['plugin'])){
+            foreach((array)$option_names['plugin'] as $plugin => $options){
+                foreach($options as $ops){
+                    if($ops == $option_name){
+                        $es_context = 'admin_texts_plugin_' . $plugin;
+                        break;
+                    }
+                }            
+            }
+        }
+        
+        
         
         echo '<ul class="icl_tm_admin_options">';
         echo '<li>';
@@ -1517,13 +1575,22 @@ class TranslationManagement{
                     $value = $value[$matches[1][$i]];
                 }
                 $value = $value[$option_name];
+                $edit_link = '';
             }else{
-                $value = $option[$option_name];
+                $value = is_scalar($option) ? $option : $option[$option_name];                
+                if(!$option_key){
+                    $edit_link = '[<a href="'.admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/string-translation.php&context='.$es_context) . '">' .
+                     __('translate', 'sitepress') . '</a>]';
+                }else{
+                    $edit_link = '';
+                }
             }
             
-            echo '<li>' . $option_name . ': <i>' . $value . '</i></li>';
-        }else{            
-            echo '<strong>' . $option_name . '</strong>';
+            echo '<li>' . $option_name . ': <i>' . $value . '</i> ' . $edit_link . '</li>';
+        }else{  
+            $edit_link = '[<a href="'.admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/string-translation.php&context='.$es_context) . '">' .
+                     __('translate', 'sitepress') . '</a>]';          
+            echo '<strong>' . $option_name . '</strong> ' . $edit_link;
             foreach((array)$option_value as $key=>$value){
                 $this->render_option_writes($key, $value, $option_key . '[' . $option_name . ']');                
             }            
@@ -1577,7 +1644,7 @@ class TranslationManagement{
         if(!empty($mu_plugins)){
             foreach($mu_plugins as $mup){
                 if(rtrim(dirname($mup), '/') != WPMU_PLUGIN_DIR){
-                    $config_file = dirname($mup) . '/wpml-config.xml';     
+                    $config_file = dirname($mup) . '/wpml-config.xml';                         
                     $this->_parse_wpml_config($config_file);
                 }
             }

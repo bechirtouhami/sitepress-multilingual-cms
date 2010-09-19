@@ -1,7 +1,6 @@
 <?php 
 
 $job = $iclTranslationManagement->get_translation_job((int)$_GET['job_id'], false, true); // don't include not-translatable and auto-assign
-//debug_array($job);
 if(empty($job)){
     $job_checked = true;
     include ICL_PLUGIN_PATH . '/menu/translations-queue.php';
