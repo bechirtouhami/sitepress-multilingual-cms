@@ -375,6 +375,9 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                             <tr>
                                 <td>
                                     <p class="icl_form_errors" style="display:none"></p>
+                                    <?php if(isset($_GET['icl_ls_reset']) && $_GET['icl_ls_reset'] == 'default'): ?>
+                                    <p class="icl_form_success"><?php _e('Default settings have been loaded', 'sitepress')?></p>
+                                    <?php endif; ?>
                                     <ul>
                                         <li>
                                             <h4 class="icl_advanced_feature"><?php echo __('Language switcher widget', 'sitepress')?></h4>                                
@@ -500,6 +503,8 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                                         <p>
                                             <input class="button" name="save" value="<?php echo __('Apply','sitepress') ?>" type="submit" />
                                             <span class="icl_ajx_response" id="icl_ajx_response3"></span>
+                                            <a class="button secondary" onclick="if(!confirm('<?php echo esc_js(__('Are you sure you wante to reset to the default settings?')) ?>')) return false;" 
+                                                href="<?php echo admin_url('admin.php?page='.$_GET['page'].'&restore_ls_settings=1') ?>"><?php _e('Restore default', 'sitepress')?></a>
                                         </p>                                    
                                     <?php endif; ?>
                                 </td>

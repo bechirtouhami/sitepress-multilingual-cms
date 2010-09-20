@@ -1371,7 +1371,7 @@ class TranslationManagement{
     }
     
     function _parse_wpml_config($file){
-        global $sitepress_settings;
+        global $sitepress, $sitepress_settings;
         
         $config = xml2array(file_get_contents($file));    
         
@@ -1479,6 +1479,25 @@ class TranslationManagement{
             update_option('_icl_admin_option_names', $_icl_admin_option_names);
         }  
         
+        // language-switcher-settings
+        if(!$sitepress_settings['language_selector_initialized'] || (isset($_GET['restore_ls_settings']) && $_GET['restore_ls_settings'] == 1)){
+            if(!empty($config['wpml-config']['language-switcher-settings'])){
+                
+                if(!is_numeric(key($config['wpml-config']['language-switcher-settings']['key']))){
+                    $cfgsettings[0] = $config['wpml-config']['language-switcher-settings']['key'];
+                }else{
+                    $cfgsettings = $config['wpml-config']['language-switcher-settings']['key'];
+                }
+                $iclsettings = $this->_read_settings_recursive($cfgsettings);
+                
+                $iclsettings['language_selector_initialized'] = 1;
+                
+                $sitepress->save_settings($iclsettings);
+                echo 'Loading default';
+            }
+            wp_redirect(admin_url('admin.php?page='.$_GET['page'].'&icl_ls_reset=default#icl_save_language_switcher_options'));
+        }
+        
     }
     
     function _read_admin_texts_recursive($keys){
@@ -1509,6 +1528,22 @@ class TranslationManagement{
                 }
             }
         }
+    }
+    
+    function _read_settings_recursive($cfgsettings){
+        foreach($cfgsettings as $s){
+            if(isset($s['key'])){
+                if(!is_numeric(key($s['key']))){
+                    $skey[0] = $s['key'];
+                }else{
+                    $skey = $s['key'];
+                }
+                $iclsettings[$s['attr']['name']] = $this->_read_settings_recursive($skey);
+            }else{
+                $iclsettings[$s['attr']['name']] = $s['value'];
+            }    
+        }        
+        return $iclsettings;
     }
     
     function render_option_writes($option_name, $option_value, $option_key=''){

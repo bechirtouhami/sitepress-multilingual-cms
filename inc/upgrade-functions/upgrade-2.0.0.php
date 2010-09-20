@@ -1,11 +1,11 @@
 <?php
-function icl_upgrade_1_9_0(){
+function icl_upgrade_2_0_0(){
     global $wpdb, $sitepress;
     
-    if(defined('icl_upgrade_1_9_0_runonce')){
+    if(defined('icl_upgrade_2_0_0_runonce')){
         return;
     }
-    define('icl_upgrade_1_9_0_runonce', true);
+    define('icl_upgrade_2_0_0_runonce', true);
     
     // if the tables are missing, call the plugin activation routine
     $table_name = $wpdb->prefix.'icl_translation_status';
@@ -156,6 +156,10 @@ function icl_upgrade_1_9_0(){
         
         mysql_query("DROP TABLE {$wpdb->prefix}icl_plugins_texts");
     }
+    
+    $iclsettings['language_selector_initialized'] = 1;
+    $sitepress->save_settings($iclsettings);
+    
     
 }  
 ?>

@@ -496,7 +496,10 @@ class SitePressLanguageSwitcher {
 														<?php _e('Position', 'sitepress'); ?>&nbsp;
                                                        <select name="icl_post_availability_position">
 															<option value="above"<?php if($this->settings['icl_post_availability_position'] == 'above'):?> selected="selected"<?php endif?>><?php _e('Above post', 'sitepress'); ?>&nbsp;&nbsp;</option>
-															<option value="bellow"<?php if(! $this->settings['icl_post_availability_position'] || $this->settings['icl_post_availability_position'] == 'bellow'):?> selected="selected"<?php endif?>><?php _e('Below post', 'sitepress'); ?>&nbsp;&nbsp;</option>
+															<option value="below"<?php if(! $this->settings['icl_post_availability_position'] || 
+                                                            $this->settings['icl_post_availability_position'] == 'bellow' || 
+                                                            $this->settings['icl_post_availability_position'] == 'below'
+                                                            ):?> selected="selected"<?php endif?>><?php _e('Below post', 'sitepress'); ?>&nbsp;&nbsp;</option>
 														</select>
                                                     </label>
                                                 </li>

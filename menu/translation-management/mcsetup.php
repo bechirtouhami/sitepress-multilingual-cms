@@ -243,6 +243,12 @@
     <?php endif; ?>     
     <br clear="all" />    
     
+    <?php 
+    
+    debug_array($sitepress_settings);
+    
+    ?>
+    
     <?php if(!empty($iclTranslationManagement->admin_texts_to_translate)): ?>
     <table class="widefat">
         <thead>
