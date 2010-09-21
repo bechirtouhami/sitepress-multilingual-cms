@@ -1493,9 +1493,10 @@ class TranslationManagement{
                 $iclsettings['language_selector_initialized'] = 1;
                 
                 $sitepress->save_settings($iclsettings);
-                echo 'Loading default';
             }
-            wp_redirect(admin_url('admin.php?page='.$_GET['page'].'&icl_ls_reset=default#icl_save_language_switcher_options'));
+            if($sitepress_settings['setup_complete']){
+                wp_redirect(admin_url('admin.php?page='.$_GET['page'].'&icl_ls_reset=default#icl_save_language_switcher_options'));
+            }
         }
         
     }
