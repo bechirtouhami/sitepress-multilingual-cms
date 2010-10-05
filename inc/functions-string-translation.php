@@ -520,11 +520,13 @@ function icl_t($context, $name, $original_value=false, &$has_translation=null){
         return $original_value !== false ? $original_value : $name;
     }   
        
-    if(is_admin()){
-        $current_language = $sitepress->get_admin_language();
+    if(defined('DOING_AJAX')){            
+         $current_language = $sitepress->get_language_cookie();
+    }elseif(is_admin()){            
+        $current_language = $sitepress->get_admin_language();                 
     }else{
-        $current_language = $sitepress->get_current_language();
-    }   
+        $current_language = $sitepress->get_current_language();     
+    }
     $default_language = $sitepress_settings['st']['strings_language'] ? $sitepress_settings['st']['strings_language'] : $sitepress->get_default_language();
     
     if($current_language == $default_language && $original_value){
@@ -829,7 +831,13 @@ function icl_t_cache_lookup($context, $name){
     }elseif(!isset($icl_st_cache[$context][$name])){ //cache MISS
     
         global $sitepress, $wpdb;        
-        $current_language = $sitepress->get_current_language();     
+        if(defined('DOING_AJAX')){            
+             $current_language = $sitepress->get_language_cookie();
+        }elseif(is_admin()){            
+            $current_language = $sitepress->get_admin_language();                 
+        }else{
+            $current_language = $sitepress->get_current_language();     
+        }
         $default_language = $sitepress->get_default_language();
         
         global $switched, $switched_stack;        
