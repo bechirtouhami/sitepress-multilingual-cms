@@ -268,7 +268,6 @@ class SitePress{
     }
              
     function init(){ 
-
         $this->set_admin_language();
         //configure callbacks for plugin menu pages
         if(defined('WP_ADMIN') && isset($_GET['page']) && 0 === strpos($_GET['page'],basename(ICL_PLUGIN_PATH).'/')){
