@@ -381,11 +381,14 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 
 == Upgrade Notice ==
 
+= 1.8.3 =
+Bug fixes and better compatibility with other plugins.
+
 = 1.8.2 =
-Bug fixes and improved professional translation workflow
+Bug fixes and improved professional translation workflow.
 
 = 1.8.1 =
-Multilingual menus bug fixes and improved translation interface
+Multilingual menus bug fixes and improved translation interface.
 
 = 1.8.0 =
 Added support for multilingual menus.
