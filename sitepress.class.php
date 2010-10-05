@@ -1070,8 +1070,8 @@ class SitePress{
                     }                    
                 }                
                 $target[] = array(
-                    'from' => $this->get_language_code(apply_filters('icl_server_languages_map', $lang['attr']['from_language_name'], true)),
-                    'to' => $this->get_language_code(apply_filters('icl_server_languages_map', $lang['attr']['to_language_name'], true)),
+                    'from' => $this->get_language_code(icl_server_languages_map($lang['attr']['from_language_name'], true)),
+                    'to' => $this->get_language_code(icl_server_languages_map($lang['attr']['to_language_name'], true)),                
                     'have_translators' => $lang['attr']['have_translators'],
                     'available_translators' => $lang['attr']['available_translators'],
                     'applications' => $lang['attr']['applications'],
@@ -1273,7 +1273,7 @@ class SitePress{
                 "/menu/languages.php&amp;icl_action=reminder_popup{$auto_resize}{$unload_cb}&amp;target=" . urlencode($link) .'"' . $id . '>';
         } else {
             return '<a class="icl_thickbox' . $class . '" href="admin.php?page='.ICL_PLUGIN_FOLDER . 
-                "/menu/languages&amp;icl_action=reminder_popup{$auto_resize}&amp;target=" . urlencode($link) .'"' . $id . '>';
+                "/menu/languages.php&amp;icl_action=reminder_popup{$auto_resize}&amp;target=" . urlencode($link) .'"' . $id . '>';
         }
     }
     
@@ -1819,6 +1819,7 @@ class SitePress{
         $post_types = array_diff(array_keys($wp_post_types), array('attachment','revision','nav_menu_item'));
         foreach($post_types as $type){
             if(in_array($type,array('post','page')) || $this->settings['custom_posts_sync_option'][$type] == 1){
+                if ( function_exists( 'add_meta_box' ) )
                 add_meta_box('icl_div', __('Language', 'sitepress'), array($this,'meta_box'), $type, 'side', 'high');            
             }
         }

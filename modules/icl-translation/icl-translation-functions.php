@@ -1187,7 +1187,7 @@ function icl_process_translated_document($request_id, $language){
             $ret = icl_add_post_translation($trid, $translation, apply_filters('icl_server_languages_map', $language, true), $request_id); //the 'reverse' language filter
             if ($ret){
                 $translations = $sitepress->get_element_translations($trid, 'post_'.$post_type);
-                $iclq->report_back_permalink($request_id, $language, $translations[$sitepress->get_language_code($language)]);
+                $iclq->report_back_permalink($request_id, $language, $translations[$sitepress->get_language_code(icl_server_languages_map($language, 1))]);
             }
         }
         if($ret){
