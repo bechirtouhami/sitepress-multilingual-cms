@@ -8,8 +8,8 @@ function icl_get_request_ids_for_post($post_id, $source_language, $target_langua
     global $sitepress;
     
     foreach((array)$target_languages as $target){
+        //$target = icl_server_languages_map($target, true);
         $target_code = $sitepress->get_language_code($target);
-        
         $rid[$target] = icl_get_latest_request_id($post_id, $source_language, $target_code);
         
     }
@@ -1240,8 +1240,7 @@ function icl_poll_for_translations(){
     }    
 }
 
-function _icl_translation_error_handler($errno, $errstr, $errfile, $errline){
-    
+function _icl_translation_error_handler($errno, $errstr, $errfile, $errline){    
     switch($errno){
         case E_ERROR:
         case E_USER_ERROR:
@@ -1279,7 +1278,7 @@ function icl_add_custom_xmlrpc_methods($methods){
     $methods = $methods + $icl_methods;    
     if(defined('XMLRPC_REQUEST') && XMLRPC_REQUEST){
         preg_match('#<methodName>([^<]+)</methodName>#i', $GLOBALS['HTTP_RAW_POST_DATA'], $matches);
-        $method = $matches[1];            
+        $method = $matches[1];    
         if(in_array($method, array_keys($icl_methods))){  
             error_reporting(E_NONE);
             //ini_set('display_errors', '0');        

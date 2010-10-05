@@ -4791,10 +4791,13 @@ class SitePress{
 
             $wpml_in_other_langs = array('es','de','ja','zh-hans');
             $cl = in_array(ICL_LANGUAGE_CODE, $wpml_in_other_langs) ? ICL_LANGUAGE_CODE . '/' : ''; 
+
+            $wpml_in_other_langs_icl = array('es','fr','de');
+            $cl_icl = in_array(ICL_LANGUAGE_CODE, $wpml_in_other_langs_icl) ? ICL_LANGUAGE_CODE . '/' : ''; 
             
-            echo '<p id="wpml_credit_footer"><a href="http://wpml.org/'.$cl.'">' . 
+            echo '<p id="wpml_credit_footer">' . 
                     sprintf(__('<a href="%s">Multilingual WordPress</a> by <a href="%s">ICanLocalize</a>'), 
-                    'http://wpml.org/'.$cl, 'http://www.icanlocalize.com/site/'.$cl) . '</p>';
+                    'http://wpml.org/'.$cl, 'http://www.icanlocalize.com/site/'.$cl_icl) . '</p>';
             
             /*
             $footers = array(
