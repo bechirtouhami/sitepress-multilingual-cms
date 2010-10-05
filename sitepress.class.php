@@ -4741,27 +4741,32 @@ class SitePress{
     
     function display_wpml_footer(){
         if($this->settings['promote_wpml']){
+
+            $wpml_in_other_langs = array('es','de','ja','zh-hans');
+            $cl = in_array(ICL_LANGUAGE_CODE, $wpml_in_other_langs) ? ICL_LANGUAGE_CODE . '/' : ''; 
+            
+            echo '<p id="wpml_credit_footer"><a href="http://wpml.org/'.$cl.'">' . 
+                    sprintf(__('<a href="%s">Multilingual WordPress</a> by <a href="%s">ICanLocalize</a>'), 
+                    'http://wpml.org/'.$cl, 'http://www.icanlocalize.com/site/'.$cl) . '</p>';
+            
+            /*
             $footers = array(
                 '1' => __('Multilingual thanks to WPML', 'sitepress'),
                 '2' => __('Multilingual WordPress by WPML', 'sitepress'),
                 '3' => __('Translated with WPML', 'sitepress'),
                 '4' => __('Translating with WPML', 'sitepress'),
                 '5' => __('We translate using WPML', 'sitepress'),
-                '6' => __('<a href="%s">Multilingual WordPress</a> by <a href="%s">ICanLocalize</a>')
             );
+            
             if(!isset($this->settings['promote_wpml_footer_version'])){
-                $iclsettings['promote_wpml_footer_version'] = $this->settings['promote_wpml_footer_version'] = rand(1,5);
+                $iclsettings['promote_wpml_footer_version'] = $this->settings['promote_wpml_footer_version'] = rand(1,5); 
                 $this->save_settings($iclsettings);
             }
+            
             $wpml_in_other_langs = array('es','de','ja','zh-hans');
             $cl = in_array(ICL_LANGUAGE_CODE, $wpml_in_other_langs) ? ICL_LANGUAGE_CODE . '/' : ''; 
-            if($iclsettings['promote_wpml_footer_version'] == 6){
-                echo '<p id="wpml_credit_footer"><a href="http://wpml.org/'.$cl.'">' . 
-                    sprintf($footers[$this->settings['promote_wpml_footer_version']], 'http://wpml.org/'.$cl, 'http://icanlocalize.com/site/'.$cl) . '</p>';
-            }else{
-                echo '<p id="wpml_credit_footer"><a href="http://wpml.org/'.$cl.'">' . $footers[$this->settings['promote_wpml_footer_version']] . '</a></p>';    
-            }
-            
+            echo '<p id="wpml_credit_footer"><a href="http://wpml.org/'.$cl.'">' . $footers[$this->settings['promote_wpml_footer_version']] . '</a></p>';    
+            */
         }
     }
     
