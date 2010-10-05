@@ -520,13 +520,16 @@ function icl_t($context, $name, $original_value=false, &$has_translation=null){
         return $original_value !== false ? $original_value : $name;
     }   
        
-    if(is_admin()){
-        $current_language = $sitepress->get_admin_language();
+    if(defined('DOING_AJAX')){            
+         $current_language = $sitepress->get_language_cookie();
+    }elseif(is_admin()){            
+        $current_language = $sitepress->get_admin_language();                 
     }else{
-        $current_language = $sitepress->get_current_language();
-    }   
-    $default_language = $sitepress_settings['st']['strings_language'] ? $sitepress_settings['st']['strings_language'] : $sitepress->get_default_language();
+        $current_language = $sitepress->get_current_language();     
+    }
     
+    $default_language = $sitepress_settings['st']['strings_language'] ? $sitepress_settings['st']['strings_language'] : $sitepress->get_default_language();
+
     if($current_language == $default_language && $original_value){
         
         $ret_val = $original_value;
@@ -534,6 +537,7 @@ function icl_t($context, $name, $original_value=false, &$has_translation=null){
         
     }else{
         $result = icl_t_cache_lookup($context, $name); 
+               
         if($result === false || !$result['translated'] && $original_value){        
             $ret_val = $original_value;    
             if(isset($has_translation)) $has_translation = false;
@@ -828,8 +832,15 @@ function icl_t_cache_lookup($context, $name){
         $ret_value = false;            
     }elseif(!isset($icl_st_cache[$context][$name])){ //cache MISS
     
-        global $sitepress, $wpdb;        
-        $current_language = $sitepress->get_current_language();     
+        global $sitepress, $wpdb;  
+        if(defined('DOING_AJAX')){            
+             $current_language = $sitepress->get_language_cookie();
+        }elseif(is_admin()){            
+            $current_language = $sitepress->get_admin_language();                 
+        }else{
+            $current_language = $sitepress->get_current_language();     
+        }
+        
         $default_language = $sitepress->get_default_language();
         
         global $switched, $switched_stack;        
@@ -844,6 +855,7 @@ function icl_t_cache_lookup($context, $name){
             WHERE s.context = '{$context}'
                 AND (t.language = '{$current_language}' OR t.language IS NULL)
             ", ARRAY_A);
+            
         if(isset($switched) && $switched){
             $wpdb->set_blog_id($prev_blog_id);
         }            
