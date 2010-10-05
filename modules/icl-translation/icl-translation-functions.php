@@ -728,7 +728,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
                     WHERE tm.name='".$wpdb->escape($v)."' OR tm.name='".$wpdb->escape($v)." @{$lang_code}' AND taxonomy='post_tag'");
                 if(!$term_taxonomy_id){                                          
                     $tmp = wp_insert_term($v, 'post_tag');
-                    if(isset($tmp['term_taxonomy_id'])){                
+                    if(!is_wp_error($tmp) && isset($tmp['term_taxonomy_id'])){
                         $wpdb->update($wpdb->prefix.'icl_translations', 
                             array('language_code'=>$lang_code, 'trid'=>$tag_trid, 'source_language_code'=>$original_post_details->language_code), 
                             array('element_type'=>'tax_post_tag','element_id'=>$tmp['term_taxonomy_id']));
@@ -810,7 +810,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
                         $category_parent_id = 0;
                     }
                     $tmp = wp_insert_term($v, 'category', array('parent'=>$category_parent_id));
-                    if(isset($tmp['term_taxonomy_id'])){                
+                    if(!is_wp_error($tmp) && isset($tmp['term_taxonomy_id'])){
                         $wpdb->update($wpdb->prefix.'icl_translations', 
                             array('language_code'=>$lang_code, 'trid'=>$cat_trid, 'source_language_code'=>$original_post_details->language_code), 
                             array('element_type'=>'tax_category','element_id'=>$tmp['term_taxonomy_id']));
@@ -883,7 +883,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
                                 WHERE tm.name='".$wpdb->escape($v)."' OR tm.name='".$wpdb->escape($v)." @{$lang_code}' AND taxonomy='{$taxonomy}'");
                         if(!$term_taxonomy_id){                                          
                             $tmp = wp_insert_term($v, $taxonomy);                            
-                            if(isset($tmp['term_taxonomy_id'])){                
+                            if(!is_wp_error($tmp) && isset($tmp['term_taxonomy_id'])){
                                 $wpdb->update($wpdb->prefix.'icl_translations', 
                                         array('language_code'=>$lang_code, 'trid'=>$tax_trid, 'source_language_code'=>$original_post_details->language_code), 
                                         array('element_type'=>'tax_'.$taxonomy,'element_id'=>$tmp['term_taxonomy_id']));
@@ -1184,7 +1184,7 @@ function icl_process_translated_document($request_id, $language){
             $ret = icl_add_post_translation($trid, $translation, apply_filters('icl_server_languages_map', $language, true), $request_id); //the 'reverse' language filter
             if ($ret){
                 $translations = $sitepress->get_element_translations($trid, 'post_'.$post_type);
-                $iclq->report_back_permalink($request_id, $language, $translations[$sitepress->get_language_code($language)]);
+                $iclq->report_back_permalink($request_id, $language, $translations[$sitepress->get_language_code(icl_server_languages_map($language, 1))]);
             }
         }
         if($ret){

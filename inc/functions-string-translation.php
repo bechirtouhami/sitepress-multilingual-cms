@@ -713,6 +713,7 @@ function icl_sw_filters_gettext($translation, $text, $domain){
     $dbt = debug_backtrace();    
     $dbt4 = str_replace('\\','/',$dbt[4]['file']);
     $wp_plugin_dir = str_replace('\\','/',WP_PLUGIN_DIR);
+    $wpmu_plugin_dir = str_replace('\\','/',WPMU_PLUGIN_DIR); 
     
     if(0 === strpos($dbt4, $wp_plugin_dir)){        
         if(dirname($dbt4) == $wp_plugin_dir){
@@ -722,6 +723,8 @@ function icl_sw_filters_gettext($translation, $text, $domain){
             $plugin_folder = $exp[0];    
         }
         $context = 'plugin ' . $plugin_folder;
+    }elseif(0 === strpos($dbt4, $wpmu_plugin_dir)){ 
+        $context = ($domain != 'default') ? 'plugin ' . $domain : 'plugin';         
     }else{
         $context = ($domain != 'default') ? 'theme ' . $domain : 'theme';
     }
