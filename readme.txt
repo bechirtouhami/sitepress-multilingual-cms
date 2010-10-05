@@ -1,5 +1,5 @@
 === WPML Multilingual CMS ===
-Contributors: ICanLocalize
+Contributors: icanlocalize
 Donate link: http://wpml.org/?page_id=2312
 Tags: CMS, navigation, menus, menu, dropdown, css, sidebar, pages, i18n, translation, localization, language, multilingual, WPML
 Requires at least: 2.7
@@ -12,12 +12,14 @@ Allows building complete multilingual sites with WordPress.
 
 **WPML makes multilingual content management easy, just like running a site in one language.**
 
+Plugin home page: [wpml.org](http://wpml.org) | Author home page: [www.icanlocalize.com](http://www.icanlocalize.com/site/)
+
 = Multilingual Features =
 
  * Turns a single WordPress install into a multilingual site.
- * Built-in [theme localization](http://wpml.org/?page_id=2717) without .mo files.
- * [Comments translation](http://wpml.org/?page_id=2755) allows you to moderate and reply to comments in your own language.
- * [Professional translation](http://wpml.org/?page_id=1169), connecting expert translators with site owners (optional, you can translate yourself for free).
+ * Built-in [theme localization](http://wpml.org/documentation/getting-started-guide/theme-localization/) without .mo files.
+ * [Comments translation](http://wpml.org/content-translation/translation-for-visitor-comments/) allows you to moderate and reply to comments in your own language.
+ * [Professional translation](http://wpml.org/content-translation/), connecting expert translators with site owners (optional, you can translate yourself for free).
 
 = CMS Navigation Features =
 
@@ -74,6 +76,12 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 4. Language setup admin screen.
 
 == Changelog ==
+
+= 1.8.3 =
+* Fixed bugs that prevented working with OpenID.
+* Fixed SQL bugs that prevented returning translations in certain cases.
+* Fixed bug for AJAX queries, causing them to be performed in the Admin language.
+* Added error reporting when translation returning fails.
 
 = 1.8.2.1 =
 * Small fixes/tweaks for 1.8.2

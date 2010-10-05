@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/sitepress-multilingual-cms\n"
-"POT-Creation-Date: 2010-09-02 04:40+0000\n"
+"POT-Creation-Date: 2010-10-04 17:33+0000\n"
 "PO-Revision-Date: 2010-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: ajax.php:40 menu/languages.php:139 menu/overview.php:6
-#: sitepress.class.php:1292 sitepress.class.php:5182
+#: sitepress.class.php:1292 sitepress.class.php:5189
 msgid "default"
 msgstr ""
 
@@ -799,7 +799,7 @@ msgid "edit translation"
 msgstr ""
 
 #: inc/wp-nav-menus/iclNavMenu.class.php:276 menu/post-menu.php:282
-#: sitepress.class.php:5202
+#: sitepress.class.php:5209
 msgid "edit"
 msgstr ""
 
@@ -2107,7 +2107,7 @@ msgstr ""
 msgid "Your site's languages are not set up yet."
 msgstr ""
 
-#: menu/overview.php:43 sitepress.class.php:5202
+#: menu/overview.php:43 sitepress.class.php:5209
 msgid "Currently configured languages:"
 msgstr ""
 
@@ -2311,7 +2311,7 @@ msgid "up to date"
 msgstr ""
 
 #: menu/post-menu.php:167 sitepress.class.php:1131 sitepress.class.php:1135
-#: sitepress.class.php:1144 sitepress.class.php:1157 sitepress.class.php:4940
+#: sitepress.class.php:1144 sitepress.class.php:1157 sitepress.class.php:4947
 msgid "Select translators"
 msgstr ""
 
@@ -3735,92 +3735,98 @@ msgstr ""
 msgid "We translate using WPML"
 msgstr ""
 
-#: sitepress.class.php:4852
+#: sitepress.class.php:4750
+#, php-format
+msgid ""
+"<a href=\"%s\">Multilingual WordPress</a> by <a href=\"%s\">ICanLocalize</a>"
+msgstr ""
+
+#: sitepress.class.php:4859
 msgid "A translation for this post already exists"
 msgstr ""
 
-#: sitepress.class.php:4879
+#: sitepress.class.php:4886
 msgid "A translation in this language already exists"
 msgstr ""
 
-#: sitepress.class.php:4892
+#: sitepress.class.php:4899
 msgid "Invalid language code"
 msgstr ""
 
-#: sitepress.class.php:4941
+#: sitepress.class.php:4948
 msgid "Send documents to translation"
 msgstr ""
 
-#: sitepress.class.php:4942
+#: sitepress.class.php:4949
 msgid "Deposit payment"
 msgstr ""
 
-#: sitepress.class.php:4943
+#: sitepress.class.php:4950
 msgid "Translations will be returned to your site"
 msgstr ""
 
-#: sitepress.class.php:4956
+#: sitepress.class.php:4963
 msgid "Setup check list"
 msgstr ""
 
-#: sitepress.class.php:5003
+#: sitepress.class.php:5010
 msgid "Help"
 msgstr ""
 
-#: sitepress.class.php:5011
+#: sitepress.class.php:5018
 msgid "Get help"
 msgstr ""
 
-#: sitepress.class.php:5134
+#: sitepress.class.php:5141
 #, php-format
 msgid ""
 "You haven't set your <a %s>synchronization preferences</a> for these custom "
 "posts: %s. Default value was selected."
 msgstr ""
 
-#: sitepress.class.php:5147
+#: sitepress.class.php:5154
 #, php-format
 msgid ""
 "You haven't set your <a %s>synchronization preferences</a> for these "
 "taxonomies: %s. Default value was selected."
 msgstr ""
 
-#: sitepress.class.php:5164
+#: sitepress.class.php:5171
 msgid "WPML Status"
 msgstr ""
 
-#: sitepress.class.php:5189
+#: sitepress.class.php:5196
 msgid "None"
 msgstr ""
 
-#: sitepress.class.php:5192
+#: sitepress.class.php:5199
 #, php-format
 msgid "Valid! (amount: $%d - until %s)"
 msgstr ""
 
-#: sitepress.class.php:5194
+#: sitepress.class.php:5201
 #, php-format
 msgid "Expired! - since %s"
 msgstr ""
 
-#: sitepress.class.php:5198
+#: sitepress.class.php:5205
 #, php-format
 msgid "WPML version: %s"
 msgstr ""
 
-#: sitepress.class.php:5200
+#: sitepress.class.php:5207
 msgid "Finish the WPML setup."
 msgstr ""
 
-#: sitepress.class.php:5204
+#: sitepress.class.php:5211
 #, php-format
 msgid "Support Subscription - %s"
 msgstr ""
 
-#: sitepress.class.php:5205
+#: sitepress.class.php:5212
 msgid "purchase"
 msgstr ""
 
-#: sitepress.class.php:5208
+#: sitepress.class.php:5215
 msgid "more"
 msgstr ""
