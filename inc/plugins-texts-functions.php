@@ -40,7 +40,7 @@ function icl_pt_get_texts(){
 
 function icl_get_posts_translatable_fields($only_sync = false){
     global $wpdb;
-    $enabled_plugins = get_option('icl_plugins_texts_enabled');
+    $enabled_plugins = get_option('icl_plugins_texts_enabled');    
     if(!empty($enabled_plugins)){
         foreach($enabled_plugins as $ap){
             $aps[] = "'" . $ap . "'";
