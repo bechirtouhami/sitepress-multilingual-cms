@@ -680,6 +680,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
     global $wpdb, $sitepress_settings, $sitepress, $wp_taxonomies;
     $taxonomies = array_diff(array_keys((array)$wp_taxonomies), array('post_tag','category'));
     $lang_code = $wpdb->get_var("SELECT code FROM {$wpdb->prefix}icl_languages WHERE english_name='".$wpdb->escape($lang)."'");
+    
     if(!$lang_code){        
         return false;
     }
@@ -723,13 +724,11 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
                 }
                 
                 //tag exists? (in the current language)
-                $term_taxonomy_id = $wpdb->get_var("
-                    SELECT term_taxonomy_id 
-                    FROM {$wpdb->term_taxonomy} tx 
-                        JOIN {$wpdb->terms} tm ON tx.term_id = tm.term_id 
-                        JOIN {$wpdb->prefix}icl_translations tr ON tx.term_taxonomy_id = tr.element_id AND tr.element_type = 'tax_post_tag' AND tr.language_code = '{$lang_code}'
-                    WHERE tm.name='".$wpdb->escape($v)."' OR tm.name='".$wpdb->escape($v)." @{$lang_code}' AND taxonomy='post_tag'");
-                if(!$term_taxonomy_id){                                          
+                $etag = get_term_by('name', htmlspecialchars($v), 'post_tag');
+                if(!$etag){
+                    $etag = get_term_by('name', htmlspecialchars($v) . '@'.$lang_code, 'post_tag');
+                }                
+                if(!$etag){                                          
                     $tmp = wp_insert_term($v, 'post_tag');
                     if(!is_wp_error($tmp) && isset($tmp['term_taxonomy_id'])){
                         $wpdb->update($wpdb->prefix.'icl_translations', 
@@ -737,7 +736,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
                             array('element_type'=>'tax_post_tag','element_id'=>$tmp['term_taxonomy_id']));
                     }
                 }else{
-                    
+                    $term_taxonomy_id = $etag['term_taxonomy_id']; 
                     // check whether we have an orphan translation - the same trid and language but a different element id                                                     
                     $__translation_id = $wpdb->get_var("
                         SELECT translation_id FROM {$wpdb->prefix}icl_translations 
@@ -753,7 +752,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
                     if($tag_translation_id){
                         $wpdb->update($wpdb->prefix.'icl_translations', 
                             array('language_code'=>$lang_code, 'trid'=>$tag_trid, 'source_language_code'=>$original_post_details->language_code), 
-                            array('element_type'=>'tax_post_tag','translation_id'=>$tag_translation_id));                
+                            array('element_type'=>'tax_post_tag','translation_id'=>$tag_translation_id));                                        
                     }else{                                                
                         $wpdb->insert($wpdb->prefix.'icl_translations', 
                             array('language_code'=>$lang_code, 'trid'=>$tag_trid, 'element_type'=>'tax_post_tag', 'element_id'=>$term_taxonomy_id, 'source_language_code'=>$original_post_details->language_code));                                
@@ -791,14 +790,11 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
                     $v .= ' @'.$lang_code;    
                 }
                 
-                //cat exists?
-                $term_taxonomy_id = $wpdb->get_var("
-                    SELECT term_taxonomy_id 
-                    FROM {$wpdb->term_taxonomy} tx 
-                        JOIN {$wpdb->terms} tm ON tx.term_id = tm.term_id 
-                        JOIN {$wpdb->prefix}icl_translations tr ON tx.term_taxonomy_id = tr.element_id AND tr.element_type = 'tax_category' AND tr.language_code = '{$lang_code}'
-                        WHERE tm.name='".$wpdb->escape($v)."' OR tm.name='".$wpdb->escape($v)." @{$lang_code}' AND taxonomy='category'");
-                if(!$term_taxonomy_id){  
+                $ecat = get_term_by('name', htmlspecialchars($v), 'category');
+                if(!$ecat){
+                    $ecat = get_term_by('name', htmlspecialchars($v) . '@'.$lang_code, 'category');
+                }                
+                if(!$ecat){  
                     // get original category parent id
                     $original_category_parent_id = $wpdb->get_var("SELECT parent FROM {$wpdb->term_taxonomy} WHERE term_taxonomy_id=".$translated_cats_ids[$k]);
                     if($original_category_parent_id){                        
@@ -816,10 +812,10 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
                     if(!is_wp_error($tmp) && isset($tmp['term_taxonomy_id'])){
                         $wpdb->update($wpdb->prefix.'icl_translations', 
                             array('language_code'=>$lang_code, 'trid'=>$cat_trid, 'source_language_code'=>$original_post_details->language_code), 
-                            array('element_type'=>'tax_category','element_id'=>$tmp['term_taxonomy_id']));
+                            array('element_type'=>'tax_category','element_id'=>$tmp['term_taxonomy_id']));                        
                     }
                 }else{
-                    
+                    $term_taxonomy_id = $ecat['term_taxonomy_id'];
                     // check whether we have an orphan translation - the same trid and language but a different element id                                                     
                     $__translation_id = $wpdb->get_var("
                         SELECT translation_id FROM {$wpdb->prefix}icl_translations 
@@ -876,15 +872,11 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
                             $v .= ' @'.$lang_code;    
                         }
                             
-                        //tax exists? (in the current language)
-                        $term_taxonomy_id = $wpdb->get_var("
-                                SELECT term_taxonomy_id 
-                                FROM {$wpdb->term_taxonomy} tx 
-                                    JOIN {$wpdb->terms} tm ON tx.term_id = tm.term_id 
-                                    JOIN {$wpdb->prefix}icl_translations tr ON tx.term_taxonomy_id = tr.element_id 
-                                        AND tr.element_type = 'tax_{$taxonomy}' AND tr.language_code = '{$lang_code}'
-                                WHERE tm.name='".$wpdb->escape($v)."' OR tm.name='".$wpdb->escape($v)." @{$lang_code}' AND taxonomy='{$taxonomy}'");
-                        if(!$term_taxonomy_id){                                          
+                        $etag = get_term_by('name', htmlspecialchars($v), $taxonomy);
+                        if(!$etag){
+                            $etag = get_term_by('name', htmlspecialchars($v) . '@'.$lang_code, $taxonomy);
+                        }                
+                        if(!$etag){                                          
                             $tmp = wp_insert_term($v, $taxonomy);                            
                             if(!is_wp_error($tmp) && isset($tmp['term_taxonomy_id'])){
                                 $wpdb->update($wpdb->prefix.'icl_translations', 
@@ -892,6 +884,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
                                         array('element_type'=>'tax_'.$taxonomy,'element_id'=>$tmp['term_taxonomy_id']));
                                 }
                             }else{
+                                $term_taxonomy_id = $etag['term_taxonomy_id'];
                                 // check whether we have an orphan translation - the same trid and language but a different element id                             
                                 $__translation_id = $wpdb->get_var("
                                     SELECT translation_id FROM {$wpdb->prefix}icl_translations 
@@ -1350,6 +1343,8 @@ function _icl_test_xmlrpc($args){
 
 function setTranslationStatus($args){
         global $sitepress_settings, $sitepress, $wpdb;        
+                
+        
         try{
             
             $signature   = $args[0];
@@ -1377,7 +1372,7 @@ function setTranslationStatus($args){
                 _icl_throw_exception_for_mysql_errors();
                 return 4;
             }
-                    
+            
             if (icl_process_translated_document($request_id, $language) === true){
                 _icl_throw_exception_for_mysql_errors();
                 return 1;
