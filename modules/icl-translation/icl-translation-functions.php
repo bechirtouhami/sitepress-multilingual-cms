@@ -736,7 +736,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
                             array('element_type'=>'tax_post_tag','element_id'=>$tmp['term_taxonomy_id']));
                     }
                 }else{
-                    $term_taxonomy_id = $etag['term_taxonomy_id']; 
+                    $term_taxonomy_id = $etag->term_taxonomy_id; 
                     // check whether we have an orphan translation - the same trid and language but a different element id                                                     
                     $__translation_id = $wpdb->get_var("
                         SELECT translation_id FROM {$wpdb->prefix}icl_translations 
@@ -815,7 +815,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
                             array('element_type'=>'tax_category','element_id'=>$tmp['term_taxonomy_id']));                        
                     }
                 }else{
-                    $term_taxonomy_id = $ecat['term_taxonomy_id'];
+                    $term_taxonomy_id = $ecat->term_taxonomy_id;
                     // check whether we have an orphan translation - the same trid and language but a different element id                                                     
                     $__translation_id = $wpdb->get_var("
                         SELECT translation_id FROM {$wpdb->prefix}icl_translations 
@@ -884,7 +884,7 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
                                         array('element_type'=>'tax_'.$taxonomy,'element_id'=>$tmp['term_taxonomy_id']));
                                 }
                             }else{
-                                $term_taxonomy_id = $etag['term_taxonomy_id'];
+                                $term_taxonomy_id = $etag->term_taxonomy_id;
                                 // check whether we have an orphan translation - the same trid and language but a different element id                             
                                 $__translation_id = $wpdb->get_var("
                                     SELECT translation_id FROM {$wpdb->prefix}icl_translations 
