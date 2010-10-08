@@ -91,8 +91,9 @@
         $language_names[] = $active_languages[$l]['english_name'];    
     }    
     if(!empty($language_names)){
-        $previous_rid = icl_get_request_ids_for_post($post->ID, $selected_language, apply_filters('icl_server_languages_map', $language_names));
+        $previous_rid = icl_get_request_ids_for_post($post->ID, $selected_language, $language_names);
     }
+    
     if(!empty($previous_rid)){
         foreach($previous_rid as $serverlang => $pr){
             if(!empty($pr)){
