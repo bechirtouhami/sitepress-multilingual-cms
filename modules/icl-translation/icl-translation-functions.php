@@ -766,7 +766,9 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
         }    
         if($original_post_tags){
             $tag_trids = $wpdb->get_col("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_type='tax_post_tag' AND element_id IN (".join(',',$original_post_tags).")");    
+            if(!empty($tag_trids))
             $tag_tr_tts = $wpdb->get_col("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE element_type='tax_post_tag' AND language_code='{$lang_code}' AND trid IN (".join(',',$tag_trids).")");    
+            if(!empty($tag_tr_tts))
             $translated_tags = $wpdb->get_col("SELECT t.name FROM {$wpdb->terms} t JOIN {$wpdb->term_taxonomy} tx ON tx.term_id = t.term_id WHERE tx.taxonomy='post_tag' AND tx.term_taxonomy_id IN (".join(',',$tag_tr_tts).")");
         }
                                           
@@ -845,7 +847,9 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
         }
         if($original_post_cats){    
             $cat_trids = $wpdb->get_col("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_type='tax_category' AND element_id IN (".join(',',$original_post_cats).")");
+            if(!empty($cat_trids))
             $cat_tr_tts = $wpdb->get_col("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE element_type='tax_category' AND language_code='{$lang_code}' AND trid IN (".join(',',$cat_trids).")");
+            if(!empty($cat_tr_tts))
             $translated_cats_ids = $wpdb->get_col("SELECT t.term_id FROM {$wpdb->terms} t JOIN {$wpdb->term_taxonomy} tx ON tx.term_id = t.term_id WHERE tx.taxonomy='category' AND tx.term_taxonomy_id IN (".join(',',$cat_tr_tts).")");
         }   
                 
@@ -917,18 +921,21 @@ function icl_add_post_translation($trid, $translation, $lang, $rid){
                     if($original_post_taxs[$taxonomy]){
                         $tax_trids = $wpdb->get_col("SELECT trid FROM {$wpdb->prefix}icl_translations 
                             WHERE element_type='tax_{$taxonomy}' AND element_id IN (".join(',',$original_post_taxs[$taxonomy]).")");    
+                        if(!empty($tax_trids))
                         $tax_tr_tts = $wpdb->get_col("SELECT element_id FROM {$wpdb->prefix}icl_translations 
                             WHERE element_type='tax_{$taxonomy}' AND language_code='{$lang_code}' AND trid IN (".join(',',$tax_trids).")");    
-                        if($wp_taxonomies[$taxonomy]->hierarchical){
-                            $translated_tax_ids[$taxonomy] = $wpdb->get_col("SELECT term_id FROM {$wpdb->term_taxonomy} WHERE term_taxonomy_id IN (".join(',',$tax_tr_tts).")");
-                        }else{
-                            $translated_taxs[$taxonomy] = $wpdb->get_col("SELECT t.name FROM {$wpdb->terms} t 
-                                JOIN {$wpdb->term_taxonomy} tx ON tx.term_id = t.term_id 
-                                WHERE tx.taxonomy='{$taxonomy}' AND tx.term_taxonomy_id IN (".join(',',$tax_tr_tts).")");                    
+                        if(!empty($tax_tr_tts)){
+                            if($wp_taxonomies[$taxonomy]->hierarchical){
+                                $translated_tax_ids[$taxonomy] = $wpdb->get_col("SELECT term_id FROM {$wpdb->term_taxonomy} WHERE term_taxonomy_id IN (".join(',',$tax_tr_tts).")");
+                            }else{
+                                $translated_taxs[$taxonomy] = $wpdb->get_col("SELECT t.name FROM {$wpdb->terms} t 
+                                    JOIN {$wpdb->term_taxonomy} tx ON tx.term_id = t.term_id 
+                                    WHERE tx.taxonomy='{$taxonomy}' AND tx.term_taxonomy_id IN (".join(',',$tax_tr_tts).")");                    
+                            }
                         }
+                    }
                 }
             }
-        }
                      
     /*}elseif($original_post_details->post_type=='page'){*/
     
