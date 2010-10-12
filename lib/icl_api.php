@@ -556,7 +556,6 @@ class ICanLocalizeQuery{
         $res = $this->_request($request_url, 'GET');
         return $res['info']['result']['value'] == 'OK';
     }
-        
 }
   
 /**

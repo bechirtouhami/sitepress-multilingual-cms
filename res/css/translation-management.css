@@ -68,3 +68,8 @@
 .icl_tm_admin_options li ul{
     margin-left:20px;
 }
+
+#local_translations_add_translator_toggle {
+  border: 1px solid #CCCCCC;
+  padding: 10px;
+}

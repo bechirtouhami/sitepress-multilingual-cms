@@ -103,6 +103,11 @@ class TranslationManagement{
         switch($action){
             case 'add_translator':
                 if(wp_create_nonce('add_translator') == $data['add_translator_nonce']){
+                    // Initial adding
+                    if (isset($data['from_lang']) && isset($data['to_lang'])) {
+                      $data['lang_pairs'] = array();
+                      $data['lang_pairs'][$data['from_lang']] = array($data['to_lang'] => 1);
+                    }
                     $this->add_translator($data['user_id'], $data['lang_pairs']);
                 }
                 break;

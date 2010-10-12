@@ -178,3 +178,29 @@ function icl_support_view_ticket() {
 			}); 
 		});
 	}
+
+function icl_thickbox_reopen(url) {
+  tb_remove();
+  if (url.indexOf("?") == -1) {
+    var glue = '?';
+  } else {
+    var glue = '&';
+  }
+  jQuery('#iclThickboxReopenLink').remove();
+  jQuery('body').prepend('<a id="iclThickboxReopenLink" href="'+url+glue+'keepThis=true&amp;TB_iframe=true" class="thickbox" style="display:none;">test</a>');
+  icl_tb_set_size('#iclThickboxReopenLink');
+  jQuery('#iclThickboxReopenLink').addClass('initThickbox-processed').click(function() {
+    var t = this.title || this.name || null;
+    var a = this.href || this.alt;
+    var g = this.rel || false;
+    tb_show(t,a,g);
+    this.blur();
+    return false;
+  });
+  window.setTimeout(function() {
+    jQuery('#iclThickboxReopenLink').trigger('click');
+    jQuery('#TB_window').bind('unload', function() {
+      window.location.href = unescape(window.location); // Add .pathname to get URL without query
+    });
+  }, 1000);
+}

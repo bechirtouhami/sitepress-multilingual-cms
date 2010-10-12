@@ -1244,7 +1244,7 @@ class SitePress{
         exit;
     }
     
-    function create_icl_popup_link($link, $args = array()) {
+    function create_icl_popup_link($link, $args = array(), $just_url = false) {
         
         // defaults
         $defaults = array(
@@ -1274,12 +1274,14 @@ class SitePress{
 		if ($id) {
 			$id = ' id="' . $id . '"';
 		}
-		if ($title) {
+		    if ($title && !$just_url) {
             return '<a class="icl_thickbox ' . $class . '" title="' . $title . '" href="admin.php?page='.ICL_PLUGIN_FOLDER . 
                 "/menu/languages.php&amp;icl_action=reminder_popup{$auto_resize}{$unload_cb}&amp;target=" . urlencode($link) .'"' . $id . '>';
-        } else {
+        } else if (!$just_url) {
             return '<a class="icl_thickbox' . $class . '" href="admin.php?page='.ICL_PLUGIN_FOLDER . 
                 "/menu/languages.php&amp;icl_action=reminder_popup{$auto_resize}&amp;target=" . urlencode($link) .'"' . $id . '>';
+        } else {
+            return 'admin.php?page='.ICL_PLUGIN_FOLDER . "/menu/languages.php&amp;icl_action=reminder_popup{$auto_resize}{$unload_cb}&amp;target=" . urlencode($link);
         }
     }
     

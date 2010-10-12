@@ -19,14 +19,14 @@ jQuery(document).ready(function(){
             jQuery(this).parent().parent().find('.icl_tm_lang_pairs_to').slideUp();
         }
     });
-    
-    jQuery('#icl_tm_adduser').submit(function(){
-        jQuery('#icl_tm_add_user_errors span').hide();
-        if(jQuery('.icl_tm_to_lang:checked').length==0){
-            jQuery('#icl_tm_add_user_errors .icl_tm_no_to').show();    
-            return false;    
-        }
-    });
+    // @todo Remove if not needed anymore
+//    jQuery('#icl_tm_adduser').submit(function(){
+//        jQuery('#icl_tm_add_user_errors span').hide();
+//        if(jQuery('.icl_tm_to_lang:checked').length==0){
+//            jQuery('#icl_tm_add_user_errors .icl_tm_no_to').show();
+//            return false;
+//        }
+//    });
     
     jQuery('a[href="#hide-advanced-filters"]').click(function(){        
         athis = jQuery(this);        
@@ -136,8 +136,76 @@ jQuery(document).ready(function(){
         });  
     });
     
-            
+    if (jQuery('#radio-local').is(':checked')) {
+      jQuery('#local_translations_add_translator_toggle').slideDown();
+    }
+
+    icl_add_translators_form_check_submit();
+    var icl_active_service = jQuery('input[name=services]').val();
+
+    jQuery('input[name=services]').change(function() {
+      if (jQuery('#radio-local').is(':checked')) {
+        jQuery('#local_translations_add_translator_toggle').slideDown();
+      } else {
+        jQuery('#local_translations_add_translator_toggle').slideUp();
+      }
+      icl_active_service = jQuery(this).val();
+      icl_add_translators_form_check_submit();
+    });
+
+    jQuery('#edit-from').change(function() {
+      icl_add_translators_form_check_submit();
+    });
+
+    jQuery('#edit-to').change(function() {
+      icl_add_translators_form_check_submit();
+    });
+
+    jQuery('#icl_add_translator_submit').click(function() {
+      var url = jQuery('#'+icl_active_service+'_setup_url').val();
+      if (url !== undefined) {
+        url = url.replace(/from_replace/, jQuery('#edit-from').val());
+        url = url.replace(/to_replace/, jQuery('#edit-to').val());
+        icl_thickbox_reopen(url);
+        return false;
+      }
+      jQuery('#icl_tm_add_user_errors span').hide();
+      if (jQuery('input[name=services]').val() == 'local' && jQuery('#icl_tm_selected_user').val() == 0){
+          jQuery('#icl_tm_add_user_errors .icl_tm_no_to').show();
+          return false;
+      }
+    });
+
+    jQuery('#icl_add_translator_form_toggle').click(function() {
+      jQuery('#icl_add_translator_form_wrapper').slideToggle(function(){
+        if (jQuery('#icl_add_translator_form_wrapper').is(':hidden')) {
+          var caption = jQuery('#icl_add_translator_form_toggle').val().replace(/<</, '>>');
+        } else {
+          var caption = jQuery('#icl_add_translator_form_toggle').val().replace(/>>/, '<<');
+        }
+        jQuery('#icl_add_translator_form_toggle').val(caption);
+      });
+      
+      return false;
+    });
+
 })
+
+function icl_add_translators_form_check_submit() {
+  if (jQuery('#edit-from').val() != 0 && jQuery('#edit-to').val() != 0 && jQuery('#edit-from').val() != jQuery('#edit-to').val()) {
+    jQuery('#icl_add_translator_submit').attr('disabled', 0);
+  } else {
+    jQuery('#icl_add_translator_submit').attr('disabled', 1);
+    return false;
+  }
+
+  if (jQuery('input[name=services]').is(':checked')) {
+    jQuery('#icl_add_translator_submit').attr('disabled', 0);
+  } else {
+    jQuery('#icl_add_translator_submit').attr('disabled', 1);
+    return false;
+  }
+}
 
 function icl_tm_update_word_count_estimate(){
     icl_tm_enable_submit();
@@ -229,4 +297,4 @@ jQuery(document).ready(function(){
     jQuery('form[name="icl_custom_tax_sync_options"]').submit(iclSaveForm);
     jQuery('form[name="icl_custom_posts_sync_options"]').submit(iclSaveForm);
     jQuery('form[name="icl_cf_translation"]').submit(iclSaveForm);
-})
+});
