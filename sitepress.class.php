@@ -1278,7 +1278,7 @@ class SitePress{
             return '<a class="icl_thickbox ' . $class . '" title="' . $title . '" href="admin.php?page='.ICL_PLUGIN_FOLDER . 
                 "/menu/languages.php&amp;icl_action=reminder_popup{$auto_resize}{$unload_cb}&amp;target=" . urlencode($link) .'"' . $id . '>';
         } else if (!$just_url) {
-            return '<a class="icl_thickbox' . $class . '" href="admin.php?page='.ICL_PLUGIN_FOLDER . 
+            return '<a class="icl_thickbox ' . $class . '" href="admin.php?page='.ICL_PLUGIN_FOLDER .
                 "/menu/languages.php&amp;icl_action=reminder_popup{$auto_resize}&amp;target=" . urlencode($link) .'"' . $id . '>';
         } else {
             return 'admin.php?page='.ICL_PLUGIN_FOLDER . "/menu/languages.php&amp;icl_action=reminder_popup{$auto_resize}{$unload_cb}&amp;target=" . urlencode($link);

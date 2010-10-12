@@ -204,3 +204,7 @@ function icl_thickbox_reopen(url) {
     });
   }, 1000);
 }
+
+function icl_thickbox_refresh() {
+  window.location.href = unescape(window.location);
+}

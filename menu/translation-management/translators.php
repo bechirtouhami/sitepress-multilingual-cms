@@ -359,7 +359,7 @@ function icl_icanlocalize_translators_list($array) {
           $translators[$translator['attr']['id']]['type'] = 'ICanLocalize';
           $translators[$translator['attr']['id']]['action'] = $sitepress->create_icl_popup_link(ICL_API_ENDPOINT . '/websites/' . $wid
             . '/website_translation_offers/' . $data['translation_languages']['translation_language'][$key]['attr']['id'] . '/website_translation_contracts/'
-            . $value['attr']['contract_id'], array('title' => __('Chat with translator', 'sitepress'))) . __('Chat with translator', 'sitepress') . '</a>';
+            . $value['attr']['contract_id'], array('title' => __('Chat with translator', 'sitepress'), 'unload_cb' => 'icl_thickbox_refresh')) . __('Chat with translator', 'sitepress') . '</a>';
         }
       }
     }
