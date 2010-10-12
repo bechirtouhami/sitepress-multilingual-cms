@@ -292,6 +292,7 @@ function icl_tm_update_complete_cb_status(){
 /* MC Setup */
 
 jQuery(document).ready(function(){
+    jQuery('#icl_doc_translation_method').submit(iclSaveForm);    
     jQuery('#icl_page_sync_options').submit(iclSaveForm);    
     jQuery('form[name="icl_plugins_texts"]').submit(iclSaveForm);
     jQuery('form[name="icl_custom_tax_sync_options"]').submit(iclSaveForm);

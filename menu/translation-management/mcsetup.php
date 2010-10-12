@@ -57,10 +57,38 @@
     
     $cf_settings = $iclTranslationManagement->settings['custom_fields_translation'];  
     $cf_settings_ro = (array)$iclTranslationManagement->settings['custom_fields_readonly_config'];  
+    $doc_translation_method = intval($iclTranslationManagement->settings['doc_translation_method']);
     
 ?>
 
     <?php if(isset($notice)) echo $notice ?>
+    
+    <form id="icl_doc_translation_method" name="icl_doc_translation_method" action="">        
+    <table class="widefat">
+        <thead>
+            <tr>
+                <th colspan="2"><?php _e('How to translate posts and pages', 'sitepress');?></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    <ul>
+                        <li><label><input type="radio" name="t_method" value="<?php echo ICL_TM_TMETHOD_MANUAL ?>" <?php if($doc_translation_method==ICL_TM_TMETHOD_MANUAL): ?>checked="checked"<?php endif; ?> /> 
+                            <?php _e('Create translations manually.', 'sitepress')?></label></li>
+                        <li><label><input type="radio" name="t_method" value="<?php echo ICL_TM_TMETHOD_EDITOR ?>" <?php if($doc_translation_method==ICL_TM_TMETHOD_EDITOR): ?>checked="checked"<?php endif; ?> /> 
+                            <?php _e('Use translation editor.', 'sitepress')?></label></li>
+                        <li><label><input type="radio" name="t_method" value="<?php echo ICL_TM_TMETHOD_PRO ?>" <?php if($doc_translation_method==ICL_TM_TMETHOD_PRO): ?>checked="checked"<?php endif; ?> /> 
+                            <?php _e('Send to professional translation.', 'sitepress')?></label></li>
+                    </ul>
+                    <input type="submit" class="button-secondary" value="<?php _e('Save', 'sitepress')?>" />
+                    <span class="icl_ajx_response" id="icl_ajx_response_dtm"></span>
+                </td>    
+            </tr>
+        </tbody>
+    </table>
+    </form>
+    <br />
     
     <form id="icl_page_sync_options" name="icl_page_sync_options" action="">        
     <table class="widefat">
@@ -242,13 +270,7 @@
     </form>        
     <?php endif; ?>     
     <br clear="all" />    
-    
-    <?php 
-    
-    debug_array($sitepress_settings);
-    
-    ?>
-    
+        
     <?php if(!empty($iclTranslationManagement->admin_texts_to_translate)): ?>
     <table class="widefat">
         <thead>

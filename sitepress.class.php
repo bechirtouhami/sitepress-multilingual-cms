@@ -439,7 +439,7 @@ class SitePress{
         /* preWP3 compatibility  - end */                    
         if(($pagenow == 'edit.php' || $pagenow_ == 'edit-pages.php' || ($pagenow == 'admin-ajax.php' && $_POST['action']=='inline-save'))  
             && !$this->settings['hide_translation_controls_on_posts_lists']){
-            $post_type = isset($_REQUEST['post_type']) ? $_REQUEST['post_type'] : 'post';    
+            $post_type = isset($_REQUEST['post_type']) ? $_REQUEST['post_type'] : 'post';                
             switch($post_type){
                 case 'post': case 'page':
                     add_filter('manage_'.$post_type.'s_columns',array($this,'add_posts_management_column'));                        
@@ -4713,6 +4713,7 @@ class SitePress{
             ");
             $ptrs = $wpdb->get_results("
                 SELECT trid, element_id, language_code, source_language_code FROM {$wpdb->prefix}icl_translations WHERE trid IN (".join(',', $trids).")
+                    
             ");
             foreach($ptrs as $v){
                 $by_trid[$v->trid][] = $v;
@@ -4761,21 +4762,49 @@ class SitePress{
     }
     
     function add_content_for_posts_management_column($column_name){
+        global $wpdb;
         if($column_name != 'icl_translations') return;        
-        global $id, $__management_columns_posts_translations, $pagenow;
+        global $id, $__management_columns_posts_translations, $pagenow, $iclTranslationManagement;
         $active_languages = $this->get_active_languages();
         foreach($active_languages as $k=>$v){
             if($v['code']==$this->get_current_language()) continue;
             $post_type = isset($_REQUEST['post_type']) ? $_REQUEST['post_type'] : 'post';            
-            if($__management_columns_posts_translations[$id][$v['code']]){
+            if($__management_columns_posts_translations[$id][$v['code']]->element_id){
                 $img = 'edit_translation.png';
                 $alt = sprintf(__('Edit the %s translation','sitepress'), $v['display_name']);                
-                $link = 'post.php?post_type='.$post_type.'&action=edit&amp;post='.$__management_columns_posts_translations[$id][$v['code']]->element_id.'&amp;lang='.$v['code'];
+                switch($iclTranslationManagement->settings['doc_translation_method']){
+                    case ICL_TM_TMETHOD_EDITOR:
+                        $job_id = $iclTranslationManagement->get_translation_job_id($__management_columns_posts_translations[$id][$v['code']]->trid, $v['code']);
+                        $link = admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&job_id='.$job_id);
+                        break;
+                    case ICL_TM_TMETHOD_PRO:
+                        break;
+                        // TBD
+                    default:
+                        $link = 'post.php?post_type='.$post_type.'&action=edit&amp;post='.$__management_columns_posts_translations[$id][$v['code']]->element_id.'&amp;lang='.$v['code'];
+                }
+                
             }else{
                 $img = 'add_translation.png';
                 $alt = sprintf(__('Add translation to %s','sitepress'), $v['display_name']);
                 $src_lang = $this->get_current_language() == 'all' ? $this->get_default_language() : $this->get_current_language();
-                $link = 'post-new.php?post_type='.$post_type.'&trid=' . $__management_columns_posts_translations[$id][$this->get_current_language()]->trid.'&amp;lang='.$v['code'].'&amp;source_lang=' . $src_lang;
+                switch($iclTranslationManagement->settings['doc_translation_method']){
+                    case ICL_TM_TMETHOD_EDITOR:
+                        $job_id = $iclTranslationManagement->get_translation_job_id($__management_columns_posts_translations[$id][$v['code']]->trid, $v['code']);
+                        if($job_id){
+                            $link = admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&job_id='.$job_id);    
+                        }else{
+                            $link = admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&icl_tm_action=create_job&post[]='.
+                                $id.'&translate_to['.$v['code'].']=1');
+                        }                        
+                        break;
+                    case ICL_TM_TMETHOD_PRO:
+                        // TBD
+                        break;
+                    default:
+                        $link = 'post-new.php?post_type='.$post_type.'&trid=' 
+                            . $__management_columns_posts_translations[$id][$this->get_current_language()]->trid.'&amp;lang='.$v['code'].'&amp;source_lang=' . $src_lang;
+                }
             }
             echo '<a href="'.$link.'" title="'.$alt.'">';
             echo '<img style="padding:1px;margin:2px;" border="0" src="'.ICL_PLUGIN_URL . '/res/img/' .$img.'" alt="'.$alt.'" width="16" height="16" />';

@@ -10,6 +10,10 @@ define('ICL_TM_NOTIFICATION_NONE', 0);
 define('ICL_TM_NOTIFICATION_IMMEDIATELY', 1);
 define('ICL_TM_NOTIFICATION_DAILY', 2);    
 
+define('ICL_TM_TMETHOD_MANUAL', 0);    
+define('ICL_TM_TMETHOD_EDITOR', 1);    
+define('ICL_TM_TMETHOD_PRO', 2);    
+
 
 $asian_languages = array('ja', 'ko', 'zh-hans', 'zh-hant', 'mn', 'ne', 'hi', 'pa', 'ta', 'th');
   
@@ -158,6 +162,11 @@ class TranslationManagement{
                     'text' => __('Preferences saved.', 'sitepress')
                 );
                 break;
+           case 'create_job':
+                $data['translator'] = $this->current_translator->ID;
+                $job_ids = $this->send_jobs($data);
+                wp_redirect('admin.php?page='.ICL_PLUGIN_FOLDER . '/menu/translations-queue.php&job_id=' . array_pop($job_ids));
+                break;                
         }
     }
     
@@ -188,7 +197,12 @@ class TranslationManagement{
                     $this->settings['custom_fields_translation'] = $cft;
                     $this->save_settings();
                     echo '1|';
-                }
+                }            
+                break;
+            case 'icl_doc_translation_method':
+                $this->settings['doc_translation_method'] = intval($data['t_method']);
+                $this->save_settings();
+                echo '1|';
                 break;
         }
     }
@@ -692,8 +706,7 @@ class TranslationManagement{
         $selected_posts = $data['post'];
         $selected_translators = $data['translator'];
         $selected_languages = $data['translate_to'];
-        
-        
+        $job_ids = array();
         foreach($selected_posts as $post_id){
             $post = get_post($post_id); 
             $post_trid = $sitepress->get_element_trid($post->ID, 'post_' . $post->post_type);
@@ -723,7 +736,7 @@ class TranslationManagement{
                 ));
                 
                 if(!$update){
-                    $this->add_translation_job($rid, $selected_translators[$lang], $translation_package);
+                    $job_ids[] = $this->add_translation_job($rid, $selected_translators[$lang], $translation_package);
                 }
             }                
             
@@ -733,8 +746,8 @@ class TranslationManagement{
             'type'=>'updated',
             'text' => __('All documents sent to translation.', 'sitepress')
         );
-        
-        
+
+        return $job_ids;
     }
     
     /**
@@ -804,8 +817,7 @@ class TranslationManagement{
                 }
             }
         }                
-        
-        foreach($sitepress->get_translatable_taxonomies(true, $post->post_type) as $taxonomy){
+        foreach((array)$sitepress->get_translatable_taxonomies(true, $post->post_type) as $taxonomy){
             $terms = get_the_terms( $post->ID , $taxonomy );
             if(!empty($terms)){
                 $_taxs = $_tax_ids = array();
@@ -905,6 +917,7 @@ class TranslationManagement{
             $wpdb->insert($wpdb->prefix . 'icl_translate', $job_translate);    
         }
         
+        return $job_id;
         
     }
     
@@ -1089,6 +1102,18 @@ class TranslationManagement{
         }
         
         return $job;    
+    }
+    
+    function get_translation_job_id($trid, $language_code){
+        global $wpdb, $sitepress;
+        $job_id = $wpdb->get_var($wpdb->prepare("
+            SELECT tj.job_id FROM {$wpdb->prefix}icl_translate_job tj 
+                JOIN {$wpdb->prefix}icl_translation_status ts ON tj.rid = ts.rid
+                JOIN {$wpdb->prefix}icl_translations t ON ts.translation_id = t.translation_id
+                WHERE t.trid = %d AND t.language_code=%s
+                ORDER BY tj.rid DESC LIMIT 1                
+        ", $trid, $language_code));
+        return $job_id;
     }
     
     public function decode_field_data($data, $format){
@@ -1288,10 +1313,8 @@ class TranslationManagement{
             }
                
             // set the translated custom fields if we have any.
-            $custom_fields = icl_get_posts_translatable_fields();
-            foreach($custom_fields as $id => $cf){
-                if ($cf->translate) {
-                    $field_name = $cf->attribute_name;                    
+            foreach($this->settings['custom_fields_translation'] as $field_name => $val){
+                if ($val == 2) { // should be translated
                     // find it in the translation
                     foreach($job->elements as $name => $data) {
                         if ($data->field_data == $field_name) {

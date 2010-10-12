@@ -91,7 +91,7 @@
         $language_names[] = $active_languages[$l]['english_name'];    
     }    
     if(!empty($language_names)){
-        $previous_rid = icl_get_request_ids_for_post($post->ID, $selected_language, apply_filters('icl_server_languages_map', $language_names));
+        $previous_rid = icl_get_request_ids_for_post($post->ID, $selected_language, $language_names);
     }
     if(!empty($previous_rid)){
         foreach($previous_rid as $serverlang => $pr){
@@ -257,12 +257,28 @@
             <p style="clear:both;"><b><?php _e('Translate yourself', 'sitepress'); ?></b>
         <?php endif; ?>
         <table>
+        <?php global $iclTranslationManagement; ?>
         <?php foreach($active_languages as $lang): if($selected_language==$lang['code']) continue; ?>
         <tr>
             <?php if(!isset($translations[$lang['code']]->element_id)):?>
                 <td><?php echo $lang['display_name'] ?></td>
                 <?php
-                    $add_link = get_option('siteurl') . "/wp-admin/post-new.php?post_type={$post->post_type}&trid=" . $trid . "&lang=" . $lang['code'] . "&source_lang=" . $selected_language;
+                    switch($iclTranslationManagement->settings['doc_translation_method']){
+                        case ICL_TM_TMETHOD_EDITOR:
+                            $job_id = $iclTranslationManagement->get_translation_job_id($trid, $lang['code']);
+                            if($job_id){
+                                $add_link = admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&job_id='.$job_id);    
+                            }else{
+                                $add_link = admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&icl_tm_action=create_job&post[]='.
+                                    $post->ID.'&translate_to['.$lang['code'].']=1');
+                            }                        
+                            break;
+                        case ICL_TM_TMETHOD_PRO:
+                            // TBD
+                            break;
+                        default:
+                            $add_link = get_option('siteurl') . "/wp-admin/post-new.php?post_type={$post->post_type}&trid=" . $trid . "&lang=" . $lang['code'] . "&source_lang=" . $selected_language;    
+                    }                    
                 ?>
                 <td><a href="<?php echo $add_link?>"><?php echo __('add','sitepress') ?></a></td>
             <?php endif; ?>        
@@ -279,8 +295,21 @@
         <?php foreach($active_languages as $lang): if($selected_language==$lang['code']) continue; ?>
         <tr>
             <?php if(isset($translations[$lang['code']]->element_id)):?>
+                <?php
+                    switch($iclTranslationManagement->settings['doc_translation_method']){
+                        case ICL_TM_TMETHOD_EDITOR:
+                            $job_id = $iclTranslationManagement->get_translation_job_id($trid, $lang['code']);
+                            $edit_link = admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&job_id='.$job_id);    
+                            break;
+                        case ICL_TM_TMETHOD_PRO:
+                            // TBD
+                            break;
+                        default:
+                            $edit_link = get_edit_post_link($translations[$lang['code']]->element_id);    
+                    }                    
+                ?>
                 <td><?php echo $lang['display_name'] ?></td>
-                <td align="right" width="20%"><?php echo isset($translations[$lang['code']]->post_title)?'<a href="'.get_edit_post_link($translations[$lang['code']]->element_id).'" title="'.__('Edit','sitepress').'">'.apply_filters('the_title', __('edit','sitepress')).'</a>':__('n/a','sitepress') ?></td>
+                <td align="right" width="20%"><?php echo isset($translations[$lang['code']]->post_title)?'<a href="'.$edit_link.'" title="'.__('Edit','sitepress').'">'.apply_filters('the_title', __('edit','sitepress')).'</a>':__('n/a','sitepress') ?></td>
                 
             <?php endif; ?>        
         </tr>
