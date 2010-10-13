@@ -9,7 +9,7 @@ if ($selected_translator->ID) {
   
   // Edit form
   echo '<h3>'. __('Edit translator', 'sitepress') . '</h3>';
-  echo '<form id="icl_tm_adduser" method="post">' . "\r\n";
+  echo '<form id="icl_tm_adduser" method="post" action="">' . "\r\n";
   echo icl_local_edit_translator_form('edit', $selected_translator) . "\r\n";
   echo '</form>' . "\r\n";
 
@@ -26,7 +26,7 @@ if ($selected_translator->ID) {
     // Toggle div start
     echo '<div id="icl_add_translator_form_wrapper" class="hidden">';
     // Open form
-    echo '<form id="icl_tm_adduser" method="post">';
+    echo '<form id="icl_tm_adduser" method="post" action="">';
 
     // 'From' and 'To' languages dropdowns
     $languages = $sitepress->get_active_languages();
@@ -303,7 +303,7 @@ function icl_local_edit_translator_form($action = 'add', $selected_translator = 
       $output .= '
       <input class="button-primary" type="submit" value="';
       $output .= $selected_translator ? esc_attr(__('Update', 'sitepress')) : esc_attr(__('Add as translator', 'sitepress'));
-      $output .= '" />';
+      $output .= '" /><input type="submit" value="' . __('Cancel') . '" name="cancel" class="button-secondary" onclick="history.go(-1); return false;" />';
     }
     
     $return['content'] = $output;
