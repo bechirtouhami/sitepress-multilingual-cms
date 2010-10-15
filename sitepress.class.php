@@ -443,7 +443,10 @@ class SitePress{
             switch($post_type){
                 case 'post': case 'page':
                     add_filter('manage_'.$post_type.'s_columns',array($this,'add_posts_management_column'));                        
-                    add_action('manage_'.$post_type.'s_custom_column',array($this,'add_content_for_posts_management_column'));
+                    if(ICL_PRE_WP3 && $pagenow == 'edit-pages.php'){
+                        add_action('manage_'.$post_type.'s_custom_column',array($this,'add_content_for_posts_management_column'));
+                    }
+                    add_action('manage_posts_custom_column',array($this,'add_content_for_posts_management_column'));
                     break;
                 default:
                     if($this->settings['custom_posts_sync_option'][$post_type] == 1){
@@ -4775,7 +4778,12 @@ class SitePress{
                 switch($iclTranslationManagement->settings['doc_translation_method']){
                     case ICL_TM_TMETHOD_EDITOR:
                         $job_id = $iclTranslationManagement->get_translation_job_id($__management_columns_posts_translations[$id][$v['code']]->trid, $v['code']);
-                        $link = admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&job_id='.$job_id);
+                        if($job_id){
+                            $link = admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&job_id='.$job_id);
+                        }else{
+                            $link = admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&icl_tm_action=create_job&post[]='.
+                                $id.'&translate_to['.$v['code'].']=1');                            
+                        }
                         break;
                     case ICL_TM_TMETHOD_PRO:
                         break;
@@ -4792,6 +4800,11 @@ class SitePress{
                     case ICL_TM_TMETHOD_EDITOR:
                         $job_id = $iclTranslationManagement->get_translation_job_id($__management_columns_posts_translations[$id][$v['code']]->trid, $v['code']);
                         if($job_id){
+                            $job_details = $iclTranslationManagement->get_translation_job($job_id);
+                            if($job_details->status == ICL_TM_IN_PROGRESS){
+                                $img = 'in-progress.png';
+                                $alt = sprintf(__('Translation to %s is in progress','sitepress'), $v['display_name']);
+                            }
                             $link = admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&job_id='.$job_id);    
                         }else{
                             $link = admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&icl_tm_action=create_job&post[]='.

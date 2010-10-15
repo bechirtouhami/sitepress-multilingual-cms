@@ -188,6 +188,17 @@ jQuery(document).ready(function(){
       
       return false;
     });
+    
+    jQuery('#icl_side_by_site a[href=#cancel]').click(function(){
+        var thisa = jQuery(this);
+        jQuery.ajax({
+            type: "POST", url: icl_ajx_url, data: 'icl_ajx_action=dismiss_icl_side_by_site',
+            success: function(msg){
+                    thisa.parent().parent().fadeOut();
+                }
+            });
+        return false;
+    });
 
 })
 

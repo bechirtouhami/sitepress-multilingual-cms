@@ -95,6 +95,26 @@ class TranslationManagement{
         if(basename($_GET['page']) == 'translations-queue.php' && isset($_GET['job_id'])){
             add_filter('admin_head',array($this, '_show_tinyMCE'));    
         }
+                
+        
+        //if(!isset($this->settings['doc_translation_method'])){        
+        if($this->settings['doc_translation_method'] < 0 ){
+            if(isset($_GET['sm']) && $_GET['sm']=='mcsetup' && isset($_GET['src']) && $_GET['src']=='notice'){
+                        $this->settings['doc_translation_method'] = 0;
+                        $this->save_settings();
+            }else{
+                add_action('admin_notices', array($this, '_translation_method_notice'));    
+            }                        
+        }
+
+        //$this->settings['doc_translation_method'] = -1;
+        //$this->save_settings();
+        
+    }
+    
+    function _translation_method_notice(){
+        echo '<div class="updated fade"><p id="icl_side_by_site">'.sprintf(__('New - side-by-site translation editor: <a href="%s">try it</a> | <a href="#cancel">no thanks</a>.', 'sitepress'),
+                admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translation-management.php&sm=mcsetup&src=notice')) . '</p></div>';    
     }
     
     function _show_tinyMCE() {
@@ -166,12 +186,12 @@ class TranslationManagement{
                 $data['translator'] = $this->current_translator->ID;
                 $job_ids = $this->send_jobs($data);
                 wp_redirect('admin.php?page='.ICL_PLUGIN_FOLDER . '/menu/translations-queue.php&job_id=' . array_pop($job_ids));
-                break;                
+                break; 
         }
     }
     
     function ajax_calls($call, $data){
-        global $wpdb, $sitepress, $sitepress_settings;
+        global $wpdb, $sitepress, $sitepress_settings;        
         switch($call){
             case 'save_dashboard_setting':
                 $iclsettings['dashboard'] = $sitepress_settings['dashboard'];
@@ -203,6 +223,10 @@ class TranslationManagement{
                 $this->settings['doc_translation_method'] = intval($data['t_method']);
                 $this->save_settings();
                 echo '1|';
+                break;
+           case 'dismiss_icl_side_by_site':
+                $this->settings['doc_translation_method'] = 0;
+                $this->save_settings();
                 break;
         }
     }
@@ -1311,14 +1335,15 @@ class TranslationManagement{
                     update_post_meta($new_post_id, '_wp_page_template', $_wp_page_template);
                 }
             }
+
                
             // set the translated custom fields if we have any.
             foreach($this->settings['custom_fields_translation'] as $field_name => $val){
                 if ($val == 2) { // should be translated
                     // find it in the translation
-                    foreach($job->elements as $name => $data) {
-                        if ($data->field_data == $field_name) {
-                            if (preg_match("/field-(.*?)-name/", $data->field_type, $match)) {
+                    foreach($job->elements as $name => $eldata) {
+                        if ($eldata->field_data == $field_name) {
+                            if (preg_match("/field-(.*?)-name/", $eldata->field_type, $match)) {
                                 $field_id = $match[1];                                
                                 foreach($job->elements as $k => $v){
                                     if($v->field_type=='field-'.$field_id){
@@ -1339,7 +1364,7 @@ class TranslationManagement{
                     }
                 }
             }
-                       
+                                              
                         
             if(is_null($element_id)){
                 $wpdb->update($wpdb->prefix.'icl_translations', array('element_id' => $new_post_id), array('translation_id' => $translation_id) );
@@ -1352,6 +1377,7 @@ class TranslationManagement{
                 'type'=>'updated',
                 'text' => $user_message
             );
+            
             
             if($this->settings['notification']['completed'] != ICL_TM_NOTIFICATION_NONE){
                 require_once ICL_PLUGIN_PATH . '/inc/translation-management/tm-notification.class.php';

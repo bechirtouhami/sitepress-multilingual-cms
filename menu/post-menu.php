@@ -256,31 +256,40 @@
         <?php else: ?>
             <p style="clear:both;"><b><?php _e('Translate yourself', 'sitepress'); ?></b>
         <?php endif; ?>
-        <table>
-        <?php global $iclTranslationManagement; ?>
-        <?php foreach($active_languages as $lang): if($selected_language==$lang['code']) continue; ?>
-        <tr>
-            <?php if(!isset($translations[$lang['code']]->element_id)):?>
-                <td><?php echo $lang['display_name'] ?></td>
+        <table width="100%" style="border: 1px solid #8CCEEA;">
+        <?php global $iclTranslationManagement; $oddev = 1; ?>
+        <?php foreach($active_languages as $lang): if($selected_language==$lang['code']) continue; ?>        
+        <tr <?php if($oddev < 0): ?>style="background-color:#EFF8FC;"<?php endif; ?>>            
+            <?php if(!isset($translations[$lang['code']]->element_id)):?>                
+                <?php $oddev = $oddev*-1; ?>
+                <td style="padding-left: 4px;"><?php echo $lang['display_name'] ?></td>
                 <?php
+                    $add_anchor =  __('add','sitepress');
+                    $img = 'add_translation.png';
                     switch($iclTranslationManagement->settings['doc_translation_method']){
                         case ICL_TM_TMETHOD_EDITOR:
                             $job_id = $iclTranslationManagement->get_translation_job_id($trid, $lang['code']);
                             if($job_id){
+                                $job_details = $iclTranslationManagement->get_translation_job($job_id);
+                                if($job_details->status == ICL_TM_IN_PROGRESS){
+                                    $add_anchor =  __('in progress','sitepress');
+                                    $img = 'in-progress.png';
+                                }
                                 $add_link = admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&job_id='.$job_id);    
                             }else{
                                 $add_link = admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&icl_tm_action=create_job&post[]='.
                                     $post->ID.'&translate_to['.$lang['code'].']=1');
-                            }                        
+                            }                                                    
                             break;
                         case ICL_TM_TMETHOD_PRO:
                             // TBD
                             break;
-                        default:
+                        default:                            
                             $add_link = get_option('siteurl') . "/wp-admin/post-new.php?post_type={$post->post_type}&trid=" . $trid . "&lang=" . $lang['code'] . "&source_lang=" . $selected_language;    
                     }                    
                 ?>
-                <td><a href="<?php echo $add_link?>"><?php echo __('add','sitepress') ?></a></td>
+                <td align="right"><a href="<?php echo $add_link?>" title="<?php echo esc_attr($add_anchor) ?>"><img  border="0" src="<?php 
+                    echo ICL_PLUGIN_URL . '/res/img/' . $img ?>" alt="<?php echo esc_attr($add_anchor) ?>" width="16" height="16" /></a></td>
             <?php endif; ?>        
         </tr>
         <?php endforeach; ?>
@@ -291,11 +300,15 @@
         <p style="clear:both;">
             <b><?php _e('Translations', 'sitepress') ?></b> 
             (<a class="icl_toggle_show_translations" href="#" <?php if(!$this->settings['show_translations_flag']):?>style="display:none;"<?php endif;?>><?php _e('hide','sitepress')?></a><a class="icl_toggle_show_translations" href="#" <?php if($this->settings['show_translations_flag']):?>style="display:none;"<?php endif;?>><?php _e('show','sitepress')?></a>)                
-        <table width="97%" cellspacing="1" id="icl_translations_table" <?php if(!$this->settings['show_translations_flag']):?>style="display:none;"<?php endif;?>>        
+        <table width="100%" style="border: 1px solid #8CCEEA;" <?php if(!$this->settings['show_translations_flag']):?>style="display:none;"<?php endif;?>>        
+        <?php $oddev = 1; ?>
         <?php foreach($active_languages as $lang): if($selected_language==$lang['code']) continue; ?>
-        <tr>
+        <tr <?php if($oddev < 0): ?>style="background-color:#EFF8FC;"<?php endif; ?>>
             <?php if(isset($translations[$lang['code']]->element_id)):?>
-                <?php
+                <?php 
+                    $oddev = $oddev*-1;
+                    $img = 'edit_translation.png';
+                    $edit_anchor = __('edit','sitepress');
                     switch($iclTranslationManagement->settings['doc_translation_method']){
                         case ICL_TM_TMETHOD_EDITOR:
                             $job_id = $iclTranslationManagement->get_translation_job_id($trid, $lang['code']);
@@ -308,8 +321,10 @@
                             $edit_link = get_edit_post_link($translations[$lang['code']]->element_id);    
                     }                    
                 ?>
-                <td><?php echo $lang['display_name'] ?></td>
-                <td align="right" width="20%"><?php echo isset($translations[$lang['code']]->post_title)?'<a href="'.$edit_link.'" title="'.__('Edit','sitepress').'">'.apply_filters('the_title', __('edit','sitepress')).'</a>':__('n/a','sitepress') ?></td>
+                <td style="padding-left: 4px;"><?php echo $lang['display_name'] ?></td>
+                <td align="right" ><a href="<?php echo $edit_link ?>" title="<?php echo esc_attr($edit_anchor) ?>"><img border="0" src="<?php 
+                    echo ICL_PLUGIN_URL . '/res/img/' . $img ?>" alt="<?php echo esc_attr($edit_anchor) ?>" width="16" height="16" /></a>                    
+                <?php //echo isset($translations[$lang['code']]->post_title)?'<a href="'.$edit_link.'" title="'.__('Edit','sitepress').'">'.apply_filters('the_title', __('edit','sitepress')).'</a>':__('n/a','sitepress') ?></td>
                 
             <?php endif; ?>        
         </tr>
