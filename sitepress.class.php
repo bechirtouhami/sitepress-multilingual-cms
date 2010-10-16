@@ -645,10 +645,6 @@ class SitePress{
             add_menu_page(__('WPML','sitepress'), __('WPML','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/languages.php',null, ICL_PLUGIN_URL . '/res/img/icon16.png');    
             add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Languages','sitepress'), __('Languages','sitepress'), 
                         'manage_options', basename(ICL_PLUGIN_PATH).'/menu/languages.php');             
-            if(1 < count($this->get_active_languages())){                        
-                add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Professional translation','sitepress'), __('Professional translation','sitepress'), 
-                        'manage_options', basename(ICL_PLUGIN_PATH).'/menu/content-translation.php');                                                     
-            }
 			add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Support','sitepress'), __('Support','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/support.php');
             
             if($_GET['page'] == basename(ICL_PLUGIN_PATH).'/menu/troubleshooting.php'){
@@ -671,8 +667,6 @@ class SitePress{
             //if(1 < count($this->get_active_languages())){                
                 add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Comments translation','sitepress'), __('Comments translation','sitepress'), 
                             'manage_options', basename(ICL_PLUGIN_PATH).'/menu/comments-translation.php'); 
-                add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Professional translation','sitepress'), __('Professional translation','sitepress'), 
-                            'manage_options', basename(ICL_PLUGIN_PATH).'/menu/content-translation.php');                 
                 add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/content-translation.php', __('Professional translation','sitepress'), __('Professional translation','sitepress'), 
                             'manage_options', basename(ICL_PLUGIN_PATH).'/menu/content-translation-how-it-works.php');
             }
@@ -5217,8 +5211,12 @@ class SitePress{
             if(in_array($object_type, $taxonomy->object_type) && !empty($this->settings['taxonomies_sync_option'][$taxonomy_name])){
                 $t_taxonomies[] = $taxonomy_name;    
             }    
-        } 
-        list($t_taxonomies, $ot) = apply_filters('get_translatable_taxonomies', array('taxs'=>$t_taxonomies, 'object_type'=>$object_type));   
+        }         
+                
+        if(has_filter('get_translatable_taxonomies')){
+            list($t_taxonomies, $ot) = apply_filters('get_translatable_taxonomies', array('taxs'=>$t_taxonomies, 'object_type'=>$object_type));               
+        }
+        
         return $t_taxonomies;
     }
     

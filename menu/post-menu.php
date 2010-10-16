@@ -256,10 +256,10 @@
         <?php else: ?>
             <p style="clear:both;"><b><?php _e('Translate yourself', 'sitepress'); ?></b>
         <?php endif; ?>
-        <table width="100%" style="border: 1px solid #8CCEEA;">
+        <table width="100%" class="icl_translations_table">
         <?php global $iclTranslationManagement; $oddev = 1; ?>
         <?php foreach($active_languages as $lang): if($selected_language==$lang['code']) continue; ?>        
-        <tr <?php if($oddev < 0): ?>style="background-color:#EFF8FC;"<?php endif; ?>>            
+        <tr <?php if($oddev < 0): ?>class="icl_odd_row"<?php endif; ?>>            
             <?php if(!isset($translations[$lang['code']]->element_id)):?>                
                 <?php $oddev = $oddev*-1; ?>
                 <td style="padding-left: 4px;"><?php echo $lang['display_name'] ?></td>
@@ -300,10 +300,10 @@
         <p style="clear:both;">
             <b><?php _e('Translations', 'sitepress') ?></b> 
             (<a class="icl_toggle_show_translations" href="#" <?php if(!$this->settings['show_translations_flag']):?>style="display:none;"<?php endif;?>><?php _e('hide','sitepress')?></a><a class="icl_toggle_show_translations" href="#" <?php if($this->settings['show_translations_flag']):?>style="display:none;"<?php endif;?>><?php _e('show','sitepress')?></a>)                
-        <table width="100%" style="border: 1px solid #8CCEEA;" <?php if(!$this->settings['show_translations_flag']):?>style="display:none;"<?php endif;?>>        
+        <table width="100%" class="icl_translations_table" id="icl_translations_table" <?php if(!$this->settings['show_translations_flag']):?>style="display:none;"<?php endif;?>>        
         <?php $oddev = 1; ?>
         <?php foreach($active_languages as $lang): if($selected_language==$lang['code']) continue; ?>
-        <tr <?php if($oddev < 0): ?>style="background-color:#EFF8FC;"<?php endif; ?>>
+        <tr <?php if($oddev < 0): ?>class="icl_odd_row"<?php endif; ?>>
             <?php if(isset($translations[$lang['code']]->element_id)):?>
                 <?php 
                     $oddev = $oddev*-1;
