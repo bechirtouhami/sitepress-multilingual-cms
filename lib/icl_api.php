@@ -151,6 +151,7 @@ class ICanLocalizeQuery{
             update_option('_mp_post_https_tries', 0);
             
         }
+        
         if($c->error){
             $this->error = $c->error;
             return false;
@@ -173,22 +174,15 @@ class ICanLocalizeQuery{
         return $this->_request($request_url, 'GET', null, null, $gzipped);
     }   
        
-    function build_cms_request_xml($data, $orig_lang, $previous_rid = false, $linkTo = '') {
+    function build_cms_request_xml($data, $orig_lang) {
         global $wp_taxonomies;
         $taxonomies = array_diff(array_keys((array)$wp_taxonomies), array('post_tag','category'));
         
-        if($previous_rid){
-            $command = 'update_content';
-            $previous_rid = 'previous_cms_request_id="'.$previous_rid.'"';
-        }else{
-            $command = 'new_content';
-            $previous_rid = '';
-        }
         $tab = "\t";
         $nl = PHP_EOL;
         
         $xml  = "<?xml version=\"1.0\" encoding=\"utf-8\"?>".$nl;
-        $xml .= '<cms_request_details type="sitepress" command="'.$command.'" from_lang="'.$orig_lang.'" '.$previous_rid.'>'.$nl;
+        $xml .= '<cms_request_details type="sitepress" command="translate_content" from_lang="'.$orig_lang.'">'.$nl;
         $xml .= $tab.'<link url="'.$data['url'].'" />'.$nl;
         $xml .= $tab.'<contents>'.$nl;
         foreach($data['contents'] as $key=>$val){
@@ -204,14 +198,40 @@ class ICanLocalizeQuery{
         }                
         $xml .= $tab.'</cms_target_languages>'.$nl;
         $xml .= '</cms_request_details>';                
+        
         return $xml;
     }
       
-    function send_request($xml, $title, $to_languages, $orig_language, $permlink, $note=""){
+    function send_request($args){
         $request_url = ICL_API_ENDPOINT . '/websites/'. $this->site_id . '/cms_requests.xml';
         
+        // $cms_id
+        // $xml
+        // $title 
+        // $to_languages
+        // $orig_language
+        // $permlink
+        // $translator_id
+        // $note=""
+        $args_defaults = array(
+            'cms_id'        => false,
+            'xml'           => '',
+            'title'         => '',
+            'to_languages'   => array(),
+            'orig_language' => '',
+            'permlink'      => '',
+            'translator_id' => 0,
+            'note'          => ''
+        );
+        extract($args_defaults);
+        extract($args, EXTR_OVERWRITE);
+        
+        if(!empty($cms_id)){
+            $parameters['cms_id'] = $cms_id;              
+        }
         $parameters['accesskey'] = $this->access_key;
         $parameters['doc_count'] = 1;          
+        $parameters['translator_id'] = $translator_id;          
         $i = 1;
         foreach($to_languages as $l){
           $parameters['to_language'.$i] = $l;
@@ -228,18 +248,14 @@ class ICanLocalizeQuery{
         
         // add a unique key so that so that the server can return an
         // existing cms_request_id if we are sending the same info
-        
         $parameters['key'] = md5($xml);
-        
-        //$parameters['list_type'] = 'post';          
-        //$parameters['list_id'] = $timestamp;          
-        
         
         $file = "cms_request_details.xml.gz";
         
         // send the file upload as the file_name and file_content in an array.
         // Snoopy has been changed to use this format.
         $res = $this->_request($request_url, 'POST' , $parameters, array('file1[uploaded_data]'=>array(array($file, gzencode($xml)))));
+                
         if($res['info']['status']['attr']['err_code']=='0'){
             return $res['info']['result']['attr']['id'];
         }else{

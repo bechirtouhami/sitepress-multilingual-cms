@@ -86,44 +86,8 @@
     }
     $languages_not_translated = array_diff(array_keys($active_languages), array_merge(array($selected_language), $languages_translated));
     
-    // previous translations
-    foreach($languages_translated as $l){
-        $language_names[] = $active_languages[$l]['english_name'];    
-    }    
-    if(!empty($language_names)){
-        $previous_rid = icl_get_request_ids_for_post($post->ID, $selected_language, $language_names);
-    }
-    if(!empty($previous_rid)){
-        foreach($previous_rid as $serverlang => $pr){
-            if(!empty($pr)){
-                $_target_lang = $wpdb->get_var("SELECT code FROM {$wpdb->prefix}icl_languages WHERE english_name='".$wpdb->escape(apply_filters('icl_server_languages_map', $serverlang, true))."'");
-                $status = $wpdb->get_var("SELECT status FROM {$wpdb->prefix}icl_core_status WHERE rid={$pr}");
-                $was_translated = $wpdb->get_var("
-                            SELECT cr.status 
-                            FROM {$wpdb->prefix}icl_content_status cs 
-                                JOIN {$wpdb->prefix}icl_core_status cr ON cr.rid = cs.rid 
-                            WHERE 
-                                
-                                cr.origin ='{$selected_language}'
-                                AND target = '{$_target_lang}'
-                                AND cs.nid = {$post->ID} 
-                                AND cr.status = ".CMS_TARGET_LANGUAGE_DONE."
-                            LIMIT 1");
-                if($was_translated){
-                    $langs_done[apply_filters('icl_server_languages_map', $serverlang, true)] = 1;
-                }         
-                if(!is_null($status) && $status != CMS_TARGET_LANGUAGE_DONE){
-                    // translation is still in progress for one or more languages.
-                    $langs_in_progress[apply_filters('icl_server_languages_map', $serverlang, true)] = 1;
-                }
-                
-                // needs update ?
-                if($wpdb->get_var("SELECT n.md5<>c.md5 FROM {$wpdb->prefix}icl_node n JOIN {$wpdb->prefix}icl_content_status c ON n.nid = c.nid WHERE n.nid={$post->ID} AND c.rid={$pr}")){
-                    $langs_need_update[apply_filters('icl_server_languages_map', $serverlang, true)] = 1;
-                }
-            }
-        }        
-    }
+    // get pro translations
+    $pro_translations = $iclTranslationManagement->get_element_translations($post->ID, 'post_'.$post->post_type);
     ?>
     <div class="icl_cyan_box">
     <div class="clear" style="font-size: 0px">&nbsp;</div>    
@@ -135,24 +99,25 @@
         if(!empty($languages_translated)){ 
             echo '<ul>';
             foreach($languages_translated as $lang){
-                if(isset($langs_in_progress[$active_languages[$lang]['english_name']]) || 
-                    ($langs_done[$active_languages[$lang]['english_name']] && !isset($langs_need_update[$active_languages[$lang]['english_name']]))){
+                if(isset($pro_translations[$lang]) 
+                    && ($pro_translations[$lang]->status == ICL_TM_IN_PROGRESS || 
+                        ($pro_translations[$lang]->status == ICL_TM_COMPLETE && !$pro_translations[$lang]->needs_update))){
                     $disabled = ' disabled="disabled"';
                 }else{
                     $disabled = '';
                 }
                 echo '<li><label>';
                 echo '<input type="hidden" id="icl_pt_rate_'.$lang.'" value="'.$lang_rates[$lang].'" />';
-                echo '<input type="checkbox" id="icl_pt_to_'.$lang.'" value="'.$active_languages[$lang]['english_name'].'"'.$disabled.'/>&nbsp;';
-                if(isset($langs_done[$active_languages[$lang]['english_name']])){
+                echo '<input type="checkbox" id="icl_pt_to_'.$lang.'" value="'.$lang.'"'.$disabled.'/>&nbsp;';
+                if(isset($pro_translations[$lang]) && $pro_translations[$lang]->status == ICL_TM_COMPLETE){
                     printf(__('Update %s translation', 'sitepress'), $active_languages[$lang]['display_name']);
                 }else{
                     printf(__('Translate to %s', 'sitepress'), $active_languages[$lang]['display_name']);
                 }
                 
-                if(isset($langs_in_progress[$active_languages[$lang]['english_name']])){
+                if(isset($pro_translations[$lang]) && $pro_translations[$lang]->status == ICL_TM_IN_PROGRESS){
                     echo '&nbsp;<small>('.__('in progress', 'sitepress').')</small>';
-                }elseif($langs_done[$active_languages[$lang]['english_name']] && !isset($langs_need_update[$active_languages[$lang]['english_name']])){
+                }elseif(isset($pro_translations[$lang]) && $pro_translations[$lang]->status == ICL_TM_COMPLETE && !$pro_translations[$lang]->needs_update){
                     echo '&nbsp;<small>('.__('up to date', 'sitepress').')</small>';
                 }
                                 
@@ -193,15 +158,14 @@
     </div>    
     
     <div style="text-align: right;margin:0 5px 5px 0;"><?php printf(__('Cost: %s USD', 'sitepress'), '<span id="icl_pt_cost_estimate">0.00</span>');?></div>
-    
-    <input type="hidden" id="icl_pt_wc" value="<?php echo icl_estimate_word_count($post, $selected_language) + icl_estimate_custom_field_word_count($post->ID, $selected_language) ?>" />
+    <input type="hidden" id="icl_pt_wc" value="<?php echo ICL_Pro_Translation::estimate_word_count($post, $selected_language) + ICL_Pro_Translation::estimate_custom_field_word_count($post->ID, $selected_language) ?>" />
     <input type="hidden" id="icl_pt_post_id" value="<?php echo $post->ID ?>" />
     <input type="hidden" id="icl_pt_post_type" value="<?php echo $post->post_type ?>" />
     <input type="button" disabled="disabled" id="icl_pt_send" class="button-primary alignright" value="<?php echo esc_html(__('Send to translation', 'sitepress')) ?>" style="clear: right;"/>
     <br clear="all" />
     <?php else:?>
     <?php 
-        $estimated_cost = sprintf("%.2f", (icl_estimate_word_count($post, $selected_language) + icl_estimate_custom_field_word_count($post->ID, $selected_language)) * 0.07);
+        $estimated_cost = sprintf("%.2f", (ICL_Pro_Translation::estimate_word_count($post, $selected_language) + ICL_Pro_Translation::estimate_custom_field_word_count($post->ID, $selected_language)) * 0.07);
     ?>
     <div style="text-align: right;margin:0 5px 5px 0;white-space:nowrap;">
     <?php printf( __('Estimated cost: %s USD', 'sitepress'), $estimated_cost);?><br />
@@ -257,7 +221,7 @@
             <p style="clear:both;"><b><?php _e('Translate yourself', 'sitepress'); ?></b>
         <?php endif; ?>
         <table width="100%" class="icl_translations_table">
-        <?php global $iclTranslationManagement; $oddev = 1; ?>
+        <?php $oddev = 1; ?>
         <?php foreach($active_languages as $lang): if($selected_language==$lang['code']) continue; ?>        
         <tr <?php if($oddev < 0): ?>class="icl_odd_row"<?php endif; ?>>            
             <?php if(!isset($translations[$lang['code']]->element_id)):?>                
@@ -358,11 +322,6 @@
     
     <br clear="all" style="line-height:1px;" />
     </div>
-<?php endif; ?>
-
-<?php if($this->get_icl_translation_enabled() 
-        && !$wpdb->get_var("SELECT source_language_code FROM {$wpdb->prefix}icl_translations WHERE element_type='post' AND element_id={$post->ID}") 
-        && !isset($_GET['source_lang'])):?>
 <?php endif; ?>
 
 <?php do_action('icl_post_languages_options_after') ?>

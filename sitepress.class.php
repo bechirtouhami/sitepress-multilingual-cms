@@ -260,7 +260,7 @@ class SitePress{
                 $iclNavMenu = new iclNavMenu;
             }
             
-            if(is_admin()){
+            if(is_admin() || defined('XMLRPC_REQUEST')){
                 global $iclTranslationManagement;
                 $iclTranslationManagement = new TranslationManagement;
             }
@@ -443,7 +443,7 @@ class SitePress{
             switch($post_type){
                 case 'post': case 'page':
                     add_filter('manage_'.$post_type.'s_columns',array($this,'add_posts_management_column'));                        
-                    if(ICL_PRE_WP3 && $pagenow == 'edit-pages.php'){
+                    if(ICL_PRE_WP3 && $pagenow == 'edit-pages.php' || version_compare($GLOBALS['wp_version'], '3.1', '<') && $_GET['post_type']=='page'){
                         add_action('manage_'.$post_type.'s_custom_column',array($this,'add_content_for_posts_management_column'));
                     }
                     add_action('manage_posts_custom_column',array($this,'add_content_for_posts_management_column'));
@@ -1071,8 +1071,8 @@ class SitePress{
                     }                    
                 }                
                 $target[] = array(
-                    'from' => $this->get_language_code(icl_server_languages_map($lang['attr']['from_language_name'], true)),
-                    'to' => $this->get_language_code(icl_server_languages_map($lang['attr']['to_language_name'], true)),                
+                    'from' => $this->get_language_code(ICL_Pro_Translation::server_languages_map($lang['attr']['from_language_name'], true)),
+                    'to' => $this->get_language_code(ICL_Pro_Translation::server_languages_map($lang['attr']['to_language_name'], true)),                
                     'have_translators' => $lang['attr']['have_translators'],
                     'available_translators' => $lang['attr']['available_translators'],
                     'applications' => $lang['attr']['applications'],
@@ -1612,8 +1612,8 @@ class SitePress{
                         foreach($v as $k=>$v){
                             $incr++;
                             $english_to = $wpdb->get_var("SELECT english_name FROM {$wpdb->prefix}icl_languages WHERE code='{$k}' ");
-                            $lang_pairs['from_language'.$incr] = apply_filters('icl_server_languages_map', $english_fr); 
-                            $lang_pairs['to_language'.$incr] = apply_filters('icl_server_languages_map', $english_to);
+                            $lang_pairs['from_language'.$incr] = ICL_Pro_Translation::server_languages_map($english_fr); 
+                            $lang_pairs['to_language'.$incr] = ICL_Pro_Translation::server_languages_map($english_to);
                             if ($pay_per_use) {
                                 $lang_pairs['pay_per_use'.$incr] = 1;
                             }
@@ -2412,7 +2412,7 @@ class SitePress{
     }
     
     function meta_box($post){
-        global $wpdb, $wp_post_types;   
+        global $wpdb, $wp_post_types, $iclTranslationManagement;   
         $active_languages = $this->get_active_languages();
         $default_language = $this->get_default_language();
         if($post->ID && $post->post_status != 'auto-draft'){

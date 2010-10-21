@@ -1,5 +1,5 @@
 <?php
-
+return;
 function icl_translation_js(){
     wp_enqueue_script('icl-translation-scripts', ICL_PLUGIN_URL . '/modules/icl-translation/js/icl-translation.js', array(), '0.1');
 }

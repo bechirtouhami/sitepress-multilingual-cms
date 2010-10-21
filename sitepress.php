@@ -84,7 +84,10 @@ require ICL_PLUGIN_PATH . '/inc/compatibility-packages/wpml-package.class.php';
 require ICL_PLUGIN_PATH . '/inc/affiliate-info.php';
 require ICL_PLUGIN_PATH . '/inc/language-switcher.php';
 require ICL_PLUGIN_PATH . '/inc/import-xml.php';
-if(is_admin()){
+if(is_admin() || defined('XMLRPC_REQUEST')){
+    require ICL_PLUGIN_PATH . '/lib/icl_api.php';
+    require ICL_PLUGIN_PATH . '/lib/xml2array.php';
+    require ICL_PLUGIN_PATH . '/lib/Snoopy.class.php';
     require ICL_PLUGIN_PATH . '/inc/translation-management/translation-management.class.php';
 }
 
@@ -119,7 +122,7 @@ if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQ
     }
 
     // Professional Translation    
-    require ICL_PLUGIN_PATH . '/modules/icl-translation/icl-translation.php';
+    // require ICL_PLUGIN_PATH . '/modules/icl-translation/icl-translation.php';
     
     // Comments translation
     if($sitepress_settings['existing_content_language_verified']){
@@ -141,4 +144,10 @@ register_activation_hook( __FILE__, 'icl_sitepress_activate' );
 register_deactivation_hook(__FILE__, 'icl_sitepress_deactivate');
 
 add_filter('plugin_action_links', 'icl_plugin_action_links', 10, 2); 
+
+
+
+require ICL_PLUGIN_PATH . '/inc/translation-management/pro-translation.class.php';
+$ICL_Pro_Translation = new ICL_Pro_Translation();
+
 ?>

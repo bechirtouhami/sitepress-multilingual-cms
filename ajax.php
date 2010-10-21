@@ -434,9 +434,13 @@ switch($_REQUEST['icl_ajx_action']){
         
             
     case 'send_translation_request':
+        global $ICL_Pro_Translation, $current_user;   
         $post_ids = explode(',',$_POST['post_ids']);
         $target_languages = explode('#', $_POST['target_languages']);
         $post_types = $_POST['icl_post_type'];
+        
+        get_currentuserinfo();
+        $translator_id = isset($_POST['translator_id']) ? $_POST['translator_id'] : $current_user->ID;
         foreach($post_ids as $post_id){            
             
             if(isset($_POST['tn_note_'.$post_id]) && trim($_POST['tn_note_'.$post_id])){
@@ -445,7 +449,7 @@ switch($_REQUEST['icl_ajx_action']){
             
             $resp[] = array(
                 'post_id'=>$post_id, 
-                'status'=>icl_translation_send_post($post_id, $target_languages, $post_types[$post_id])
+                'status'=>$ICL_Pro_Translation->send_post($post_id, $target_languages, $translator_id)
             );
         }
         echo json_encode($resp);

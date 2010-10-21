@@ -1,6 +1,8 @@
 <?php //included from menu translation-management.php ?>
 <?php 
 
+$ICL_Pro_Translation->send_post(232, array('zh-hans'), 'en');
+
 if(isset($_SESSION['translation_dashboard_filter'])){
     $icl_translation_filter = $_SESSION['translation_dashboard_filter'];
 }
