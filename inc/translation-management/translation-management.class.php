@@ -463,7 +463,7 @@ class TranslationManagement{
                 
                 
                 // saving the translation
-                $this->save_job_fields_from_post($job_id, $post){
+                $this->save_job_fields_from_post($job_id, $post);
                 
                 /*    
                 $data['complete'] = 1;
