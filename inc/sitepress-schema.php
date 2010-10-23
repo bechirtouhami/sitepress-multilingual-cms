@@ -130,6 +130,7 @@ function icl_sitepress_activate(){
             `translator_id` INT UNSIGNED NOT NULL ,
             `translated` TINYINT UNSIGNED NOT NULL DEFAULT 0,
             `manager_id` INT UNSIGNED NOT NULL ,
+            `revision` INT UNSIGNED NULL,
             INDEX ( `rid` , `translator_id` )
             ) ENGINE = MYISAM ;    
         ";

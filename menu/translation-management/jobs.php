@@ -96,11 +96,13 @@ $translation_jobs = $iclTranslationManagement->get_translation_jobs((array)$icl_
         <tr>
             <td colspan="4" align="center"><?php _e('No translation jobs found', 'sitepress')?></td>
         </tr>
-        <?php else: foreach($translation_jobs as $job):?>
+        <?php else: foreach($translation_jobs as $job):?>        
         <tr>
             <td><a href="<?php echo $job->edit_link ?>"><?php echo esc_html($job->post_title) ?></a></td>
             <td><?php echo $job->lang_text ?></td>            
-            <td><span id="icl_tj_job_status_<?php echo $job->job_id ?>"><?php echo $iclTranslationManagement->status2text($job->status) ?></span></td>
+            <td><span id="icl_tj_job_status_<?php echo $job->job_id ?>"><?php echo $iclTranslationManagement->status2text($job->status) ?></span>
+                <?php if($job->needs_update) _e(' - (needs update)', 'sitepress'); ?>
+            </td>
             <td>
                 <?php if(!empty($job->translator_id) && $job->status != ICL_TM_WAITING_FOR_TRANSLATOR): ?>
                 <a href="<?php echo $iclTranslationManagement->get_translator_edit_url($job->translator_id) ?>"><?php echo esc_html($job->translator_name) ?></a>

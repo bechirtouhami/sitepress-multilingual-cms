@@ -330,8 +330,8 @@ class ICL_Pro_Translation{
             
             $signature   = $args[0];
             $site_id     = $args[1];
-            $cms_id      = $args[2];
-            $request_id  = $args[3];
+            $request_id  = $args[2];
+            $cms_id      = $args[3];            
             $status      = $args[4];
             $message     = $args[5];  
 
@@ -345,16 +345,13 @@ class ICL_Pro_Translation{
                 return 2;
             }
             
-            $translation = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}icl_translations WHERE translation_id=%d", $cms_id));                                    
+            $translation = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}icl_translations WHERE translation_id=%d", $cms_id));                                                
+            
             if (empty($translation )){
                 $this->_throw_exception_for_mysql_errors();
                 return 4;
             }
-            
-            // TEMPO            
-            return $this->add_translated_document($cms_id, $request_id);
-            // RARY
-            
+                        
             if ($this->add_translated_document($cms_id, $request_id) === true){
                 $this->_throw_exception_for_mysql_errors();
                 return 1;
@@ -844,7 +841,7 @@ class ICL_Pro_Translation{
         }
         
         update_post_meta($new_post_id, '_icl_translation', 1);
-        
+                
         $this->_content_fix_links_to_translated_content($new_post_id, $lang_code, 'post');
         icl_st_fix_links_in_strings($new_post_id);
         
@@ -868,14 +865,13 @@ class ICL_Pro_Translation{
                 JOIN
                     {$wpdb->prefix}icl_translation_status ts
                 ON
-                    tr.translation_id = ts.translaiton_id
+                    tr.translation_id = ts.translation_id
                 WHERE
-                    ts.links_fixed = 0 AND tr.element_type = 'post_{$original_post_details->post_type}' AND tr.language_code = '{$lang_code}'";
-                    
+                    ts.links_fixed = 0 AND tr.element_type = 'post_{$original_post_details->post_type}' AND tr.language_code = '{$lang_code}' AND tr.element_id IS NOT NULL";
         $needs_fixing = $wpdb->get_results($sql);
         foreach($needs_fixing as $id){
             if($id->element_id != $new_post_id){ // fix all except the new_post_id. We have already done this.
-                $this->_content_fix_links_to_translated_content($id->element_id, $lang_code, 'post');
+                $this->_content_fix_links_to_translated_content($id->element_id, $lang_code, 'post');                
             }
         }
         

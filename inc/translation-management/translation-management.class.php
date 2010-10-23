@@ -1151,9 +1151,9 @@ class TranslationManagement{
                     'translation_package'   => serialize($translation_package)
                 ));
                 
-                if(!$update){
+                //if(!$update){
                     $job_ids[] = $this->add_translation_job($rid, $selected_translators[$lang], $translation_package);
-                }
+                //}
             }                
             
         }
@@ -1173,6 +1173,7 @@ class TranslationManagement{
     * @param mixed $translator_id
     */
     function add_translation_job($rid, $translator_id, $translation_package){
+        
         global $wpdb, $current_user;        
         get_currentuserinfo();
         if(!$current_user->ID){
@@ -1180,6 +1181,80 @@ class TranslationManagement{
         }else{
             $manager_id = $current_user->ID;
         }
+        
+        // if we have a previous job_id for this rid mark it as the top (last) revision
+        $prev_job_id = $wpdb->get_var($wpdb->prepare("
+            SELECT job_id, revision FROM {$wpdb->prefix}icl_translate_job WHERE rid=%d AND revision IS NULL 
+        ", $rid));
+        if($prev_job_id){
+            $last_rev = $wpdb->get_var($wpdb->prepare("
+                SELECT MAX(revision) AS rev FROM {$wpdb->prefix}icl_translate_job WHERE rid=%d AND revision IS NOT NULL 
+            ", $rid));        
+            $wpdb->update($wpdb->prefix . 'icl_translate_job', array('revision'=>$last_rev+1), array('job_id'=>$prev_job_id));
+            
+            $prev_job = $this->get_translation_job($prev_job_id);
+            
+            $original_post = get_post($prev_job->original_doc_id);
+            foreach($prev_job->elements as $element){
+                switch($element->field_type){
+                    case 'title':
+                        if($this->decode_field_data($element->field_data, $element->field_format) == $original_post->post_title){
+                            $unchanged[$element->field_type] = $element->field_data_translated;
+                        }
+                        break;
+                    case 'body':
+                        if($this->decode_field_data($element->field_data, $element->field_format) == $original_post->post_content){
+                            $unchanged[$element->field_type] = $element->field_data_translated;
+                        }
+                        break;
+                    case 'excerpt':
+                        if($this->decode_field_data($element->field_data, $element->field_format) == $original_post->post_excerpt){
+                            $unchanged[$element->field_type] = $element->field_data_translated;
+                        }
+                        break;                    
+                    case 'tags':
+                        $terms = get_the_terms( $prev_job->original_doc_id , 'post_tag' );
+                        $_taxs = array();
+                        foreach($terms as $term){
+                            $_taxs[] = $term->name;    
+                        }
+                        if($element->field_data == $this->encode_field_data($_taxs, $element->field_format)){
+                            $unchanged['tags'] = $element->field_data_translated;
+                        }                    
+                        break;
+                    case 'categories':
+                        $terms = get_the_terms( $prev_job->original_doc_id , 'category' );
+                        $_taxs = array();
+                        foreach($terms as $term){
+                            $_taxs[] = $term->name;    
+                        }
+                        if($element->field_data == $this->encode_field_data($_taxs, $element->field_format)){
+                            $unchanged['categories'] = $element->field_data_translated;
+                        }                                    
+                        break;
+                    default:
+                        if(false !== strpos($element->field_type, 'field-') && !empty($this->settings['custom_fields_translation'])){                                
+                            $cf_name = preg_replace('#^field-#', '', $element->field_type);
+                            if($this->decode_field_data($element->field_data, $field['format']) == get_post_meta($prev_job->original_doc_id, $cf_name, 1)){
+                                $unchanged[$element->field_type] = $element->field_data_translated;
+                            }
+                        }else{
+                            // taxonomies                                                 
+                            if(taxonomy_exists($element->field_type)){
+                                $terms = get_the_terms( $prev_job->original_doc_id , $element->field_type );
+                                $_taxs = array();
+                                foreach($terms as $term){
+                                    $_taxs[] = $term->name;    
+                                }
+                                if($element->field_data == $this->encode_field_data($_taxs, $element->field_format)){
+                                    $unchanged[$element->field_type] = $field['data_translated'];
+                                }  
+                            }                                  
+                        }                
+                }
+            }                    
+        }
+        
         $wpdb->insert($wpdb->prefix . 'icl_translate_job', array(
             'rid' => $rid,
             'translator_id' => $translator_id, 
@@ -1208,6 +1283,10 @@ class TranslationManagement{
                 'field_data'        => $value['data'],
                 'field_finished'    => 0      
             );
+            if(isset($unchanged[$field])){
+                $job_translate['field_data_translated'] = $unchanged[$field];    
+                $job_translate['field_finished'] = 1;
+            }
             $wpdb->insert($wpdb->prefix . 'icl_translate', $job_translate);    
         }
         
@@ -1290,11 +1369,12 @@ class TranslationManagement{
                     JOIN {$wpdb->prefix}icl_translation_status s ON j.rid = s.rid
                     JOIN {$wpdb->prefix}icl_translations t ON s.translation_id = t.translation_id
                     LEFT JOIN {$wpdb->users} u ON s.translator_id = u.ID
-                WHERE {$where} 
+                WHERE {$where} AND revision IS NULL
                 ORDER BY {$orderby}
                 LIMIT {$limit}
             "
-        );        
+        );   
+             
         $count = $wpdb->get_var("SELECT FOUND_ROWS()");
 
         $wp_query->found_posts = $count;

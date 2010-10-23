@@ -1,4 +1,7 @@
 <?php 
+    //$iclTranslationManagement->add_translation_job(45,1,$iclTranslationManagement->create_translation_package(367));
+
+
     if(!isset($job_checked) && isset($_GET['job_id']) && $_GET['job_id'] > 0){
         include ICL_PLUGIN_PATH . '/menu/translation-editor.php';
         return;
