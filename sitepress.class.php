@@ -1868,6 +1868,13 @@ class SitePress{
                     array('trid'=>$trid, 'language_code'=>$language_code, 'source_language_code'=>$src_language_code), 
                     array('element_type'=>$el_type, 'element_id'=>$el_id));
                 $this->icl_translations_cache->clear();
+            } elseif($translation_id = $wpdb->get_var($wpdb->prepare("
+                SELECT translation_id FROM {$wpdb->prefix}icl_translations WHERE trid=%d AND language_code=%s AND element_id IS NULL", 
+                $trid, $language_code ))){                
+                    $wpdb->update($wpdb->prefix.'icl_translations', 
+                        array('element_id'=>$el_id), 
+                        array('translation_id'=>$translation_id)
+                    );                    
             }else{
                 //get source
                 $src_language_code = $wpdb->get_var("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE trid={$trid} AND source_language_code IS NULL"); 

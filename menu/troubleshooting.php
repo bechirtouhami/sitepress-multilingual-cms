@@ -120,6 +120,11 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
     <label><input type="checkbox" name="troubleshooting_options[raise_mysql_errors]" value="1" <?php 
         if($sitepress_settings['troubleshooting_options']['raise_mysql_errors']): ?>checked="checked"<?php endif; ?>/>&nbsp;<?php 
         _e('Raise mysql errors on XML-RPC calls', 'sitepress')?></label>
+    <br />
+    <label><input type="checkbox" name="troubleshooting_options[http_communication]" value="1" <?php 
+            if($sitepress_settings['troubleshooting_options']['http_communication']): ?>checked="checked"<?php endif; ?>/>&nbsp;<?php 
+            _e('Communicate with ICanLocalize using HTTP instead of HTTPS', 'sitepress')?></label>        
+                
     <p>
         <input class="button" name="save" value="<?php echo __('Apply','sitepress') ?>" type="submit" />
         <span class="icl_ajx_response" id="icl_ajx_response"></span>
