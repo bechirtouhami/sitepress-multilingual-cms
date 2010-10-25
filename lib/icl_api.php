@@ -78,7 +78,7 @@ class ICanLocalizeQuery{
     
     
     function _request($request, $method='GET', $formvars=null, $formfiles=null, $gzipped = false){
-        
+        global $sitepress_settings, $sitepress;
         $request = str_replace(" ", "%20", $request);
         $c = new IcanSnoopy();
         
@@ -114,21 +114,8 @@ class ICanLocalizeQuery{
         $c->_fp_timeout = 3;
         $url_parts = parse_url($request);
         $https = $url_parts['scheme']=='https';
-        if($method=='GET'){            
-            $_force_mp_post_http = get_option('_force_mp_post_http');
-            if($_force_mp_post_http){
-                $request = str_replace('https://','http://',$request);
-                $https = false;
-            }
-            $c->fetch($request);  
-            if((!$c->results || $c->timed_out) && $https){
-                $c->fetch(str_replace('https://','http://',$request));  
-            }          
-            if($c->timed_out){die(__('Error:','sitepress').$c->error);}
-        }else{
-            $c->set_submit_multipart();          
-            
-            $_force_mp_post_http = get_option('_force_mp_post_http');
+        $_force_mp_post_http = $sitepress_settings['troubleshooting_options']['http_communication'];
+        if($method=='GET'){                        
             if($_force_mp_post_http){
                 $request = str_replace('https://','http://',$request);
                 $https = false;
@@ -137,14 +124,37 @@ class ICanLocalizeQuery{
                 if($_mp_post_https_tries == 2){ //it's the third try
                     $request = str_replace('https://','http://',$request);
                     $https = false;
-                    update_option('_force_mp_post_http', 1);
+                    $iclsettings['troubleshooting_options']['http_communication'] = 1;
+                    $sitepress->save_settings($iclsettings);
+                }else{
+                    $_mp_post_https_tries++;
+                    update_option('_mp_post_https_tries', $_mp_post_https_tries);                    
+                }
+            }
+            $c->fetch($request);  
+            if((!$c->results || $c->timed_out || $c->error) && $https){
+                $c->fetch(str_replace('https://','http://',$request));  
+            }          
+            if($c->timed_out){die(__('Error:','sitepress').$c->error);}
+        }else{
+            $c->set_submit_multipart();          
+            if($_force_mp_post_http){
+                $request = str_replace('https://','http://',$request);
+                $https = false;
+            }else{
+                $_mp_post_https_tries = (int)get_option('_mp_post_https_tries');
+                if($_mp_post_https_tries == 2){ //it's the third try
+                    $request = str_replace('https://','http://',$request);
+                    $https = false;
+                    $iclsettings['troubleshooting_options']['http_communication'] = 1;
+                    $sitepress->save_settings($iclsettings);
                 }else{
                     $_mp_post_https_tries++;
                     update_option('_mp_post_https_tries', $_mp_post_https_tries);
                 }
             }
             $c->submit($request, $formvars, $formfiles);            
-            if((!$c->results || $c->timed_out) && $https){
+            if((!$c->results || $c->timed_out || $c->error) && $https){
                 $c->submit(str_replace('https://','http://',$request), $formvars, $formfiles);  
             }                      
             if($c->timed_out){die(__('Error:','sitepress').$c->error);}

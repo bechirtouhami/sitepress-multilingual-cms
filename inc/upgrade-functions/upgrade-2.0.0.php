@@ -158,6 +158,12 @@ function icl_upgrade_2_0_0(){
     }
     
     $iclsettings['language_selector_initialized'] = 1;
+    
+    if(get_option('_force_mp_post_http')){
+        $iclsettings['troubleshooting_options']['http_communication'] = get_option('_force_mp_post_http'); 
+        delete_option('_force_mp_post_http');
+    }
+    
     $sitepress->save_settings($iclsettings);
     
     

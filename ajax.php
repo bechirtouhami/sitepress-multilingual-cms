@@ -861,7 +861,7 @@ switch($_REQUEST['icl_ajx_action']){
         echo '1|';        
         break;
     case 'icl_torubleshooting_more_options':
-        $iclsettings['troubleshooting_options'] = $_POST['troubleshooting_options'];
+        $iclsettings['troubleshooting_options'] = $_POST['troubleshooting_options'];        
         $this->save_settings($iclsettings);
         echo '1|';        
         break;
