@@ -1218,8 +1218,8 @@ function icl_st_generate_po_file($strings, $potonly = false){
             $translation = '';            
         }
         if(isset($positions[$s['string_id']])){           
-            $exp = explode('::',$positions[$s['string_id']]);
-            $file = file($exp[0]);
+            $exp = @explode('::',$positions[$s['string_id']]);
+            $file = @file($exp[0]);
         }
         $po .= '# ' . @trim($file[$exp[1]-2])  . PHP_EOL;
         $po .= '# ' . @trim($file[$exp[1]-1])  . PHP_EOL;

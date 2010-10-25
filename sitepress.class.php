@@ -436,7 +436,10 @@ class SitePress{
             switch($post_type){
                 case 'post': case 'page':
                     add_filter('manage_'.$post_type.'s_columns',array($this,'add_posts_management_column'));                        
-                    add_action('manage_'.$post_type.'s_custom_column',array($this,'add_content_for_posts_management_column'));
+                    if(ICL_PRE_WP3 && $pagenow == 'edit-pages.php'){
+                        add_action('manage_'.$post_type.'s_custom_column',array($this,'add_content_for_posts_management_column'));
+                    }
+                    add_action('manage_posts_custom_column',array($this,'add_content_for_posts_management_column'));
                     break;
                 default:
                     if($this->settings['custom_posts_sync_option'][$post_type] == 1){
