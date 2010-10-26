@@ -1723,8 +1723,7 @@ class TranslationManagement{
                         // taxonomies                                                 
                         // TBD
                     }
-            }
-
+            }            
             $wpdb->update($wpdb->prefix.'icl_translate', 
                 array('field_data_translated'=>$field_data, 'field_finished'=>1), 
                 array('tid'=>$element->tid)
@@ -1733,6 +1732,7 @@ class TranslationManagement{
         }   
         
         $this->mark_job_done($job_id);                
+
     }
     
     public function determine_translated_taxonomies($elements, $taxonomy, $translated_language){

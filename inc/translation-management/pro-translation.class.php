@@ -14,7 +14,10 @@ class ICL_Pro_Translation{
     }
     
     function send_post($post_id, $target_languages, $translator_id = 0){
-        global $sitepress, $sitepress_settings, $wpdb;
+        global $sitepress, $sitepress_settings, $wpdb, $iclTranslationManagement;
+        
+        // don't wait for init
+        $iclTranslationManagement->init();
         
         $err = false;
         
@@ -174,9 +177,8 @@ class ICL_Pro_Translation{
                                                     );
                 $data['target_languages']         = array($target_for_server);   
                 
-                
                 $custom_fields = array();
-                foreach((array)$sitepress_settings['translation-management']['custom_fields_translation'] as $cf => $op){
+                foreach((array)$iclTranslationManagement->settings['custom_fields_translation'] as $cf => $op){
                     if ($op == 2) {
                         $custom_fields[] = $cf;
                     }
@@ -249,10 +251,9 @@ class ICL_Pro_Translation{
                     $permlink = false;
                 }
                 
-                $note = get_post_meta($post_id, '_icl_translator_note', true);
+                $note = get_post_meta($post_id, '_icl_translator_note', true);                
                 
                 $xml = $iclq->build_cms_request_xml($data, $orig_lang_for_server);                 
-                
                 $args = array(
                     'cms_id'        => $translation->translation_id,
                     'xml'           => $xml,
@@ -351,7 +352,7 @@ class ICL_Pro_Translation{
                 $this->_throw_exception_for_mysql_errors();
                 return 4;
             }
-                        
+            
             if ($this->add_translated_document($cms_id, $request_id) === true){
                 $this->_throw_exception_for_mysql_errors();
                 return 1;
@@ -370,7 +371,7 @@ class ICL_Pro_Translation{
         $iclq = new ICanLocalizeQuery($sitepress_settings['site_id'], $sitepress_settings['access_key']);                               
         $tinfo = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}icl_translations WHERE translation_id=%d", $cms_id));                
         $_lang = $sitepress->get_language_details($tinfo->language_code);
-        $translation = $iclq->cms_do_download($request_id, $this->server_languages_map($_lang['english_name']));                                                   
+        $translation = $iclq->cms_do_download($request_id, $this->server_languages_map($_lang['english_name']));                                                           
         $ret = $this->save_post_translation($cms_id, $translation);  
         return $ret;
     }
@@ -784,12 +785,22 @@ class ICL_Pro_Translation{
                 unstick_post($new_post_id); //just in case - if this is an update and the original post stckiness has changed since the post was sent to translation
             }
         }
-        
+                                                                                                         
         foreach((array)$sitepress_settings['translation-management']['custom_fields_translation'] as $cf => $op){
             if ($op == 1) {
                 update_post_meta($new_post_id, $cf, get_post_meta($translation['original_id'],$cf,true));
+            }elseif ($op == 2 && isset($translation['field-'.$cf])) {                
+                $field_translation = $translation['field-'.$cf];
+                $field_type = $translation['field-'.$cf.'-type'];
+                if ($field_type == 'custom_field') {
+                    $field_translation = str_replace ( '&#0A;', "\n", $field_translation );                                
+                    // always decode html entities  eg decode &amp; to &
+                    $field_translation = html_entity_decode($field_translation);
+                    update_post_meta($new_post_id, $cf, $field_translation);
+                }            
             }
         }
+        
         
         // set specific custom fields
         $copied_custom_fields = array('_top_nav_excluded', '_cms_nav_minihome');    
@@ -804,34 +815,6 @@ class ICL_Pro_Translation{
             update_post_meta($new_post_id, '_wp_page_template', $_wp_page_template);
         }
         
-        // FIXME!!!!
-        require_once ICL_PLUGIN_PATH . '/inc/plugins-texts-functions.php';
-        // set the translated custom fields if we have some.    
-        $custom_fields = icl_get_posts_translatable_fields();
-        
-        foreach($custom_fields as $id => $cf){
-            if ($cf->translate) {
-                $field_name = $cf->attribute_name;
-                // find it in the translation
-                foreach($translation as $name => $data) {
-                    if ($data == $field_name) {
-                        if (preg_match("/field-(.*?)-name/", $name, $match)) {
-                            $field_id = $match[1];
-                            $field_translation = $translation['field-'.$field_id];
-                            $field_type = $translation['field-'.$field_id.'-type'];
-                            if ($field_type == 'custom_field') {
-                                $field_translation = str_replace ( '&#0A;', "\n", $field_translation );
-                                
-                                // always decode html entities  eg decode &amp; to &
-                                $field_translation = html_entity_decode($field_translation);
-                                update_post_meta($new_post_id, $field_name, $field_translation);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        
         if(!$new_post_id){
             return false;
         }
@@ -841,9 +824,11 @@ class ICL_Pro_Translation{
         }
         
         update_post_meta($new_post_id, '_icl_translation', 1);
+        
                 
         $this->_content_fix_links_to_translated_content($new_post_id, $lang_code, 'post');
         icl_st_fix_links_in_strings($new_post_id);
+        
         
         // update translation status
         $wpdb->update($wpdb->prefix.'icl_translation_status', array('status'=>ICL_TM_COMPLETE, 'needs_update'=>0), array('translation_id'=>$cms_id));
@@ -854,8 +839,9 @@ class ICL_Pro_Translation{
         $translation_package = $iclTranslationManagement->create_translation_package(get_post($translation['original_id']));
         $job_id = $iclTranslationManagement->add_translation_job($tinfo->rid, $tinfo->translator_id, $translation_package);
         // save the translation
-        $iclTranslationManagement->save_job_fields_from_post($job_id, get_post($new_post_id));
         
+        $iclTranslationManagement->save_job_fields_from_post($job_id, get_post($new_post_id));
+                
         
         // Now try to fix links in other translated content that may link to this post.
         $sql = "SELECT
