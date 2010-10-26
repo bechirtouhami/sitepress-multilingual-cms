@@ -1676,6 +1676,202 @@ function icl_st_fix_links_in_strings($post_id){
 }
 
 
+function icl_translation_send_strings($string_ids, $target_languages) {
+    // send to each language
+    foreach($target_languages as $target){
+        _icl_translation_send_strings($string_ids, $target);
+    }
+}
+
+function _icl_translation_send_strings($string_ids, $target) {
+    global $wpdb, $sitepress, $sitepress_settings;
+    
+    if(!$sitepress_settings['st']['strings_language']) $sitepress_settings['st']['strings_language'] = $sitepress->get_default_language();
+    
+    $target_code = $sitepress->get_language_code($target);
+    
+    // get all the untranslated strings
+    $untranslated = array();
+    foreach($string_ids as $st_id) {
+        $status = $wpdb->get_var("SELECT status FROM {$wpdb->prefix}icl_string_translations WHERE string_id={$st_id} and language='{$target_code}'");
+        if ($status != ICL_STRING_TRANSLATION_COMPLETE) {
+            $untranslated[] = $st_id;
+        }
+    }
+    
+    if (sizeof($untranslated) >  0) {
+        // Something to translate.
+        $target_for_server = apply_filters('icl_server_languages_map', array($target)); //filter some language names to match the names on the server
+        $data = array(
+            'url'=>'', 
+            'target_languages' => $target_for_server,
+        );
+        $string_values = array();
+        foreach($untranslated as $st_id) {
+            
+            $string = $wpdb->get_row("SELECT context, name, value FROM {$wpdb->prefix}icl_strings WHERE id={$st_id}");
+            $string_values[$st_id] = $string->value;
+            $data['contents']['string-'.$st_id.'-context'] = array(
+                    'translate'=>0,
+                    'data'=>base64_encode(htmlspecialchars($string->context)),
+                    'format'=>'base64',
+            );
+            $data['contents']['string-'.$st_id.'-name'] = array(
+                    'translate'=>0,
+                    'data'=>base64_encode(htmlspecialchars($string->name)),
+                    'format'=>'base64',
+            );
+            $data['contents']['string-'.$st_id.'-value'] = array(
+                    'translate'=>1,
+                    'data'=>base64_encode(htmlspecialchars($string->value)),
+                    'format'=>'base64',
+            );
+            
+        }
+
+        $iclq = new ICanLocalizeQuery($sitepress_settings['site_id'], $sitepress_settings['access_key']);
+        
+        $orig_lang = $sitepress->get_language_details($sitepress_settings['st']['strings_language']);
+        $orig_lang_for_server = apply_filters('icl_server_languages_map', $orig_lang['english_name']);
+
+        $timestamp = date('Y-m-d H:i:s');
+        
+        $xml = $iclq->build_cms_request_xml($data, $orig_lang_for_server);
+        $res = $iclq->send_request($xml, "String translations", $target_for_server, $orig_lang_for_server, "");
+
+        
+        if($res > 0){
+            foreach($string_values as $st_id => $value){
+                $wpdb->insert($wpdb->prefix.'icl_string_status', array('rid'=>$res, 'string_translation_id'=>$st_id, 'timestamp'=>$timestamp, 'md5'=>md5($value))); //insert rid
+            }
+    
+            $wpdb->insert($wpdb->prefix.'icl_core_status', array('rid'=>$res,
+                                                                     'origin'=>$orig_lang['code'],
+                                                                     'target'=>$target_code,
+                                                                     'status'=>CMS_REQUEST_WAITING_FOR_PROJECT_CREATION));
+        }
+    }
+}
+
+function icl_translation_get_string_translation_status($string_id) {
+    global $wpdb;
+    $status = $wpdb->get_var("
+            SELECT
+                MIN(cs.status) 
+            FROM
+                {$wpdb->prefix}icl_core_status cs
+            JOIN 
+               {$wpdb->prefix}icl_string_status ss
+            ON
+               ss.rid = cs.rid
+            WHERE
+                ss.string_translation_id={$string_id}
+            "   
+            );
+    
+    if ($status === null){
+        return "";
+    }
+    
+    $status = icl_decode_translation_status_id($status);
+    
+    return $status;
+        
+}
+
+function icl_translation_send_untranslated_strings($target_languages) {
+    global $wpdb;
+    $untranslated = $wpdb->get_col("SELECT id FROM {$wpdb->prefix}icl_strings WHERE status <> " . ICL_STRING_TRANSLATION_COMPLETE);
+    
+    icl_translation_send_strings($untranslated, $target_languages);
+    
+}
+
+function icl_is_string_translation($translation) {
+    // determine if the $translation data is for string translation.
+    
+    foreach($translation as $key => $value) {
+        if($key == 'body' or $key == 'title') {
+            return false;
+        }
+        if (preg_match("/string-.*?-value/", $key)){
+            return true;
+        }
+    }
+    
+    // if we get here assume it's not a string.
+    return false;
+    
+}
+
+function icl_translation_add_string_translation($trid, $translation, $lang, $rid){
+    
+    global $wpdb, $sitepress_settings, $sitepress;
+    $lang_code = $wpdb->get_var("SELECT code FROM {$wpdb->prefix}icl_languages WHERE english_name='".$wpdb->escape($lang)."'");
+    if(!$lang_code){        
+        return false;
+    }
+
+    foreach($translation as $key => $value) {
+        if (preg_match("/string-(.*?)-value/", $key, $match)){
+            $string_id = $match[1];
+            
+            $md5_when_sent = $wpdb->get_var("SELECT md5 FROM {$wpdb->prefix}icl_string_status WHERE string_translation_id={$string_id} AND rid={$rid}");
+            $current_string_value = $wpdb->get_var("SELECT value FROM {$wpdb->prefix}icl_strings WHERE id={$string_id}");
+            if ($md5_when_sent == md5($current_string_value)) {
+                $status = ICL_STRING_TRANSLATION_COMPLETE;
+            } else {
+                $status = ICL_STRING_TRANSLATION_NEEDS_UPDATE;
+            }
+            $value = str_replace ( '&#0A;', "\n", $value );
+            icl_add_string_translation($string_id, $lang_code, html_entity_decode($value), $status);
+        }
+    }
+
+    // update translation status
+    $wpdb->update($wpdb->prefix.'icl_core_status', array('status'=>CMS_TARGET_LANGUAGE_DONE), array('rid'=>$rid, 'target'=>$sitepress->get_language_code($lang)));
+    
+    return true;
+}
+
+
+function _icl_xmlrpc_add_message_translation($args){
+    global $wpdb, $sitepress, $sitepress_settings, $wpml_add_message_translation_callbacks;
+    $signature      = $args[0];
+    $site_id        = $args[1];
+    $rid            = $args[2];
+    $translation    = $args[3];
+    
+    $signature_check = md5($sitepress_settings['access_key'] . $sitepress_settings['site_id'] . $rid);
+    if($signature != $signature_check){
+        return 0; // array('err_code'=>1, 'err_str'=> __('Signature mismatch','sitepress'));
+    }
+    
+    $res = $wpdb->get_row("SELECT to_language, object_id, object_type FROM {$wpdb->prefix}icl_message_status WHERE rid={$rid}");
+    if(!$res){
+        return 0;
+    }
+    
+    $to_language = $res->to_language;
+    $object_id   = $res->object_id;
+    $object_type   = $res->object_type;
+    
+    try{
+        if(is_array($wpml_add_message_translation_callbacks[$object_type])){
+            foreach($wpml_add_message_translation_callbacks[$object_type] as $callback){
+                if ( !is_null($callback) ) {
+                    call_user_func($callback, $object_id, $to_language, $translation);    
+                } 
+            }
+        }                            
+        $wpdb->update($wpdb->prefix.'icl_message_status', array('status'=>MESSAGE_TRANSLATION_COMPLETE), array('rid'=>$rid));
+    }catch(Exception $e){
+        return $e->getMessage().'[' . $e->getFile() . ':' . $e->getLine() . ']';
+    }
+    return 1;
+    
+}
+
 
 function icl_st_debug($str){
     trigger_error($str, E_USER_WARNING);
