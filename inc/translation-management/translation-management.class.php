@@ -80,6 +80,9 @@ class TranslationManagement{
         }
         
         $this->current_translator = (object)$ct;
+
+        $this->load_plugins_wpml_config();
+        $this->load_theme_wpml_config();
         
         if(isset($_POST['icl_tm_action'])){
             $this->process_request($_POST['icl_tm_action'], $_POST);
@@ -87,8 +90,8 @@ class TranslationManagement{
             $this->process_request($_GET['icl_tm_action'], $_GET);
         }        
         
-        $this->load_plugins_wpml_config();
-        $this->load_theme_wpml_config();
+        //$this->load_plugins_wpml_config();
+        //$this->load_theme_wpml_config();
         
         add_action('icl_tm_messages', array($this, 'show_messages'));
         
@@ -1000,7 +1003,7 @@ class TranslationManagement{
             'translate' => 0,
             'data'      => $post->ID
         );
-        
+                
         if(!empty($this->settings['custom_fields_translation']))
         foreach($this->settings['custom_fields_translation'] as $cf => $op){
             if ($op == 2) { // translate
@@ -1021,7 +1024,7 @@ class TranslationManagement{
                     );
                 }
             }
-        }                        
+        }                   
         foreach((array)$sitepress->get_translatable_taxonomies(true, $post->post_type) as $taxonomy){
             $terms = get_the_terms( $post->ID , $taxonomy );
             if(!empty($terms)){
@@ -1055,7 +1058,6 @@ class TranslationManagement{
                 );
             }            
         }
-        
         return $package;
     }    
     
@@ -1173,7 +1175,7 @@ class TranslationManagement{
     * @param mixed $translator_id
     */
     function add_translation_job($rid, $translator_id, $translation_package){
-        
+                
         global $wpdb, $current_user;        
         get_currentuserinfo();
         if(!$current_user->ID){
@@ -1428,7 +1430,7 @@ class TranslationManagement{
         }else{
             $jelq = '';
         }
-        $job->elements = $wpdb->get_results($wpdb->prepare("SELECT * FROM {$wpdb->prefix}icl_translate WHERE job_id = %d {$jelq}", $job_id));
+        $job->elements = $wpdb->get_results($wpdb->prepare("SELECT * FROM {$wpdb->prefix}icl_translate WHERE job_id = %d {$jelq} ORDER BY tid ASC", $job_id));
         
         if($job->translator_id == 0 || $job->status == ICL_TM_WAITING_FOR_TRANSLATOR){
             if($auto_assign){
@@ -1692,6 +1694,7 @@ class TranslationManagement{
         $data['complete'] = 1;
         $data['job_id'] = $job_id;        
         $job = $this->get_translation_job($job_id,1);
+        
         foreach($job->elements as $element){
             $field_data = '';
             switch($element->field_type){
@@ -1727,7 +1730,8 @@ class TranslationManagement{
                 array('tid'=>$element->tid)
             );
             
-        }
+        }   
+        
         $this->mark_job_done($job_id);                
     }
     
