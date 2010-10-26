@@ -653,6 +653,12 @@ class SitePressLanguageSwitcher {
             }
             echo "</style>\n";
         }
+        if (isset($this->settings['icl_additional_css']) && !empty($this->settings['icl_additional_css'])) {
+          echo "\r\n<style type=\"text/css\">";
+          //echo implode("\r\n", $this->settings['icl_additional_css']);
+          echo $this->settings['icl_additional_css'];
+          echo "\r\n</style>";
+        }
     }
 } // end class
 
