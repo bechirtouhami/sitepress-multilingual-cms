@@ -1514,9 +1514,13 @@ function icl_st_set_admin_options_filters(){
         }
     }
     if(!empty($option_names['plugin'])){
-        foreach((array)$option_names['plugin'] as $plugin => $options){
-            foreach($options as $option){
-                add_filter('option_'.$option, 'icl_st_translate_admin_string');    
+        foreach((array)$option_names['plugin'] as $plugin => $options){            
+            foreach($options as $option_key => $option){
+                if(is_array($option) || is_object($option)){
+                    add_filter('option_'.$option_key, 'icl_st_translate_admin_string');        
+                }else{
+                    add_filter('option_'.$option, 'icl_st_translate_admin_string');        
+                }                
             }            
         }
     }
@@ -1531,8 +1535,6 @@ function icl_st_translate_admin_string($option_value, $key="", $name=""){
         $option_value = @unserialize($option_value);
         $serialized = true;
     }
-    
-    
     
     if(is_array($option_value) || is_object($option_value)){
         if(!$name){
@@ -1550,6 +1552,7 @@ function icl_st_translate_admin_string($option_value, $key="", $name=""){
         }            
         
     }else{   
+
         if(!$name){
             $ob = debug_backtrace();
             $name = preg_replace('@^option_@', '',$ob[2]['args'][0]);
@@ -1557,6 +1560,10 @@ function icl_st_translate_admin_string($option_value, $key="", $name=""){
                 
         $option_names = get_option('_icl_admin_option_names');                
         // determine theme/plugin name
+        
+        
+        
+        
         if(!empty($option_names['theme'])){
             foreach((array)$option_names['theme'][basename(get_template_directory())] as $ops){
                 
@@ -1589,21 +1596,36 @@ function icl_st_translate_admin_string($option_value, $key="", $name=""){
                 }
             }
         }
+        
         if(!empty($option_names['plugin'])){
             foreach((array)$option_names['plugin'] as $plugin => $options){
-                foreach($options as $ops){
-                    if($ops == $name){
+                foreach($options as $kops=>$ops){                    
+                    if(is_array($ops)){
+                        $arrkey = explode('][', trim($key, '[]'));
+                        $_val = $options;
+                        for($i=0; $i<count($arrkey); $i++){
+                            if(isset($_val[$arrkey[$i]])){
+                                $_val = $_val[$arrkey[$i]];                                 
+                            }else{
+                                break;
+                            }
+                        }
+                        if(in_array($name, $_val)){
+                            $key_suff = 'plugin_' . $plugin;
+                            break;
+                        }
+                    }elseif($ops == $name){
                         $key_suff = 'plugin_' . $plugin;
                         break;
                     }
                 }            
             }
-        }
-        
+        }        
         $tr = icl_t('admin_texts_' . $key_suff, $key . $name, $option_value);
         if($tr !== null){
             $option_value = $tr;
-        }            
+        }
+        
     }
     
     // case of double-serialized options (See Arras theme)   

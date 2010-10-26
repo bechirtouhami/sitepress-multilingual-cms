@@ -1878,8 +1878,9 @@ class TranslationManagement{
             $this->admin_texts_to_translate = array_merge($this->admin_texts_to_translate, $arr);                        
             
             $_icl_admin_option_names = get_option('_icl_admin_option_names');
-            $_icl_admin_option_names[$type][$atid] = array_keys($arr);
+            $_icl_admin_option_names[$type][$atid] = $this->_array_keys_recursive($arr);
             update_option('_icl_admin_option_names', $_icl_admin_option_names);
+            
         }  
         
         // language-switcher-settings
@@ -1902,6 +1903,17 @@ class TranslationManagement{
             }
         }
         
+    }
+    
+    function _array_keys_recursive($arr){                
+        foreach((array)$arr as $k=>$v){            
+            if(is_array($v)){                
+                $arr_rec_ret[$k] = $this->_array_keys_recursive($v);
+            }else{
+                $arr_rec_ret[] = $k;        
+            }
+        }
+        return $arr_rec_ret;
     }
     
     function _read_admin_texts_recursive($keys){
