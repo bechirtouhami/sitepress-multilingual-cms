@@ -510,6 +510,16 @@ class SitePressLanguageSwitcher {
 													<br /><br />
                                                 </li>
                                             </ul>
+                                            <h4><?php _e('Additional CSS', 'sitepress'); ?></h4>
+                                            <ul>
+                                                <li>
+                                                  <textarea name="icl_additional_css" rows="4" cols="80"><?php
+                                                    if (!empty($this->settings['icl_additional_css'])) {
+                                                      echo $this->settings['icl_additional_css'];
+                                                    }
+                                                  ?></textarea>
+                                                </li>
+                                            </ul>
                                         </li>
 										
 <?php

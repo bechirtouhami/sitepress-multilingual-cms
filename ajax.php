@@ -315,6 +315,7 @@ switch($_REQUEST['icl_ajx_action']){
             $iclsettings['icl_post_availability_text'] = $_POST['icl_post_availability_text'];
         
         $iclsettings['icl_widget_title_show'] = (isset($_POST['icl_widget_title_show'])) ? 1 : 0;
+        $iclsettings['icl_additional_css'] = $_POST['icl_additional_css'];
         
         if(!$iclsettings['icl_lso_flags'] && !$iclsettings['icl_lso_native_lang'] && !$iclsettings['icl_lso_display_lang']){
             echo '0|';
