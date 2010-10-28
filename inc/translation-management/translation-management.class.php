@@ -387,12 +387,7 @@ class TranslationManagement{
     /* ******************************************************************************************** */
     function menu(){
         global $sitepress_settings;
-        if($sitepress_settings['basic_menu']){        
-            $top_level_page = 'languages';
-        }else{
-            $top_level_page = 'overview';
-        }
-        add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/'.$top_level_page.'.php', __('Translation Management','sitepress'), __('Translation Management','sitepress'), 
+        add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Translation Management','sitepress'), __('Translation Management','sitepress'), 
             'manage_options', basename(ICL_PLUGIN_PATH).'/menu/translation-management.php');
             
         $current_translator = $this->get_current_translator();
@@ -1635,7 +1630,7 @@ class TranslationManagement{
 
                
             // set the translated custom fields if we have any.
-            foreach($this->settings['custom_fields_translation'] as $field_name => $val){
+            foreach((array)$this->settings['custom_fields_translation'] as $field_name => $val){
                 if ($val == 2) { // should be translated
                     // find it in the translation
                     foreach($job->elements as $name => $eldata) {

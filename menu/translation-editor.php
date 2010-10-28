@@ -9,7 +9,7 @@ if(empty($job)){
 ?>
 <div class="wrap icl-translation-editor">
     <div id="icon-options-general" class="icon32" 
-        style="background: transparent url(<?php echo ICL_PLUGIN_URL ?>/res/img/icon<?php if(!$sitepress_settings['basic_menu']) echo '_adv'?>.png) no-repeat"><br /></div>
+        style="background: transparent url(<?php echo ICL_PLUGIN_URL ?>/res/img/icon.png) no-repeat"><br /></div>
     <h2><?php echo __('Translation editor', 'sitepress') ?></h2>    
     
     <?php do_action('icl_tm_messages'); ?>

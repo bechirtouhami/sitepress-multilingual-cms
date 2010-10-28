@@ -50,8 +50,6 @@ if(!$sitepress_settings['st']['strings_language']){
     <div id="icon-options-general" class="icon32 icon32_adv"><br /></div>
     <h2><?php echo __('String translation', 'sitepress') ?></h2>    
     
-    <?php include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php' ?>
-    
     <?php if(isset($icl_st_po_strings) && !empty($icl_st_po_strings)): ?>
     
         <p><?php printf(__('These are the strings that we found in your .po file. Please carefully review them. Then, click on the \'add\' or \'cancel\' buttons at the <a href="%s">bottom of this screen</a>. You can exclude individual strings by clearing the check boxes next to them.', 'sitepress'), '#add_po_strings_confirm'); ?></p>        

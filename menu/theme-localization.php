@@ -12,8 +12,6 @@ $plugin_localization_stats = get_plugin_localization_stats();
     <div id="icon-options-general" class="icon32 icon32_adv"><br /></div>
     <h2><?php _e('Theme and plugins localization', 'sitepress') ?></h2>    
 
-    <?php include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php' ?>
-    
     <h3><?php _e('Select how to localize the theme','sitepress'); ?></h3>
     <p><?php _e("If your theme's texts are wrapped in gettext calls, WPML can help you display it multilingual.",'sitepress'); ?></p>
     <form id="icl_theme_localization_type" method="post" action="">

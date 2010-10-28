@@ -30,10 +30,8 @@
 ?>
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap" id="icl_wrap" style="float:left;width:98%;">
-    <div id="icon-options-general" class="icon32<?php if(!$sitepress_settings['basic_menu']) echo ' icon32_adv'?>"><br /></div>
+    <div id="icon-options-general" class="icon32"><br /></div>
     <h2><?php _e('Professional Translation', 'sitepress') ?></h2>    
-
-    <?php include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php' ?>     
 
     <table style="width:100%; border: none;"><tr>
     <td style="vertical-align:top;">

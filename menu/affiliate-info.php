@@ -15,8 +15,6 @@
     <div id="icon-options-general" class="icon32 icon32_adv"><br /></div>
     <h2><?php echo __('Affiliate information check', 'sitepress') ?></h2>    
     
-    <?php include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php' ?>
-    
     <form id="icl_affiliate_info_check" method="post" action="">
     
     <h3><?php _e('Affiliate test') ?></h3>

@@ -5,8 +5,6 @@
     <div id="icon-options-general" class="icon32 icon32_adv"><br /></div>
     <h2><?php echo __('String translation', 'sitepress') ?></h2>    
     
-    <?php include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php' ?>
-
     <?php if(!empty($troptions)): ?>
     <div id="icl_st_option_writes">
     <p><?php _e('This table shows all the admin texts that WPML  found.', 'sitepress'); ?></p>

@@ -38,8 +38,7 @@
     $translation_jobs = $iclTranslationManagement->get_translation_jobs((array)$icl_translation_filter);    
 ?>
 <div class="wrap">
-    <div id="icon-options-general" class="icon32" 
-        style="background: transparent url(<?php echo ICL_PLUGIN_URL ?>/res/img/icon<?php if(!$sitepress_settings['basic_menu']) echo '_adv'?>.png) no-repeat"><br /></div>
+    <div id="icon-options-general" class="icon32" style="background: transparent url(<?php echo ICL_PLUGIN_URL ?>/res/img/icon.png) no-repeat"><br /></div>
     <h2><?php echo __('Translations queue', 'sitepress') ?></h2>    
     
     <?php do_action('icl_tm_messages'); ?>

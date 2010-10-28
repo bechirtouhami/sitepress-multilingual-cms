@@ -18,13 +18,7 @@ class SitePress{
 
         if(isset($_GET['icl_action'])){
             require_once ABSPATH . WPINC . '/pluggable.php';
-            if($_GET['icl_action']=='advanced' && wp_create_nonce('icl_enable_advanced_mode')==$_GET['nonce']){
-                $this->enable_advanced_mode();
-            }
-            elseif($_GET['icl_action']=='basic' && wp_create_nonce('icl_enable_basic_mode')==$_GET['nonce']){
-                $this->enable_basic_mode();
-            }                                              
-            elseif($_GET['icl_action']=='reminder_popup'){
+            if($_GET['icl_action']=='reminder_popup'){
                 add_action('init', array($this, 'reminders_popup'));
             }            
             elseif($_GET['icl_action']=='dismiss_help'){
@@ -268,7 +262,7 @@ class SitePress{
         } //end if the initial language is set - existing_content_language_verified
         
         add_action('wp_dashboard_setup', array($this, 'dashboard_widget_setup'));
-        if(is_admin() && $pagenow == 'index.php' && !$this->settings['basic_menu']){
+        if(is_admin() && $pagenow == 'index.php'){
             add_action('icl_dashboard_widget_notices', array($this, 'print_translatable_custom_content_status'));    
         }
     }
@@ -639,56 +633,42 @@ class SitePress{
     function administration_menu(){
         add_action('admin_print_scripts', array($this,'js_scripts_setup'));
         add_action('admin_print_styles', array($this,'css_setup'));
+                    
+        add_menu_page(__('WPML','sitepress'), __('WPML','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/overview.php',null, ICL_PLUGIN_URL . '/res/img/icon16.png');              
+        add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Overview','sitepress'), __('Overview','sitepress'), 
+                        'manage_options', basename(ICL_PLUGIN_PATH).'/menu/overview.php'); 
+        add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Languages','sitepress'), __('Languages','sitepress'), 
+                        'manage_options', basename(ICL_PLUGIN_PATH).'/menu/languages.php'); 
         
-        if($this->settings['basic_menu']){        
-            
-            add_menu_page(__('WPML','sitepress'), __('WPML','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/languages.php',null, ICL_PLUGIN_URL . '/res/img/icon16.png');    
-            add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Languages','sitepress'), __('Languages','sitepress'), 
-                        'manage_options', basename(ICL_PLUGIN_PATH).'/menu/languages.php');             
-			add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Support','sitepress'), __('Support','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/support.php');
-            
-            if($_GET['page'] == basename(ICL_PLUGIN_PATH).'/menu/troubleshooting.php'){
-                add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Troubleshooting','sitepress'), __('Troubleshooting','sitepress'), 
-                            'manage_options', basename(ICL_PLUGIN_PATH).'/menu/troubleshooting.php'); 
-            }            
-
-        }else{
-            
-            add_menu_page(__('WPML','sitepress'), __('WPML','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/overview.php',null, ICL_PLUGIN_URL . '/res/img/icon16.png');              
-            add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Overview','sitepress'), __('Overview','sitepress'), 
-                            'manage_options', basename(ICL_PLUGIN_PATH).'/menu/overview.php'); 
-            add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Languages','sitepress'), __('Languages','sitepress'), 
-                            'manage_options', basename(ICL_PLUGIN_PATH).'/menu/languages.php'); 
-            
-            if(1 < count($this->get_active_languages())){                
-                add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Theme and plugins localization','sitepress'), __('Theme and plugins localization','sitepress'), 
-                            'manage_options', basename(ICL_PLUGIN_PATH).'/menu/theme-localization.php'); 
-                            icl_st_administration_menu();
-            //if(1 < count($this->get_active_languages())){                
-                add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Comments translation','sitepress'), __('Comments translation','sitepress'), 
-                            'manage_options', basename(ICL_PLUGIN_PATH).'/menu/comments-translation.php'); 
-                add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/content-translation.php', __('Professional translation','sitepress'), __('Professional translation','sitepress'), 
-                            'manage_options', basename(ICL_PLUGIN_PATH).'/menu/content-translation-how-it-works.php');
-            }
-            
-            if($this->settings['modules']['cms-navigation']['enabled']){
-                add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Navigation','sitepress'), __('Navigation','sitepress'), 
-                            'manage_options', basename(ICL_PLUGIN_PATH).'/menu/navigation.php'); 
-            }
-            if($this->settings['modules']['absolute-links']['enabled']){
-                add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Sticky links','sitepress'), __('Sticky links','sitepress'), 
-                            'manage_options', basename(ICL_PLUGIN_PATH).'/menu/absolute-links.php'); 
-            }
-            if($_GET['page'] == basename(ICL_PLUGIN_PATH).'/menu/troubleshooting.php'){
-                add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Troubleshooting','sitepress'), __('Troubleshooting','sitepress'), 
-                            'manage_options', basename(ICL_PLUGIN_PATH).'/menu/troubleshooting.php'); 
-            }            
-            
-            add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Compatibility packages','sitepress'), __('Compatibility packages','sitepress'), 
-                            'manage_options', basename(ICL_PLUGIN_PATH).'/menu/compatibility-packages.php');             
-            
-			add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Support','sitepress'), __('Support','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/support.php');
+        if(1 < count($this->get_active_languages())){                
+            add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Theme and plugins localization','sitepress'), __('Theme and plugins localization','sitepress'), 
+                        'manage_options', basename(ICL_PLUGIN_PATH).'/menu/theme-localization.php'); 
+                        icl_st_administration_menu();
+        //if(1 < count($this->get_active_languages())){                
+            add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Comments translation','sitepress'), __('Comments translation','sitepress'), 
+                        'manage_options', basename(ICL_PLUGIN_PATH).'/menu/comments-translation.php'); 
+            add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/content-translation.php', __('Professional translation','sitepress'), __('Professional translation','sitepress'), 
+                        'manage_options', basename(ICL_PLUGIN_PATH).'/menu/content-translation-how-it-works.php');
         }
+        
+        if($this->settings['modules']['cms-navigation']['enabled']){
+            add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Navigation','sitepress'), __('Navigation','sitepress'), 
+                        'manage_options', basename(ICL_PLUGIN_PATH).'/menu/navigation.php'); 
+        }
+        if($this->settings['modules']['absolute-links']['enabled']){
+            add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Sticky links','sitepress'), __('Sticky links','sitepress'), 
+                        'manage_options', basename(ICL_PLUGIN_PATH).'/menu/absolute-links.php'); 
+        }
+        if($_GET['page'] == basename(ICL_PLUGIN_PATH).'/menu/troubleshooting.php'){
+            add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Troubleshooting','sitepress'), __('Troubleshooting','sitepress'), 
+                        'manage_options', basename(ICL_PLUGIN_PATH).'/menu/troubleshooting.php'); 
+        }            
+        
+        add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Compatibility packages','sitepress'), __('Compatibility packages','sitepress'), 
+                        'manage_options', basename(ICL_PLUGIN_PATH).'/menu/compatibility-packages.php');             
+        
+		add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Support','sitepress'), __('Support','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/support.php');
+        
     }
 
     function save_settings($settings=null){
@@ -714,7 +694,6 @@ class SitePress{
     function verify_settings(){
         
         $default_settings = array(
-            'basic_menu' => 0,
             'interview_translators' => 1,
             'existing_content_language_verified' => 0,
             'language_negotiation_type' => 3,
@@ -1489,9 +1468,6 @@ class SitePress{
     }
     
     function css_setup(){        
-        if($this->settings['basic_menu']){
-            echo '<style type="text/css">.icl_advanced_feature{display:none}</style>';       
-        }
         if(isset($_GET['page'])){
             $page = basename($_GET['page']);
             $page_basename = str_replace('.php','',$page);        
@@ -4871,16 +4847,6 @@ class SitePress{
         }
     }
     
-    function enable_advanced_mode(){
-        $this->settings['basic_menu'] = 0;
-        $this->save_settings();
-    }
-    
-    function enable_basic_mode(){
-        $this->settings['basic_menu'] = 1;
-        $this->save_settings();
-    }
-    
     function xmlrpc_methods($methods){
         $methods['icanlocalize.get_languages_list'] = array($this, 'xmlrpc_get_languages_list');
         return $methods;
@@ -5341,9 +5307,7 @@ class SitePress{
         <p><?php printf(__('Support Subscription - %s', 'sitepress'), $pss_string_status); ?> 
             <?php if(!$pss_status['valid']):?>(<a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/support.php"><?php _e('purchase', 'sitepress'); ?></a>)<?php endif; ?></p>
         <?php do_action('icl_dashboard_widget_content'); ?>
-        <?php if(!$this->settings['basic_menu']):?>
         <p><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/overview.php"><?php _e('more', 'sitepress')?></a></p>
-        <?php endif; ?>
         <?php
     }
     

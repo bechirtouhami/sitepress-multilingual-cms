@@ -46,15 +46,9 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
 ?>
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap">
-    <div id="icon-options-general" class="icon32<?php if(!$sitepress_settings['basic_menu']) echo ' icon32_adv'?>" ><br /></div>
+    <div id="icon-options-general" class="icon32" ><br /></div>
     <h2><?php echo __('Setup WPML', 'sitepress') ?></h2>
-    
-    <?php 
-        if($sitepress_settings['setup_complete']){
-            include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php'; 
-        }        
-    ?>
-    
+        
     <?php if(!$sitepress_settings['setup_complete']): /* setup wizard */ ?>
     <?php 
         if(!$sitepress_settings['existing_content_language_verified']){
