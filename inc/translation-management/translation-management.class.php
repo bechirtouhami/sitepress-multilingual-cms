@@ -111,16 +111,36 @@ class TranslationManagement{
                 add_action('admin_notices', array($this, '_translation_method_notice'));    
             }                        
         }
-
-        //$this->settings['doc_translation_method'] = -1;
-        //$this->save_settings();
         
-        $this->is_translator(3);
+        // Add a nice warning message if the user tries to edit a post manually and it's actually in the process of being translated
+        global $pagenow;
+        if($pagenow == 'post-new.php' && isset($_GET['trid']) && isset($_GET['lang'])){
+            add_action('admin_notices', array($this, '_warn_editing_icl_translation'));    
+        }
+        
+    }
+    
+    function _warn_editing_icl_translation(){
+        global $wpdb;
+        $translation_id = $wpdb->get_var($wpdb->prepare("
+                SELECT translation_id FROM {$wpdb->prefix}icl_translations WHERE trid=%d AND language_code=%s"
+            , $_GET['trid'], $_GET['lang']));
+        if($translation_id){
+            $translation_status = $wpdb->get_var($wpdb->prepare("
+                SELECT status FROM {$wpdb->prefix}icl_translation_status WHERE translation_id=%d"
+            , $translation_id));
+            if($translation_status < ICL_TM_COMPLETE){
+                echo '<div class="error fade"><p id="icl_side_by_site">'. 
+                    sprintf(__('<strong>Warning:</strong> You are trying to edit a translation that is currently in the process of being added using WPML.' , 'sitepress')) . '<br /><br />'.
+                    sprintf(__('Please refer to the <a href="%s">Translation management dashbord</a> for the exact status of this translation.' , 'sitepress'),
+                    admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translation-management.php&')) . '</p></div>';    
+            }
+        }
         
     }
     
     function _translation_method_notice(){
-        echo '<div class="updated fade"><p id="icl_side_by_site">'.sprintf(__('New - side-by-site translation editor: <a href="%s">try it</a> | <a href="#cancel">no thanks</a>.', 'sitepress'),
+        echo '<div class="error fade"><p id="icl_side_by_site">'.sprintf(__('New - side-by-site translation editor: <a href="%s">try it</a> | <a href="#cancel">no thanks</a>.', 'sitepress'),
                 admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translation-management.php&sm=mcsetup&src=notice')) . '</p></div>';    
     }
     
@@ -1148,17 +1168,34 @@ class TranslationManagement{
                     'translation_package'   => serialize($translation_package)
                 ));
                 
-                //if(!$update){
-                    $job_ids[] = $this->add_translation_job($rid, $selected_translators[$lang], $translation_package);
-                //}
+                
+                $job_ids[] = $this->add_translation_job($rid, $selected_translators[$lang], $translation_package);                
             }                
             
         }
+        
+        $job_ids = array_unique($job_ids);
+        if(array(false) == $job_ids){
+            $this->messages[] = array(
+                'type'=>'error',
+                'text' => __('No documents were not sent to translation. Make sure that translations are not currently in progress for the selected language(s).', 'sitepress')
+            );            
+        }elseif(in_array(false, $job_ids)){
+            $this->messages[] = array(
+                'type'=>'updated',
+                'text' => __('Some documents were sent to translation.', 'sitepress')
+            );            
+            $this->messages[] = array(
+                'type'=>'error',
+                'text' => __('Some documents were <i>not</i> sent to translation. Make sure that translations are not currently in progress for the selected language(s).', 'sitepress')
+            );
+        }else{
+            $this->messages[] = array(
+                'type'=>'updated',
+                'text' => __('All documents sent to translation.', 'sitepress')
+            );
+        }
                 
-        $this->messages[] = array(
-            'type'=>'updated',
-            'text' => __('All documents sent to translation.', 'sitepress')
-        );
 
         return $job_ids;
     }    
@@ -1180,10 +1217,17 @@ class TranslationManagement{
         }
         
         // if we have a previous job_id for this rid mark it as the top (last) revision
-        $prev_job_id = $wpdb->get_var($wpdb->prepare("
-            SELECT job_id, revision FROM {$wpdb->prefix}icl_translate_job WHERE rid=%d AND revision IS NULL 
-        ", $rid));
-        if($prev_job_id){
+        list($prev_job_id, $prev_job_translated) = $wpdb->get_row($wpdb->prepare("
+                    SELECT job_id, translated FROM {$wpdb->prefix}icl_translate_job WHERE rid=%d AND revision IS NULL 
+        ", $rid), ARRAY_N);
+        if(!is_null($prev_job_id)){
+         
+            // if previous job is not complete bail out
+            if(!$prev_job_translated){
+                trigger_error(sprintf(__('Translation is in progress for job: %s.', 'sitepress'), $prev_job_id), E_USER_NOTICE);
+                return false;
+            }
+            
             $last_rev = $wpdb->get_var($wpdb->prepare("
                 SELECT MAX(revision) AS rev FROM {$wpdb->prefix}icl_translate_job WHERE rid=%d AND revision IS NOT NULL 
             ", $rid));        
