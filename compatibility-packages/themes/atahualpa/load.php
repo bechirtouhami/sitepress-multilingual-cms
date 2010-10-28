@@ -50,7 +50,7 @@ class Atahualpa_theme_compatibility  extends WPML_Package{
 			'archives_category_title'
 			);
 	
-    function __construct(){
+    function __construct(){ return;
         parent::__construct();
         
 		if (is_admin()) add_action('init',array(&$this,'register_strings'));
