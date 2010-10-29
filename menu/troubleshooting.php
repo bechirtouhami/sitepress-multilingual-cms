@@ -174,7 +174,7 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
         $resp = $icl_query->createAccount($user);                
         echo '<textarea style="width:100%;height:400px;font-size:9px;">';
         if (defined('ICL_API_ENDPOINT')) {
-            echo ICL_API_ENDPOINT . "\r\n";
+            echo ICL_API_ENDPOINT . "\r\n\r\n";
         }
         echo __('Data', 'sitepress') . "\n----------------------------------------\n" .
             print_r($user, 1) . 
