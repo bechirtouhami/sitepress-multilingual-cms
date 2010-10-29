@@ -314,23 +314,6 @@ function icl_local_edit_translator_form($action = 'add', $selected_translator = 
 }
 
 /**
- * Implementation of 'icl_translation_services_button' hook
- *
- * @global object $sitepress
- * @param array $buttons
- * @return array
- */
-function icl_icanlocalize_add_translator_button($buttons) {
-  global $sitepress;
-  $return['name'] = 'ICanLocalize';
-  $return['setup_url'] = $sitepress->create_icl_popup_link('@select-translators;from_replace;to_replace@', array('ar' => 1), true);
-  $return['description'] = __('Connects you with freelance professional translators where you can interview and choose the best ones for your project.', 'sitepress');
-  $buttons['icanlocalize'] = $return;
-
-  return $buttons;
-}
-
-/**
  * Implementation of 'icl_translators_list' hook
  *
  * @global object $sitepress
