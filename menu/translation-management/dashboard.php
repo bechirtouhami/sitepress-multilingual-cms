@@ -74,7 +74,7 @@ if(!empty($iclTranslationManagement->dashboard_select)){
 <?php
 
 $icl_translation_services = apply_filters('icl_translation_services', array());
-$icl_translation_services = array_merge($icl_translation_services, TranslationManagement::icl_icanlocalize_service_info());
+$icl_translation_services = array_merge($icl_translation_services, TranslationManagement::icanlocalize_service_info());
 if (!empty($icl_translation_services)) {
     $output = '';
     $output .= '<div class="icl-translation-services" style="margin-bottom:20px">';

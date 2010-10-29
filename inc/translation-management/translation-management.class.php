@@ -2182,7 +2182,7 @@ class TranslationManagement{
         
     }
 
-    public static function icl_icanlocalize_service_info($info = array()) {
+    public static function icanlocalize_service_info($info = array()) {
         global $sitepress;
         $return = array();
         $return['name'] = 'ICanLocalize';

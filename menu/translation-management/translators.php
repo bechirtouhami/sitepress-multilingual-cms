@@ -3,7 +3,7 @@
 
 add_filter('icl_translators_list', 'icl_icanlocalize_translators_list');
 add_filter('icl_translation_services_button', 'icl_local_add_translator_button');
-add_filter('icl_translation_services_button', array('TranslationManagement', 'icl_icanlocalize_service_info'));
+add_filter('icl_translation_services_button', array('TranslationManagement', 'icanlocalize_service_info'));
 
 if ($selected_translator->ID) {
   
