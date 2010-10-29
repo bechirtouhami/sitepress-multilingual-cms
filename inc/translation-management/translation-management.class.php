@@ -2191,10 +2191,8 @@ class TranslationManagement{
         $return['description'] = __('Connects you with freelance professional translators where you can interview and choose the best ones for your project.', 'sitepress');
         $return['setup_url_dashboard'] = array(__('Add translators from ICanLocalize &raquo;', 'sitepress'), 'admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/translation-management.php&amp;sm=translators&amp;service=icanlocalize');
         $info['icanlocalize'] = $return;
-
         return $info;
     }
-    
     
 }
   
