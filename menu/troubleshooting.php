@@ -172,8 +172,11 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
         
         define('ICL_DEB_SHOW_ICL_RAW_RESPONSE', true);
         $resp = $icl_query->createAccount($user);                
-        echo '<textarea style="width:100%;height:400px;font-size:9px;">' . 
-            __('Data', 'sitepress') . "\n----------------------------------------\n" . 
+        echo '<textarea style="width:100%;height:400px;font-size:9px;">';
+        if (defined('ICL_API_ENDPOINT')) {
+            echo ICL_API_ENDPOINT;
+        }
+        echo __('Data', 'sitepress') . "\n----------------------------------------\n" .
             print_r($user, 1) . 
             __('Response', 'sitepress') . "\n----------------------------------------\n" .
             print_r($resp, 1) . 
