@@ -71,8 +71,29 @@ if(!empty($iclTranslationManagement->dashboard_select)){
 }
 ?>
 
+<?php
 
-    
+$icl_translation_services = apply_filters('icl_translation_services', array());
+$icl_translation_services = array_merge($icl_translation_services, TranslationManagement::icl_icanlocalize_service_info());
+if (!empty($icl_translation_services)) {
+    $output = '';
+    $output .= '<div class="icl-translation-services" style="margin-bottom:20px">';
+    foreach ($icl_translation_services as $key => $service) {
+        $output .= '<div class="icl-translation-service">';
+        $output .= '<img src="' . $service['logo'] . '" alt="' . $service['name'] . '" />';
+        $output .= '<p style="width:500px;">' . $service['description'] . '</p>';
+        $output .= isset($service['setup_url_dashboard'])
+            ? '<a href="' . $service['setup_url_dashboard'][1] . '" title="'
+                . $service['name'] . '">' . $service['setup_url_dashboard'][0]
+                . '</a>'
+            : '';
+        $output .= '</div>';
+    }
+    $output .= '</div>';
+    echo $output;
+}
+?>
+
     <form method="post" name="translation-dashboard-filter" action="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/translation-management.php&amp;sm=dashboard">
     <input type="hidden" name="icl_tm_action" value="dashboard_filter" />
     <table class="form-table widefat fixed">

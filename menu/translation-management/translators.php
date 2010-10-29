@@ -3,7 +3,7 @@
 
 add_filter('icl_translators_list', 'icl_icanlocalize_translators_list');
 add_filter('icl_translation_services_button', 'icl_local_add_translator_button');
-add_filter('icl_translation_services_button', 'icl_icanlocalize_add_translator_button');
+add_filter('icl_translation_services_button', array('TranslationManagement', 'icl_icanlocalize_service_info'));
 
 if ($selected_translator->ID) {
   
@@ -24,7 +24,8 @@ if ($selected_translator->ID) {
     // Toggle button
     echo '<input type="submit" id="icl_add_translator_form_toggle" value="'. __('Add translator', 'sitepress') . ' >>" />' . "\r\n";
     // Toggle div start
-    echo '<div id="icl_add_translator_form_wrapper" class="hidden">';
+    $hidden = isset($_GET['service']) ? '' : ' class="hidden"';
+    echo '<div id="icl_add_translator_form_wrapper"' . $hidden . '>';
     // Open form
     echo '<form id="icl_tm_adduser" method="post" action="">';
 
@@ -51,8 +52,9 @@ if ($selected_translator->ID) {
     echo '<h4 style="margin-bottom:5px;">' . __('Select translation service', 'sitepress') . '</h4>' . "\r\n";
 
     foreach ($services as $service => $button) {
+      $selected = (isset($_GET['service']) && $_GET['service'] == $service) ? ' checked="checked"' : '';
       $title = array();
-      echo '<div style="margin-bottom:5px;"><input type="radio" id="radio-' . $service . '" name="services" value="' . $service . '" />';
+      echo '<div style="margin-bottom:5px;"><input type="radio" id="radio-' . $service . '" name="services" value="' . $service . '"' . $selected . ' />';
       if (isset($button['name'])) $title[] = '<label for="radio-' .$service . '">&nbsp;' . $button['name'] . '</label>';
       if (isset($button['description'])) $title[] = $button['description'];
       if (isset($button['more_link'])) $title[] = $button['more_link'];
@@ -322,6 +324,7 @@ function icl_icanlocalize_add_translator_button($buttons) {
   global $sitepress;
   $return['name'] = 'ICanLocalize';
   $return['setup_url'] = $sitepress->create_icl_popup_link('@select-translators;from_replace;to_replace@', array('ar' => 1), true);
+  $return['description'] = __('Connects you with freelance professional translators where you can interview and choose the best ones for your project.', 'sitepress');
   $buttons['icanlocalize'] = $return;
 
   return $buttons;
