@@ -47,6 +47,7 @@ class TranslationManagement{
                 
         if(isset($_GET['sm']) && ($_GET['sm'] == 'dashboard' || $_GET['sm'] == 'jobs')){session_start();}
         elseif(isset($_GET['page']) && $_GET['page'] == ICL_PLUGIN_FOLDER. '/menu/translations-queue.php'){session_start();}
+        add_filter('icl_additional_translators', array($this, 'icl_additional_translators'), 99, 3);
                 
     }
     
@@ -400,19 +401,26 @@ class TranslationManagement{
             'default_name' => __('Any', 'sitepress'),
             'name'          => 'translator_id',
             'selected'      => 0,
-            'echo'          => true
+            'echo'          => true,
+            'translation_service' => __('Local')
         );
         extract($args_default);
         extract($args, EXTR_OVERWRITE);        
-        $translators = $this->get_blog_translators(array('from'=>$from,'to'=>$to));             
+        $translators = $this->get_blog_translators(array('from'=>$from,'to'=>$to));
+        $additional_translators = apply_filters('icl_additional_translators', array(), $from, $to);
+        $translators = array_merge($additional_translators, $translators);
         ?>
         <select name="<?php echo $name ?>">
             <option value="0"><?php echo $default_name ?></option>
             <?php foreach($translators as $t):?>
-            <option value="<?php echo $t->ID ?>" <?php if($selected==$t->ID):?>selected="selected"<?php endif;?>><?php echo esc_html($t->display_name) ?> (<?php _e('Local')?>)</option>
+            <option value="<?php echo $t->ID ?>" <?php if($selected==$t->ID):?>selected="selected"<?php endif;?>><?php echo esc_html($t->display_name) ?> (<?php echo $translation_service; ?>)</option>
             <?php endforeach; ?>
         </select>
         <?php
+    }
+
+    function icl_additional_translators($translators, $from, $to) {
+        return array();
     }
     
     
