@@ -164,6 +164,12 @@ class TranslationManagement{
                     wp_redirect('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translation-management.php&sm=translators&icl_tm_message='.urlencode(sprintf(__('%s has been added as a translator for this site.','sitepress'),$_user->data->display_name)).'&icl_tm_message_type=updated');                    
                 }
                 break;
+            case 'edit_translator':
+                if(wp_create_nonce('edit_translator') == $data['edit_translator_nonce']){
+                    $this->edit_translator($data['user_id'], $data['lang_pairs']);
+                    wp_redirect('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translation-management.php&sm=translators&icl_tm_message='.urlencode(sprintf(__('%s has been added as a translator for this site.','sitepress'),$_user->data->display_name)).'&icl_tm_message_type=updated');
+                }
+                break;
             case 'remove_translator':
                 if(wp_create_nonce('remove_translator') == $data['remove_translator_nonce']){
                     $this->remove_translator($data['user_id']);
@@ -290,6 +296,13 @@ class TranslationManagement{
         
         update_user_meta($user_id, $wpdb->prefix . 'language_pairs',  $language_pairs);
         
+    }
+
+    function edit_translator($user_id, $language_pairs){
+        global $wpdb;
+        $um = get_user_meta($user_id, $wpdb->prefix . 'language_pairs', true);
+        update_user_meta($user_id, $wpdb->prefix . 'language_pairs',  $language_pairs);
+
     }
     
     function remove_translator($user_id){

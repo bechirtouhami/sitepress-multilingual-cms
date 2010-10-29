@@ -233,7 +233,7 @@ function icl_local_edit_translator_form($action = 'add', $selected_translator = 
     $return['name'] = __('Local', 'sitepress');
     $return['description'] = __('Your own translators', 'sitepress');
 
-    if (empty($blog_users_nt)) {
+    if ($action == 'add' && empty($blog_users_nt)) {
       $output .= '<span class="updated fade" style="padding:4px">' . __('All blog users are translators', 'sitepress') . '</span>';
       $return['content'] = $output;
       return $return;
@@ -242,8 +242,8 @@ function icl_local_edit_translator_form($action = 'add', $selected_translator = 
     $output .= '<div id="icl_tm_add_user_errors">
         <span class="icl_tm_no_to">' . __('Select user.', 'sitepress') . '</span>
     </div>
-    <input type="hidden" name="icl_tm_action" value="add_translator" />'
-    . wp_nonce_field('add_translator', 'add_translator_nonce', true, false);
+    <input type="hidden" name="icl_tm_action" value="' . $action . '_translator" />'
+    . wp_nonce_field($action . '_translator', $action . '_translator_nonce', true, false);
     
     if (!$selected_translator):
       $output .= '<select id="icl_tm_selected_user" name="user_id">
