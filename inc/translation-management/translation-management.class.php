@@ -239,10 +239,32 @@ class TranslationManagement{
                 }
                 break;
             case 'assign_translator':
-                if($this->assign_translation_job($data['job_id'], $data['translator_id'])){
-                    $translator_edit_link = '<a href="'.$this->get_translator_edit_url($data['translator_id']).'">' . 
-                    esc_html($wpdb->get_var($wpdb->prepare("SELECT display_name FROM {$wpdb->users} WHERE ID=%d",$data['translator_id']))) . '</a>';
-                    echo json_encode(array('error'=>0, 'message'=>$translator_edit_link, 'status'=>$this->status2text(ICL_TM_WAITING_FOR_TRANSLATOR)));
+            
+                $_exp = explode('-', $data['translator_id']);
+                $service = isset($_exp[1]) ? $_exp[1] : 'local';
+                $translator_id = $_exp[0];                
+                if($this->assign_translation_job($data['job_id'], $translator_id, $service)){
+                    if($service == 'icanlocalize'){
+                        $job = $this->get_translation_job($data['job_id']);
+                        global $ICL_Pro_Translation;
+                        $ICL_Pro_Translation->send_post($job->original_doc_id, array($job->language_code), $translator_id);
+                        foreach($sitepress_settings['icl_lang_status'] as $lp){
+                            if($lp['from'] == $job->source_language_code && $lp['to'] == $job->language_code){
+                                $contract_id = $lp['contract_id'];
+                                $lang_tr_id =  $lp['id']; 
+                                break;
+                            }
+                        }
+                        $translator_edit_link = $sitepress->create_icl_popup_link(ICL_API_ENDPOINT . '/websites/' . $sitepress_settings['site_id']
+                        . '/website_translation_offers/' . $lang_tr_id . '/website_translation_contracts/'
+                        . $contract_id, array('title' => __('Chat with translator', 'sitepress'), 'unload_cb' => 'icl_thickbox_refresh')) 
+                        . esc_html(ICL_Pro_Translation::get_translator_name($translator_id))  . '</a> (ICanLocalize)';                    
+                        
+                    }else{
+                        $translator_edit_link = '<a href="'.$this->get_translator_edit_url($data['translator_id']).'">' . 
+                        esc_html($wpdb->get_var($wpdb->prepare("SELECT display_name FROM {$wpdb->users} WHERE ID=%d",$data['translator_id']))) . '</a>';
+                    }
+                    echo json_encode(array('error'=>0, 'message'=>$translator_edit_link, 'status'=>$this->status2text(ICL_TM_WAITING_FOR_TRANSLATOR), 'service'=>$service));
                 }else{
                     echo json_encode(array('error'=>1));
                 }
@@ -396,31 +418,51 @@ class TranslationManagement{
     }
     
     public function translators_dropdown($args = array()){
+        global $sitepress_settings;
         $args_default = array(
             'from'=>false, 'to'=>false,
             'default_name' => __('Any', 'sitepress'),
             'name'          => 'translator_id',
             'selected'      => 0,
             'echo'          => true,
-            'translation_service' => __('Local')
+            'services'      => array('local')
         );
         extract($args_default);
         extract($args, EXTR_OVERWRITE);        
-        $translators = $this->get_blog_translators(array('from'=>$from,'to'=>$to));
-        $additional_translators = apply_filters('icl_additional_translators', array(), $from, $to);
-        $translators = array_merge($additional_translators, $translators);
+        
+        if(in_array('local', $services)){
+            $translators = $this->get_blog_translators(array('from'=>$from,'to'=>$to));             
+        }
+        
+        if(in_array('icanlocalize', $services)){
+            foreach($sitepress_settings['icl_lang_status'] as $langpair){
+                if($from && $from != $langpair['from']) continue;
+                if($to && $to != $langpair['to']) continue;
+                
+                if(!empty($langpair['translators'])){
+                    foreach($langpair['translators'] as $tr){
+                        if(!isset($_icl_translators[$tr['id']])){
+                            $translators[] = $_icl_translators[$tr['id']] = (object) array(
+                                'ID'=>$tr['id'].'-icanlocalize', 
+                                'display_name'=>$tr['nickname'],
+                                'service'       => 'ICanLocalize'
+                            );            
+                        }
+                    }
+                }    
+            }
+        }
+        
         ?>
         <select name="<?php echo $name ?>">
             <option value="0"><?php echo $default_name ?></option>
             <?php foreach($translators as $t):?>
-            <option value="<?php echo $t->ID ?>" <?php if($selected==$t->ID):?>selected="selected"<?php endif;?>><?php echo esc_html($t->display_name) ?> (<?php echo $translation_service; ?>)</option>
+            <option value="<?php echo $t->ID ?>" <?php if($selected==$t->ID):?>selected="selected"<?php endif;?>><?php echo esc_html($t->display_name) ?> (
+                <?php if(isset($t->service)) echo $t->service; else _e('Local'); ?>
+            )</option>
             <?php endforeach; ?>
         </select>
         <?php
-    }
-
-    function icl_additional_translators($translators, $from, $to) {
-        return array();
     }
     
     
@@ -1132,7 +1174,6 @@ class TranslationManagement{
         // service
         // defaults
         $data_default = array(
-            'service'           => 'local',
             'translate_from'    => $sitepress->get_default_language()
         );        
         extract($data_default);
@@ -1178,19 +1219,25 @@ class TranslationManagement{
                 
                 $_status = ICL_TM_WAITING_FOR_TRANSLATOR;
                 
+                $_exp = explode('-', $selected_translators[$lang]);
+                $service = isset($_exp[1]) ? $_exp[1] : 'local';
+                $translator_id = $_exp[0];
+                
                 // add translation_status record        
                 list($rid, $update) = $this->update_translation_status(array(
                     'translation_id'        => $translation_id,
                     'status'                => $_status,
-                    'translator_id'         => $selected_translators[$lang],
+                    'translator_id'         => $translator_id,
                     'needs_update'          => 0,
                     'md5'                   => $md5,
                     'translation_service'   => $service,
                     'translation_package'   => serialize($translation_package)
                 ));
-                
-                
-                $job_ids[] = $this->add_translation_job($rid, $selected_translators[$lang], $translation_package);                
+                $job_ids[] = $this->add_translation_job($rid, $translator_id, $translation_package);                                
+                if( $service == 'icanlocalize' ){
+                    global $ICL_Pro_Translation;
+                    $ICL_Pro_Translation->send_post($post->ID, array($lang), $translator_id);
+                }
             }                
             
         }
@@ -1216,7 +1263,6 @@ class TranslationManagement{
                 'text' => __('All documents sent to translation.', 'sitepress')
             );
         }
-                
 
         return $job_ids;
     }    
@@ -1356,7 +1402,7 @@ class TranslationManagement{
         
     }
     
-    function assign_translation_job($job_id, $translator_id){
+    function assign_translation_job($job_id, $translator_id, $service='local'){
         global $wpdb;
         list($prev_translator_id, $rid) = $wpdb->get_row($wpdb->prepare("SELECT translator_id, rid FROM {$wpdb->prefix}icl_translate_job WHERE job_id=%d", $job_id), ARRAY_N);
         
@@ -1374,7 +1420,7 @@ class TranslationManagement{
         }            
         
         $wpdb->update($wpdb->prefix.'icl_translation_status', 
-            array('translator_id'=>$translator_id, 'status'=>ICL_TM_WAITING_FOR_TRANSLATOR), 
+            array('translator_id'=>$translator_id, 'status'=>ICL_TM_WAITING_FOR_TRANSLATOR, 'translation_service' => $service),
             array('rid'=>$rid));
         $wpdb->update($wpdb->prefix.'icl_translate_job', array('translator_id'=>$translator_id), array('job_id'=>$job_id));
         return true;
@@ -1393,6 +1439,10 @@ class TranslationManagement{
         extract($args_default);
         extract($args, EXTR_OVERWRITE);
         
+        $_exp = explode('-', $translator_id);
+        $service = isset($_exp[1]) ? $_exp[1] : 'local';
+        $translator_id = $_exp[0];
+        
         $where = "1";
         if($status != ''){
             $where .= " AND s.status=" . intval($status);    
@@ -1403,7 +1453,9 @@ class TranslationManagement{
             }else{
                 $where .= " AND j.translator_id=" . intval($translator_id);        
             }
-            
+            if(!empty($service)){
+                $where .= " AND s.translation_service='{$service}'";        
+            }
         }
         if(!empty($from)){
             $where .= " AND t.source_language_code='".$wpdb->escape($from)."'";    
@@ -1426,7 +1478,7 @@ class TranslationManagement{
                 
         $jobs = $wpdb->get_results(
             "SELECT SQL_CALC_FOUND_ROWS 
-                j.job_id, t.trid, t.language_code, t.source_language_code, s.status, s.needs_update, s.translator_id, u.display_name AS translator_name 
+                j.job_id, t.trid, t.language_code, t.source_language_code, s.status, s.needs_update, s.translator_id, u.display_name AS translator_name, s.translation_service 
                 FROM {$wpdb->prefix}icl_translate_job j
                     JOIN {$wpdb->prefix}icl_translation_status s ON j.rid = s.rid
                     JOIN {$wpdb->prefix}icl_translations t ON s.translation_id = t.translation_id
@@ -1435,8 +1487,7 @@ class TranslationManagement{
                 ORDER BY {$orderby}
                 LIMIT {$limit}
             "
-        );   
-             
+        );         
         $count = $wpdb->get_var("SELECT FOUND_ROWS()");
 
         $wp_query->found_posts = $count;
@@ -1456,17 +1507,20 @@ class TranslationManagement{
             $ldt = $sitepress->get_language_details($row->language_code);
             $ldf = $sitepress->get_language_details($row->source_language_code);
             $jobs[$k]->lang_text = $ldf['display_name'] . ' &raquo; ' . $ldt['display_name'];
+            if($row->translation_service=='icanlocalize'){
+                $row->translator_name = ICL_Pro_Translation::get_translator_name($row->translator_id);
+            }
         }
        return $jobs; 
         
     }
     
     function get_translation_job($job_id, $include_non_translatable_elements = false, $auto_assign = false){
-        global $wpdb, $sitepress;
+        global $wpdb, $sitepress, $current_user;
         $job = $wpdb->get_row($wpdb->prepare("
             SELECT 
                 j.rid, j.translator_id, j.translated, j.manager_id,
-                s.status, s.needs_update,
+                s.status, s.needs_update, s.translation_service,
                 t.trid, t.language_code, t.source_language_code             
             FROM {$wpdb->prefix}icl_translate_job j 
                 JOIN {$wpdb->prefix}icl_translation_status s ON j.rid = s.rid
@@ -1490,8 +1544,7 @@ class TranslationManagement{
         }else{
             $jelq = '';
         }
-        $job->elements = $wpdb->get_results($wpdb->prepare("SELECT * FROM {$wpdb->prefix}icl_translate WHERE job_id = %d {$jelq} ORDER BY tid ASC", $job_id));
-        
+        $job->elements = $wpdb->get_results($wpdb->prepare("SELECT * FROM {$wpdb->prefix}icl_translate WHERE job_id = %d {$jelq} ORDER BY tid ASC", $job_id));        
         if($job->translator_id == 0 || $job->status == ICL_TM_WAITING_FOR_TRANSLATOR){
             if($auto_assign){
                 $wpdb->update($wpdb->prefix . 'icl_translate_job', array('translator_id' => $this->current_translator->translator_id), array('job_id'=>$job_id));
@@ -1500,7 +1553,7 @@ class TranslationManagement{
                     array('rid'=>$job->rid)
                 );
             }
-        }elseif($job->translator_id != $this->current_translator->translator_id && !defined('XMLRPC_REQUEST')){
+        }elseif($job->translator_id != $this->current_translator->translator_id && !defined('XMLRPC_REQUEST') && $job->manager_id != $current_user->ID){
             $this->messages[] = array(
                 'type' => 'error', 'text' => __("You can't translate this document. It's assigned to a different translator.", 'sitepress')
             );

@@ -24,7 +24,8 @@ $translation_jobs = $iclTranslationManagement->get_translation_jobs((array)$icl_
                     <?php $iclTranslationManagement->translators_dropdown(array(
                         'name'          => 'filter[translator_id]',
                         'default_name'  => __('All', 'sitepress'),
-                        'selected'      => $icl_translation_filter['translator_id'] 
+                        'selected'      => $icl_translation_filter['translator_id'],
+                        'services'      => array('local', 'icanlocalize')
                         )
                      ); ?>            
                 </label>&nbsp;
@@ -105,10 +106,34 @@ $translation_jobs = $iclTranslationManagement->get_translation_jobs((array)$icl_
             </td>
             <td>
                 <?php if(!empty($job->translator_id) && $job->status != ICL_TM_WAITING_FOR_TRANSLATOR): ?>
-                <a href="<?php echo $iclTranslationManagement->get_translator_edit_url($job->translator_id) ?>"><?php echo esc_html($job->translator_name) ?></a>
+                    <?php if($job->translation_service == 'icanlocalize'): ?>
+                    <?php 
+                    foreach($sitepress_settings['icl_lang_status'] as $lp){
+                        if($lp['from'] == $job->source_language_code && $lp['to'] == $job->language_code){
+                            $contract_id = $lp['contract_id'];
+                            $lang_tr_id =  $lp['id']; 
+                            break;
+                        }
+                    }
+                    echo $sitepress->create_icl_popup_link(ICL_API_ENDPOINT . '/websites/' . $sitepress_settings['site_id']
+                    . '/website_translation_offers/' . $lang_tr_id . '/website_translation_contracts/'
+                    . $contract_id, array('title' => __('Chat with translator', 'sitepress'), 'unload_cb' => 'icl_thickbox_refresh')) . esc_html($job->translator_name)  . '</a> (ICanLocalize)';                    
+                    ?>
+                    <?php else: ?>
+                    <a href="<?php echo $iclTranslationManagement->get_translator_edit_url($job->translator_id) ?>"><?php echo esc_html($job->translator_name) ?></a>
+                    <?php endif;?>
                 <?php else: ?>
-                <span class="icl_tj_select_translator"><?php $iclTranslationManagement->translators_dropdown(
-                    array('name'=>'icl_tj_translator_for_'.$job->job_id , 'from'=>$job->source_language_code,'to'=>$job->language_code, 'selected'=>@intval($job->translator_id)));?></span>
+                <span class="icl_tj_select_translator"><?php 
+                    $iclTranslationManagement->translators_dropdown(
+                        array(
+                            'name'=>'icl_tj_translator_for_'.$job->job_id , 
+                            'from'=>$job->source_language_code,
+                            'to'=>$job->language_code, 
+                            'selected'=>@intval($job->translator_id),
+                            'services' => array('local', 'icanlocalize')
+                        )
+                    );
+                    ?></span>
                 <input type="hidden" id="icl_tj_ov_<?php echo $job->job_id ?>" value="<?php echo @intval($job->translator_id) ?>" />
                 <span class="icl_tj_select_translator_controls" id="icl_tj_tc_<?php echo $job->job_id ?>">
                     <input type="button" class="button-secondary icl_tj_ok" value="<?php _e('Send', 'sitepress') ?>" />&nbsp;

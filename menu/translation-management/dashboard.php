@@ -392,7 +392,8 @@ if (!empty($icl_translation_services)) {
                                         'to'            => $lang['code'],
                                         'name'          => 'translator['.$lang['code'].']',
                                         'default_name'  => __('First available (Local)', 'sitepress'),
-                                        'selected'      =>  $icl_selected_translators[$lang['code']]
+                                        'selected'      =>  $icl_selected_translators[$lang['code']],
+                                        'services'      => array('local', 'icanlocalize')
                                         )); 
                         ?>                        
                         </label>

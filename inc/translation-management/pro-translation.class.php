@@ -17,12 +17,15 @@ class ICL_Pro_Translation{
         global $sitepress, $sitepress_settings, $wpdb, $iclTranslationManagement;
         
         // don't wait for init
-        $iclTranslationManagement->init();
+        if(empty($this->tmg->settings)){
+            $iclTranslationManagement->init();    
+        }
+        
         
         $err = false;
         
         $post = get_post($post_id);
-        
+                
         if(!$post){
             return false;
         }
@@ -1431,6 +1434,25 @@ class ICL_Pro_Translation{
         }        
         return (int)$words;
     }    
+    
+    public function get_translator_name($translator_id){
+        global $sitepress_settings;
+        static $translators;
+        if(is_null($translators)){
+            foreach($sitepress_settings['icl_lang_status'] as $lp){
+                if(!empty($lp['translators'])){
+                    foreach($lp['translators'] as $tr){
+                        $translators[$tr['id']] = $tr['nickname'];                    
+                    }
+                }
+            }
+        }        
+        if(isset($translators[$translator_id])){
+            return $translators[$translator_id];
+        }else{
+            return false;
+        }
+    }
     
         
 }  

@@ -268,7 +268,7 @@ function icl_tm_assign_translator_request(job_id, translator_id, select){
     var translation_controls = select.parent().parent().find('.icl_tj_select_translator_controls');
     select.attr('disabled', 'disabled');
     translation_controls.find('.icl_tj_cancel, .icl_tj_ok').attr('disabled', 'disabled');
-
+    var tdwrp = select.parent().parent();
     jQuery.ajax({
         type: "POST",
         url: icl_ajx_url,
@@ -277,7 +277,11 @@ function icl_tm_assign_translator_request(job_id, translator_id, select){
         success: function(msg){
             if(!msg.error){
                 translation_controls.hide();    
-                jQuery('#icl_tj_ov_'+job_id).val(translator_id);
+                if(msg.service == 'icanlocalize'){
+                    tdwrp.html(msg.message);
+                }else{                    
+                    jQuery('#icl_tj_ov_'+job_id).val(translator_id);
+                }
             }else{
                 //                
             }
