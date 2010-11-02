@@ -22,7 +22,7 @@ class SitePress{
                 add_action('init', array($this, 'reminders_popup'));
             }            
             elseif($_GET['icl_action']=='dismiss_help'){
-                $this->settings['dont_show_help_admin_notice'] = true;
+                $this->settings['dont_show_help_admin_nonotice'] = true;
                 $this->save_settings();                
             }elseif($_GET['icl_action']=='dbdump'){
                 include_once ICL_PLUGIN_PATH . '/inc/functions-troubleshooting.php';
@@ -1436,9 +1436,9 @@ class SitePress{
             wp_enqueue_script('sitepress-icl_reminders', ICL_PLUGIN_URL . '/res/js/icl_reminders.js', array(), ICL_SITEPRESS_VERSION);
         }
 
-        if('content-translation' == $page_basename) {        
-            wp_enqueue_script('icl-sidebar-scripts', ICL_PLUGIN_URL . '/res/js/icl_sidebar.js', array(), ICL_SITEPRESS_VERSION);
-        }
+        //if('content-translation' == $page_basename) {        
+        //    wp_enqueue_script('icl-sidebar-scripts', ICL_PLUGIN_URL . '/res/js/icl_sidebar.js', array(), ICL_SITEPRESS_VERSION);
+        //}
         if('languages' == $page_basename || 'string-translation' == $page_basename) {        
             wp_enqueue_script( 'colorpicker' );
         }
@@ -4742,7 +4742,7 @@ class SitePress{
     }
     
     function add_content_for_posts_management_column($column_name){
-        global $wpdb;
+        global $wpdb, $sitepress_settings;
         if($column_name != 'icl_translations') return;        
         global $id, $__management_columns_posts_translations, $pagenow, $iclTranslationManagement;
         $active_languages = $this->get_active_languages();
@@ -4762,9 +4762,49 @@ class SitePress{
                                 $id.'&translate_to['.$v['code'].']=1');                            
                         }
                         break;
-                    case ICL_TM_TMETHOD_PRO:
+                    case ICL_TM_TMETHOD_PRO:                        
+                        if($this->have_icl_translator($src_lang,$v['code'])){
+                            $job_id = $iclTranslationManagement->get_translation_job_id($__management_columns_posts_translations[$id][$v['code']]->trid, $v['code']);
+                            if($job_id){
+                                $job_details = $iclTranslationManagement->get_translation_job($job_id);
+                                if($job_details->status == ICL_TM_IN_PROGRESS || $job_details->status == ICL_TM_WAITING_FOR_TRANSLATOR){
+                                    $img = 'in-progress.png';
+                                    $alt = sprintf(__('Translation to %s is in progress','sitepress'), $v['display_name']);
+                                }
+                                $link = admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&job_id='.$job_id);
+                            }else{
+                                
+                                // get the first translator for the given language pair
+                                /*
+                                foreach($sitepress_settings['icl_lang_status'] as $lpair){
+                                    if($lpair['from'] == $src_lang && $lpair['to'] == $v['code'] && !empty($lpair['translators'])){
+                                        $translator_id = $lpair['translators'][0]['id'];
+                                    }
+                                }
+                                
+                                $link = admin_url('edit.php?'.$_SERVER['QUERY_STRING'].'&icl_tm_action=send_jobs&translate_from='.$src_lang 
+                                    .'&translate_to['.$v['code'].']=1&iclpost[]='.$id
+                                    .'&service=icanlocalize&iclnonce=' . wp_create_nonce('pro-translation-icl') 
+                                    . '&translator['.$v['code'].']=' . $translator_id . '-icanlocalize');
+                                
+                                */
+                                $link = admin_url('edit.php?'.$_SERVER['QUERY_STRING'].'&icl_tm_action=send_jobs&translate_from='.$src_lang 
+                                    .'&translate_to['.$v['code'].']=1&iclpost[]='.$id
+                                    .'&service=icanlocalize&iclnonce=' . wp_create_nonce('pro-translation-icl'));
+                            }
+                        }else{
+                            $link = false;
+                            $alt = sprintf(__('Get %s translators','sitepress'), $v['display_name']);
+                            $img = 'add_translators.png';
+                            echo $this->create_icl_popup_link("@select-translators;{$src_lang};{$v['code']}@",
+                                array(
+                                    'ar'=>1, 
+                                    'title'=>$alt,
+                                    'unload_cb' => 'icl_pt_reload_translation_box'
+                                )
+                            ) . '<img style="padding:1px;margin:2px;" border="0" src="'.ICL_PLUGIN_URL . '/res/img/' .$img.'" alt="'.$alt.'" width="16" height="16" />' . '</a>';
+                        }
                         break;
-                        // TBD
                     default:
                         $link = 'post.php?post_type='.$post_type.'&action=edit&amp;post='.$__management_columns_posts_translations[$id][$v['code']]->element_id.'&amp;lang='.$v['code'];
                 }
@@ -4789,16 +4829,57 @@ class SitePress{
                         }                        
                         break;
                     case ICL_TM_TMETHOD_PRO:
-                        // TBD
+                        if($this->have_icl_translator($src_lang,$v['code'])){
+                            $job_id = $iclTranslationManagement->get_translation_job_id($__management_columns_posts_translations[$id][$v['code']]->trid, $v['code']);
+                            if($job_id){
+                                $job_details = $iclTranslationManagement->get_translation_job($job_id);
+                                if($job_details->status == ICL_TM_IN_PROGRESS || $job_details->status == ICL_TM_WAITING_FOR_TRANSLATOR){
+                                    $img = 'in-progress.png';
+                                    $alt = sprintf(__('Translation to %s is in progress','sitepress'), $v['display_name']);
+                                }
+                                $link = admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&job_id='.$job_id);    
+                            }else{
+                                
+                                // get the first translator for the given language pair
+                                /*
+                                foreach($sitepress_settings['icl_lang_status'] as $lpair){
+                                    if($lpair['from'] == $src_lang && $lpair['to'] == $v['code'] && !empty($lpair['translators'])){
+                                        $translator_id = $lpair['translators'][0]['id'];
+                                    }
+                                }
+                                $link = admin_url('edit.php?'.$_SERVER['QUERY_STRING'].'&icl_tm_action=send_jobs&translate_from='.$src_lang
+                                    .'&translate_to['.$v['code'].']=1&iclpost[]='.$id
+                                    .'&service=icanlocalize&iclnonce=' . wp_create_nonce('pro-translation-icl') 
+                                    . '&translator['.$v['code'].']=' . $translator_id . '-icanlocalize');
+                                */
+                                $link = admin_url('edit.php?'.$_SERVER['QUERY_STRING'].'&icl_tm_action=send_jobs&translate_from='.$src_lang
+                                    .'&translate_to['.$v['code'].']=1&iclpost[]='.$id
+                                    .'&service=icanlocalize&iclnonce=' . wp_create_nonce('pro-translation-icl')); 
+                                
+                            }
+                        }else{
+                            $link = false;
+                            $alt = sprintf(__('Get %s translators','sitepress'), $v['display_name']);
+                            $img = 'add_translators.png';
+                            echo $this->create_icl_popup_link("@select-translators;{$src_lang};{$v['code']}@",
+                                array(
+                                    'ar'=>1, 
+                                    'title'=>$alt,
+                                    'unload_cb' => 'icl_pt_reload_translation_box'
+                                )
+                            ) . '<img style="padding:1px;margin:2px;" border="0" src="'.ICL_PLUGIN_URL . '/res/img/' .$img.'" alt="'.$alt.'" width="16" height="16" />' . '</a>';
+                        }
                         break;
                     default:
                         $link = 'post-new.php?post_type='.$post_type.'&trid=' 
                             . $__management_columns_posts_translations[$id][$this->get_current_language()]->trid.'&amp;lang='.$v['code'].'&amp;source_lang=' . $src_lang;
                 }
             }
-            echo '<a href="'.$link.'" title="'.$alt.'">';
-            echo '<img style="padding:1px;margin:2px;" border="0" src="'.ICL_PLUGIN_URL . '/res/img/' .$img.'" alt="'.$alt.'" width="16" height="16" />';
-            echo '</a>';
+            if($link){
+                echo '<a href="'.$link.'" title="'.$alt.'">';
+                echo '<img style="padding:1px;margin:2px;" border="0" src="'.ICL_PLUGIN_URL . '/res/img/' .$img.'" alt="'.$alt.'" width="16" height="16" />';
+                echo '</a>';
+            }
         }
     }
     
@@ -4854,7 +4935,7 @@ class SitePress{
     
     function xmlrpc_call_actions($action){
         global $HTTP_RAW_POST_DATA, $wpdb;
-        $params = xml2array($HTTP_RAW_POST_DATA);
+        $params = icl_xml2array($HTTP_RAW_POST_DATA);
         switch($action){
             case 'wp.getPage':    
             case 'blogger.getPost': // yet this doesn't return custom fields
@@ -5094,7 +5175,7 @@ class SitePress{
         
     }
     
-    function meta_generator_tag(){
+    function meta_generator_tag(){        
         $lids = array();
         foreach($this->get_active_languages() as $l){
             $lids[] = $l['id'];

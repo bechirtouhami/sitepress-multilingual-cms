@@ -214,7 +214,7 @@
         }
     ?>
     
-    <?php if($untranslated_found > 0): ?>    
+    <?php if($untranslated_found > 0 && $iclTranslationManagement->settings['doc_translation_method'] != ICL_TM_TMETHOD_PRO): ?>    
         <?php if($this->get_icl_translation_enabled()):?>
             <p style="clear:both;"><b><?php _e('or, translate manually:', 'sitepress'); ?> </b>
         <?php else: ?>
@@ -230,8 +230,7 @@
                 <?php
                     $add_anchor =  __('add','sitepress');
                     $img = 'add_translation.png';
-                    switch($iclTranslationManagement->settings['doc_translation_method']){
-                        case ICL_TM_TMETHOD_EDITOR:
+                    if($iclTranslationManagement->settings['doc_translation_method'] == ICL_TM_TMETHOD_EDITOR){
                             $job_id = $iclTranslationManagement->get_translation_job_id($trid, $lang['code']);
                             if($job_id){
                                 $job_details = $iclTranslationManagement->get_translation_job($job_id);
@@ -244,13 +243,10 @@
                                 $add_link = admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&icl_tm_action=create_job&post[]='.
                                     $post->ID.'&translate_to['.$lang['code'].']=1');
                             }                                                    
-                            break;
-                        case ICL_TM_TMETHOD_PRO:
-                            // TBD
-                            break;
-                        default:                            
-                            $add_link = get_option('siteurl') . "/wp-admin/post-new.php?post_type={$post->post_type}&trid=" . $trid . "&lang=" . $lang['code'] . "&source_lang=" . $selected_language;    
-                    }                    
+                    }else{                        
+                            $add_link = get_option('siteurl') . "/wp-admin/post-new.php?post_type={$post->post_type}&trid=" . 
+                                $trid . "&lang=" . $lang['code'] . "&source_lang=" . $selected_language;    
+                    }                                        
                 ?>
                 <td align="right"><a href="<?php echo $add_link?>" title="<?php echo esc_attr($add_anchor) ?>"><img  border="0" src="<?php 
                     echo ICL_PLUGIN_URL . '/res/img/' . $img ?>" alt="<?php echo esc_attr($add_anchor) ?>" width="16" height="16" /></a></td>
@@ -279,7 +275,8 @@
                             $edit_link = admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&job_id='.$job_id);    
                             break;
                         case ICL_TM_TMETHOD_PRO:
-                            // TBD
+                            $job_id = $iclTranslationManagement->get_translation_job_id($trid, $lang['code']);
+                            $edit_link = admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&job_id='.$job_id);    
                             break;
                         default:
                             $edit_link = get_edit_post_link($translations[$lang['code']]->element_id);    
@@ -294,29 +291,7 @@
         </tr>
         <?php endforeach; ?>
         </table>
-        
-        <?php if($this->get_icl_translation_enabled()):?>
-            <p style="clear:both;"><b><?php echo __('ICanlocalize translation status:', 'sitepress') ?></b> (<a href="javascript:;" 
-            onclick="jQuery('#icl_translations_status').toggle();jQuery('#noupdate_but').toggle();if(jQuery(this).html()=='<?php echo __('hide','sitepress')?>') jQuery(this).html('<?php echo __('show','sitepress')?>'); else jQuery(this).html('<?php echo __('hide','sitepress')?>')"><?php echo __('show','sitepress')?></a>)</p>
-
-            <?php icl_display_post_translation_status($post->ID, &$post_translation_statuses, true); ?>
-            <table width="100%" id="icl_translations_status" style="display:none;">
-            
-            <?php foreach($active_languages as $lang): if($selected_language==$lang['code']) continue; ?>
-            <tr>
-                <?php if(isset($translations[$lang['code']]->element_id)):?>
-                    <td><?php echo $lang['display_name'] ?></td>
-                    <td class="icl_translation_status_msg">
-                    <?php echo isset($post_translation_statuses[$lang['code']]) ? $post_translation_statuses[$lang['code']] : __('Not translated','sitepress'); ?>
-                    </td>
-                    
-                <?php endif; ?>        
-            </tr>
-            <?php endforeach; ?>
-            </table>
-        <?php endif; ?>
-        
-        
+                
         
     <?php endif; ?>
     

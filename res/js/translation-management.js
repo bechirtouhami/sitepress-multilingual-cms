@@ -200,6 +200,29 @@ jQuery(document).ready(function(){
         return false;
     });
 
+    
+    if (typeof(icl_tb_init) != 'undefined') {
+        icl_tb_init('a.icl_thickbox');
+        icl_tb_set_size('a.icl_thickbox');
+    }
+    
+    var cache = '&cache=1';
+    if (location.href.indexOf("translation-management.php&sm=translators") != -1 || location.href.indexOf('/post.php') != -1 || location.href.indexOf('/edit.php') != -1) {
+        cache = '';    
+    }
+    jQuery.ajax({
+        type: "POST",
+        url: icl_ajx_url,
+        dataType: 'json',
+        data: "icl_ajx_action=get_translator_status"+cache,
+        success: function(msg){
+            if (cache == '') {
+            }
+        }
+    });
+
+    
+    
 })
 
 function icl_add_translators_form_check_submit() {
@@ -301,6 +324,7 @@ function icl_tm_update_complete_cb_status(){
         jQuery('#icl_tm_editor :checkbox[name=complete]').attr('disabled', 'disabled');        
     }    
 }
+
 
 
 

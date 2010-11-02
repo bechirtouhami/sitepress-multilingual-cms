@@ -94,7 +94,11 @@ class TranslationManagement{
         //$this->load_plugins_wpml_config();
         //$this->load_theme_wpml_config();
         
-        add_action('icl_tm_messages', array($this, 'show_messages'));
+        if($GLOBALS['pagenow']=='edit.php'){ // use standard WP admin notices
+            add_action('admin_notices', array($this, 'show_messages'));    
+        }else{                               // use custom WP admin notices
+            add_action('icl_tm_messages', array($this, 'show_messages'));            
+        }
         
         wp_enqueue_script('sitepress-translation-management' , ICL_PLUGIN_URL . '/res/js/translation-management.js', null, ICL_SITEPRESS_VERSION, true);
         
@@ -114,7 +118,7 @@ class TranslationManagement{
         }
         
         // Add a nice warning message if the user tries to edit a post manually and it's actually in the process of being translated
-        global $pagenow;
+        
         if($pagenow == 'post-new.php' && isset($_GET['trid']) && isset($_GET['lang'])){
             add_action('admin_notices', array($this, '_warn_editing_icl_translation'));    
         }
@@ -193,7 +197,9 @@ class TranslationManagement{
                 unset($_SESSION['translation_dashboard_filter']);
                 break;          
            case 'send_jobs':
-                $this->send_jobs($data);
+                if(isset($data['iclnonce']) && wp_verify_nonce($data['iclnonce'], 'pro-translation-icl')){
+                    $this->send_jobs($data);                    
+                }   
                 break; 
            case 'jobs_filter':
                 $_SESSION['translation_jobs_filter'] = $data['filter'];
@@ -1189,7 +1195,7 @@ class TranslationManagement{
             return;
         }
         // no post selected ?
-        if(!isset($post) || empty($post)){
+        if(!isset($iclpost) || empty($iclpost)){
             $this->messages[] = array(
                 'type'=>'error',
                 'text' => __('Please select at least one document to translate.', 'sitepress')
@@ -1198,7 +1204,7 @@ class TranslationManagement{
             return;
         }
         
-        $selected_posts = $post;
+        $selected_posts = $iclpost;
         $selected_translators = $translator;
         $selected_languages = $translate_to;
         $job_ids = array();
@@ -1260,7 +1266,7 @@ class TranslationManagement{
         }else{
             $this->messages[] = array(
                 'type'=>'updated',
-                'text' => __('All documents sent to translation.', 'sitepress')
+                'text' => __('Selected document(s) sent to translation.', 'sitepress')
             );
         }
 
@@ -1893,7 +1899,7 @@ class TranslationManagement{
     function _parse_wpml_config($file){
         global $sitepress, $sitepress_settings;
         
-        $config = xml2array(file_get_contents($file));    
+        $config = icl_xml2array(file_get_contents($file));    
         
         // custom fields
         if(!empty($config['wpml-config']['custom-fields'])){

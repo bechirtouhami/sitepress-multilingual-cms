@@ -8,6 +8,7 @@
 .icl_tm_wrap{
     border: 1px solid #CCCCCC;
     padding:10px;    
+    background-color:#ffffff;
 }
 
 #icl_tm_adduser{
@@ -47,6 +48,7 @@
 .nav-tab-active{
     font-weight: bold;        
     background-color: #fff;
+    border-bottom-color: #fff;
 }
 
 .form-table td, .form-table th{

@@ -1,12 +1,5 @@
 jQuery(document).ready(function(){
-    // put the reminders after the "advanced switch" if it exists.
-    if (jQuery('.icl_advanced_switch').length > 0) {
-        jQuery('#icl_reminder_message').insertAfter('.icl_advanced_switch');
-        if (jQuery('#icl_update_message').length > 0) {
-            jQuery('#icl_update_message').insertAfter('.icl_advanced_switch');
-        }
-    }
-    
+
     jQuery('#icl_reminder_show').click(icl_show_hide_reminders);
 
     jQuery('#icl_reminder_message').css({'margin-bottom' : '5px'});

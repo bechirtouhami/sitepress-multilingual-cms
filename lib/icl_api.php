@@ -170,7 +170,7 @@ class ICanLocalizeQuery{
         if($gzipped){
             $c->results = $this->_gzdecode($c->results);
         }        
-        $results = xml2array($c->results,1);                
+        $results = icl_xml2array($c->results,1);                
         if(isset($results['info']) && $results['info']['status']['attr']['err_code']=='-1'){
             $this->error = $results['info']['status']['value'];            
             return false;

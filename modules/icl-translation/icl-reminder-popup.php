@@ -19,7 +19,7 @@
         $icl_query = new ICanLocalizeQuery();                
         
         foreach($this->get_active_languages() as $lang){
-            $lang_server[$lang['code']] = apply_filters('icl_server_languages_map', $lang['english_name']);
+            $lang_server[$lang['code']] = ICL_Pro_Translation::server_languages_map($lang['english_name']);
         }        
         if(!$this->icl_account_configured()){
             $user['create_account'] = 1;
@@ -91,6 +91,8 @@
         $icl_query = new ICanLocalizeQuery($this->settings['site_id'], $this->settings['access_key']);                
         $website_details = $icl_query->get_website_details();
         
+        
+        
         $translation_languages = $website_details['translation_languages']['translation_language'];        
         if(isset($translation_languages['attr'])){
             $buff = $translation_languages;
@@ -98,6 +100,7 @@
             $translation_languages[0] = $buff;
             unset($buff);
         }
+        
         foreach((array)$translation_languages as $lpair){
             if($lpair['attr']['from_language_name'] == $lang_server[$from_lang] && $lpair['attr']['to_language_name'] == $lang_server[$to_lang]){
                 $lang_pair_id = $lpair['attr']['id']; 

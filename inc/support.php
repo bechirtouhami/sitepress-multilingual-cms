@@ -99,7 +99,7 @@ class SitePress_Support {
 	function request($url) {
 		$result = $this->request->request($url);
 		if (!is_object($result)) {
-			return xml2array($result['body'], 1);
+			return icl_xml2array($result['body'], 1);
 		} else {
 			return array();
 		}

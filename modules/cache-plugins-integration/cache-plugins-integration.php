@@ -66,7 +66,7 @@ if(is_admin() || defined('XMLRPC_REQUEST')):
                     
                     // when a post is sent from the translation server
                     global $HTTP_RAW_POST_DATA;
-                    $hrow = xml2array($HTTP_RAW_POST_DATA);
+                    $hrow = icl_xml2array($HTTP_RAW_POST_DATA);
                     if(isset($hrow['methodCall']['methodName']['value']) && $hrow['methodCall']['methodName']['value'] == 'icanlocalize.set_translation_status'){
                         add_action('save_post', array($this, 'call_cache_clear'));
                     }

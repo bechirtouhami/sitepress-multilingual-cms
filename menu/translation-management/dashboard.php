@@ -245,7 +245,7 @@ if (!empty($icl_translation_services)) {
             <?php foreach($icl_documents as $doc): $oddcolumn=!$oddcolumn; ?>
             <tr<?php if($oddcolumn): ?> class="alternate"<?php endif;?>>
                 <td scope="col">
-                    <input type="checkbox" value="<?php echo $doc->post_id ?>" name="post[]" <?php 
+                    <input type="checkbox" value="<?php echo $doc->post_id ?>" name="iclpost[]" <?php 
                         if(isset($_GET['post_id']) || (is_array($icl_selected_posts) && in_array($doc->post_id, $icl_selected_posts))) echo 'checked="checked"'?> />                    
                 </td>
                 <td scope="col" class="post-title column-title">
@@ -401,6 +401,7 @@ if (!empty($icl_translation_services)) {
                     </li>
                     <?php endforeach; ?>
                     </ul>
+                    <input id="iclnonce" type="hidden" value="<?php echo wp_create_nonce('pro-translation-icl') ?>" />
                     <input id="icl_tm_jobs_submit" class="button-primary" type="submit" value="<?php _e('Translate documents', 'sitepress') ?>" 
                         <?php if(empty($icl_selected_languages) && empty($icl_selected_posts)):?>disabled="disabled" <?php endif; ?> />
                 </td>
