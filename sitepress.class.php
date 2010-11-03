@@ -4852,7 +4852,17 @@ class SitePress{
                                     .'&service=icanlocalize&iclnonce=' . wp_create_nonce('pro-translation-icl') 
                                     . '&translator['.$v['code'].']=' . $translator_id . '-icanlocalize');
                                 */
-                                $link = admin_url('edit.php?'.$_SERVER['QUERY_STRING'].'&icl_tm_action=send_jobs&translate_from='.$src_lang
+                                //$qs = join('&', array_diff(explode('&', $_SERVER['QUERY_STRING']), array('iclpost[]', 'icl_tm_action', 'translate_from', '')))                                
+                                $qs = array();
+                                if(!empty($_SERVER['QUERY_STRING']))
+                                foreach($_exp = explode('&', $_SERVER['QUERY_STRING']) as $q=>$qv){
+                                    $__exp = explode('=', $qv);
+                                    $__exp[0] = preg_replace('#\[(.*)\]#', '', $__exp[0]);
+                                    if(!in_array($__exp[0], array('icl_tm_action', 'translate_from', 'translate_to', 'iclpost', 'service', 'iclnonce'))){
+                                        $qs[$q] = $qv;
+                                    }
+                                }
+                                $link = admin_url('edit.php?'.join('&', $qs).'&icl_tm_action=send_jobs&translate_from='.$src_lang
                                     .'&translate_to['.$v['code'].']=1&iclpost[]='.$id
                                     .'&service=icanlocalize&iclnonce=' . wp_create_nonce('pro-translation-icl')); 
                                 

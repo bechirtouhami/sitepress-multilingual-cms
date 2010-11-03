@@ -1226,7 +1226,9 @@ class TranslationManagement{
                 $_status = ICL_TM_WAITING_FOR_TRANSLATOR;
                 
                 $_exp = explode('-', $selected_translators[$lang]);
-                $service = isset($_exp[1]) ? $_exp[1] : 'local';
+                if(!isset($service)){
+                    $service = isset($_exp[1]) ? $_exp[1] : 'local';
+                }                
                 $translator_id = $_exp[0];
                 
                 // add translation_status record        
@@ -1240,6 +1242,7 @@ class TranslationManagement{
                     'translation_package'   => serialize($translation_package)
                 ));
                 $job_ids[] = $this->add_translation_job($rid, $translator_id, $translation_package);                                
+                
                 if( $service == 'icanlocalize' ){
                     global $ICL_Pro_Translation;
                     $ICL_Pro_Translation->send_post($post->ID, array($lang), $translator_id);
