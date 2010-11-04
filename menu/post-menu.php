@@ -285,7 +285,7 @@
                 <td style="padding-left: 4px;"><?php echo $lang['display_name'] ?></td>
                 <td align="right" ><a href="<?php echo $edit_link ?>" title="<?php echo esc_attr($edit_anchor) ?>"><img border="0" src="<?php 
                     echo ICL_PLUGIN_URL . '/res/img/' . $img ?>" alt="<?php echo esc_attr($edit_anchor) ?>" width="16" height="16" /></a>                    
-                <?php //echo isset($translations[$lang['code']]->post_title)?'<a href="'.$edit_link.'" title="'.__('Edit','sitepress').'">'.apply_filters('the_title', __('edit','sitepress')).'</a>':__('n/a','sitepress') ?></td>
+                </td>
                 
             <?php endif; ?>        
         </tr>

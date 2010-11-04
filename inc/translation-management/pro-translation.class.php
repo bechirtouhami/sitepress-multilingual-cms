@@ -355,7 +355,7 @@ class ICL_Pro_Translation{
                 $this->_throw_exception_for_mysql_errors();
                 return 4;
             }
-            
+            //return $this->add_translated_document($cms_id, $request_id);
             if ($this->add_translated_document($cms_id, $request_id) === true){
                 $this->_throw_exception_for_mysql_errors();
                 return 1;

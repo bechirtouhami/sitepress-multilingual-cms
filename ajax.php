@@ -435,7 +435,7 @@ switch($_REQUEST['icl_ajx_action']){
         
             
     case 'send_translation_request':
-        global $ICL_Pro_Translation, $current_user;   
+        global $iclTranslationManagement, $current_user;   
         $post_ids = explode(',',$_POST['post_ids']);
         $target_languages = explode('#', $_POST['target_languages']);
         $post_types = $_POST['icl_post_type'];
@@ -447,11 +447,27 @@ switch($_REQUEST['icl_ajx_action']){
             if(isset($_POST['tn_note_'.$post_id]) && trim($_POST['tn_note_'.$post_id])){
                 update_post_meta($post_id, '_icl_translator_note', $_POST['tn_note_'.$post_id]);
             }
-            
+            foreach($target_languages as $to_lang){
+                $from_lang = $wpdb->get_var($wpdb->prepare("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE element_id=%d AND element_type=%s", $post_id, $post_types[$post_id]));
+                $data = array(
+                    'translate_from'    => $from_lang,
+                    'translate_to'      => array($to_lang=>1),
+                    'iclpost'           => array($post_id),
+                    'service'           => 'icanlocalize',
+                    'iclnonce'          => wp_create_nonce('pro-translation-icl')
+                );
+                $jd = $iclTranslationManagement->send_jobs($data);
+                $resp[] = array(
+                    'post_id' => $post_id,
+                    'status'  => !empty($jd)
+                );
+            }
+            /*
             $resp[] = array(
                 'post_id'=>$post_id, 
                 'status'=>$ICL_Pro_Translation->send_post($post_id, $target_languages, $translator_id)
             );
+            */
         }
         echo json_encode($resp);
         break;

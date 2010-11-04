@@ -420,6 +420,7 @@ function iclPTSend(){
         data: "icl_ajx_action=send_translation_request&post_ids=" + jQuery('#icl_pt_post_id').val() 
             + '&icl_post_type['+ jQuery('#icl_pt_post_id').val() + ']=' + jQuery('#icl_pt_post_type').val() 
             + '&target_languages='+target_languages.join('#')
+            + '&service=icanlocalize'
             + '&tn_note_'+jQuery('#icl_pt_post_id').val()+'=' + jQuery('#icl_pt_tn_note').val(),
         success: function(msg){
             for(i in msg){

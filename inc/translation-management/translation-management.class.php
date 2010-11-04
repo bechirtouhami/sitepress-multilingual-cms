@@ -506,6 +506,12 @@ class TranslationManagement{
         if($post->post_status == 'auto-draft'){
             return;
         }
+        // skip autosave
+        if(isset($_POST['autosave'])){
+            return;
+        }
+        
+        
         
         // when a manual translation is added/edited make sure to update translation tables
         if($_POST['icl_trid'] && $this->settings['doc_translation_method'] == ICL_TM_TMETHOD_MANUAL){
