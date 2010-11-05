@@ -1,7 +1,6 @@
 <?php //included from menu translation-management.php ?>
 <?php
-  
-  
+      
     $cposts = array();
     $icl_post_types = $sitepress->get_translatable_documents(true);    
     
@@ -77,7 +76,7 @@
                         <li><label><input type="radio" name="t_method" value="<?php echo ICL_TM_TMETHOD_MANUAL ?>" <?php if($doc_translation_method==ICL_TM_TMETHOD_MANUAL): ?>checked="checked"<?php endif; ?> /> 
                             <?php _e('Create translations manually.', 'sitepress')?></label></li>
                         <li><label><input type="radio" name="t_method" value="<?php echo ICL_TM_TMETHOD_EDITOR ?>" <?php if($doc_translation_method==ICL_TM_TMETHOD_EDITOR): ?>checked="checked"<?php endif; ?> /> 
-                            <?php _e('Use translation editor.', 'sitepress')?></label></li>
+                            <?php _e('Use the translation editor.', 'sitepress')?></label></li>
                         <li><label><input type="radio" name="t_method" value="<?php echo ICL_TM_TMETHOD_PRO ?>" <?php if($doc_translation_method==ICL_TM_TMETHOD_PRO): ?>checked="checked"<?php endif; ?> /> 
                             <?php _e('Send to professional translation.', 'sitepress')?></label></li>
                     </ul>

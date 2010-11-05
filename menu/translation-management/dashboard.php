@@ -401,7 +401,7 @@ if (!empty($icl_translation_services)) {
                     </li>
                     <?php endforeach; ?>
                     </ul>
-                    <input id="iclnonce" type="hidden" value="<?php echo wp_create_nonce('pro-translation-icl') ?>" />
+                    <input name="iclnonce" type="hidden" value="<?php echo wp_create_nonce('pro-translation-icl') ?>" />
                     <input id="icl_tm_jobs_submit" class="button-primary" type="submit" value="<?php _e('Translate documents', 'sitepress') ?>" 
                         <?php if(empty($icl_selected_languages) && empty($icl_selected_posts)):?>disabled="disabled" <?php endif; ?> />
                 </td>

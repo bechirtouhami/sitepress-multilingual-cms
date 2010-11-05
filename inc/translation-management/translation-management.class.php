@@ -606,18 +606,19 @@ class TranslationManagement{
         }
         
         // if this is an original post - compute md5 hash and mark for update if neded
-        if($_POST['icl_trid']){
+        if($_POST['icl_trid'] && empty($_POST['icl_minor_edit'])){
             $needs_update = false;
             $is_original  = false;
             $translations = $sitepress->get_element_translations($_POST['icl_trid'], 'post_' . $post->post_type);    
+
             foreach($translations as $lang=>$translation){                
-                if($translation->original == 1 && $translation->translation_id == $translation_id){
+                if($translation->original == 1 && $translation->element_id == $post_id){
                     $is_original = true;
                     break;
                 }
             }
             if($is_original){
-                $md5 = $wpdb->get_var($wpdb->prepare("SELECT md5 FROM {$wpdb->prefix}icl_translation_status WHERE translation_id = %d", $translation_id));
+                $md5 = $this->post_md5($post_id);
                 foreach($translations as $lang=>$translation){                
                     if(!$translation->original){
                         $emd5 = $wpdb->get_var($wpdb->prepare("SELECT md5 FROM {$wpdb->prefix}icl_translation_status WHERE translation_id = %d", $translation->translation_id));
@@ -772,7 +773,7 @@ class TranslationManagement{
         $t_el_types = array_keys($sitepress->get_translatable_documents());
         
         // SELECT
-        $select = " p.ID AS post_id, p.post_title, p.post_content, p.post_type, p.post_status, p.post_date, t.source_language_code <> '' AS is_translation";
+        $select = " p.ID AS post_id, p.post_title, p.post_content, p.post_type, p.post_status, p.post_date, t.trid, t.source_language_code <> '' AS is_translation";
         if($to_lang){
             $select .= ", iclts.status, iclts.needs_update";
         }else{
@@ -894,7 +895,18 @@ class TranslationManagement{
             LIMIT {$limit}
         ";
         
+        
         $results = $wpdb->get_results($sql);    
+        
+        // post process
+        foreach($results as $k=>$v){
+            if($v->is_translation){
+                $source_language = $wpdb->get_var($wpdb->prepare("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE trid=%d AND source_language_code IS NULL", $v->trid));    
+                $_tmp = 'status_' . $source_language;
+                $v->$_tmp = ICL_TM_COMPLETE;
+            }    
+        }
+        
         
         
         $count = $wpdb->get_var("SELECT FOUND_ROWS()");
@@ -1229,6 +1241,9 @@ class TranslationManagement{
                     $translation_id = $post_translations[$lang]->translation_id;
                 }     
                 
+                $current_translation_status = $this->get_element_translation($post_id, $lang, 'post_' . $post->post_type);
+                if(!empty($current_translation_status) && $current_translation_status->md5 == $md5 && !$current_translation_status->needs_update) continue;
+                    
                 $_status = ICL_TM_WAITING_FOR_TRANSLATOR;
                 
                 $_exp = explode('-', $selected_translators[$lang]);
@@ -1580,13 +1595,15 @@ class TranslationManagement{
     
     function get_translation_job_id($trid, $language_code){
         global $wpdb, $sitepress;
+        
         $job_id = $wpdb->get_var($wpdb->prepare("
             SELECT tj.job_id FROM {$wpdb->prefix}icl_translate_job tj 
                 JOIN {$wpdb->prefix}icl_translation_status ts ON tj.rid = ts.rid
                 JOIN {$wpdb->prefix}icl_translations t ON ts.translation_id = t.translation_id
                 WHERE t.trid = %d AND t.language_code=%s
-                ORDER BY tj.rid DESC LIMIT 1                
+                ORDER BY tj.job_id DESC LIMIT 1                
         ", $trid, $language_code));
+        
         return $job_id;
     }
         
@@ -1818,10 +1835,12 @@ class TranslationManagement{
     //
     // when the translated post was created, we have the job_id and need to update the job
     function save_job_fields_from_post($job_id, $post){
-        global $wpdb;
+        global $wpdb, $sitepress;
         $data['complete'] = 1;
         $data['job_id'] = $job_id;        
         $job = $this->get_translation_job($job_id,1);
+        
+        //debug_array($job);
         
         foreach($job->elements as $element){
             $field_data = '';
@@ -1848,8 +1867,26 @@ class TranslationManagement{
                             }
                         }
                     }else{
-                        // taxonomies                                                 
-                        // TBD
+                        if(in_array($element->field_type, $sitepress->get_translatable_taxonomies(true, $post->post_type))){
+                            $ids = array();
+                            foreach($job->elements as $je){
+                                if($je->field_type == $element->field_type .'_ids' ){
+                                    $ids = explode(',', $je->field_data);
+                                }
+                            }
+                            $translated_tax_names = array();
+                            foreach($ids as $id){
+                                $translated_tax_id = icl_object_id($id, $element->field_type,false,$job->language_code);
+                                if($translated_tax_id){
+                                    $translated_tax_names[] = $wpdb->get_var($wpdb->prepare("
+                                        SELECT t.name FROM {$wpdb->terms} t JOIN {$wpdb->term_taxonomy} x ON t.term_id = x.term_id
+                                        WHERE x.term_taxonomy_id = {$translated_tax_id}
+                                    "));
+                                }
+                            }
+                            $field_data = $this->encode_field_data($translated_tax_names, $element->field_format);
+                            
+                        }
                     }
             }            
             $wpdb->update($wpdb->prefix.'icl_translate', 

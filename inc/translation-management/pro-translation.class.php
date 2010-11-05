@@ -338,7 +338,7 @@ class ICL_Pro_Translation{
             $cms_id      = $args[3];            
             $status      = $args[4];
             $message     = $args[5];  
-
+            
             if ($site_id != $sitepress_settings['site_id']) {
                 return 3;                                                             
             }
@@ -355,7 +355,11 @@ class ICL_Pro_Translation{
                 $this->_throw_exception_for_mysql_errors();
                 return 4;
             }
+            
+            
             //return $this->add_translated_document($cms_id, $request_id);
+            
+            
             if ($this->add_translated_document($cms_id, $request_id) === true){
                 $this->_throw_exception_for_mysql_errors();
                 return 1;
@@ -828,22 +832,21 @@ class ICL_Pro_Translation{
         
         update_post_meta($new_post_id, '_icl_translation', 1);
         
-                
-        $this->_content_fix_links_to_translated_content($new_post_id, $lang_code, 'post');
-        icl_st_fix_links_in_strings($new_post_id);
-        
-        
         // update translation status
         $wpdb->update($wpdb->prefix.'icl_translation_status', array('status'=>ICL_TM_COMPLETE, 'needs_update'=>0), array('translation_id'=>$cms_id));
         // 
         
         // add new translation job
         global $iclTranslationManagement;
-        $translation_package = $iclTranslationManagement->create_translation_package(get_post($translation['original_id']));
-        $job_id = $iclTranslationManagement->add_translation_job($tinfo->rid, $tinfo->translator_id, $translation_package);
+        //$translation_package = $iclTranslationManagement->create_translation_package(get_post($translation['original_id'])); 
+        //$job_id = $iclTranslationManagement->add_translation_job($tinfo->rid, $tinfo->translator_id, $translation_package);
+        $job_id = $iclTranslationManagement->get_translation_job_id($trid, $lang_code);
         // save the translation
-        
         $iclTranslationManagement->save_job_fields_from_post($job_id, get_post($new_post_id));
+        $iclTranslationManagement->mark_job_done($job_id);
+        
+        $this->_content_fix_links_to_translated_content($new_post_id, $lang_code, 'post');
+        icl_st_fix_links_in_strings($new_post_id);
                 
         
         // Now try to fix links in other translated content that may link to this post.

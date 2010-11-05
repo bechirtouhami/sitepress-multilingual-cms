@@ -1723,7 +1723,7 @@ function _icl_translation_send_strings($string_ids, $target) {
     
     if (sizeof($untranslated) >  0) {
         // Something to translate.
-        $target_for_server = apply_filters('icl_server_languages_map', array($target)); //filter some language names to match the names on the server
+        $target_for_server = array(ICL_Pro_Translation::server_languages_map($target)); //filter some language names to match the names on the server
         $data = array(
             'url'=>'', 
             'target_languages' => $target_for_server,
@@ -1754,12 +1754,20 @@ function _icl_translation_send_strings($string_ids, $target) {
         $iclq = new ICanLocalizeQuery($sitepress_settings['site_id'], $sitepress_settings['access_key']);
         
         $orig_lang = $sitepress->get_language_details($sitepress_settings['st']['strings_language']);
-        $orig_lang_for_server = apply_filters('icl_server_languages_map', $orig_lang['english_name']);
+        $orig_lang_for_server = ICL_Pro_Translation::server_languages_map($orig_lang['english_name']);
 
         $timestamp = date('Y-m-d H:i:s');
         
         $xml = $iclq->build_cms_request_xml($data, $orig_lang_for_server);
-        $res = $iclq->send_request($xml, "String translations", $target_for_server, $orig_lang_for_server, "");
+        $args = array(
+            'xml'           => $xml,
+            'title'         => "String translations",
+            'to_languages'  =>  $target_for_server,
+            'orig_language' => $orig_lang_for_server
+            
+        );
+
+        $res = $iclq->send_request($args);
 
         
         if($res > 0){
@@ -1773,6 +1781,19 @@ function _icl_translation_send_strings($string_ids, $target) {
                                                                      'status'=>CMS_REQUEST_WAITING_FOR_PROJECT_CREATION));
         }
     }
+}
+
+function icl_decode_translation_status_id($status){
+    switch($status){
+        case CMS_TARGET_LANGUAGE_CREATED: $st = __('Waiting for translator','sitepress');break;
+        case CMS_TARGET_LANGUAGE_ASSIGNED: $st = __('In progress','sitepress');break; 
+        case CMS_TARGET_LANGUAGE_TRANSLATED: $st = __('Translation received','sitepress');break;
+        case CMS_TARGET_LANGUAGE_DONE: $st = __('Translation complete','sitepress');break;
+        case CMS_REQUEST_FAILED: $st = __('Request failed','sitepress');break;
+        default: $st = __('Not translated','sitepress');
+    }
+    
+    return $st;
 }
 
 function icl_translation_get_string_translation_status($string_id) {

@@ -4759,50 +4759,28 @@ class SitePress{
                             $link = admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&job_id='.$job_id);
                         }else{
                             $link = admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&icl_tm_action=create_job&post[]='.
-                                $id.'&translate_to['.$v['code'].']=1');                            
+                                $id.'&translate_to['.$v['code'].']=1&iclnonce=' . wp_create_nonce('pro-translation-icl'));                            
                         }
                         break;
-                    case ICL_TM_TMETHOD_PRO:                        
-                        if($this->have_icl_translator($src_lang,$v['code'])){
-                            $job_id = $iclTranslationManagement->get_translation_job_id($__management_columns_posts_translations[$id][$v['code']]->trid, $v['code']);
+                    case ICL_TM_TMETHOD_PRO:  
+                    
+                        //debug_array($__management_columns_posts_translations[$id]);
+                        if(!$__management_columns_posts_translations[$id][$v['code']]->source_language_code){
+                            $link = get_edit_post_link($__management_columns_posts_translations[$id][$v['code']]->element_id);
+                            $alt = __('Edit the original document','sitepress');
+                        }else{
+                            $job_id = $iclTranslationManagement->get_translation_job_id($__management_columns_posts_translations[$id][$v['code']]->trid, $v['code']);                            
                             if($job_id){
                                 $job_details = $iclTranslationManagement->get_translation_job($job_id);
                                 if($job_details->status == ICL_TM_IN_PROGRESS || $job_details->status == ICL_TM_WAITING_FOR_TRANSLATOR){
                                     $img = 'in-progress.png';
                                     $alt = sprintf(__('Translation to %s is in progress','sitepress'), $v['display_name']);
+                                    $link = false;
+                                    echo '<img style="padding:1px;margin:2px;" border="0" src="'.ICL_PLUGIN_URL . '/res/img/' .$img.'" title="'.$alt.'" alt="'.$alt.'" width="16" height="16" />';
+                                }else{
+                                    $link = admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&job_id='.$job_id);    
                                 }
-                                $link = admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&job_id='.$job_id);
-                            }else{
-                                
-                                // get the first translator for the given language pair
-                                /*
-                                foreach($sitepress_settings['icl_lang_status'] as $lpair){
-                                    if($lpair['from'] == $src_lang && $lpair['to'] == $v['code'] && !empty($lpair['translators'])){
-                                        $translator_id = $lpair['translators'][0]['id'];
-                                    }
-                                }
-                                
-                                $link = admin_url('edit.php?'.$_SERVER['QUERY_STRING'].'&icl_tm_action=send_jobs&translate_from='.$src_lang 
-                                    .'&translate_to['.$v['code'].']=1&iclpost[]='.$id
-                                    .'&service=icanlocalize&iclnonce=' . wp_create_nonce('pro-translation-icl') 
-                                    . '&translator['.$v['code'].']=' . $translator_id . '-icanlocalize');
-                                
-                                */
-                                $link = admin_url('edit.php?'.$_SERVER['QUERY_STRING'].'&icl_tm_action=send_jobs&translate_from='.$src_lang 
-                                    .'&translate_to['.$v['code'].']=1&iclpost[]='.$id
-                                    .'&service=icanlocalize&iclnonce=' . wp_create_nonce('pro-translation-icl'));
                             }
-                        }else{
-                            $link = false;
-                            $alt = sprintf(__('Get %s translators','sitepress'), $v['display_name']);
-                            $img = 'add_translators.png';
-                            echo $this->create_icl_popup_link("@select-translators;{$src_lang};{$v['code']}@",
-                                array(
-                                    'ar'=>1, 
-                                    'title'=>$alt,
-                                    'unload_cb' => 'icl_pt_reload_translation_box'
-                                )
-                            ) . '<img style="padding:1px;margin:2px;" border="0" src="'.ICL_PLUGIN_URL . '/res/img/' .$img.'" alt="'.$alt.'" width="16" height="16" />' . '</a>';
                         }
                         break;
                     default:
@@ -4822,10 +4800,10 @@ class SitePress{
                                 $img = 'in-progress.png';
                                 $alt = sprintf(__('Translation to %s is in progress','sitepress'), $v['display_name']);
                             }
-                            $link = admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&job_id='.$job_id);    
+                            $link = admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&job_id='.$job_id);        
                         }else{
                             $link = admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&icl_tm_action=create_job&post[]='.
-                                $id.'&translate_to['.$v['code'].']=1');
+                                $id.'&translate_to['.$v['code'].']=1&iclnonce=' . wp_create_nonce('pro-translation-icl'));
                         }                        
                         break;
                     case ICL_TM_TMETHOD_PRO:
@@ -4836,23 +4814,12 @@ class SitePress{
                                 if($job_details->status == ICL_TM_IN_PROGRESS || $job_details->status == ICL_TM_WAITING_FOR_TRANSLATOR){
                                     $img = 'in-progress.png';
                                     $alt = sprintf(__('Translation to %s is in progress','sitepress'), $v['display_name']);
-                                }
-                                $link = admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&job_id='.$job_id);    
+                                    $link = false;
+                                    echo '<img style="padding:1px;margin:2px;" border="0" src="'.ICL_PLUGIN_URL . '/res/img/' .$img.'" title="'.$alt.'" alt="'.$alt.'" width="16" height="16" />';
+                                }else{
+                                    $link = admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&job_id='.$job_id);        
+                                }                                
                             }else{
-                                
-                                // get the first translator for the given language pair
-                                /*
-                                foreach($sitepress_settings['icl_lang_status'] as $lpair){
-                                    if($lpair['from'] == $src_lang && $lpair['to'] == $v['code'] && !empty($lpair['translators'])){
-                                        $translator_id = $lpair['translators'][0]['id'];
-                                    }
-                                }
-                                $link = admin_url('edit.php?'.$_SERVER['QUERY_STRING'].'&icl_tm_action=send_jobs&translate_from='.$src_lang
-                                    .'&translate_to['.$v['code'].']=1&iclpost[]='.$id
-                                    .'&service=icanlocalize&iclnonce=' . wp_create_nonce('pro-translation-icl') 
-                                    . '&translator['.$v['code'].']=' . $translator_id . '-icanlocalize');
-                                */
-                                //$qs = join('&', array_diff(explode('&', $_SERVER['QUERY_STRING']), array('iclpost[]', 'icl_tm_action', 'translate_from', '')))                                
                                 $qs = array();
                                 if(!empty($_SERVER['QUERY_STRING']))
                                 foreach($_exp = explode('&', $_SERVER['QUERY_STRING']) as $q=>$qv){
