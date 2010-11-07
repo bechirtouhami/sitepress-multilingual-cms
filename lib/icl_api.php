@@ -307,7 +307,8 @@ class ICanLocalizeQuery{
         $taxonomies = array_diff(array_keys((array)$wp_taxonomies), array('post_tag','category'));
         
         $request_url = ICL_API_ENDPOINT . '/websites/' . $this->site_id . '/cms_requests/'.$request_id.'/cms_download?accesskey=' . $this->access_key . '&language=' . $language;                        
-        $res = $this->_request_gz($request_url);                
+        $res = $this->_request_gz($request_url); 
+                       
         $content = $res['cms_request_details']['contents']['content'];
                 
         $translation = array();

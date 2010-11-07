@@ -530,7 +530,7 @@ switch($_REQUEST['icl_ajx_action']){
         break;
     case 'icl_st_send_strings':
         $arr = explode(',',$_POST['strings']);
-        icl_translation_send_strings($arr, explode(',',$_POST['languages']));
+        icl_translation_send_strings($arr, explode('#',$_POST['languages']));
         echo '1';
         break;    
     case 'icl_st_send_strings_all':

@@ -25,6 +25,11 @@ Version: 2.0.0 BETA 2
     along with ICanLocalize Translator.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+//update_option('icl_sitepress_version', '1.8.3');
+//$wpdb->query("DROP TABLE {$wpdb->prefix}icl_translation_status");
+//$wpdb->query("DROP TABLE {$wpdb->prefix}icl_translate");
+//$wpdb->query("DROP TABLE {$wpdb->prefix}icl_translate_job");
+
 if(defined('ICL_SITEPRESS_VERSION')) return;
 define('ICL_SITEPRESS_VERSION', '2.0.0');
 define('ICL_PLUGIN_PATH', dirname(__FILE__));

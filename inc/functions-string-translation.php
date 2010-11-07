@@ -28,6 +28,7 @@ if(!defined('XMLRPC')){
     add_action('save_post', 'icl_st_fix_links_in_strings', 19);
 }
 
+//add_filter('xmlrpc_methods','icl_add_custom_xmlrpc_methods');
 
 if(is_admin()){
     wp_enqueue_style('thickbox');
@@ -373,7 +374,7 @@ function icl_st_administration_menu(){
 
 
 function icl_register_string($context, $name, $value){    
-    global $wpdb, $sitepress, $sitepress_settings;
+    global $wpdb, $sitepress, $sitepress_settings, $ICL_Pro_Translation;
     // if the default language is not set up return without doing anything
     if( 
         !isset($sitepress_settings['existing_content_language_verified']) || 
@@ -412,7 +413,7 @@ function icl_register_string($context, $name, $value){
         }
     } 
     if($sitepress_settings['modules']['absolute-links']['enabled'] && $sitepress_settings['modules']['absolute-links']['sticky_links_strings']){        
-        _icl_content_make_links_sticky($string_id, 'string', false);   
+        $ICL_Pro_Translation->_content_make_links_sticky($string_id, 'string', false);   
     }
     return $string_id; 
 }  
@@ -580,7 +581,7 @@ function icl_add_string_translation($string_id, $language, $value, $status = fal
         $st_id = $wpdb->insert_id;
     }    
 
-    _icl_content_fix_links_to_translated_content($st_id, $language, 'string');    
+    $GLOBALS['ICL_Pro_Translation']->_content_fix_links_to_translated_content($st_id, $language, 'string');    
                                          
     icl_update_string_status($string_id);
     
@@ -1708,7 +1709,8 @@ function icl_translation_send_strings($string_ids, $target_languages) {
 function _icl_translation_send_strings($string_ids, $target) {
     global $wpdb, $sitepress, $sitepress_settings;
     
-    if(!$sitepress_settings['st']['strings_language']) $sitepress_settings['st']['strings_language'] = $sitepress->get_default_language();
+    if(!$sitepress_settings['st']['strings_language']) 
+        $sitepress_settings['st']['strings_language'] = $sitepress->get_default_language();
     
     $target_code = $sitepress->get_language_code($target);
     
@@ -1768,13 +1770,12 @@ function _icl_translation_send_strings($string_ids, $target) {
         );
 
         $res = $iclq->send_request($args);
-
         
         if($res > 0){
             foreach($string_values as $st_id => $value){
-                $wpdb->insert($wpdb->prefix.'icl_string_status', array('rid'=>$res, 'string_translation_id'=>$st_id, 'timestamp'=>$timestamp, 'md5'=>md5($value))); //insert rid
+                $wpdb->insert($wpdb->prefix.'icl_string_status', 
+                    array('rid'=>$res, 'string_translation_id'=>$st_id, 'timestamp'=>$timestamp, 'md5'=>md5($value))); //insert rid
             }
-    
             $wpdb->insert($wpdb->prefix.'icl_core_status', array('rid'=>$res,
                                                                      'origin'=>$orig_lang['code'],
                                                                      'target'=>$target_code,
@@ -1847,19 +1848,14 @@ function icl_is_string_translation($translation) {
     
 }
 
-function icl_translation_add_string_translation($trid, $translation, $lang, $rid){
-    
+function icl_translation_add_string_translation($rid, $translation, $lang_code){
     global $wpdb, $sitepress_settings, $sitepress;
-    $lang_code = $wpdb->get_var("SELECT code FROM {$wpdb->prefix}icl_languages WHERE english_name='".$wpdb->escape($lang)."'");
-    if(!$lang_code){        
-        return false;
-    }
-
     foreach($translation as $key => $value) {
         if (preg_match("/string-(.*?)-value/", $key, $match)){
             $string_id = $match[1];
             
-            $md5_when_sent = $wpdb->get_var("SELECT md5 FROM {$wpdb->prefix}icl_string_status WHERE string_translation_id={$string_id} AND rid={$rid}");
+            $md5_when_sent = $wpdb->get_var("SELECT md5 FROM {$wpdb->prefix}icl_string_status 
+                WHERE string_translation_id={$string_id} AND rid={$rid}");
             $current_string_value = $wpdb->get_var("SELECT value FROM {$wpdb->prefix}icl_strings WHERE id={$string_id}");
             if ($md5_when_sent == md5($current_string_value)) {
                 $status = ICL_STRING_TRANSLATION_COMPLETE;
@@ -1872,11 +1868,42 @@ function icl_translation_add_string_translation($trid, $translation, $lang, $rid
     }
 
     // update translation status
-    $wpdb->update($wpdb->prefix.'icl_core_status', array('status'=>CMS_TARGET_LANGUAGE_DONE), array('rid'=>$rid, 'target'=>$sitepress->get_language_code($lang)));
+    $wpdb->update($wpdb->prefix.'icl_core_status', array('status'=>CMS_TARGET_LANGUAGE_DONE), array('rid'=>$rid, 'target'=>$lang_code));
     
     return true;
 }
 
+
+/*
+function icl_add_custom_xmlrpc_methods($methods){
+    $icl_methods['icanlocalize.notify_comment_translation'] =  '_icl_xmlrpc_add_message_translation';    
+    
+    $methods = $methods + $icl_methods;    
+    if(defined('XMLRPC_REQUEST') && XMLRPC_REQUEST){
+        preg_match('#<methodName>([^<]+)</methodName>#i', $GLOBALS['HTTP_RAW_POST_DATA'], $matches);
+        $method = $matches[1];    
+        if(in_array($method, array_keys($icl_methods))){  
+            error_reporting(E_NONE);
+            $old_error_handler = set_error_handler("_icl_translation_error_handler",E_ERROR|E_USER_ERROR);
+        }
+    }
+    return $methods;
+}
+
+function _icl_translation_error_handler($errno, $errstr, $errfile, $errline){    
+    switch($errno){
+        case E_ERROR:
+        case E_USER_ERROR:
+            throw new Exception ($errstr . ' [code:e' . $errno . '] in '. $errfile . ':' . $errline);
+        case E_WARNING:
+        case E_USER_WARNING:
+            return true;                
+            //throw new Exception ($errstr . ' [code:w' . $errno . '] in '. $errfile . ':' . $errline);    
+        default: 
+            return true;
+    }
+    
+}
 
 function _icl_xmlrpc_add_message_translation($args){
     global $wpdb, $sitepress, $sitepress_settings, $wpml_add_message_translation_callbacks;
@@ -1884,7 +1911,7 @@ function _icl_xmlrpc_add_message_translation($args){
     $site_id        = $args[1];
     $rid            = $args[2];
     $translation    = $args[3];
-    
+            
     $signature_check = md5($sitepress_settings['access_key'] . $sitepress_settings['site_id'] . $rid);
     if($signature != $signature_check){
         return 0; // array('err_code'=>1, 'err_str'=> __('Signature mismatch','sitepress'));
@@ -1898,6 +1925,7 @@ function _icl_xmlrpc_add_message_translation($args){
     $to_language = $res->to_language;
     $object_id   = $res->object_id;
     $object_type   = $res->object_type;
+    
     
     try{
         if(is_array($wpml_add_message_translation_callbacks[$object_type])){
@@ -1914,6 +1942,7 @@ function _icl_xmlrpc_add_message_translation($args){
     return 1;
     
 }
+*/
 
 
 function icl_st_debug($str){

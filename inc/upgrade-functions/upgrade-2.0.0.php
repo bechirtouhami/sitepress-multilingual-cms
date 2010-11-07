@@ -2,6 +2,8 @@
 function icl_upgrade_2_0_0(){
     global $wpdb, $sitepress;
     
+    $TranslationManagement = new TranslationManagement;
+    
     if(defined('icl_upgrade_2_0_0_runonce')){
         return;
     }
@@ -15,6 +17,103 @@ function icl_upgrade_2_0_0(){
     
     $wpdb->query("ALTER TABLE `{$wpdb->prefix}icl_translations` CHANGE `element_type` `element_type` VARCHAR( 32 ) NOT NULL DEFAULT 'post_post'");
     $wpdb->query("ALTER TABLE `{$wpdb->prefix}icl_translations` CHANGE `element_id` `element_id` BIGINT( 20 ) NULL DEFAULT NULL ");
+    
+    // NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW     
+    // fix source_language_code
+    // assume that the lowest element_id is the source language
+    ini_set('max_execution_time', 300);
+    $res = $wpdb->get_results("
+        SELECT trid, count(source_language_code) c 
+        FROM {$wpdb->prefix}icl_translations 
+        WHERE source_language_code = '' AND element_type LIKE 'post\\_%'
+        GROUP BY trid 
+        HAVING c > 1            
+        "); 
+    $wpdb->query("UPDATE {$wpdb->prefix}icl_translations SET source_language_code = NULL WHERE source_language_code = ''");
+           
+    foreach($res as $row){
+        $source = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}icl_translations WHERE trid = " . $row->trid. " ORDER BY element_id ASC LIMIT 1");            
+        $wpdb->query("UPDATE {$wpdb->prefix}icl_translations 
+            SET source_language_code='{$source->language_code}' 
+            WHERE source_language_code='' AND language_code<>'{$source->language_code}'");
+    }    
+    //loop existing translations
+    get_currentuserinfo();
+    $translator_id =  $current_user->ID;
+    
+    $res = mysql_query("SELECT * FROM {$wpdb->prefix}icl_translations WHERE source_language_code IS NULL");
+    while($row = mysql_fetch_object($res)){
+        // grab translations
+        $translations = $sitepress->get_element_translations($row->trid, $row->element_type);
+        
+        $md5 = $TranslationManagement->post_md5($row->element_id);
+        $translation_package = $TranslationManagement->create_translation_package($row->element_id);
+        
+        // determine service and status
+        $service = 'local';
+        $status  = 10;
+        $needs_update = 0;
+        $table_name = $wpdb->prefix.'icl_node';
+        if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") == $table_name){
+            $rid = $wpdb->get_var($wpdb->prepare("SELECT MAX(rid) FROM {$wpdb->prefix}icl_content_status WHERE nid=%d", $row->element_id));
+            
+            $current_md5 = $wpdb->get_var($wpdb->prepare("SELECT md5 FROM {$wpdb->prefix}icl_content_status WHERE rid=%d", $rid));
+            
+            if($current_md5 != $md5){
+                $needs_update = 1;
+            }
+            
+            if($rid){                
+                $service = 'icanlocalize';
+            }    
+        }
+        
+        
+        foreach($translations as $lang => $t){
+            if(!$t->original){
+                
+                if($rid){                
+                    $status  = $wpdb->get_var($wpdb->prepare("SELECT status FROM {$wpdb->prefix}icl_core_status WHERE rid = %d AND origin = %s AND target = %s", 
+                        $rid, $row->language_code, $lang
+                    ));
+                    echo $wpdb->last_query;
+                    if($status == 3){
+                        $status = 10;
+                    }else{
+                        $status = 2;
+                    }
+                }    
+                
+                // add translation_status record        
+                list($rid, $update) = $TranslationManagement->update_translation_status(array(
+                    'translation_id'        => $t->translation_id,
+                    'status'                => $status,
+                    'translator_id'         => $translator_id,
+                    'needs_update'          => $needs_update,
+                    'md5'                   => $md5,
+                    'translation_service'   => $service,
+                    'translation_package'   => serialize($translation_package)
+                ));
+                
+                
+            }
+        }
+        
+        continue;
+        
+        
+        
+        // check status (for ICL translations)
+        
+        // add icl_translation_status entries
+        
+        // add icl_translate_job entries
+        
+        // add icl_translate entries
+    }
+    
+    // NEW NEW NEW NEW NEW NEW NEW NEW NEW NEW     
+    
     
     // if pro translation tables exist
     $table_name = $wpdb->prefix.'icl_node';
@@ -132,9 +231,9 @@ function icl_upgrade_2_0_0(){
                 $ts_record['translator_id'] = $original->post_author;    
                 $ts_record['needs_update'] = intval($status->md5 != $node_record->md5);    
                 $ts_record['md5'] = $status->md5;    
-                $ts_record['translation_service'] = '';    
-                $ts_record['translation_package'] = '';    
-                $ts_record['links_fixed'] = 0;     // ????
+                $ts_record['translation_service'] = 'icanlocalize';    
+                $ts_record['translation_package'] = $TranslationManagement->create_translation_package($original->element_id);    
+                $ts_record['links_fixed'] = 1;
                 $ts_record['timestamp'] = $status->timestamp;    
                 
                 

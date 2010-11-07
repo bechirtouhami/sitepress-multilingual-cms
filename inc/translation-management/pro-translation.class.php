@@ -1,4 +1,12 @@
 <?php
+
+// deprecated - used for string translations
+define ( 'CMS_TARGET_LANGUAGE_CREATED', 0);
+define ( 'CMS_TARGET_LANGUAGE_ASSIGNED', 1);
+define ( 'CMS_TARGET_LANGUAGE_TRANSLATED', 2);
+define ( 'CMS_TARGET_LANGUAGE_DONE', 3);
+
+
 class ICL_Pro_Translation{
     
     private $tmg;
@@ -302,8 +310,17 @@ class ICL_Pro_Translation{
     }    
     
     function custom_xmlrpc_methods($methods){
-        //$icl_methods['icanlocalize.set_translation_status'] = array($this, 'getDocumentXMLRPC');
+        
         $icl_methods['icanlocalize.update_status_by_cms_id'] = array($this, 'get_translated_document');
+        
+        $icl_methods['icanlocalize.set_translation_status'] =  array($this,'get_translated_string'); // use for strings - old method
+        
+        //$icl_methods['icanlocalize.list_posts'] = '_icl_list_posts';
+        //$icl_methods['icanlocalize.translate_post'] = '_icl_remote_control_translate_post';
+        //$icl_methods['icanlocalize.test_xmlrpc'] = '_icl_test_xmlrpc';
+        $icl_methods['icanlocalize.cancel_translation'] = array($this, '_xmlrpc_cancel_translation');
+        //$icl_methods['icanlocalize.notify_comment_translation'] =  '_icl_xmlrpc_add_message_translation';    
+        
         
         $methods = $methods + $icl_methods;    
         if(defined('XMLRPC_REQUEST') && XMLRPC_REQUEST){
@@ -318,7 +335,7 @@ class ICL_Pro_Translation{
         return $methods;
         
     }
-    
+        
     /*
      * 0 - unknown error
      * 1 - success
@@ -338,6 +355,7 @@ class ICL_Pro_Translation{
             $cms_id      = $args[3];            
             $status      = $args[4];
             $message     = $args[5];  
+            
             
             if ($site_id != $sitepress_settings['site_id']) {
                 return 3;                                                             
@@ -375,11 +393,34 @@ class ICL_Pro_Translation{
     
     function add_translated_document($cms_id, $request_id){
         global $sitepress_settings, $wpdb, $sitepress;            
+        
+        
+        
         $iclq = new ICanLocalizeQuery($sitepress_settings['site_id'], $sitepress_settings['access_key']);                               
         $tinfo = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}icl_translations WHERE translation_id=%d", $cms_id));                
         $_lang = $sitepress->get_language_details($tinfo->language_code);
-        $translation = $iclq->cms_do_download($request_id, $this->server_languages_map($_lang['english_name']));                                                           
-        $ret = $this->save_post_translation($cms_id, $translation);  
+        $translation = $iclq->cms_do_download($request_id, $this->server_languages_map($_lang['english_name']));                                 
+        
+        //if(icl_is_string_translation($translation)){
+        //    $language_code = $wpdb->get_var($wpdb->prepare("
+        //        SELECT target FROM {$wpdb->prefix}icl_core_status
+        //        WHERE rid=%d", $request_id
+        //    ));
+        //    $ret = icl_translation_add_string_translation($request_id, $translation, $language_code);
+        //}else{
+            $language_code = $wpdb->get_var($wpdb->prepare("
+                SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE translation_id=%d", $cms_id
+            ));
+            $ret = $this->save_post_translation($cms_id, $translation);    
+        //}
+
+        if($ret){
+            $lang_details = $sitepress->get_language_details($language_code);
+            $language_server = $this->server_languages_map($lang_details['english_name']);
+            $iclq->cms_update_request_status($request_id, CMS_TARGET_LANGUAGE_DONE, $language_server);
+        } 
+                                  
+          
         return $ret;
     }
     
@@ -874,6 +915,76 @@ class ICL_Pro_Translation{
     }    
     
     
+    // old style - for strings
+    function get_translated_string($args){
+        global $sitepress_settings, $sitepress, $wpdb;        
+
+        try{
+            
+            $signature   = $args[0];
+            $site_id     = $args[1];
+            $request_id  = $args[2];
+            $original_language    = $args[3];
+            $language    = $args[4];
+            $status      = $args[5];
+            $message     = $args[6];  
+            
+            if ($site_id != $sitepress_settings['site_id']) {
+                return 3;                                                             
+            }
+            
+            //check signature
+            $signature_chk = sha1($sitepress_settings['access_key'].$sitepress_settings['site_id'].$request_id.$language.$status.$message);
+            if($signature_chk != $signature){
+                return 2;
+            }
+            
+            $lang_code = $sitepress->get_language_code($this->server_languages_map($language, true));//the 'reverse' language filter 
+            
+            $cms_request_info = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}icl_core_status WHERE rid={$request_id} AND target='{$lang_code}'");
+            
+            if (empty($cms_request_info)){
+                $this->_throw_exception_for_mysql_errors();
+                return 4;
+            }
+
+            //return $this->process_translated_string($request_id, $language);
+            
+            if ($this->process_translated_string($request_id, $language) === true){
+                $this->_throw_exception_for_mysql_errors();
+                return 1;
+            } else {
+                $this->_throw_exception_for_mysql_errors();
+                return 6;
+            }
+            
+        }catch(Exception $e) {
+            return $e->getMessage();
+        }
+    }
+    
+    // old style - for strings
+    function process_translated_string($request_id, $language){
+        global $sitepress_settings, $wpdb, $sitepress;
+        $ret = false;
+        $iclq = new ICanLocalizeQuery($sitepress_settings['site_id'], $sitepress_settings['access_key']);       
+        
+        $translation = $iclq->cms_do_download($request_id, $language);                                   
+        
+        if($translation){            
+            $ret = icl_translation_add_string_translation($request_id, $translation, $sitepress->get_language_code($this->server_languages_map($language, true))); 
+            if($ret){
+                $iclq->cms_update_request_status($request_id, CMS_TARGET_LANGUAGE_DONE, $language);
+            } 
+        }   
+             
+        // if there aren't any other unfullfilled requests send a global 'done'               
+        if(0 == $wpdb->get_var("SELECT COUNT(rid) FROM {$wpdb->prefix}icl_core_status WHERE rid='{$request_id}' AND status < ".CMS_TARGET_LANGUAGE_DONE)){
+            $iclq->cms_update_request_status($request_id, CMS_REQUEST_DONE, false);
+        }
+        return $ret;
+    }
+    
     function _content_fix_image_paths_in_body(&$translation) {
         $body = $translation['body'];
         $image_paths = $this->_content_get_image_paths($body);
@@ -1334,7 +1445,7 @@ class ICL_Pro_Translation{
         
     }    
     
-    /**/
+    /*
     function process_translated_document($request_id, $language){
         global $sitepress_settings, $wpdb, $sitepress;
         $ret = false;
@@ -1366,7 +1477,7 @@ class ICL_Pro_Translation{
         }
         return $ret;
     }      
-    /**/
+    */
         
         
         
@@ -1455,6 +1566,42 @@ class ICL_Pro_Translation{
         }else{
             return false;
         }
+    }
+    
+    // @todo: update for cms_id
+    function _xmlrpc_cancel_translation($args){
+        global $sitepress_settings, $sitepress, $wpdb;        
+        $signature = $args[0];
+        $website_id = $args[1];
+        $request_id = $args[2];
+        $accesskey = $sitepress_settings['access_key'];
+        $checksum = $accesskey . $website_id . $request_id;
+        if (sha1 ( $checksum ) == $signature) {
+            $wid = $sitepress_settings['site_id'];
+            if ($website_id == $wid) {
+        
+                $cms_request_info = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}icl_core_status WHERE rid={$request_id}");
+                
+                if (empty($cms_request_info)){
+                    return 4; // cms_request not found
+                }
+          
+                // cms_request have been found.
+                // delete it
+        
+                $wpdb->query("DELETE FROM {$wpdb->prefix}icl_core_status WHERE rid={$request_id}");
+                $wpdb->query("DELETE FROM {$wpdb->prefix}icl_content_status WHERE rid={$request_id}");
+                return 1;
+            } else {
+                return 3; // Website id incorrect
+            }
+        } else {
+            return 2; // Signature failed
+        }
+      
+        return 0; // Should not have got here - unknown error.
+        
+        
     }
     
         

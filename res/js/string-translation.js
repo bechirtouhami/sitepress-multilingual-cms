@@ -167,7 +167,7 @@ function icl_st_review_strings(){
         return false;
     }
     jQuery('#icl_st_review_strings input[name="strings"]').val(sendids.join(','));
-    jQuery('#icl_st_review_strings input[name="langs"]').val(trlangs.join(','));
+    jQuery('#icl_st_review_strings input[name="langs"]').val(trlangs.join('#'));
     
     return true;
     
