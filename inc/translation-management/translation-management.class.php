@@ -441,7 +441,7 @@ class TranslationManagement{
         }
         
         if(in_array('icanlocalize', $services)){
-            foreach($sitepress_settings['icl_lang_status'] as $langpair){
+            foreach((array)$sitepress_settings['icl_lang_status'] as $langpair){
                 if($from && $from != $langpair['from']) continue;
                 if($to && $to != $langpair['to']) continue;
                 
@@ -826,6 +826,14 @@ class TranslationManagement{
         if($status){
             $where .= " AND p.post_status = '{$status}'\n";
         }        
+        
+        if(isset($from_date)){
+            $where .= " AND p.post_date > '{$from_date}'\n";
+        }
+
+        if(isset($to_date)){
+            $where .= " AND p.post_date > '{$to_date}'\n";
+        }
         
         if($tstatus){
             if($to_lang){
