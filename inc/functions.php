@@ -73,5 +73,31 @@ function icl_js_escape($str){
     $str = esc_js($str);
     $str = htmlspecialchars_decode($str);
     return $str;
-}       
+}
+
+function _icl_test_xmlrpc($args){
+    return true;
+}
+
+function icl_add_custom_xmlrpc_methods($methods){
+    $icl_methods['icanlocalize.set_translation_status'] = 'setTranslationStatus';
+    $icl_methods['icanlocalize.list_posts'] = '_icl_list_posts';
+    $icl_methods['icanlocalize.translate_post'] = '_icl_remote_control_translate_post';
+    $icl_methods['icanlocalize.test_xmlrpc'] = '_icl_test_xmlrpc';
+    $icl_methods['icanlocalize.cancel_translation'] = '_icl_xmlrpc_cancel_translation';
+    $icl_methods['icanlocalize.notify_comment_translation'] =  '_icl_xmlrpc_add_message_translation';
+
+    $methods = $methods + $icl_methods;
+    if(defined('XMLRPC_REQUEST') && XMLRPC_REQUEST){
+        preg_match('#<methodName>([^<]+)</methodName>#i', $GLOBALS['HTTP_RAW_POST_DATA'], $matches);
+        $method = $matches[1];
+        if(in_array($method, array_keys($icl_methods))){
+            error_reporting(E_NONE);
+            //ini_set('display_errors', '0');
+            $old_error_handler = set_error_handler("_icl_translation_error_handler",E_ERROR|E_USER_ERROR);
+        }
+    }
+    return $methods;
+}
+add_filter('xmlrpc_methods','icl_add_custom_xmlrpc_methods');
 ?>
