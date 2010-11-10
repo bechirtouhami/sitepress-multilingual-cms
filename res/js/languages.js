@@ -15,7 +15,7 @@ addLoadEvent(function(){
     jQuery('#icl_hide_languages').submit(iclSaveForm);    
     jQuery('#icl_adjust_ids').submit(iclSaveForm);    
     jQuery('input[name="icl_language_negotiation_type"]').change(iclLntDomains);
-    jQuery('#icl_dismiss_translate_help').click(iclDismissTranslateHelp);
+    
     jQuery('#icl_setup_back_1').click(iclSetupStep1);
     jQuery('#icl_setup_back_2').click(iclSetupStep2);
     jQuery('#icl_setup_back_3').click(iclSetupStep3);
@@ -39,7 +39,7 @@ addLoadEvent(function(){
 		var set = jQuery(this).offset();
    		jQuery("#colorPickerDiv").css({"top":set.top+25,"left":set.left});
 	});
-    jQuery('#icl_translate_help_collapsed').click(iclDismissTranslateHelp);
+        
     jQuery('form[name="icl_promote_form"] input[name="icl_promote"]').change(function(){
         jQuery.post(icl_ajx_url, 'icl_ajx_action=icl_promote&icl_promote='+jQuery(this).attr('checked'));
     });    
@@ -324,23 +324,6 @@ function iclSaveLanguageNegotiationType(){
     return false;     
 }
 
-function iclDismissTranslateHelp(){
-    var thisa = jQuery(this);
-    jQuery.ajax({
-            type: "POST",
-            url: icl_ajx_url,
-            data: "icl_ajx_action=dismiss_translate_help",
-            success: function(msg){
-                if(jQuery('#icl_translate_help').css('display') == 'none'){
-                    thisa.hide();
-                    jQuery('#icl_translate_help').fadeIn();
-                }else{
-                    thisa.parent().fadeOut('fast',function(){jQuery('#icl_translate_help_collapsed').fadeIn();});                    
-                }
-            }
-    });    
-    return false;
-}
 
 function iclSetupStep1(){
     jQuery.ajax({

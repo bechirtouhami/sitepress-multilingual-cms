@@ -228,6 +228,7 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
 
         
         <div id="icl_more_languages_wrap">
+            <?php if($sitepress_settings['setup_complete']): ?>
             <div id="icl_lnt" class="icl_advanced_feature">
             <?php if(count($active_languages) > 1): ?>            
             
@@ -354,6 +355,7 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                 <br />  
             <?php endif; ?>
             </div>
+            <?php endif; ?>
             
             <div id="icl_lso">
             <?php if($sitepress_settings['setup_complete'] && count($active_languages) > 1 || $sitepress_settings['setup_wizard_step']==3): ?>
@@ -525,8 +527,7 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
             <?php endif; ?>
             </div>
             
-            <div class="icl_advanced_feature">
-            <?php if(count($active_languages) > 1): ?>   
+            <?php if($sitepress_settings['setup_complete'] && count($active_languages) > 1): ?>   
                 <table class="widefat">
                     <thead>
                         <tr>
@@ -563,10 +564,8 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                 </table>
                 <br />
             <?php endif; ?>                            
-            </div>
             
-            <div class="icl_advanced_feature">
-            <?php if(count($active_languages) > 1): ?>   
+            <?php if($sitepress_settings['setup_complete'] && count($active_languages) > 1): ?>   
                 <table class="widefat">
                     <thead>
                         <tr>
@@ -676,8 +675,7 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                     </tbody>
                 </table>
                 <br />
-            <?php endif; ?>                            
-            </div>            
+            <?php endif; ?>                                        
 
         </div>
     <?php endif; ?>
@@ -693,24 +691,7 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
     </p>
     </form>
     <?php endif; ?>
-    
-    <div id="icl_translate_help_collapsed" <?php if(!$sitepress_settings['dont_show_translate_help']) echo 'style="display:none"' ?>>
-    <img src="<?php echo ICL_PLUGIN_URL ?>/res/img/question-green.png" width="16" height="16" />&nbsp;<a href="#"><?php _e('Instructions for translating contents', 'sitepress'); ?> &raquo;</a>
-    </div>    
-    <div id="icl_translate_help" class="icl_yellow_box" <?php if(!$sitepress_settings['setup_complete'] || $sitepress_settings['dont_show_translate_help']) echo 'style="display:none"' ?>>
-    <h3><?php _e('How to translate ', 'sitepress')?></h3>
-    <h4><?php _e('Translating yourself?', 'sitepress')?></h4>
-    <p><?php _e('You can add translations to posts, pages, tags and categories. Each edit page now includes a new languages box. From that box you can add translations to other languages.', 'sitepress'); ?></p>                                                                                                         
-    <h4><?php _e('Need help translating?', 'sitepress')?></h4>    
-    
-    <img align="left" src="<?php echo ICL_PLUGIN_URL ?>/res/img/icon16.png" width="16" height="16" style="margin-right:7px" />
-    
-    <p><?php printf(__('Try WPML&#8217;s <a href="%s">professional translation</a> and get excellent translations at an affordable rate. <a href="%s">Learn more</a>.','sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php', 'http://wpml.org/content-translation/" target="_blank'); ?></p>
-    <br />
-    <input id="icl_dismiss_translate_help" type="button" class="button secondary" value="<?php _e('Hide this message', 'sitepress');?>" />
-    </div> 
-    <br />   
-       
+           
     <?php do_action('icl_menu_footer'); ?>
     
 </div>

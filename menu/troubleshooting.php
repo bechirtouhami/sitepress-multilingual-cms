@@ -8,9 +8,9 @@ $icl_tables = array(
     $wpdb->prefix . 'icl_translate',    
     $wpdb->prefix . 'icl_locale_map',
     $wpdb->prefix . 'icl_flags',
-    $wpdb->prefix . 'icl_content_status',
-    $wpdb->prefix . 'icl_core_status',
-    $wpdb->prefix . 'icl_node',
+    //$wpdb->prefix . 'icl_content_status',
+    //$wpdb->prefix . 'icl_core_status',
+    //$wpdb->prefix . 'icl_node',
     $wpdb->prefix . 'icl_strings',
     $wpdb->prefix . 'icl_string_translations',
     $wpdb->prefix . 'icl_string_status',
@@ -185,7 +185,7 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
     ?>
         
     <?php endif; ?>
-    <a class="button" href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/troubleshooting.php&amp=ts=<?php echo time()?>&amp;icl_action=icl-connection-test#icl-connection-test"><?php _e('Connect', 'sitepress') ?></a>
+    <a class="button" href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/troubleshooting.php&ts=<?php echo time()?>&icl_action=icl-connection-test#icl-connection-test"><?php _e('Connect', 'sitepress') ?></a>
         
     
     <?php

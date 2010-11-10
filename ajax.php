@@ -664,10 +664,6 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings['hide_upgrade_notice'] = implode('.', array_slice(explode('.', ICL_SITEPRESS_VERSION), 0, 3));
         $this->save_settings($iclsettings);
         break;        
-    case 'dismiss_translate_help':
-        $iclsettings['dont_show_translate_help'] = !$this->settings['dont_show_translate_help'];
-        $this->save_settings($iclsettings);
-        break;        
     case 'setup_got_to_step1':
         $iclsettings['existing_content_language_verified'] = 0;
         $iclsettings['setup_wizard_step'] = 1;

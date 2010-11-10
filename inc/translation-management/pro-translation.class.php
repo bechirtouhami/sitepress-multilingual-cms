@@ -318,7 +318,7 @@ class ICL_Pro_Translation{
         //$icl_methods['icanlocalize.list_posts'] = array($this, '_list_posts');
         //$icl_methods['icanlocalize.translate_post'] = array($this, '_remote_control_translate_post');
         
-        $icl_methods['icanlocalize.test_xmlrpc'] = arary($this, '_test_xmlrpc');
+        $icl_methods['icanlocalize.test_xmlrpc'] = array($this, '_test_xmlrpc');
         $icl_methods['icanlocalize.cancel_translation'] = array($this, '_xmlrpc_cancel_translation');
         $icl_methods['icanlocalize.notify_comment_translation'] =  array($this, '_xmlrpc_add_message_translation');    
         
