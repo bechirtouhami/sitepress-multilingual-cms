@@ -378,7 +378,7 @@ class SitePress_Support {
 										 <a href="#" onclick="javascript:location.href='<?php echo 'admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/support.php'; ?>'" class="button"><?php _e('Cancel', 'sitepress'); ?></a>
                                         <input class="button" name="create account" value="<?php _e('Create account', 'sitepress'); ?>" type="submit" />
 									</p>
-                                    <div class="icl_progress"><?php _e('Saving. Please wait...', 'sitepress'); ?></div>
+                                    <div class="icl_progress" style="display:none;"><?php _e('Saving. Please wait...', 'sitepress'); ?></div>
                                 </form>
 
 								
@@ -412,7 +412,6 @@ class SitePress_Support {
 										<a href="#" onclick="javascript:location.href='<?php echo 'admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/support.php'; ?>'" class="button"><?php _e('Cancel', 'sitepress'); ?></a>
 										<input class="button" name="configure account" value="<?php _e('Log in to my account', 'sitepress'); ?>" type="submit" />
                                     </p>                                    
-                                    <div class="icl_progress"><?php _e('Saving. Please wait...', 'sitepress'); ?></div>
                                 </form>
 		</div>
 <?php
