@@ -141,7 +141,7 @@ jQuery(document).ready(function(){
     }
 
     icl_add_translators_form_check_submit();
-    var icl_active_service = jQuery('input[name=services]').val();
+    var icl_active_service = jQuery("input[name='services']:checked").val();
 
     jQuery('input[name=services]').change(function() {
       if (jQuery('#radio-local').is(':checked')) {
