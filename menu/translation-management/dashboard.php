@@ -60,7 +60,7 @@ $icl_post_types = $sitepress->get_translatable_documents();
 
 $icl_dashboard_settings = $sitepress_settings['dashboard'];
 
-$icl_translation_filter['limit_no'] = isset($_GET['limit_no']) ? $_GET['limit_no'] : 20;
+$icl_translation_filter['limit_no'] = isset($_GET['show_all']) && $_GET['show_all'] ? 10000 : ICL_TM_DOCS_PER_PAGE;
 $icl_documents = $iclTranslationManagement->get_documents($icl_translation_filter);
 $icl_translators = $iclTranslationManagement->get_blog_translators();
 
@@ -339,6 +339,12 @@ if (!empty($icl_translation_services)) {
     
     
     <?php 
+    
+    if(isset($_GET['show_all']) && $_GET['show_all'] && count($icl_documents)>ICL_TM_DOCS_PER_PAGE){        
+        echo '<a style="float:right" href="'.admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translation-management.php&sm=dashboard').'">' . sprintf(__('Show %d documents per page', 'sitepress'),
+             ICL_TM_DOCS_PER_PAGE) . '</a>';
+    }
+    
     // pagination  
     $page_links = paginate_links( array(
         'base' => add_query_arg('paged', '%#%' ),
@@ -354,6 +360,7 @@ if (!empty($icl_translation_services)) {
     <div class="tablenav">    
         <div style="float:left;margin-top:4px;">
             <strong><?php echo __('Word count estimate:', 'sitepress') ?></strong> <?php printf(__('%s words', 'sitepress'), '<span id="icl-tm-estimated-words-count">0</span>')?>
+            <span id="icl-tm-doc-wrap" style="display: none"><?php printf(__('in %s document(s)'), '<span id="icl-tm-sel-doc-count">0</span>'); ?></span>
         </div>    
         <?php if ( $page_links ) { ?>
         <div class="tablenav-pages"><?php $page_links_text = sprintf( '<span class="displaying-num">' . __( 'Displaying %s&#8211;%s of %s', 'sitepress' ) . '</span>%s',

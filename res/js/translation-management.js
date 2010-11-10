@@ -252,9 +252,10 @@ function icl_tm_update_word_count_estimate(){
         var newval = curval - val;        
     }    
     jQuery('#icl-tm-estimated-words-count').html(newval);
+    icl_tm_update_doc_count();    
 }
 
-function icl_tm_select_all_documents(){
+function icl_tm_select_all_documents(){    
     if(jQuery(this).attr('checked')){
         jQuery('#icl-tm-translation-dashboard :checkbox').attr('checked','checked');    
         jQuery('#icl-tm-estimated-words-count').html(parseInt(jQuery('#icl-cw-total').html()));
@@ -262,7 +263,18 @@ function icl_tm_select_all_documents(){
         jQuery('#icl-tm-translation-dashboard :checkbox').removeAttr('checked');    
         jQuery('#icl-tm-estimated-words-count').html('0');
     }
-    icl_tm_enable_sumit();
+    icl_tm_update_doc_count();
+    icl_tm_enable_sumit();    
+}
+
+function icl_tm_update_doc_count(){
+    dox = jQuery('#icl-tm-translation-dashboard td :checkbox:checked').length;
+    jQuery('#icl-tm-sel-doc-count').html(dox);
+    if(dox){
+        jQuery('#icl-tm-doc-wrap').fadeIn();
+    }else{
+        jQuery('#icl-tm-doc-wrap').fadeOut();
+    }    
 }
 
 function icl_tm_enable_submit(){

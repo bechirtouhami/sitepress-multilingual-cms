@@ -16,6 +16,8 @@ define('ICL_TM_TMETHOD_MANUAL', 0);
 define('ICL_TM_TMETHOD_EDITOR', 1);    
 define('ICL_TM_TMETHOD_PRO', 2);    
 
+define('ICL_TM_DOCS_PER_PAGE', 20);    
+
 
 $asian_languages = array('ja', 'ko', 'zh-hans', 'zh-hant', 'mn', 'ne', 'hi', 'pa', 'ta', 'th');
   
