@@ -343,8 +343,7 @@ if (!empty($icl_translation_services)) {
     if(isset($_GET['show_all']) && $_GET['show_all'] && count($icl_documents)>ICL_TM_DOCS_PER_PAGE){        
         echo '<a style="float:right" href="'.admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translation-management.php&sm=dashboard').'">' . sprintf(__('Show %d documents per page', 'sitepress'),
              ICL_TM_DOCS_PER_PAGE) . '</a>';
-    }
-    
+    }    
     // pagination  
     $page_links = paginate_links( array(
         'base' => add_query_arg('paged', '%#%' ),
@@ -363,7 +362,13 @@ if (!empty($icl_translation_services)) {
             <span id="icl-tm-doc-wrap" style="display: none"><?php printf(__('in %s document(s)'), '<span id="icl-tm-sel-doc-count">0</span>'); ?></span>
         </div>    
         <?php if ( $page_links ) { ?>
-        <div class="tablenav-pages"><?php $page_links_text = sprintf( '<span class="displaying-num">' . __( 'Displaying %s&#8211;%s of %s', 'sitepress' ) . '</span>%s',
+        <div class="tablenav-pages">
+        <?php
+        if(!isset($_GET['show_all']) && count($icl_documents)>ICL_TM_DOCS_PER_PAGE){        
+            echo '<a style="font-weight:normal" href="'.admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translation-management.php&sm=dashboard&show_all=1').'">' . __('show all', 'sitepress') . '</a>';
+        }
+        ?>
+        <?php $page_links_text = sprintf( '<span class="displaying-num">' . __( 'Displaying %s&#8211;%s of %s', 'sitepress' ) . '</span>%s',
             number_format_i18n( ( $_GET['paged'] - 1 ) * $wp_query->query_vars['posts_per_page'] + 1 ),
             number_format_i18n( min( $_GET['paged'] * $wp_query->query_vars['posts_per_page'], $wp_query->found_posts ) ),
             number_format_i18n( $wp_query->found_posts ),
