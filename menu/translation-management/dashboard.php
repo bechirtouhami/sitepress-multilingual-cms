@@ -364,7 +364,7 @@ if (!empty($icl_translation_services)) {
         <?php if ( $page_links ) { ?>
         <div class="tablenav-pages">
         <?php
-        if(!isset($_GET['show_all']) && count($wp_query->found_posts)>ICL_TM_DOCS_PER_PAGE){        
+        if(!isset($_GET['show_all']) && $wp_query->found_posts > ICL_TM_DOCS_PER_PAGE){        
             echo '<a style="font-weight:normal" href="'.admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translation-management.php&sm=dashboard&show_all=1').'">' . __('show all', 'sitepress') . '</a>';
         }
         ?>
