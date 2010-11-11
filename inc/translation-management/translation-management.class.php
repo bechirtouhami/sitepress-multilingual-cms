@@ -473,6 +473,22 @@ class TranslationManagement{
         <?php
     }
     
+    public function get_number_of_docs_sent($service = 'icanlocalize'){
+        global $wpdb;
+        $n = $wpdb->get_var($wpdb->prepare("
+            SELECT COUNT(rid) FROM {$wpdb->prefix}icl_translation_status WHERE translation_service=%s
+        ", $service));
+        return $n;
+    }
+
+    public function get_number_of_docs_pending($service = 'icanlocalize'){
+        global $wpdb;
+        $n = $wpdb->get_var($wpdb->prepare("
+            SELECT COUNT(rid) FROM {$wpdb->prefix}icl_translation_status WHERE translation_service=%s AND status < " . ICL_TM_COMPLETE . "
+        ", $service));
+        return $n;        
+    }
+    
     
     /* MENU */
     /* ******************************************************************************************** */
