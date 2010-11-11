@@ -23,17 +23,17 @@ class SitePress_Support {
 		
 		if ($sitepress->icl_support_configured()) {
 			
-			if (isset($sp_settings['site_id'])) {
-				$this->site_id = $sp_settings['site_id'];
-			} else {
+//			if (isset($sp_settings['site_id'])) {
+//				$this->site_id = $sp_settings['site_id'];
+//			} else {
 				$this->site_id = $sp_settings['support_site_id'];
-			}
-			
-			if (isset($sp_settings['access_key'])) {
-				$this->access_key = $sp_settings['access_key'];
-			} else {
+//			}
+//
+//			if (isset($sp_settings['access_key'])) {
+//				$this->access_key = $sp_settings['access_key'];
+//			} else {
 				$this->access_key = $sp_settings['support_access_key'];
-			}
+//			}
 		}
 		
 		if (isset($_GET['page']) && $_GET['page'] == ICL_PLUGIN_FOLDER . '/menu/support.php'){            
@@ -114,7 +114,7 @@ class SitePress_Support {
 			return '<a href="admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/support.php&amp;subscription=' . $var['code'] . '&amp;support=1">';
 		}
 		global $sitepress;
-		return $sitepress->create_icl_popup_link(ICL_API_ENDPOINT . '/' . $url . '&amp;support=1', array('title'=>'ICanLocalize', 'class'=>$class, 'id'=>$id));
+		return '<a href="' . $sitepress->create_icl_popup_link(ICL_API_ENDPOINT . '/' . $url, array('title'=>'ICanLocalize', 'class'=>$class, 'id'=>$id), TRUE) . '&support=1" class="icl_thickbox ' . $class . '">';
 	}
 
 	function thickbox2($url, $class = null, $id = null) {

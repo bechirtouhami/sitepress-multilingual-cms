@@ -1240,14 +1240,17 @@ class SitePress{
         }
         
         $unload_cb = $unload_cb ? '&amp;unload_cb=' . $unload_cb : '';
+        $url_glue = false !== strpos($link,'?') ? '&' : '?';
+        $link .= $url_glue . 'compact=1';
+        if (isset($this->settings['access_key']) || isset($this->settings['support_access_key'])){
+            if (isset($this->settings['access_key'])) {
+                $link .= '&accesskey=' . $this->settings['access_key'];
+            } else {
+                $link .= '&accesskey=' . $this->settings['support_access_key'];
+            }
+        }           
         
-        if($this->settings['access_key']){
-            $url_glue = false !== strpos($link,'?') ? '&' : '?';
-            $link .= $url_glue . 'accesskey=' . $this->settings['access_key'];    
-        }
-        $link .= '&compact=1';            
-        
-		if ($id) {
+		if (!is_null($id)) {
 			$id = ' id="' . $id . '"';
 		}
 		    if ($title && !$just_url) {
