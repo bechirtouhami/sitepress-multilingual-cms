@@ -20,7 +20,7 @@ class SitePress_Support {
 		$sp_settings = get_option('icl_sitepress_settings');
 		$this->data = $sp_settings['icl_support'];
 		$this->request = new WP_Http;
-		
+
 		if ($sitepress->icl_support_configured()) {
 			
 //			if (isset($sp_settings['site_id'])) {
@@ -44,7 +44,17 @@ class SitePress_Support {
 
 	function admin_page() {
 		global $sitepress;
-		if (isset($_POST['icl_support_account']) && $sitepress->icl_support_configured()) {
+        if (isset($_POST['icl_configure_support_account_data_nonce'])
+                && $_POST['icl_configure_support_account_data_nonce']
+                    == wp_create_nonce('icl_configure_support_account_data')
+                && isset($_POST['icl_support_site_id'])
+                && isset($_POST['icl_support_access_key']))
+                    {
+            $sitepress->save_settings(array('support_site_id' => $_POST['icl_support_site_id'],
+                'support_access_key' => $_POST['icl_support_access_key']));
+            $this->site_id = $_POST['icl_support_site_id'];
+            $this->access_key = $_POST['icl_support_access_key'];
+        } else if (isset($_POST['icl_support_account']) && $sitepress->icl_support_configured()) {
 			$sitepress->save_settings(array('support_icl_account_created' => 1));
 			if ($_POST['icl_support_account'] == 'create') {
 				if (!isset($_POST['icl_support_subscription_type'])) {
@@ -94,6 +104,9 @@ class SitePress_Support {
 				$this->render_tickets();
 			}
 		}
+        $this->configure_account_form();
+        echo '<p style="width: 410px; margin-top: 20px;">' . sprintf(__('For advanced access or to completely uninstall WPML and remove all language information, use the <a href="%s">troubleshooting</a> page.','sitepress'),
+                'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/troubleshooting.php') . '</p>';
 	}
 
 	function request($url) {
@@ -114,7 +127,7 @@ class SitePress_Support {
 			return '<a href="admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/support.php&amp;subscription=' . $var['code'] . '&amp;support=1">';
 		}
 		global $sitepress;
-		return '<a href="' . $sitepress->create_icl_popup_link(ICL_API_ENDPOINT . '/' . $url, array('title'=>'ICanLocalize', 'class'=>$class, 'id'=>$id), TRUE) . '&support=1" class="icl_thickbox ' . $class . '">';
+		return '<a href="' . $sitepress->create_icl_popup_link(ICL_API_ENDPOINT . '/' . $url, array('title'=>'ICanLocalize', 'class'=>$class, 'id'=>$id), TRUE, TRUE) . '&support=1" class="icl_thickbox ' . $class . '">';
 	}
 
 	function thickbox2($url, $class = null, $id = null) {
@@ -385,7 +398,38 @@ class SitePress_Support {
 <?php
 	}
 	
-	function login_to_account_form() {
+	function configure_account_form() {
+		global $current_user;
+?>
+		<br /><br />
+		<a href="javascript:;" onclick="jQuery(this).next('div').slideToggle();" class="button"><?php _e('Configure account', 'sitepress'); ?></a>
+		<div style="display:none;">
+			<form id="icl_configure_account" action="" method="post">
+				<?php wp_nonce_field('icl_configure_support_account_data','icl_configure_support_account_data_nonce'); ?>
+				<input type="hidden" name="icl_support_account" value="configure" />    
+                                <table class="form-table icl-account-setup">
+                                    <tbody>
+                                    <tr class="form-field">
+                                        <th scope="row"><?php _e('Site ID', 'sitepress'); ?></th>
+                                        <td><input type="text" name="icl_support_site_id" value="<?php echo $this->site_id ? $this->site_id : ''; ?>" /></td>
+                                    </tr>
+                                    <tr class="form-field">
+                                        <th scope="row"><?php _e('Access key', 'sitepress'); ?></th>
+                                        <td><input type="text" name="icl_support_access_key" value="<?php echo $this->access_key ? $this->access_key : ''; ?>" /></td>
+                                    </tr>        
+                                    </tbody>
+                                </table>
+								<p class="submit">                                        
+                                        <input type="hidden" name="configure_account" value="1" />
+										<a href="#" onclick="javascript:location.href='<?php echo 'admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/support.php'; ?>'" class="button"><?php _e('Cancel', 'sitepress'); ?></a>
+										<input class="button" name="configure account" value="<?php _e('Save', 'sitepress'); ?>" type="submit" />
+                                    </p>                                    
+                                </form>
+		</div>
+<?php
+	}
+    
+    function login_to_account_form() {
 		$this->form_errors();
 		global $current_user;
 ?>

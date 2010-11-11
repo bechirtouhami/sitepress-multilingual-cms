@@ -1220,7 +1220,7 @@ class SitePress{
         exit;
     }
     
-    function create_icl_popup_link($link, $args = array(), $just_url = false) {
+    function create_icl_popup_link($link, $args = array(), $just_url = false, $support_mode = FALSE) {
         
         // defaults
         $defaults = array(
@@ -1242,11 +1242,12 @@ class SitePress{
         $unload_cb = $unload_cb ? '&amp;unload_cb=' . $unload_cb : '';
         $url_glue = false !== strpos($link,'?') ? '&' : '?';
         $link .= $url_glue . 'compact=1';
+
         if (isset($this->settings['access_key']) || isset($this->settings['support_access_key'])){
-            if (isset($this->settings['access_key'])) {
-                $link .= '&accesskey=' . $this->settings['access_key'];
-            } else {
+            if ($support_mode && isset($this->settings['support_access_key'])) {
                 $link .= '&accesskey=' . $this->settings['support_access_key'];
+            } elseif (isset($this->settings['access_key'])) {
+                $link .= '&accesskey=' . $this->settings['access_key'];
             }
         }           
         
