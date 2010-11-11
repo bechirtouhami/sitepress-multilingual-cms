@@ -1,5 +1,5 @@
 <?php
-global $wpdb;
+global $wpdb, $current_user;
 $active_languages = $this->get_active_languages();
 foreach ($active_languages as $lang) {
     if ($default_language != $lang['code']) {
@@ -22,15 +22,62 @@ if (!isset($pss_status['valid'])) {
     }
 }
 
+$docs_sent = 0;
+$docs_completed = 0;
+$docs_waiting = 0;
+$docs_statuses = $wpdb->get_results("SELECT status FROM {$wpdb->prefix}icl_translation_status");
+foreach ($docs_statuses as $doc_status) {
+    $docs_sent += 1;
+    if ($doc_status->status == ICL_TM_COMPLETE) {
+        $docs_completed += 1;
+    } elseif ($doc_status->status == ICL_TM_WAITING_FOR_TRANSLATOR
+            || $doc_status->status == ICL_TM_IN_PROGRESS) {
+        $docs_waiting += 1;
+    }
+}
+
 ?>
 <p><?php echo sprintf(__('WPML version: %s'), '<strong>' . ICL_SITEPRESS_VERSION . '</strong>'); ?></p>
 <?php if (!$this->settings['setup_complete']): ?>
     <p class="updated" style="padding:4px"><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/languages.php"><strong><?php _e('Finish the WPML setup.', 'sitepress') ?></strong></a></p>
 <?php else: ?>
         <p><?php _e('Currently configured languages:', 'sitepress') ?> <b><?php echo join(', ', (array) $alanguages_links) ?></b> (<a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/languages.php"><?php _e('edit', 'sitepress'); ?></a>)</p>
+        <p><?php if ($docs_sent)
+            printf(__('%d documents sent to translation.<br />%d are complete, %d waiting for translation.', 'sitepress'), $docs_sent, $docs_completed, $docs_waiting); ?></p>
+    <p><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/translation-management.php" class="button secondary"><strong><?php _e('Send more documents to translation', 'sitepress'); ?></strong></a></p>
 
-        <div><a href="#" onclick="jQuery(this).parent().next('.wrapper').slideToggle();" style="display:block; padding:5px; border: 1px solid #eee; margin-bottom:2px;"><?php _e('Theme and plugins localization', 'sitepress') ?></a></div>
-        <div class="wrapper" style="display:none;"><p>
+    <div><a href="#" onclick="jQuery(this).parent().next('.wrapper').slideToggle();" style="display:block; padding:5px; border: 1px solid #eee; margin-bottom:2px;"><?php _e('Translators', 'sitepress') ?></a></div>
+    <div class="wrapper" style="display:none;"><p>
+        <?php
+        $your_translators = TranslationManagement::get_blog_translators();
+        if (!empty($your_translators)) {
+            echo '<strong>' . __('Your translators', 'sitepress') . '</strong><br />';
+            foreach ($your_translators as $your_translator) {
+
+                if ($current_user->ID == $your_translator->ID) {
+                    $edit_link = 'profile.php';
+                } else {
+                    $edit_link = esc_url(add_query_arg('wp_http_referer', urlencode(esc_url(stripslashes($_SERVER['REQUEST_URI']))), "user-edit.php?user_id=$your_translator->ID"));
+                }
+                echo '<a href="' . $edit_link . '"><strong>' . $your_translator->display_name . '</strong></a> - ';
+                foreach ($your_translator->language_pairs as $from => $lp) {
+                    $tos = array();
+                    foreach ($lp as $to => $null) {
+                        $tos[] = $active_languages[$to]['display_name'];
+                    }
+                    printf(__('%s to %s', 'sitepress'), $active_languages[$from]['display_name'], join(', ', $tos));
+                }
+                echo '<br />';
+            }
+        }
+
+        ?>
+        <br />
+        <a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/translation-management.php&amp;sm=translators&amp;service=icanlocalize" class="button secondary"><strong><?php _e('Get professional translators', 'sitepress'); ?></strong></a>
+    </p></div>
+
+<div><a href="#" onclick="jQuery(this).parent().next('.wrapper').slideToggle();" style="display:block; padding:5px; border: 1px solid #eee; margin-bottom:2px;"><?php _e('Theme and plugins localization', 'sitepress') ?></a></div>
+<div class="wrapper" style="display:none;"><p>
         <?php
         echo __('Current configuration', 'sitepress');
         echo '<br /><strong>';
