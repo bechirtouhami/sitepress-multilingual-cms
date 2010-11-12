@@ -470,17 +470,16 @@ class ICanLocalizeQuery{
     
         // see if we need to refresh the reminders from ICanLocalize
         $icl_settings = $sitepress->get_settings();
-        $last_time = $icl_settings['last_icl_reminder_fetch'];
-        if (($refresh || $support_mode) && (time() - $last_time > 30 * 60)) {
+        $setting = $support_mode ? 'icl_support_current_session' : 'icl_current_session';
+        $last_time = $support_mode ? 'last_icl_support_fetch' : 'last_icl_reminder_fetch';
+
+        if (empty($icl_settings[$setting]) || ($refresh && time() - $icl_settings[$last_time] > 30 * 60)) {
             $session_id = $this->get_session_id($support_mode);
-    
-            $last_time = time();
-            if (!$support_mode) {
-				$sitepress->save_settings(array('icl_current_session' => $session_id));
-			}
+            $new_time = time();
+            $sitepress->save_settings(array($setting => $session_id, $last_time => $new_time));
             return $session_id;
         } else {
-            return $icl_settings['icl_current_session'];
+            return $icl_settings[$setting];
         }
         
     }
