@@ -46,7 +46,8 @@ foreach ($docs_statuses as $doc_status) {
             printf(__('%d documents sent to translation.<br />%d are complete, %d waiting for translation.', 'sitepress'), $docs_sent, $docs_completed, $docs_waiting); ?></p>
     <p><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/translation-management.php" class="button secondary"><strong><?php _e('Send documents to translation', 'sitepress'); ?></strong></a></p>
 
-    <div><a href="#" onclick="jQuery(this).parent().next('.wrapper').slideToggle();" style="display:block; padding:5px; border: 1px solid #eee; margin-bottom:2px;"><?php _e('Translators', 'sitepress') ?></a></div>
+<?php if (count($active_languages) > 1) { ?>
+    <div><a href="#" onclick="jQuery(this).parent().next('.wrapper').slideToggle();" style="display:block; padding:5px; border: 1px solid #eee; margin-bottom:2px;"><?php _e('Content translation', 'sitepress') ?></a></div>
     <div class="wrapper" style="display:none;"><p>
         <?php
         $your_translators = TranslationManagement::get_blog_translators();
@@ -73,8 +74,11 @@ foreach ($docs_statuses as $doc_status) {
 
         ?>
         <br />
-        <a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/translation-management.php&amp;sm=translators&amp;service=icanlocalize" class="button secondary"><strong><?php _e('Get professional translators', 'sitepress'); ?></strong></a>
+        <a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/translation-management.php&amp;sm=translators&amp;service=icanlocalize"><strong><?php _e('Add professional translators', 'sitepress'); ?></strong></a><br />
+        <a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/translation-management.php&amp;sm=translators&amp;service=local"><strong><?php _e('Add your own translators', 'sitepress'); ?></strong></a><br />
+        <a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/translation-management.php"><strong><?php _e('Translate contents', 'sitepress'); ?></strong></a><br />
     </p></div>
+<?php } ?>
 
 <div><a href="#" onclick="jQuery(this).parent().next('.wrapper').slideToggle();" style="display:block; padding:5px; border: 1px solid #eee; margin-bottom:2px;"><?php _e('Theme and plugins localization', 'sitepress') ?></a></div>
 <div class="wrapper" style="display:none;"><p>
