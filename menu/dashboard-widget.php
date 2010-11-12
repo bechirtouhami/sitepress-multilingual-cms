@@ -9,18 +9,18 @@ foreach ($active_languages as $lang) {
     }
     $alanguages_links[] = $lang['display_name'] . $default;
 }
-require_once(ICL_PLUGIN_PATH . '/inc/support.php');
-$SitePress_Support = new SitePress_Support;
-$pss_status = $SitePress_Support->get_subscription();
-if (!isset($pss_status['valid'])) {
-    $pss_string_status = __('None', 'sitepress');
-} else {
-    if ($pss_status['valid']) {
-        $pss_string_status = '<span class="icl_valid_text">' . sprintf(__('Valid! (amount: $%d - until %s)', 'sitepress'), $pss_status['amount'], date('d/m/Y', $pss_status['expires'])) . '</span>';
-    } else {
-        $pss_string_status = '<span class="icl_error_text">' . sprintf(__('Expired! - since %s', 'sitepress'), date('d/m/Y', $pss_status['expires'])) . '</span>';
-    }
-}
+//require_once(ICL_PLUGIN_PATH . '/inc/support.php');
+//$SitePress_Support = new SitePress_Support;
+//$pss_status = $SitePress_Support->get_subscription();
+//if (!isset($pss_status['valid'])) {
+//    $pss_string_status = __('None', 'sitepress');
+//} else {
+//    if ($pss_status['valid']) {
+//        $pss_string_status = '<span class="icl_valid_text">' . sprintf(__('Valid! (amount: $%d - until %s)', 'sitepress'), $pss_status['amount'], date('d/m/Y', $pss_status['expires'])) . '</span>';
+//    } else {
+//        $pss_string_status = '<span class="icl_error_text">' . sprintf(__('Expired! - since %s', 'sitepress'), date('d/m/Y', $pss_status['expires'])) . '</span>';
+//    }
+//}
 
 $docs_sent = 0;
 $docs_completed = 0;
@@ -46,42 +46,43 @@ foreach ($docs_statuses as $doc_status) {
             printf(__('%d documents sent to translation.<br />%d are complete, %d waiting for translation.', 'sitepress'), $docs_sent, $docs_completed, $docs_waiting); ?></p>
     <p><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/translation-management.php" class="button secondary"><strong><?php _e('Send documents to translation', 'sitepress'); ?></strong></a></p>
 
-<?php if (count($active_languages) > 1) { ?>
-    <div><a href="#" onclick="jQuery(this).parent().next('.wrapper').slideToggle();" style="display:block; padding:5px; border: 1px solid #eee; margin-bottom:2px;"><?php _e('Content translation', 'sitepress') ?></a></div>
-    <div class="wrapper" style="display:none;"><p>
+<?php if (count($active_languages) > 1) {
+ ?>
+            <div><a href="javascript:void(0)" onclick="jQuery(this).parent().next('.wrapper').slideToggle();" style="display:block; padding:5px; border: 1px solid #eee; margin-bottom:2px; background-color: #F7F7F7;"><?php _e('Content translation', 'sitepress') ?></a></div>
+            <div class="wrapper" style="display:none; padding: 5px 10px; border: 1px solid #eee; border-top: 0px; margin:-11px 0 2px 0;"><p>
         <?php
-        $your_translators = TranslationManagement::get_blog_translators();
-        if (!empty($your_translators)) {
-            echo '<strong>' . __('Your translators', 'sitepress') . '</strong><br />';
-            foreach ($your_translators as $your_translator) {
+            $your_translators = TranslationManagement::get_blog_translators();
+            if (!empty($your_translators)) {
+                echo '<strong>' . __('Your translators', 'sitepress') . '</strong><br />';
+                foreach ($your_translators as $your_translator) {
 
-                if ($current_user->ID == $your_translator->ID) {
-                    $edit_link = 'profile.php';
-                } else {
-                    $edit_link = esc_url(add_query_arg('wp_http_referer', urlencode(esc_url(stripslashes($_SERVER['REQUEST_URI']))), "user-edit.php?user_id=$your_translator->ID"));
-                }
-                echo '<a href="' . $edit_link . '"><strong>' . $your_translator->display_name . '</strong></a> - ';
-                foreach ($your_translator->language_pairs as $from => $lp) {
-                    $tos = array();
-                    foreach ($lp as $to => $null) {
-                        $tos[] = $active_languages[$to]['display_name'];
+                    if ($current_user->ID == $your_translator->ID) {
+                        $edit_link = 'profile.php';
+                    } else {
+                        $edit_link = esc_url(add_query_arg('wp_http_referer', urlencode(esc_url(stripslashes($_SERVER['REQUEST_URI']))), "user-edit.php?user_id=$your_translator->ID"));
                     }
-                    printf(__('%s to %s', 'sitepress'), $active_languages[$from]['display_name'], join(', ', $tos));
+                    echo '<a href="' . $edit_link . '"><strong>' . $your_translator->display_name . '</strong></a> - ';
+                    foreach ($your_translator->language_pairs as $from => $lp) {
+                        $tos = array();
+                        foreach ($lp as $to => $null) {
+                            $tos[] = $active_languages[$to]['display_name'];
+                        }
+                        printf(__('%s to %s', 'sitepress'), $active_languages[$from]['display_name'], join(', ', $tos));
+                    }
+                    echo '<br />';
                 }
-                echo '<br />';
             }
-        }
 
         ?>
-        <br />
-        <a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/translation-management.php&amp;sm=translators&amp;service=icanlocalize"><strong><?php _e('Add professional translators', 'sitepress'); ?></strong></a><br />
-        <a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/translation-management.php&amp;sm=translators&amp;service=local"><strong><?php _e('Add your own translators', 'sitepress'); ?></strong></a><br />
-        <a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/translation-management.php"><strong><?php _e('Translate contents', 'sitepress'); ?></strong></a><br />
-    </p></div>
+            <br />
+            <a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/translation-management.php&amp;sm=translators&amp;service=icanlocalize"><strong><?php _e('Add professional translators', 'sitepress'); ?></strong></a><br />
+            <a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/translation-management.php&amp;sm=translators&amp;service=local"><strong><?php _e('Add your own translators', 'sitepress'); ?></strong></a><br />
+            <a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/translation-management.php"><strong><?php _e('Translate contents', 'sitepress'); ?></strong></a><br />
+        </p></div>
 <?php } ?>
 
-<div><a href="#" onclick="jQuery(this).parent().next('.wrapper').slideToggle();" style="display:block; padding:5px; border: 1px solid #eee; margin-bottom:2px;"><?php _e('Theme and plugins localization', 'sitepress') ?></a></div>
-<div class="wrapper" style="display:none;"><p>
+        <div><a href="javascript:void(0)" onclick="jQuery(this).parent().next('.wrapper').slideToggle();" style="display:block; padding:5px; border: 1px solid #eee; margin-bottom:2px; background-color: #F7F7F7;"><?php _e('Theme and plugins localization', 'sitepress') ?></a></div>
+        <div class="wrapper" style="display:none; padding: 5px 10px; border: 1px solid #eee; border-top: 0px; margin:-11px 0 2px 0;"><p>
         <?php
         echo __('Current configuration', 'sitepress');
         echo '<br /><strong>';
@@ -99,21 +100,21 @@ foreach ($docs_statuses as $doc_status) {
     <p><a class="button secondary" href="<?php echo 'admin.php?page=' . basename(ICL_PLUGIN_PATH) . '/menu/theme-localization.php' ?>"><?php echo __('Manage theme and plugins localization', 'sitepress'); ?></a></p>
 </div>
 
-<div><a href="#" onclick="jQuery(this).parent().next('.wrapper').slideToggle();" style="display:block; padding:5px; border: 1px solid #eee; margin-bottom:2px;"><?php _e('String translation', 'sitepress') ?></a></div>
-<div class="wrapper" style="display:none;"><p><?php echo __('String translation allows you to enter translation for texts such as the site\'s title, tagline, widgets and other text not contained in posts and pages.', 'sitepress') ?></p>
+<div><a href="javascript:void(0)" onclick="jQuery(this).parent().next('.wrapper').slideToggle();" style="display:block; padding:5px; border: 1px solid #eee; margin-bottom:2px; background-color: #F7F7F7;"><?php _e('String translation', 'sitepress') ?></a></div>
+<div class="wrapper" style="display:none; padding: 5px 10px; border: 1px solid #eee; border-top: 0px; margin:-11px 0 2px 0;"><p><?php echo __('String translation allows you to enter translation for texts such as the site\'s title, tagline, widgets and other text not contained in posts and pages.', 'sitepress') ?></p>
     <?php
         $strings_need_update = $wpdb->get_var("SELECT COUNT(id) FROM {$wpdb->prefix}icl_strings WHERE status <> 1");
         if ($strings_need_update == 1):
 
     ?>
             <p><b><?php printf(__('There is <a href="%s"><b>1</b> string</a> that needs to be updated or translated. ', 'sitepress'), 'admin.php?page=' . basename(ICL_PLUGIN_PATH) . '/menu/string-translation.php&amp;status=0') ?></b></p>
-    <?php elseif ($strings_need_update): ?>
+<?php elseif ($strings_need_update): ?>
                 <p><b><?php printf(__('There are <a href="%s"><b>%s</b> strings</a> that need to be updated or translated. ', 'sitepress'), 'admin.php?page=' . basename(ICL_PLUGIN_PATH) . '/menu/string-translation.php&amp;status=0', $strings_need_update) ?></b></p>
-    <?php else: ?>
+<?php else: ?>
                     <p>
-        <?php echo __('All strings are up to date.', 'sitepress'); ?>
+<?php echo __('All strings are up to date.', 'sitepress'); ?>
                 </p>
-    <?php endif; ?>
+<?php endif; ?>
                     <p>
                         <a class="button secondary" href="<?php echo 'admin.php?page=' . basename(ICL_PLUGIN_PATH) . '/menu/string-translation.php' ?>"><?php echo __('Translate strings', 'sitepress') ?></a>
                     </p>
@@ -121,44 +122,47 @@ foreach ($docs_statuses as $doc_status) {
 
 
 
-    <?php endif; ?>
+<?php endif; ?>
                 </div>
 
-                <div><a href="#" onclick="jQuery(this).parent().next('.wrapper').slideToggle();" style="display:block; padding:5px; border: 1px solid #eee; margin-bottom:2px;"><?php _e('Navigation', 'sitepress') ?></a></div>
-                <div class="wrapper" style="display:none;"><p>
-        <?php echo __('WPML provides advanced menus and navigation to go with your WordPress website, including drop-down menus, breadcrumbs and sidebar navigation.', 'sitepress') ?>
+                <div><a href="javascript:void(0)" onclick="jQuery(this).parent().next('.wrapper').slideToggle();" style="display:block; padding:5px; border: 1px solid #eee; margin-bottom:2px; background-color: #F7F7F7;"><?php _e('Navigation', 'sitepress') ?></a></div>
+                <div class="wrapper" style="display:none; padding: 5px 10px; border: 1px solid #eee; border-top: 0px; margin:-11px 0 2px 0;"><p>
+<?php echo __('WPML provides advanced menus and navigation to go with your WordPress website, including drop-down menus, breadcrumbs and sidebar navigation.', 'sitepress') ?>
                 </p>
-    <?php if (!$sitepress_settings['modules']['cms-navigation']['enabled']): ?>
+<?php if (!$sitepress_settings['modules']['cms-navigation']['enabled']): ?>
                         <p><b><?php echo __('CMS Navigation is disabled.', 'sitepress') ?></b></p>
                         <p><a class="button secondary" href="<?php echo 'admin.php?page=' . basename(ICL_PLUGIN_PATH) . '/menu/overview.php&amp;enable-cms-navigation=1' ?>"><?php echo __('Enable CMS navigation', 'sitepress') ?></a></p>
-    <?php else: ?>
+<?php else: ?>
                             <p><b><?php echo __('CMS Navigation is enabled.', 'sitepress') ?></b></p>
                             <p>
                                 <a class="button secondary" href="<?php echo 'admin.php?page=' . basename(ICL_PLUGIN_PATH) . '/menu/navigation.php' ?>"><?php echo __('Configure navigation', 'sitepress') ?></a>
                                 <a class="button secondary" href="<?php echo 'admin.php?page=' . basename(ICL_PLUGIN_PATH) . '/menu/overview.php&amp;enable-cms-navigation=0' ?>"><?php echo __('Disable CMS navigation', 'sitepress') ?></a>
                             </p>
-    <?php endif; ?>
+<?php endif; ?>
                         </div>
 
-                        <div><a href="#" onclick="jQuery(this).parent().next('.wrapper').slideToggle();" style="display:block; padding:5px; border: 1px solid #eee; margin-bottom:2px;"><?php _e('Sticky links', 'sitepress') ?></a></div>
+                        <div><a href="javascript:void(0)" onclick="jQuery(this).parent().next('.wrapper').slideToggle();" style="display:block; padding:5px; border: 1px solid #eee; margin-bottom:2px; background-color: #F7F7F7;"><?php _e('Sticky links', 'sitepress') ?></a></div>
 
-                        <div class="wrapper" style="display:none;"><p><?php echo __('With Sticky Links, WPML can automatically ensure that all links on posts and pages are up-to-date, should their URL change.', 'sitepress'); ?></p>
+                        <div class="wrapper" style="display:none; padding: 5px 10px; border: 1px solid #eee; border-top: 0px; margin:-11px 0 2px 0;"><p><?php echo __('With Sticky Links, WPML can automatically ensure that all links on posts and pages are up-to-date, should their URL change.', 'sitepress'); ?></p>
 
-    <?php if ($sitepress_settings['modules']['absolute-links']['enabled']): ?>
+<?php if ($sitepress_settings['modules']['absolute-links']['enabled']): ?>
                                 <p><b><?php echo __('Sticky links are enabled.', 'sitepress') ?></b></p>
                                 <p>
                                     <a class="button secondary" href="<?php echo 'admin.php?page=' . basename(ICL_PLUGIN_PATH) . '/menu/absolute-links.php' ?>"><?php echo __('Configure sticky links', 'sitepress') ?></a>
                                     <a class="button secondary" href="<?php echo 'admin.php?page=' . basename(ICL_PLUGIN_PATH) . '/menu/overview.php&amp;icl_enable_alp=0' ?>"><?php echo __('Disable sticky links', 'sitepress') ?></a>
                                 </p>
 
-    <?php else: ?>
+<?php else: ?>
                                     <p><b><?php echo __('Sticky links are disabled.', 'sitepress') ?></b></p>
                                     <p><a class="button secondary" href="<?php echo 'admin.php?page=' . basename(ICL_PLUGIN_PATH) . '/menu/overview.php&amp;icl_enable_alp=1' ?>"><?php echo __('Enable sticky links', 'sitepress') ?></a></p>
-    <?php endif; ?>
+<?php endif; ?>
                                 </div>
 
-                                <div><a href="#" onclick="jQuery(this).parent().next('.wrapper').slideToggle();" style="display:block; padding:5px; border: 1px solid #eee; margin-bottom:2px;"><?php _e('Support Subscription', 'sitepress'); ?></a></div>
-                                <div class="wrapper" style="display:none;"><p><?php printf(__('Support Subscription - %s', 'sitepress'), $pss_string_status); ?>
-        <?php if (!$pss_status['valid']): ?>(<a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/support.php"><?php _e('purchase', 'sitepress'); ?></a>)<?php endif; ?></p>
-        <?php do_action('icl_dashboard_widget_content'); ?>
-</div>
+                                <div><a href="javascript:void(0)" onclick="jQuery(this).parent().next('.wrapper').slideToggle();" style="display:block; padding:5px; border: 1px solid #eee; margin-bottom:2px; background-color: #F7F7F7;"><?php _e('Help resources', 'sitepress'); ?></a></div>
+                                <div class="wrapper" style="display:none; padding: 5px 10px; border: 1px solid #eee; border-top: 0px; margin:-11px 0 2px 0;">
+                                    <p><img src="<?php echo ICL_PLUGIN_URL; ?>/res/img/question1.png" width="16" height="16" style="position: relative; top: 4px;" alt="<?php _e('WPML home page', 'sitepress'); ?>" />&nbsp;<a href="http://wpml.org/"><?php _e('WPML home page', 'sitepress'); ?></a>
+                                        <br /><img src="<?php echo ICL_PLUGIN_URL; ?>/res/img/RO-Mx1-16_tool-wrench.png" width="16" height="16" style="position: relative; top: 4px;" alt="<?php _e('Commercial support', 'sitepress'); ?>" />&nbsp;<a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH); ?>/menu/support.php"><?php _e('Commercial support', 'sitepress'); ?></a></p>
+                                    <!-- <p><?php printf(__('Support Subscription - %s', 'sitepress'), $pss_string_status); ?>
+<?php if (!$pss_status['valid']): ?>(<a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/support.php"><?php _e('purchase', 'sitepress'); ?></a>)<?php endif; ?></p> -->
+                                </div>
+<?php do_action('icl_dashboard_widget_content'); ?>
