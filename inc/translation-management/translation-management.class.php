@@ -492,20 +492,18 @@ class TranslationManagement{
     /* MENU */
     /* ******************************************************************************************** */
     function menu(){
-        global $sitepress_settings;
-        add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Translation Management','sitepress'), __('Translation Management','sitepress'), 
-            'manage_options', basename(ICL_PLUGIN_PATH).'/menu/translation-management.php');
-            
-        $current_translator = $this->get_current_translator();
-        
-        if(!empty($current_translator->language_pairs) || current_user_can('manage_options')){            
-            if(current_user_can('manage_options')){            
-                add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Translations','sitepress'), __('Translations','sitepress'), 
-                'manage_options', basename(ICL_PLUGIN_PATH).'/menu/translations-queue.php');
-            }else{
-                add_menu_page(__('WPML','sitepress'), __('WPML','sitepress'), 0, basename(ICL_PLUGIN_PATH).'/menu/translations-queue.php',null, ICL_PLUGIN_URL . '/res/img/icon16.png');              
-                add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/translations-queue.php', __('Translations','sitepress'), __('Translations','sitepress'), 
-                0, basename(ICL_PLUGIN_PATH).'/menu/translations-queue.php');
+        global $sitepress, $sitepress_settings;
+        if (1 < count($sitepress->get_active_languages())) {
+            $current_translator = $this->get_current_translator();
+            if(!empty($current_translator->language_pairs) || current_user_can('manage_options')){
+                if(current_user_can('manage_options')){
+                    add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/translation-management.php', __('Translations','sitepress'), __('Translations','sitepress'),
+                    'manage_options', basename(ICL_PLUGIN_PATH).'/menu/translations-queue.php');
+                } else {
+                    add_menu_page(__('WPML','sitepress'), __('WPML','sitepress'), 0, basename(ICL_PLUGIN_PATH).'/menu/translations-queue.php',null, ICL_PLUGIN_URL . '/res/img/icon16.png');
+                    add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/translations-queue.php', __('Translations','sitepress'), __('Translations','sitepress'),
+                    0, basename(ICL_PLUGIN_PATH).'/menu/translations-queue.php');
+                }
             }
         }
     }
