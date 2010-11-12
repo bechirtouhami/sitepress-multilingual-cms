@@ -47,7 +47,8 @@ foreach ($docs_statuses as $doc_status) {
     <p><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/translation-management.php" class="button secondary"><strong><?php _e('Send documents to translation', 'sitepress'); ?></strong></a></p>
 
 <?php if (count($active_languages) > 1) {
- ?>
+
+?>
             <div><a href="javascript:void(0)" onclick="jQuery(this).parent().next('.wrapper').slideToggle();" style="display:block; padding:5px; border: 1px solid #eee; margin-bottom:2px; background-color: #F7F7F7;"><?php _e('Content translation', 'sitepress') ?></a></div>
             <div class="wrapper" style="display:none; padding: 5px 10px; border: 1px solid #eee; border-top: 0px; margin:-11px 0 2px 0;"><p>
         <?php
@@ -108,13 +109,13 @@ foreach ($docs_statuses as $doc_status) {
 
     ?>
             <p><b><?php printf(__('There is <a href="%s"><b>1</b> string</a> that needs to be updated or translated. ', 'sitepress'), 'admin.php?page=' . basename(ICL_PLUGIN_PATH) . '/menu/string-translation.php&amp;status=0') ?></b></p>
-<?php elseif ($strings_need_update): ?>
+    <?php elseif ($strings_need_update): ?>
                 <p><b><?php printf(__('There are <a href="%s"><b>%s</b> strings</a> that need to be updated or translated. ', 'sitepress'), 'admin.php?page=' . basename(ICL_PLUGIN_PATH) . '/menu/string-translation.php&amp;status=0', $strings_need_update) ?></b></p>
-<?php else: ?>
+    <?php else: ?>
                     <p>
-<?php echo __('All strings are up to date.', 'sitepress'); ?>
+        <?php echo __('All strings are up to date.', 'sitepress'); ?>
                 </p>
-<?php endif; ?>
+    <?php endif; ?>
                     <p>
                         <a class="button secondary" href="<?php echo 'admin.php?page=' . basename(ICL_PLUGIN_PATH) . '/menu/string-translation.php' ?>"><?php echo __('Translate strings', 'sitepress') ?></a>
                     </p>
@@ -122,40 +123,40 @@ foreach ($docs_statuses as $doc_status) {
 
 
 
-<?php endif; ?>
+    <?php endif; ?>
                 </div>
 
                 <div><a href="javascript:void(0)" onclick="jQuery(this).parent().next('.wrapper').slideToggle();" style="display:block; padding:5px; border: 1px solid #eee; margin-bottom:2px; background-color: #F7F7F7;"><?php _e('Navigation', 'sitepress') ?></a></div>
                 <div class="wrapper" style="display:none; padding: 5px 10px; border: 1px solid #eee; border-top: 0px; margin:-11px 0 2px 0;"><p>
-<?php echo __('WPML provides advanced menus and navigation to go with your WordPress website, including drop-down menus, breadcrumbs and sidebar navigation.', 'sitepress') ?>
+        <?php echo __('WPML provides advanced menus and navigation to go with your WordPress website, including drop-down menus, breadcrumbs and sidebar navigation.', 'sitepress') ?>
                 </p>
-<?php if (!$sitepress_settings['modules']['cms-navigation']['enabled']): ?>
+    <?php if (!$sitepress_settings['modules']['cms-navigation']['enabled']): ?>
                         <p><b><?php echo __('CMS Navigation is disabled.', 'sitepress') ?></b></p>
                         <p><a class="button secondary" href="<?php echo 'admin.php?page=' . basename(ICL_PLUGIN_PATH) . '/menu/overview.php&amp;enable-cms-navigation=1' ?>"><?php echo __('Enable CMS navigation', 'sitepress') ?></a></p>
-<?php else: ?>
+    <?php else: ?>
                             <p><b><?php echo __('CMS Navigation is enabled.', 'sitepress') ?></b></p>
                             <p>
                                 <a class="button secondary" href="<?php echo 'admin.php?page=' . basename(ICL_PLUGIN_PATH) . '/menu/navigation.php' ?>"><?php echo __('Configure navigation', 'sitepress') ?></a>
                                 <a class="button secondary" href="<?php echo 'admin.php?page=' . basename(ICL_PLUGIN_PATH) . '/menu/overview.php&amp;enable-cms-navigation=0' ?>"><?php echo __('Disable CMS navigation', 'sitepress') ?></a>
                             </p>
-<?php endif; ?>
+    <?php endif; ?>
                         </div>
 
                         <div><a href="javascript:void(0)" onclick="jQuery(this).parent().next('.wrapper').slideToggle();" style="display:block; padding:5px; border: 1px solid #eee; margin-bottom:2px; background-color: #F7F7F7;"><?php _e('Sticky links', 'sitepress') ?></a></div>
 
                         <div class="wrapper" style="display:none; padding: 5px 10px; border: 1px solid #eee; border-top: 0px; margin:-11px 0 2px 0;"><p><?php echo __('With Sticky Links, WPML can automatically ensure that all links on posts and pages are up-to-date, should their URL change.', 'sitepress'); ?></p>
 
-<?php if ($sitepress_settings['modules']['absolute-links']['enabled']): ?>
+    <?php if ($sitepress_settings['modules']['absolute-links']['enabled']): ?>
                                 <p><b><?php echo __('Sticky links are enabled.', 'sitepress') ?></b></p>
                                 <p>
                                     <a class="button secondary" href="<?php echo 'admin.php?page=' . basename(ICL_PLUGIN_PATH) . '/menu/absolute-links.php' ?>"><?php echo __('Configure sticky links', 'sitepress') ?></a>
                                     <a class="button secondary" href="<?php echo 'admin.php?page=' . basename(ICL_PLUGIN_PATH) . '/menu/overview.php&amp;icl_enable_alp=0' ?>"><?php echo __('Disable sticky links', 'sitepress') ?></a>
                                 </p>
 
-<?php else: ?>
+    <?php else: ?>
                                     <p><b><?php echo __('Sticky links are disabled.', 'sitepress') ?></b></p>
                                     <p><a class="button secondary" href="<?php echo 'admin.php?page=' . basename(ICL_PLUGIN_PATH) . '/menu/overview.php&amp;icl_enable_alp=1' ?>"><?php echo __('Enable sticky links', 'sitepress') ?></a></p>
-<?php endif; ?>
+    <?php endif; ?>
                                 </div>
 
                                 <div><a href="javascript:void(0)" onclick="jQuery(this).parent().next('.wrapper').slideToggle();" style="display:block; padding:5px; border: 1px solid #eee; margin-bottom:2px; background-color: #F7F7F7;"><?php _e('Help resources', 'sitepress'); ?></a></div>
@@ -163,6 +164,30 @@ foreach ($docs_statuses as $doc_status) {
                                     <p><img src="<?php echo ICL_PLUGIN_URL; ?>/res/img/question1.png" width="16" height="16" style="position: relative; top: 4px;" alt="<?php _e('WPML home page', 'sitepress'); ?>" />&nbsp;<a href="http://wpml.org/"><?php _e('WPML home page', 'sitepress'); ?></a>
                                         <br /><img src="<?php echo ICL_PLUGIN_URL; ?>/res/img/RO-Mx1-16_tool-wrench.png" width="16" height="16" style="position: relative; top: 4px;" alt="<?php _e('Commercial support', 'sitepress'); ?>" />&nbsp;<a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH); ?>/menu/support.php"><?php _e('Commercial support', 'sitepress'); ?></a></p>
                                     <!-- <p><?php printf(__('Support Subscription - %s', 'sitepress'), $pss_string_status); ?>
-<?php if (!$pss_status['valid']): ?>(<a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/support.php"><?php _e('purchase', 'sitepress'); ?></a>)<?php endif; ?></p> -->
-                                </div>
+    <?php if (!$pss_status['valid']): ?>(<a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/support.php"><?php _e('purchase', 'sitepress'); ?></a>)<?php endif; ?></p> -->
+                                    </div>
+
+<?php
+$rss = fetch_feed('http://wpml.org/feed/');
+if (!is_wp_error($rss)) { // Checks that the object is created correctly
+    // Figure out how many total items there are, but limit it to 5.
+    $maxitems = $rss->get_item_quantity(5);
+    // Build an array of all the items, starting with element 0 (first element).
+    $rss_items = $rss->get_items(0, $maxitems);
+}
+if ($maxitems != 0) {
+?>
+                                                <p><strong><?php _e('WPML news:', 'sitepress'); ?></strong></p>
+                                                <ul>
+<?php
+    // Loop through each feed item and display each item as a hyperlink.
+    foreach ($rss_items as $item) {
+
+?>
+                                                    <li><a href='<?php echo $item->get_permalink(); ?>'title='<?php echo 'Posted ' . $item->get_date('j F Y | g:i a'); ?>'><?php echo $item->get_title(); ?></a></li>
+<?php } ?>
+                                                </ul>
+<?php
+}
+?>
 <?php do_action('icl_dashboard_widget_content'); ?>
