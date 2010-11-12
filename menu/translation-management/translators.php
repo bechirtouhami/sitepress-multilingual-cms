@@ -320,35 +320,25 @@ function icl_local_edit_translator_form($action = 'add', $selected_translator = 
  * @param array $array
  * @return array
  */
-function icl_icanlocalize_translators_list($array) {
+function icl_icanlocalize_translators_list($array) {  
+  global $sitepress_settings, $sitepress;
   
-  global $sitepress;
-  $settings = $sitepress->get_settings();
-
-  if (!isset($settings['site_id']) || !isset($settings['access_key'])) {
-    return $array;
+  $lang_status = (array)$sitepress_settings['icl_lang_status'];
+  if (0 != key($lang_status)){
+    $buf[] = $lang_status;  
+    $lang_status = $buf;    
   }
   
-  $wid = $settings['site_id'];
-  $access_key = $settings['access_key'];
-
-  $icl = new ICanLocalizeQuery($wid, $access_key);
-  $data = $icl->get_website_details();
-
   $translators = array();
-  if (isset($data['translation_languages']['translation_language'])) {
-    foreach ($data['translation_languages']['translation_language'] as $key => $value) {
-      if (isset($value['translators']) && !empty($value['translators'])) {
-        foreach ($value['translators'] as $translator) {
-          $translators[$translator['attr']['id']]['name'] = $translator['attr']['nickname'];
-          $translators[$translator['attr']['id']]['langs'][$value['attr']['from_language_name']][] = $value['attr']['to_language_name'];
-          $translators[$translator['attr']['id']]['type'] = 'ICanLocalize';
-          $translators[$translator['attr']['id']]['action'] = $sitepress->create_icl_popup_link(ICL_API_ENDPOINT . '/websites/' . $wid
-            . '/website_translation_offers/' . $data['translation_languages']['translation_language'][$key]['attr']['id'] . '/website_translation_contracts/'
-            . $value['attr']['contract_id'], array('title' => __('Chat with translator', 'sitepress'), 'unload_cb' => 'icl_thickbox_refresh')) . __('Chat with translator', 'sitepress') . '</a>';
-        }
+  foreach($lang_status as $lpair){
+      foreach($lpair['translators'] as $translator){
+        $translators[$translator['id']]['name'] = $translator['nickname'];
+        $translators[$translator['id']]['langs'][$lpair['from']][] = $lpair['to'];
+        $translators[$translator['id']]['type'] = 'ICanLocalize';
+        $translators[$translator['id']]['action'] = $sitepress->create_icl_popup_link(ICL_API_ENDPOINT . '/websites/' . $sitepress_settings['site_id']
+            . '/website_translation_offers/' . $lpair['id'] . '/website_translation_contracts/'
+            . $translator['contract_id'], array('title' => __('Chat with translator', 'sitepress'), 'unload_cb' => 'icl_thickbox_refresh')) . __('Chat with translator', 'sitepress') . '</a>';        
       }
-    }
   }
 
   return array_merge($translators, $array);

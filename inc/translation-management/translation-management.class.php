@@ -465,9 +465,8 @@ class TranslationManagement{
         <select name="<?php echo $name ?>">
             <option value="0"><?php echo $default_name ?></option>
             <?php foreach($translators as $t):?>
-            <option value="<?php echo $t->ID ?>" <?php if($selected==$t->ID):?>selected="selected"<?php endif;?>><?php echo esc_html($t->display_name) ?> (
-                <?php if(isset($t->service)) echo $t->service; else _e('Local'); ?>
-            )</option>
+            <option value="<?php echo $t->ID ?>" <?php if($selected==$t->ID):?>selected="selected"<?php endif;?>><?php echo esc_html($t->display_name);
+                 ?> (<?php if(isset($t->service)) echo $t->service; else _e('Local'); ?>)</option>
             <?php endforeach; ?>
         </select>
         <?php
@@ -499,9 +498,9 @@ class TranslationManagement{
             
         $current_translator = $this->get_current_translator();
         
-        if(!empty($current_translator->language_pairs)){            
+        if(!empty($current_translator->language_pairs) || current_user_can('manage_options')){            
             if(current_user_can('manage_options')){            
-                add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/'.$top_level_page.'.php', __('Translations','sitepress'), __('Translations','sitepress'), 
+                add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/languages.php', __('Translations','sitepress'), __('Translations','sitepress'), 
                 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/translations-queue.php');
             }else{
                 add_menu_page(__('WPML','sitepress'), __('WPML','sitepress'), 0, basename(ICL_PLUGIN_PATH).'/menu/translations-queue.php',null, ICL_PLUGIN_URL . '/res/img/icon16.png');              
@@ -1427,14 +1426,16 @@ class TranslationManagement{
         ));        
         $job_id = $wpdb->insert_id;
         
-        require_once ICL_PLUGIN_PATH . '/inc/translation-management/tm-notification.class.php';
-        if($job_id){
-            $tn_notification = new TM_Notification();
-            if(empty($translator_id)){
-                $tn_notification->new_job_any($job_id);    
-            }else{
-                $tn_notification->new_job_translator($job_id, $translator_id);
-            }            
+        if(!defined('ICL_TM_DISABLE_ALL_NOTIFICATIONS')){
+            require_once ICL_PLUGIN_PATH . '/inc/translation-management/tm-notification.class.php';
+            if($job_id){
+                $tn_notification = new TM_Notification();
+                if(empty($translator_id)){
+                    $tn_notification->new_job_any($job_id);    
+                }else{
+                    $tn_notification->new_job_translator($job_id, $translator_id);
+                }            
+            }
         }
         
         foreach($translation_package['contents'] as $field => $value){

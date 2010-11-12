@@ -664,7 +664,8 @@ class SitePress{
                         'manage_options', basename(ICL_PLUGIN_PATH).'/menu/troubleshooting.php'); 
         }            
         
-        add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Compatibility packages','sitepress'), __('Compatibility packages','sitepress'), 
+        $alert = '&nbsp;<img width="12" height="12" style="margin-bottom:-2px;" src="'.ICL_PLUGIN_URL.'/res/img/alert.png" />';
+        add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Compatibility packages','sitepress'), __('Compatibility packages','sitepress').$alert, 
                         'manage_options', basename(ICL_PLUGIN_PATH).'/menu/compatibility-packages.php');             
         
 		add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/overview.php', __('Support','sitepress'), __('Support','sitepress'), 'manage_options', basename(ICL_PLUGIN_PATH).'/menu/support.php');
@@ -721,7 +722,8 @@ class SitePress{
                 'absolute-links' => array('enabled'=>0, 'sticky_links_widgets'=>1, 'sticky_links_strings'=>1),
                 'cms-navigation'=>array('enabled'=>0, 'breadcrumbs_separator'=>' &raquo; ')
                 ),
-            'promote_wpml' => 1
+            'promote_wpml' => 1,
+            'troubleshooting_options' => array('http_communication' => 1)
         ); 
         
         //congigured for three levels

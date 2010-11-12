@@ -1508,8 +1508,6 @@ class ICL_Pro_Translation{
         }
       
         return 0; // Should not have got here - unknown error.
-        
-        
     }
     
     function _test_xmlrpc(){ return true; }
