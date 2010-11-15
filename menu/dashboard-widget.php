@@ -1,5 +1,5 @@
 <?php
-global $wpdb, $current_user;
+global $wpdb, $current_user, $sitepress_settings;
 $active_languages = $this->get_active_languages();
 foreach ($active_languages as $lang) {
     if ($default_language != $lang['code']) {
@@ -132,12 +132,12 @@ foreach ($docs_statuses as $doc_status) {
                 </p>
     <?php if (!$sitepress_settings['modules']['cms-navigation']['enabled']): ?>
                         <p><b><?php echo __('CMS Navigation is disabled.', 'sitepress') ?></b></p>
-                        <p><a class="button secondary" href="<?php echo 'admin.php?page=' . basename(ICL_PLUGIN_PATH) . '/menu/overview.php&amp;enable-cms-navigation=1' ?>"><?php echo __('Enable CMS navigation', 'sitepress') ?></a></p>
+                        <p><a class="button secondary" href="<?php echo 'index.php?enable-cms-navigation=1' ?>"><?php echo __('Enable CMS navigation', 'sitepress') ?></a></p>
     <?php else: ?>
                             <p><b><?php echo __('CMS Navigation is enabled.', 'sitepress') ?></b></p>
                             <p>
                                 <a class="button secondary" href="<?php echo 'admin.php?page=' . basename(ICL_PLUGIN_PATH) . '/menu/navigation.php' ?>"><?php echo __('Configure navigation', 'sitepress') ?></a>
-                                <a class="button secondary" href="<?php echo 'admin.php?page=' . basename(ICL_PLUGIN_PATH) . '/menu/overview.php&amp;enable-cms-navigation=0' ?>"><?php echo __('Disable CMS navigation', 'sitepress') ?></a>
+                                <a class="button secondary" href="<?php echo 'index.php?enable-cms-navigation=0' ?>"><?php echo __('Disable CMS navigation', 'sitepress') ?></a>
                             </p>
     <?php endif; ?>
                         </div>
@@ -150,12 +150,12 @@ foreach ($docs_statuses as $doc_status) {
                                 <p><b><?php echo __('Sticky links are enabled.', 'sitepress') ?></b></p>
                                 <p>
                                     <a class="button secondary" href="<?php echo 'admin.php?page=' . basename(ICL_PLUGIN_PATH) . '/menu/absolute-links.php' ?>"><?php echo __('Configure sticky links', 'sitepress') ?></a>
-                                    <a class="button secondary" href="<?php echo 'admin.php?page=' . basename(ICL_PLUGIN_PATH) . '/menu/overview.php&amp;icl_enable_alp=0' ?>"><?php echo __('Disable sticky links', 'sitepress') ?></a>
+                                    <a class="button secondary" href="<?php echo 'index.php?icl_enable_alp=0' ?>"><?php echo __('Disable sticky links', 'sitepress') ?></a>
                                 </p>
 
     <?php else: ?>
                                     <p><b><?php echo __('Sticky links are disabled.', 'sitepress') ?></b></p>
-                                    <p><a class="button secondary" href="<?php echo 'admin.php?page=' . basename(ICL_PLUGIN_PATH) . '/menu/overview.php&amp;icl_enable_alp=1' ?>"><?php echo __('Enable sticky links', 'sitepress') ?></a></p>
+                                    <p><a class="button secondary" href="<?php echo 'index.php?icl_enable_alp=1' ?>"><?php echo __('Enable sticky links', 'sitepress') ?></a></p>
     <?php endif; ?>
                                 </div>
 
