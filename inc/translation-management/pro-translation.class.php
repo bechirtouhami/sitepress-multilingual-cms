@@ -313,7 +313,8 @@ class ICL_Pro_Translation{
         
         $icl_methods['icanlocalize.update_status_by_cms_id'] = array($this, 'get_translated_document');
         
-        $icl_methods['icanlocalize.set_translation_status'] =  array($this,'get_translated_string'); // use for strings - old method
+        $icl_methods['icanlocalize.set_translation_status'] =  array($this,'_legacy_set_translation_status'); 
+        //$icl_methods['icanlocalize.set_translation_status'] =  array($this,'get_translated_string'); // use for strings - old method
         
         //$icl_methods['icanlocalize.list_posts'] = array($this, '_list_posts');
         //$icl_methods['icanlocalize.translate_post'] = array($this, '_remote_control_translate_post');
@@ -336,7 +337,118 @@ class ICL_Pro_Translation{
         return $methods;
         
     }
+    
+    function _legacy_set_translation_status($args){
+            global $sitepress_settings, $sitepress, $wpdb;        
+            try{
+                
+                $signature   = $args[0];
+                $site_id     = $args[1];
+                $request_id  = $args[2];
+                $original_language    = $args[3];
+                $language    = $args[4];
+                $status      = $args[5];
+                $message     = $args[6];  
+
+                if ($site_id != $sitepress_settings['site_id']) {
+                    return 3;                                                             
+                }
+                
+                //check signature
+                $signature_chk = sha1($sitepress_settings['access_key'].$sitepress_settings['site_id'].$request_id.$language.$status.$message);
+                if($signature_chk != $signature){
+                    return 2;
+                }
+                
+                $lang_code = $sitepress->get_language_code($this->server_languages_map($language, true));//the 'reverse' language filter 
+                $cms_request_info = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}icl_core_status WHERE rid={$request_id} AND target='{$lang_code}'");
+                
+                if (empty($cms_request_info)){
+                    $this->_throw_exception_for_mysql_errors();
+                    return 4;
+                }
+                
+                if ($this->_legacy_process_translated_document($request_id, $language, $args) === true){
+                    $this->_throw_exception_for_mysql_errors();
+                    return 1;
+                } else {
+                    $this->_throw_exception_for_mysql_errors();
+                    return 6;
+                }
+                
+            }catch(Exception $e) {
+                return $e->getMessage();
+            }
+
+    } 
+    
+    function _legacy_process_translated_document($request_id, $language, $args){
+        global $sitepress_settings, $wpdb, $sitepress, $iclTranslationManagement, $current_user;
+        $ret = false;
+        $iclq = new ICanLocalizeQuery($sitepress_settings['site_id'], $sitepress_settings['access_key']);       
+        $post_type = $wpdb->get_var($wpdb->prepare("SELECT p.post_type FROM {$wpdb->posts} p JOIN {$wpdb->prefix}icl_content_status c ON p.ID = c.nid WHERE c.rid=%d", $request_id));
+        $trid = $wpdb->get_var($wpdb->prepare("
+            SELECT trid 
+            FROM {$wpdb->prefix}icl_translations t 
+            JOIN {$wpdb->prefix}icl_content_status c ON t.element_id = c.nid AND t.element_type='post_{$post_type}' AND c.rid=%d",$request_id));
+        $translation = $iclq->cms_do_download($request_id, $language);                           
         
+        if($translation){
+            if (icl_is_string_translation($translation)){
+                $ret = $this->get_translated_string($args);
+            } else {
+                // we need to create a cms_id for this
+                list($lang_from, $lang_to) = $wpdb->get_row($wpdb->prepare("
+                    SELECT origin, target FROM {$wpdb->prefix}icl_core_status WHERE rid=%d ORDER BY id DESC LIMIT 1
+                ", $request_id), ARRAY_N);
+                $translation_id = $wpdb->get_var($wpdb->prepare("
+                    SELECT translsation_id FROM {$wpdb->prefix}icl_translations WHERE trid=%d and language_code=%s
+                ", $trid, $lang_to));
+                if(!$translation_id){
+                    $wpdb->insert($wpdb->prefix.'icl_translations', array(
+                        'element_type'  => 'post_' . $post_type,
+                        'element_id'    => $wpdb->get_var($wpdb->prepare("SELECT nid FROM {$wpdb->prefix}icl_content_status WHERE rid=%d", $request_id)),
+                        'trid'          => $trid,
+                        'language_code' => $lang_to,
+                        'source_language_code' => $lang_from
+                    ));
+                    $translation_id = $wpdb->insert_id;
+                }
+                
+                $original_post_id = $wpdb->get_var($wpdb->prepare("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid=%d AND source_language_code IS NULL"));
+                $translation_package = $iclTranslationManagement->create_translation_package($original_post_id);
+                $md5 = $iclTranslationManagement->post_md5($original_post_id);
+                
+                get_currentuserinfo();
+                $translator_id = $current_user->ID;
+                // add translation_status record        
+                list($rid, $update) = $iclTranslationManagement->update_translation_status(array(
+                    'translation_id'        => $translation_id,
+                    'status'                => 2,
+                    'translator_id'         => $translator_id,
+                    'needs_update'          => 0,
+                    'md5'                   => $md5,
+                    'translation_service'   => 'icanlocalize',
+                    'translation_package'   => serialize($translation_package)
+                ));
+                $job_ids[] = $iclTranslationManagement->add_translation_job($rid, $translator_id, $translation_package);                                
+                                
+                                
+                $ret = $this->add_translated_document($translation_id, $request_id);
+                
+                //if ($ret){
+                //    $translations = $sitepress->get_element_translations($trid, 'post_'.$post_type);
+                //    $iclq->report_back_permalink($request_id, $language, $translations[$sitepress->get_language_code(icl_server_languages_map($language, 1))]);
+                //}
+            }
+            if($ret){
+                $iclq->cms_update_request_status($request_id, CMS_TARGET_LANGUAGE_DONE, $language);
+            } 
+            
+        }        
+        return $ret;
+    }
+            
     /*
      * 0 - unknown error
      * 1 - success
