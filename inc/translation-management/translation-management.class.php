@@ -526,14 +526,13 @@ class TranslationManagement{
             return;
         }
 
-        $already_sent = $wpdb->get_var($wpdb->prepare("SELECT t.translation_id FROM
-            {$wpdb->prefix}icl_translations t JOIN {$wpdb->prefix}icl_translation_status s
-            ON t.translation_id = s.translation_id WHERE t.element_type='%s'
-            AND t.element_id=%d", 'post_' . $post->post_type, $post_id));
+        // is this the original document? 
+        if($_POST['icl_trid']){
+            $is_original = $wpdb->get_var($wpdb->prepare("SELECT source_language_code IS NULL FROM {$wpdb->prefix}icl_translations WHERE element_id=%d AND trid=%d", $post_id, $_POST['icl_trid']));
+        }
         
         // when a manual translation is added/edited make sure to update translation tables
-        if($_POST['icl_trid'] && $this->settings['doc_translation_method'] == ICL_TM_TMETHOD_MANUAL
-                && $already_sent){
+        if($_POST['icl_trid'] && $this->settings['doc_translation_method'] == ICL_TM_TMETHOD_MANUAL && !$is_original){
             $trid = $_POST['icl_trid'];
             $lang = $_POST['icl_post_language'];
             
