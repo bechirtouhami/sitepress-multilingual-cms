@@ -3192,7 +3192,7 @@ class SitePress{
         }elseif(isset($_POST['action']) && ($_POST['action']=='get-tagcloud' || $_POST['action']=='menu-quick-search')){
             $urlparts = parse_url($_SERVER['HTTP_REFERER']); 
             parse_str($urlparts['query'], $qvars);
-            $this_lang = $qvars['lang']; 
+            $this_lang = isset($qvars['lang']) ? $qvars['lang'] : $this->get_default_language();
         }else{
             $this_lang = $this->get_default_language();
         }          
