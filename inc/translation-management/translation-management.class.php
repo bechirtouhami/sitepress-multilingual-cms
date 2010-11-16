@@ -1197,11 +1197,11 @@ class TranslationManagement{
     */
     function update_translation_status($data){
         global $wpdb;
-        
         if(!isset($data['translation_id'])) return;
-        
         if($rid = $wpdb->get_var($wpdb->prepare("SELECT rid FROM {$wpdb->prefix}icl_translation_status WHERE translation_id=%d", $data['translation_id']))){
+            
             $wpdb->update($wpdb->prefix.'icl_translation_status', $data, array('rid'=>$rid));
+            
             $update = true;
         }else{
             $wpdb->insert($wpdb->prefix.'icl_translation_status',$data);
@@ -2096,7 +2096,7 @@ class TranslationManagement{
                 
                 $sitepress->save_settings($iclsettings);
             }
-            if($sitepress_settings['setup_complete']){
+            if($sitepress_settings['setup_complete'] && !empty($_GET['page'])){
                 wp_redirect(admin_url('admin.php?page='.$_GET['page'].'&icl_ls_reset=default#icl_save_language_switcher_options'));
             }
         }

@@ -1,6 +1,8 @@
 <?php
 function icl_upgrade_2_0_0(){
-    global $wpdb, $sitepress, $current_user;
+    global $wpdb, $sitepress, $current_user, $wp_post_types;
+    
+    if(!isset($sitepress)) $sitepress = new SitePress;
     
     $TranslationManagement = new TranslationManagement;
     
@@ -22,9 +24,9 @@ function icl_upgrade_2_0_0(){
     // assume that the lowest element_id is the source language
     ini_set('max_execution_time', 300);
     
-    $translatable = array_keys($sitepress->get_translatable_documents());
-    foreach($translatable as $t){
-        $types[] = 'post_' . $t;
+    $post_types = array_keys($wp_post_types);
+    foreach($post_types as $pt){
+        $types[] = 'post_' . $pt;
     }
     
     $res = $wpdb->get_results("

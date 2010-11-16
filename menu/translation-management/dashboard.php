@@ -1,6 +1,7 @@
 <?php //included from menu translation-management.php ?>
 <?php 
 
+
 if(isset($_SESSION['translation_dashboard_filter'])){
     $icl_translation_filter = $_SESSION['translation_dashboard_filter'];
 }
@@ -62,6 +63,7 @@ $icl_dashboard_settings = $sitepress_settings['dashboard'];
 
 $icl_translation_filter['limit_no'] = isset($_GET['show_all']) && $_GET['show_all'] ? 10000 : ICL_TM_DOCS_PER_PAGE;
 $icl_documents = $iclTranslationManagement->get_documents($icl_translation_filter);
+
 $icl_translators = $iclTranslationManagement->get_blog_translators();
 
 if(!empty($iclTranslationManagement->dashboard_select)){
