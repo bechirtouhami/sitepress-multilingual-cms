@@ -14,7 +14,7 @@ jQuery(document).ready(function(){
     icl_tn_initial_value   = jQuery('#icl_post_note textarea').val();
     jQuery('#icl_post_add_notes h4 a').live('click', iclTnOpenNoteBox);
     jQuery('#icl_post_note textarea').live('keyup', iclTnClearButtonState);
-    jQuery('#icl_tn_clear').live('click', function(){jQuery('#icl_post_note textarea').val(''); jQuery(this).attr('disabled','disabled')});
+    jQuery('#icl_tn_clear').live('click', function(){jQuery('#icl_post_note textarea').val('');jQuery(this).attr('disabled','disabled')});
     jQuery('#icl_tn_save').live('click', iclTnCloseNoteBox);
     
     jQuery('#icl_pt_hide').click(iclHidePTControls);
@@ -29,6 +29,9 @@ jQuery(document).ready(function(){
         iclPtCostEstimate();
     });
     jQuery('#icl_pt_send').live('click', iclPTSend);
+
+    /* needed for tagcloud */
+    oldajaxurl = false;
     
 });
 
@@ -230,8 +233,34 @@ function iclPostLanguageSwitch(){
             jQuery('.categorydiv').show();                
             
 
+            /* tagcloud */
+
+            if (oldajaxurl == false) {
+                oldajaxurl = ajaxurl;
+            }
+            if(-1 == ajaxurl.indexOf('?')){
+                temp_url_glue='?';
+            } else {
+                temp_url_glue='&';
+            }
             
-            
+            if (lang == icl_this_lang) {
+                ajaxurl = oldajaxurl;
+            } else if (-1 == ajaxurl.indexOf('lang')) {
+                ajaxurl = ajaxurl+temp_url_glue+'lang='+lang;
+            } else {
+                ajaxurl = oldajaxurl+temp_url_glue+'lang='+lang;
+            }
+
+            jQuery('div[id^=tagsdiv-]').each(function(){
+                jQuery(this).slideUp();
+                jQuery(this).find('.the-tagcloud').remove();
+                jQuery(this).find('.tagchecklist span').remove();
+                jQuery(this).find('.the-tags').val('');
+                tag_tax = jQuery(this).attr('id').substring(8);
+                tagBox.get('link-'+tag_tax);
+                jQuery(this).slideDown();
+            });
         });    
         
     }
