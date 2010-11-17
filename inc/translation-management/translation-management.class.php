@@ -1645,7 +1645,7 @@ class TranslationManagement{
     }
     
     function save_translation($data){
-        global $wpdb, $sitepress, $sitepress_settings;
+        global $wpdb, $sitepress, $sitepress_settings, $ICL_Pro_Translation;
         
         $is_incomplete = false;
         foreach($data['fields'] as $field){
@@ -1671,7 +1671,7 @@ class TranslationManagement{
                     case 'title': 
                         $postarr['post_title'] = $this->decode_field_data($field->field_data_translated, $field->field_format); 
                         break;                            
-                    case 'body': 
+                    case 'body':
                         $postarr['post_content'] = $this->decode_field_data($field->field_data_translated, $field->field_format);
                         break;
                     case 'excerpt': 
@@ -1768,7 +1768,9 @@ class TranslationManagement{
             $_POST['lang'] = $job->language_code;
             $_POST['skip_sitepress_actions'] = true;
 
-            $new_post_id = wp_insert_post($postarr);    
+            $new_post_id = wp_insert_post($postarr);
+
+            $ICL_Pro_Translation->_content_fix_links_to_translated_content($new_post_id, $job->language_code);
                        
             // set stickiness
             //is the original post a sticky post?
