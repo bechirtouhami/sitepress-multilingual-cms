@@ -264,6 +264,8 @@ function iclPostLanguageSwitch(){
                 });
                 jQuery(this).slideDown();
             });
+
+            ajaxurl = oldajaxurl;
         });    
         
     }
