@@ -61,7 +61,7 @@
 ?>
 
     <?php if(isset($notice)) echo $notice ?>
-    
+        
     <form id="icl_doc_translation_method" name="icl_doc_translation_method" action="">        
     <table class="widefat">
         <thead>
@@ -146,6 +146,11 @@
     </table>
     </form>                
     <br />
+    
+    <div class="updated below-h2">
+        <p style="line-height: 14px"><?php _e("WPML can read a configuration file that tells it what needs translation in themes and plugins. The file is named wpml-config.xml and it's placed in the root folder of the plugin or theme.", 'sitepress'); ?></p>
+        <p><a href="http://wpml.org/?page_id=5526"><?php _e('Learn more', 'sitepress') ?></a></p>
+    </div>
     
     <form id="icl_cf_translation" name="icl_cf_translation" action="">        
     <table class="widefat">
