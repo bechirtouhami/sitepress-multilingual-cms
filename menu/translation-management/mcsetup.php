@@ -82,6 +82,7 @@
                     </ul>
                     <input type="submit" class="button-secondary" value="<?php _e('Save', 'sitepress')?>" />
                     <span class="icl_ajx_response" id="icl_ajx_response_dtm"></span>
+                    <p><a href="http://wpml.org/?page_id=3416" target="_blank">Learn more about the different translation options</a></p>
                 </td>    
             </tr>
         </tbody>
