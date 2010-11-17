@@ -986,14 +986,18 @@ class TranslationManagement{
     * 
     * @param int $status
     */
-    public function status2img_filename($status){
-        switch($status){
-            case ICL_TM_NOT_TRANSLATED: $img_file = 'not-translated.png'; break;
-            case ICL_TM_WAITING_FOR_TRANSLATOR: $img_file = 'in-progress.png'; break;
-            case ICL_TM_IN_PROGRESS: $img_file = 'in-progress.png'; break;
-            case ICL_TM_NEEDS_UPDATE: $img_file = 'needs-update.png'; break;
-            case ICL_TM_COMPLETE: $img_file = 'complete.png'; break;
-            default: $img_file = '';
+    public function status2img_filename($status, $needs_update = 0){
+        if($needs_update){
+            $img_file = 'needs-update.png'; 
+        }else{
+            switch($status){
+                case ICL_TM_NOT_TRANSLATED: $img_file = 'not-translated.png'; break;
+                case ICL_TM_WAITING_FOR_TRANSLATOR: $img_file = 'in-progress.png'; break;
+                case ICL_TM_IN_PROGRESS: $img_file = 'in-progress.png'; break;
+                case ICL_TM_NEEDS_UPDATE: $img_file = 'needs-update.png'; break;
+                case ICL_TM_COMPLETE: $img_file = 'complete.png'; break;
+                default: $img_file = '';
+            }
         }
         return $img_file;
     }

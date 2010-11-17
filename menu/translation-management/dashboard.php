@@ -326,7 +326,7 @@ if (!empty($icl_translation_services)) {
                     ?>
                     <td scope="col" class="manage-column column-cb check-column">
                         <img style="margin-top:4px;" title="<?php echo $tst_title ?>"
-                            src="<?php echo ICL_PLUGIN_URL ?>/res/img/<?php echo $_st = TranslationManagement::status2img_filename($docst)?>" 
+                            src="<?php echo ICL_PLUGIN_URL ?>/res/img/<?php echo $_st = TranslationManagement::status2img_filename($docst, $doc->$_prop_up)?>" 
                             width="16" height="16" alt="<?php echo $st ?>" />
                     </td>        
                     <?php endforeach; ?>                
