@@ -259,6 +259,9 @@ function iclPostLanguageSwitch(){
                 jQuery(this).find('.the-tags').val('');
                 tag_tax = jQuery(this).attr('id').substring(8);
                 tagBox.get('link-'+tag_tax);
+                jQuery(this).find('a.tagcloud-link').unbind().click(function(){
+                    jQuery(this).siblings('.the-tagcloud').toggle();
+                });
                 jQuery(this).slideDown();
             });
         });    
