@@ -74,11 +74,11 @@
                 <td>
                     <ul>
                         <li><label><input type="radio" name="t_method" value="<?php echo ICL_TM_TMETHOD_MANUAL ?>" <?php if($doc_translation_method==ICL_TM_TMETHOD_MANUAL): ?>checked="checked"<?php endif; ?> /> 
-                            <?php _e('Create translations manually.', 'sitepress')?></label></li>
+                            <?php _e('Create translations manually', 'sitepress')?></label></li>
                         <li><label><input type="radio" name="t_method" value="<?php echo ICL_TM_TMETHOD_EDITOR ?>" <?php if($doc_translation_method==ICL_TM_TMETHOD_EDITOR): ?>checked="checked"<?php endif; ?> /> 
-                            <?php _e('Use the translation editor.', 'sitepress')?></label></li>
+                            <?php _e('Use the translation editor', 'sitepress')?></label></li>
                         <li><label><input type="radio" name="t_method" value="<?php echo ICL_TM_TMETHOD_PRO ?>" <?php if($doc_translation_method==ICL_TM_TMETHOD_PRO): ?>checked="checked"<?php endif; ?> /> 
-                            <?php _e('Send to professional translation.', 'sitepress')?></label></li>
+                            <?php _e('Send to professional translation', 'sitepress')?></label></li>
                     </ul>
                     <input type="submit" class="button-secondary" value="<?php _e('Save', 'sitepress')?>" />
                     <span class="icl_ajx_response" id="icl_ajx_response_dtm"></span>
@@ -102,31 +102,31 @@
                     <br />                    
                     <p>
                         <label><input type="checkbox" id="icl_sync_page_ordering" name="icl_sync_page_ordering" <?php if($sitepress_settings['sync_page_ordering']): ?>checked="checked"<?php endif; ?> value="1" />
-                        <?php echo __('Synchronize page order for translations.', 'sitepress') ?></label>                        
+                        <?php echo __('Synchronize page order for translations', 'sitepress') ?></label>                        
                     </p>
                     <p>
                         <label><input type="checkbox" id="icl_sync_page_parent" name="icl_sync_page_parent" <?php if($sitepress_settings['sync_page_parent']): ?>checked="checked"<?php endif; ?> value="1" />
-                        <?php echo __('Set page parent for translation according to page parent of the original language.', 'sitepress') ?></label>                        
+                        <?php echo __('Set page parent for translation according to page parent of the original language', 'sitepress') ?></label>                        
                     </p>
                     <p>
                         <label><input type="checkbox" name="icl_sync_page_template" <?php if($sitepress_settings['sync_page_template']): ?>checked="checked"<?php endif; ?> value="1" />
-                        <?php echo __('Synchronize page template.', 'sitepress') ?></label>                        
+                        <?php echo __('Synchronize page template', 'sitepress') ?></label>                        
                     </p>                    
                     <p>
                         <label><input type="checkbox" name="icl_sync_comment_status" <?php if($sitepress_settings['sync_comment_status']): ?>checked="checked"<?php endif; ?> value="1" />
-                        <?php echo __('Synchronize comment status.', 'sitepress') ?></label>                        
+                        <?php echo __('Synchronize comment status', 'sitepress') ?></label>                        
                     </p>                    
                     <p>
                         <label><input type="checkbox" name="icl_sync_ping_status" <?php if($sitepress_settings['sync_ping_status']): ?>checked="checked"<?php endif; ?> value="1" />
-                        <?php echo __('Synchronize ping status.', 'sitepress') ?></label>                        
+                        <?php echo __('Synchronize ping status', 'sitepress') ?></label>                        
                     </p>                                        
                     <p>
                         <label><input type="checkbox" name="icl_sync_sticky_flag" <?php if($sitepress_settings['sync_sticky_flag']): ?>checked="checked"<?php endif; ?> value="1" />
-                        <?php echo __('Synchronize sticky flag.', 'sitepress') ?></label>                        
+                        <?php echo __('Synchronize sticky flag', 'sitepress') ?></label>                        
                     </p>                                                            
                     <p>
                         <label><input type="checkbox" name="icl_sync_private_flag" <?php if($sitepress_settings['sync_private_flag']): ?>checked="checked"<?php endif; ?> value="1" />
-                        <?php echo __('Synchronize private flag.', 'sitepress') ?></label>                        
+                        <?php echo __('Synchronize private flag', 'sitepress') ?></label>                        
                     </p>                                                                                
                     <p>
                         <input class="button" name="save" value="<?php echo __('Save','sitepress') ?>" type="submit" />
@@ -137,7 +137,7 @@
                     <br />                    
                     <p>
                         <label><input type="checkbox" name="icl_sync_delete" <?php if($sitepress_settings['sync_delete']): ?>checked="checked"<?php endif; ?> value="1" />
-                        <?php echo __('When deleting a post, delete translations as well.', 'sitepress') ?></label>                        
+                        <?php echo __('When deleting a post, delete translations as well', 'sitepress') ?></label>                        
                     </p>                                                                                
                 </td>
             </tr>
@@ -157,7 +157,7 @@
             <?php if(empty($cf_keys)): ?>
             <tr>
                 <td colspan="2">
-                    <?php _e('No custom fields found. It is possible that they will only show up here after you add more posts after installing a new plugin', 'sitepress'); ?>
+                    <?php _e('No custom fields found. It is possible that they will only show up here after you add more posts after installing a new plugin.', 'sitepress'); ?>
                 </td>
             </tr>
             <?php else: foreach($cf_keys as $cf_key): ?>

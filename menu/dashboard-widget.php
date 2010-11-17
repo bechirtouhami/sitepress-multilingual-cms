@@ -50,13 +50,13 @@ foreach ($docs_statuses as $doc_status) {
 
 ?>
             <div><a href="javascript:void(0)" onclick="jQuery(this).parent().next('.wrapper').slideToggle();" style="display:block; padding:5px; border: 1px solid #eee; margin-bottom:2px; background-color: #F7F7F7;"><?php _e('Content translation', 'sitepress') ?></a></div>
-            <div class="wrapper" style="display:none; padding: 5px 10px; border: 1px solid #eee; border-top: 0px; margin:-11px 0 2px 0;"><p>
+            <div class="wrapper" style="display:none; padding: 5px 10px; border: 1px solid #eee; border-top: 0px; margin:-11px 0 2px 0;">
         <?php
             $your_translators = TranslationManagement::get_blog_translators();
             if (!empty($your_translators)) {
-                echo '<strong>' . __('Your translators', 'sitepress') . '</strong><br />';
+                echo '<p><strong>' . __('Your translators', 'sitepress') . '</strong></p><ul>';
                 foreach ($your_translators as $your_translator) {
-
+                    echo '<li>';
                     if ($current_user->ID == $your_translator->ID) {
                         $edit_link = 'profile.php';
                     } else {
@@ -70,16 +70,16 @@ foreach ($docs_statuses as $doc_status) {
                         }
                         printf(__('%s to %s', 'sitepress'), $active_languages[$from]['display_name'], join(', ', $tos));
                     }
-                    echo '<br />';
+                    echo '</li>';
                 }
+                echo '</ul><hr />';
             }
 
         ?>
-            <br />
-            <a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/translation-management.php&amp;sm=translators&amp;service=icanlocalize"><strong><?php _e('Add professional translators', 'sitepress'); ?></strong></a><br />
-            <a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/translation-management.php&amp;sm=translators&amp;service=local"><strong><?php _e('Add your own translators', 'sitepress'); ?></strong></a><br />
-            <a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/translation-management.php"><strong><?php _e('Translate contents', 'sitepress'); ?></strong></a><br />
-        </p></div>
+            <p><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/translation-management.php&amp;sm=translators&amp;service=icanlocalize"><strong><?php _e('Add professional translators &raquo;', 'sitepress'); ?></strong></a></p>
+            <p><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/translation-management.php&amp;sm=translators&amp;service=local"><strong><?php _e('Add your own translators &raquo;', 'sitepress'); ?></strong></a></p>
+            <p><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/translation-management.php"><strong><?php _e('Translate contents &raquo;', 'sitepress'); ?></strong></a></p>
+        </div>
 <?php } ?>
 
         <div><a href="javascript:void(0)" onclick="jQuery(this).parent().next('.wrapper').slideToggle();" style="display:block; padding:5px; border: 1px solid #eee; margin-bottom:2px; background-color: #F7F7F7;"><?php _e('Theme and plugins localization', 'sitepress') ?></a></div>
@@ -177,16 +177,16 @@ if (!is_wp_error($rss)) { // Checks that the object is created correctly
 }
 if ($maxitems != 0) {
 ?>
-                                                <p><strong><?php _e('WPML news:', 'sitepress'); ?></strong></p>
+                                                <div class="rss-widget"><p><strong><?php _e('WPML news', 'sitepress'); ?></strong></p>
                                                 <ul>
 <?php
     // Loop through each feed item and display each item as a hyperlink.
     foreach ($rss_items as $item) {
 
 ?>
-                                                    <li><a href='<?php echo $item->get_permalink(); ?>'title='<?php echo 'Posted ' . $item->get_date('j F Y | g:i a'); ?>'><?php echo $item->get_title(); ?></a></li>
+                                                    <li><a class="rsswidget" href='<?php echo $item->get_permalink(); ?>'><?php echo $item->get_title(); ?></a> <span class="rss-date"><?php echo $item->get_date('j F Y'); ?></span></li>
 <?php } ?>
-                                                </ul>
+                                                </ul></div>
 <?php
 }
 ?>

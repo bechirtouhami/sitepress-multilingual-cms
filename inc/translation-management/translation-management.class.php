@@ -2321,7 +2321,7 @@ class TranslationManagement{
         $return['name'] = 'ICanLocalize';
         $return['logo'] = ICL_PLUGIN_URL . '/res/img/web_logo_small.png';
         $return['setup_url'] = $sitepress->create_icl_popup_link('@select-translators;from_replace;to_replace@', array('ar' => 1), true);
-        $return['description'] = __('Connects you with freelance professional translators where you can interview and choose the best ones for your project.', 'sitepress');
+        $return['description'] = __('Meet freelance professional translators from around the world.<br />You can interview and choose the best ones for your project.', 'sitepress');
         $return['setup_url_dashboard'] = array(__('Add translators from ICanLocalize &raquo;', 'sitepress'), 'admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/translation-management.php&amp;sm=translators&amp;service=icanlocalize');
         $info['icanlocalize'] = $return;
         return $info;

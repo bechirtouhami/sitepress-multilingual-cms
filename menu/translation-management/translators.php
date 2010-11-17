@@ -198,7 +198,7 @@ $other_service_translators = apply_filters('icl_translators_list', $other_servic
             
             </table>
         <?php else: ?>
-            <center><?php _e('No translators set.', 'sitepress'); ?></center>
+            <center><?php _e('You did not add any translator accounts yet.', 'sitepress'); ?></center>
         <?php endif; ?>
     
     <?php endif; //if ( current_user_can('list_users') ) ?>
@@ -254,6 +254,7 @@ function icl_local_edit_translator_form($action = 'add', $selected_translator = 
         $output .= '<option value="'. $bu->ID . '">' . esc_html($bu->display_name) . ' (' . $bu->user_login . ')' . '</option>';
       endforeach;
       $output .= '</select>';
+      $output .= '<p>To add translators, they must first have accounts in WordPress. Translators can have any editing privileges, including subscriber.</p>';
     else:
       $output .= '<span class="updated fade" style="padding:4px">' . sprintf(__('Editing language pairs for <strong>%s</strong>', 'sitepress'),
             esc_html($selected_translator->display_name) . ' ('.$selected_translator->user_login.')') . '</span>';
