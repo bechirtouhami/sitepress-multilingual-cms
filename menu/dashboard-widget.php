@@ -45,22 +45,24 @@ foreach ($docs_statuses as $doc_status) {
         <p><?php if ($docs_sent)
             printf(__('%d documents sent to translation.<br />%d are complete, %d waiting for translation.', 'sitepress'), $docs_sent, $docs_completed, $docs_waiting); ?></p>
     <p><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/translation-management.php" class="button secondary"><strong><?php _e('Send documents to translation', 'sitepress'); ?></strong></a></p>
-    <div class="updated message below-h2">
-            <h5 style="margin: 10px 0 0 0;"><?php _e('Need translation work?', 'sitepress'); ?></h5>
-            <p style="line-height: 1.4em;">
-                <?php printf(__('ICanLocalize offers affordable professional translation via a streamlined process.<br />%s Lean how it works %s', 'sitepress'),
-                        '<a href="https://www.icanlocalize.com/destinations/go?name=wpml-pro-translation-intro&amp;src=' . urlencode(get_bloginfo('url')) . '&amp;iso=' . $sitepress->get_default_language() . '" target="_blank">', '</a>'); ?>
+            
+    <h5 style="margin: 15px 0 0 0;"><?php _e('Need translation work?', 'sitepress'); ?></h5>
+            <p style="margin-top: 5px; line-height: 1.4em;">
+                <?php printf(__('ICanLocalize offers affordable professional translation via a streamlined process.<br />%s Learn how it works %s', 'sitepress'),
+                        '<a href="http://www.icanlocalize.com/destinations/go?name=wpml-pro-translation-intro&amp;src=' . urlencode(get_bloginfo('url')) . '&amp;iso=' . $sitepress->get_default_language() . '" target="_blank">', '</a>'); ?>
             </p>
             <?php if (!isset($sitepress_settings['hide_affiliate_message'])) { ?>
-            <p style="line-height: 1.4em;">
-                <?php printf(__('Our affiliate program pays 30%% commission. Building a site for your client? Set up your affiliate account!<br />%s Learn more %s', 'sitepress'),
-                        '<a href="http://www.icanlocalize.com/destinations/go?name=wpml-affiliate-info&amp;src=' . urlencode(get_bloginfo('url')) . '&amp;iso=' . $sitepress->get_default_language() . '" target="_blank">', '</a>'); ?>
-                <br />
-                <a href="javascript:void(0);" onclick="if (confirm('<?php _e('Are you sure you want to dismiss this message?\r\nThis operation is permanent', 'sitepress'); ?>')) {
-jQuery(this).parent().fadeOut(); jQuery.post('admin-ajax.php', { icl_ajx_action: 'hide_affiliate_message' }); }"><?php _e('Dismiss this message', 'sitepress'); ?></a>
-            </p>
+            <div>
+                <h5 style="margin: 10px 0 0 0;"><?php _e('Our affiliate program pays 30% commission', 'sitepress'); ?></h5>
+                <p style="margin-top: 5px; line-height: 1.4em;">
+                    <?php printf(__('Building a site for your client? Set up your affiliate account!<br />%s Learn more %s', 'sitepress'),
+                            '<a href="http://www.icanlocalize.com/destinations/go?name=wpml-affiliate-info&amp;src=' . urlencode(get_bloginfo('url')) . '&amp;iso=' . $sitepress->get_default_language() . '" target="_blank">', '</a>'); ?>
+                    |
+                    <a href="javascript:void(0);" onclick="if (confirm('<?php _e('Are you sure you want to dismiss this message?\r\nThis operation is permanent', 'sitepress'); ?>')) {
+    jQuery(this).parent().parent().fadeOut(); jQuery.post('admin-ajax.php', { icl_ajx_action: 'hide_affiliate_message' }); }"><?php _e('Dismiss this message', 'sitepress'); ?></a>
+                </p>
+            </div>
             <?php } ?>
-    </div>
 
 <?php if (count($active_languages) > 1) {
 
