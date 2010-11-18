@@ -48,7 +48,7 @@ foreach ($docs_statuses as $doc_status) {
             
     <h5 style="margin: 15px 0 0 0;"><?php _e('Need translation work?', 'sitepress'); ?></h5>
             <p style="margin-top: 5px; line-height: 1.4em;">
-                <?php printf(__('ICanLocalize offers affordable professional translation via a streamlined process.<br />%s Learn how it works %s', 'sitepress'),
+                <?php printf(__('<a target="_blank" href="http://www.icanlocalize.com/site/">ICanLocalize</a> offers affordable professional translation via a streamlined process. %sLearn how it works &raquo;%s', 'sitepress'),
                         '<a href="http://www.icanlocalize.com/destinations/go?name=wpml-pro-translation-intro&amp;src=' . urlencode(get_bloginfo('url')) . '&amp;iso=' . $sitepress->get_default_language() . '" target="_blank">', '</a>'); ?>
             </p>
             <?php if (!isset($sitepress_settings['hide_affiliate_message'])) { ?>
