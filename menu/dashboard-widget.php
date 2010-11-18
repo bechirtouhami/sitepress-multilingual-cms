@@ -37,18 +37,17 @@ foreach ($docs_statuses as $doc_status) {
 }
 
 ?>
-<p><?php echo sprintf(__('WPML version: %s'), '<strong>' . ICL_SITEPRESS_VERSION . '</strong>'); ?></p>
 <?php if (!$this->settings['setup_complete']): ?>
     <p class="updated" style="padding:4px"><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/languages.php"><strong><?php _e('Finish the WPML setup.', 'sitepress') ?></strong></a></p>
 <?php else: ?>
-        <p><?php _e('Currently configured languages:', 'sitepress') ?> <b><?php echo join(', ', (array) $alanguages_links) ?></b> (<a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/languages.php"><?php _e('edit', 'sitepress'); ?></a>)</p>
+        <p><?php _e('Site languages:', 'sitepress') ?> <b><?php echo join(', ', (array) $alanguages_links) ?></b> (<a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/languages.php"><?php _e('edit', 'sitepress'); ?></a>)</p>
         <p><?php if ($docs_sent)
             printf(__('%d documents sent to translation.<br />%d are complete, %d waiting for translation.', 'sitepress'), $docs_sent, $docs_completed, $docs_waiting); ?></p>
     <p><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/translation-management.php" class="button secondary"><strong><?php _e('Translate content', 'sitepress'); ?></strong></a></p>
             
     <h5 style="margin: 15px 0 0 0;"><?php _e('Need translation work?', 'sitepress'); ?></h5>
             <p style="margin-top: 5px; line-height: 1.4em;">
-                <?php printf(__('<a target="_blank" href="http://www.icanlocalize.com/site/">ICanLocalize</a> offers affordable professional translation via a streamlined process. %sLearn how it works &raquo;%s', 'sitepress'),
+                <?php printf(__('<a target="_blank" href="http://www.icanlocalize.com/site/">ICanLocalize</a> offers affordable professional translation via a streamlined process. %sLearn more%s', 'sitepress'),
                         '<a href="http://www.icanlocalize.com/destinations/go?name=wpml-pro-translation-intro&amp;src=' . urlencode(get_bloginfo('url')) . '&amp;iso=' . $sitepress->get_default_language() . '" target="_blank">', '</a>'); ?>
             </p>
             <?php if (!isset($sitepress_settings['hide_affiliate_message'])) { ?>
@@ -94,7 +93,7 @@ foreach ($docs_statuses as $doc_status) {
             }
 
         ?>
-            <p><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/translation-management.php&amp;sm=translators&amp;service=icanlocalize"><strong><?php _e('Add professional translators &raquo;', 'sitepress'); ?></strong></a></p>
+            <p><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/translation-management.php&amp;sm=translators&amp;service=icanlocalize"><strong><?php _e('Add translators from ICanLocalize &raquo;', 'sitepress'); ?></strong></a></p>
             <p><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/translation-management.php&amp;sm=translators&amp;service=local"><strong><?php _e('Add your own translators &raquo;', 'sitepress'); ?></strong></a></p>
             <p><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/translation-management.php"><strong><?php _e('Translate contents &raquo;', 'sitepress'); ?></strong></a></p>
         </div>

@@ -5334,7 +5334,7 @@ class SitePress{
             if(!in_array($icl_dashboard_widget_id, $all_widgets)){
                 $install = true;
             }else{$install = false;}
-            wp_add_dashboard_widget($icl_dashboard_widget_id, __('WPML Status', 'sitepress'), array($this, 'dashboard_widget'), null);
+            wp_add_dashboard_widget($icl_dashboard_widget_id, sprintf(__('Multi-language | WPML %s', 'sitepress'),ICL_SITEPRESS_VERSION), array($this, 'dashboard_widget'), null);
             if($install){
                 $dashboard_widgets_order['side'] = $icl_dashboard_widget_id . ',' . $dashboard_widgets_order['side'];
                 $user = wp_get_current_user();

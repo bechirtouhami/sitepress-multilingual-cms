@@ -59,7 +59,7 @@
                 $this->save_settings($iclsettings);
             }else{
                 echo '<p class="error" style="padding-left:8px;">';
-                printf(__('WPML did not manage to access the server at ICanLocalize. Please <a%s>contact us</a> for support. <br />Show <a%s>debug information</a>.', 'sitepress'), 
+                printf(__('<p>In order to enable ICanLocalize translation, your site needs to be on a public server (not localhost). Please <a%s>contact us</a> for support. </p><p>Show <a%s>debug information</a>.</p>', 'sitepress'), 
                     ' target="_blank" href="http://wpml.org/?page_id=5255"', 
                     ' a href="admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/troubleshooting.php&icl_action=icl-connection-test&data='.base64_encode(serialize($user)).'#icl-connection-test"');
                 echo '</p>';
