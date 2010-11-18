@@ -260,7 +260,7 @@ class SitePress{
             }
                                               
         } //end if the initial language is set - existing_content_language_verified
-        
+
         add_action('wp_dashboard_setup', array($this, 'dashboard_widget_setup'));
         if(is_admin() && $pagenow == 'index.php'){
             add_action('icl_dashboard_widget_notices', array($this, 'print_translatable_custom_content_status'));    
@@ -5323,28 +5323,30 @@ class SitePress{
         echo $notice;
     }
     
-    function dashboard_widget_setup(){        
-        $dashboard_widgets_order = (array)get_user_option( "meta-box-order_dashboard" );        
-        $icl_dashboard_widget_id = 'icl_dashboard_widget';
-        $all_widgets = array();
-        foreach($dashboard_widgets_order as $k=>$v){
-            $all_widgets = array_merge($all_widgets, explode(',', $v));
-        }        
-        if(!in_array($icl_dashboard_widget_id, $all_widgets)){
-            $install = true;
-        }else{$install = false;}        
-        wp_add_dashboard_widget($icl_dashboard_widget_id, __('WPML Status', 'sitepress'), array($this, 'dashboard_widget'), null);
-        if($install){
-            $dashboard_widgets_order['side'] = $icl_dashboard_widget_id . ',' . $dashboard_widgets_order['side'];   
-            $user = wp_get_current_user();            
-            update_user_option($user->ID, 'meta-box-order_dashboard', $dashboard_widgets_order);
-            /* preWP3 compatibility  - start */
-            if(ICL_PRE_WP3){
-                // bug with WP 2.9 reading the correct data after update_user_option
-                header("Location: index.php");
-                exit;
+    function dashboard_widget_setup(){
+        if (current_user_can('manage_options')) {
+            $dashboard_widgets_order = (array)get_user_option( "meta-box-order_dashboard" );
+            $icl_dashboard_widget_id = 'icl_dashboard_widget';
+            $all_widgets = array();
+            foreach($dashboard_widgets_order as $k=>$v){
+                $all_widgets = array_merge($all_widgets, explode(',', $v));
             }
-            /* preWP3 compatibility  - end   */
+            if(!in_array($icl_dashboard_widget_id, $all_widgets)){
+                $install = true;
+            }else{$install = false;}
+            wp_add_dashboard_widget($icl_dashboard_widget_id, __('WPML Status', 'sitepress'), array($this, 'dashboard_widget'), null);
+            if($install){
+                $dashboard_widgets_order['side'] = $icl_dashboard_widget_id . ',' . $dashboard_widgets_order['side'];
+                $user = wp_get_current_user();
+                update_user_option($user->ID, 'meta-box-order_dashboard', $dashboard_widgets_order);
+                /* preWP3 compatibility  - start */
+                if(ICL_PRE_WP3){
+                    // bug with WP 2.9 reading the correct data after update_user_option
+                    header("Location: index.php");
+                    exit;
+                }
+                /* preWP3 compatibility  - end   */
+            }
         }
     }
     function dashboard_widget(){        
