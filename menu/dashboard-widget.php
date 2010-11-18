@@ -38,7 +38,7 @@ foreach ($docs_statuses as $doc_status) {
 
 ?>
 <?php if (!$this->settings['setup_complete']): ?>
-    <p class="updated" style="padding:4px"><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/languages.php"><strong><?php _e('Setup languages', 'sitepress') ?></strong></a></p>
+    <p class="updated" style="text-align: center; padding:4px"><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/languages.php"><strong><?php _e('Setup languages', 'sitepress') ?></strong></a></p>
 <?php else: ?>
         <p><?php _e('Site languages:', 'sitepress') ?> <b><?php echo join(', ', (array) $alanguages_links) ?></b> (<a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/languages.php"><?php _e('edit', 'sitepress'); ?></a>)</p>
         <p><?php if ($docs_sent)
