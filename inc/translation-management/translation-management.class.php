@@ -500,9 +500,7 @@ class TranslationManagement{
                     add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/translation-management.php', __('Translations','sitepress'), __('Translations','sitepress'),
                     'manage_options', basename(ICL_PLUGIN_PATH).'/menu/translations-queue.php');
                 } else {
-                    add_menu_page(__('WPML','sitepress'), __('WPML','sitepress'), 0, basename(ICL_PLUGIN_PATH).'/menu/translations-queue.php',null, ICL_PLUGIN_URL . '/res/img/icon16.png');
-                    add_submenu_page(basename(ICL_PLUGIN_PATH).'/menu/translations-queue.php', __('Translations','sitepress'), __('Translations','sitepress'),
-                    0, basename(ICL_PLUGIN_PATH).'/menu/translations-queue.php');
+                    add_menu_page(__('Translation interface','sitepress'), __('Translation interface','sitepress'), 0, basename(ICL_PLUGIN_PATH).'/menu/translations-queue.php',null, ICL_PLUGIN_URL . '/res/img/icon16.png');
                 }
             }
         }
