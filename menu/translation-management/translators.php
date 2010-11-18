@@ -227,9 +227,9 @@ function icl_local_add_translator_button($buttons = array()) {
  */
 function icl_local_edit_translator_form($action = 'add', $selected_translator = 0) {
 
-    global $sitepress;
-    $blog_users_nt = TranslationManagement::get_blog_not_translators();
-    $blog_users_t = TranslationManagement::get_blog_translators();
+    global $sitepress, $iclTranslationManagement;
+    $blog_users_nt = $iclTranslationManagement->get_blog_not_translators();
+    $blog_users_t = $iclTranslationManagement->get_blog_translators();
 
     $output = '';
     $return['name'] = __('Local', 'sitepress');

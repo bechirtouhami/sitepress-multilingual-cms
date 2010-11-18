@@ -37,11 +37,8 @@ define('CMS_NAV_CACHE_EXPIRE', '1 HOUR');
 
 class CMSNavigation{
     var $settings;
-    function __construct(){
-        $this->CMSNavigation();
-    } 
       
-    function CMSNavigation(){
+    function __construct(){
         
         global $cms_nav_ie_ver, $sitepress;
         if(!isset($sitepress)){

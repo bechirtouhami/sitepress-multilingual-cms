@@ -448,7 +448,8 @@ switch($_REQUEST['icl_ajx_action']){
                 update_post_meta($post_id, '_icl_translator_note', $_POST['tn_note_'.$post_id]);
             }
             foreach($target_languages as $to_lang){
-                $from_lang = $wpdb->get_var($wpdb->prepare("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE element_id=%d AND element_type=%s", $post_id, $post_types[$post_id]));
+                $from_lang = $wpdb->get_var($wpdb->prepare("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE element_id=%d AND element_type=%s", 
+                    $post_id, 'post_'.$post_types[$post_id]));
                 $data = array(
                     'translate_from'    => $from_lang,
                     'translate_to'      => array($to_lang=>1),

@@ -625,7 +625,7 @@ class SitePress{
     function get_user_admin_language($user_id) {
         static $lang = null;
         if ($lang === null) {
-            $lang = get_usermeta($user_id,'icl_admin_language',true);
+            $lang = get_user_meta($user_id,'icl_admin_language',true);
         }
         return $lang;
     }
@@ -900,7 +900,7 @@ class SitePress{
         // hide languages for front end
         global $current_user;        
         if(!is_admin() && !empty($this->settings['hidden_languages']) 
-            && is_array($this->settings['hidden_languages']) && !get_usermeta($current_user->data->ID, 'icl_show_hidden_languages')){
+            && is_array($this->settings['hidden_languages']) && !get_user_meta($current_user->data->ID, 'icl_show_hidden_languages', true)){
             foreach($this->settings['hidden_languages'] as $l){
                 unset($this->active_languages[$l]);
             }
@@ -4585,7 +4585,7 @@ class SitePress{
         global $current_user;
         $active_languages = $this->get_active_languages();
         $default_language = $this->get_default_language();
-        $user_language = get_usermeta($current_user->data->ID,'icl_admin_language',true);
+        $user_language = get_user_meta($current_user->data->ID,'icl_admin_language',true);
         if($this->settings['admin_default_language'] == '_default_'){
             $this->settings['admin_default_language'] = $default_language;
         }
@@ -4631,7 +4631,7 @@ class SitePress{
                         </p>
                         <p>
                         <label><input name="icl_show_hidden_languages" type="checkbox" value="1" <?php 
-                            if(get_usermeta($current_user->data->ID, 'icl_show_hidden_languages')):?>checked="checked"<?php endif?> />&nbsp;<?php 
+                            if(get_user_meta($current_user->data->ID, 'icl_show_hidden_languages', true)):?>checked="checked"<?php endif?> />&nbsp;<?php 
                             _e('Display hidden languages', 'sitepress') ?></label>
                         </p>
                     </td>

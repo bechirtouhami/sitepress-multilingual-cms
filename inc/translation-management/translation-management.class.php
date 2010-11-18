@@ -1,7 +1,4 @@
 <?php
-// TODO - when creating a post, create icl_translation_status entry
-// when document is saved check if 'Minor edit' was checked before marking needs update
- 
 define ( 'ICL_TM_NOT_TRANSLATED', 0);
 define ( 'ICL_TM_WAITING_FOR_TRANSLATOR', 1);
 define ( 'ICL_TM_IN_PROGRESS', 2);
@@ -77,7 +74,7 @@ class TranslationManagement{
         $ct['user_login'] =  $user->data->user_login;
         
         if(ICL_PRE_WP3){ // pre WP3 back compatibility
-            $ct['language_pairs'] = get_usermeta($current_user->ID, $wpdb->prefix.'language_pairs');
+            $ct['language_pairs'] = get_user_meta($current_user->ID, $wpdb->prefix.'language_pairs', true);
         }else{
             $ct['language_pairs'] = get_user_meta($current_user->ID, $wpdb->prefix.'language_pairs', true);    
         }
@@ -388,7 +385,7 @@ class TranslationManagement{
         foreach($res as $row){
             $user = new WP_User($row->ID);
             $caps = @unserialize($row->caps);
-            $row->language_pairs = get_usermeta($row->ID, $wpdb->prefix.'language_pairs', true);
+            $row->language_pairs = get_user_meta($row->ID, $wpdb->prefix.'language_pairs', true);
             
             if(!empty($from) && !empty($to) && (!isset($row->language_pairs[$from][$to]) || !$row->language_pairs[$from][$to])){
                 continue;
@@ -1254,6 +1251,7 @@ class TranslationManagement{
         $selected_translators = $translator;
         $selected_languages = $translate_to;
         $job_ids = array();
+        
         foreach($selected_posts as $post_id){
             $post = get_post($post_id); 
             $post_trid = $sitepress->get_element_trid($post->ID, 'post_' . $post->post_type);
@@ -1269,7 +1267,7 @@ class TranslationManagement{
                     $translation_id = $post_translations[$lang]->translation_id;
                 }     
                 
-                $current_translation_status = $this->get_element_translation($post_id, $lang, 'post_' . $post->post_type);
+                $current_translation_status = $this->get_element_translation($post_id, $lang, 'post_' . $post->post_type);                
                 if(!empty($current_translation_status) && $current_translation_status->md5 == $md5 && !$current_translation_status->needs_update) continue;
                     
                 $_status = ICL_TM_WAITING_FOR_TRANSLATOR;
@@ -1290,8 +1288,7 @@ class TranslationManagement{
                     'translation_service'   => $service,
                     'translation_package'   => serialize($translation_package)
                 ));
-                $job_ids[] = $this->add_translation_job($rid, $translator_id, $translation_package);                                
-                
+                $job_ids[] = $this->add_translation_job($rid, $translator_id, $translation_package);                                                
                 if( $service == 'icanlocalize' ){
                     global $ICL_Pro_Translation;
                     $ICL_Pro_Translation->send_post($post->ID, array($lang), $translator_id);
