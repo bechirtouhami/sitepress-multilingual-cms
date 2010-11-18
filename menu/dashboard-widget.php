@@ -44,7 +44,7 @@ foreach ($docs_statuses as $doc_status) {
         <p><?php _e('Currently configured languages:', 'sitepress') ?> <b><?php echo join(', ', (array) $alanguages_links) ?></b> (<a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/languages.php"><?php _e('edit', 'sitepress'); ?></a>)</p>
         <p><?php if ($docs_sent)
             printf(__('%d documents sent to translation.<br />%d are complete, %d waiting for translation.', 'sitepress'), $docs_sent, $docs_completed, $docs_waiting); ?></p>
-    <p><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/translation-management.php" class="button secondary"><strong><?php _e('Send documents to translation', 'sitepress'); ?></strong></a></p>
+    <p><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/translation-management.php" class="button secondary"><strong><?php _e('Translate content', 'sitepress'); ?></strong></a></p>
             
     <h5 style="margin: 15px 0 0 0;"><?php _e('Need translation work?', 'sitepress'); ?></h5>
             <p style="margin-top: 5px; line-height: 1.4em;">
@@ -188,8 +188,8 @@ foreach ($docs_statuses as $doc_status) {
 <?php
 $rss = fetch_feed('http://wpml.org/feed/');
 if (!is_wp_error($rss)) { // Checks that the object is created correctly
-    // Figure out how many total items there are, but limit it to 5.
-    $maxitems = $rss->get_item_quantity(5);
+    // Figure out how many total items there are, but limit it to 2.
+    $maxitems = $rss->get_item_quantity(2);
     // Build an array of all the items, starting with element 0 (first element).
     $rss_items = $rss->get_items(0, $maxitems);
 }
