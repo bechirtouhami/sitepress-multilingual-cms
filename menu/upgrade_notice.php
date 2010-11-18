@@ -17,7 +17,8 @@ $upgrade_lines =  array(
     '1.7.7' => __('Supports custom taxonomies and lots of bug fixes for tags and categories','sitepress'),
     '1.7.8' => __('Supports custom post types','sitepress'),
     '1.8.0' => __('Supports multilingual menus','sitepress'),
-    '1.8.1' => __('Multilingual menus bug fixes and improved translation interface','sitepress')
+    '1.8.1' => __('Multilingual menus bug fixes and improved translation interface','sitepress'),
+    '2.0.0' => __('New Translator role and full translation management workflow','sitepress')
 );
 
 $short_v = implode('.', array_slice(explode('.', ICL_SITEPRESS_VERSION), 0, 3));
