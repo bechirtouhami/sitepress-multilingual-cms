@@ -989,7 +989,11 @@ if (function_exists('wpml_register_admin_strings')) {
         echo '1|';
         break;
     
-    break;    
+    break;
+
+    case 'hide_affiliate_message':
+        $this->save_settings(array('hide_affiliate_message' => 0));
+        break;
                 
     default:
         do_action('icl_ajx_custom_call', $_REQUEST['icl_ajx_action'], $_REQUEST);
