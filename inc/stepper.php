@@ -34,7 +34,8 @@ class Icl_Stepper
      * Register steps (function names)
      */
     public function registerSteps() {
-        $this->_steps = array_merge($this->_steps, func_get_args());
+        $args = func_get_args();
+        $this->_steps = array_merge($this->_steps, $args);
     }
 
     /**
