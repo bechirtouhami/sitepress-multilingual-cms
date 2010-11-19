@@ -126,7 +126,14 @@ if(empty($job)){
     <div id="icl_tm_validation_error" class="icl_error_text"><?php _e('Please review the document translation and fill in all the required fields.', 'sitepress') ?></div>
     <p class="submit-buttons">
         <input type="submit" class="button-primary" value="<?php _e('Save translation', 'sitepress')?>" />&nbsp;
-        <a class="button-secondary" href="<?php echo admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php') ?>"><?php _e('Cancel', 'sitepress')?></a>
+<?php
+if (isset($_POST['complete']) && $_POST['complete']) {
+    $cancel_txt = __('Jobs queue', 'sitepress');
+} else {
+    $cancel_txt = __('Cancel', 'sitepress');
+}
+?>
+        <a class="button-secondary" href="<?php echo admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php') ?>"><?php echo $cancel_txt; ?></a>
         <input type="submit" id="icl_tm_resign" class="button-secondary" value="<?php _e('Resign', 'sitepress')?>" onclick="if(confirm('<?php echo esc_js(__('Are you sure you want to resign from this job?', 'sitepress')) ?>')) jQuery(this).next().val(1); else return false;" /><input type="hidden" name="resign" value="0" />
     </p>
     </form>
