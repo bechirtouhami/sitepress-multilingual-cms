@@ -1770,6 +1770,17 @@ class TranslationManagement{
             $new_post_id = wp_insert_post($postarr);
 
             $ICL_Pro_Translation->_content_fix_links_to_translated_content($new_post_id, $job->language_code);
+            
+            // update body translation with the links fixed
+            $new_post_content = $wpdb->get_var($wpdb->prepare("SELECT post_content FROM {$wpdb->posts} WHERE ID=%d", $new_post_id));
+            foreach($job->elements as $jel){
+                if($jel->field_type=='body'){
+                    $fields_data_translated = $this->encode_field_data($new_post_content, $jel->field_format);
+                    break;
+                }
+            }
+            $wpdb->update($wpdb->prefix.'icl_translate', array('field_data_translated'=>$fields_data_translated), array('job_id'=>$data['job_id'], 'field_type'=>'body'));
+            
                        
             // set stickiness
             //is the original post a sticky post?

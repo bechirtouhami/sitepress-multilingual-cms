@@ -516,7 +516,7 @@ class ICL_Pro_Translation{
         $tinfo = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}icl_translations WHERE translation_id=%d", $cms_id));                
         $_lang = $sitepress->get_language_details($tinfo->language_code);
         $translation = $iclq->cms_do_download($request_id, $this->server_languages_map($_lang['english_name']));                                 
-        
+                
         //if(icl_is_string_translation($translation)){
         //    $language_code = $wpdb->get_var($wpdb->prepare("
         //        SELECT target FROM {$wpdb->prefix}icl_core_status
@@ -643,9 +643,7 @@ class ICL_Pro_Translation{
             $translated_cats = $translation['categories'];   
             $translated_cats_ids = explode(',', $translation['category_ids']);    
             foreach($translated_cats as $k=>$v){
-                
-                $v = trim(str_replace('<p>', '', $v));
-                
+                //$v = trim(str_replace('<p>', '', $v));
                 $cat_trid = $wpdb->get_var("SELECT trid FROM {$wpdb->prefix}icl_translations WHERE element_id='{$translated_cats_ids[$k]}' AND element_type='tax_category'");
                 
                 // before adding the new term make sure that another tag with the same name doesn't exist. If it does append @lang                                        
@@ -1337,7 +1335,6 @@ class ICL_Pro_Translation{
         global $wpdb, $sitepress, $sitepress_settings, $wp_taxonomies;
         $this->_content_make_links_sticky($element_id, $element_type);
         
-        
         if($element_type == 'post'){
             $post = $wpdb->get_row("SELECT * FROM {$wpdb->posts} WHERE ID={$element_id}");
             $body = $post->post_content;        
@@ -1361,6 +1358,7 @@ class ICL_Pro_Translation{
                 $query_parts = split('&', $url_parts['query']);
                 foreach($query_parts as $query){
                     
+                   
                     // find p=id or cat=id or tag=id queries
                     
                     list($key, $value) = split('=', $query);
@@ -1372,6 +1370,7 @@ class ICL_Pro_Translation{
                         $kind = 'post_page';
                     } else if($key == 'cat' || $key == 'cat_ID'){
                         $kind = 'tax_category';
+                        $taxonomy = 'category';
                     } else if($key == 'tag'){
                         $is_tax = true;
                         $taxonomy = 'post_tag';
@@ -1416,13 +1415,23 @@ class ICL_Pro_Translation{
                         if($is_tax){
                             $translated_id = $wpdb->get_var("SELECT slug FROM {$wpdb->terms} t JOIN {$wpdb->term_taxonomy} x ON t.term_id=x.term_id WHERE x.term_taxonomy_id=$translated_id");    
                         }
-
-                        $replace = $key . '=' . $translated_id;
                         
-                        $new_link = str_replace($query, $replace, $link[0]);
+                        // if absolute links is not on turn into WP permalinks
+                        if(!$sitepress_settings['modules']['absolute-links']['enabled']){
+                            ////////
+                            if(preg_match('#^post_#', $kind)){
+                                $replace = get_permalink($translated_id);
+                            }elseif(preg_match('#^tax_#', $kind)){
+                                if(is_numeric($translated_id)) $translated_id = intval($translated_id);
+                                $replace = get_term_link($translated_id, $taxonomy);                                
+                            }
+                            $new_link = str_replace($link[2], $replace, $link[0]);
+                        }else{
+                            $replace = $key . '=' . $translated_id;    
+                            $new_link = str_replace($query, $replace, $link[0]);
+                        }
                         
-                        // replace the link in the body.
-                        
+                        // replace the link in the body.                        
                         $new_body = str_replace($link[0], $new_link, $new_body);
                     } else {
                         // translation not found for this.

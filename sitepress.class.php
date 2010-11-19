@@ -268,7 +268,7 @@ class SitePress{
     }
              
     function init(){ 
-
+        global $wpdb;
         $this->set_admin_language();
         //configure callbacks for plugin menu pages
         if(defined('WP_ADMIN') && isset($_GET['page']) && 0 === strpos($_GET['page'],basename(ICL_PLUGIN_PATH).'/')){
@@ -353,7 +353,66 @@ class SitePress{
                     default:
                         if(isset($_GET['lang'])){
                             $this->this_lang = preg_replace("/[^0-9a-zA-Z-]/i", '',$_GET['lang']);             
-                        }else{
+                        // set the language based on the content id - for short links
+                        }elseif(isset($_GET['page_id'])){         
+                            $this->this_lang = $wpdb->get_var($wpdb->prepare("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE element_type='post_page' AND element_id=%d", $_GET['page_id']));
+                        }elseif(isset($_GET['p'])){         
+                            $post_type = $wpdb->get_var($wpdb->prepare("SELECT post_type FROM {$wpdb->posts} WHERE ID=%d", $_GET['p']));
+                            $this->this_lang = $wpdb->get_var($wpdb->prepare("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE element_type=%s AND element_id=%d", 
+                                'post_' . $post_type, $_GET['p']));  
+                        }elseif(isset($_GET['cat_ID'])){
+                            $cat_tax_id = $wpdb->get_var($wpdb->prepare("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id=%d AND taxonomy=%s",
+                                $_GET['cat_ID'], 'category'));
+                            $this->this_lang = $wpdb->get_var($wpdb->prepare("SELECT language_code FROM {$wpdb->prefix}icl_translations 
+                                WHERE element_type='tax_category' AND element_id=%d", $cat_tax_id));                            
+                        }elseif(isset($_GET['tag'])){
+                            $tag_tax_id = $wpdb->get_var($wpdb->prepare("
+                                SELECT x.term_taxonomy_id FROM {$wpdb->term_taxonomy} x JOIN {$wpdb->terms} t ON t.term_id = x.term_id
+                                WHERE t.slug=%s AND x.taxonomy=%s",
+                                $_GET['tag'], 'post_tag'));
+                            $this->this_lang = $wpdb->get_var($wpdb->prepare("SELECT language_code FROM {$wpdb->prefix}icl_translations 
+                                WHERE element_type='tax_category' AND element_id=%d", $tax_tax_id));                                                        
+                        }                        
+                        //
+                        if(!isset($_GET['lang']) && $this->this_lang != $this->get_default_language()){
+                            if(!isset($GLOBALS['wp_rewrite'])){
+                                require_once ABSPATH . WPINC . '/rewrite.php'; 
+                                $GLOBALS['wp_rewrite'] = new WP_Rewrite();
+                            }                            
+                            if(isset($_GET['page_id'])){         
+                                wp_redirect(get_page_link($_GET['page_id']), '301');
+                                exit;
+                            }elseif(isset($_GET['p'])){         
+                                wp_redirect(get_permalink($_GET['p']), '301');
+                                exit;                                
+                            }elseif(isset($_GET['cat_ID'])){                            
+                                wp_redirect(get_term_link( intval($_GET['cat_ID']), 'category' ));
+                                exit;
+                            }elseif(isset($_GET['tag'])){                            
+                                wp_redirect(get_term_link( $_GET['tag'], 'post_tag' ));
+                                exit;
+                            }else{
+                                global $wp_taxonomies;
+                                $taxs = array_keys((array)$this->settings['taxonomies_sync_option']);
+                                foreach($taxs as $t){                                    
+                                    if(isset($_GET[$t])){                                        
+                                        $term_obj = $wpdb->get_row($wpdb->prepare(
+                                            "SELECT * FROM {$wpdb->terms} t JOIN {$wpdb->term_taxonomy} x ON t.term_id = x.term_id 
+                                            WHERE t.slug=%s AND x.taxonomy=%s"
+                                            , $_GET[$t], $t));
+                                        $term_link = get_term_link( $term_obj, $t );
+                                        $term_link = str_replace('&amp;', '&', $term_link); // fix
+                                        if($term_link && !is_wp_error($term_link)){                                            
+                                            wp_redirect($term_link);
+                                            exit;
+                                        }
+                                    }                                                                            
+                                }
+                            }
+                            
+                        }
+                        
+                        if(empty($this->this_lang)){
                             $this->this_lang = $this->get_default_language();
                         }                        
                 }

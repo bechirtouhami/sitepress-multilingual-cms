@@ -269,14 +269,46 @@
                     $oddev = $oddev*-1;
                     $img = 'edit_translation.png';
                     $edit_anchor = __('edit','sitepress');
+                    list($needs_update, $in_progress) = $wpdb->get_row($wpdb->prepare("
+                        SELECT needs_update, status = ".ICL_TM_IN_PROGRESS." FROM {$wpdb->prefix}icl_translation_status s JOIN {$wpdb->prefix}icl_translations t ON t.translation_id = s.translation_id
+                        WHERE t.trid = %d AND t.language_code = %s
+                    ", $trid, $lang['code']), ARRAY_N);           
                     switch($iclTranslationManagement->settings['doc_translation_method']){
                         case ICL_TM_TMETHOD_EDITOR:
                             $job_id = $iclTranslationManagement->get_translation_job_id($trid, $lang['code']);
-                            $edit_link = admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&job_id='.$job_id);    
-                            break;
+                            if($needs_update){
+                                $img = 'needs-update.png';
+                                $edit_anchor = __('Update translation','sitepress');
+                                $edit_link = admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&icl_tm_action=create_job&iclpost[]='.
+                                    $post->ID.'&translate_to['.$lang['code'].']=1&iclnonce=' . wp_create_nonce('pro-translation-icl'));
+                            }else{
+                                $edit_link = admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&job_id='.$job_id);    
+                            }
+                            break;                        
                         case ICL_TM_TMETHOD_PRO:
                             $job_id = $iclTranslationManagement->get_translation_job_id($trid, $lang['code']);
-                            $edit_link = admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&job_id='.$job_id);    
+                            if($in_progress){
+                                $img = 'in-progress.png';
+                                $edit_link = '#';
+                                $edit_anchor = __('Translation is in progress','sitepress');
+                            }elseif($needs_update){
+                                $img = 'needs-update.png';
+                                $edit_anchor = __('Update translation','sitepress');
+                                $qs = array();
+                                if(!empty($_SERVER['QUERY_STRING']))
+                                foreach($_exp = explode('&', $_SERVER['QUERY_STRING']) as $q=>$qv){
+                                    $__exp = explode('=', $qv);
+                                    $__exp[0] = preg_replace('#\[(.*)\]#', '', $__exp[0]);
+                                    if(!in_array($__exp[0], array('icl_tm_action', 'translate_from', 'translate_to', 'iclpost', 'service', 'iclnonce'))){
+                                        $qs[$q] = $qv;
+                                    }
+                                }                                
+                                $edit_link = admin_url('post.php?'.join('&', $qs).'&icl_tm_action=send_jobs&translate_from='.$source_language
+                                    .'&translate_to['.$lang['code'].']=1&iclpost[]='.$post->ID
+                                    .'&service=icanlocalize&iclnonce=' . wp_create_nonce('pro-translation-icl')); 
+                            }else{
+                                $edit_link = admin_url('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translations-queue.php&job_id='.$job_id);    
+                            }
                             break;
                         default:
                             $edit_link = get_edit_post_link($translations[$lang['code']]->element_id);    
