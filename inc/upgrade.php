@@ -489,8 +489,8 @@ function icl_plugin_upgrade(){
         if($mig_debug) fwrite($mig_debug, "Upgrading to 2.0.0 \n");
                 
         // importing content from icl_node, icl_content_status, icl_core_status to icl_translaiton_status
-        include_once ICL_PLUGIN_PATH . '/inc/upgrade-functions/upgrade-2.0.0.php';
-        icl_upgrade_2_0_0();
+        //include_once ICL_PLUGIN_PATH . '/inc/upgrade-functions/upgrade-2.0.0.php';
+        //icl_upgrade_2_0_0();
         
         if($mig_debug) fwrite($mig_debug, "Upgraded to 2.0.0 \n");
     }    

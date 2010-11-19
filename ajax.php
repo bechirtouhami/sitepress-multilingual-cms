@@ -995,6 +995,43 @@ if (function_exists('wpml_register_admin_strings')) {
     case 'hide_affiliate_message':
         $this->save_settings(array('hide_affiliate_message' => 0));
         break;
+
+    case 'upgrade_2_0_0':
+        $error = 0;
+        $completed = 0;
+        $stop = 0;
+        $message = 'Starting migration process';
+        include_once ICL_PLUGIN_PATH . '/inc/stepper.php';
+        include_once ICL_PLUGIN_PATH . '/inc/upgrade-functions/upgrade-2.0.0.php';
+        $temp_upgrade_data = get_option('icl_temp_upgrade_data',
+                array('step' => 0, 'offset' => 0));
+        $step = isset($_REQUEST['step']) ? $_REQUEST['step'] : $temp_upgrade_data['step'];
+        $migration = new Icl_Stepper($step);
+        $migration->registerSteps(
+                'icl_upgrade_2_0_0_steps',
+                'icl_upgrade_2_0_0_steps',
+                'icl_upgrade_2_0_0_steps');
+        if (isset($_REQUEST['init'])) {
+            echo json_encode(array(
+                'error' => $error,
+                'output' => $migration->render(),
+                'step' => $migration->getNextStep(),
+                'message' => __('Altering tables', 'sitepress'),
+                'stop' => $stop,
+            ));
+            exit;
+        }
+        $data = $migration->init();
+        extract($data, EXTR_OVERWRITE);
+        echo json_encode(array(
+            'error' => $error,
+            'completed' => $completed,
+            'message' => $message,
+            'step' => $migration->getNextStep(),
+            'barWidth' => $migration->barWidth(),
+            'stop' => $stop,
+            ));
+        break;
                 
     default:
         do_action('icl_ajx_custom_call', $_REQUEST['icl_ajx_action'], $_REQUEST);

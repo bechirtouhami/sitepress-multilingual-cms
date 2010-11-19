@@ -145,6 +145,13 @@ if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQ
     
     require ICL_PLUGIN_PATH . '/inc/compatibility-packages/init-packages.php';
     require ICL_PLUGIN_PATH . '/modules/cache-plugins-integration/cache-plugins-integration.php';
+
+    if (!isset($sitepress_settings['migrated_2_0_0'])
+            && get_option('icl_sitepress_version')
+            && version_compare(get_option('icl_sitepress_version'), '2.0.0', '=')){
+        include_once ICL_PLUGIN_PATH . '/inc/upgrade-functions/upgrade-2.0.0.php';
+        wp_enqueue_script('icl-stepper', ICL_PLUGIN_URL . '/res/js/stepper.js', array('jquery'));
+    }
     
 }
  
