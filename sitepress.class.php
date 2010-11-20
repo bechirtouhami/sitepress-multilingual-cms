@@ -4832,8 +4832,6 @@ class SitePress{
                         }
                         break;
                     case ICL_TM_TMETHOD_PRO:  
-                    
-                        //debug_array($__management_columns_posts_translations[$id]);
                         if(!$__management_columns_posts_translations[$id][$v['code']]->source_language_code){
                             $link = get_edit_post_link($__management_columns_posts_translations[$id][$v['code']]->element_id);
                             $alt = __('Edit the original document','sitepress');
