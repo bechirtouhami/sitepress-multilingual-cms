@@ -1,6 +1,4 @@
 <?php 
-    //$iclTranslationManagement->add_translation_job(45,1,$iclTranslationManagement->create_translation_package(367));
-
 
     if(!isset($job_checked) && isset($_GET['job_id']) && $_GET['job_id'] > 0){
         include ICL_PLUGIN_PATH . '/menu/translation-editor.php';
@@ -15,35 +13,46 @@
     $current_translator = $iclTranslationManagement->get_current_translator();
     $icl_translation_filter['translator_id'] = $current_translator->translator_id;
     $icl_translation_filter['include_unassigned'] = true;
-    if(1 < count($current_translator->language_pairs)){
-        foreach($current_translator->language_pairs as $lang=>$to){
-            $langs_from[] = $sitepress->get_language_details($lang);
-            $_langs_to = array_merge((array)$_langs_to, array_keys($to));                                                
+    
+    if(!empty($current_translator->language_pairs)){
+        if(1 < count($current_translator->language_pairs)){
+            foreach($current_translator->language_pairs as $lang=>$to){
+                $langs_from[] = $sitepress->get_language_details($lang);
+                $_langs_to = array_merge((array)$_langs_to, array_keys($to));                                                
+            }
+            $_langs_to = array_unique($_langs_to);
+        }else{        
+            $_langs_to = array_keys(current($current_translator->language_pairs));
+            $lang_from = $sitepress->get_language_details(key($current_translator->language_pairs));         
+            $icl_translation_filter['from'] = $lang_from['code'];
         }
-        $_langs_to = array_unique($_langs_to);
-    }else{
-        $_langs_to = array_keys(current($current_translator->language_pairs));
-        $lang_from = $sitepress->get_language_details(key($current_translator->language_pairs));         
-        $icl_translation_filter['from'] = $lang_from['code'];
-    }
-    if(1 < count($_langs_to)){
-        foreach($_langs_to as $lang){
-            $langs_to[] = $sitepress->get_language_details($lang);
+
+        if(1 < count($_langs_to)){
+            foreach($_langs_to as $lang){
+                $langs_to[] = $sitepress->get_language_details($lang);
+            }
+        }else{
+            $lang_to  = $sitepress->get_language_details(current($_langs_to));             
+            $icl_translation_filter['to'] = $lang_to['code'];
         }
-    }else{
-        $lang_to  = $sitepress->get_language_details(current($_langs_to));             
-        $icl_translation_filter['to'] = $lang_to['code'];
+        
+        $icl_translation_filter['limit_no'] = 20;
+        $translation_jobs = $iclTranslationManagement->get_translation_jobs((array)$icl_translation_filter);    
+        
     }
-    $icl_translation_filter['limit_no'] = 20;
-    $translation_jobs = $iclTranslationManagement->get_translation_jobs((array)$icl_translation_filter);    
+        
 ?>
 <div class="wrap">
     <div id="icon-options-general" class="icon32" style="background: transparent url(<?php echo ICL_PLUGIN_URL ?>/res/img/icon.png) no-repeat"><br /></div>
     <h2><?php echo __('Translations queue', 'sitepress') ?></h2>    
     
+    <?php if(empty($current_translator->language_pairs)): ?>
+    <div class="error below-h2"><p><?php _e("No translation languages configured for this user.", 'sitepress'); ?></p></div>
+    <?php endif; ?>
     <?php do_action('icl_tm_messages'); ?>
     
-
+    
+    <?php if(!empty($current_translator->language_pairs)): ?>
     <form method="post" name="translation-jobs-filter" action="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/translations-queue.php">
     <input type="hidden" name="icl_tm_action" value="ujobs_filter" />
     <table class="form-table widefat fixed">
@@ -109,7 +118,7 @@
     </table>
     </form>    
 
-    <br />
+    <br />    
         
     <table class="widefat fixed" id="icl-translation-jobs" cellspacing="0">
         <thead>
@@ -183,5 +192,7 @@
         <?php } ?>
     </div>    
     <?php // pagination - end ?>
+    
+    <?php endif; ?>
     
 </div>

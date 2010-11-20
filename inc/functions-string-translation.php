@@ -413,7 +413,8 @@ function icl_register_string($context, $name, $value){
         }
     } 
     if($sitepress_settings['modules']['absolute-links']['enabled'] && $sitepress_settings['modules']['absolute-links']['sticky_links_strings']){        
-        $ICL_Pro_Translation->_content_make_links_sticky($string_id, 'string', false);   
+        require_once ICL_PLUGIN_PATH . '/inc/translation-management/pro-translation.class.php';
+        ICL_Pro_Translation::_content_make_links_sticky($string_id, 'string', false);   
     }
     return $string_id; 
 }  

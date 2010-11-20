@@ -1313,7 +1313,7 @@ class ICL_Pro_Translation{
         return $links;
     }    
     
-    function _content_make_links_sticky($element_id, $element_type='post', $string_translation = true) {
+    public static function _content_make_links_sticky($element_id, $element_type='post', $string_translation = true) {
         if($element_type=='post'){
             // only need to do it if sticky links is not enabled.
             // create the object
@@ -1333,7 +1333,7 @@ class ICL_Pro_Translation{
 
     function _content_fix_links_to_translated_content($element_id, $target_lang_code, $element_type='post'){
         global $wpdb, $sitepress, $sitepress_settings, $wp_taxonomies;
-        $this->_content_make_links_sticky($element_id, $element_type);
+        self::_content_make_links_sticky($element_id, $element_type);
         
         if($element_type == 'post'){
             $post = $wpdb->get_row("SELECT * FROM {$wpdb->posts} WHERE ID={$element_id}");

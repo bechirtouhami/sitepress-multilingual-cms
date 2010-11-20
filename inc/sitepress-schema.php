@@ -291,9 +291,12 @@ function icl_sitepress_activate(){
    if(get_option('icl_sitepress_version')){
        icl_plugin_upgrade();               
    }
-                  
-   delete_option('icl_sitepress_version');   
-   add_option('icl_sitepress_version', ICL_SITEPRESS_VERSION, '', true);
+   
+   // don't set the new version if a multi-step upgrade is in progress   
+   if(!defined('ICL_MULTI_STEP_UPGRADE')){
+       delete_option('icl_sitepress_version');   
+       add_option('icl_sitepress_version', ICL_SITEPRESS_VERSION, '', true);
+   }               
 
     
     $iclsettings = get_option('icl_sitepress_settings');

@@ -72,12 +72,8 @@ class TranslationManagement{
         $ct['translator_id'] =  $current_user->ID;
         $ct['display_name'] =  $user->data->display_name;
         $ct['user_login'] =  $user->data->user_login;
-        
-        if(ICL_PRE_WP3){ // pre WP3 back compatibility
-            $ct['language_pairs'] = get_user_meta($current_user->ID, $wpdb->prefix.'language_pairs', true);
-        }else{
-            $ct['language_pairs'] = get_user_meta($current_user->ID, $wpdb->prefix.'language_pairs', true);    
-        }
+        $ct['language_pairs'] = get_user_meta($current_user->ID, $wpdb->prefix.'language_pairs', true);    
+        if(empty($ct['language_pairs'])) $ct['language_pairs'] = array();
         
         $this->current_translator = (object)$ct;
 
@@ -201,7 +197,7 @@ class TranslationManagement{
                 }   
                 break; 
            case 'jobs_filter':
-                $_SESSION['translation_jobs_filter'] = $data['filter'];
+                $_SESSION['translation_jobs_filter'] = $data['filter'];                
                 wp_redirect('admin.php?page='.ICL_PLUGIN_FOLDER . '/menu/translation-management.php&sm=jobs');
                 break;                               
            case 'ujobs_filter':
@@ -328,9 +324,16 @@ class TranslationManagement{
 
     function edit_translator($user_id, $language_pairs){
         global $wpdb;
-        $um = get_user_meta($user_id, $wpdb->prefix . 'language_pairs', true);
-        update_user_meta($user_id, $wpdb->prefix . 'language_pairs',  $language_pairs);
-
+        $_user = new WP_User($user_id);
+        if(empty($language_pairs)){
+            $this->remove_translator($user_id);                
+            wp_redirect('admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translation-management.php&sm=translators&icl_tm_message='.
+                urlencode(sprintf(__('%s has been removed as a translator for this site.','sitepress'),$_user->data->display_name)).'&icl_tm_message_type=updated');                                                           exit; 
+        }
+        else{
+            if(!$_user->has_cap('translate')) $_user->add_cap('translate');
+            update_user_meta($user_id, $wpdb->prefix . 'language_pairs',  $language_pairs);    
+        }
     }
     
     function remove_translator($user_id){
@@ -1503,7 +1506,7 @@ class TranslationManagement{
         $where = "1";
         if($status != ''){
             $where .= " AND s.status=" . intval($status);    
-        }
+        }        
         if(!empty($translator_id)){
             if($include_unassigned){
                 $where .= " AND (j.translator_id=" . intval($translator_id) . " OR j.translator_id=0) ";    
@@ -1544,7 +1547,7 @@ class TranslationManagement{
                 ORDER BY {$orderby}
                 LIMIT {$limit}
             "
-        );         
+        ); 
         $count = $wpdb->get_var("SELECT FOUND_ROWS()");
 
         $wp_query->found_posts = $count;
@@ -1584,12 +1587,13 @@ class TranslationManagement{
                 JOIN {$wpdb->prefix}icl_translations t ON s.translation_id = t.translation_id                
             WHERE j.job_id = %d", $job_id));        
         $original = $wpdb->get_row($wpdb->prepare("
-            SELECT t.element_id, p.post_title
+            SELECT t.element_id, p.post_title, p.post_type
             FROM {$wpdb->prefix}icl_translations t 
             JOIN {$wpdb->posts} p ON t.element_id = p.ID AND t.trid = %d 
             WHERE t.language_code = %s", $job->trid, $job->source_language_code));
         $job->original_doc_title = $original->post_title;
         $job->original_doc_id = $original->element_id;
+        $job->original_post_type = $original->post_type;
 
         $_ld = $sitepress->get_language_details($job->source_language_code);
         $job->from_language = $_ld['display_name'];
@@ -1664,7 +1668,7 @@ class TranslationManagement{
             if(!is_null($element_id)){
                 $postarr['ID'] = $_POST['post_ID'] = $element_id;
             }
-            
+                        
             foreach($job->elements as $field){
                 switch($field->field_type){
                     case 'title': 
@@ -1705,7 +1709,10 @@ class TranslationManagement{
                             if(empty($thecat)){
                                 $the_original_cat = get_term_by('name', $original_cats[$k], 'category');                                
                                 $the_original_cat_parent = $wpdb->get_var("SELECT parent FROM {$wpdb->term_taxonomy} WHERE term_taxonomy_id=".$the_original_cat->term_taxonomy_id);
-                                $tmp = wp_insert_term($c, 'category', array('parent'=>$the_original_cat_parent));
+                                if($the_original_cat_parent){
+                                    $op_tr = icl_object_id($the_original_cat_parent, 'category', false, $job->language_code);
+                                }else{$op_tr = 0;}                                
+                                $tmp = wp_insert_term($c, 'category', array('parent'=>$op_tr));
                                 if(isset($tmp['term_taxonomy_id'])){                
                                     $cat_trid = $sitepress->get_element_trid($the_original_cat->term_taxonomy_id,'tax_category');
                                     $wpdb->update($wpdb->prefix.'icl_translations', 
@@ -1721,9 +1728,40 @@ class TranslationManagement{
                         }
                         $postarr['post_category'] = $cat_ids;
                         break;
+                    default:
+                        if(in_array($field->field_type, $sitepress->get_translatable_taxonomies(false, $job->original_post_type))){                            
+                            $taxs = $this->decode_field_data($field->field_data_translated, $field->field_format);
+                            $original_taxs = $this->decode_field_data($field->field_data, $field->field_format);
+                            $taxonomy = $field->field_type;
+                            $alltaxs = array();
+                            foreach($taxs as $k=>$c){
+                                $thetax = get_term_by('name', $c, $taxonomy);
+                                if(empty($thetax)){
+                                    $the_original_tax = get_term_by('name', $original_taxs[$k], $taxonomy);                                
+                                    $the_original_tax_parent = $wpdb->get_var("SELECT parent FROM {$wpdb->term_taxonomy} WHERE term_taxonomy_id=".$the_original_tax->term_taxonomy_id);
+                                    if($the_original_tax_parent){
+                                        $op_tr = icl_object_id($the_original_tax_parent, $taxonomy, false, $job->language_code);
+                                    }else{$op_tr = 0;}                                
+                                    $tmp = wp_insert_term($c, $taxonomy, array('parent'=>$op_tr));
+                                    if(isset($tmp['term_taxonomy_id'])){                
+                                        $tax_trid = $sitepress->get_element_trid($the_original_tax->term_taxonomy_id,'tax_'.$taxonomy);
+                                        $wpdb->update($wpdb->prefix.'icl_translations', 
+                                            array('language_code'=>$job->language_code, 'trid'=>$tax_trid, 'source_language_code'=>$job->source_language_code), 
+                                            array('element_type'=>'tax_'.$taxonomy,'element_id'=>$tmp['term_taxonomy_id']));
+                                    }
+                                    $tax_id = $tmp['term_id'];
+                                     
+                                }else{
+                                    $tax_id = $thetax->term_id;
+                                }                                
+                                $tax_ids[] = $tax_id;
+                                $alltaxs[] = $c;
+                            }
+                            $postarr['tax_input'][$taxonomy] = join(',', $alltaxs);
+                        }
                 }
             }
-            
+                        
             $original_post = get_post($job->original_doc_id);
             
             $postarr['post_author'] = $original_post->post_author;  

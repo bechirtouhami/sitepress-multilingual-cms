@@ -5306,13 +5306,12 @@ class SitePress{
         if($include_not_synced){
             if(in_array($object_type, $wp_taxonomies['post_tag']->object_type)) $t_taxonomies[] = 'post_tag';    
             if(in_array($object_type, $wp_taxonomies['category']->object_type)) $t_taxonomies[] = 'category';            
-        }
+        }        
         foreach($wp_taxonomies as $taxonomy_name => $taxonomy){
             if(in_array($object_type, $taxonomy->object_type) && !empty($this->settings['taxonomies_sync_option'][$taxonomy_name])){
                 $t_taxonomies[] = $taxonomy_name;    
             }    
         }         
-                
         if(has_filter('get_translatable_taxonomies')){
             list($t_taxonomies, $ot) = apply_filters('get_translatable_taxonomies', array('taxs'=>$t_taxonomies, 'object_type'=>$object_type));               
         }

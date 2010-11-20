@@ -484,13 +484,17 @@ function icl_plugin_upgrade(){
         $sitepress->save_settings($iclsettings);
         if($mig_debug) fwrite($mig_debug, "Upgraded to 1.8.1 \n");
     }
-
+    
     if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '2.0.0', '<')){    
         if($mig_debug) fwrite($mig_debug, "Upgrading to 2.0.0 \n");
                 
-        // importing content from icl_node, icl_content_status, icl_core_status to icl_translaiton_status
-        //include_once ICL_PLUGIN_PATH . '/inc/upgrade-functions/upgrade-2.0.0.php';
-        //icl_upgrade_2_0_0();
+        
+        include_once ICL_PLUGIN_PATH . '/inc/upgrade-functions/upgrade-2.0.0.php';
+        
+        if(!$iclsettings['migrated_2_0_0']){
+            define('ICL_MULTI_STEP_UPGRADE', true);
+            return; // GET OUT AND DO NOT SET THE NEW VERSION
+        }
         
         if($mig_debug) fwrite($mig_debug, "Upgraded to 2.0.0 \n");
     }    

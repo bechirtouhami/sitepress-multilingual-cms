@@ -48,6 +48,11 @@ if(empty($job)){
                                     $icl_tm_translated_taxs[$element->field_type] = 
                                         TranslationManagement::determine_translated_taxonomies($icl_tm_original_content, $taxonomy, $job->language_code);
                                 }
+                                if(in_array($element->field_type, $sitepress->get_translatable_taxonomies(false, $job->original_post_type))){
+                                    $taxonomy = $element->field_type;
+                                    $icl_tm_translated_taxs[$element->field_type] = 
+                                        TranslationManagement::determine_translated_taxonomies($icl_tm_original_content, $taxonomy, $job->language_code);
+                                };
                             ?>
                             <p><?php _e('Translated content', 'sitepress'); echo ' - ' . $job->to_language; ?></p>
                             <?php if($element->field_type=='body'): ?>
