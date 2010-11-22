@@ -1322,8 +1322,6 @@ class TranslationManagement{
                     $this->set_default_translator($translator_id, $translate_from, $lang, $service);
                 }
                 
-                exit;
-                
                 // add translation_status record        
                 list($rid, $update) = $this->update_translation_status(array(
                     'translation_id'        => $translation_id,
