@@ -77,10 +77,6 @@ if(!empty($sitepress_settings['default_translators'][$icl_translation_filter['fr
     }
 }
 
-?>
-
-<?php
-
 $icl_translation_services = apply_filters('icl_translation_services', array());
 $icl_translation_services = array_merge($icl_translation_services, TranslationManagement::icanlocalize_service_info());
 if (!empty($icl_translation_services)) {
