@@ -261,6 +261,7 @@ function iclPostLanguageSwitch(){
                 tagBox.get('link-'+tag_tax);
                 jQuery(this).find('a.tagcloud-link').unbind().click(function(){
                     jQuery(this).siblings('.the-tagcloud').toggle();
+                    return false;
                 });
                 jQuery(this).slideDown();
             });
