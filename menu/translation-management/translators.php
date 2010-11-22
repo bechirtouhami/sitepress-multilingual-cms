@@ -236,7 +236,7 @@ function icl_local_edit_translator_form($action = 'add', $selected_translator = 
     $return['description'] = __('Your own translators', 'sitepress');
 
     if ($action == 'add' && empty($blog_users_nt)) {
-      $output .= '<span class="updated fade" style="padding:4px">' . __('All blog users are translators', 'sitepress') . '</span>';
+      $output .= '<span class="updated fade" style="padding:4px">' . __('All WordPress users are already translators. To add more translators, first create accounts for them.', 'sitepress') . '</span>';
       $return['content'] = $output;
       return $return;
     }
