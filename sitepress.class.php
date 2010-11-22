@@ -1144,23 +1144,6 @@ class SitePress{
         $iclsettings['icl_support_ticket_id'] = $res['attr']['support_ticket_id'];
     }
     
-    function translator_exists($id, $from, $to){
-        $exists = false;
-        foreach($this->settings['icl_lang_status'] as $lpair){
-            if($lpair['from'] == $from && $lpair['to'] == 'de'){
-                if(!empty($lpair['translators'])){
-                    foreach($lpair['translators'] as $t){
-                        if($t['id'] == $id){
-                            $exists = true;
-                            break(2);
-                        }
-                    }
-                }
-            }
-        }
-        return $exists;
-    }
-
     function get_language_status_text($from_lang, $to_lang, $popclose_cb = false) {        
         
         $popargs = array('title'=>'ICanLocalize');

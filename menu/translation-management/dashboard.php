@@ -71,8 +71,8 @@ if(!empty($iclTranslationManagement->dashboard_select)){
 
 if(!empty($sitepress_settings['default_translators'][$icl_translation_filter['from_lang']])){
     foreach($sitepress_settings['default_translators'][$icl_translation_filter['from_lang']] as $_tolang => $tr){
-        if($sitepress->translator_exists($tr['id'], $icl_translation_filter['from_lang'], $_tolang)){
-            $icl_selected_translators[$_tolang] = $tr['id'] . '-icanlocalize';        
+        if($iclTranslationManagement->translator_exists($tr['id'], $icl_translation_filter['from_lang'], $_tolang, $tr['type'])){            
+            $icl_selected_translators[$_tolang] = $tr['type'] == 'local' ? $tr['id'] : $tr['id'] . '-' . $tr['type'];        
         }        
     }
 }

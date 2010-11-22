@@ -359,6 +359,45 @@ class TranslationManagement{
         return $is_translator;
     }
     
+    function translator_exists($id, $from, $to, $type = 'local'){
+        global $sitepress_settings;
+        $exists = false;
+        if($type == 'icanlocalize'){
+            foreach($sitepress_settings['icl_lang_status'] as $lpair){
+                if($lpair['from'] == $from && $lpair['to'] == $to){
+                    if(!empty($lpair['translators'])){
+                        foreach($lpair['translators'] as $t){
+                            if($t['id'] == $id){
+                                $exists = true;
+                                break(2);
+                            }
+                        }
+                    }
+                }
+            }
+        }elseif($type == 'local'){
+            $exists = $this->is_translator($id, array('lang_from'=>$from, 'lang_to'=>$to));    
+        }
+        return $exists;
+    }
+    
+    function set_default_translator($id, $from, $to, $type = 'local'){
+        global $sitepress, $sitepress_settings;
+        $iclsettings['default_translators'] = $sitepress_settings['default_translators'];
+        $iclsettings['default_translators'][$from][$to] = array('id'=>$id, 'type'=>$type);
+        $sitepress->save_settings($iclsettings);
+    } 
+    
+    function get_default_translator($from, $to){
+        global $sitepress_settings;
+        if(isset($sitepress_settings['default_translators'][$from][$to])){
+            $dt = $sitepress_settings['default_translators'][$from][$to];    
+        }else{
+            $dt = array();
+        }
+        return $dt; 
+    }   
+    
     public function get_blog_not_translators(){
         global $wpdb;
         $sql = "SELECT u.ID, u.user_login, u.display_name, m.meta_value AS caps 
@@ -1277,6 +1316,13 @@ class TranslationManagement{
                     $service = isset($_exp[1]) ? $_exp[1] : 'local';
                 }                
                 $translator_id = $_exp[0];
+                
+                // set as default translator                
+                if($translator_id > 0){
+                    $this->set_default_translator($translator_id, $translate_from, $lang, $service);
+                }
+                
+                exit;
                 
                 // add translation_status record        
                 list($rid, $update) = $this->update_translation_status(array(
