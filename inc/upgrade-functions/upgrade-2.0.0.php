@@ -186,7 +186,7 @@ function icl_upgrade_2_0_0_steps($step, $stepper){
             // set default translators
             foreach($sitepress_settings['icl_lang_status'] as $lpair){
                 if(!empty($lpair['translators'])){
-                    $iclsettings['default_translators'][$lpair['from']][$lpair['to']] = $lpair['translators'][0];                    
+                    $iclsettings['default_translators'][$lpair['from']][$lpair['to']] = array('id'=>$lpair['translators'][0]['id'], 'type'=>'icanlocalize');                    
                 }                
             }
             $sitepress->save_settings($iclsettings);            
