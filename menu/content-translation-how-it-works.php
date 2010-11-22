@@ -1,10 +1,8 @@
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap">
-    <div id="icon-options-general" class="icon32<?php if(!$sitepress_settings['basic_menu']) echo ' icon32_adv'?>"><br /></div>    
+    <div id="icon-options-general" class="icon32"><br /></div>    
     
     <h2><?php _e('Professional Translation - How it works', 'sitepress') ?></h2>    
-    
-    <?php include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php' ?>    
     
     <img src="<?php echo ICL_PLUGIN_URL?>/res/img/web_logo_large.png" style="float: right; border: 1pt solid #C0C0C0; margin: 16px 10px 10px 10px;" alt="ICanLocalize" />   
         

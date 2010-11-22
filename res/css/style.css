@@ -68,15 +68,15 @@
     /*display:none;*/
 }
 
-#icl_translations_table{    
-    background-color: #f2f2f2;
-    margin: 0 5px 0 5px;
+.icl_translations_table{
+    border: 1px solid #8CCEEA;
+    -moz-border-radius-bottomleft:3px;
+    -moz-border-radius-bottomright:3px;
+    -moz-border-radius-topleft:3px;
+    -moz-border-radius-topright:3px;    
 }
-#icl_translations_table td{
-    font-size: 11px;
-    padding:5px;
-    background-color: #fcfcfc;
-}
+.icl_translations_table tr.icl_odd_row{background-color:#EFF8FC;}
+.icl_translations_table td{font-size: 11px;}
 
 .icl_golden_button{
     background-image:none;

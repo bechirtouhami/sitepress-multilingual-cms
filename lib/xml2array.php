@@ -1,7 +1,7 @@
 <?php
-if(!function_exists('xml2array')):
+if(!function_exists('icl_xml2array')):
 
-function xml2array($contents, $get_attributes=1) {
+function icl_xml2array($contents, $get_attributes=1) {
     if(!$contents) return array();
 
     if(!function_exists('xml_parser_create')) {

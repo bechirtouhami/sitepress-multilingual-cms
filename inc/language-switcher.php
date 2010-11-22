@@ -241,7 +241,7 @@ class SitePressLanguageSwitcher {
 											
 		<?php if(!defined('ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS') || !ICL_DONT_LOAD_LANGUAGE_SELECTOR_CSS): ?>
                                             <br />
-                                            <a href="#" onclick="jQuery(this).next().slideToggle();return false;"><?php _e('Edit the language switcher widget colors', 'sitepress')?></a>                                            
+                                            <a href="#" onclick="jQuery(this).next().slideToggle();return false;"><?php _e('Edit the language switcher widget colors', 'sitepress')?></a>                            
                                             <div style="display:none">                                          
                                                 <table id="icl_lang_preview_config" style="width:auto;">
                                                     <thead>
@@ -496,7 +496,10 @@ class SitePressLanguageSwitcher {
 														<?php _e('Position', 'sitepress'); ?>&nbsp;
                                                        <select name="icl_post_availability_position">
 															<option value="above"<?php if($this->settings['icl_post_availability_position'] == 'above'):?> selected="selected"<?php endif?>><?php _e('Above post', 'sitepress'); ?>&nbsp;&nbsp;</option>
-															<option value="bellow"<?php if(! $this->settings['icl_post_availability_position'] || $this->settings['icl_post_availability_position'] == 'bellow'):?> selected="selected"<?php endif?>><?php _e('Below post', 'sitepress'); ?>&nbsp;&nbsp;</option>
+															<option value="below"<?php if(! $this->settings['icl_post_availability_position'] || 
+                                                            $this->settings['icl_post_availability_position'] == 'bellow' || 
+                                                            $this->settings['icl_post_availability_position'] == 'below'
+                                                            ):?> selected="selected"<?php endif?>><?php _e('Below post', 'sitepress'); ?>&nbsp;&nbsp;</option>
 														</select>
                                                     </label>
                                                 </li>
@@ -505,6 +508,16 @@ class SitePressLanguageSwitcher {
                                                       <?php _e('Text for alternative languages for posts', 'sitepress'); ?><br /><input type="text" name="icl_post_availability_text" value="<?php if($this->settings['icl_post_availability_text']) echo $this->settings['icl_post_availability_text']; else _e('This post is also available in: %s','sitepress'); ?>" size="40" />
                                                     </label>
 													<br /><br />
+                                                </li>
+                                            </ul>
+                                            <h4><?php _e('Additional CSS (optional)', 'sitepress'); ?></h4>
+                                            <ul>
+                                                <li>
+                                                  <textarea name="icl_additional_css" rows="4" cols="80"><?php
+                                                    if (!empty($this->settings['icl_additional_css'])) {
+                                                      echo $this->settings['icl_additional_css'];
+                                                    }
+                                                  ?></textarea>
                                                 </li>
                                             </ul>
                                         </li>
@@ -649,6 +662,12 @@ class SitePressLanguageSwitcher {
                 }
             }
             echo "</style>\n";
+        }
+        if (isset($this->settings['icl_additional_css']) && !empty($this->settings['icl_additional_css'])) {
+          echo "\r\n<style type=\"text/css\">";
+          //echo implode("\r\n", $this->settings['icl_additional_css']);
+          echo $this->settings['icl_additional_css'];
+          echo "\r\n</style>";
         }
     }
 } // end class

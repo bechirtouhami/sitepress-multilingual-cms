@@ -14,6 +14,7 @@ $search_filter = isset($_GET['search']) ? $_GET['search'] : false;
 $exact_match = isset($_GET['em']) ? $_GET['em'] == 1 : false;
 
 $icl_string_translations = icl_get_string_translations();
+
 if(!empty($icl_string_translations)){
     $icl_strings_in_page = icl_get_strigs_tracked_in_pages($icl_string_translations);
 }
@@ -49,8 +50,6 @@ if(!$sitepress_settings['st']['strings_language']){
 <div class="wrap">
     <div id="icon-options-general" class="icon32 icon32_adv"><br /></div>
     <h2><?php echo __('String translation', 'sitepress') ?></h2>    
-    
-    <?php include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php' ?>
     
     <?php if(isset($icl_st_po_strings) && !empty($icl_st_po_strings)): ?>
     
@@ -112,7 +111,7 @@ if(!$sitepress_settings['st']['strings_language']){
             <tbody>
                 <?php 
                     $total_cost = $total_wc = $total_rate = 0; 
-                    $languages_to = explode(",",$_POST['langs']);
+                    $languages_to = explode("#",$_POST['langs']);
                     $total_langs = count($languages_to);         
                     foreach($_POST['icl_tr_rate'] as $k=>$v){
                         if(in_array($k, $languages_to)){

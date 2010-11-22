@@ -1,6 +1,6 @@
 <?php
 
-class SitePressEditLanguages {
+class SitePress_EditLanguages {
 
 	var $active_languages;
 	var $upload_dir;
@@ -130,7 +130,7 @@ For each language, you need to enter the following information:
 	function table_row( $lang, $echo = true, $add = false ){ ?>
 		
 		<tr style="<?php if ($add && !$this->add_validation_failed) echo 'display:none; '; if ($add) echo 'background-color:yellow; '; ?>"<?php if ($add) echo ' class="icl_edit_languages_show"'; ?>>
-					<td><input type="text" name="icl_edit_languages[<?php echo $lang['id']; ?>][english_name]" value="<?php echo $lang['english_name']; ?>" /></td>
+					<td><input type="text" name="icl_edit_languages[<?php echo $lang['id']; ?>][english_name]" value="<?php echo $lang['english_name']; ?>"<?php if (!$add) { ?> readonly="readonly"<?php } ?> /></td>
 					<td><input type="text" name="icl_edit_languages[<?php echo $lang['id']; ?>][code]" value="<?php echo $lang['code']; ?>" style="width:30px;"<?php if (!$add) { ?> readonly="readonly"<?php } ?> /></td>
 					<td <?php if (!$this->add_validation_failed) echo 'style="display:none;" ';?>class="icl_edit_languages_show"><input type="text" name="icl_edit_languages[<?php echo $lang['id']; ?>][translations][add]" value="<?php echo  $_POST['icl_edit_languages'][$lang['id']]['translations']['add']; ?>" /></td>
 					<?php foreach($this->active_languages as $translation){ 
@@ -203,9 +203,9 @@ For each language, you need to enter the following information:
 		return $wpdb->query("INSERT INTO {$wpdb->prefix}icl_languages (code, english_name, default_locale, major, active) VALUES('".$code."', '".$english_name."', '".$default_locale."', ".$major.", ".$active.")");
 	}
 
-	function update_main_table($id, $code, $english_name, $default_locale){
+	function update_main_table($id, $code, $default_locale){
 		global $wpdb;
-		$wpdb->query("UPDATE {$wpdb->prefix}icl_languages SET code='".$code."', english_name='".$english_name."', default_locale='".$default_locale."'  WHERE ID = ".$id);
+		$wpdb->query("UPDATE {$wpdb->prefix}icl_languages SET code='".$code."', default_locale='".$default_locale."'  WHERE ID = ".$id);
 	}
 
 	function insert_translation($name, $language_code, $display_language_code) {
@@ -256,7 +256,7 @@ For each language, you need to enter the following information:
 			$data = $this->sanitize($data);
 			
 				// Update main table.
-			$this->update_main_table($id, $data['code'], $data['english_name'], $data['default_locale']);
+			$this->update_main_table($id, $data['code'], $data['default_locale']);
 			
 				// Update translations table.
 			foreach ($data['translations'] as $translation_code => $translation_value) {
@@ -483,4 +483,4 @@ For each language, you need to enter the following information:
 }
 
 global $icl_edit_languages;
-$icl_edit_languages = new SitePressEditLanguages;
+$icl_edit_languages = new SitePress_EditLanguages;

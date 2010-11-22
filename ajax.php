@@ -315,6 +315,7 @@ switch($_REQUEST['icl_ajx_action']){
             $iclsettings['icl_post_availability_text'] = $_POST['icl_post_availability_text'];
         
         $iclsettings['icl_widget_title_show'] = (isset($_POST['icl_widget_title_show'])) ? 1 : 0;
+        $iclsettings['icl_additional_css'] = $_POST['icl_additional_css'];
         
         if(!$iclsettings['icl_lso_flags'] && !$iclsettings['icl_lso_native_lang'] && !$iclsettings['icl_lso_display_lang']){
             echo '0|';
@@ -434,19 +435,40 @@ switch($_REQUEST['icl_ajx_action']){
         
             
     case 'send_translation_request':
+        global $iclTranslationManagement, $current_user;   
         $post_ids = explode(',',$_POST['post_ids']);
         $target_languages = explode('#', $_POST['target_languages']);
         $post_types = $_POST['icl_post_type'];
+        
+        get_currentuserinfo();
+        $translator_id = isset($_POST['translator_id']) ? $_POST['translator_id'] : $current_user->ID;
         foreach($post_ids as $post_id){            
             
             if(isset($_POST['tn_note_'.$post_id]) && trim($_POST['tn_note_'.$post_id])){
                 update_post_meta($post_id, '_icl_translator_note', $_POST['tn_note_'.$post_id]);
             }
-            
+            foreach($target_languages as $to_lang){
+                $from_lang = $wpdb->get_var($wpdb->prepare("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE element_id=%d AND element_type=%s", 
+                    $post_id, 'post_'.$post_types[$post_id]));
+                $data = array(
+                    'translate_from'    => $from_lang,
+                    'translate_to'      => array($to_lang=>1),
+                    'iclpost'           => array($post_id),
+                    'service'           => 'icanlocalize',
+                    'iclnonce'          => wp_create_nonce('pro-translation-icl')
+                );
+                $jd = $iclTranslationManagement->send_jobs($data);
+                $resp[] = array(
+                    'post_id' => $post_id,
+                    'status'  => !empty($jd)
+                );
+            }
+            /*
             $resp[] = array(
                 'post_id'=>$post_id, 
-                'status'=>icl_translation_send_post($post_id, $target_languages, $post_types[$post_id])
+                'status'=>$ICL_Pro_Translation->send_post($post_id, $target_languages, $translator_id)
             );
+            */
         }
         echo json_encode($resp);
         break;
@@ -463,9 +485,7 @@ switch($_REQUEST['icl_ajx_action']){
         }
         
         $iclsettings['last_get_translator_status_call'] = time();
-        
         $this->get_icl_translator_status($iclsettings);
-        
         $this->save_settings($iclsettings);
         
         echo json_encode($iclsettings['icl_lang_status']);
@@ -511,7 +531,7 @@ switch($_REQUEST['icl_ajx_action']){
         break;
     case 'icl_st_send_strings':
         $arr = explode(',',$_POST['strings']);
-        icl_translation_send_strings($arr, explode(',',$_POST['languages']));
+        icl_translation_send_strings($arr, explode('#',$_POST['languages']));
         echo '1';
         break;    
     case 'icl_st_send_strings_all':
@@ -643,10 +663,6 @@ switch($_REQUEST['icl_ajx_action']){
         break;                
     case 'dismiss_upgrade_notice':
         $iclsettings['hide_upgrade_notice'] = implode('.', array_slice(explode('.', ICL_SITEPRESS_VERSION), 0, 3));
-        $this->save_settings($iclsettings);
-        break;        
-    case 'dismiss_translate_help':
-        $iclsettings['dont_show_translate_help'] = !$this->settings['dont_show_translate_help'];
         $this->save_settings($iclsettings);
         break;        
     case 'setup_got_to_step1':
@@ -857,7 +873,7 @@ switch($_REQUEST['icl_ajx_action']){
         echo '1|';        
         break;
     case 'icl_torubleshooting_more_options':
-        $iclsettings['troubleshooting_options'] = $_POST['troubleshooting_options'];
+        $iclsettings['troubleshooting_options'] = $_POST['troubleshooting_options'];        
         $this->save_settings($iclsettings);
         echo '1|';        
         break;
@@ -973,7 +989,13 @@ if (function_exists('wpml_register_admin_strings')) {
         $this->save_settings($iclsettings);
         echo '1|';
         break;
-        
+    
+    break;
+
+    case 'hide_affiliate_message':
+        $this->save_settings(array('hide_affiliate_message' => 0));
+        break;
+    
     default:
         do_action('icl_ajx_custom_call', $_REQUEST['icl_ajx_action'], $_REQUEST);
 }    

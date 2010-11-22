@@ -484,34 +484,20 @@ function icl_plugin_upgrade(){
         $sitepress->save_settings($iclsettings);
         if($mig_debug) fwrite($mig_debug, "Upgraded to 1.8.1 \n");
     }
-	/*
-    if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '1.8.3.5', '<')){    
-        if($mig_debug) fwrite($mig_debug, "Upgrading to 1.8.3.5 \n");        
+    
+    if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '2.0.0', '<')){    
+        if($mig_debug) fwrite($mig_debug, "Upgrading to 2.0.0 \n");
+                
         
-        $sql = "
-        SELECT t.name, x.term_taxonomy_id, x.count 
-        FROM $wpdb->term_taxonomy x JOIN $wpdb->terms t ON t.term_id = x.term_id
-        WHERE term_taxonomy_id NOT IN(SELECT element_id FROM wp_icl_translations WHERE element_type NOT LIKE 'tax\\%')
-        ";
-        $res = $wpdb->get_results($sql);
-        foreach($res as $row){
-            $term_taxonomy_id = $row->term_taxonomy_id;
-            $post_id = $wpdb->get_var($wpdb->prepare("SELECT object_id FROM {$wpdb->term_relationships} WHERE term_taxonomy_id=%d LIMIT 1",$term_taxonomy_id));
-            if($post_id){
-                $lang = $wpdb->get_var($wpdb->prepare("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE element_id=%d AND element_type IN ('post_post', 'post_page')", $post_id));   
-                if($lang){
-                    $sitepress->set_element_language_details($term_taxonomy_id, 'tax_category', null, $lang);
-                    continue;
-                }
-            }
-            $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->term_taxonomy} WHERE term_taxonomy_id=%d", $term_taxonomy_id));
-            $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->term_relationships} WHERE term_taxonomy_id=%d", $term_taxonomy_id));
-        }        
+        include_once ICL_PLUGIN_PATH . '/inc/upgrade-functions/upgrade-2.0.0.php';
         
-        if($mig_debug) fwrite($mig_debug, "Upgraded to 1.8.3.5 \n");
-    }
-    */ 
-   
+        if(!$iclsettings['migrated_2_0_0']){
+            define('ICL_MULTI_STEP_UPGRADE', true);
+            return; // GET OUT AND DO NOT SET THE NEW VERSION
+        }
+        
+        if($mig_debug) fwrite($mig_debug, "Upgraded to 2.0.0 \n");
+    }    
     
     if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '<')){
         if($mig_debug) fwrite($mig_debug, "Update plugin version in the database \n");

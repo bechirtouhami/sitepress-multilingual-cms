@@ -2,14 +2,16 @@
 $icl_enabled_packages = $WPML_Packages->get_enabled_packages();
 ?>
 <div class="wrap">
-    <div id="icon-options-general" class="icon32" style="background: transparent url(<?php echo ICL_PLUGIN_URL ?>/res/img/icon<?php if(!$sitepress_settings['basic_menu']) echo '_adv'?>.png) no-repeat"><br /></div>
+    <div id="icon-options-general" class="icon32" style="background: transparent url(<?php echo ICL_PLUGIN_URL ?>/res/img/icon.png) no-repeat"><br /></div>
     <h2><?php echo __('Setup WPML', 'sitepress') ?></h2>    
     
-    <?php include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php' ?>
+    <p class="error fade" style="padding:10px;"><?php _e('WPML compatibility packages will soon be obsolete and removed. Please use other means to make your site multilingual-ready.', 'sitepress')?></p>
     
     <h3><?php echo __('Compatibility packages', 'sitepress') ?></h3>    
     <?php foreach($WPML_Packages->get_packages() as $package_type => $packages): ?>
     <h4><?php echo ucfirst($package_type) ?></h4>
+    
+    
     
     <form action="" method="post">
         <?php if(isset($_POST['icl_packages'][$package_type])): ?>

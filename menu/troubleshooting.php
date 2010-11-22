@@ -3,12 +3,14 @@ $icl_tables = array(
     $wpdb->prefix . 'icl_languages',
     $wpdb->prefix . 'icl_languages_translations',
     $wpdb->prefix . 'icl_translations',
+    $wpdb->prefix . 'icl_translation_status',    
+    $wpdb->prefix . 'icl_translate_job',    
+    $wpdb->prefix . 'icl_translate',    
     $wpdb->prefix . 'icl_locale_map',
     $wpdb->prefix . 'icl_flags',
-    $wpdb->prefix . 'icl_content_status',
-    $wpdb->prefix . 'icl_core_status',
-    $wpdb->prefix . 'icl_node',
-    $wpdb->prefix . 'icl_plugins_texts',
+    //$wpdb->prefix . 'icl_content_status',
+    //$wpdb->prefix . 'icl_core_status',
+    //$wpdb->prefix . 'icl_node',
     $wpdb->prefix . 'icl_strings',
     $wpdb->prefix . 'icl_string_translations',
     $wpdb->prefix . 'icl_string_status',
@@ -40,8 +42,6 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
 <div class="wrap">
     <div id="icon-options-general" class="icon32 icon32_adv" style="background: transparent url(<?php echo ICL_PLUGIN_URL; ?>/res/img/icon_adv.png) no-repeat;"><br /></div>
     <h2><?php echo __('Troubleshooting', 'sitepress') ?></h2>    
-    
-    <?php include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php' ?>
     
     <?php
     foreach($icl_tables as $icl_table){
@@ -118,6 +118,11 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
     <label><input type="checkbox" name="troubleshooting_options[raise_mysql_errors]" value="1" <?php 
         if($sitepress_settings['troubleshooting_options']['raise_mysql_errors']): ?>checked="checked"<?php endif; ?>/>&nbsp;<?php 
         _e('Raise mysql errors on XML-RPC calls', 'sitepress')?></label>
+    <br />
+    <label><input type="checkbox" name="troubleshooting_options[http_communication]" value="1" <?php 
+            if($sitepress_settings['troubleshooting_options']['http_communication']): ?>checked="checked"<?php endif; ?>/>&nbsp;<?php 
+            _e('Communicate with ICanLocalize using HTTP instead of HTTPS', 'sitepress')?></label>        
+                
     <p>
         <input class="button" name="save" value="<?php echo __('Apply','sitepress') ?>" type="submit" />
         <span class="icl_ajx_response" id="icl_ajx_response"></span>
@@ -126,6 +131,7 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
        
     <h3><?php _e('Database dump', 'sitepress')?></h3>
     <a class="button" href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/troubleshooting.php&amp;icl_action=dbdump"><?php _e('Download', 'sitepress') ?></a>
+    
     
     <a name="icl-connection-test"></a>
     <h3><?php _e('ICanLocalize connection test', 'sitepress')?></h3>
@@ -166,8 +172,11 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
         
         define('ICL_DEB_SHOW_ICL_RAW_RESPONSE', true);
         $resp = $icl_query->createAccount($user);                
-        echo '<textarea style="width:100%;height:400px;font-size:9px;">' . 
-            __('Data', 'sitepress') . "\n----------------------------------------\n" . 
+        echo '<textarea style="width:100%;height:400px;font-size:9px;">';
+        if (defined('ICL_API_ENDPOINT')) {
+            echo ICL_API_ENDPOINT . "\r\n\r\n";
+        }
+        echo __('Data', 'sitepress') . "\n----------------------------------------\n" .
             print_r($user, 1) . 
             __('Response', 'sitepress') . "\n----------------------------------------\n" .
             print_r($resp, 1) . 
@@ -176,7 +185,8 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
     ?>
         
     <?php endif; ?>
-    <a class="button" href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/troubleshooting.php&amp=ts=<?php echo time()?>&amp;icl_action=icl-connection-test#icl-connection-test"><?php _e('Connect', 'sitepress') ?></a>
+    <a class="button" href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/troubleshooting.php&ts=<?php echo time()?>&icl_action=icl-connection-test#icl-connection-test"><?php _e('Connect', 'sitepress') ?></a>
+        
     
     <?php
     

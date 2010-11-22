@@ -46,15 +46,9 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
 ?>
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap">
-    <div id="icon-options-general" class="icon32<?php if(!$sitepress_settings['basic_menu']) echo ' icon32_adv'?>" ><br /></div>
+    <div id="icon-options-general" class="icon32" ><br /></div>
     <h2><?php echo __('Setup WPML', 'sitepress') ?></h2>
-    
-    <?php 
-        if($sitepress_settings['setup_complete']){
-            include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php'; 
-        }        
-    ?>
-    
+        
     <?php if(!$sitepress_settings['setup_complete']): /* setup wizard */ ?>
     <?php 
         if(!$sitepress_settings['existing_content_language_verified']){
@@ -234,6 +228,7 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
 
         
         <div id="icl_more_languages_wrap">
+            <?php if($sitepress_settings['setup_complete']): ?>
             <div id="icl_lnt" class="icl_advanced_feature">
             <?php if(count($active_languages) > 1): ?>            
             
@@ -360,6 +355,7 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                 <br />  
             <?php endif; ?>
             </div>
+            <?php endif; ?>
             
             <div id="icl_lso">
             <?php if($sitepress_settings['setup_complete'] && count($active_languages) > 1 || $sitepress_settings['setup_wizard_step']==3): ?>
@@ -375,6 +371,9 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                             <tr>
                                 <td>
                                     <p class="icl_form_errors" style="display:none"></p>
+                                    <?php if(isset($_GET['icl_ls_reset']) && $_GET['icl_ls_reset'] == 'default'): ?>
+                                    <p class="icl_form_success"><?php _e('Default settings have been loaded', 'sitepress')?></p>
+                                    <?php endif; ?>
                                     <ul>
                                         <li>
                                             <h4 class="icl_advanced_feature"><?php echo __('Language switcher widget', 'sitepress')?></h4>                                
@@ -500,6 +499,8 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                                         <p>
                                             <input class="button" name="save" value="<?php echo __('Apply','sitepress') ?>" type="submit" />
                                             <span class="icl_ajx_response" id="icl_ajx_response3"></span>
+                                            <a class="button secondary" onclick="if(!confirm('<?php echo esc_js(__('Are you sure you wante to reset to the default settings?')) ?>')) return false;" 
+                                                href="<?php echo admin_url('admin.php?page='.$_GET['page'].'&restore_ls_settings=1') ?>"><?php _e('Restore default', 'sitepress')?></a>
                                         </p>                                    
                                     <?php endif; ?>
                                 </td>
@@ -526,8 +527,7 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
             <?php endif; ?>
             </div>
             
-            <div class="icl_advanced_feature">
-            <?php if(count($active_languages) > 1): ?>   
+            <?php if($sitepress_settings['setup_complete'] && count($active_languages) > 1): ?>   
                 <table class="widefat">
                     <thead>
                         <tr>
@@ -564,10 +564,8 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                 </table>
                 <br />
             <?php endif; ?>                            
-            </div>
             
-            <div class="icl_advanced_feature">
-            <?php if(count($active_languages) > 1): ?>   
+            <?php if($sitepress_settings['setup_complete'] && count($active_languages) > 1): ?>   
                 <table class="widefat">
                     <thead>
                         <tr>
@@ -677,8 +675,7 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
                     </tbody>
                 </table>
                 <br />
-            <?php endif; ?>                            
-            </div>            
+            <?php endif; ?>                                        
 
         </div>
     <?php endif; ?>
@@ -694,24 +691,7 @@ global $language_switcher_defaults, $language_switcher_defaults_alt;
     </p>
     </form>
     <?php endif; ?>
-    
-    <div id="icl_translate_help_collapsed" <?php if(!$sitepress_settings['dont_show_translate_help']) echo 'style="display:none"' ?>>
-    <img src="<?php echo ICL_PLUGIN_URL ?>/res/img/question-green.png" width="16" height="16" />&nbsp;<a href="#"><?php _e('Instructions for translating contents', 'sitepress'); ?> &raquo;</a>
-    </div>    
-    <div id="icl_translate_help" class="icl_yellow_box" <?php if(!$sitepress_settings['setup_complete'] || $sitepress_settings['dont_show_translate_help']) echo 'style="display:none"' ?>>
-    <h3><?php _e('How to translate ', 'sitepress')?></h3>
-    <h4><?php _e('Translating yourself?', 'sitepress')?></h4>
-    <p><?php _e('You can add translations to posts, pages, tags and categories. Each edit page now includes a new languages box. From that box you can add translations to other languages.', 'sitepress'); ?></p>                                                                                                         
-    <h4><?php _e('Need help translating?', 'sitepress')?></h4>    
-    
-    <img align="left" src="<?php echo ICL_PLUGIN_URL ?>/res/img/icon16.png" width="16" height="16" style="margin-right:7px" />
-    
-    <p><?php printf(__('Try WPML&#8217;s <a href="%s">professional translation</a> and get excellent translations at an affordable rate. <a href="%s">Learn more</a>.','sitepress'), 'admin.php?page='.basename(ICL_PLUGIN_PATH).'/menu/content-translation.php', 'http://wpml.org/content-translation/" target="_blank'); ?></p>
-    <br />
-    <input id="icl_dismiss_translate_help" type="button" class="button secondary" value="<?php _e('Hide this message', 'sitepress');?>" />
-    </div> 
-    <br />   
-       
+           
     <?php do_action('icl_menu_footer'); ?>
     
 </div>

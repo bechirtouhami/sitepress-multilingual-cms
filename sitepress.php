@@ -5,7 +5,7 @@ Plugin URI: http://wpml.org/
 Description: WPML Multilingual CMS. <a href="http://wpml.org">Documentation</a>.
 Author: OnTheGoSystems
 Author URI: http://www.onthegosystems.com
-Version: 1.8.3.5
+Version: 2.0.0 BETA 2
 */
 
 /*
@@ -25,8 +25,10 @@ Version: 1.8.3.5
     along with ICanLocalize Translator.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+print_r(get_user_meta(3, $wpdb->prefix.'language_pairs'), 1);
+
 if(defined('ICL_SITEPRESS_VERSION')) return;
-define('ICL_SITEPRESS_VERSION', '1.8.3.5');
+define('ICL_SITEPRESS_VERSION', '2.0.0');
 define('ICL_PLUGIN_PATH', dirname(__FILE__));
 define('ICL_PLUGIN_FOLDER', basename(ICL_PLUGIN_PATH));
 
@@ -73,7 +75,6 @@ if(defined('ICL_DEBUG_DEVELOPMENT') && ICL_DEBUG_DEVELOPMENT){
 require ICL_PLUGIN_PATH . '/inc/pre-wp3-compatibility.php';
 require ICL_PLUGIN_PATH . '/inc/sitepress-schema.php';
 require ICL_PLUGIN_PATH . '/inc/template-functions.php';
-//require ICL_PLUGIN_PATH . '/inc/translation-management/translation-management.class.php';
 require ICL_PLUGIN_PATH . '/inc/icl-recent-comments-widget.php';
 require ICL_PLUGIN_PATH . '/sitepress.class.php';
 require ICL_PLUGIN_PATH . '/inc/functions.php';
@@ -85,6 +86,14 @@ require ICL_PLUGIN_PATH . '/inc/compatibility-packages/wpml-package.class.php';
 require ICL_PLUGIN_PATH . '/inc/affiliate-info.php';
 require ICL_PLUGIN_PATH . '/inc/language-switcher.php';
 require ICL_PLUGIN_PATH . '/inc/import-xml.php';
+if(is_admin() || defined('XMLRPC_REQUEST')){
+    require ICL_PLUGIN_PATH . '/lib/icl_api.php';
+    require ICL_PLUGIN_PATH . '/lib/xml2array.php';
+    require ICL_PLUGIN_PATH . '/lib/Snoopy.class.php';
+    require ICL_PLUGIN_PATH . '/inc/translation-management/translation-management.class.php';
+    require ICL_PLUGIN_PATH . '/inc/translation-management/pro-translation.class.php';
+    $ICL_Pro_Translation = new ICL_Pro_Translation();    
+}
 
 
 
@@ -117,7 +126,7 @@ if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQ
     }
 
     // Professional Translation    
-    require ICL_PLUGIN_PATH . '/modules/icl-translation/icl-translation.php';
+    // require ICL_PLUGIN_PATH . '/modules/icl-translation/icl-translation.php';
     
     // Comments translation
     if($sitepress_settings['existing_content_language_verified']){
@@ -131,6 +140,7 @@ if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQ
     
     require ICL_PLUGIN_PATH . '/inc/compatibility-packages/init-packages.php';
     require ICL_PLUGIN_PATH . '/modules/cache-plugins-integration/cache-plugins-integration.php';
+
     
 }
  
@@ -139,4 +149,5 @@ register_activation_hook( __FILE__, 'icl_sitepress_activate' );
 register_deactivation_hook(__FILE__, 'icl_sitepress_deactivate');
 
 add_filter('plugin_action_links', 'icl_plugin_action_links', 10, 2); 
+
 ?>

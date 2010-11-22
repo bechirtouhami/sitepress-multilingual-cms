@@ -11,8 +11,6 @@ var icl_ajx_cache_cleared = '<?php echo icl_js_escape(__('The cache has been cle
     <div id="icon-options-general" class="icon32 icon32_adv"><br /></div>
     <h2><?php echo __('Setup WPML', 'sitepress') ?></h2>    
     
-    <?php include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php' ?>
-    
     <h3><?php echo __('Navigation', 'sitepress') ?></h3>    
     
     <p><?php echo __('Out-of-the-box support for full CMS navigation in your WordPress site including drop down menus, breadcrumbs trail and sidebar navigation.', 'sitepress')?></p>

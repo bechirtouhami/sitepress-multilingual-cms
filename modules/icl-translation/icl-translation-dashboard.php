@@ -292,7 +292,7 @@
                 <?php 
                     if($target_status[$lang['code']]){
                         $disabled =  ''; 
-                        $checked='checked="checked"';                        
+                        $checked='checked="checked"';
                     }else{
                         $disabled =  ' disabled="disabled"'; 
                         $checked='';
@@ -301,7 +301,7 @@
                 <li>
                     <label>
                         <input type="checkbox" name="icl-tr-to-<?php echo $lang['code']?>" value="<?php echo $lang['english_name']?>"<?php echo $checked ?><?php echo $disabled ?> />&nbsp;
-                        <?php printf(__('Translate to %s %s','sitepress'), $lang['display_name'], $sitepress->get_language_status_text($selected_language, $lang['code'])); ?><?php if(empty($target_status[$lang['code']])):?>*<?php endif; ?>
+                        <?php printf(__('Translate to %s %s','sitepress'), $lang['display_name'], $sitepress->get_language_status_text($selected_language, $lang['code'])); ?>
                     </label>
                     <input type="hidden" id="icl_tr_rate_<?php echo $lang['code'] ?>" value="<?php echo $target_rate[$lang['code']] ?>" />
                 </li>
@@ -332,4 +332,4 @@
             )
         )  . __('Learn more.', 'sitepress') ?></a>
         </p>
-        <?php endif; ?>        
+        <?php endif; ?>    

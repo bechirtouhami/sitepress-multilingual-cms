@@ -37,4 +37,12 @@ if(!isset($wp_post_types)){
     );
     unset($__pw3_post, $__pw3_page);
 }
+
+
+if(!function_exists('get_user_meta')){
+    function get_user_meta($k,$v,$single){
+        return get_usermeta($k, $v);
+    }
+}
+
 ?>

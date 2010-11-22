@@ -1,10 +1,10 @@
 === WPML Multilingual CMS ===
-Contributors: icanlocalize
+Contributors: ICanLocalize
 Donate link: http://wpml.org/?page_id=2312
 Tags: CMS, navigation, menus, menu, dropdown, css, sidebar, pages, i18n, translation, localization, language, multilingual, WPML
 Requires at least: 2.7
 Tested up to: 3.0.1
-Stable tag: 1.8.3
+Stable tag: 1.8.1.1
 
 Allows building complete multilingual sites with WordPress.
 
@@ -12,35 +12,33 @@ Allows building complete multilingual sites with WordPress.
 
 **WPML makes multilingual content management easy, just like running a site in one language.**
 
-Plugin home page: [wpml.org](http://wpml.org) | Author home page: [www.icanlocalize.com](http://www.icanlocalize.com/site/)
+= Features =
 
-= Multilingual Features =
-
- * Turns a single WordPress install into a multilingual site.
- * Built-in [theme localization](http://wpml.org/documentation/getting-started-guide/theme-localization/) without .mo files.
- * [Comments translation](http://wpml.org/content-translation/translation-for-visitor-comments/) allows you to moderate and reply to comments in your own language.
- * [Professional translation](http://wpml.org/content-translation/), connecting expert translators with site owners (optional, you can translate yourself for free).
-
-= CMS Navigation Features =
-
+ * Turns a single WordPress install into a [multilingual site](http://wpml.org/?page_id=519).
+ * Built-in [theme localization](http://wpml.org/?page_id=2717) without .mo files.
+ * [Comments translation](http://wpml.org/?page_id=2755) allows you to moderate and reply to comments in your own language.
+ * Integrated [professional translation](http://wpml.org/?page_id=1169) (optional feature for folks who need help translating).
  * Includes [CMS navigation](http://wpml.org/?page_id=527) elements for drop down menus, breadcrumbs trail and sidebar navigation.
  * [Robust links](http://wpml.org/?page_id=594) to posts and pages that never break.
 
-= Architecture (for geeks) =
+= Highlights =
 
 * Translations are grouped together and not mixed in the database.
 * CMS navigation elements provide accurate and easy to use site-wide navigation.
-* Simple CSS for easy customization. Try [WPML's CSS customization tool](http://wpml.org/?page_id=909).
+* Simple CSS for easy [customization](http://wpml.org/?page_id=909).
 
-= Commercial Support (for professional developers) =
+= Commercial Support =
 
 While WPML boast a lively [community](http://forum.wpml.org), it's great to get fast an accurate support when you need it.
 
 [ICanLocalize](http://www.icanlocalize.com/site/) offers reliable [commercial support](http://wpml.org/partners/) for WPML. This support option is meant for professional web developers who need timely and dependable support directly from the developers.
 
-= User Guide (for end users) =
+= In a Nutshell =
 
-[wpml.org](http://wpml.org) is a resource for theme developers and designers. End users who want to learn about running multilingual WordPress sites should check out the [WordPress Admin Guide](http://wp-admin-guide.com/).
+WPML makes it possible to turn WordPress blogs multilingual in a few minutes with no knowledge of PHP or WordPress.
+Its advanced features allow professional web developers to build full multilingual websites.
+
+WPML's [showcase](http://wpml.org/showcase/) includes samples of blogs, full websites and even multilingual BuddyPress portals.
 
 == Installation ==
 
@@ -76,25 +74,6 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 4. Language setup admin screen.
 
 == Changelog ==
-
-= 1.8.3 =
-* Fixed bugs that prevented working with OpenID.
-* Fixed SQL bugs that prevented returning translations in certain cases.
-* Fixed bug for AJAX queries, causing them to be performed in the Admin language.
-* Added error reporting when translation returning fails.
-
-= 1.8.2.1 =
-* Small fixes/tweaks for 1.8.2
-* Fixed bug with setting the element_type for customly created posts.
-
-= 1.8.2 =
-* improvements to the professional translation workflow
-* Fixed bug with urls of categories containing slavic characters
-* Fixed bug on saving list of 'hidden' languages
-* Fixed bug in icl_object_id function.
-
-= 1.8.1.2 =
-* Bug fixes for reminders, removing translation languages and more
 
 = 1.8.1.1 =
 * Fixed source of warning messages in 1.8.1
@@ -381,14 +360,8 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 
 == Upgrade Notice ==
 
-= 1.8.3 =
-Bug fixes and better compatibility with other plugins.
-
-= 1.8.2 =
-Bug fixes and improved professional translation workflow.
-
 = 1.8.1 =
-Multilingual menus bug fixes and improved translation interface.
+Multilingual menus bug fixes and improved translation interface
 
 = 1.8.0 =
 Added support for multilingual menus.

@@ -1,12 +1,5 @@
 jQuery(document).ready(function(){
-    // put the reminders after the "advanced switch" if it exists.
-    if (jQuery('.icl_advanced_switch').length > 0) {
-        jQuery('#icl_reminder_message').insertAfter('.icl_advanced_switch');
-        if (jQuery('#icl_update_message').length > 0) {
-            jQuery('#icl_update_message').insertAfter('.icl_advanced_switch');
-        }
-    }
-    
+
     jQuery('#icl_reminder_show').click(icl_show_hide_reminders);
 
     jQuery('#icl_reminder_message').css({'margin-bottom' : '5px'});
@@ -69,6 +62,7 @@ function icl_tb_init(domChunk) {
     jQuery('#TB_window').bind('unload', function(){
         url = location.href;
         if (url.indexOf('content-translation.php') != -1) {
+        
             url = url.replace(/&icl_refresh_langs=1/g, '');
             url = url.replace(/&show_config=1/g, '');
             url = url.replace(/#.*/,'');
@@ -177,3 +171,33 @@ function icl_support_view_ticket() {
 			}); 
 		});
 	}
+
+function icl_thickbox_reopen(url) {
+  tb_remove();
+  if (url.indexOf("?") == -1) {
+    var glue = '?';
+  } else {
+    var glue = '&';
+  }
+  jQuery('#iclThickboxReopenLink').remove();
+  jQuery('body').prepend('<a id="iclThickboxReopenLink" href="'+url+glue+'keepThis=true&amp;TB_iframe=true" class="thickbox" style="display:none;">test</a>');
+  icl_tb_set_size('#iclThickboxReopenLink');
+  jQuery('#iclThickboxReopenLink').addClass('initThickbox-processed').click(function() {
+    var t = this.title || this.name || null;
+    var a = this.href || this.alt;
+    var g = this.rel || false;
+    tb_show(t,a,g);
+    this.blur();
+    return false;
+  });
+  window.setTimeout(function() {
+    jQuery('#iclThickboxReopenLink').trigger('click');
+    jQuery('#TB_window').bind('unload', function() {
+      window.location.href = unescape(window.location); // Add .pathname to get URL without query
+    });
+  }, 1000);
+}
+
+function icl_thickbox_refresh() {
+  window.location.href = unescape(window.location);
+}

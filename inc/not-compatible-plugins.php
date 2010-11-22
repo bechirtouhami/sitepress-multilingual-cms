@@ -38,7 +38,3 @@ if(!empty($icl_ncp_plugins)){
 }else{
     $icl_sitepress_disabled = false;
 }
-
-
-
-?>

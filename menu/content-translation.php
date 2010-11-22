@@ -30,10 +30,8 @@
 ?>
 <?php $sitepress->noscript_notice() ?>
 <div class="wrap" id="icl_wrap" style="float:left;width:98%;">
-    <div id="icon-options-general" class="icon32<?php if(!$sitepress_settings['basic_menu']) echo ' icon32_adv'?>"><br /></div>
+    <div id="icon-options-general" class="icon32"><br /></div>
     <h2><?php _e('Professional Translation', 'sitepress') ?></h2>    
-
-    <?php include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php' ?>     
 
     <table style="width:100%; border: none;"><tr>
     <td style="vertical-align:top;">
@@ -57,7 +55,7 @@
                     <p class='icl_form_errors'><?php echo __('After you configure more languages for your blog, the translation options will show here', 'sitepress'); ?></p>
                 <?php endif; ?>                            
             </div> <?php // <div id="icl_account_setup"> ?>
-            <?php endif; ?>
+            <?php endif; ?>        
             
             <?php if(empty($translators_selected)):?>
             <div class="icl_cyan_box">
@@ -67,11 +65,11 @@
             <?php _e('ICanLocalize offers expert translators at competitive rates.', 'sitepress'); ?><br />
             <?php echo $sitepress->create_icl_popup_link('http://www.icanlocalize.com/destinations/go?name=moreinfo-wp&iso=' . 
                 $sitepress->get_locale($sitepress->get_admin_language()).'&src='.get_option('home'), 
-                array('title'=>__('About Our Translators', 'sitepress'), 'unload_cb'=>'icl_prevent_tb_reload')) ?><?php _e('Learn more', 'sitepress'); ?></a>
+                array('title'=>__('About Our Translators', 'sitepress'), 'unload_cb'=>'icl_prevent_tb_reload')) ?><?php _e('Learn more', 'sitepress'); ?></a>            
             </div>
-            <?php endif; ?>                            
-            
-            <div class="icl_cyan_box">
+            <?php endif; ?> 
+                        
+            <div class="icl_cyan_box">            
                 <?php if($sitepress->icl_account_configured() && $sitepress_settings['icl_html_status']): ?>
                 <h3><?php _e('ICanLocalize account status', 'sitepress')?></h3>
                 <?php echo $sitepress_settings['icl_html_status']; ?>
@@ -81,6 +79,7 @@
                 <?php endif; ?>
             </div>         
             
+                        
     </div>    
 
     </td><td style="vertical-align:top; padding: 21px 0 0 10px;">

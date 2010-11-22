@@ -19,7 +19,7 @@
         $icl_query = new ICanLocalizeQuery();                
         
         foreach($this->get_active_languages() as $lang){
-            $lang_server[$lang['code']] = apply_filters('icl_server_languages_map', $lang['english_name']);
+            $lang_server[$lang['code']] = ICL_Pro_Translation::server_languages_map($lang['english_name']);
         }        
         if(!$this->icl_account_configured()){
             $user['create_account'] = 1;
@@ -50,7 +50,7 @@
             
             $user['from_language1'] = $lang_server[$from_lang]; 
             $user['to_language1'] = $lang_server[$to_lang]; 
-
+            
             list($site_id, $access_key) = $icl_query->createAccount($user);                
             if($site_id && $access_key){
                 $this->settings['site_id'] = $iclsettings['site_id'] = $site_id;
@@ -59,11 +59,11 @@
                 $this->save_settings($iclsettings);
             }else{
                 echo '<p class="error" style="padding-left:8px;">';
-                printf(__('WPML did not manage to access the server at ICanLocalize. Please <a%s>contact us</a> for support. <br />Show <a%s>debug information</a>.', 'sitepress'), 
-                    ' target="_blank" href="http://www.icanlocalize.com/site/about-us/contact-us/"', 
+                printf(__('<p>In order to enable ICanLocalize translation, your site needs to be on a public server (not localhost). Please <a%s>contact us</a> for support. </p><p>Show <a%s>debug information</a>.</p>', 'sitepress'), 
+                    ' target="_blank" href="http://wpml.org/?page_id=5255"', 
                     ' a href="admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/troubleshooting.php&icl_action=icl-connection-test&data='.base64_encode(serialize($user)).'#icl-connection-test"');
                 echo '</p>';
-                exit;
+                exit;                
             }
         }else{
             
@@ -91,6 +91,8 @@
         $icl_query = new ICanLocalizeQuery($this->settings['site_id'], $this->settings['access_key']);                
         $website_details = $icl_query->get_website_details();
         
+        
+        
         $translation_languages = $website_details['translation_languages']['translation_language'];        
         if(isset($translation_languages['attr'])){
             $buff = $translation_languages;
@@ -98,6 +100,7 @@
             $translation_languages[0] = $buff;
             unset($buff);
         }
+        
         foreach((array)$translation_languages as $lpair){
             if($lpair['attr']['from_language_name'] == $lang_server[$from_lang] && $lpair['attr']['to_language_name'] == $lang_server[$to_lang]){
                 $lang_pair_id = $lpair['attr']['id']; 

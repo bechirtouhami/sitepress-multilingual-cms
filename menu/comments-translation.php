@@ -4,7 +4,7 @@ $active_languages = $sitepress->get_active_languages();
 $languages = $sitepress->get_languages();            
 global $userdata, $current_user;
 $users = get_editable_authors($userdata->ID);
-if($user_language = get_usermeta($current_user->data->ID,'icl_admin_language',true)){
+if($user_language = get_user_meta($current_user->data->ID,'icl_admin_language',true)){
     $lang_details = $sitepress->get_language_details($user_language);
     $user_language = $lang_details['display_name'];
 }else{
@@ -12,10 +12,8 @@ if($user_language = get_usermeta($current_user->data->ID,'icl_admin_language',tr
 }
 ?>
 <div class="wrap">
-    <div id="icon-options-general" class="icon32" style="background: transparent url(<?php echo ICL_PLUGIN_URL ?>/res/img/icon<?php if(!$sitepress_settings['basic_menu']) echo '_adv'?>.png) no-repeat"><br /></div>
+    <div id="icon-options-general" class="icon32" style="background: transparent url(<?php echo ICL_PLUGIN_URL ?>/res/img/icon.png) no-repeat"><br /></div>
     <h2><?php echo __('Setup WPML', 'sitepress') ?></h2>    
-    
-    <?php include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php' ?>
     
     <h3><?php echo __('Comments translation', 'sitepress') ?></h3>    
     <br />
@@ -38,8 +36,8 @@ if($user_language = get_usermeta($current_user->data->ID,'icl_admin_language',tr
         </thead>
         <tbody>
             <?php foreach((array)$users as $u): 
-                $enable_comments_translation = get_usermeta($u->ID,'icl_enable_comments_translation',true);
-                $enable_replies_translation = get_usermeta($u->ID,'icl_enable_replies_translation',true);
+                $enable_comments_translation = get_user_meta($u->ID,'icl_enable_comments_translation',true);
+                $enable_replies_translation = get_user_meta($u->ID,'icl_enable_replies_translation',true);
             ?>
             <tr>
             <td><a href="user-edit.php?user_id=<?php echo $u->ID?>"><?php echo $u->user_login ?></a></td>

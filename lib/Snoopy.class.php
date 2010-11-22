@@ -1028,7 +1028,9 @@ class IcanSnoopy
 
         if(!empty($body))
             $cmdline_params .= " -d \"$body\"";
-
+        
+        $this->read_timeout = 10;
+            
         if($this->read_timeout > 0)
             $cmdline_params .= " -m ".$this->read_timeout;
             

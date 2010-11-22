@@ -88,7 +88,7 @@ function icl_sitepress_activate(){
         CREATE TABLE `{$table_name}` (
             `translation_id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
             `element_type` VARCHAR( 32 ) NOT NULL DEFAULT 'post',
-            `element_id` BIGINT NOT NULL ,
+            `element_id` BIGINT NULL DEFAULT NULL ,
             `trid` BIGINT NOT NULL ,
             `language_code` VARCHAR( 7 ) NOT NULL,
             `source_language_code` VARCHAR( 7 ),
@@ -98,6 +98,66 @@ function icl_sitepress_activate(){
         mysql_query($sql);
     } 
 
+    // translation_status table
+    $table_name = $wpdb->prefix.'icl_translation_status';
+    if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
+        $sql = "
+            CREATE TABLE `{$table_name}` (
+             `rid` bigint(20) NOT NULL AUTO_INCREMENT,
+             `translation_id` bigint(20) NOT NULL,
+             `status` tinyint(4) NOT NULL,
+             `translator_id` bigint(20) NOT NULL,
+             `needs_update` tinyint(4) NOT NULL,
+             `md5` varchar(32) NOT NULL,
+             `translation_service` varchar(16) NOT NULL,
+             `translation_package` text NOT NULL,
+             `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+             `links_fixed` tinyint(4) NOT NULL DEFAULT 0,
+             PRIMARY KEY (`rid`),
+             UNIQUE KEY `translation_id` (`translation_id`)
+            ) ENGINE=MyISAM {$charset_collate}    
+        ";
+        mysql_query($sql);
+    } 
+    
+    // translation jobs
+    $table_name = $wpdb->prefix.'icl_translate_job';
+    if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
+        $sql = "
+            CREATE TABLE `{$table_name}` (
+            `job_id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+            `rid` BIGINT UNSIGNED NOT NULL ,
+            `translator_id` INT UNSIGNED NOT NULL ,
+            `translated` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+            `manager_id` INT UNSIGNED NOT NULL ,
+            `revision` INT UNSIGNED NULL,
+            INDEX ( `rid` , `translator_id` )
+            ) ENGINE = MYISAM ;    
+        ";
+        mysql_query($sql);
+    }
+    
+    // translate table
+    $table_name = $wpdb->prefix.'icl_translate';
+    if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
+            $sql = "
+            CREATE TABLE `{$table_name}` (
+            `tid` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+            `job_id` BIGINT UNSIGNED NOT NULL ,
+            `content_id` BIGINT UNSIGNED NOT NULL ,
+            `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+            `field_type` VARCHAR( 128 ) NOT NULL ,
+            `field_format` VARCHAR( 16 ) NOT NULL ,
+            `field_translate` TINYINT NOT NULL ,
+            `field_data` TEXT NOT NULL ,
+            `field_data_translated` TEXT NOT NULL ,
+            `field_finished` TINYINT NOT NULL DEFAULT 0,
+            INDEX ( `job_id` )
+            ) ENGINE = MYISAM ;
+        ";
+        mysql_query($sql);
+    }
+        
     // languages locale file names
     $table_name = $wpdb->prefix.'icl_locale_map';
     if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
@@ -133,71 +193,7 @@ function icl_sitepress_activate(){
             $wpdb->insert($wpdb->prefix.'icl_flags', array('lang_code'=>$code, 'flag'=>$file, 'from_template'=>0));
         }
     } 
-    
-    // plugins texts table
-    $table_name = $wpdb->prefix.'icl_plugins_texts';
-    if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
-        $sql = "
-            CREATE TABLE `{$table_name}` (
-            `id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
-            `plugin_name` VARCHAR( 128 ) NOT NULL ,
-            `attribute_type` VARCHAR( 64 ) NOT NULL ,
-            `attribute_name` VARCHAR( 128 ) NOT NULL ,
-            `description` TEXT NOT NULL ,
-            `translate` TINYINT NOT NULL DEFAULT 0,
-            UNIQUE KEY `plugin_name` (`plugin_name`,`attribute_type`,`attribute_name`)            
-            ) ENGINE=MyISAM {$charset_collate}"; 
-       mysql_query($sql);
-       $prepop  = array(
-            0 => array(
-                'plugin_name' => ICL_PLUGIN_FOLDER . '/sitepress.php',
-                'attribute_type' => 'custom_field',
-                'attribute_name' => '_top_nav_excluded',
-                'description' => 'Exclude page from top navigation',
-                'translate' => 0
-                ),
-            1 => array(
-                'plugin_name' => ICL_PLUGIN_FOLDER . '/sitepress.php',
-                'attribute_type' => 'custom_field',
-                'attribute_name' => '_cms_nav_minihome',
-                'description' => 'Sets page as a mini home in CMS Navigation',
-                'translate' => 0
-                ),
-            2 => array(
-                'plugin_name' => ICL_PLUGIN_FOLDER . '/sitepress.php',
-                'attribute_type' => 'custom_field',
-                'attribute_name' => '_cms_nav_section',
-                'description' => 'Defines the section the page belong to',
-                'translate' => 1
-                ),
-            3 => array(
-                'plugin_name' => 'all-in-one-seo-pack/all_in_one_seo_pack.php',
-                'attribute_type' => 'custom_field',
-                'attribute_name' => 'title',
-                'description' => 'Custom title for post/page',
-                'translate' => 1
-                ),
-            4 => array(
-                'plugin_name' => 'all-in-one-seo-pack/all_in_one_seo_pack.php',
-                'attribute_type' => 'custom_field',
-                'attribute_name' => 'description',
-                'description' => 'Custom description for post/page',
-                'translate' => 1
-                ),
-            5 => array(
-                'plugin_name' => 'all-in-one-seo-pack/all_in_one_seo_pack.php',
-                'attribute_type' => 'custom_field',
-                'attribute_name' => 'keywords',
-                'description' => 'Custom keywords for post/page',
-                'translate' => 1
-                )
-       );   
        
-       foreach($prepop as $pre){
-           $wpdb->insert($table_name, $pre);
-       }         
-   }   
-   
    /* general string translation */
     $table_name = $wpdb->prefix.'icl_strings';
     if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
@@ -295,17 +291,19 @@ function icl_sitepress_activate(){
    if(get_option('icl_sitepress_version')){
        icl_plugin_upgrade();               
    }
-                  
-   delete_option('icl_sitepress_version');   
-   add_option('icl_sitepress_version', ICL_SITEPRESS_VERSION, '', true);
+   
+   // don't set the new version if a multi-step upgrade is in progress   
+   if(!defined('ICL_MULTI_STEP_UPGRADE')){
+       delete_option('icl_sitepress_version');   
+       add_option('icl_sitepress_version', ICL_SITEPRESS_VERSION, '', true);
+   }               
 
     
     $iclsettings = get_option('icl_sitepress_settings');
     if($iclsettings === false ){
         $short_v = implode('.', array_slice(explode('.', ICL_SITEPRESS_VERSION), 0, 3));
         $settings = array(
-            'hide_upgrade_notice' => $short_v,
-            'basic_menu'          => 1  
+            'hide_upgrade_notice' => $short_v
         );
         add_option('icl_sitepress_settings', $settings, '', true);        
     }else{

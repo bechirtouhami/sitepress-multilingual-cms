@@ -37,11 +37,8 @@ define('CMS_NAV_CACHE_EXPIRE', '1 HOUR');
 
 class CMSNavigation{
     var $settings;
-    function __construct(){
-        $this->CMSNavigation();
-    } 
       
-    function CMSNavigation(){
+    function __construct(){
         
         global $cms_nav_ie_ver, $sitepress;
         if(!isset($sitepress)){
@@ -367,7 +364,7 @@ class CMSNavigation{
                             $smain_li_classes[] = 'selected_page';
                         }                        
                         
-                        ?><li<?php if(!empty($smain_li_classes)):?> class="<?php echo join(' ' , $smain_li_classes)?>"<?php endif?>><a href="<?php echo $sitepress->language_url(); ?>" class="<?php if($this->settings['cat_menu_contents'] != 'nothing'):?>trigger<?php endif?>"><?php echo $cat_menu_title  ?><?php if(!isset($cms_nav_ie_ver) || $cms_nav_ie_ver > 6): ?></a><?php endif; ?><?php
+                        ?><li<?php if(!empty($smain_li_classes)):?> class="<?php echo join(' ' , $smain_li_classes)?>"<?php endif?>><a href="<?php echo trailingslashit(get_option('home')) ?>" class="<?php if($this->settings['cat_menu_contents'] != 'nothing'):?>trigger<?php endif?>"><?php echo $cat_menu_title ?><?php if(!isset($cms_nav_ie_ver) || $cms_nav_ie_ver > 6): ?></a><?php endif; ?><?php
                     }else{
                         $sections = array();
                         $subpages = $wpdb->get_results("
@@ -752,6 +749,9 @@ class CMSNavigation{
         if(defined('ICL_DONT_LOAD_NAVIGATION_CSS') && ICL_DONT_LOAD_NAVIGATION_CSS){
             return;
         }
+        $path = dirname(substr(__FILE__, strpos(__FILE__,'wp-content')));
+        $path = str_replace('\\','/',$path);
+        $stylesheet = rtrim(get_option('siteurl'),'/') . '/' . $path . '/res'; 
         wp_enqueue_style('cms-navigation-style-base', ICL_PLUGIN_URL . '/modules/cms-navigation/css/cms-navigation-base.css', array(), ICL_SITEPRESS_VERSION, 'screen');            
         wp_enqueue_style('cms-navigation-style', ICL_PLUGIN_URL . '/modules/cms-navigation/css/cms-navigation.css', array(), ICL_SITEPRESS_VERSION, 'screen');            
     }

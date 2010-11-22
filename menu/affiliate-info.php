@@ -1,5 +1,4 @@
 <?php        
-    require_once ICL_PLUGIN_PATH . '/inc/plugins-texts-functions.php';     
     if(defined('ICL_AFFILIATE_ID')){
         $icl_affiliate_id = ICL_AFFILIATE_ID;
     }else{
@@ -15,8 +14,6 @@
 <div class="wrap">
     <div id="icon-options-general" class="icon32 icon32_adv"><br /></div>
     <h2><?php echo __('Affiliate information check', 'sitepress') ?></h2>    
-    
-    <?php include ICL_PLUGIN_PATH . '/menu/basic_advanced_switch.php' ?>
     
     <form id="icl_affiliate_info_check" method="post" action="">
     

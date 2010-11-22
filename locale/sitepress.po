@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version:  \n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/sitepress-multilingual-cms\n"
-"POT-Creation-Date: 2010-10-04 17:33+0000\n"
+"POT-Creation-Date: 2010-08-01 13:14+0000\n"
 "PO-Revision-Date: 2010-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: ajax.php:40 menu/languages.php:139 menu/overview.php:6
-#: sitepress.class.php:1292 sitepress.class.php:5189
+#: sitepress.class.php:1288 sitepress.class.php:5195
 msgid "default"
 msgstr ""
 
@@ -72,52 +72,52 @@ msgstr ""
 msgid "Back to translated version"
 msgstr ""
 
-#: ajax.php:701 menu/string-translation.php:203
-#: menu/string-translation.php:213
+#: ajax.php:693 menu/string-translation.php:209
+#: menu/string-translation.php:219
 msgid "View"
 msgstr ""
 
-#: ajax.php:720
+#: ajax.php:712
 msgid "Show 1 reminder"
 msgstr ""
 
-#: ajax.php:722
+#: ajax.php:714
 #, php-format
 msgid "Show %d reminders"
 msgstr ""
 
-#: ajax.php:828 menu/languages.php:637 sitepress.class.php:4579
+#: ajax.php:815 menu/languages.php:637 sitepress.class.php:4593
 #, php-format
 msgid "%s is currently hidden to visitors."
 msgstr ""
 
-#: ajax.php:835 menu/languages.php:644 sitepress.class.php:4586
+#: ajax.php:822 menu/languages.php:644 sitepress.class.php:4600
 #, php-format
 msgid "%s are currently hidden to visitors."
 msgstr ""
 
-#: ajax.php:837 menu/languages.php:647
+#: ajax.php:824 menu/languages.php:647
 #, php-format
 msgid ""
 "You can enable its/their display for yourself, in your <a href=\"%s"
 "\">profile page</a>."
 msgstr ""
 
-#: ajax.php:840 menu/languages.php:650
+#: ajax.php:827 menu/languages.php:650
 msgid "All languages are currently displayed."
 msgstr ""
 
-#: ajax.php:869
+#: ajax.php:856
 msgid "No strings selected"
 msgstr ""
 
-#: ajax.php:886
+#: ajax.php:873
 msgid ""
 "Include the following PHP in your code. <em>functions.php</em> would be a "
 "good place."
 msgstr ""
 
-#: ajax.php:894
+#: ajax.php:881
 msgid "Error: no strings selected"
 msgstr ""
 
@@ -202,7 +202,7 @@ msgid "Translate my replies."
 msgstr ""
 
 #: inc/comments-translation/functions.php:209 menu/comments-translation.php:26
-#: menu/overview.php:104
+#: menu/overview.php:112
 #, php-format
 msgid ""
 "To translate your replies, you need to enable <a href=\"%s\">professional "
@@ -237,7 +237,7 @@ msgstr ""
 #: inc/comments-translation/functions.php:828
 #: inc/comments-translation/functions.php:869
 #: modules/icl-translation/icl-translation-dashboard.php:98
-#: modules/icl-translation/icl-translation-dashboard.php:320
+#: modules/icl-translation/icl-translation-dashboard.php:310
 #: modules/icl-translation/icl-translation-functions.php:1472
 msgid "Translation in progress"
 msgstr ""
@@ -266,9 +266,9 @@ msgstr ""
 
 #: inc/compatibility-packages/functions-packages.php:403
 #: menu/comments-translation.php:55 menu/content-translation-langs.php:94
-#: menu/content-translation-options.php:116
+#: menu/content-translation-options.php:112
 #: menu/content-translation-site-description.php:33
-#: menu/edit-languages.php:118 menu/string-translation.php:281
+#: menu/edit-languages.php:118 menu/string-translation.php:287
 #: menu/theme-localization.php:27 menu/theme-localization.php:103
 #: menu/translation-synchronization.php:95
 #: menu/translation-synchronization.php:161
@@ -287,18 +287,18 @@ msgstr ""
 msgid "Translation needs update"
 msgstr ""
 
-#: inc/functions-string-translation.php:16 menu/post-menu.php:301
+#: inc/functions-string-translation.php:16 menu/post-menu.php:263
 #: modules/icl-translation/icl-translation-functions.php:1486
 #: modules/icl-translation/icl-translation-functions.php:1490
 #: modules/icl-translation/icl-translation-functions.php:1502
 msgid "Not translated"
 msgstr ""
 
-#: inc/functions-string-translation.php:80 menu/string-translation.php:484
+#: inc/functions-string-translation.php:80 menu/string-translation.php:494
 msgid "Blog Title"
 msgstr ""
 
-#: inc/functions-string-translation.php:83 menu/string-translation.php:486
+#: inc/functions-string-translation.php:83 menu/string-translation.php:496
 msgid "Tagline"
 msgstr ""
 
@@ -310,7 +310,7 @@ msgstr ""
 msgid "No string found"
 msgstr ""
 
-#: inc/functions-string-translation.php:370 menu/overview.php:75
+#: inc/functions-string-translation.php:370 menu/overview.php:83
 #: menu/string-translation-translate-options.php:6
 #: menu/string-translation.php:51
 msgid "String translation"
@@ -508,7 +508,7 @@ msgid "Show post translation links"
 msgstr ""
 
 #: inc/language-switcher.php:491 menu/theme-localization.php:240
-#: sitepress.class.php:4626
+#: sitepress.class.php:4640
 msgid "Yes"
 msgstr ""
 
@@ -534,12 +534,12 @@ msgid "This post is also available in: %s"
 msgstr ""
 
 #: inc/language-switcher.php:518 menu/language-selector.php:5
-#: sitepress.class.php:2582 sitepress.class.php:3093 sitepress.class.php:3346
+#: sitepress.class.php:2582 sitepress.class.php:3105 sitepress.class.php:3358
 msgid "All languages"
 msgstr ""
 
-#: inc/language-switcher.php:667 menu/overview.php:37 sitepress.class.php:638
-#: sitepress.class.php:655
+#: inc/language-switcher.php:667 menu/overview.php:45 sitepress.class.php:639
+#: sitepress.class.php:652
 msgid "Languages"
 msgstr ""
 
@@ -559,7 +559,7 @@ msgid ""
 msgstr ""
 
 #: inc/php-version-check.php:47 menu/content-translation-icl-account.php:140
-#: menu/post-menu.php:186 menu/string-translation-translate-options.php:18
+#: menu/post-menu.php:173 menu/string-translation-translate-options.php:18
 msgid "Close"
 msgstr ""
 
@@ -605,16 +605,16 @@ msgstr ""
 msgid "Your password is sent to your e-mail."
 msgstr ""
 
-#: inc/support.php:75 inc/support.php:78 inc/support.php:382
-#: inc/support.php:416 menu/content-translation-icl-account-wizard.php:22
+#: inc/support.php:75 inc/support.php:78 inc/support.php:378
+#: inc/support.php:412 menu/content-translation-icl-account-wizard.php:22
 #: menu/content-translation-icl-account-wizard.php:80
 #: menu/content-translation-icl-account-wizard.php:116
 #: menu/content-translation-icl-account-wizard.php:166
 #: menu/content-translation-langs.php:107
-#: menu/content-translation-options.php:118
+#: menu/content-translation-options.php:114
 #: menu/content-translation-site-description.php:46
 #: menu/edit-languages.php:118 menu/languages.php:147 menu/languages.php:169
-#: menu/string-translation.php:94 menu/string-translation.php:145
+#: menu/string-translation.php:94 menu/string-translation.php:151
 msgid "Cancel"
 msgstr ""
 
@@ -632,136 +632,136 @@ msgstr ""
 msgid "Create new ticket"
 msgstr ""
 
-#: inc/support.php:182
+#: inc/support.php:178
 #, php-format
 msgid "Your subscription is valid until %s"
 msgstr ""
 
-#: inc/support.php:197
+#: inc/support.php:193
 msgid "24h support"
 msgstr ""
 
-#: inc/support.php:198
+#: inc/support.php:194
 msgid "Support tickets to WPML developers"
 msgstr ""
 
-#: inc/support.php:199
+#: inc/support.php:195
 msgid "Consultation and planning"
 msgstr ""
 
-#: inc/support.php:200
+#: inc/support.php:196
 msgid "Help troubleshooting"
 msgstr ""
 
-#: inc/support.php:204
+#: inc/support.php:200
 msgid ""
 "In order to get premium support, you need to create a support subscription."
 msgstr ""
 
-#: inc/support.php:205
+#: inc/support.php:201
 msgid ""
 "A support subscription gives you 24h response directly from WPML's "
 "developers."
 msgstr ""
 
-#: inc/support.php:210
+#: inc/support.php:206
 msgid "Community Support"
 msgstr ""
 
-#: inc/support.php:211
+#: inc/support.php:207
 msgid "Single Site Support"
 msgstr ""
 
-#: inc/support.php:212
+#: inc/support.php:208
 msgid "Developer Support"
 msgstr ""
 
-#: inc/support.php:215
+#: inc/support.php:211
 #, php-format
 msgid "Community support via %s WPML's technical forum %s"
 msgstr ""
 
-#: inc/support.php:216 inc/support.php:217 inc/support.php:218
+#: inc/support.php:212 inc/support.php:213 inc/support.php:214
 msgid "Free"
 msgstr ""
 
-#: inc/support.php:231
+#: inc/support.php:227
 msgid "Not included"
 msgstr ""
 
-#: inc/support.php:232 inc/support.php:233
+#: inc/support.php:228 inc/support.php:229
 msgid "Included"
 msgstr ""
 
-#: inc/support.php:237
+#: inc/support.php:233
 msgid "Number of sites"
 msgstr ""
 
-#: inc/support.php:239
+#: inc/support.php:235
 msgid "One site"
 msgstr ""
 
-#: inc/support.php:240
+#: inc/support.php:236
 msgid "Unlimited sites"
 msgstr ""
 
-#: inc/support.php:245 inc/support.php:246
+#: inc/support.php:241 inc/support.php:242
 #, php-format
 msgid "Buy %s / year"
 msgstr ""
 
-#: inc/support.php:255
+#: inc/support.php:251
 msgid "Renew your subscription"
 msgstr ""
 
-#: inc/support.php:287 inc/support.php:294
+#: inc/support.php:283 inc/support.php:290
 msgid "Subject"
 msgstr ""
 
-#: inc/support.php:288 inc/support.php:295
+#: inc/support.php:284 inc/support.php:291
 msgid "Created"
 msgstr ""
 
-#: inc/support.php:289 inc/support.php:296
+#: inc/support.php:285 inc/support.php:292
 msgid "Messages"
 msgstr ""
 
-#: inc/support.php:321
+#: inc/support.php:317
 msgid "New message"
 msgstr ""
 
-#: inc/support.php:361
+#: inc/support.php:357
 msgid ""
 "Premium support is provided by ICanLocalize. You will need to create an "
 "account to get started."
 msgstr ""
 
-#: inc/support.php:362
+#: inc/support.php:358
 msgid ""
 "WPML will use this account to create support tickets and connect you with "
 "the development team."
 msgstr ""
 
-#: inc/support.php:367 menu/content-translation-icl-account-wizard.php:61
+#: inc/support.php:363 menu/content-translation-icl-account-wizard.php:61
 msgid "First name"
 msgstr ""
 
-#: inc/support.php:371 menu/content-translation-icl-account-wizard.php:65
+#: inc/support.php:367 menu/content-translation-icl-account-wizard.php:65
 msgid "Last name"
 msgstr ""
 
-#: inc/support.php:375 inc/support.php:405
+#: inc/support.php:371 inc/support.php:401
 #: menu/content-translation-icl-account-wizard.php:69
 #: menu/content-translation-icl-account-wizard.php:101
 #: menu/content-translation-icl-account-wizard.php:151
 msgid "Email"
 msgstr ""
 
-#: inc/support.php:383
+#: inc/support.php:379
 msgid "Create account"
 msgstr ""
 
-#: inc/support.php:385 inc/support.php:419
+#: inc/support.php:381 inc/support.php:415
 #: menu/content-translation-icl-account-wizard.php:85
 #: menu/content-translation-icl-account-wizard.php:121
 #: menu/content-translation-icl-account-wizard.php:129
@@ -769,16 +769,16 @@ msgstr ""
 msgid "Saving. Please wait..."
 msgstr ""
 
-#: inc/support.php:397
+#: inc/support.php:393
 msgid "I already have an ICanLocalize account"
 msgstr ""
 
-#: inc/support.php:409 menu/content-translation-icl-account-wizard.php:105
+#: inc/support.php:405 menu/content-translation-icl-account-wizard.php:105
 #: menu/content-translation-icl-account-wizard.php:155
 msgid "Password"
 msgstr ""
 
-#: inc/support.php:417
+#: inc/support.php:413
 msgid "Log in to my account"
 msgstr ""
 
@@ -798,25 +798,25 @@ msgstr ""
 msgid "edit translation"
 msgstr ""
 
-#: inc/wp-nav-menus/iclNavMenu.class.php:276 menu/post-menu.php:282
-#: sitepress.class.php:5209
+#: inc/wp-nav-menus/iclNavMenu.class.php:276 menu/post-menu.php:244
+#: sitepress.class.php:5215
 msgid "edit"
 msgstr ""
 
-#: inc/wp-nav-menus/iclNavMenu.class.php:279 sitepress.class.php:4339
-#: sitepress.class.php:4359
+#: inc/wp-nav-menus/iclNavMenu.class.php:279 sitepress.class.php:4353
+#: sitepress.class.php:4373
 msgid "add translation"
 msgstr ""
 
-#: inc/wp-nav-menus/iclNavMenu.class.php:281 menu/post-menu.php:266
-#: sitepress.class.php:2893
+#: inc/wp-nav-menus/iclNavMenu.class.php:281 menu/post-menu.php:228
+#: sitepress.class.php:2905
 msgid "add"
 msgstr ""
 
 #: inc/wp-nav-menus/iclNavMenu.class.php:291 menu/languages.php:193
 #: menu/theme-localization.php:43 menu/theme-localization.php:54
-#: modules/icl-translation/icl-ajx-requests.php:12 sitepress.class.php:1822
-#: sitepress.class.php:2744
+#: modules/icl-translation/icl-ajx-requests.php:12 sitepress.class.php:1818
+#: sitepress.class.php:2756
 msgid "Language"
 msgstr ""
 
@@ -843,11 +843,11 @@ msgid ""
 "and from that IP."
 msgstr ""
 
-#: lib/icl_api.php:115 lib/icl_api.php:138
+#: lib/icl_api.php:109 lib/icl_api.php:132
 msgid "Error:"
 msgstr ""
 
-#: lib/icl_api.php:418
+#: lib/icl_api.php:413
 #, php-format
 msgid ""
 "You don't have enough funds in your ICanLocalize account - [b]Funds required "
@@ -913,7 +913,7 @@ msgstr ""
 #: menu/languages.php:352 menu/languages.php:501 menu/languages.php:557
 #: menu/languages.php:588 menu/languages.php:609 menu/languages.php:629
 #: menu/languages.php:670 menu/string-translation-translate-options.php:32
-#: menu/string-translation.php:451 menu/troubleshooting.php:122
+#: menu/string-translation.php:461 menu/troubleshooting.php:122
 msgid "Apply"
 msgstr ""
 
@@ -972,41 +972,12 @@ msgstr ""
 msgid "Test"
 msgstr ""
 
-#: menu/basic_advanced_switch.php:3
-#, php-format
-msgid ""
-"Using WordPress as CMS? Try WPML's <span title=\"%s\" %s>advanced features</"
-"span>."
-msgstr ""
-
-#: menu/basic_advanced_switch.php:3
-msgid ""
-"Theme localization, translation synchronization, comments translation, CMS "
-"navigation, Sticky links"
-msgstr ""
-
-#: menu/basic_advanced_switch.php:3
-msgid "Switch to advanced setup mode"
-msgstr ""
-
-#: menu/basic_advanced_switch.php:3
-msgid "Go Advanced"
-msgstr ""
-
-#: menu/basic_advanced_switch.php:12
-msgid "Switch to basic setup mode"
-msgstr ""
-
-#: menu/basic_advanced_switch.php:12
-msgid "Back to Basic mode"
-msgstr ""
-
 #: menu/comments-translation.php:11
 msgid "the default language"
 msgstr ""
 
-#: menu/comments-translation.php:20 menu/overview.php:99
-#: sitepress.class.php:665
+#: menu/comments-translation.php:20 menu/overview.php:107
+#: sitepress.class.php:662
 msgid "Comments translation"
 msgstr ""
 
@@ -1035,7 +1006,7 @@ msgstr ""
 msgid "Translate replies"
 msgstr ""
 
-#: menu/compatibility-packages.php:10 sitepress.class.php:686
+#: menu/compatibility-packages.php:10 sitepress.class.php:683
 msgid "Compatibility packages"
 msgstr ""
 
@@ -1052,7 +1023,7 @@ msgid "Version"
 msgstr ""
 
 #: menu/compatibility-packages.php:28 menu/compatibility-packages.php:72
-#: menu/navigation.php:104 menu/overview.php:32 menu/overview.php:131
+#: menu/navigation.php:104 menu/overview.php:40 menu/overview.php:145
 msgid "Description"
 msgstr ""
 
@@ -1281,74 +1252,74 @@ msgid "Next"
 msgstr ""
 
 #: menu/content-translation-options.php:10
-msgid "Advanced translation options"
+msgid "Translation options"
 msgstr ""
 
-#: menu/content-translation-options.php:25
+#: menu/content-translation-options.php:21
 msgid "Translation delivery"
 msgstr ""
 
-#: menu/content-translation-options.php:28
+#: menu/content-translation-options.php:24
 msgid "Select the desired translation delivery mehtod:"
 msgstr ""
 
-#: menu/content-translation-options.php:35
+#: menu/content-translation-options.php:31
 msgid "Translations will be posted back to this website via XML-RPC."
 msgstr ""
 
-#: menu/content-translation-options.php:41
+#: menu/content-translation-options.php:37
 msgid "This WordPress installation will poll for translations."
 msgstr ""
 
-#: menu/content-translation-options.php:47
+#: menu/content-translation-options.php:43
 msgid "Choose polling if your site is inaccessible from the Internet."
 msgstr ""
 
-#: menu/content-translation-options.php:51
+#: menu/content-translation-options.php:47
 msgid "Notification preferences:"
 msgstr ""
 
-#: menu/content-translation-options.php:58
+#: menu/content-translation-options.php:54
 msgid "Send an email notification when translations complete."
 msgstr ""
 
-#: menu/content-translation-options.php:62
+#: menu/content-translation-options.php:58
 msgid "Send an alert when translations delay for more than 4 days."
 msgstr ""
 
-#: menu/content-translation-options.php:68
+#: menu/content-translation-options.php:64
 msgid "ICanLocalize will send email notifications for these events."
 msgstr ""
 
-#: menu/content-translation-options.php:72
+#: menu/content-translation-options.php:68
 msgid "Translated document status:"
 msgstr ""
 
-#: menu/content-translation-options.php:79
+#: menu/content-translation-options.php:75
 #: modules/icl-translation/icl-translation-dashboard.php:48
 msgid "Draft"
 msgstr ""
 
-#: menu/content-translation-options.php:85
+#: menu/content-translation-options.php:81
 msgid "Same as the original document"
 msgstr ""
 
-#: menu/content-translation-options.php:92
+#: menu/content-translation-options.php:88
 msgid ""
 "Choose if translations should be published when received. Note: If Publish "
 "is selected, the translation will only be published if the original node is "
 "published when the translation is received."
 msgstr ""
 
-#: menu/content-translation-options.php:96
+#: menu/content-translation-options.php:92
 msgid "Remote control translation management:"
 msgstr ""
 
-#: menu/content-translation-options.php:103
+#: menu/content-translation-options.php:99
 msgid "Enable remote control over the translation management."
 msgstr ""
 
-#: menu/content-translation-options.php:110
+#: menu/content-translation-options.php:106
 msgid ""
 "This feature is intended for blog networks. It allows controlling the "
 "translation process remotely via XML-RPC calls without going through the "
@@ -1381,45 +1352,35 @@ msgstr ""
 msgid "3. ICanLocalize account setup"
 msgstr ""
 
-#: menu/content-translation.php:34
+#: menu/content-translation.php:35
 msgid "Professional Translation"
 msgstr ""
 
-#: menu/content-translation.php:47
+#: menu/content-translation.php:48
 msgid "Translation management"
 msgstr ""
 
-#: menu/content-translation.php:51
-msgid "Advanced options"
-msgstr ""
-
-#: menu/content-translation.php:57
-msgid ""
-"After you configure more languages for your blog, the translation options "
-"will show here"
-msgstr ""
-
-#: menu/content-translation.php:66 menu/content-translation.php:70
-#: menu/post-menu.php:219 menu/post-menu.php:223
-msgid "About Our Translators"
-msgstr ""
-
-#: menu/content-translation.php:67 menu/post-menu.php:220
-msgid "ICanLocalize offers expert translators at competitive rates."
-msgstr ""
-
-#: menu/content-translation.php:70 menu/post-menu.php:223
-#: menu/upgrade_notice.php:31
-msgid "Learn more"
-msgstr ""
-
-#: menu/content-translation.php:76
+#: menu/content-translation.php:54
 msgid "ICanLocalize account status"
 msgstr ""
 
-#: menu/content-translation.php:79
+#: menu/content-translation.php:57
 #, php-format
 msgid "For help getting started, %scontact ICanLocalize%s"
+msgstr ""
+
+#: menu/content-translation.php:66
+msgid "Professional translation setup"
+msgstr ""
+
+#: menu/content-translation.php:68
+msgid "Configure professional translation"
+msgstr ""
+
+#: menu/content-translation.php:80
+msgid ""
+"After you configure more languages for your blog, the translation options "
+"will show here"
 msgstr ""
 
 #: menu/edit-languages.php:20
@@ -1649,7 +1610,7 @@ msgstr ""
 msgid "Tags"
 msgstr ""
 
-#: menu/languages.php:202 menu/string-translation.php:138
+#: menu/languages.php:202 menu/string-translation.php:141
 #: menu/theme-localization.php:153 menu/theme-localization.php:161
 #: menu/theme-localization.php:267
 msgid "Total"
@@ -1928,7 +1889,7 @@ msgstr ""
 msgid "The cache has been cleared."
 msgstr ""
 
-#: menu/navigation.php:16 menu/overview.php:138 sitepress.class.php:674
+#: menu/navigation.php:16 menu/overview.php:152 sitepress.class.php:671
 msgid "Navigation"
 msgstr ""
 
@@ -2083,185 +2044,196 @@ msgstr ""
 msgid "Visit %s for full CSS customization information."
 msgstr ""
 
-#: menu/overview.php:19
+#: menu/overview.php:27
 msgid "WPML Overview"
 msgstr ""
 
-#: menu/overview.php:23
+#: menu/overview.php:31
 #, php-format
 msgid ""
 "WPML makes it possible to run full multilingual websites with WordPress. You "
 "are using <b>WPML %s</b>."
 msgstr ""
 
-#: menu/overview.php:27
+#: menu/overview.php:35
 msgid "Multilingual"
 msgstr ""
 
-#: menu/overview.php:31 menu/overview.php:130
+#: menu/overview.php:39 menu/overview.php:144
 #: modules/cms-navigation/cms-navigation.php:708
 msgid "Section"
 msgstr ""
 
-#: menu/overview.php:40
+#: menu/overview.php:48
 msgid "Your site's languages are not set up yet."
 msgstr ""
 
-#: menu/overview.php:43 sitepress.class.php:5209
+#: menu/overview.php:51 sitepress.class.php:5215
 msgid "Currently configured languages:"
 msgstr ""
 
-#: menu/overview.php:48
+#: menu/overview.php:56
 msgid "Configure languages"
 msgstr ""
 
-#: menu/overview.php:56 menu/theme-localization.php:13 sitepress.class.php:659
+#: menu/overview.php:64 menu/theme-localization.php:13 sitepress.class.php:656
 msgid "Theme and plugins localization"
 msgstr ""
 
-#: menu/overview.php:60
+#: menu/overview.php:68
 msgid "Current configuration"
 msgstr ""
 
-#: menu/overview.php:63
+#: menu/overview.php:71
 msgid "Translate the theme by WPML"
 msgstr ""
 
-#: menu/overview.php:64
+#: menu/overview.php:72
 msgid "Using a .mo file in the theme directory"
 msgstr ""
 
-#: menu/overview.php:65
+#: menu/overview.php:73
 msgid "No localization"
 msgstr ""
 
-#: menu/overview.php:70
+#: menu/overview.php:78
 msgid "Manage theme and plugins localization"
 msgstr ""
 
-#: menu/overview.php:77
+#: menu/overview.php:85
 msgid ""
 "String translation allows you to enter translation for texts such as the "
 "site's title, tagline, widgets and other text not contained in posts and "
 "pages."
 msgstr ""
 
-#: menu/overview.php:79
+#: menu/overview.php:87
 #, php-format
 msgid ""
 "There is <a href=\"%s\"><b>1</b> string</a> that needs to be updated or "
 "translated. "
 msgstr ""
 
-#: menu/overview.php:81
+#: menu/overview.php:89
 #, php-format
 msgid ""
 "There are <a href=\"%s\"><b>%s</b> strings</a> that need to be updated or "
 "translated. "
 msgstr ""
 
-#: menu/overview.php:84
+#: menu/overview.php:92
 msgid "All strings are up to date."
 msgstr ""
 
-#: menu/overview.php:88
+#: menu/overview.php:96
 msgid "Translate strings"
 msgstr ""
 
-#: menu/overview.php:94 menu/translation-synchronization.php:51
+#: menu/overview.php:102 menu/translation-synchronization.php:51
 msgid "Translation synchronization"
 msgstr ""
 
-#: menu/overview.php:95
+#: menu/overview.php:103
 msgid "Controls how to synchronize between contents in different languages."
 msgstr ""
 
-#: menu/overview.php:101
+#: menu/overview.php:109
 msgid ""
 "WPML can translate comments that visitors leave you in languages that you "
 "don't speak and translate back your replies."
 msgstr ""
 
-#: menu/overview.php:110 menu/post-menu.php:132 sitepress.class.php:641
-#: sitepress.class.php:667 sitepress.class.php:669
+#: menu/overview.php:118 menu/post-menu.php:126 sitepress.class.php:642
+#: sitepress.class.php:664 sitepress.class.php:666
 msgid "Professional translation"
 msgstr ""
 
-#: menu/overview.php:112
+#: menu/overview.php:121
+msgid ""
+"Professional translation is not yet enabled because you didn't select "
+"between which languages to translate."
+msgstr ""
+
+#: menu/overview.php:123
+#, php-format
+msgid "Translating: %s"
+msgstr ""
+
+#: menu/overview.php:126
 msgid "ICanLocalize can translate your site's contents professionally."
 msgstr ""
 
-#: menu/overview.php:113
+#: menu/overview.php:127
 msgid ""
 "WPML will send the documents that need translation to ICanLocalize and then "
 "create the translated posts and pages."
 msgstr ""
 
-#: menu/overview.php:115
+#: menu/overview.php:129
 msgid "Manage professional translation"
 msgstr ""
 
-#: menu/overview.php:126
+#: menu/overview.php:140
 msgid "CMS navigation"
 msgstr ""
 
-#: menu/overview.php:143
+#: menu/overview.php:157
 msgid ""
 "WPML provides advanced menus and navigation to go with your WordPress "
 "website, including drop-down menus, breadcrumbs and sidebar navigation."
 msgstr ""
 
-#: menu/overview.php:146
+#: menu/overview.php:160
 msgid "CMS Navigation is disabled."
 msgstr ""
 
-#: menu/overview.php:147
+#: menu/overview.php:161
 msgid "Enable CMS navigation"
 msgstr ""
 
-#: menu/overview.php:149
+#: menu/overview.php:163
 msgid "CMS Navigation is enabled."
 msgstr ""
 
-#: menu/overview.php:151
+#: menu/overview.php:165
 msgid "Configure navigation"
 msgstr ""
 
-#: menu/overview.php:152
+#: menu/overview.php:166
 msgid "Disable CMS navigation"
 msgstr ""
 
-#: menu/overview.php:160 sitepress.class.php:678
+#: menu/overview.php:174 sitepress.class.php:675
 msgid "Sticky links"
 msgstr ""
 
-#: menu/overview.php:164
+#: menu/overview.php:178
 msgid ""
 "With Sticky Links, WPML can automatically ensure that all links on posts and "
 "pages are up-to-date, should their URL change."
 msgstr ""
 
-#: menu/overview.php:167
+#: menu/overview.php:181
 msgid "Sticky links are enabled."
 msgstr ""
 
-#: menu/overview.php:169
+#: menu/overview.php:183
 msgid "Configure sticky links"
 msgstr ""
 
-#: menu/overview.php:170
+#: menu/overview.php:184
 msgid "Disable sticky links"
 msgstr ""
 
-#: menu/overview.php:174
+#: menu/overview.php:188
 msgid "Sticky links are disabled."
 msgstr ""
 
-#: menu/overview.php:175
+#: menu/overview.php:189
 msgid "Enable sticky links"
 msgstr ""
 
-#: menu/overview.php:183
+#: menu/overview.php:197
 #, php-format
 msgid ""
 "For advanced access or to completely uninstall WPML and remove all language "
@@ -2273,123 +2245,103 @@ msgstr ""
 msgid "Language of this %s"
 msgstr ""
 
-#: menu/post-menu.php:22 sitepress.class.php:2791
+#: menu/post-menu.php:22 sitepress.class.php:2803
 msgid "This is a translation of"
 msgstr ""
 
 #: menu/post-menu.php:26 menu/post-menu.php:42 menu/post-menu.php:62
-#: sitepress.class.php:2795 sitepress.class.php:2811 sitepress.class.php:2834
+#: sitepress.class.php:2807 sitepress.class.php:2823 sitepress.class.php:2846
 msgid "--None--"
 msgstr ""
 
-#: menu/post-menu.php:130 menu/post-menu.php:276 menu/post-menu.php:291
-#: sitepress.class.php:2904
-msgid "hide"
-msgstr ""
-
-#: menu/post-menu.php:131 menu/post-menu.php:276 menu/post-menu.php:291
-#: sitepress.class.php:2904
-msgid "show"
-msgstr ""
-
-#: menu/post-menu.php:148
+#: menu/post-menu.php:142
 #, php-format
 msgid "Update %s translation"
 msgstr ""
 
-#: menu/post-menu.php:150
+#: menu/post-menu.php:144 menu/string-translation.php:387
+#: menu/string-translation.php:390
 #, php-format
 msgid "Translate to %s"
 msgstr ""
 
-#: menu/post-menu.php:153
-msgid "in progress"
-msgstr ""
-
-#: menu/post-menu.php:155
-msgid "up to date"
-msgstr ""
-
-#: menu/post-menu.php:167 sitepress.class.php:1131 sitepress.class.php:1135
-#: sitepress.class.php:1144 sitepress.class.php:1157 sitepress.class.php:4947
+#. translators have applied but none selected yet
+#: menu/post-menu.php:156 sitepress.class.php:1120 sitepress.class.php:1123
+#: sitepress.class.php:1139 sitepress.class.php:1153 sitepress.class.php:4953
 msgid "Select translators"
 msgstr ""
 
-#: menu/post-menu.php:171
+#: menu/post-menu.php:160
 #, php-format
 msgid "Get %s translators"
 msgstr ""
 
-#: menu/post-menu.php:182
+#: menu/post-menu.php:169
 #: modules/icl-translation/icl-translation-dashboard.php:206
 msgid "Note for the translators"
 msgstr ""
 
-#: menu/post-menu.php:186
+#: menu/post-menu.php:173
 #: modules/icl-translation/icl-translation-dashboard.php:211
 msgid "Clear"
 msgstr ""
 
-#: menu/post-menu.php:188
+#: menu/post-menu.php:175
 msgid "Your changes to the note for the translators are not saved."
 msgstr ""
 
-#: menu/post-menu.php:190
+#: menu/post-menu.php:177
 msgid "Note not saved yet"
 msgstr ""
 
-#: menu/post-menu.php:193
-#, php-format
-msgid "Cost: %s USD"
+#: menu/post-menu.php:180
+msgid "Cost:"
 msgstr ""
 
-#: menu/post-menu.php:198 menu/string-translation.php:146
+#: menu/post-menu.php:185 menu/string-translation.php:152
 msgid "Send to translation"
 msgstr ""
 
-#: menu/post-menu.php:205
-#, php-format
-msgid "Estimated cost: %s USD"
+#: menu/post-menu.php:187 menu/post-menu.php:238 menu/post-menu.php:253
+#: sitepress.class.php:2916
+msgid "hide"
 msgstr ""
 
-#: menu/post-menu.php:210
-msgid "Cost estimate"
+#: menu/post-menu.php:188 menu/post-menu.php:238 menu/post-menu.php:253
+#: sitepress.class.php:2916
+msgid "show"
 msgstr ""
 
-#: menu/post-menu.php:213
-msgid "why estimated?"
-msgstr ""
-
-#: menu/post-menu.php:229
+#: menu/post-menu.php:191
 msgid "Failed sending to translation."
 msgstr ""
 
-#: menu/post-menu.php:231
+#: menu/post-menu.php:193
 msgid "Sent to translation."
 msgstr ""
 
-#: menu/post-menu.php:254
+#: menu/post-menu.php:216
 msgid "or, translate manually:"
 msgstr ""
 
-#: menu/post-menu.php:256
+#: menu/post-menu.php:218
 msgid "Translate yourself"
 msgstr ""
 
-#: menu/post-menu.php:275 sitepress.class.php:2903
+#: menu/post-menu.php:237 sitepress.class.php:2915
 msgid "Translations"
 msgstr ""
 
-#: menu/post-menu.php:282 sitepress.class.php:2926
+#: menu/post-menu.php:244 sitepress.class.php:2938
 msgid "Edit"
 msgstr ""
 
-#: menu/post-menu.php:282 menu/theme-localization.php:235
-#: sitepress.class.php:2926
+#: menu/post-menu.php:244 menu/theme-localization.php:235
+#: sitepress.class.php:2938
 msgid "n/a"
 msgstr ""
 
-#: menu/post-menu.php:290
+#: menu/post-menu.php:252
 msgid "ICanlocalize translation status:"
 msgstr ""
 
@@ -2445,8 +2397,8 @@ msgid ""
 msgstr ""
 
 #: menu/string-translation.php:68 menu/string-translation.php:74
-#: menu/string-translation.php:107 menu/string-translation.php:204
-#: menu/string-translation.php:214
+#: menu/string-translation.php:108 menu/string-translation.php:210
+#: menu/string-translation.php:220
 msgid "String"
 msgstr ""
 
@@ -2454,146 +2406,156 @@ msgstr ""
 msgid "Add selected strings"
 msgstr ""
 
-#: menu/string-translation.php:100
+#: menu/string-translation.php:101
 msgid "Preview strings"
 msgstr ""
 
-#: menu/string-translation.php:108
+#: menu/string-translation.php:109
 msgid "Word count"
 msgstr ""
 
-#: menu/string-translation.php:109
-msgid "Cost"
+#: menu/string-translation.php:111
+#, php-format
+msgid "Cost per language (at $%s per word)"
 msgstr ""
 
-#: menu/string-translation.php:147 menu/string-translation.php:399
-#: modules/icl-translation/icl-translation-dashboard.php:314
+#: menu/string-translation.php:113
+#, php-format
+msgid "Cost (at $%s per word)"
+msgstr ""
+
+#: menu/string-translation.php:153 menu/string-translation.php:399
+#: modules/icl-translation/icl-translation-dashboard.php:304
 msgid "Sending translation requests. Please wait!"
 msgstr ""
 
-#: menu/string-translation.php:153
+#: menu/string-translation.php:159
 msgid "Select which strings to display:"
 msgstr ""
 
-#: menu/string-translation.php:155
+#: menu/string-translation.php:161
 msgid "All strings"
 msgstr ""
 
-#: menu/string-translation.php:157
+#: menu/string-translation.php:163
 msgid "Translation needed"
 msgstr ""
 
-#: menu/string-translation.php:163
+#: menu/string-translation.php:169
 msgid "Select strings within context:"
 msgstr ""
 
-#: menu/string-translation.php:165 menu/string-translation.php:565
+#: menu/string-translation.php:171 menu/string-translation.php:575
 msgid "All contexts"
 msgstr ""
 
-#: menu/string-translation.php:176
+#: menu/string-translation.php:182
 msgid "Search for:"
 msgstr ""
 
-#: menu/string-translation.php:182
+#: menu/string-translation.php:188
 msgid "Exact match"
 msgstr ""
 
-#: menu/string-translation.php:185
+#: menu/string-translation.php:191
 msgid "Search"
 msgstr ""
 
-#: menu/string-translation.php:190
+#: menu/string-translation.php:196
 #, php-format
 msgid "Showing only strings that contain %s"
 msgstr ""
 
-#: menu/string-translation.php:191
+#: menu/string-translation.php:197
 msgid "Exit search"
 msgstr ""
 
-#: menu/string-translation.php:201 menu/string-translation.php:211
+#: menu/string-translation.php:207 menu/string-translation.php:217
 msgid "Context"
 msgstr ""
 
-#: menu/string-translation.php:202 menu/string-translation.php:212
+#: menu/string-translation.php:208 menu/string-translation.php:218
 msgid "Name"
 msgstr ""
 
-#: menu/string-translation.php:205 menu/string-translation.php:215
+#: menu/string-translation.php:211 menu/string-translation.php:221
 #: modules/icl-translation/icl-ajx-requests.php:13
 #: modules/icl-translation/icl-translation-dashboard.php:142
 #: modules/icl-translation/icl-translation-dashboard.php:153
 msgid "Status"
 msgstr ""
 
-#: menu/string-translation.php:221
+#: menu/string-translation.php:227
 msgid "No strings found"
 msgstr ""
 
-#: menu/string-translation.php:231
+#: menu/string-translation.php:237
 msgid "view in source"
 msgstr ""
 
-#: menu/string-translation.php:234 menu/string-translation.php:237
-#: menu/string-translation.php:240
+#: menu/string-translation.php:240 menu/string-translation.php:243
+#: menu/string-translation.php:246
 msgid "view in page"
 msgstr ""
 
-#: menu/string-translation.php:248
+#: menu/string-translation.php:254
 msgid "translations"
 msgstr ""
 
-#: menu/string-translation.php:280
+#: menu/string-translation.php:286
 msgid "Translation is complete"
 msgstr ""
 
-#: menu/string-translation.php:293
+#: menu/string-translation.php:299
 msgid "ICanLocalize "
 msgstr ""
 
-#: menu/string-translation.php:319
+#: menu/string-translation.php:325
 #, php-format
 msgid "Display %d results per page"
 msgstr ""
 
-#: menu/string-translation.php:325
+#: menu/string-translation.php:331
 #: modules/icl-translation/icl-translation-dashboard.php:261
 #, php-format
 msgid "Displaying %s&#8211;%s of %s"
 msgstr ""
 
-#: menu/string-translation.php:334
+#: menu/string-translation.php:340
 msgid "Strings per page:"
 msgstr ""
 
-#: menu/string-translation.php:342
+#: menu/string-translation.php:348
 msgid "Display all results"
 msgstr ""
 
-#: menu/string-translation.php:350
+#: menu/string-translation.php:356
 msgid "Delete selected strings"
 msgstr ""
 
-#: menu/string-translation.php:351
+#: menu/string-translation.php:357
 msgid ""
 "Are you sure you want to delete these strings?\n"
 "Their translations will be deleted too."
 msgstr ""
 
-#: menu/string-translation.php:356
+#: menu/string-translation.php:363
 msgid "Translation by ICanLocalize"
 msgstr ""
 
-#: menu/string-translation.php:357
+#: menu/string-translation.php:364
 msgid ""
 "You can send all the untranslated strings for translation by ICanLocalize."
 msgstr ""
 
-#: menu/string-translation.php:388
-#: modules/icl-translation/icl-translation-dashboard.php:304
+#: menu/string-translation.php:385
+#: modules/icl-translation/icl-translation-dashboard.php:294
 #, php-format
 msgid "Translate to %s %s"
+msgstr ""
+
+#: menu/string-translation.php:390
+msgid " - This language has not been selected for translation by ICanLocalize"
 msgstr ""
 
 #: menu/string-translation.php:396
@@ -2611,118 +2573,131 @@ msgid ""
 "page to deposit additional funds."
 msgstr ""
 
-#: menu/string-translation.php:421 menu/string-translation.php:461
-#: menu/string-translation.php:507 menu/translation-synchronization.php:58
+#: menu/string-translation.php:416
+msgid ""
+"To translate yourself, click on the <b>Translation</b> link next to each "
+"strings."
+msgstr ""
+
+#: menu/string-translation.php:418
+#, php-format
+msgid ""
+"To send these strings to translation by ICanLocalize you first need to set "
+"up <a href=\"%s\">professional translation</a>."
+msgstr ""
+
+#: menu/string-translation.php:431 menu/string-translation.php:471
+#: menu/string-translation.php:517 menu/translation-synchronization.php:58
 msgid "Click to toggle"
 msgstr ""
 
-#: menu/string-translation.php:425
+#: menu/string-translation.php:435
 msgid "Track where string appear on the site"
 msgstr ""
 
-#: menu/string-translation.php:428
+#: menu/string-translation.php:438
 msgid ""
 "WPML can keep track of where strings are used on the public pages. "
 "Activating this feature will enable the 'view in page' functionality and "
 "make translation easier."
 msgstr ""
 
-#: menu/string-translation.php:436
+#: menu/string-translation.php:446
 msgid "Track where strings appear on the site"
 msgstr ""
 
-#: menu/string-translation.php:440
+#: menu/string-translation.php:450
 msgid "Highlight color for strings"
 msgstr ""
 
-#: menu/string-translation.php:465
+#: menu/string-translation.php:475
 msgid "Translate general settings texts"
 msgstr ""
 
-#: menu/string-translation.php:468
+#: menu/string-translation.php:478
 msgid ""
 "WPML can translate texts entered in different admin screens. Select which "
 "texts to translate."
 msgstr ""
 
-#: menu/string-translation.php:474
+#: menu/string-translation.php:484
 msgid "Strings Language"
 msgstr ""
 
-#: menu/string-translation.php:488
+#: menu/string-translation.php:498
 msgid "Widget titles"
 msgstr ""
 
-#: menu/string-translation.php:490
+#: menu/string-translation.php:500
 msgid "Content for text-widgets"
 msgstr ""
 
-#: menu/string-translation.php:493
+#: menu/string-translation.php:503
 msgid "Save options and rescan strings"
 msgstr ""
 
-#: menu/string-translation.php:494
+#: menu/string-translation.php:504
 msgid "Settings saved"
 msgstr ""
 
-#: menu/string-translation.php:511
+#: menu/string-translation.php:521
 msgid "Import / export .po"
 msgstr ""
 
-#: menu/string-translation.php:514
+#: menu/string-translation.php:524
 msgid "Import"
 msgstr ""
 
-#: menu/string-translation.php:517
+#: menu/string-translation.php:527
 msgid ".po file:"
 msgstr ""
 
-#: menu/string-translation.php:522
+#: menu/string-translation.php:532
 msgid "Also create translations according to the .po file"
 msgstr ""
 
-#: menu/string-translation.php:530
+#: menu/string-translation.php:540
 msgid "Select what the strings are for:"
 msgstr ""
 
-#: menu/string-translation.php:541
+#: menu/string-translation.php:551
 msgid "new"
 msgstr ""
 
-#: menu/string-translation.php:547
+#: menu/string-translation.php:557
 msgid "select from existing"
 msgstr ""
 
-#: menu/string-translation.php:553 menu/string-translation.php:580
+#: menu/string-translation.php:563 menu/string-translation.php:590
 #: menu/translation-synchronization.php:111
 msgid "Submit"
 msgstr ""
 
-#: menu/string-translation.php:554
+#: menu/string-translation.php:564
 msgid "Please enter a context!"
 msgstr ""
 
-#: menu/string-translation.php:555
+#: menu/string-translation.php:565
 msgid "Please select the .po file to upload!"
 msgstr ""
 
-#: menu/string-translation.php:560
+#: menu/string-translation.php:570
 msgid "Export strings into .po/.pot file"
 msgstr ""
 
-#: menu/string-translation.php:563
+#: menu/string-translation.php:573
 msgid "Select context:"
 msgstr ""
 
-#: menu/string-translation.php:573
+#: menu/string-translation.php:583
 msgid "Also include translations"
 msgstr ""
 
-#: menu/string-translation.php:595
+#: menu/string-translation.php:605
 msgid "Translate texts in admin screens &raquo;"
 msgstr ""
 
-#: menu/support.php:4 sitepress.class.php:644 sitepress.class.php:689
+#: menu/support.php:4 sitepress.class.php:645 sitepress.class.php:686
 msgid "Support"
 msgstr ""
 
@@ -2995,7 +2970,7 @@ msgstr ""
 msgid "Custom taxonomies"
 msgstr ""
 
-#: menu/troubleshooting.php:42 sitepress.class.php:646 sitepress.class.php:682
+#: menu/troubleshooting.php:42 sitepress.class.php:679
 msgid "Troubleshooting"
 msgstr ""
 
@@ -3024,42 +2999,26 @@ msgid "Download"
 msgstr ""
 
 #: menu/troubleshooting.php:131
-msgid "ICanLocalize connection test"
-msgstr ""
-
-#: menu/troubleshooting.php:170
-msgid "Data"
-msgstr ""
-
-#: menu/troubleshooting.php:172
-msgid "Response"
-msgstr ""
-
-#: menu/troubleshooting.php:179
-msgid "Connect"
-msgstr ""
-
-#: menu/troubleshooting.php:183
 msgid "Reset"
 msgstr ""
 
-#: menu/troubleshooting.php:184
+#: menu/troubleshooting.php:132
 msgid ""
 "Are you sure you want to reset all languages data? This operation cannot be "
 "reversed."
 msgstr ""
 
-#: menu/troubleshooting.php:186
+#: menu/troubleshooting.php:134
 msgid ""
 "All translations you have sent to ICanLocalize will be lost if you reset "
 "WPML's data. They cannot be recovered later."
 msgstr ""
 
-#: menu/troubleshooting.php:188
+#: menu/troubleshooting.php:136
 msgid "I am about to reset all language data."
 msgstr ""
 
-#: menu/troubleshooting.php:189
+#: menu/troubleshooting.php:137
 msgid "Reset all language data and deactivate WPML"
 msgstr ""
 
@@ -3144,12 +3103,16 @@ msgstr ""
 msgid "New in WPML %s: <b>%s</b>"
 msgstr ""
 
-#: menu/upgrade_notice.php:32 sitepress.class.php:4628
+#: menu/upgrade_notice.php:31
+msgid "Learn more"
+msgstr ""
+
+#: menu/upgrade_notice.php:32 sitepress.class.php:4642
 msgid "Stop showing this message"
 msgstr ""
 
 #: menu/upgrade_notice.php:32
-#: modules/icl-translation/icl-reminder-popup.php:146 sitepress.class.php:4628
+#: modules/icl-translation/icl-reminder-popup.php:139 sitepress.class.php:4642
 msgid "Dismiss"
 msgstr ""
 
@@ -3293,7 +3256,7 @@ msgstr ""
 msgid "cancel"
 msgstr ""
 
-#: modules/cms-navigation/cms-navigation.php:767
+#: modules/cms-navigation/cms-navigation.php:770
 msgid "Sidebar Navigation"
 msgstr ""
 
@@ -3319,13 +3282,6 @@ msgstr ""
 msgid "Sent for translation: %s"
 msgstr ""
 
-#: modules/icl-translation/icl-reminder-popup.php:62
-#, php-format
-msgid ""
-"WPML did not manage to access the server at ICanLocalize. Please <a%"
-"s>contact us</a> for support. <br />Show <a%s>debug information</a>."
-msgstr ""
-
 #: modules/icl-translation/icl-translation-dashboard.php:47
 msgid "Published"
 msgstr ""
@@ -3339,12 +3295,12 @@ msgid "Scheduled"
 msgstr ""
 
 #: modules/icl-translation/icl-translation-dashboard.php:58
-#: modules/icl-translation/icl-translation-dashboard.php:319
+#: modules/icl-translation/icl-translation-dashboard.php:309
 msgid "Error sending some documents to translation"
 msgstr ""
 
 #: modules/icl-translation/icl-translation-dashboard.php:61
-#: modules/icl-translation/icl-translation-dashboard.php:318
+#: modules/icl-translation/icl-translation-dashboard.php:308
 msgid "All documents sent to translation"
 msgstr ""
 
@@ -3431,20 +3387,8 @@ msgstr ""
 msgid "%s words, %s USD."
 msgstr ""
 
-#: modules/icl-translation/icl-translation-dashboard.php:312
+#: modules/icl-translation/icl-translation-dashboard.php:302
 msgid "Translate selected documents"
-msgstr ""
-
-#: modules/icl-translation/icl-translation-dashboard.php:324
-msgid "You need to select translators before sending document to translation."
-msgstr ""
-
-#: modules/icl-translation/icl-translation-dashboard.php:330
-msgid "About translators"
-msgstr ""
-
-#: modules/icl-translation/icl-translation-dashboard.php:333
-msgid "Learn more."
 msgstr ""
 
 #: modules/icl-translation/icl-translation-functions.php:1437
@@ -3544,87 +3488,87 @@ msgstr ""
 msgid "Possible login hack attempt"
 msgstr ""
 
-#: sitepress.class.php:637 sitepress.class.php:652
+#: sitepress.class.php:638 sitepress.class.php:649
 msgid "WPML"
 msgstr ""
 
-#: sitepress.class.php:653
+#: sitepress.class.php:650
 msgid "Overview"
 msgstr ""
 
-#: sitepress.class.php:663
+#: sitepress.class.php:660
 msgid "Translation sync"
 msgstr ""
 
-#: sitepress.class.php:1116
+#: sitepress.class.php:1106
 #, php-format
 msgid ""
 "- (No translators available - please %sprovide more information about your "
 "site%s)"
 msgstr ""
 
-#: sitepress.class.php:1121
+#: sitepress.class.php:1111
 #, php-format
 msgid "- (No translators available - %scheck progress%s)"
 msgstr ""
 
-#: sitepress.class.php:1145
+#: sitepress.class.php:1140
 #, php-format
 msgid "Communicate with %s"
 msgstr ""
 
-#: sitepress.class.php:1224
+#: sitepress.class.php:1220
 msgid "Professional translation not enabled"
 msgstr ""
 
-#: sitepress.class.php:1290
+#: sitepress.class.php:1286
 msgid "Data saved"
 msgstr ""
 
-#: sitepress.class.php:1291
+#: sitepress.class.php:1287
 msgid "Error: data not saved"
 msgstr ""
 
-#: sitepress.class.php:1295
+#: sitepress.class.php:1291
 msgid ""
 "To add categories that already exist in other languages go to the <a href="
 "\"edit-tags.php?taxonomy=category\">category management page<\\/a>"
 msgstr ""
 
-#: sitepress.class.php:1305
+#: sitepress.class.php:1301
 #, php-format
 msgid ""
 "WPML can't run normally. There is an installation or server configuration "
 "problem. %sShow details%s"
 msgstr ""
 
-#: sitepress.class.php:1307
+#: sitepress.class.php:1303
 msgid "AJAX Error:"
 msgstr ""
 
-#: sitepress.class.php:1398
+#: sitepress.class.php:1394
 msgid "Private"
 msgstr ""
 
-#: sitepress.class.php:1411
+#: sitepress.class.php:1407
 msgid "Sticky"
 msgstr ""
 
-#: sitepress.class.php:1618
+#: sitepress.class.php:1614
 msgid ""
 "An unknown error has occurred when communicating with the ICanLocalize "
 "server. Please try again."
 msgstr ""
 
-#: sitepress.class.php:1638
+#: sitepress.class.php:1634
 msgid "A project on ICanLocalize has been created."
 msgstr ""
 
-#: sitepress.class.php:1641
+#: sitepress.class.php:1637
 msgid "Project added"
 msgstr ""
 
-#: sitepress.class.php:1758
+#: sitepress.class.php:1754
 msgid ""
 "Please provide a short description of the website so that translators know "
 "what background is required from them."
@@ -3634,199 +3578,193 @@ msgstr ""
 msgid "How to translate"
 msgstr ""
 
-#: sitepress.class.php:2658
+#: sitepress.class.php:2670
 msgid "Main Page (no parent)"
 msgstr ""
 
-#: sitepress.class.php:4341 sitepress.class.php:4361
+#: sitepress.class.php:4355 sitepress.class.php:4375
 msgid "Not published - edit page"
 msgstr ""
 
-#: sitepress.class.php:4346
+#: sitepress.class.php:4360
 #, php-format
 msgid "Your home page does not exist or its translation is not published in %s"
 msgstr ""
 
-#: sitepress.class.php:4348 sitepress.class.php:4368
+#: sitepress.class.php:4362 sitepress.class.php:4382
 msgid "Edit this page to add translations"
 msgstr ""
 
-#: sitepress.class.php:4366
+#: sitepress.class.php:4380
 #, php-format
 msgid "Your blog page does not exist or its translation is not published in %s"
 msgstr ""
 
-#: sitepress.class.php:4430
+#: sitepress.class.php:4444
 msgid ""
 "WPML admin screens require JavaScript in order to display. JavaScript is "
 "currently off in your browser."
 msgstr ""
 
-#: sitepress.class.php:4557
+#: sitepress.class.php:4571
 msgid "WPML language settings"
 msgstr ""
 
-#: sitepress.class.php:4561
+#: sitepress.class.php:4575
 msgid "Select your language:"
 msgstr ""
 
-#: sitepress.class.php:4564
+#: sitepress.class.php:4578
 #, php-format
 msgid "Default admin language (currently %s)"
 msgstr ""
 
-#: sitepress.class.php:4569
+#: sitepress.class.php:4583
 msgid ""
 "this will be your admin language and will also be used for translating "
 "comments."
 msgstr ""
 
-#: sitepress.class.php:4573
+#: sitepress.class.php:4587
 msgid "Hidden languages:"
 msgstr ""
 
-#: sitepress.class.php:4590
+#: sitepress.class.php:4604
 msgid ""
 "All languages are currently displayed. Choose what to do when site languages "
 "are hidden."
 msgstr ""
 
-#: sitepress.class.php:4596
+#: sitepress.class.php:4610
 msgid "Display hidden languages"
 msgstr ""
 
-#: sitepress.class.php:4623
+#: sitepress.class.php:4637
 msgid ""
 "WPML is a powerful plugin with many features. Would you like to see a quick "
 "overview?"
 msgstr ""
 
-#: sitepress.class.php:4627
+#: sitepress.class.php:4641
 msgid "No thanks, I will configure myself"
 msgstr ""
 
-#: sitepress.class.php:4723
+#: sitepress.class.php:4737
 #, php-format
 msgid "Edit the %s translation"
 msgstr ""
 
-#: sitepress.class.php:4727
+#: sitepress.class.php:4741
 #, php-format
 msgid "Add translation to %s"
 msgstr ""
 
-#: sitepress.class.php:4745
+#: sitepress.class.php:4759
 msgid "Multilingual thanks to WPML"
 msgstr ""
 
-#: sitepress.class.php:4746
+#: sitepress.class.php:4760
 msgid "Multilingual WordPress by WPML"
 msgstr ""
 
-#: sitepress.class.php:4747
+#: sitepress.class.php:4761
 msgid "Translated with WPML"
 msgstr ""
 
-#: sitepress.class.php:4748
+#: sitepress.class.php:4762
 msgid "Translating with WPML"
 msgstr ""
 
-#: sitepress.class.php:4749
+#: sitepress.class.php:4763
 msgid "We translate using WPML"
 msgstr ""
 
-#: sitepress.class.php:4750
-#, php-format
-msgid ""
-"<a href=\"%s\">Multilingual WordPress</a> by <a href=\"%s\">ICanLocalize</a>"
-msgstr ""
-
-#: sitepress.class.php:4859
+#: sitepress.class.php:4866
 msgid "A translation for this post already exists"
 msgstr ""
 
-#: sitepress.class.php:4886
+#: sitepress.class.php:4893
 msgid "A translation in this language already exists"
 msgstr ""
 
-#: sitepress.class.php:4899
+#: sitepress.class.php:4906
 msgid "Invalid language code"
 msgstr ""
 
-#: sitepress.class.php:4948
+#: sitepress.class.php:4954
 msgid "Send documents to translation"
 msgstr ""
 
-#: sitepress.class.php:4949
+#: sitepress.class.php:4955
 msgid "Deposit payment"
 msgstr ""
 
-#: sitepress.class.php:4950
+#: sitepress.class.php:4956
 msgid "Translations will be returned to your site"
 msgstr ""
 
-#: sitepress.class.php:4963
+#: sitepress.class.php:4969
 msgid "Setup check list"
 msgstr ""
 
-#: sitepress.class.php:5010
+#: sitepress.class.php:5016
 msgid "Help"
 msgstr ""
 
-#: sitepress.class.php:5018
+#: sitepress.class.php:5024
 msgid "Get help"
 msgstr ""
 
-#: sitepress.class.php:5141
+#: sitepress.class.php:5147
 #, php-format
 msgid ""
 "You haven't set your <a %s>synchronization preferences</a> for these custom "
 "posts: %s. Default value was selected."
 msgstr ""
 
-#: sitepress.class.php:5154
+#: sitepress.class.php:5160
 #, php-format
 msgid ""
 "You haven't set your <a %s>synchronization preferences</a> for these "
 "taxonomies: %s. Default value was selected."
 msgstr ""
 
-#: sitepress.class.php:5171
+#: sitepress.class.php:5177
 msgid "WPML Status"
 msgstr ""
 
-#: sitepress.class.php:5196
+#: sitepress.class.php:5202
 msgid "None"
-msgstr ""
-
-#: sitepress.class.php:5199
-#, php-format
-msgid "Valid! (amount: $%d - until %s)"
-msgstr ""
-
-#: sitepress.class.php:5201
-#, php-format
-msgid "Expired! - since %s"
 msgstr ""
 
 #: sitepress.class.php:5205
 #, php-format
-msgid "WPML version: %s"
+msgid "Valid! (amount: $%d - until %s)"
 msgstr ""
 
 #: sitepress.class.php:5207
-msgid "Finish the WPML setup."
+#, php-format
+msgid "Expired! - since %s"
 msgstr ""
 
 #: sitepress.class.php:5211
 #, php-format
+msgid "WPML version: %s"
+msgstr ""
+
+#: sitepress.class.php:5213
+msgid "Finish the WPML setup."
+msgstr ""
+
+#: sitepress.class.php:5217
+#, php-format
 msgid "Support Subscription - %s"
 msgstr ""
 
-#: sitepress.class.php:5212
+#: sitepress.class.php:5218
 msgid "purchase"
 msgstr ""
 
-#: sitepress.class.php:5215
+#: sitepress.class.php:5221
 msgid "more"
 msgstr ""
