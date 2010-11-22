@@ -52,8 +52,7 @@ function icl_upgrade_2_0_0_steps($step, $stepper){
                     ", $sitepress->get_default_language()
                 ));
             foreach($res as $row){
-                $languagecode = $wpdb->get_var($wpdb->prepare("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE trid=%d AND language_code = %s", $row->trid, $sitepress->get_default_language()));
-                $wpdb->query($wpdb->prepare("UPDATE {$wpdb->prefix}icl_translations SET source_language_code = %s WHERE translation_id=%d", $languagecode, $row->translation_id));
+                $wpdb->query($wpdb->prepare("UPDATE {$wpdb->prefix}icl_translations SET source_language_code = %s WHERE translation_id=%d", $sitepress->get_default_language(), $row->translation_id));
             }
             
             
