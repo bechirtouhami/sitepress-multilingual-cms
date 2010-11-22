@@ -182,6 +182,15 @@ function icl_upgrade_2_0_0_steps($step, $stepper){
                 $iclsettings['troubleshooting_options']['http_communication'] = intval(get_option('_force_mp_post_http'));
                 delete_option('_force_mp_post_http');
             }
+            
+            // set default translators
+            foreach($sitepress_settings['icl_lang_status'] as $lpair){
+                if(!empty($lpair['translators'])){
+                    $iclsettings['default_translators'][$lpair['from']][$lpair['to']] = $lpair['translators'][0];                    
+                }                
+            }
+            $sitepress->save_settings($iclsettings);            
+            
             $iclsettings['migrated_2_0_0'] = 1;
             $sitepress->save_settings($iclsettings);
             delete_option('icl_temp_upgrade_data');
