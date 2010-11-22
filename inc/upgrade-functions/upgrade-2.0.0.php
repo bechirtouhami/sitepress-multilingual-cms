@@ -37,23 +37,26 @@ function icl_upgrade_2_0_0_steps($step, $stepper){
             $wpdb->query("ALTER TABLE `{$wpdb->prefix}icl_translations` CHANGE `element_type` `element_type` VARCHAR( 32 ) NOT NULL DEFAULT 'post_post'");
             $wpdb->query("ALTER TABLE `{$wpdb->prefix}icl_translations` CHANGE `element_id` `element_id` BIGINT( 20 ) NULL DEFAULT NULL ");
 
-            $res = $wpdb->get_results("
-                SELECT trid, count(source_language_code) c
-                FROM {$wpdb->prefix}icl_translations
-                WHERE source_language_code = '' AND element_type IN('".join("','", $types)."')
-                GROUP BY trid
-                HAVING c > 1
-                ");
-            $wpdb->query("UPDATE {$wpdb->prefix}icl_translations SET source_language_code = NULL WHERE source_language_code = ''");
-
+            
             // fix source_language_code
-            // assume that the lowest element_id is the source language
+            // all source documents must ahve null
+            $wpdb->query($wpdb->prepare("UPDATE {$wpdb->prefix}icl_translations SET source_language_code = NULL WHERE source_language_code = '' AND language_code=%s", $sitepress->get_default_language()));
+            // get translated documents with missing source language
+            $res = $wpdb->get_results($wpdb->prepare("
+                SELECT translation_id, trid, language_code 
+                FROM {$wpdb->prefix}icl_translations 
+                WHERE source_language_code = '' OR source_language_code IS NULL
+                    AND element_type IN('".join("','", $types)."')
+                    AND language_code <> %s
+                    ", $sitepress->get_default_language()
+                ));
             foreach($res as $row){
-                $source = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}icl_translations WHERE trid = " . $row->trid. " ORDER BY element_id ASC LIMIT 1");
-                $wpdb->query("UPDATE {$wpdb->prefix}icl_translations
-                    SET source_language_code='{$source->language_code}'
-                    WHERE source_language_code='' AND language_code<>'{$source->language_code}'");
+                $languagecode = $wpdb->get_var($wpdb->prepare("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE trid=%d AND source_language_code IS NULL", $row->trid));
+                $wpdb->query($wpdb->prepare("UPDATE {$wpdb->prefix}icl_translations SET source_language_code = %s WHERE translation_id=%d", $languagecode, $row->translation_id));
             }
+            
+            
+            
             $temp_upgrade_data['step'] = 2;
             update_option('icl_temp_upgrade_data', $temp_upgrade_data);
 
