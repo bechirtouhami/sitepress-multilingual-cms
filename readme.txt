@@ -1,5 +1,5 @@
 === WPML Multilingual CMS ===
-Contributors: ICanLocalize
+Contributors: icanlocalize
 Donate link: http://wpml.org/?page_id=2312
 Tags: CMS, navigation, menus, menu, dropdown, css, sidebar, pages, i18n, translation, localization, language, multilingual, WPML
 Requires at least: 2.7
@@ -10,35 +10,28 @@ Allows building complete multilingual sites with WordPress.
 
 == Description ==
 
-**WPML makes multilingual content management easy, just like running a site in one language.**
+**WPML combines multilingual content authoring with powerful translation management. It powers corporate sites and is simple enough for bloggers.**
 
 = Features =
 
- * Turns a single WordPress install into a [multilingual site](http://wpml.org/?page_id=519).
+WPML makes it possible to turn WordPress blogs multilingual in a few minutes with no knowledge of PHP or WordPress.
+Its advanced features allow professional web developers to build full multilingual websites.
+
+ * Turns a single WordPress site into a [multilingual site](http://wpml.org/?page_id=519).
+ * Powerful [translation management](http://wpml.org/?page_id=3416), allowing teams of translators to work on multilingual sites.
  * Built-in [theme localization](http://wpml.org/?page_id=2717) without .mo files.
  * [Comments translation](http://wpml.org/?page_id=2755) allows you to moderate and reply to comments in your own language.
  * Integrated [professional translation](http://wpml.org/?page_id=1169) (optional feature for folks who need help translating).
  * Includes [CMS navigation](http://wpml.org/?page_id=527) elements for drop down menus, breadcrumbs trail and sidebar navigation.
  * [Robust links](http://wpml.org/?page_id=594) to posts and pages that never break.
 
-= Highlights =
-
-* Translations are grouped together and not mixed in the database.
-* CMS navigation elements provide accurate and easy to use site-wide navigation.
-* Simple CSS for easy [customization](http://wpml.org/?page_id=909).
-
 = Commercial Support =
 
-While WPML boast a lively [community](http://forum.wpml.org), it's great to get fast an accurate support when you need it.
+[ICanLocalize](http://www.icanlocalize.com/site/) offers reliable [commercial support](http://wpml.org/partners/) for WPML. This support provides timely and dependable help directly from the developers.
 
-[ICanLocalize](http://www.icanlocalize.com/site/) offers reliable [commercial support](http://wpml.org/partners/) for WPML. This support option is meant for professional web developers who need timely and dependable support directly from the developers.
+= Learn More =
 
-= In a Nutshell =
-
-WPML makes it possible to turn WordPress blogs multilingual in a few minutes with no knowledge of PHP or WordPress.
-Its advanced features allow professional web developers to build full multilingual websites.
-
-WPML's [showcase](http://wpml.org/showcase/) includes samples of blogs, full websites and even multilingual BuddyPress portals.
+[WPML website](http://wpml.org) | [ICanLocalize](http://www.icanlocalize.com/site/)
 
 == Installation ==
 
@@ -74,6 +67,13 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 4. Language setup admin screen.
 
 == Changelog ==
+
+= 2.0.0 =
+* Added Translator role.
+* Added Translation Management toolset.
+* Added Translation Editor.
+* Added language configuration files.
+* Compatibility packages are not obsolete and will be removed from the next version.
 
 = 1.8.1.1 =
 * Fixed source of warning messages in 1.8.1
