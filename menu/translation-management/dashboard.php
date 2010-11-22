@@ -1,6 +1,5 @@
 <?php //included from menu translation-management.php ?>
 <?php 
-
 if(isset($_SESSION['translation_dashboard_filter'])){
     $icl_translation_filter = $_SESSION['translation_dashboard_filter'];
 }
@@ -62,7 +61,6 @@ $icl_dashboard_settings = $sitepress_settings['dashboard'];
 
 $icl_translation_filter['limit_no'] = isset($_GET['show_all']) && $_GET['show_all'] ? 10000 : ICL_TM_DOCS_PER_PAGE;
 $icl_documents = $iclTranslationManagement->get_documents($icl_translation_filter);
-
 $icl_translators = $iclTranslationManagement->get_blog_translators();
 
 if(!empty($iclTranslationManagement->dashboard_select)){
@@ -70,6 +68,15 @@ if(!empty($iclTranslationManagement->dashboard_select)){
     $icl_selected_languages = (array)$iclTranslationManagement->dashboard_select['translate_to'];
     $icl_selected_translators = (array)$iclTranslationManagement->dashboard_select['translator'];
 }
+
+if(!empty($sitepress_settings['default_translators'][$icl_translation_filter['from_lang']])){
+    foreach($sitepress_settings['default_translators'][$icl_translation_filter['from_lang']] as $_tolang => $tr){
+        if($sitepress->translator_exists($tr['id'], $icl_translation_filter['from_lang'], $_tolang)){
+            $icl_selected_translators[$_tolang] = $tr['id'] . '-icanlocalize';        
+        }        
+    }
+}
+
 ?>
 
 <?php
@@ -91,9 +98,10 @@ if (!empty($icl_translation_services)) {
         $output .= '</div>';
     }
     $output .= '</div>';
-    echo $output;
+    echo $output;    
 }
 ?>
+
 
     <form method="post" name="translation-dashboard-filter" action="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/translation-management.php&amp;sm=dashboard">
     <input type="hidden" name="icl_tm_action" value="dashboard_filter" />
@@ -354,7 +362,8 @@ if (!empty($icl_translation_services)) {
         'total' => $wp_query->max_num_pages,
         'current' => $_GET['paged'],
         'add_args' => isset($icl_translation_filter)?$icl_translation_filter:array() 
-    ));         
+    ));  
+
     ?> 
     <span id="icl-cw-total" style="display:none"><?php echo $wctotal; ?></span>       
     <div class="tablenav">    

@@ -922,6 +922,12 @@ class TranslationManagement{
         
         $results = $wpdb->get_results($sql);    
         
+        $count = $wpdb->get_var("SELECT FOUND_ROWS()");
+        
+        $wp_query->found_posts = $count;
+        $wp_query->query_vars['posts_per_page'] = $limit_no;
+        $wp_query->max_num_pages = ceil($wp_query->found_posts/$limit_no);
+        
         // post process
         foreach($results as $k=>$v){
             if($v->is_translation){
@@ -930,15 +936,6 @@ class TranslationManagement{
                 $v->$_tmp = ICL_TM_COMPLETE;
             }    
         }
-        
-        
-        
-        $count = $wpdb->get_var("SELECT FOUND_ROWS()");
-
-        $wp_query->found_posts = $count;
-        $wp_query->query_vars['posts_per_page'] = $limit_no;
-        $wp_query->max_num_pages = ceil($wp_query->found_posts/$limit_no);
-          
           
         return $results;
         
