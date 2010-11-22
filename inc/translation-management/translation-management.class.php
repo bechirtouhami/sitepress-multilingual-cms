@@ -1959,8 +1959,6 @@ class TranslationManagement{
         $data['job_id'] = $job_id;        
         $job = $this->get_translation_job($job_id,1);
         
-        //debug_array($job);
-        
         foreach($job->elements as $element){
             $field_data = '';
             switch($element->field_type){
