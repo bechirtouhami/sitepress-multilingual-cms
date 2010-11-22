@@ -46,7 +46,7 @@ function icl_upgrade_2_0_0_steps($step, $stepper){
             $res = $wpdb->get_results($wpdb->prepare("
                 SELECT translation_id, trid, language_code 
                 FROM {$wpdb->prefix}icl_translations 
-                WHERE source_language_code = '' OR source_language_code IS NULL
+                WHERE (source_language_code = '' OR source_language_code IS NULL)
                     AND element_type IN('".join("','", $types)."')
                     AND language_code <> %s
                     ", $sitepress->get_default_language()
