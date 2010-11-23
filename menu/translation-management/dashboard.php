@@ -427,11 +427,4 @@ if (!empty($icl_translation_services)) {
         </tbody>
     </table>
     
-    </form>
-        
-    <?php if(defined('ICL_DEBUG_DEVELOPMENT') && ICL_DEBUG_DEVELOPMENT): ?>
-    <br clear="all" />
-    <a style="float:right;" href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/translation-management.php.php&amp;debug_action=reset_pro_translation_configuration&amp;nonce=<?php echo wp_create_nonce('reset_pro_translation_configuration')?>" class="button">Reset pro translation configuration</a>
-    <br clear="all" />
-    <?php endif; ?>
-    
+    </form>    

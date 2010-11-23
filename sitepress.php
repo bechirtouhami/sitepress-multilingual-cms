@@ -67,11 +67,7 @@ if(isset($_REQUEST['action']) && $_REQUEST['action']=='addblog' && false !== str
 } 
 
 require ICL_PLUGIN_PATH . '/inc/constants.inc';
-if(defined('ICL_DEBUG_DEVELOPMENT') && ICL_DEBUG_DEVELOPMENT){
-    include ICL_PLUGIN_PATH . '/inc/hacks/debug-actions.php';
-}     
     
-
 require ICL_PLUGIN_PATH . '/inc/pre-wp3-compatibility.php';
 require ICL_PLUGIN_PATH . '/inc/sitepress-schema.php';
 require ICL_PLUGIN_PATH . '/inc/template-functions.php';

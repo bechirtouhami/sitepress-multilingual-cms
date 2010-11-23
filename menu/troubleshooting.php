@@ -1,4 +1,38 @@
 <?php 
+
+/* DEBUG ACTION */
+if(isset($_GET['debug_action']) && $_GET['nonce']==wp_create_nonce($_GET['debug_action']))
+switch($_GET['debug_action']){
+    case 'reset_pro_translation_configuration':
+        $sitepress_settings = get_option('icl_sitepress_settings');
+        
+        $sitepress_settings['content_translation_languages_setup'] = false;
+        $sitepress_settings['content_translation_setup_complete'] = false;        
+        unset($sitepress_settings['content_translation_setup_wizard_step']);
+        unset($sitepress_settings['site_id']);
+        unset($sitepress_settings['access_key']);
+        unset($sitepress_settings['translator_choice']);
+        unset($sitepress_settings['icl_lang_status']);
+        unset($sitepress_settings['icl_balance']);
+        unset($sitepress_settings['icl_support_ticket_id']);
+        unset($sitepress_settings['icl_current_session']);
+        unset($sitepress_settings['last_get_translator_status_call']);
+        unset($sitepress_settings['last_icl_reminder_fetch']);
+        unset($sitepress_settings['icl_account_email']);
+
+        update_option('icl_sitepress_settings', $sitepress_settings);
+        
+        mysql_query("TRUNCATE TABLE {$wpdb->prefix}icl_core_status");
+        mysql_query("TRUNCATE TABLE {$wpdb->prefix}icl_content_status");
+        mysql_query("TRUNCATE TABLE {$wpdb->prefix}icl_string_status");
+        mysql_query("TRUNCATE TABLE {$wpdb->prefix}icl_node");
+        mysql_query("TRUNCATE TABLE {$wpdb->prefix}icl_reminders");
+        
+        header("Location: admin.php?page=".basename(ICL_PLUGIN_PATH).'/menu/troubleshooting.php&message=' . __('PRO translation was reset.', 'sitepress'));
+        exit;
+}
+/* DEBUG ACTION */
+
 $icl_tables = array(
     $wpdb->prefix . 'icl_languages',
     $wpdb->prefix . 'icl_languages_translations',
@@ -42,7 +76,11 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
 <div class="wrap">
     <div id="icon-options-general" class="icon32 icon32_adv" style="background: transparent url(<?php echo ICL_PLUGIN_URL; ?>/res/img/icon_adv.png) no-repeat;"><br /></div>
     <h2><?php echo __('Troubleshooting', 'sitepress') ?></h2>    
-    
+    <?php if(isset($_GET['message'])):?>
+    <div class="updated message fade"><p>
+    <?php echo $_GET['message'];?>
+    </p></div>
+    <?php endif?>
     <?php
     foreach($icl_tables as $icl_table){
         echo '<a href="#'.$icl_table.'_anch">'.$icl_table.'</a> | ';
@@ -128,6 +166,12 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
         <span class="icl_ajx_response" id="icl_ajx_response"></span>
     </p>    
     </form>
+      
+      
+    <h3><?php _e('Reset PRO translation configuration', 'sitepress')?></h3>
+    <p class="error" style="padding:6px;"><?php _e("Resetting your ICanLocalize account will interrupt any translation jobs that you have in progress. Only use this function if your ICanLocalize account doesn't include any jobs, or if the account was deleted.", 'sitepress'); ?></p>
+    <a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/troubleshooting.php&amp;debug_action=reset_pro_translation_configuration&amp;nonce=<?php echo wp_create_nonce('reset_pro_translation_configuration')?>" class="button"><?php _e('Reset PRO translation configuration', 'sitepress');?></a>
+
        
     <h3><?php _e('Database dump', 'sitepress')?></h3>
     <a class="button" href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/troubleshooting.php&amp;icl_action=dbdump"><?php _e('Download', 'sitepress') ?></a>
