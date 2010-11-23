@@ -1338,8 +1338,12 @@ class SitePress{
         }
         ?>
         <script type="text/javascript">   
-        // <![CDATA[     
+        // <![CDATA[    
+        <?php if(defined('FORCE_SSL_ADMIN') && FORCE_SSL_ADMIN): ?> 
+        var icl_ajx_url = '<?php echo str_replace('http://', 'https://', rtrim(get_option('siteurl'),'/')) . '/wp-admin/' ?>admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/languages.php';
+        <?php else: ?>
         var icl_ajx_url = '<?php echo rtrim(get_option('siteurl'),'/') . '/wp-admin/' ?>admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/languages.php';
+        <?php endif; ?>
         var icl_ajx_saved = '<?php echo icl_js_escape( __('Data saved','sitepress')); ?>';
         var icl_ajx_error = '<?php echo icl_js_escape( __('Error: data not saved','sitepress')); ?>';
         var icl_default_mark = '<?php echo icl_js_escape(__('default','sitepress')); ?>';     
