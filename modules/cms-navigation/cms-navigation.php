@@ -561,7 +561,7 @@ class CMSNavigation{
             $sub = $wpdb->get_results("
                     SELECT p1.ID, meta_value AS section FROM {$wpdb->posts} p1 
                     LEFT JOIN {$wpdb->postmeta} p2 ON p1.ID=p2.post_id AND (meta_key='_cms_nav_section' OR meta_key IS NULL)
-                    WHERE post_parent='{$pid}' AND post_status='publish' ORDER BY {$order}"); 
+                    WHERE post_parent='{$pid}' AND post_type='page' AND post_status='publish' ORDER BY {$order}"); 
             if(empty($sub))  return;                   
             foreach($sub as $s){
                 $sections[$s->section][] = $s->ID;    
