@@ -27,7 +27,7 @@ switch($_GET['debug_action']){
         mysql_query("TRUNCATE TABLE {$wpdb->prefix}icl_node");
         mysql_query("TRUNCATE TABLE {$wpdb->prefix}icl_reminders");
         
-        header("Location: admin.php?page=".basename(ICL_PLUGIN_PATH).'/menu/content-translation.php');
+        header("Location: admin.php?page=".basename(ICL_PLUGIN_PATH).'/menu/translation-management.php');
         exit;
     
 }

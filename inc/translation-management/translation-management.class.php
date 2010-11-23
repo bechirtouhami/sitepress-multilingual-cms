@@ -362,7 +362,7 @@ class TranslationManagement{
     function translator_exists($id, $from, $to, $type = 'local'){
         global $sitepress_settings;
         $exists = false;
-        if($type == 'icanlocalize'){
+        if($type == 'icanlocalize' && !empty($sitepress_settings['icl_lang_status'])){
             foreach($sitepress_settings['icl_lang_status'] as $lpair){
                 if($lpair['from'] == $from && $lpair['to'] == $to){
                     if(!empty($lpair['translators'])){
@@ -1958,8 +1958,6 @@ class TranslationManagement{
         $data['complete'] = 1;
         $data['job_id'] = $job_id;        
         $job = $this->get_translation_job($job_id,1);
-        
-        //debug_array($job);
         
         foreach($job->elements as $element){
             $field_data = '';
