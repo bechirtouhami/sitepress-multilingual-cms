@@ -119,8 +119,6 @@ if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQ
         $iclAbsoluteLinks = new AbsoluteLinksPlugin();
     }
 
-    // Professional Translation    
-    // require ICL_PLUGIN_PATH . '/modules/icl-translation/icl-translation.php';
     
     // Comments translation
     if($sitepress_settings['existing_content_language_verified']){
