@@ -5,7 +5,7 @@ Plugin URI: http://wpml.org/
 Description: WPML Multilingual CMS. <a href="http://wpml.org">Documentation</a>.
 Author: OnTheGoSystems
 Author URI: http://www.onthegosystems.com
-Version: 2.0.0 BETA 2
+Version: 2.0.0
 */
 
 /*
@@ -24,8 +24,6 @@ Version: 2.0.0 BETA 2
     You should have received a copy of the GNU General Public License
     along with ICanLocalize Translator.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-print_r(get_user_meta(3, $wpdb->prefix.'language_pairs'), 1);
 
 if(defined('ICL_SITEPRESS_VERSION')) return;
 define('ICL_SITEPRESS_VERSION', '2.0.0');
