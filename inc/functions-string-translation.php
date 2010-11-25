@@ -1506,12 +1506,20 @@ add_action('plugins_loaded', 'icl_st_set_admin_options_filters', 10);
 function icl_st_set_admin_options_filters(){
     $option_names = get_option('_icl_admin_option_names');
     if(!empty($option_names['theme'])){
-        foreach((array)$option_names['theme'][basename(get_template_directory())] as $option){
-            add_filter('option_'.$option, 'icl_st_translate_admin_string');
+        foreach((array)$option_names['theme'][basename(get_template_directory())] as $option_key=>$option){
+            if(is_array($option) || is_object($option)){
+                add_filter('option_'.$option_key, 'icl_st_translate_admin_string');        
+            }else{
+                add_filter('option_'.$option, 'icl_st_translate_admin_string');        
+            }                
         }
         if(get_template_directory() != get_stylesheet_directory()){
-            foreach((array)$option_names['theme'][basename(get_stylesheet_directory())] as $option){
-                add_filter('option_'.$option, 'icl_st_translate_admin_string');
+            foreach((array)$option_names['theme'][basename(get_stylesheet_directory())] as $option_key=>$option){
+                if(is_array($option) || is_object($option)){
+                    add_filter('option_'.$option_key, 'icl_st_translate_admin_string');        
+                }else{
+                    add_filter('option_'.$option, 'icl_st_translate_admin_string');        
+                }                
             }
         }
     }
@@ -1538,12 +1546,15 @@ function icl_st_translate_admin_string($option_value, $key="", $name=""){
         $serialized = true;
     }
     
+    //if(is_object($option_value)){
+        //$option_value = (array)$option_value;
+    //}
+    
     if(is_array($option_value) || is_object($option_value)){
         if(!$name){
-            $ob = debug_backtrace();
+            $ob = debug_backtrace();            
             $name = preg_replace('@^option_@', '', $ob[3]['args'][0]);
-        }
-        
+        }        
         foreach($option_value as $k=>$value){            
             $val = icl_st_translate_admin_string($value, $key . '[' . $name . ']' , $k);
             if(is_object($option_value)){
@@ -1554,21 +1565,18 @@ function icl_st_translate_admin_string($option_value, $key="", $name=""){
         }            
         
     }else{   
-
+        
         if(!$name){
             $ob = debug_backtrace();
             $name = preg_replace('@^option_@', '',$ob[2]['args'][0]);
         }
                 
+                
         $option_names = get_option('_icl_admin_option_names');                
         // determine theme/plugin name
         
-        
-        
-        
         if(!empty($option_names['theme'])){
-            foreach((array)$option_names['theme'][basename(get_template_directory())] as $ops){
-                
+            foreach((array)$option_names['theme'][basename(get_template_directory())] as $ops=>$val){                
                 if(!empty($key)){
                     $int = preg_match_all('#\[([^\]]+)\]#', $key, $matches);
                     if($int) $opname = $matches[1][0];
@@ -1581,8 +1589,9 @@ function icl_st_translate_admin_string($option_value, $key="", $name=""){
                     break;
                 }
             }
+            
             if(get_template_directory() != get_stylesheet_directory()){
-                foreach((array)$option_names['theme'][basename(get_stylesheet_directory())] as $ops){
+                foreach((array)$option_names['theme'][basename(get_stylesheet_directory())] as $ops=>$val){
                     
                     if(!empty($key)){
                         $int = preg_match_all('#\[([^\]]+)\]#', $key, $matches);
@@ -1622,8 +1631,10 @@ function icl_st_translate_admin_string($option_value, $key="", $name=""){
                     }
                 }            
             }
-        }        
+        }       
+         
         $tr = icl_t('admin_texts_' . $key_suff, $key . $name, $option_value);
+                
         if($tr !== null){
             $option_value = $tr;
         }

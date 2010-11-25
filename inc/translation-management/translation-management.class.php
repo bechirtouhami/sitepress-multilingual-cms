@@ -2149,13 +2149,14 @@ class TranslationManagement{
                     }
                 }
             }
-            
+                        
             foreach($arr as $key => $v){
                 $value = get_option($key);
-                if(is_scalar($value)){
+                $value = maybe_unserialize($value);                                
+                if(is_scalar($value)){                    
                     icl_register_string('admin_texts_' . $type . '_' . $atid, $key , $value);    
-                }else{
-                    $value = (array)maybe_unserialize($value);
+                }else{                    
+                    if(is_object($value)) $value = (array)$value;                    
                     if(!empty($value)){
                         $this->_register_string_recursive($key, $value, $arr[$key], '', $type . '_' . $atid);    
                     }
@@ -2165,7 +2166,7 @@ class TranslationManagement{
             
             $_icl_admin_option_names = get_option('_icl_admin_option_names');
             $_icl_admin_option_names[$type][$atid] = $this->_array_keys_recursive($arr);
-            update_option('_icl_admin_option_names', $_icl_admin_option_names);
+            update_option('_icl_admin_option_names', $_icl_admin_option_names);            
             
         }  
         
@@ -2252,15 +2253,18 @@ class TranslationManagement{
         static $option;
         if(!$option_key){
             $option = maybe_unserialize(get_option($option_name));
+            if(is_object($option)){
+                $option = (array)$option;
+            }
         }
         
-        $option_names = get_option('_icl_admin_option_names');
+        $option_names = get_option('_icl_admin_option_names');        
         // determine theme/plugin name (string context)
         if(!empty($option_names['theme'])){
-            foreach((array)$option_names['theme'][basename(get_template_directory())] as $ops){
+            foreach((array)$option_names['theme'][basename(get_template_directory())] as $ops=>$val){
                 
-                if(!empty($key)){
-                    $int = preg_match_all('#\[([^\]]+)\]#', $key, $matches);
+                if(!empty($option_key)){
+                    $int = preg_match_all('#\[([^\]]+)\]#', $option_key, $matches);
                     if($int) $opname = $matches[1][0];
                 }else{
                     $opname = $option_name;
@@ -2271,11 +2275,12 @@ class TranslationManagement{
                     break;
                 }
             }
+            
             if(get_template_directory() != get_stylesheet_directory()){
-                foreach((array)$option_names['theme'][basename(get_stylesheet_directory())] as $ops){
+                foreach((array)$option_names['theme'][basename(get_stylesheet_directory())] as $ops=>$val){
 
-                    if(!empty($key)){
-                        $int = preg_match_all('#\[([^\]]+)\]#', $key, $matches);
+                    if(!empty($option_key)){
+                        $int = preg_match_all('#\[([^\]]+)\]#', $option_key, $matches);
                         if($int) $opname = $matches[1][0];
                     }else{
                         $opname = $option_name;
@@ -2304,8 +2309,10 @@ class TranslationManagement{
         echo '<ul class="icl_tm_admin_options">';
         echo '<li>';
         
+        
         if(is_scalar($option_value)){
             $int = preg_match_all('#\[([^\]]+)\]#', $option_key, $matches);
+                        
             if(count($matches[1]) > 1){
                 $value = $option;
                 for($i = 1; $i < count($matches[1]); $i++){
