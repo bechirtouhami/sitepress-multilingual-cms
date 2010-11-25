@@ -62,6 +62,7 @@
 
     <?php if(isset($notice)) echo $notice ?>
         
+    <div style="width:50%;float:left;margin-right:12px;">
     <form id="icl_doc_translation_method" name="icl_doc_translation_method" action="">        
     <table class="widefat">
         <thead>
@@ -71,7 +72,7 @@
         </thead>
         <tbody>
             <tr>
-                <td>
+                <td style="border: none;">
                     <ul>
                         <li><label><input type="radio" name="t_method" value="<?php echo ICL_TM_TMETHOD_MANUAL ?>" <?php if($doc_translation_method==ICL_TM_TMETHOD_MANUAL): ?>checked="checked"<?php endif; ?> /> 
                             <?php _e('Create translations manually', 'sitepress')?></label></li>
@@ -88,7 +89,50 @@
         </tbody>
     </table>
     </form>
-    <br />
+    </div>
+    
+    <div style="width:49%;float:left;">
+    <form name="icl_tdo_options" id="icl_tdo_options" action="">
+    <table class="widefat">
+        <thead>
+            <tr>
+                <th colspan="2"><?php _e('Translated documents options', 'sitepress') ?></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="border: none;"><?php _e('Document status', 'sitepress')?></td>
+                <td style="border: none;">
+                    <ul>
+                        <li>
+                            <p>
+                            <label><input type="radio" name="icl_translated_document_status" value="0" 
+                                <?php if(!$sitepress_settings['translated_document_status']): ?>checked="checked"<?php endif;?> /> 
+                                <?php echo __('Draft', 'sitepress') ?>
+                            </label>&nbsp;
+                            <label><input type="radio" name="icl_translated_document_status" value="1" 
+                                <?php if($sitepress_settings['translated_document_status']): ?>checked="checked"<?php endif;?> /> 
+                                <?php echo __('Same as the original document', 'sitepress') ?>
+                            </label>     
+                            </p>
+                            <i><?php echo __("Choose if translations should be published when received. Note: If Publish is selected, the translation will only be published if the original node is published when the translation is received.", 'sitepress') ?></i>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="border: none;">
+                    <input type="submit" class="button-secondary" value="<?php _e('Save', 'sitepress')?>" />
+                    <span class="icl_ajx_response" id="icl_ajx_response_tdo"></span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    </form>
+    </div>
+    
+    <br clear="all" />
+    <br>
     
     <form id="icl_page_sync_options" name="icl_page_sync_options" action="">        
     <table class="widefat">
@@ -99,7 +143,7 @@
         </thead>
         <tbody>
             <tr>
-                <td>
+                <td style="border: none;">
                     <br />                    
                     <p>
                         <label><input type="checkbox" id="icl_sync_page_ordering" name="icl_sync_page_ordering" <?php if($sitepress_settings['sync_page_ordering']): ?>checked="checked"<?php endif; ?> value="1" />
@@ -134,7 +178,7 @@
                         <span class="icl_ajx_response" id="icl_ajx_response_mo"></span>
                     </p>                    
                 </td>
-                <td>
+                <td style="border: none;">
                     <br />                    
                     <p>
                         <label><input type="checkbox" name="icl_sync_delete" <?php if($sitepress_settings['sync_delete']): ?>checked="checked"<?php endif; ?> value="1" />
@@ -162,7 +206,7 @@
         <tbody>
             <?php if(empty($cf_keys)): ?>
             <tr>
-                <td colspan="2">
+                <td colspan="2" style="border: none;">
                     <?php _e('No custom fields found. It is possible that they will only show up here after you add more posts after installing a new plugin.', 'sitepress'); ?>
                 </td>
             </tr>
@@ -184,7 +228,7 @@
             </tr>
             <?php endforeach; ?>
             <tr>
-                <td colspan="2">
+                <td colspan="2" style="border: none;">
                     <p>
                         <input type="submit" class="button" value="<?php _e('Save', 'sitepress') ?>" />
                         <span class="icl_ajx_response" id="icl_ajx_response_cf"></span>

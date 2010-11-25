@@ -212,20 +212,10 @@ switch($_REQUEST['icl_ajx_action']){
         $this->save_settings($iclsettings);
         echo '1|'.$redir;
         break;
-    case 'icl_more_options':
-        $this->update_icl_more_options();
-
-        $ret = update_icl_account();
-        if($ret){
-            echo '1| ('. __('Not updated on ICanLocalize: ', 'sitepress') . $ret . ')';
-            break;
-        }
-        if(isset($is_error)){
-            echo '0|'.$is_error;
-        }else{
-            echo 1; 
-        }
-        
+    case 'icl_tdo_options':
+        $iclsettings['translated_document_status'] = intval($_POST['icl_translated_document_status']);
+        $this->save_settings($iclsettings);
+        echo '1|';
        break;
     case 'icl_plugins_texts':
         update_option('icl_plugins_texts_enabled', $_POST['icl_plugins_texts_enabled']);

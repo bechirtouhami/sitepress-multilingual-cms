@@ -428,10 +428,11 @@ class SitePress{
                 }
             }
             
-            if($this->settings['language_negotiation_type']==3){
+            
+            //if($this->settings['language_negotiation_type']==3){
                // fix pagenum links for when using the language as a parameter 
-               add_filter('get_pagenum_link', array($this,'get_pagenum_link_filter'));         
-            }
+            //   add_filter('get_pagenum_link', array($this,'get_pagenum_link_filter'));         
+            //}
             
             // filter some queries
             add_filter('query', array($this, 'filter_queries'));                
@@ -772,7 +773,6 @@ class SitePress{
             'sync_sticky_flag' => 1,
             'sync_private_flag' => 1,
             'sync_delete' => 0,            
-            'translated_document_status' => 0,
             'translation_pickup_method' => 0,
             'notify_complete' => 1,
             'translated_document_status' => 1,
@@ -826,42 +826,7 @@ class SitePress{
         $response = $client->request(get_option('home') . '/' . $language_code .'/' . $url_glue . '____icl_validate_domain=1', array('timeout'=>15, 'decompress'=>false));
         return (!is_wp_error($response) && ($response['response']['code']=='200') && ($response['body'] == '<!--'.get_option('home').'-->'));
     }
-    
-    function update_icl_more_options() {
-        $iclsettings['translator_choice'] = $_POST['icl_translator_choice'];
-        switch($_POST['icl_translator_choice']) {
-            case '0':
-                $iclsettings['website_kind'] = 2;
-                $iclsettings['interview_translators'] = 1;
-                break;
-                
-            case '1':
-                $iclsettings['website_kind'] = 2;
-                $iclsettings['interview_translators'] = 1;
-                break;
-                
-            default:
-                $iclsettings['website_kind'] = 0;
-                $iclsettings['interview_translators'] = 0;
-                break;
-                
-                
-        }
-
-        $iclsettings['translation_pickup_method'] = $_POST['icl_delivery_method'];        
-        if ($iclsettings['translation_pickup_method'] == 1){
-            add_action('poll_for_translations', 'icl_poll_for_translations');
-            wp_schedule_event(time(), 'hourly', 'poll_for_translations');
-        } else {
-            wp_clear_scheduled_hook('poll_for_translations');            
-        }
-        $iclsettings['translated_document_status'] = $_POST['icl_translated_document_status'];        
-        $iclsettings['alert_delay'] = intval($_POST['icl_alert_delay']);
-        $iclsettings['notify_complete'] = intval($_POST['icl_notify_complete']);
-        $iclsettings['remote_management'] = intval($_POST['icl_remote_management']);
-        $this->save_settings($iclsettings);
-    }
-
+        
     function save_language_pairs() {    
         // clear existing languages
         $lang_pairs = $this->settings['language_pairs'];
@@ -3275,6 +3240,13 @@ class SitePress{
     
     // filter for WP home_url function
     function home_url($url, $path, $orig_scheme, $blog_id){
+        
+        // exception for get_page_num_link and language_negotiation_type = 3
+        if($this->settings['language_negotiation_type'] == 3){
+            $db = debug_backtrace();
+            if($db[6]['function'] == 'get_pagenum_link') return $url;            
+        }
+        
         // only apply this for home url - not for posts or page permalinks since this filter is called there too
         if(did_action('template_redirect') && rtrim($url,'/') == rtrim(get_option('home'),'/')){
             $url = $this->convert_url($url);
@@ -3283,7 +3255,7 @@ class SitePress{
     }
     
     // converts WP generated url to language specific based on plugin settings
-    function convert_url($url, $code=null){
+    function convert_url($url, $code=null){ 
         if(is_null($code)){
             $code = $this->this_lang;
         }
@@ -3302,7 +3274,7 @@ class SitePress{
                     $url = str_replace($abshome, $this->settings['language_domains'][$code], $url);
                     break;                
                 case '3':
-                default:
+                default:                    
                     if(false===strpos($url,'?')){
                         $url_glue = '?';
                     }else{
@@ -3311,8 +3283,8 @@ class SitePress{
                         }else{
                             $url_glue = '&amp;';
                         }                                                
-                    }                    
-                    $url .= $url_glue . 'lang=' . $code;
+                    } 
+                    $url .= $url_glue . 'lang=' . $code;                    
             }
         }
       return $url;  
@@ -4011,13 +3983,13 @@ class SitePress{
     }
        
     // Navigation
-    function get_pagenum_link_filter($url){
+    //function get_pagenum_link_filter($url){
         // fix pagenum links for when using the language as a parameter 
         // remove language query string appended by WP
         // WPML adds the language parameter after the url is built
-        $url = str_replace(get_option('home') . '?lang=' . $this->get_current_language(), get_option('home'), $url);
-        return $url;
-    }
+    //    $url = str_replace(get_option('home') . '?lang=' . $this->get_current_language(), get_option('home'), $url);
+    //    return $url;
+    //}
     
     function pre_option_home(){                              
         $dbbt = debug_backtrace();                                     
@@ -4026,7 +3998,7 @@ class SitePress{
         if($dbbt['4']['function']=='get_bloginfo' && $dbbt['5']['function']=='bloginfo'){  // case of bloginfo
             $is_template_file = false !== strpos($dbbt[5]['file'], realpath(TEMPLATEPATH));
             $is_direct_call   = in_array($dbbt[6]['function'], $inc_methods) || (false !== strpos($dbbt[6]['file'], realpath(TEMPLATEPATH)));
-        }elseif($dbbt['4']['function']=='get_bloginfo'){  // case of get_bloginfo
+        }elseif($dbbt['4']['function']=='get_bloginfo'){  // case of get_bloginfo            
             $is_template_file = false !== strpos($dbbt[4]['file'], realpath(TEMPLATEPATH));
             $is_direct_call   = in_array($dbbt[5]['function'], $inc_methods) || (false !== strpos($dbbt[5]['file'], realpath(TEMPLATEPATH)));
         }elseif($dbbt['4']['function']=='get_settings'){  // case of get_settings
@@ -4630,11 +4602,11 @@ class SitePress{
     
     function _allow_calling_template_file_directly(){
         if(is_404()){  
-            global $wp_query, $wpdb;
-            $wp_query->is_404 = false;            
+            global $wp_query, $wpdb;            
             $parts = parse_url(get_bloginfo('home'));
             $req = str_replace($parts['path'], '', $_SERVER['REQUEST_URI']);
             if(file_exists(ABSPATH . $req) && !is_dir(ABSPATH . $req)){                
+                $wp_query->is_404 = false;            
                 header('HTTP/1.1 200 OK');
                 include ABSPATH . $req;
                 exit;

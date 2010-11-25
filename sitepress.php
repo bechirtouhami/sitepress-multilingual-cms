@@ -1,4 +1,4 @@
-<?php  
+<?php 
 /*
 Plugin Name: WPML Multilingual CMS
 Plugin URI: http://wpml.org/

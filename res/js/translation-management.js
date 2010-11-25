@@ -221,7 +221,7 @@ jQuery(document).ready(function(){
         }
     });
 
-    
+    jQuery('#icl_tdo_options').submit(iclSaveForm); 
     
 })
 
