@@ -81,21 +81,20 @@ if(!empty($sitepress_settings['default_translators'][$icl_translation_filter['fr
 $icl_translation_services = apply_filters('icl_translation_services', array());
 $icl_translation_services = array_merge($icl_translation_services, TranslationManagement::icanlocalize_service_info());
 if (!empty($icl_translation_services)) {
-    $output = '';
-    $output .= '<div class="icl-translation-services" style="margin-bottom:20px">';
+    $icls_output = '';
+    $icls_output .= '<div class="icl-translation-services" style="margin-bottom:20px">';
     foreach ($icl_translation_services as $key => $service) {
-        $output .= '<div class="icl-translation-service">';
-        $output .= '<img src="' . $service['logo'] . '" alt="' . $service['name'] . '" />';
-        $output .= '<p style="width:500px;">' . $service['description'] . '</p>';
-        $output .= isset($service['setup_url_dashboard'])
+        $icls_output .= '<div class="icl-translation-service">';
+        $icls_output .= '<img src="' . $service['logo'] . '" alt="' . $service['name'] . '" />';
+        $icls_output .= '<p style="width:500px;">' . $service['description'] . '</p>';
+        $icls_output .= isset($service['setup_url_dashboard'])
             ? '<a href="' . $service['setup_url_dashboard'][1] . '" title="'
                 . $service['name'] . '">' . $service['setup_url_dashboard'][0]
                 . '</a>'
             : '';
-        $output .= '</div>';
+        $icls_output .= '</div>';
     }
-    $output .= '</div>';
-    echo $output;    
+    $icls_output .= '</div>';    
 }
 ?>
 
@@ -105,11 +104,11 @@ if (!empty($icl_translation_services)) {
     <table class="form-table widefat fixed">
         <thead>
         <tr>
-            <th scope="col"><strong><?php _e('Select which documents to display','sitepress')?></strong></th>
+            <th scope="col" colspan="2"><strong><?php _e('Select which documents to display','sitepress')?></strong></th>
         </tr>
         </thead>        
         <tr valign="top">
-            <td>
+            <td colspan="2">
                 <img id="icl_dashboard_ajax_working" align="right" src="<?php echo ICL_PLUGIN_URL ?>/res/img/ajax-loader.gif" style="display: none;" width="16" height="16" alt="loading..." />
                 <label>
                     <strong><?php echo __('Show documents in:', 'sitepress') ?></strong>
@@ -148,12 +147,10 @@ if (!empty($icl_translation_services)) {
                     </select>
                 </label>                
                 <br />
-                
-                <a href="#hide-advanced-filters" <?php if(!$icl_dashboard_settings['advanced_filters']): ?>style="display: none"<?php endif; ?>><?php _e('Hide advanced filters', 'sitepress'); ?></a>
-                <a href="#show-advanced-filters" <?php if($icl_dashboard_settings['advanced_filters']): ?>style="display: none"<?php endif; ?>><?php _e('Show advanced filters', 'sitepress'); ?></a>                
+            
             </td>
         </tr>
-        <tr id="icl_dashboard_advanced_filters" valign="top" <?php if(!$icl_dashboard_settings['advanced_filters']): ?>style="display: none;"<?php endif; ?>>
+        <tr id="icl_dashboard_advanced_filters" valign="top">
             <td>                
                 <strong><?php echo __('Filters:', 'sitepress') ?></strong><br />
                 <label><input type="checkbox" name="filter[status_on]" <?php if($icl_translation_filter['status_on']):?>checked="checked"<?php endif?> />&nbsp;
@@ -175,12 +172,11 @@ if (!empty($icl_translation_services)) {
                 <label><input type="checkbox" name="filter[title_on]" <?php if($icl_translation_filter['title_on']):?>checked="checked"<?php endif?> />&nbsp;
                     <?php _e('Title:', 'sitepress')?></label> 
                     <input type="text" name="filter[title]" value="<?php echo $icl_translation_filter['title'] ?>" />
+                    <br />
+                    <p style="margin-left:133px"><input name="translation_dashboard_filter" class="button-primary" type="submit" value="<?php echo __('Display','sitepress')?>" /></p>
             </td>
-        </tr>
-        <tr>
-            <td align="right">
-                <a class="submitdelete deletion" href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/translation-management.php&sm=dashboard&icl_tm_action=reset_filters"><?php _e('Reset filters', '&nbsp;'); ?></a>&nbsp;
-                <input name="translation_dashboard_filter" class="button" type="submit" value="<?php echo __('Display','sitepress')?>" />
+            <td align="right">                
+                <?php echo $icls_output; ?>   
             </td>
         </tr>
     </table>

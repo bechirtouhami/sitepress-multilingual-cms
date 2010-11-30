@@ -1,10 +1,14 @@
 <?php //included from menu translation-management.php ?>
 <?php if ( current_user_can('list_users') ):
-
 add_filter('icl_translators_list', 'icl_icanlocalize_translators_list');
 add_filter('icl_translation_services_button', 'icl_local_add_translator_button');
 add_filter('icl_translation_services_button', array('TranslationManagement', 'icanlocalize_service_info'));
-
+?>
+<?php if(!empty($sitepress_settings['translators_management_info'])):?>
+    <h3><?php _e('ICanLocalize', 'sitepress'); ?></h3>
+    <?php echo $sitepress_settings['translators_management_info']; ?>
+<?php endif; ?>
+<?php 
 if ($selected_translator->ID) {
   
   // Edit form
@@ -83,12 +87,7 @@ $blog_users_t = TranslationManagement::get_blog_translators();
 // Translators added via hook
 $other_service_translators = array();
 $other_service_translators = apply_filters('icl_translators_list', $other_service_translators);
-?>
-        <?php if(!empty($sitepress_settings['translators_management_info'])):?>
-        <h3><?php _e('ICanLocalize', 'sitepress'); ?></h3>
-        <?php echo $sitepress_settings['translators_management_info']; ?>
-        <?php endif; ?>
-        
+?>        
         <?php if(!empty($blog_users_t) || !empty($other_service_translators)): ?>
             <h3><?php _e('Current translators', 'sitepress'); ?></h3>
             <table class="widefat fixed" cellspacing="0">

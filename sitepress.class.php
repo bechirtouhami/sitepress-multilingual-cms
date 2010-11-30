@@ -1059,7 +1059,6 @@ class SitePress{
             $res = $icl_query->get_website_details();
             
         }
-        
         if(isset($res['translation_languages']['translation_language'])){
                 
             // reset $this->settings['icl_lang_status']
@@ -1117,7 +1116,7 @@ class SitePress{
             $iclsettings['translators_management_info'] = html_entity_decode($res['translators_management_info']['value']);
             $iclsettings['translators_management_info'] = preg_replace_callback('#<a([^>]*)href="([^"]+)"([^>]*)>#i', create_function(
                 '$matches',
-                'global $sitepress; return $sitepress->create_icl_popup_link($matches[2]);'
+                'global $sitepress; return $sitepress->create_icl_popup_link($matches[2], array(\'unload_cb\'=>\'icl_thickbox_refresh\'));'
             ) ,$iclsettings['translators_management_info']);
         }
         
@@ -1285,6 +1284,7 @@ class SitePress{
         }
         
         $unload_cb = $unload_cb ? '&amp;unload_cb=' . $unload_cb : '';
+                
         $url_glue = false !== strpos($link,'?') ? '&' : '?';
         $link .= $url_glue . 'compact=1';
 
@@ -1299,12 +1299,12 @@ class SitePress{
 		if (!is_null($id)) {
 			$id = ' id="' . $id . '"';
 		}
-		    if ($title && !$just_url) {
+		if ($title && !$just_url) {
             return '<a class="icl_thickbox ' . $class . '" title="' . $title . '" href="admin.php?page='.ICL_PLUGIN_FOLDER . 
                 "/menu/languages.php&amp;icl_action=reminder_popup{$auto_resize}{$unload_cb}&amp;target=" . urlencode($link) .'"' . $id . '>';
         } else if (!$just_url) {
             return '<a class="icl_thickbox ' . $class . '" href="admin.php?page='.ICL_PLUGIN_FOLDER .
-                "/menu/languages.php&amp;icl_action=reminder_popup{$auto_resize}&amp;target=" . urlencode($link) .'"' . $id . '>';
+                "/menu/languages.php&amp;icl_action=reminder_popup{$auto_resize}{$unload_cb}&amp;target=" . urlencode($link) .'"' . $id . '>';
         } else {
             return 'admin.php?page='.ICL_PLUGIN_FOLDER . "/menu/languages.php&amp;icl_action=reminder_popup{$auto_resize}{$unload_cb}&amp;target=" . urlencode($link);
         }
@@ -5350,7 +5350,7 @@ class SitePress{
         if (!empty($cposts_sync_not_set)) {
             $notice = '<p class="updated fade">';
             $notice .= sprintf(__("You haven't set your <a %s>synchronization preferences</a> for these custom posts: %s. Default value was selected.", 'sitepress'),
-                            'href="admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/translation-synchronization.php"', '<i>' . join('</i>, <i>', $cposts_sync_not_set) . '</i>');
+                            'href="admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/translation-management.php&sm=mcsetup"', '<i>' . join('</i>, <i>', $cposts_sync_not_set) . '</i>');
             $notice .= '</p>';
         }
 
@@ -5363,7 +5363,7 @@ class SitePress{
         if (!empty($tax_sync_not_set)) {
             $notice .= '<p class="updated">';
             $notice .= sprintf(__("You haven't set your <a %s>synchronization preferences</a> for these taxonomies: %s. Default value was selected.", 'sitepress'),
-                            'href="admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/translation-synchronization.php"', '<i>' . join('</i>, <i>', $tax_sync_not_set) . '</i>');
+                            'href="admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/translation-management.php&sm=mcsetup"', '<i>' . join('</i>, <i>', $tax_sync_not_set) . '</i>');
             $notice .= '</p>';
         }
 

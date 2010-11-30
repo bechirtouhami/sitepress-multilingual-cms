@@ -89,7 +89,7 @@ if($sitepress_settings['existing_content_language_verified']){
                 </tr>
                 
                 <tr>
-                    <td><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/translation-synchronization.php"><?php _e('Translation synchronization', 'sitepress')?></a></td>
+                    <td><a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/translation-management.php&sm=mcsetup"><?php _e('Translation synchronization', 'sitepress')?></a></td>
                     <td><?php _e('Controls how to synchronize between contents in different languages.','sitepress') ?></td>
                 </tr>
                 

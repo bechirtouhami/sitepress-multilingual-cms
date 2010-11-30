@@ -477,7 +477,7 @@ switch($_REQUEST['icl_ajx_action']){
         $iclsettings['last_get_translator_status_call'] = time();
         $this->get_icl_translator_status($iclsettings);
         $this->save_settings($iclsettings);
-        
+                
         echo json_encode($iclsettings['icl_lang_status']);
         break;
     

@@ -41,6 +41,7 @@
 
 .nav-tab{
     background-color: #efefef;
+    color: #000;
 }
 .nav-tab:hover{
     background-color: #fff;
