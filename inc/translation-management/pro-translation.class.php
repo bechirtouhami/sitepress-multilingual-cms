@@ -368,7 +368,7 @@ class ICL_Pro_Translation{
                     return 4;
                 }
                 
-                if ($this->_legacy_process_translated_document($request_id, $language, $args) === true){
+                if ($this->_legacy_process_translated_document($request_id, $language, $args)){
                     $this->_throw_exception_for_mysql_errors();
                     return 1;
                 } else {

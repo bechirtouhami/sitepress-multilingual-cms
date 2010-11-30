@@ -1,5 +1,4 @@
 <?php 
-
 $job = $iclTranslationManagement->get_translation_job((int)$_GET['job_id'], false, true); // don't include not-translatable and auto-assign
 if(empty($job)){
     $job_checked = true;
@@ -108,7 +107,7 @@ if(empty($job)){
                                 <div class="icl_multiple"><?php echo $c ?></div>
                                 <?php endforeach;?>
                                 <?php else: ?>
-                                <div class="icl_single"><?php echo $icl_tm_original_content ?><br clear="all"/></div>
+                                <div class="icl_single"><?php echo esc_html($icl_tm_original_content) ?><br clear="all"/></div>
                                 <?php endif; ?>
                             </div>
                             <?php /* ORIGINAL CONTENT */ ?>

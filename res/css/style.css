@@ -11,6 +11,10 @@
     -moz-border-radius-bottomright:3px;
     -moz-border-radius-topleft:3px;
     -moz-border-radius-topright:3px;
+    border-bottom-left-radius: 3px 3px;
+    border-bottom-right-radius: 3px 3px;
+    border-top-left-radius: 3px 3px;
+    border-top-right-radius: 3px 3px;
 }
 .icl_form_errors p{
     line-height:1.5;

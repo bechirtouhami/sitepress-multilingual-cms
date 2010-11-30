@@ -134,8 +134,7 @@ class ICanLocalizeQuery{
         if($gzipped){
             $c->results = $this->_gzdecode($c->results);
         }        
-        $results = icl_xml2array($c->results,1);                
-
+        $results = icl_xml2array($c->results,1);                        
         if(isset($results['info']) && $results['info']['status']['attr']['err_code']=='-1'){
             $this->error = $results['info']['status']['value'];            
             return false;
@@ -272,7 +271,7 @@ class ICanLocalizeQuery{
         
         $request_url = ICL_API_ENDPOINT . '/websites/' . $this->site_id . '/cms_requests/'.$request_id.'/cms_download?accesskey=' . $this->access_key . '&language=' . $language;                        
         $res = $this->_request_gz($request_url); 
-                       
+    
         $content = $res['cms_request_details']['contents']['content'];
                 
         $translation = array();

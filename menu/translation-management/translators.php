@@ -73,6 +73,7 @@ if ($selected_translator->ID) {
   }
 }
 
+
 // Translators lists
 
 // Local translators
@@ -83,6 +84,10 @@ $blog_users_t = TranslationManagement::get_blog_translators();
 $other_service_translators = array();
 $other_service_translators = apply_filters('icl_translators_list', $other_service_translators);
 ?>
+        <?php if(!empty($sitepress_settings['translators_management_info'])):?>
+        <h3><?php _e('ICanLocalize', 'sitepress'); ?></h3>
+        <?php echo $sitepress_settings['translators_management_info']; ?>
+        <?php endif; ?>
         
         <?php if(!empty($blog_users_t) || !empty($other_service_translators)): ?>
             <h3><?php _e('Current translators', 'sitepress'); ?></h3>
@@ -332,7 +337,7 @@ function icl_icanlocalize_translators_list($array) {
   
   $translators = array();
   foreach($lang_status as $lpair){
-      foreach($lpair['translators'] as $translator){
+      foreach((array)$lpair['translators'] as $translator){
         $translators[$translator['id']]['name'] = $translator['nickname'];
         $translators[$translator['id']]['langs'][$lpair['from']][] = $lpair['to'];
         $translators[$translator['id']]['type'] = 'ICanLocalize';

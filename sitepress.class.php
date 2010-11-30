@@ -264,7 +264,15 @@ class SitePress{
         add_action('wp_dashboard_setup', array($this, 'dashboard_widget_setup'));
         if(is_admin() && $pagenow == 'index.php'){
             add_action('icl_dashboard_widget_notices', array($this, 'print_translatable_custom_content_status'));    
+            if(trim(get_option('permalink_structure'), '/') == '%postname%'){
+                add_action('icl_dashboard_widget_notices', array($this, 'warn_permalink_structure'));    
+            }
         }
+        
+        if($pagenow == 'options-permalink.php' && trim(get_option('permalink_structure'), '/') == '%postname%'){
+            add_action('admin_notices', array($this, 'warn_permalink_structure'));    
+        }
+        
     }
              
     function init(){ 
@@ -359,7 +367,7 @@ class SitePress{
                         }elseif(isset($_GET['p'])){         
                             $post_type = $wpdb->get_var($wpdb->prepare("SELECT post_type FROM {$wpdb->posts} WHERE ID=%d", $_GET['p']));
                             $this->this_lang = $wpdb->get_var($wpdb->prepare("SELECT language_code FROM {$wpdb->prefix}icl_translations WHERE element_type=%s AND element_id=%d", 
-                                'post_' . $post_type, $_GET['p']));  
+                                'post_' . $post_type, $_GET['p']));                                  
                         }elseif(isset($_GET['cat_ID'])){
                             $cat_tax_id = $wpdb->get_var($wpdb->prepare("SELECT term_taxonomy_id FROM {$wpdb->term_taxonomy} WHERE term_id=%d AND taxonomy=%s",
                                 $_GET['cat_ID'], 'category'));
@@ -374,11 +382,12 @@ class SitePress{
                                 WHERE element_type='tax_category' AND element_id=%d", $tax_tax_id));                                                        
                         }                        
                         //
-                        if(!isset($_GET['lang']) && $this->this_lang != $this->get_default_language()){
+                        if(!isset($_GET['lang']) && ($this->this_lang != $this->get_default_language())){
                             if(!isset($GLOBALS['wp_rewrite'])){
                                 require_once ABSPATH . WPINC . '/rewrite.php'; 
                                 $GLOBALS['wp_rewrite'] = new WP_Rewrite();
-                            }                            
+                            } 
+                            define('ICL_DOING_REDIRECT', true);
                             if(isset($_GET['page_id'])){         
                                 wp_redirect(get_page_link($_GET['page_id']), '301');
                                 exit;
@@ -1102,6 +1111,14 @@ class SitePress{
                 '$matches',
                 'global $sitepress; return $sitepress->create_icl_popup_link($matches[2]);'
             ) ,$iclsettings['icl_html_status']);
+        }
+
+        if(isset($res['translators_management_info']['value'])){
+            $iclsettings['translators_management_info'] = html_entity_decode($res['translators_management_info']['value']);
+            $iclsettings['translators_management_info'] = preg_replace_callback('#<a([^>]*)href="([^"]+)"([^>]*)>#i', create_function(
+                '$matches',
+                'global $sitepress; return $sitepress->create_icl_popup_link($matches[2]);'
+            ) ,$iclsettings['translators_management_info']);
         }
         
         $iclsettings['icl_support_ticket_id'] = $res['attr']['support_ticket_id'];
@@ -3278,7 +3295,7 @@ class SitePress{
                     if(false===strpos($url,'?')){
                         $url_glue = '?';
                     }else{
-                        if(isset($_POST['comment'])){ // will be used for a redirect
+                        if(isset($_POST['comment']) || defined('ICL_DOING_REDIRECT')){ // will be used for a redirect
                             $url_glue = '&';
                         }else{
                             $url_glue = '&amp;';
@@ -5379,6 +5396,7 @@ class SitePress{
             }
         }
     }
+    
     function dashboard_widget(){        
         do_action('icl_dashboard_widget_notices');        
         include_once ICL_PLUGIN_PATH . '/menu/dashboard-widget.php';
@@ -5408,6 +5426,25 @@ class SitePress{
                 }
             }
         }
+    }
+    
+    function warn_permalink_structure(){        
+        global $pagenow;
+        if($pagenow == 'options-permalink.php'):
+        ?>
+        <div class="error message fade">
+            <p><?php printf(__("This permalink format can cause problems with translations. See <a href=%s>WPML's minimum requirement page</a>.", 
+                'sitepress'), '"http://wpml.org/?page_id=716"') ?></p>
+        </div>
+        <?php
+        else:
+        ?>
+        <div class="icl_form_errors" style="width: 98%;">
+            <p><?php printf(__("The current permalink format can cause problems with translations. See <a href=%s>WPML's minimum requirement page</a>.", 
+                'sitepress'), '"http://wpml.org/?page_id=716"') ?></p>
+        </div>        
+        <?php
+        endif;
     }
     
        

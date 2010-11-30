@@ -28,7 +28,7 @@ class TranslationManagement{
     public $admin_texts_to_translate = array();
     
     function __construct(){
-        add_action('init', array($this, 'init'));
+        add_action('init', array($this, 'init'), 15);
         add_action('admin_menu', array($this, 'menu'));
         
         if(isset($_GET['icl_tm_message'])){
@@ -594,6 +594,7 @@ class TranslationManagement{
             
             if($translation_id){
                 $translation_package = $this->create_translation_package($original_post_id);                    
+                
                 list($rid, $update) = $this->update_translation_status(array(
                     'translation_id'        => $translation_id,
                     'status'                => ICL_TM_COMPLETE,
@@ -1190,7 +1191,8 @@ class TranslationManagement{
                     );
                 }
             }
-        }                   
+        } 
+        
         foreach((array)$sitepress->get_translatable_taxonomies(true, $post->post_type) as $taxonomy){
             $terms = get_the_terms( $post->ID , $taxonomy );
             if(!empty($terms)){
