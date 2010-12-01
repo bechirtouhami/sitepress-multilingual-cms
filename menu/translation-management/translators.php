@@ -1,6 +1,5 @@
 <?php //included from menu translation-management.php ?>
 <?php if ( current_user_can('list_users') ):
-add_filter('icl_translators_list', 'icl_icanlocalize_translators_list');
 add_filter('icl_translation_services_button', 'icl_local_add_translator_button');
 add_filter('icl_translation_services_button', array('TranslationManagement', 'icanlocalize_service_info'));
 ?>
@@ -84,9 +83,7 @@ if ($selected_translator->ID) {
 $blog_users_nt = TranslationManagement::get_blog_not_translators();
 $blog_users_t = TranslationManagement::get_blog_translators();
 
-// Translators added via hook
-$other_service_translators = array();
-$other_service_translators = apply_filters('icl_translators_list', $other_service_translators);
+$other_service_translators = TranslationManagement::icanlocalize_translators_list();
 ?>        
         <?php if(!empty($blog_users_t) || !empty($other_service_translators)): ?>
             <h3><?php _e('Current translators', 'sitepress'); ?></h3>
@@ -316,36 +313,5 @@ function icl_local_edit_translator_form($action = 'add', $selected_translator = 
     $return['content'] = $output;
 
     return ($action == 'edit') ? $output : $return;
-}
-
-/**
- * Implementation of 'icl_translators_list' hook
- *
- * @global object $sitepress
- * @param array $array
- * @return array
- */
-function icl_icanlocalize_translators_list($array) {  
-  global $sitepress_settings, $sitepress;
-  
-  $lang_status = (array)$sitepress_settings['icl_lang_status'];
-  if (0 != key($lang_status)){
-    $buf[] = $lang_status;  
-    $lang_status = $buf;    
-  }
-  
-  $translators = array();
-  foreach($lang_status as $lpair){
-      foreach((array)$lpair['translators'] as $translator){
-        $translators[$translator['id']]['name'] = $translator['nickname'];
-        $translators[$translator['id']]['langs'][$lpair['from']][] = $lpair['to'];
-        $translators[$translator['id']]['type'] = 'ICanLocalize';
-        $translators[$translator['id']]['action'] = $sitepress->create_icl_popup_link(ICL_API_ENDPOINT . '/websites/' . $sitepress_settings['site_id']
-            . '/website_translation_offers/' . $lpair['id'] . '/website_translation_contracts/'
-            . $translator['contract_id'], array('title' => __('Chat with translator', 'sitepress'), 'unload_cb' => 'icl_thickbox_refresh')) . __('Chat with translator', 'sitepress') . '</a>';        
-      }
-  }
-
-  return array_merge($translators, $array);
 }
 ?>

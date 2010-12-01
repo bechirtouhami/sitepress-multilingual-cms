@@ -47,6 +47,8 @@ class TranslationManagement{
         if(isset($_GET['sm']) && ($_GET['sm'] == 'dashboard' || $_GET['sm'] == 'jobs')){session_start();}
         elseif(isset($_GET['page']) && $_GET['page'] == ICL_PLUGIN_FOLDER. '/menu/translations-queue.php'){session_start();}
         add_filter('icl_additional_translators', array($this, 'icl_additional_translators'), 99, 3);
+        
+        add_filter('icl_translators_list', array($this, 'icanlocalize_translators_list'));
                 
     }
     
@@ -414,6 +416,37 @@ class TranslationManagement{
         return $users;
     }
 
+    /**
+     * Implementation of 'icl_translators_list' hook
+     *
+     * @global object $sitepress
+     * @param array $array
+     * @return array
+     */
+    public function icanlocalize_translators_list() {  
+      global $sitepress_settings, $sitepress;
+      
+      $lang_status = (array)$sitepress_settings['icl_lang_status'];
+      if (0 != key($lang_status)){
+        $buf[] = $lang_status;  
+        $lang_status = $buf;    
+      }
+      
+      $translators = array();
+      foreach($lang_status as $lpair){
+          foreach((array)$lpair['translators'] as $translator){
+            $translators[$translator['id']]['name'] = $translator['nickname'];
+            $translators[$translator['id']]['langs'][$lpair['from']][] = $lpair['to'];
+            $translators[$translator['id']]['type'] = 'ICanLocalize';
+            $translators[$translator['id']]['action'] = $sitepress->create_icl_popup_link(ICL_API_ENDPOINT . '/websites/' . $sitepress_settings['site_id']
+                . '/website_translation_offers/' . $lpair['id'] . '/website_translation_contracts/'
+                . $translator['contract_id'], array('title' => __('Chat with translator', 'sitepress'), 'unload_cb' => 'icl_thickbox_refresh', 'ar'=>1)) . __('Chat with translator', 'sitepress') . '</a>';        
+          }
+      }
+
+      return $translators;
+    }
+    
     public function get_blog_translators($args = array()){
         global $wpdb;
         $args_default = array('from'=>false, 'to'=>false);

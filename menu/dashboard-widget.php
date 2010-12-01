@@ -70,8 +70,10 @@ foreach ($docs_statuses as $doc_status) {
             <div class="wrapper" style="display:none; padding: 5px 10px; border: 1px solid #eee; border-top: 0px; margin:-11px 0 2px 0;">
         <?php
             $your_translators = TranslationManagement::get_blog_translators();
-            if (!empty($your_translators)) {
+            $other_service_translators = TranslationManagement::icanlocalize_translators_list();
+            if (!empty($your_translators) || !empty($other_service_translators)) {
                 echo '<p><strong>' . __('Your translators', 'sitepress') . '</strong></p><ul>';
+                if (!empty($your_translators))
                 foreach ($your_translators as $your_translator) {
                     echo '<li>';
                     if ($current_user->ID == $your_translator->ID) {
@@ -89,9 +91,27 @@ foreach ($docs_statuses as $doc_status) {
                     }
                     echo '</li>';
                 }
+                
+                if (!empty($other_service_translators)){
+                    $langs = $sitepress->get_active_languages();
+                    foreach ($other_service_translators as $rows){
+                        
+                        foreach($rows['langs'] as $from => $lp){
+                            $from = isset($langs[$from]['display_name']) ? $langs[$from]['display_name'] : $from;
+                            $tos = array();
+                            foreach($lp as $to){
+                                $tos[] =  isset($langs[$to]['display_name']) ? $langs[$to]['display_name'] : $to;
+                            }
+                        }
+                        echo '<li>';
+                        echo '<strong>' . $rows['name'] . '</strong> | ' . sprintf(__('%s to %s', 'sitepress'), $from, join(', ', $tos)) . ' | ' . $rows['action']; 
+                        echo '</li>';
+                    }
+                }
+                
                 echo '</ul><hr />';
             }
-
+            
         ?>
             <p><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/translation-management.php&amp;sm=translators&amp;service=icanlocalize"><strong><?php _e('Add translators from ICanLocalize &raquo;', 'sitepress'); ?></strong></a></p>
             <p><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/translation-management.php&amp;sm=translators&amp;service=local"><strong><?php _e('Add your own translators &raquo;', 'sitepress'); ?></strong></a></p>

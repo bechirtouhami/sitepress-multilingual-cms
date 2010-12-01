@@ -46,6 +46,8 @@ class SitePress{
             add_action('init', array($this,'process_forms'));           
         }        
         
+        add_action('init', array($this,'plugin_localization'));            
+        
         if($this->settings['existing_content_language_verified']){
             
             // Post/page language box
@@ -223,8 +225,6 @@ class SitePress{
             add_filter('request', array($this,'request_filter'));
             
             add_action('wp_head', array($this,'set_wp_query'));
-            
-            add_action('init', array($this,'plugin_localization'));            
             
             add_action('show_user_profile', array($this, 'show_user_options'));
             add_action('personal_options_update', array($this, 'save_user_options'));
