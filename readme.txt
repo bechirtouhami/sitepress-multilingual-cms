@@ -68,6 +68,22 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 
 == Changelog ==
 
+= 2.0.1 =
+* Added back option to set translated documents status
+* Fixed language parameter being added to the url twice
+* CMS Nav menu fix excluded non-pages children of pages
+* Fixes for admin texts translation
+* Fixed missing taxonomies fields on the translation editor
+* Fixed HTML encoding for displaying original elements in the translation editor
+* Fixed encoded & in post url and infinite loop for short urls in other languages than the default
+* Added progress of languages where translators were not selected yet
+* Rearranged the display filter in the translation dashboard
+* Fixed bug preventing WPML localization to work before the step 2 of the WPML setup wizard
+* Added ICanLocalize translators to the translators list on the dashboard
+* icl_ajax_url defined correctly for SSL
+* Added back debug function to reset the Professional Translation
+
+
 = 2.0.0 =
 * Added Translator role.
 * Added Translation Management toolset.
