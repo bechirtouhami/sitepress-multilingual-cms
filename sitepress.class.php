@@ -789,7 +789,7 @@ class SitePress{
             'auto_adjust_ids' => 1,
             'alert_delay' => 0,
             'modules' => array(
-                'absolute-links' => array('enabled'=>0, 'sticky_links_widgets'=>1, 'sticky_links_strings'=>1),
+                'absolute-links' => array('enabled'=>0, 'sticky_links_widgets'=>0, 'sticky_links_strings'=>0),
                 'cms-navigation'=>array('enabled'=>0, 'breadcrumbs_separator'=>' &raquo; ')
                 ),
             'promote_wpml' => 1,

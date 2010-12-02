@@ -258,6 +258,12 @@ class ICL_Pro_Translation{
                 
                 $note = get_post_meta($post_id, '_icl_translator_note', true);                
                 
+                // if this is an old request having a old request_id, include that
+                $prev_rid = $wpdb->get_var($wpdb->prepare("SELECT MAX(rid) FROM {$wpdb->prefix}icl_content_status WHERE nid=%d", $post_id));
+                if(!empty($prev_rid)){
+                    $data['previous_cms_request_id'] = $prev_rid;
+                }
+                
                 $xml = $iclq->build_cms_request_xml($data, $orig_lang_for_server);                 
                 $args = array(
                     'cms_id'        => $translation->translation_id,
@@ -269,6 +275,7 @@ class ICL_Pro_Translation{
                     'translator_id' => $translator_id,
                     'note'          => $note
                 );
+                
                 $res = $iclq->send_request($args);
                 if($res > 0){
                     $this->tmg->update_translation_status(array(

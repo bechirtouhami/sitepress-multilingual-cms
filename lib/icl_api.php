@@ -155,8 +155,14 @@ class ICanLocalizeQuery{
         $tab = "\t";
         $nl = PHP_EOL;
         
+        if(!empty($data['previous_cms_request_id'])){
+            $prev = ' previous_cms_request_id="' . $data['previous_cms_request_id'] . '"';
+        }else{
+            $prev = '';
+        }
+        
         $xml  = "<?xml version=\"1.0\" encoding=\"utf-8\"?>".$nl;
-        $xml .= '<cms_request_details type="sitepress" command="translate_content" from_lang="'.$orig_lang.'">'.$nl;
+        $xml .= '<cms_request_details type="sitepress" command="translate_content" from_lang="'.$orig_lang.'"'.$prev.'>'.$nl;
         $xml .= $tab.'<link url="'.$data['url'].'" />'.$nl;
         $xml .= $tab.'<contents>'.$nl;
         foreach($data['contents'] as $key=>$val){
