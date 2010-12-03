@@ -68,7 +68,7 @@ jQuery(document).ready(function(){
     
     jQuery('#icl_tm_editor .icl_tm_finished').change(icl_tm_update_complete_cb_status);
     
-    jQuery('.handlediv').click(function(){
+    jQuery('#icl_tm_editor .handlediv').click(function(){
         if(jQuery(this).parent().hasClass('closed')){
             jQuery(this).parent().removeClass('closed');
         }else{

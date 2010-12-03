@@ -151,7 +151,7 @@ if (!empty($icl_translation_services)) {
             </td>
         </tr>
         <tr id="icl_dashboard_advanced_filters" valign="top">
-            <td>                
+            <td>            
                 <strong><?php echo __('Filters:', 'sitepress') ?></strong><br />
                 <label><input type="checkbox" name="filter[status_on]" <?php if($icl_translation_filter['status_on']):?>checked="checked"<?php endif?> />&nbsp;
                     <?php _e('Status:', 'sitepress')?></label> 

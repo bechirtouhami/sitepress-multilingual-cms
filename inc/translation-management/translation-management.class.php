@@ -2119,6 +2119,7 @@ class TranslationManagement{
             }
         }  
         
+        
         // custom types
         $cf = array();
         if(!empty($config['wpml-config']['custom-types'])){

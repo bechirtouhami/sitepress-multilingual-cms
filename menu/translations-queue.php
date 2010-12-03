@@ -38,7 +38,6 @@
         
         $icl_translation_filter['limit_no'] = 20;
         $translation_jobs = $iclTranslationManagement->get_translation_jobs((array)$icl_translation_filter);    
-        
     }
         
 ?>
