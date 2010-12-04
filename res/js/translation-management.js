@@ -221,7 +221,7 @@ jQuery(document).ready(function(){
         }
     });
 
-    jQuery('#icl_tdo_options').submit(iclSaveForm); 
+    jQuery('#icl_tdo_options').submit(iclSaveForm);     
     
 })
 
@@ -337,6 +337,53 @@ function icl_tm_update_complete_cb_status(){
     }    
 }
 
+function icl_tm_set_pickup_method(){
+    var thisf = jQuery(this);
+    var thiss = thisf.find(':submit');
+    thiss.attr('disabled', 'disabled').after(icl_ajxloaderimg);
+    jQuery.ajax({
+        type: "POST",
+        url: icl_ajx_url,
+        dataType: 'json',
+        data: 'icl_ajx_action=set_pickup_mode&'+thisf.serialize(),
+        success: function(msg){
+            if(!msg.error){
+                jQuery('#icl_tm_pickup_wrap').load(location.href+' #icl_tm_pickup_wrap', function(resp){
+                    jQuery(this).html(resp.find('#icl_tm_pickup_wrap').html());                    
+                    thiss.removeAttr('disabled').next().remove();
+                })
+            }else{
+                alert(msg.error);
+                thiss.removeAttr('disabled').next().remove();
+            }
+            
+        }
+    }); 
+    return false;    
+}
+
+function icl_tm_pickup_translations(){
+    var thisb = jQuery(this);
+    thisb.attr('disabled', 'disabled').after(icl_ajxloaderimg);
+    jQuery.ajax({
+        type: "POST",
+        url: icl_ajx_url,
+        dataType: 'json',
+        data: 'icl_ajx_action=pickup_translations',
+        success: function(msg){
+            if(!msg.error){
+                jQuery('#icl_tm_pickup_wrap').load(location.href+' #icl_tm_pickup_wrap', function(resp){
+                    jQuery(this).html(resp.find('#icl_tm_pickup_wrap').html());                    
+                    thisb.removeAttr('disabled').next().remove();
+                })
+            }else{
+                alert(msg.error);
+                thisb.removeAttr('disabled').next().remove();
+            }
+            
+        }
+    }); 
+}
 
 
 
@@ -349,4 +396,6 @@ jQuery(document).ready(function(){
     jQuery('form[name="icl_custom_tax_sync_options"]').submit(iclSaveForm);
     jQuery('form[name="icl_custom_posts_sync_options"]').submit(iclSaveForm);
     jQuery('form[name="icl_cf_translation"]').submit(iclSaveForm);
+    jQuery('#icl_translation_pickup_mode').live('submit', icl_tm_set_pickup_method); 
+    jQuery('#icl_tm_get_translations').live('click', icl_tm_pickup_translations);
 });

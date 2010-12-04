@@ -134,11 +134,12 @@
     <br clear="all" />
     <br>
     
+    <div style="width:50%;float:left;margin-right:12px;">
     <form id="icl_page_sync_options" name="icl_page_sync_options" action="">        
     <table class="widefat">
         <thead>
             <tr>
-                <th colspan="2"><?php _e('Posts and pages synchronization', 'sitepress');?></th>
+                <th><?php _e('Posts and pages synchronization', 'sitepress');?></th>
             </tr>
         </thead>
         <tbody>
@@ -172,24 +173,65 @@
                     <p>
                         <label><input type="checkbox" name="icl_sync_private_flag" <?php if($sitepress_settings['sync_private_flag']): ?>checked="checked"<?php endif; ?> value="1" />
                         <?php echo __('Synchronize private flag', 'sitepress') ?></label>                        
-                    </p>                                                                                
+                    </p>                    
+                    <p style="border-top:solid 1px #ddd;font-size:2px">&nbsp;</p>
+                    <p>
+                        <label><input type="checkbox" name="icl_sync_delete" <?php if($sitepress_settings['sync_delete']): ?>checked="checked"<?php endif; ?> value="1" />
+                        <?php echo __('When deleting a post, delete translations as well', 'sitepress') ?></label>                        
+                    </p>                                                                                                                                                                
                     <p>
                         <input class="button" name="save" value="<?php echo __('Save','sitepress') ?>" type="submit" />
                         <span class="icl_ajx_response" id="icl_ajx_response_mo"></span>
                     </p>                    
                 </td>
-                <td style="border: none;">
-                    <br />                    
-                    <p>
-                        <label><input type="checkbox" name="icl_sync_delete" <?php if($sitepress_settings['sync_delete']): ?>checked="checked"<?php endif; ?> value="1" />
-                        <?php echo __('When deleting a post, delete translations as well', 'sitepress') ?></label>                        
-                    </p>                                                                                
-                </td>
             </tr>
         </tbody>
     </table>
     </form>                
-    <br />
+    </div>
+    
+    <div style="width:49%;float:left;">
+    <form id="icl_translation_pickup_mode" name="icl_translation_pickup_mode" action="">        
+    <table class="widefat">
+        <thead>
+            <tr>
+                <th><?php _e('Translation pickup mode', 'sitepress');?></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="border: none;" id="icl_tm_pickup_wrap">
+                    <p><?php _e('How should the site receive completed translations from ICanLocalize?', 'sitepress'); ?></p>
+                    <p><label>
+                        <input type="radio" name="icl_translation_pickup_method" value="<?php echo ICL_PRO_TRANSLATION_PICKUP_XMLRPC ?>"<?php
+                            if($sitepress_settings['translation_pickup_method']==ICL_PRO_TRANSLATION_PICKUP_XMLRPC) echo ' checked="checked"';
+                        ?>/>&nbsp;
+                        <?php _e('ICanLocalize will deliver translations automatically using XML-RPC', 'sitepress'); ?>
+                    </label></p>
+                    <p><label>
+                        <input type="radio" name="icl_translation_pickup_method" value="<?php echo ICL_PRO_TRANSLATION_PICKUP_POLLING ?>"<?php
+                            if($sitepress_settings['translation_pickup_method']==ICL_PRO_TRANSLATION_PICKUP_POLLING) echo ' checked="checked"';
+                        ?>/>&nbsp;
+                        <?php _e('The site will fetch translations manually', 'sitepress'); ?>
+                    </label></p> 
+                    <p>
+                        <input class="button" name="save" value="<?php echo __('Save','sitepress') ?>" type="submit" />
+                        <span class="icl_ajx_response" id="icl_ajx_response_tpm"></span>
+                    </p>    
+                    
+                    <?php if($sitepress_settings['translation_pickup_method']==ICL_PRO_TRANSLATION_PICKUP_POLLING): ?>
+                    <p><input type="button" class="button-secondary" value="<?php _e('Get completed translations from ICanLocalize', 'sitepress')?>" id="icl_tm_get_translations" /></p>                        
+                    <?php $last_time_picked_up = !empty($sitepress_settings['last_picked_up']) ? date_i18n('Y, F jS @g:i a', $sitepress_settings['last_picked_up']) : __('never', 'sitepress'); ?>
+                    <p><?php printf(__('Last time translations were picked up: %s', 'sitepress'), $last_time_picked_up) ?></p>
+                    <?php endif; ?>
+                                                                           
+                </td>
+            </tr>
+        </tbody>
+    </table>   
+    </form> 
+    </div>
+    <br clear="all" />
     
     <div class="updated below-h2">
         <p style="line-height: 14px"><?php _e("WPML can read a configuration file that tells it what needs translation in themes and plugins. The file is named wpml-config.xml and it's placed in the root folder of the plugin or theme.", 'sitepress'); ?></p>

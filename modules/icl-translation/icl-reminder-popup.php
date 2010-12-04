@@ -58,12 +58,20 @@
                 $iclsettings['language_pairs'][$from_lang][$to_lang] = 1;
                 $this->save_settings($iclsettings);
             }else{
-                echo '<p class="error" style="padding-left:8px;">';
-                printf(__('<p>In order to enable ICanLocalize translation, your site needs to be on a public server (not localhost). Please <a%s>contact us</a> for support. </p><p>Show <a%s>debug information</a>.</p>', 'sitepress'), 
-                    ' target="_blank" href="http://wpml.org/?page_id=5255"', 
-                    ' a href="admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/troubleshooting.php&icl_action=icl-connection-test&data='.base64_encode(serialize($user)).'#icl-connection-test"');
-                echo '</p>';
-                exit;                
+                $user['pickup_type'] = ICL_PRO_TRANSLATION_PICKUP_POLLING; 
+                list($site_id, $access_key) = $icl_query->createAccount($user);                
+                if($site_id && $access_key){
+                    $this->settings['site_id'] = $iclsettings['site_id'] = $site_id;
+                    $this->settings['access_key'] = $iclsettings['access_key'] = $access_key;
+                    $iclsettings['language_pairs'][$from_lang][$to_lang] = 1;
+                    $iclsettings['translation_pickup_method'] = ICL_PRO_TRANSLATION_PICKUP_POLLING;                    
+                    $this->save_settings($iclsettings);
+                }else{
+                    printf(__('<p>In order to enable ICanLocalize translation, your site needs to be on a public server (not localhost). Please <a%s>contact us</a> for support. </p><p>Show <a%s>debug information</a>.</p>', 'sitepress'), 
+                        ' target="_blank" href="http://wpml.org/?page_id=5255"', 
+                        ' a href="admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/troubleshooting.php&icl_action=icl-connection-test&data='.base64_encode(serialize($user)).'#icl-connection-test"');
+                    exit;                
+                }
             }
         }else{
             

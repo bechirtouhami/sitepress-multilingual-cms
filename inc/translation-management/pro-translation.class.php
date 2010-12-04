@@ -19,6 +19,39 @@ class ICL_Pro_Translation{
         add_filter('xmlrpc_methods',array($this, 'custom_xmlrpc_methods'));
         add_action('post_submitbox_start', array($this, 'post_submitbox_start'));
         
+        add_action('icl_ajx_custom_call', array($this, 'ajax_calls'), 10, 2);
+        
+    }
+    
+    function ajax_calls($call, $data){
+        global $sitepress_settings, $sitepress;
+        switch($call){
+            case 'set_pickup_mode':
+                $method = intval($data['icl_translation_pickup_method']);
+                $iclsettings['translation_pickup_method'] = $method;
+                $sitepress->save_settings($iclsettings);
+                
+                $data['site_id'] = $this->settings['site_id'];                    
+                $data['accesskey'] = $this->settings['access_key'];
+                $data['create_account'] = 0;
+                $data['translation_pickup_method'] = $method;
+                
+                $icl_query = new ICanLocalizeQuery();                
+                $res = $icl_query->updateAccount($data);
+                echo json_encode(array('message'=>'OK'));
+            
+                break;
+            case 'pickup_translations':
+                if($sitepress_settings['translation_pickup_method']==ICL_PRO_TRANSLATION_PICKUP_POLLING){
+                    $iclsettings['last_picked_up'] = strtotime(current_time('mysql'));
+                    $sitepress->save_settings($iclsettings);
+                    $this->pool_for_translations();
+                    echo json_encode(array('message'=>__('OK')));
+                }else{
+                    echo json_encode(array('error'=>__('Manual pick up is disabled.')));
+                }
+                break;
+        }
     }
     
     function send_post($post_id, $target_languages, $translator_id = 0){
@@ -259,9 +292,11 @@ class ICL_Pro_Translation{
                 $note = get_post_meta($post_id, '_icl_translator_note', true);                
                 
                 // if this is an old request having a old request_id, include that
-                $prev_rid = $wpdb->get_var($wpdb->prepare("SELECT MAX(rid) FROM {$wpdb->prefix}icl_content_status WHERE nid=%d", $post_id));
-                if(!empty($prev_rid)){
-                    $data['previous_cms_request_id'] = $prev_rid;
+                if($wpdb->prefix.'icl_content_status' == $wpdb->get_var("SHOW TABLES LIKE '{$wpdb->prefix}icl_content_status'")){
+                    $prev_rid = $wpdb->get_var($wpdb->prepare("SELECT MAX(rid) FROM {$wpdb->prefix}icl_content_status WHERE nid=%d", $post_id));
+                    if(!empty($prev_rid)){
+                        $data['previous_cms_request_id'] = $prev_rid;
+                    }
                 }
                 
                 $xml = $iclq->build_cms_request_xml($data, $orig_lang_for_server);                 
@@ -1761,132 +1796,13 @@ class ICL_Pro_Translation{
         
     }
     
-    /*
-    function _remote_control_translate_post($args){
-        global $wpdb, $sitepress, $sitepress_settings;
-        $signature   = $args[0];
-        $site_id     = $args[1];
-        
-        $post_id     = $args[2];
-        $from_lang   = $args[3];
-        $langs       = $args[4];
-
-        if ( !$sitepress_settings['remote_management']) {
-            return array('err_code'=>1, 'err_str'=>__('remote translation management not enabled','sitepress'));
-        }    
-
-        //check signature
-        $signature_chk = sha1($sitepress_settings['access_key'].$sitepress_settings['site_id'].$post_id.$from_lang.implode(',', $langs));
-        if($signature_chk != $signature){
-            return array('err_code'=>2, 'err_str'=>__('signature incorrect','sitepress'));
-        }
-        
-        if ($site_id != $sitepress_settings['site_id']) {
-            return array('err_code'=>4, 'err_str'=>__('website id is not correct','sitepress'));
-        }
-
-        // check post_id
-        $post = $wpdb->get_var("SELECT ID FROM {$wpdb->posts} WHERE ID={$post_id}");
-        if(!$post){
-            return array('err_code'=>5, 'err_str'=>__('post id not found','sitepress'));
-        }
-        $post_type = $wpdb->get_var("SELECT post_type FROM {$wpdb->posts} WHERE ID={$post_id}");
-        
-        $element = $wpdb->get_row("SELECT * FROM {$wpdb->prefix}icl_translations WHERE element_id={$post_id} and element_type='post_{$post_type}'");
-        if(!$element){
-            return array('err_code'=>6, 'err_str'=>__('post id not managed in icl_translations','sitepress'));
-        }
-
-        $from_code = $sitepress->get_language_code($from_lang);
-        if($element->language_code != $from_code){
-            return array('err_code'=>7, 'err_str'=>sprintf(__('Source language is not correct. %s != %s', 'sitepress'), $from_code, $element->language_code));
-        }
-        
-        $language_pairs = $sitepress_settings['language_pairs'];
-        
-        foreach($langs as $to_lang){
-            if(!isset($language_pairs[$from_code][$sitepress->get_language_code($to_lang)])){
-                return array('err_code'=>8, 'err_str'=>sprintf(__('Destination language %s is not correct','sitepress'), $to_lang));
-            }
-        }
-        
-        // everything is ok.
-        
-        
-        
-        try{
-            $result = $this->send_post($post_id, $langs);
-        }catch(Exception $e){
-            return array('err_code'=>$e->getCode(), 'err_str'=>$e->getMessage().'[' . $e->getFile() . ':' . $e->getLine() . ']');
-        }        
-        
-        if ($result != false){
-            return array('err_code'=>0, 'rid'=>$result);
-        } else {
-            return array('err_code'=>9, 'err_str'=>_('failed to send for translation','sitepress'));
-        }
-        
-        
-    }    
-    
-    function _list_posts($args){
-        global $wpdb, $sitepress, $sitepress_settings, $iclTranslationManagement;
-        try{
+    function pool_for_translations(){
+        global $sitepress_settings;
+        $iclq = new ICanLocalizeQuery($sitepress_settings['site_id'], $sitepress_settings['access_key']);
+        $pending = $iclq->cms_requests();
+        debug_array($pending);
             
-            $signature   = $args[0];
-            $site_id     = $args[1];
-                
-            $from_date   = date('Y-m-d H:i:s',$args[2]);
-            $to_date     = date('Y-m-d H:i:s',$args[3]);
-            $lang        = $args[4];
-            $tstatus     = $args[5];
-            $status      = $args[6];
-            $type        = $args[7];
-            
-            if ( !$sitepress_settings['remote_management']) {
-                return array('err_code'=>1, 'err_str'=>__('remote translation management not enabled','sitepress'));
-            } 
-             
-            //check signature
-            $signature_chk = sha1($sitepress_settings['access_key'].$sitepress_settings['site_id'].$lang.$tstatus);
-            if($signature_chk != $signature){
-                return array('err_code'=>2, 'err_str'=>__('signature incorrect','sitepress'));
-            }
-            
-            if ($site_id != $sitepress_settings['site_id']) {
-                return array('err_code'=>4, 'err_str'=>__('website id is not correct','sitepress'));
-            }
-        
-        
-            $documents = $iclTranslationManagement->get_documents(
-                array(
-                    'from_lang' => $sitepress->get_language_code($lang),
-                    'status'    => $status,
-                    'tstatus'   => $tstatus,
-                    'type'      => $type,
-                    'from_date' => $from_date,    
-                    'to_date'   => $to_date
-                )
-            );
-            foreach($documents as $id=>$data){
-                $_cats = (array)get_the_terms($data->post_id,'category');
-                $cats = array();
-                foreach($_cats as $cv){
-                    $cats[] = $cv->name;
-                }
-                $documents[$id]->categories = $cats;
-                $documents[$id]->words = $this->estimate_word_count($data, $sitepress->get_language_code($lang));
-                $documents[$id]->words += $this->estimate_custom_field_word_count($data->post_id, $sitepress->get_language_code($lang));
-                unset($documents[$id]->post_content);
-                unset($documents[$id]->post_title);
-            }
-        }catch(Exception $e){
-            return array('err_code'=>$e->getCode(), 'err_str'=>$e->getMessage().'[' . $e->getFile() . ':' . $e->getLine() . ']');
-        }
-        return array('err_code'=>0, 'posts'=>$documents);
-
-    }    
-    */
+    }
         
 }  
 ?>
