@@ -74,6 +74,7 @@ function icl_quote_get_step_one($saved) {
 
 ?>
     <input type="hidden" name="step" value="1" />
+    <h1><?php _e('Translation Languages', 'sitepress'); ?></h1>
     <p>
         <label><?php _e('I need translation from', 'sitepress'); ?>
             <select id="icl-quote-get-from" name="from" onchange="iclQuoteGetSetSelectLangs();">
@@ -166,7 +167,8 @@ function icl_quote_get_step_one($saved) {
             }
 
 ?>
-        <p>
+        <h1><?php _e('Content Types', 'sitepress'); ?></h1>
+	<p>
 <?php printf(__('Your site includes different kinds of content items. Choose which types to include in the quote. <br /><br />To get the word count of specific documents, use the %sTranslation Dashboard%s.',
                             'sitepress'), '<a href="admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/translation-management.php">', '</a>'); ?>
         </p>
