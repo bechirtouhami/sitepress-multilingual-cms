@@ -4,19 +4,23 @@
  */
 global $sitepress, $sitepress_settings, $wpdb;
 
+/**
+ * Save for later
+ */
 if (isset($data['submit-for-later'])) {
     $saved = $sitepress_settings['quote-get'];
     $saved['step'] = 3;
     $sitepress->save_settings(array('quote-get' => $saved));
     echo '<script type="text/javascript">jQuery(\'#TB_closeWindowButton\').trigger(\'click\');</script>';
+
+    /**
+     * Produce quote
+     */
 } else if (isset($data['submit-produce'])) {
     $saved = $sitepress_settings['quote-get'];
     if (empty($saved['from'])
             || empty($saved['to'])
             || empty($saved['content'])
-//            || empty($data['first_name'])
-//            || empty($data['last_name'])
-//            || !preg_match('/^[a-z0-9!#$%&\'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+\/=?^_`{|}~-]+)*@(?:[a-z0-9][-a-z0-9]*\.)*(?:[a-z0-9][-a-z0-9]{0,62})\.(?:(?:[a-z]{2}\.)?[a-z]{2,4}|museum|travel)$/i', $data['mail'])
     ) {
         die('data not valid');
     }
@@ -30,12 +34,11 @@ if (isset($data['submit-for-later'])) {
     }
     $wc_description = implode(', ', $wc_description);
 
+    /**
+     * Create account
+     */
     if (!isset($sitepress_settings['site_id'])) {
-        // create account
         $user = array();
-        //    $user['fname'] = $_POST['first_name'];
-        //    $user['lname'] = $_POST['last_name'];
-        //    $user['email'] = $_POST['mail'];
         $user['create_account'] = 1;
         $user['anon'] = 1;
         $user['platform_kind'] = 2;
@@ -49,6 +52,8 @@ if (isset($data['submit-for-later'])) {
         $user['project_kind'] = $sitepress_settings['website_kind'];
         $user['pickup_type'] = intval($sitepress_settings['translation_pickup_method']);
         $user['ignore_languages'] = 1;
+        $user['word_count'] = $word_count;
+        $user['wc_description'] = $wc_description;
 
         if (defined('ICL_AFFILIATE_ID') && defined('ICL_AFFILIATE_KEY')) {
             $user['affiliate_id'] = ICL_AFFILIATE_ID;
@@ -62,15 +67,10 @@ if (isset($data['submit-for-later'])) {
             $notifications += 2;
         }
         $user['notifications'] = $notifications;
-
         // prepare language pairs
-
         $pay_per_use = $sitepress_settings['translator_choice'] == 1;
-
         $language_pairs = array($saved['from'] => $saved['to']);
-        //    $language_pairs = $_POST['from'];
         $lang_pairs = array();
-//        $incr = 1;
         if (isset($language_pairs)) {
             foreach ($language_pairs as $k => $v) {
                 $english_fr = $wpdb->get_var("SELECT english_name FROM {$wpdb->prefix}icl_languages WHERE code='{$k}' ");
@@ -105,13 +105,24 @@ if (isset($data['submit-for-later'])) {
             $sitepress->get_icl_translator_status($iclsettings);
             $sitepress->save_settings($iclsettings);
         }
+    /**
+     * Update account
+     */
     } else {
-        $site_id = $sitepress_settings['site_id'];
-        $access_key = $sitepress_settings['access_key'];
+        $data = array();
+        $data['word_count'] = $word_count;
+        $data['wc_description'] = $wc_description;
+        $data['site_id'] = $site_id = $sitepress_settings['site_id'];
+        $data['accesskey'] = $access_key = $sitepress_settings['access_key'];
+        require_once ICL_PLUGIN_PATH . '/lib/icl_api.php';
+        $icl_query = new ICanLocalizeQuery();
+        $icl_query->updateAccount($data);
     }
 
+    /**
+     * Set URL query
+     */
     $language_pairs = array($saved['from'] => $saved['to']);
-    //    $language_pairs = $_POST['from'];
     $lang_pairs = array();
     $incr = 1;
     $query = '';
@@ -119,7 +130,7 @@ if (isset($data['submit-for-later'])) {
         foreach ($language_pairs as $k => $v) {
             $english_from = $wpdb->get_var("SELECT english_name FROM {$wpdb->prefix}icl_languages WHERE code='{$k}' ");
             $query .= '&to_lang_num=' . count($v);
-            $query .= '&from_language_iname=' . $english_from;
+            $query .= '&from_language_name=' . $english_from;
             foreach ($v as $k => $v) {
                 $english_to = $wpdb->get_var("SELECT english_name FROM {$wpdb->prefix}icl_languages WHERE code='{$k}' ");
                 $query .= '&to_language_name_' . $incr . '=' . ICL_Pro_Translation::server_languages_map($english_to);
@@ -127,7 +138,8 @@ if (isset($data['submit-for-later'])) {
             }
         }
     }
-    
-    wp_redirect(ICL_API_ENDPOINT . '/websites/' . $site_id . '/quote?accesskey=' . $access_key . '&locale=' . $sitepress->get_default_language() . $query);
+    $url = ICL_API_ENDPOINT . '/websites/' . $site_id . '/quote?accesskey=' . $access_key . '&locale=' . $sitepress->get_default_language() . $query . '&compact=1';
+    // Call reopen JS
+    echo '<script type="text/javascript">icl_thickbox_reopen(\'' . $url . '\');</script>';
     exit;
 }
