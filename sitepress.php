@@ -80,6 +80,7 @@ require ICL_PLUGIN_PATH . '/inc/compatibility-packages/wpml-package.class.php';
 require ICL_PLUGIN_PATH . '/inc/affiliate-info.php';
 require ICL_PLUGIN_PATH . '/inc/language-switcher.php';
 require ICL_PLUGIN_PATH . '/inc/import-xml.php';
+require ICL_PLUGIN_PATH . '/inc/quote.php';
 if(is_admin() || defined('XMLRPC_REQUEST')){
     require ICL_PLUGIN_PATH . '/lib/icl_api.php';
     require ICL_PLUGIN_PATH . '/lib/xml2array.php';
