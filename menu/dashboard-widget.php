@@ -46,12 +46,8 @@ foreach ($docs_statuses as $doc_status) {
     <p><a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER; ?>/menu/translation-management.php" class="button secondary"><strong><?php _e('Translate content', 'sitepress'); ?></strong></a></p>
             
     <h5 style="margin: 15px 0 0 0;"><?php _e('Need translation work?', 'sitepress'); ?></h5>
-            <p style="margin: 5px 0 20px 0; line-height: 1.4em;">
-                <?php printf(__('%sICanLocalize%s offers affordable professional translation via a streamlined process.<br /> %sGet quote%s %sGet translators%s', 'sitepress'),
-                        '<a target="_blank" href="http://www.icanlocalize.com/site/">', '</a>',
-                        '<br /><a href="admin-ajax.php?icl_ajx_action=quote-get" class="button secondary thickbox"><strong>',
-                        '</strong></a>', '<a href="admin.php?page='.ICL_PLUGIN_FOLDER.'/menu/translation-management.php&amp;sm=translators&amp;service=icanlocalize" class="button secondary"><strong>',
-                        '</strong></a>'); ?>
+            <p><?php printf(__('%s offers affordable professional translation via a streamlined process.','sitepress'),'<a target="_blank" href="http://www.icanlocalize.com/site/">ICanLocalize</a>') ?></p><p>
+                <a href="admin-ajax.php?icl_ajx_action=quote-get" class="button secondary thickbox"><strong><?php _e('Get quote','sitepress') ?></strong></a> <a href="admin.php?page=<?php echo(ICL_PLUGIN_FOLDER); ?>/menu/translation-management.php&amp;sm=translators&amp;service=icanlocalize" class="button secondary"><strong><?php _e('Get translators','sitepress') ?></strong></a>
             </p>
             <?php if (!isset($sitepress_settings['hide_affiliate_message'])) { ?>
             <div>
