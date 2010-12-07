@@ -1651,7 +1651,14 @@ class SitePress{
                 }
                 $icl_query = new ICanLocalizeQuery();                
                 list($site_id, $access_key) = $icl_query->createAccount(array_merge($user,$lang_pairs));                
+                
+                if(!$site_id){                
+                    $user['pickup_type'] = ICL_PRO_TRANSLATION_PICKUP_POLLING;
+                    list($site_id, $access_key) = $icl_query->createAccount(array_merge($user,$lang_pairs));                
+                }
+                
                 if(!$site_id){
+                    
                     if ($access_key) {
                         $_POST['icl_form_errors'] = $access_key;
                     } else {

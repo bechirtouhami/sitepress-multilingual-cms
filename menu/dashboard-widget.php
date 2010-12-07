@@ -49,6 +49,12 @@ foreach ($docs_statuses as $doc_status) {
             <p><?php printf(__('%s offers affordable professional translation via a streamlined process.','sitepress'),'<a target="_blank" href="http://www.icanlocalize.com/site/">ICanLocalize</a>') ?></p><p>
                 <a href="admin-ajax.php?icl_ajx_action=quote-get" class="button secondary thickbox"><strong><?php _e('Get quote','sitepress') ?></strong></a> <a href="admin.php?page=<?php echo(ICL_PLUGIN_FOLDER); ?>/menu/translation-management.php&amp;sm=translators&amp;service=icanlocalize" class="button secondary"><strong><?php _e('Get translators','sitepress') ?></strong></a>
             </p>
+            
+            <?php 
+            global $ICL_Pro_Translation;
+            $ICL_Pro_Translation->get_icl_manually_tranlations_box('icl_cyan_box'); // shows only when translation polling is on and there are translations in progress 
+            ?>
+                        
             <?php if (!isset($sitepress_settings['hide_affiliate_message'])) { ?>
             <div>
                 <h5 style="margin: 10px 0 0 0;"><?php _e('Our affiliate program pays 30% commission', 'sitepress'); ?></h5>

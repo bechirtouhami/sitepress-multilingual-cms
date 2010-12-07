@@ -349,7 +349,7 @@ function icl_tm_set_pickup_method(){
         success: function(msg){
             if(!msg.error){
                 jQuery('#icl_tm_pickup_wrap').load(location.href+' #icl_tm_pickup_wrap', function(resp){
-                    jQuery(this).html(resp.find('#icl_tm_pickup_wrap').html());                    
+                    jQuery(this).html(jQuery(resp).find('#icl_tm_pickup_wrap').html());                    
                     thiss.removeAttr('disabled').next().remove();
                 })
             }else{
@@ -372,8 +372,8 @@ function icl_tm_pickup_translations(){
         data: 'icl_ajx_action=pickup_translations',
         success: function(msg){
             if(!msg.error){
-                jQuery('#icl_tm_pickup_wrap').load(location.href+' #icl_tm_pickup_wrap', function(resp){
-                    jQuery(this).html(resp.find('#icl_tm_pickup_wrap').html());                    
+                jQuery('#icl_tm_pickup_wrap').load(location.href+'&icl_pick_message='+msg.fetched+' #icl_tm_pickup_wrap', function(resp){
+                    jQuery(this).html(jQuery(resp).find('#icl_tm_pickup_wrap').html());                    
                     thisb.removeAttr('disabled').next().remove();
                 })
             }else{
@@ -386,6 +386,16 @@ function icl_tm_pickup_translations(){
 }
 
 
+function icl_sec_tic_decrement(){
+    var curval = parseInt(jQuery('#icl_sec_tic').html());
+    if(curval > 0){
+        jQuery('#icl_sec_tic').html(curval - 1);
+        window.setTimeout(icl_sec_tic_decrement, 1000);
+    }else{        
+        jQuery('#icl_tm_get_translations').removeAttr('disabled');  
+        jQuery('#icl_tm_get_translations').next().fadeOut();
+    }    
+}
 
 /* MC Setup */
 
@@ -398,4 +408,7 @@ jQuery(document).ready(function(){
     jQuery('form[name="icl_cf_translation"]').submit(iclSaveForm);
     jQuery('#icl_translation_pickup_mode').live('submit', icl_tm_set_pickup_method); 
     jQuery('#icl_tm_get_translations').live('click', icl_tm_pickup_translations);
+    if(jQuery('#icl_sec_tic').length){
+        icl_sec_tic_to = window.setTimeout(icl_sec_tic_decrement, 1000);
+    }
 });

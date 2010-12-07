@@ -219,12 +219,8 @@
                         <span class="icl_ajx_response" id="icl_ajx_response_tpm"></span>
                     </p>    
                     
-                    <?php if($sitepress_settings['translation_pickup_method']==ICL_PRO_TRANSLATION_PICKUP_POLLING): ?>
-                    <p><input type="button" class="button-secondary" value="<?php _e('Get completed translations from ICanLocalize', 'sitepress')?>" id="icl_tm_get_translations" /></p>                        
-                    <?php $last_time_picked_up = !empty($sitepress_settings['last_picked_up']) ? date_i18n('Y, F jS @g:i a', $sitepress_settings['last_picked_up']) : __('never', 'sitepress'); ?>
-                    <p><?php printf(__('Last time translations were picked up: %s', 'sitepress'), $last_time_picked_up) ?></p>
-                    <?php endif; ?>
-                                                                           
+                    <?php $ICL_Pro_Translation->get_icl_manually_tranlations_box(''); // shows only when translation polling is on and there are translations in progress ?>
+                                                                                               
                 </td>
             </tr>
         </tbody>

@@ -425,3 +425,6 @@ if (!empty($icl_translation_services)) {
     </table>
     
     </form>    
+    
+    <br />
+    <?php $ICL_Pro_Translation->get_icl_manually_tranlations_box('icl_cyan_box'); // shows only when translation polling is on and there are translations in progress ?>    
