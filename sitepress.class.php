@@ -1680,6 +1680,9 @@ class SitePress{
                         $iclsettings['support_access_key'] = $access_key;
                         $iclsettings['support_icl_account_email'] = $user['email'];
                     }
+                    if(isset($user['pickup_type']) && $user['pickup_type']==ICL_PRO_TRANSLATION_PICKUP_POLLING){
+                        $iclsettings['translation_pickup_method'] = ICL_PRO_TRANSLATION_PICKUP_POLLING;    
+                    }
                     $this->save_settings($iclsettings);
                     if($user['create_account']==1){
                         $_POST['icl_form_success'] = __('A project on ICanLocalize has been created.', 'sitepress') . '<br />';
