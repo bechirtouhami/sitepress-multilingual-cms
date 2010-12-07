@@ -96,7 +96,12 @@ if (isset($data['submit-for-later'])) {
                 // We will force the next try to be http.
                 update_option('_force_mp_post_http', 1);
             }
-            die(__('An unknown error has occurred when communicating with the ICanLocalize server. Please try again.', 'sitepress'));
+            $saved = $sitepress_settings['quote-get'];
+            $saved['step'] = 3;
+            $sitepress->save_settings(array('quote-get' => $saved));
+            echo __('An unknown error has occurred when communicating with the ICanLocalize server. Please try again.', 'sitepress') . '<br /><br />';
+            require_once ICL_PLUGIN_PATH . '/inc/quote/quote-get.php';
+            exit;
         } else {
             $iclsettings['site_id'] = $site_id;
             $iclsettings['access_key'] = $access_key;
@@ -116,7 +121,14 @@ if (isset($data['submit-for-later'])) {
         $data['accesskey'] = $access_key = $sitepress_settings['access_key'];
         require_once ICL_PLUGIN_PATH . '/lib/icl_api.php';
         $icl_query = new ICanLocalizeQuery();
-        $icl_query->updateAccount($data);
+        if ($icl_query->updateAccount($data) !== 0) {
+            $saved = $sitepress_settings['quote-get'];
+            $saved['step'] = 3;
+            $sitepress->save_settings(array('quote-get' => $saved));
+            echo __('An unknown error has occurred when communicating with the ICanLocalize server. Please try again.', 'sitepress') . '<br /><br />';
+            require_once ICL_PLUGIN_PATH . '/inc/quote/quote-get.php';
+            exit;
+        }
     }
 
     /**

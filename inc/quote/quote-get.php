@@ -134,8 +134,8 @@ function icl_quote_get_step_one($saved) {
                 $posts = $wpdb->get_results("SELECT p.ID, p.post_title, p.post_content
                     FROM {$wpdb->prefix}posts p
                     JOIN {$wpdb->prefix}icl_translations t
-                    WHERE p.post_type = '$name'
-                    AND t.element_type = 'post_$name'
+                    WHERE p.post_type = '" . $name . "'
+                    AND t.element_type = 'post_" . $name . "'
                     AND t.element_id = p.ID
                     AND t.language_code = '" . $saved['from'] . "'
                     AND p.post_status = 'publish'
@@ -157,6 +157,8 @@ function icl_quote_get_step_one($saved) {
                                     $meta_count += str_word_count(strip_tags(
                                                             $meta));
                                 }
+                            } else {
+                                unset($cf_settings[$meta_key]);
                             }
                         }
                     }
