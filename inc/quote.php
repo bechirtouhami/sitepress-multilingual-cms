@@ -5,7 +5,6 @@
 
 /**
  * Include thickbox content
- * Register action on init (because of Tranaslation Management class?)
  *
  * @param string $action
  * @param array $data $_REQUEST
@@ -27,7 +26,10 @@ add_action('icl_ajx_custom_call', 'icl_quote_ajax', 10, 2);
  */
 function icl_quote_admin_init() {
     global $pagenow;
-    if ($pagenow == 'index.php') {
+    if ($pagenow == 'index.php'
+            || (isset($_GET['page'])
+                    && $_GET['page'] == 'sitepress-multilingual-cms/menu/translation-management.php')
+            ){
         wp_enqueue_script('jquery');
         wp_enqueue_script('jquery-form');
         wp_enqueue_script('thickbox');
