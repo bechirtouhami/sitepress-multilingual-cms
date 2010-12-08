@@ -109,7 +109,6 @@ if (!empty($icl_translation_services)) {
 }
 ?>
 
-
     <form method="post" name="translation-dashboard-filter" action="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/translation-management.php&amp;sm=dashboard">
     <input type="hidden" name="icl_tm_action" value="dashboard_filter" />
     <table class="form-table widefat fixed">
