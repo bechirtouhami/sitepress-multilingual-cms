@@ -3,8 +3,8 @@ Contributors: icanlocalize
 Donate link: http://wpml.org/?page_id=2312
 Tags: CMS, navigation, menus, menu, dropdown, css, sidebar, pages, i18n, translation, localization, language, multilingual, WPML
 Requires at least: 2.7
-Tested up to: 3.0.2
-Stable tag: 2.0.1
+Tested up to: 3.0.3
+Stable tag: 2.0.2
 
 Allows building complete multilingual sites with WordPress.
 
@@ -67,6 +67,11 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 4. Language setup admin screen.
 
 == Changelog ==
+
+= 2.0.2 =
+* Added polling option for picking up translations from the server
+* Added quote wizard for getting translations cost estimates
+* Other small bug fixes
 
 = 2.0.1 =
 * Added back option to set translated documents status.
