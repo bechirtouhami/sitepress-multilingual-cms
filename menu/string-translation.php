@@ -377,6 +377,7 @@ if(!$sitepress_settings['st']['strings_language']){
                     if($target_status[$lang['code']]){
                         $disabled =  ''; 
                         $checked='checked="checked"';
+                        $_one_lang_enabled = true;
                     }else{
                         $disabled =  ' disabled="disabled"'; 
                         $checked='';

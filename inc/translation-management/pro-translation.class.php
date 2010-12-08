@@ -1808,8 +1808,14 @@ class ICL_Pro_Translation{
         return $jip;
     }
     
+    function get_strings_in_progress(){
+        global $wpdb;
+        $sip = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM {$wpdb->prefix}icl_core_status WHERE status < %d", 3));
+        return $sip;
+    }    
+    
     function pool_for_translations(){
-        global $sitepress_settings, $sitepress;
+        global $sitepress_settings, $sitepress, $wpdb;
                 
         // Limit to once per hour
         $toffset = strtotime(current_time('mysql')) - $sitepress_settings['last_picked_up'] - 3600;
@@ -1819,12 +1825,23 @@ class ICL_Pro_Translation{
         
         $iclq = new ICanLocalizeQuery($sitepress_settings['site_id'], $sitepress_settings['access_key']);
         $pending = $iclq->cms_requests();
+        
         $fetched = 0;
         if(!empty($pending)){
             foreach($pending as $doc){
-                $ret = $this->add_translated_document($doc['cms_id'], $doc['id']);                
-                if($ret){
-                    $fetched++;
+                if(empty($doc['cms_id'])){ // it's a string
+                    $target = $wpdb->get_var($wpdb->prepare("SELECT target FROM {$wpdb->prefix}icl_core_status WHERE rid=%d", $doc['id']));                    
+                    $__ld = $sitepress->get_language_details($target);
+                    $language = $this->server_languages_map($__ld['english_name']);                    
+                    $ret = $this->process_translated_string($doc['id'], $language);
+                    if($ret){
+                        $fetched++;
+                    }
+                }else{
+                    $ret = $this->add_translated_document($doc['cms_id'], $doc['id']);                
+                    if($ret){
+                        $fetched++;
+                    }
                 }
             }
         }
@@ -1843,13 +1860,14 @@ class ICL_Pro_Translation{
                 <span id="icl_tm_pickup_wrap"><p><?php echo $_GET['icl_pick_message'] ?></p></div>
             <?php
         }
-        
-        if($sitepress_settings['translation_pickup_method'] == ICL_PRO_TRANSLATION_PICKUP_POLLING && $job_in_progress = $this->get_jobs_in_progress()){
+        if($sitepress_settings['translation_pickup_method'] == ICL_PRO_TRANSLATION_PICKUP_POLLING 
+            && ($job_in_progress = $this->get_jobs_in_progress() || $this->get_strings_in_progress()))
+        {
             $last_time_picked_up = !empty($sitepress_settings['last_picked_up']) ? date_i18n('Y, F jS @g:i a', $sitepress_settings['last_picked_up']) : __('never', 'sitepress'); 
             $toffset = strtotime(current_time('mysql')) - $sitepress_settings['last_picked_up'] - 3600;            
             if($toffset < 0){
                 $gettdisabled = ' disabled="disabled" ';
-                $waittext = '&nbsp;<i>' . sprintf(__('Please wait %s seconds before checking again.', 'sitepress'), '<span id="icl_sec_tic">' . abs($toffset) . '</span>') . '</i>';
+                $waittext = '<p><i>' . sprintf(__('You can check again in %s minutes.', 'sitepress'), '<span id="icl_sec_tic">' . floor(abs($toffset)/60) . '</span>') . '</i></p>';
             }else{
                 $waittext = '';
                 $gettdisabled = '';
@@ -1861,7 +1879,7 @@ class ICL_Pro_Translation{
             <div class="<?php echo $wrap_class ?>">
             <p><?php printf(__('%d job(s) sent to ICanLocalize.', 'sitepress'), $job_in_progress); ?></p>
             <p><input type="button" class="button-secondary" value="<?php _e('Get completed translations', 'sitepress')?>" id="icl_tm_get_translations"<?php echo $gettdisabled ?>/><?php echo $waittext ?></p>                
-            <p cl><?php printf(__('Last time translations were picked up: %s', 'sitepress'), $last_time_picked_up) ?></p>    
+            <p><?php printf(__('Last time translations were picked up: %s', 'sitepress'), $last_time_picked_up) ?></p>    
             </div></span><?php 
         }
     }

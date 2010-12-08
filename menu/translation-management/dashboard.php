@@ -77,6 +77,15 @@ if(!empty($sitepress_settings['default_translators'][$icl_translation_filter['fr
         }        
     }
 }
+foreach($sitepress->get_active_languages()as $lang){
+    if(empty($icl_selected_translators[$lang])){
+        foreach($sitepress_settings['icl_lang_status'] as $lpair){
+            if($lpair['from']==$icl_translation_filter['from_lang'] && $lpair['to']==$lang['code'] && !empty($lpair['translators'])){
+                $icl_selected_translators[$lang['code']] = $lpair['translators']['0']['id'] . '-icanlocalize';    
+            }
+        }
+    }    
+}
 
 $icl_translation_services = apply_filters('icl_translation_services', array());
 $icl_translation_services = array_merge($icl_translation_services, TranslationManagement::icanlocalize_service_info());
@@ -86,11 +95,13 @@ if (!empty($icl_translation_services)) {
     foreach ($icl_translation_services as $key => $service) {
         $icls_output .= '<div class="icl-translation-service">';
         $icls_output .= '<img src="' . $service['logo'] . '" alt="' . $service['name'] . '" />';
-        $icls_output .= '<p style="width:500px;">' . $service['description'] . '</p>';
+        $icls_output .= '<p style="width:500px;">' . $service['description'] . '</p>';        
+        $icls_output .= '<a href="admin-ajax.php?icl_ajx_action=quote-get" class="button-secondary thickbox"><strong>' . __('Get quote','sitepress') 
+                        . '</strong></a>&nbsp;';        
         $icls_output .= isset($service['setup_url_dashboard'])
             ? '<a href="' . $service['setup_url_dashboard'][1] . '" title="'
-                . $service['name'] . '">' . $service['setup_url_dashboard'][0]
-                . '</a>'
+                . $service['name'] . '" class="button-secondary"><strong>' . $service['setup_url_dashboard'][0]
+                . '</strong></a>'
             : '';
         $icls_output .= '</div>';
     }

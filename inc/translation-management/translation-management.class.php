@@ -59,7 +59,7 @@ class TranslationManagement{
     }
     
     function init(){
-        global $wpdb, $current_user, $sitepress_settings;
+        global $wpdb, $current_user, $sitepress_settings, $sitepress;
 
         $this->settings =& $sitepress_settings['translation-management'];
         // defaults
@@ -118,6 +118,12 @@ class TranslationManagement{
         
         if($pagenow == 'post-new.php' && isset($_GET['trid']) && isset($_GET['lang'])){
             add_action('admin_notices', array($this, '_warn_editing_icl_translation'));    
+        }
+        
+        if(isset($_GET['page']) && $_GET['page'] == ICL_PLUGIN_FOLDER. '/menu/translation-management.php' && isset($_GET['sm']) && $_GET['sm'] == 'translators'){
+            $iclsettings =& $sitepress_settings;
+            $sitepress->get_icl_translator_status($iclsettings);
+            $sitepress->save_settings($iclsettings);
         }
         
     }
@@ -2454,7 +2460,7 @@ class TranslationManagement{
         $return['logo'] = ICL_PLUGIN_URL . '/res/img/web_logo_small.png';
         $return['setup_url'] = $sitepress->create_icl_popup_link('@select-translators;from_replace;to_replace@', array('ar' => 1), true);
         $return['description'] = __('Meet freelance professional translators from around the world.<br />You can interview and choose the best ones for your project.', 'sitepress');
-        $return['setup_url_dashboard'] = array(__('Add translators from ICanLocalize &raquo;', 'sitepress'), 'admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/translation-management.php&amp;sm=translators&amp;service=icanlocalize');
+        $return['setup_url_dashboard'] = array(__('Get translators', 'sitepress'), 'admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/translation-management.php&amp;sm=translators&amp;service=icanlocalize');
         $info['icanlocalize'] = $return;
         return $info;
     }
