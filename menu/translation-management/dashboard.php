@@ -78,7 +78,7 @@ if(!empty($sitepress_settings['default_translators'][$icl_translation_filter['fr
     }
 }
 foreach($sitepress->get_active_languages()as $lang){
-    if(empty($icl_selected_translators[$lang])){
+    if(empty($icl_selected_translators[$lang['code']]) && is_array($sitepress_settings['icl_lang_status'])){
         foreach($sitepress_settings['icl_lang_status'] as $lpair){
             if($lpair['from']==$icl_translation_filter['from_lang'] && $lpair['to']==$lang['code'] && !empty($lpair['translators'])){
                 $icl_selected_translators[$lang['code']] = $lpair['translators']['0']['id'] . '-icanlocalize';    

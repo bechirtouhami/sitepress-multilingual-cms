@@ -31,7 +31,7 @@ function icl_quote_admin_init() {
         wp_enqueue_script('jquery');
         wp_enqueue_script('jquery-form');
         wp_enqueue_script('thickbox');
-    }
+    }    
 }
 
 add_action('admin_init', 'icl_quote_admin_init');
