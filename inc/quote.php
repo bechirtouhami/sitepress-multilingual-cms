@@ -28,7 +28,7 @@ function icl_quote_admin_init() {
     global $pagenow;
     if ($pagenow == 'index.php'
             || (isset($_GET['page'])
-                    && $_GET['page'] == 'sitepress-multilingual-cms/menu/translation-management.php')
+                    && $_GET['page'] == ICL_PLUGIN_FOLDER . '/menu/translation-management.php')
             ){
         wp_enqueue_script('jquery');
         wp_enqueue_script('jquery-form');
