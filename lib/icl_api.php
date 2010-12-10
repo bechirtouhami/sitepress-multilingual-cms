@@ -262,6 +262,24 @@ class ICanLocalizeQuery{
         }
         return $pending_requests;
     }   
+        
+    function cms_requests_all(){
+        $request_url = ICL_API_ENDPOINT . '/websites/' . $this->site_id . '/cms_requests.xml?show_languages=1&accesskey=' . $this->access_key;        
+        $res = $this->_request($request_url);
+        if(empty($res['info']['pending_cms_requests']['cms_request'])){
+            $pending_requests = array();
+        }elseif(count($res['info']['pending_cms_requests']['cms_request'])==1){
+            $req = $res['info']['pending_cms_requests']['cms_request']['attr'];
+            $req['target'] = $res['info']['pending_cms_requests']['cms_request']['target_language']['attr'];
+            $pending_requests[0] = $req; 
+        }else{
+            foreach($res['info']['pending_cms_requests']['cms_request'] as $req){
+                $req['attr']['target'] = $req['target_language']['attr'];
+                $pending_requests[] = $req['attr'];
+            }
+        }
+        return $pending_requests;
+    }   
     
     function cms_request_details($request_id, $language){
         $request_url = ICL_API_ENDPOINT . '/websites/' . $this->site_id . '/cms_requests/'.$request_id.'/cms_download.xml?accesskey=' . $this->access_key . '&language=' . $language;                

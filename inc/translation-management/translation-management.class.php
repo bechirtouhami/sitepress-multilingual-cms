@@ -1137,8 +1137,8 @@ class TranslationManagement{
         }
         foreach($custom_fields as $cf ){
             $custom_fields_value = get_post_meta($post_id, $cf, true);
-            if ($custom_fields_value != "") {
-                if(in_array($lang_code, $asian_languages)){
+            if ($custom_fields_value != "" && is_scalar($custom_fields_value)) {  // only support scalar values fo rnow
+                if(in_array($lang_code, $asian_languages)){ 
                     $words += strlen(strip_tags($custom_fields_value)) / 6;
                 } else {
                     $words += count(explode(' ',strip_tags($custom_fields_value)));

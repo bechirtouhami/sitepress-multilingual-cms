@@ -30,6 +30,86 @@ switch($_GET['debug_action']){
         
         header("Location: admin.php?page=".basename(ICL_PLUGIN_PATH).'/menu/troubleshooting.php&message=' . __('PRO translation was reset.', 'sitepress'));
         exit;
+    case 'ghost_clean':
+        
+        // clean the icl_translations table 
+        $orphans = $wpdb->get_col("
+            SELECT t.translation_id 
+            FROM {$wpdb->prefix}icl_translations t 
+            LEFT JOIN {$wpdb->posts} p ON t.element_id = p.ID 
+            WHERE t.element_id IS NOT NULL AND t.element_type LIKE 'post\\_%' AND p.ID IS NULL
+        ");   
+        if(!empty($orphans)){
+            $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id IN (".join(',',$orphans).")");
+        }
+        
+        $orphans = $wpdb->get_col("
+            SELECT t.translation_id 
+            FROM {$wpdb->prefix}icl_translations t 
+            LEFT JOIN {$wpdb->term_taxonomy} p ON t.element_id = p.term_taxonomy_id 
+            WHERE t.element_id IS NOT NULL AND t.element_type LIKE 'tax\\_%' AND p.term_taxonomy_id IS NULL");   
+        if(!empty($orphans)){
+            $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id IN (".join(',',$orphans).")");
+        }
+        
+        global $wp_taxonomies;
+        if (is_array($wp_taxonomies)) {
+            foreach ($wp_taxonomies as $t => $v) {
+                $orphans = $wpdb->get_col("
+            SELECT t.translation_id 
+            FROM {$wpdb->prefix}icl_translations t 
+            LEFT JOIN {$wpdb->term_taxonomy} p 
+            ON t.element_id = p.term_taxonomy_id 
+            WHERE t.element_type = 'tax_{$t}' 
+            AND p.taxonomy <> '{$t}'
+                ");
+                if (!empty($orphans)) {
+                    $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id IN (".join(',',$orphans).")");
+                }
+            }
+        } 
+        exit;       
+        break;        
+    case 'icl_sync_jobs':
+    
+        $iclq = new ICanLocalizeQuery($sitepress_settings['site_id'], $sitepress_settings['access_key']);                                
+        $requests = $iclq->cms_requests_all();        
+        if(!empty($requests))
+        foreach($requests as $request){
+            $source_language = ICL_Pro_Translation::server_languages_map($request['language_name'], true);
+            $target_language = ICL_Pro_Translation::server_languages_map($request['target']['language_name'], true);
+            
+            $source_language = $wpdb->get_var($wpdb->prepare("SELECT code FROM {$wpdb->prefix}icl_languages WHERE english_name=%s", $source_language));
+            $target_language = $wpdb->get_var($wpdb->prepare("SELECT code FROM {$wpdb->prefix}icl_languages WHERE english_name=%s", $target_language));
+            
+            $tr  = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}icl_translations WHERE translation_id=%d", $request['cms_id']));   
+            if(empty($tr)){
+                $trs = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}icl_translation_status WHERE translation_id=%d", $request['cms_id']));
+                if(!empty($trs)){
+                    $tpack = unserialize($trs->translation_package);
+                    $original_id = $tpack['contents']['original_id']['data'];
+                    list($trid, $element_type) = $wpdb->get_row("
+                            SELECT trid, element_type 
+                            FROM {$wpdb->prefix}icl_translations 
+                            WHERE element_id={$original_id}
+                            AND element_type LIKE 'post\\_%'
+                        ", ARRAY_N);
+                    if($trid){
+                        $recover = array(
+                            'translation_id' => $request['cms_id'],
+                            'element_type'   => $element_type,
+                            //'element_id'     => this is NULL
+                            'trid'           => $trid,
+                            'language_code'  => $target_language,     
+                            'source_language_code' => $source_language
+                        );
+                        $wpdb->insert($wpdb->prefix . 'icl_translations', $recover);
+                    }
+                }
+            }
+        }        
+        exit;
+        break;
 }
 /* DEBUG ACTION */
 
@@ -151,6 +231,8 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
         jQuery('#icl_torubleshooting_more_options').submit(iclSaveForm);
     })
     </script>
+    <br clear="all" /><br />
+    <div class="icl_cyan_box" >           
     <h3><?php _e('More options', 'sitepress')?></h3>
     <form name="icl_torubleshooting_more_options" id="icl_torubleshooting_more_options" action="">
     <label><input type="checkbox" name="troubleshooting_options[raise_mysql_errors]" value="1" <?php 
@@ -166,17 +248,59 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
         <span class="icl_ajx_response" id="icl_ajx_response"></span>
     </p>    
     </form>
+    </div>
+    
+    <br clear="all" /><br />
+    <script type="text/javascript">
+        jQuery(document).ready(function(){
+            jQuery('#icl_remove_ghost').click(function(){
+                jQuery(this).attr('disabled', 'disabled');
+                jQuery(this).after(icl_ajxloaderimg);
+                jQuery.post(location.href + '&debug_action=ghost_clean&nonce=<?php echo wp_create_nonce('ghost_clean'); ?>', function(){                    
+                    jQuery('#icl_remove_ghost').removeAttr('disabled');
+                    alert('<?php echo esc_js(__('Done', 'sitepress')) ?>');
+                    jQuery('#icl_remove_ghost').next().fadeOut();
+                    
+                });
+            })            
+            jQuery('#icl_sync_jobs').click(function(){
+                jQuery(this).attr('disabled', 'disabled');
+                jQuery(this).after(icl_ajxloaderimg);
+                jQuery.post(location.href + '&debug_action=icl_sync_jobs&nonce=<?php echo wp_create_nonce('icl_sync_jobs'); ?>', function(){                    
+                    jQuery('#icl_sync_jobs').removeAttr('disabled');
+                    alert('<?php echo esc_js(__('Done', 'sitepress')) ?>');
+                    jQuery('#icl_sync_jobs').next().fadeOut();
+                    
+                });
+            })            
+        })
+    </script>
+    <div class="icl_cyan_box" >           
+    <h3><?php _e('Clean up', 'sitepress')?></h3>
+    <p class="error" style="padding:6px;"><?php _e('Please make backup of your database before using this.', 'sitepress') ?></p>    
+    <input id="icl_remove_ghost" type="button" class="button-secondary" value="<?php _e('Remove ghost entries from the translation tables', 'sitepress')?>" />&nbsp;
+    <?php if($sitepress_settings['site_id'] && $sitepress_settings['access_key']):?>
+    <input id="icl_sync_jobs" type="button" class="button-secondary" value="<?php _e('Synchronize translation jobs with ICanLocalize', 'sitepress')?>" />&nbsp;
+    <?php endif; ?>
+    
+
+    </div>    
       
-      
+    <br clear="all" /><br />
+    <div class="icl_cyan_box" >       
     <h3><?php _e('Reset PRO translation configuration', 'sitepress')?></h3>
     <p class="error" style="padding:6px;"><?php _e("Resetting your ICanLocalize account will interrupt any translation jobs that you have in progress. Only use this function if your ICanLocalize account doesn't include any jobs, or if the account was deleted.", 'sitepress'); ?></p>
     <a href="admin.php?page=<?php echo basename(ICL_PLUGIN_PATH)?>/menu/troubleshooting.php&amp;debug_action=reset_pro_translation_configuration&amp;nonce=<?php echo wp_create_nonce('reset_pro_translation_configuration')?>" class="button"><?php _e('Reset PRO translation configuration', 'sitepress');?></a>
-
-       
+    </div>
+    
+    <br clear="all" /><br />
+    <div class="icl_cyan_box" >       
     <h3><?php _e('Database dump', 'sitepress')?></h3>
     <a class="button" href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/troubleshooting.php&amp;icl_action=dbdump"><?php _e('Download', 'sitepress') ?></a>
+    </div>
     
-    
+    <br clear="all" /><br />
+    <div class="icl_cyan_box" >    
     <a name="icl-connection-test"></a>
     <h3><?php _e('ICanLocalize connection test', 'sitepress')?></h3>
     <?php if(isset($_GET['icl_action']) && $_GET['icl_action']=='icl-connection-test'): ?>
@@ -230,11 +354,13 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
         
     <?php endif; ?>
     <a class="button" href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/troubleshooting.php&ts=<?php echo time()?>&icl_action=icl-connection-test#icl-connection-test"><?php _e('Connect', 'sitepress') ?></a>
+    </div>
         
     
-    <?php
-    
-    echo '<br /><hr /><h3 id="wpml-settings"> ' . __('Reset', 'sitepress') . '</h3>';
+    <br clear="all" /><br />
+    <div class="icl_cyan_box" >       
+    <?php    
+    echo '<h3 id="wpml-settings"> ' . __('Reset', 'sitepress') . '</h3>';
     echo '<form method="post" onsubmit="return confirm(\''.__('Are you sure you want to reset all languages data? This operation cannot be reversed.', 'sitepress').'\')">';
     wp_nonce_field('icl_reset_all','icl_reset_allnonce');
     echo '<p class="error" style="padding:6px;">' . __("All translations you have sent to ICanLocalize will be lost if you reset WPML's data. They cannot be recovered later.", 'sitepress') 
@@ -242,10 +368,9 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
     echo '<label><input type="checkbox" name="icl-reset-all" onchange="if(this.checked) jQuery(\'#reset-all-but\').removeAttr(\'disabled\'); else  jQuery(\'#reset-all-but\').attr(\'disabled\',\'disabled\');" /> ' . __('I am about to reset all language data.', 'sitepress') . '</label><br /><br />';
     echo '<input id="reset-all-but" type="submit" disabled="disabled" class="button-primary" value="'.__('Reset all language data and deactivate WPML', 'sitepress').'" />';    
     echo '</form>';
-    
-    
-    
     ?>
+    </div>
+    
     <?php do_action('icl_menu_footer'); ?>
 </div>
 

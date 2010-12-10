@@ -361,42 +361,6 @@ function icl_sitepress_activate(){
         $iclsettings['ajx_health_checked'] = 0;
         update_option('icl_sitepress_settings',$iclsettings);
     }  
-       
-    // clean the icl_translations table 
-    $orphans = $wpdb->get_col("
-        SELECT t.translation_id 
-        FROM {$wpdb->prefix}icl_translations t 
-        LEFT JOIN {$wpdb->posts} p ON t.element_id = p.ID 
-        WHERE t.element_id IS NOT NULL AND t.element_type LIKE 'post\\_%' AND p.ID IS NULL
-    ");   
-    if(!empty($orphans)){
-        $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id IN (".join(',',$orphans).")");
-    }
-    $orphans = $wpdb->get_col("
-        SELECT t.translation_id 
-        FROM {$wpdb->prefix}icl_translations t 
-        LEFT JOIN {$wpdb->term_taxonomy} p ON t.element_id = p.term_taxonomy_id 
-        WHERE t.element_id IS NOT NULL AND t.element_type LIKE 'tax\\_%' AND p.term_taxonomy_id IS NULL");   
-    if(!empty($orphans)){
-        $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id IN (".join(',',$orphans).")");
-    }
-    
-	global $wp_taxonomies;
-	if (is_array($wp_taxonomies)) {
-		foreach ($wp_taxonomies as $t => $v) {
-			$orphans = $wpdb->get_col("
-		SELECT t.translation_id 
-		FROM {$wpdb->prefix}icl_translations t 
-        LEFT JOIN {$wpdb->term_taxonomy} p 
-		ON t.element_id = p.term_taxonomy_id 
-		WHERE t.element_type = 'tax_{$t}' 
-		AND p.taxonomy <> '{$t}'
-			");
-    		if (!empty($orphans)) {
-        		$wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id IN (".join(',',$orphans).")");
-    		}
-		}
-	}
 	
     if(defined('ICL_DEBUG_MODE') && ICL_DEBUG_MODE && false === strpos($_SERVER['REQUEST_URI'], '/wpmu-edit.php')){
         require_once ICL_PLUGIN_PATH . '/inc/functions.php';
