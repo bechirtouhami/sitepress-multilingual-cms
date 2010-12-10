@@ -33,10 +33,10 @@ class ICL_Pro_Translation{
                 $iclsettings['translation_pickup_method'] = $method;
                 $sitepress->save_settings($iclsettings);
                 
-                $data['site_id'] = $this->settings['site_id'];                    
-                $data['accesskey'] = $this->settings['access_key'];
+                $data['site_id'] = $sitepress_settings['site_id'];
+                $data['accesskey'] = $sitepress_settings['access_key'];
                 $data['create_account'] = 0;
-                $data['translation_pickup_method'] = $method;
+                $data['pickup_type'] = $method;
                 
                 $icl_query = new ICanLocalizeQuery();                
                 $res = $icl_query->updateAccount($data);
