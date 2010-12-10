@@ -482,9 +482,7 @@ class SitePress{
         if(defined('XMLRPC_REQUEST') && XMLRPC_REQUEST){
             add_action('xmlrpc_call', array($this, 'xmlrpc_call_actions'));
             add_filter('xmlrpc_methods',array($this, 'xmlrpc_methods'));
-        }
-        
-        
+        }        
     }
     
     function ajax_setup(){
@@ -2690,11 +2688,13 @@ class SitePress{
     function exclude_other_language_pages2($arr){
         global $wpdb;
         $filtered_pages = array();
+        // grab list of pages NOT in the current language
         $excl_pages = $wpdb->get_col("
             SELECT p.ID FROM {$wpdb->posts} p 
-            LEFT JOIN {$wpdb->prefix}icl_translations t ON (p.ID = t.element_id OR t.element_id IS NULL)
+            JOIN {$wpdb->prefix}icl_translations t ON p.ID = t.element_id
             WHERE t.element_type='post_page' AND p.post_type='page' AND t.language_code <> '{$wpdb->escape($this->this_lang)}'
             ");
+        // exclude them from the result set
         foreach($arr as $page){
             if(!in_array($page->ID,$excl_pages)){
                 $filtered_pages[] = $page;

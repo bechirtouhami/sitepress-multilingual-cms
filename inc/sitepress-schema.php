@@ -87,7 +87,7 @@ function icl_sitepress_activate(){
         $sql = "
         CREATE TABLE `{$table_name}` (
             `translation_id` BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
-            `element_type` VARCHAR( 32 ) NOT NULL DEFAULT 'post',
+            `element_type` VARCHAR( 32 ) NOT NULL DEFAULT 'post_post',
             `element_id` BIGINT NULL DEFAULT NULL ,
             `trid` BIGINT NOT NULL ,
             `language_code` VARCHAR( 7 ) NOT NULL,
@@ -363,13 +363,20 @@ function icl_sitepress_activate(){
     }  
        
     // clean the icl_translations table 
-    $orphans = $wpdb->get_col("SELECT t.translation_id FROM {$wpdb->prefix}icl_translations t 
-        LEFT JOIN {$wpdb->posts} p ON t.element_id = p.ID WHERE t.element_type LIKE 'post\\_%' AND p.ID IS NULL");   
+    $orphans = $wpdb->get_col("
+        SELECT t.translation_id 
+        FROM {$wpdb->prefix}icl_translations t 
+        LEFT JOIN {$wpdb->posts} p ON t.element_id = p.ID 
+        WHERE t.element_id IS NOT NULL AND t.element_type LIKE 'post\\_%' AND p.ID IS NULL
+    ");   
     if(!empty($orphans)){
         $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id IN (".join(',',$orphans).")");
     }
-    $orphans = $wpdb->get_col("SELECT t.translation_id FROM {$wpdb->prefix}icl_translations t 
-        LEFT JOIN {$wpdb->term_taxonomy} p ON t.element_id = p.term_taxonomy_id WHERE t.element_type LIKE 'tax\\_%' AND p.term_taxonomy_id IS NULL");   
+    $orphans = $wpdb->get_col("
+        SELECT t.translation_id 
+        FROM {$wpdb->prefix}icl_translations t 
+        LEFT JOIN {$wpdb->term_taxonomy} p ON t.element_id = p.term_taxonomy_id 
+        WHERE t.element_id IS NOT NULL AND t.element_type LIKE 'tax\\_%' AND p.term_taxonomy_id IS NULL");   
     if(!empty($orphans)){
         $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id IN (".join(',',$orphans).")");
     }

@@ -1816,7 +1816,7 @@ class ICL_Pro_Translation{
     
     function pool_for_translations(){
         global $sitepress_settings, $sitepress, $wpdb;
-                
+        
         // Limit to once per hour
         $toffset = strtotime(current_time('mysql')) - $sitepress_settings['last_picked_up'] - 3600;
         if($toffset < 0){
