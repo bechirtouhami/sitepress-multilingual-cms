@@ -463,6 +463,10 @@ class TranslationManagement{
                 FROM {$wpdb->users} u JOIN {$wpdb->usermeta} m ON u.id=m.user_id AND m.meta_key LIKE '{$wpdb->prefix}capabilities'";
         $res = $wpdb->get_results($sql);
         $users = array();
+        $users[] = (object) array(
+            'ID' => 0,
+            'display_name' => __('First available', 'sitepress'),
+        );
         foreach($res as $row){
             $user = new WP_User($row->ID);
             $caps = @unserialize($row->caps);
@@ -507,18 +511,15 @@ class TranslationManagement{
         global $sitepress_settings;
         $args_default = array(
             'from'=>false, 'to'=>false,
-            'default_name' => __('Any', 'sitepress'),
             'name'          => 'translator_id',
             'selected'      => 0,
             'echo'          => true,
             'services'      => array('local')
         );
         extract($args_default);
-        extract($args, EXTR_OVERWRITE);        
-        
-        if(in_array('local', $services)){
-            $translators = $this->get_blog_translators(array('from'=>$from,'to'=>$to));             
-        }
+        extract($args, EXTR_OVERWRITE);
+
+        $translators = array();
         
         if(in_array('icanlocalize', $services)){
             foreach((array)$sitepress_settings['icl_lang_status'] as $langpair){
@@ -526,6 +527,13 @@ class TranslationManagement{
                 if($to && $to != $langpair['to']) continue;
                 
                 if(!empty($langpair['translators'])){
+                    if (1 < count($langpair['translators'])) {
+                        $translators[] = (object) array(
+                            'ID' => '0-icanlocalize',
+                            'display_name' => __('First available', 'sitepress'),
+                            'service'       => 'ICanLocalize'
+                        );
+                    }
                     foreach($langpair['translators'] as $tr){
                         if(!isset($_icl_translators[$tr['id']])){
                             $translators[] = $_icl_translators[$tr['id']] = (object) array(
@@ -538,10 +546,13 @@ class TranslationManagement{
                 }    
             }
         }
+
+        if(in_array('local', $services)){
+            $translators = array_merge($translators, $this->get_blog_translators(array('from'=>$from,'to'=>$to)));
+        }
         
         ?>
         <select name="<?php echo $name ?>">
-            <option value="0"><?php echo $default_name ?></option>
             <?php foreach($translators as $t):?>
             <option value="<?php echo $t->ID ?>" <?php if($selected==$t->ID):?>selected="selected"<?php endif;?>><?php echo esc_html($t->display_name);
                  ?> (<?php if(isset($t->service)) echo $t->service; else _e('Local'); ?>)</option>
