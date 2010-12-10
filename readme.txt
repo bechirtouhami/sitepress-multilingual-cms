@@ -69,12 +69,13 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 == Changelog ==
 
 = 2.0.3 =
-* Fix for wp_list_pages and ICanLocalize translations not being returned
+* Fix bug with pages disappearing from wp_list_pages and ICanLocalize translations not being returned
+* Added the option to send to the first available translator in ICanLocalize
 
 = 2.0.2 =
 * Added polling option for picking up translations from the server
 * Added quote wizard for getting translations cost estimates
-* Other small bug fixes
+* Other small bug fixes 
 
 = 2.0.1 =
 * Added back option to set translated documents status.
