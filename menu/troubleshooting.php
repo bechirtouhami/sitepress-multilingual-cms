@@ -167,6 +167,7 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
     }
     echo '<a href="#wpml-settings">'.__('WPML Settings', 'sitepress').'</a>';
     
+    /* 
     foreach($icl_tables as $icl_table){
         echo '<h3  id="'.$icl_table.'_anch" onclick="jQuery(\'#'.$icl_table.'\').toggle(); jQuery(\'#'.$icl_table.'_arrow_up\').toggle(); jQuery(\'#'.$icl_table.'_arrow_dn\').toggle();" style="cursor:pointer">'.$icl_table.'&nbsp;&nbsp;<span id="'.$icl_table.'_arrow_up" style="display:none">&uarr;</span><span id="'.$icl_table.'_arrow_dn">&darr;</span></h3>';        
         if(strtolower($wpdb->get_var("SHOW TABLES LIKE '{$icl_table}'")) != strtolower($icl_table)){
@@ -214,7 +215,9 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
     function __custom_csv_escape($s){
         $s = "&#34;". str_replace('"','&#34;',addslashes($s)) . "&#34;";
         return $s;
-    }                         
+    } 
+    */
+                            
     echo '<br /><hr /><h3 id="wpml-settings"> ' . __('WPML settings', 'sitepress') . '</h3>';
     echo '<textarea style="font-size:10px;width:100%" wrap="off" rows="16" readonly="readonly">';
     ob_start();
