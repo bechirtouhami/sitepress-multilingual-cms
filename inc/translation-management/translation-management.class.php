@@ -463,10 +463,6 @@ class TranslationManagement{
                 FROM {$wpdb->users} u JOIN {$wpdb->usermeta} m ON u.id=m.user_id AND m.meta_key LIKE '{$wpdb->prefix}capabilities'";
         $res = $wpdb->get_results($sql);
         $users = array();
-        $users[] = (object) array(
-            'ID' => 0,
-            'display_name' => __('First available', 'sitepress'),
-        );
         foreach($res as $row){
             $user = new WP_User($row->ID);
             $caps = @unserialize($row->caps);
@@ -548,6 +544,10 @@ class TranslationManagement{
         }
 
         if(in_array('local', $services)){
+            $translators[] = (object) array(
+                'ID' => 0,
+                'display_name' => __('First available', 'sitepress'),
+            );
             $translators = array_merge($translators, $this->get_blog_translators(array('from'=>$from,'to'=>$to)));
         }
         
