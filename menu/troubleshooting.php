@@ -28,7 +28,8 @@ switch($_GET['debug_action']){
         mysql_query("TRUNCATE TABLE {$wpdb->prefix}icl_node");
         mysql_query("TRUNCATE TABLE {$wpdb->prefix}icl_reminders");
         
-        header("Location: admin.php?page=".basename(ICL_PLUGIN_PATH).'/menu/troubleshooting.php&message=' . __('PRO translation was reset.', 'sitepress'));
+        echo "<script type=\"text/javascript\">location.href='admin.php?page=". 
+            basename(ICL_PLUGIN_PATH).'/menu/troubleshooting.php&message=' . __('PRO translation was reset.', 'sitepress')."'</script>";
         exit;
     case 'ghost_clean':
         
@@ -162,9 +163,11 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
     </p></div>
     <?php endif?>
     <?php
+    /*
     foreach($icl_tables as $icl_table){
         echo '<a href="#'.$icl_table.'_anch">'.$icl_table.'</a> | ';
     }
+    */
     echo '<a href="#wpml-settings">'.__('WPML Settings', 'sitepress').'</a>';
     
     /* 
