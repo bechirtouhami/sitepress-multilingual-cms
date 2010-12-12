@@ -12,6 +12,8 @@ Allows building complete multilingual sites with WordPress.
 
 **WPML combines multilingual content authoring with powerful translation management. It powers corporate sites and is simple enough for bloggers.**
 
+If you are having trouble downloading from here, there's an alternative download link in [WPML.org](http://wpml.org).
+
 = Features =
 
 WPML makes it possible to turn WordPress blogs multilingual in a few minutes with no knowledge of PHP or WordPress.
