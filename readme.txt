@@ -17,21 +17,21 @@ Allows building complete multilingual sites with WordPress.
 WPML makes it possible to turn WordPress blogs multilingual in a few minutes with no knowledge of PHP or WordPress.
 Its advanced features allow professional web developers to build full multilingual websites.
 
- * Turns a single WordPress site into a [multilingual site](http://wpml.org/?page_id=519).
- * Powerful [translation management](http://wpml.org/?page_id=3416), allowing teams of translators to work on multilingual sites.
- * Built-in [theme localization](http://wpml.org/?page_id=2717) without .mo files.
- * [Comments translation](http://wpml.org/?page_id=2755) allows you to moderate and reply to comments in your own language.
- * Integrated [professional translation](http://wpml.org/?page_id=1169) (optional feature for folks who need help translating).
- * Includes [CMS navigation](http://wpml.org/?page_id=527) elements for drop down menus, breadcrumbs trail and sidebar navigation.
- * [Robust links](http://wpml.org/?page_id=594) to posts and pages that never break.
+ * Turns a single WordPress site into a multilingual site.
+ * Powerful translation management, allowing teams of translators to work on multilingual sites.
+ * Built-in theme localization without .mo files.
+ * Comments translation allows you to moderate and reply to comments in your own language.
+ * Integrated professional translation (optional feature for folks who need help translating).
+ * Includes CMS navigation elements for drop down menus, breadcrumbs trail and sidebar navigation.
+ * Robust links to posts and pages that never break.
 
 = Commercial Support =
 
-[ICanLocalize](http://www.icanlocalize.com/site/) offers reliable [commercial support](http://wpml.org/partners/) for WPML. This support provides timely and dependable help directly from the developers.
+ICanLocalize offers reliable commercial support for WPML. This support provides timely and dependable help directly from the developers.
 
 = Learn More =
 
-[WPML website](http://wpml.org) | [ICanLocalize](http://www.icanlocalize.com/site/)
+[WPML website](http://wpml.org)
 
 == Installation ==
 
@@ -40,7 +40,7 @@ Its advanced features allow professional web developers to build full multilingu
 
 WPML needs to create tables in your database. These tables are used to hold the new language information. In order to use WPML, your MySQL user needs to have sufficient privileges to create new tables in the database.
 
-For help, visit the [support forum](http://forum.wpml.org).
+For help, visit the support forum - http://forum.wpml.org.
 
 == Frequently Asked Questions ==
 
@@ -52,12 +52,11 @@ If you're translating your site yourself, just ignore that option.
 
 = Everything in the theme still appears without translation =
 
-Have a look at this [theme localization guide](http://wpml.org/?page_id=2717).
+Have a look at our theme localization guide.
 
 = Languages per directories are disabled =
 
 To be able to use languages in directories, you should use a non-default permlink structure.
-Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 
 == Screenshots ==
 
@@ -183,14 +182,14 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 * Bug fix: compatibility packages from the theme folder were not included.
 * Added mysqldump feature on the troubleshooting page.
 * Catalan, Slovenian, Serbian flags fixed.
-* Fixed gallery links, per the [discussion](http://forum.wpml.org/topic.php?id=1000#post-4652) in the forum.
+* Fixed gallery links.
 * Bug fix: WPMU - some strings translations for subblogs were wrong.
 
 = 1.7.0 =
 * WPML adapts itself to any WordPress theme, making any website fully multilingual without any changes.
 * Added option to add a list of language links in the site's footer.
 * Added controls for choosing what to synchronize between originals and translations.
-* Added feature to allow [hiding all contents per language](http://wpml.org/?p=4031).
+* Added feature to allow hiding all contents per language.
 * Fixed bug when quick editing tags.
 * Switched locales for Chinese between simplified and traditional.
 * Lots of other tiny bug fixes.
@@ -237,7 +236,7 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 * WPML now has two distinct modes - Basic and Advanced. Basic mode just for multilingual contents and Advanced for all the rest.
 * Professional translation management is unified to one screen. No more Tools->Translation dashboard.
 * Communication with translators is all done from within WordPress.
-* Many [bugs fixed](http://wpml.org/?p=3110).
+* Many bugs fixed.
 
 = 1.3.5 =
 * Improved the professional translation flow and streamlined it for easy usage.
@@ -284,7 +283,7 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 * Allows specifying the locale for the default language.
 * Added a theme integration file - docs/theme-integration/wpml-integration.php.
 * Added an input for affiliate ID for themes.
-* Simplified the setup for [professional translation](http://wpml.org/?page_id=1169).
+* Simplified the setup for professional translation.
 
 = 1.2.0 =
 * Adds theme localization.
@@ -293,8 +292,8 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 * Fix for empty language tables bug.
 
 = 1.1.0 =
-* Adds [translation for general texts](http://wpml.org/?page_id=1915), such as title, tagline and widgets.
-* Can [translate custom fields](http://wpml.org/?page_id=2065) by ICanLocalize.
+* Adds translation for general texts, such as title, tagline and widgets.
+* Can translate custom fields by ICanLocalize.
 * Added an overview page, for quick access to all functions and a snapshot of WPML's status.
 
 = 1.0.4 =
@@ -310,8 +309,8 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 * Simplified the professional translation setup page.
 
 = 1.0.3 =
-* Added a hook for adding [custom HTML in menu items](http://wpml.org/?page_id=1824).
-* Added a function for creating [multilingual links in themes](http://wpml.org/?page_id=1815).
+* Added a hook for adding custom HTML in menu items.
+* Added a function for creating multilingual links in themes.
 * Cleaned up translation table, in case posts were deleted while WPML is inactive.
 * Reverting to HTTP communication instead of HTTPs if a firewall is blocking us.
 
@@ -343,7 +342,7 @@ Also, go through the [detailed description](http://wpml.org/?page_id=1010).
 * Fixed a bug which caused the default language to reset after plugin upgrade.
 * Added WP-Http class for compatibility with WP 2.6.
 * Added country flags as an option for the language switcher.
-* Added a function that returns the languages information for [building custom language switchers](http://wpml.org/?page_id=989).
+* Added a function that returns the languages information for building custom language switchers.
 * Added the language name as the class for each entry in the languages selector, so that they can be styled individually.
 
 = 0.9.8 =
