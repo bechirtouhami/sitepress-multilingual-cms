@@ -109,14 +109,6 @@ if (!empty($icl_translation_services)) {
 }
 ?>
 
-    
-<?php if ($sitepress->icl_account_configured() && $sitepress_settings['icl_html_status']): ?>
-    <div class="icl_cyan_box">
-        <h3><?php _e('ICanLocalize account status', 'sitepress') ?></h3>
-    <?php echo $sitepress_settings['icl_html_status']; ?>
-    </div>
-<?php endif; ?>
-
     <form method="post" name="translation-dashboard-filter" action="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/translation-management.php&amp;sm=dashboard">
     <input type="hidden" name="icl_tm_action" value="dashboard_filter" />
     <table class="form-table widefat fixed">
@@ -444,4 +436,11 @@ if (!empty($icl_translation_services)) {
     </form>    
     
     <br />
-    <?php $ICL_Pro_Translation->get_icl_manually_tranlations_box('icl_cyan_box'); // shows only when translation polling is on and there are translations in progress ?>    
+    <?php $ICL_Pro_Translation->get_icl_manually_tranlations_box('icl_cyan_box'); // shows only when translation polling is on and there are translations in progress ?>
+
+<?php if ($sitepress->icl_account_configured() && $sitepress_settings['icl_html_status']): ?>
+    <div class="icl_cyan_box">
+        <h3><?php _e('ICanLocalize account status', 'sitepress') ?></h3>
+    <?php echo $sitepress_settings['icl_html_status']; ?>
+    </div>
+<?php endif; ?>
