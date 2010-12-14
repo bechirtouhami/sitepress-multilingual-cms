@@ -27,7 +27,7 @@ Its advanced features allow professional web developers to build full multilingu
 
 = Commercial Support =
 
-ICanLocalize offers reliable commercial support for WPML. This support provides timely and dependable help directly from the developers.
+[ICanLocalize](http://www.icanlocalize.com/site/) offers reliable commercial support for WPML. This support provides timely and dependable help directly from the developers.
 
 = Learn More =
 
