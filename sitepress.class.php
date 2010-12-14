@@ -235,8 +235,8 @@ class SitePress{
 
             // adjust queried categories and tags ids according to the language            
             if($this->settings['auto_adjust_ids']){
-                add_action('parse_query', array($this, 'parse_query'));            
-                add_action('wp_list_pages_excludes', array($this, 'adjust_wp_list_pages_excludes'));            
+                add_action('parse_query', array($this, 'parse_query'));
+                add_action('wp_list_pages_excludes', array($this, 'adjust_wp_list_pages_excludes'));
                 if(!is_admin()){
                     add_filter('get_term', array($this,'get_term_adjust_id'), 1, 1);
                     add_filter('category_link', array($this,'category_link_adjust_id'), 1, 2);
@@ -4236,13 +4236,13 @@ class SitePress{
             }
             // name
             if(isset($q->query_vars['name']) && !empty($q->query_vars['name'])){                
-                $pid = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_name='".urlencode($wpdb->escape($q->query_vars['name']))."'");    
+                $pid = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_name='".urlencode($wpdb->escape($q->query_vars['name']))."' AND post_type='" . $post_type . "'");
                 $q->query_vars['p'] = icl_object_id($pid, $post_type, true);
                 unset($q->query_vars['name']);
             }
             // pagename
             if(isset($q->query_vars['pagename']) && !empty($q->query_vars['pagename'])){
-                $pid = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_name='".urlencode($wpdb->escape($q->query_vars['pagename']))."'");                
+                $pid = $wpdb->get_var("SELECT ID FROM $wpdb->posts WHERE post_name='".urlencode($wpdb->escape($q->query_vars['pagename']))."' AND post_type='page'");
                 $q->query_vars['page_id'] = icl_object_id($pid, 'page', true);
                 if($pid != $q->query_vars['page_id']){
                     $q->query_vars['pagename'] = $wpdb->get_var("SELECT post_name FROM $wpdb->posts WHERE ID=" . $pid);                
