@@ -376,10 +376,10 @@ class SitePress{
                         }elseif(isset($_GET['tag'])){
                             $tag_tax_id = $wpdb->get_var($wpdb->prepare("
                                 SELECT x.term_taxonomy_id FROM {$wpdb->term_taxonomy} x JOIN {$wpdb->terms} t ON t.term_id = x.term_id
-                                WHERE t.slug=%s AND x.taxonomy=%s",
+                                WHERE t.slug='%s' AND x.taxonomy='%s'",
                                 $_GET['tag'], 'post_tag'));
                             $this->this_lang = $wpdb->get_var($wpdb->prepare("SELECT language_code FROM {$wpdb->prefix}icl_translations 
-                                WHERE element_type='tax_category' AND element_id=%d", $tax_tax_id));                                                        
+                                WHERE element_type='tax_post_tag' AND element_id=%d", $tag_tax_id));
                         }                        
                         //
                         if(!isset($_GET['lang']) && ($this->this_lang != $this->get_default_language())){
