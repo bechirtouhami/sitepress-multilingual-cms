@@ -41,7 +41,7 @@ function icl_upgrade_2_0_0_steps($step, $stepper){
             // fix source_language_code
             // all source documents must have null
             $wpdb->query($wpdb->prepare("UPDATE {$wpdb->prefix}icl_translations SET source_language_code = NULL 
-                WHERE element_type IN('".join("','", $types)."') AND source_language_code = '' AND language_code=%s", $sitepress->get_default_language()));
+                WHERE element_type IN('".join("','", $types)."') AND source_language_code = '' AND language_code='%s'", $sitepress->get_default_language()));
             // get translated documents with missing source language
             $res = $wpdb->get_results($wpdb->prepare("
                 SELECT translation_id, trid, language_code 
@@ -187,10 +187,12 @@ function icl_upgrade_2_0_0_steps($step, $stepper){
             }
             
             // set default translators
-            foreach($sitepress_settings['icl_lang_status'] as $lpair){
-                if(!empty($lpair['translators'])){
-                    $iclsettings['default_translators'][$lpair['from']][$lpair['to']] = array('id'=>$lpair['translators'][0]['id'], 'type'=>'icanlocalize');                    
-                }                
+            if (isset($sitepress_settings['icl_lang_status'])) {
+                foreach($sitepress_settings['icl_lang_status'] as $lpair){
+                    if(!empty($lpair['translators'])){
+                        $iclsettings['default_translators'][$lpair['from']][$lpair['to']] = array('id'=>$lpair['translators'][0]['id'], 'type'=>'icanlocalize');
+                    }
+                }
             }
             $sitepress->save_settings($iclsettings);            
             

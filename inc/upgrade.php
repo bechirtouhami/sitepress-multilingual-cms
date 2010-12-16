@@ -497,7 +497,7 @@ function icl_plugin_upgrade(){
         }
         
         if($mig_debug) fwrite($mig_debug, "Upgraded to 2.0.0 \n");
-    }    
+    }
     
     if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '<')){
         if($mig_debug) fwrite($mig_debug, "Update plugin version in the database \n");
