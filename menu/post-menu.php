@@ -271,7 +271,7 @@
                     $edit_anchor = __('edit','sitepress');
                     list($needs_update, $in_progress) = $wpdb->get_row($wpdb->prepare("
                         SELECT needs_update, status = ".ICL_TM_IN_PROGRESS." FROM {$wpdb->prefix}icl_translation_status s JOIN {$wpdb->prefix}icl_translations t ON t.translation_id = s.translation_id
-                        WHERE t.trid = %d AND t.language_code = %s
+                        WHERE t.trid = %d AND t.language_code = '%s'
                     ", $trid, $lang['code']), ARRAY_N);           
                     switch($iclTranslationManagement->settings['doc_translation_method']){
                         case ICL_TM_TMETHOD_EDITOR:

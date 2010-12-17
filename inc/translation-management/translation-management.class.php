@@ -131,7 +131,7 @@ class TranslationManagement{
     function _warn_editing_icl_translation(){
         global $wpdb;
         $translation_id = $wpdb->get_var($wpdb->prepare("
-                SELECT translation_id FROM {$wpdb->prefix}icl_translations WHERE trid=%d AND language_code=%s"
+                SELECT translation_id FROM {$wpdb->prefix}icl_translations WHERE trid=%d AND language_code='%s'"
             , $_GET['trid'], $_GET['lang']));
         if($translation_id){
             $translation_status = $wpdb->get_var($wpdb->prepare("
@@ -630,7 +630,7 @@ class TranslationManagement{
             $from_lang = $res->language_code;
             $original_post = get_post($original_post_id);
             $translation_id = $wpdb->get_var($wpdb->prepare("
-                SELECT translation_id FROM {$wpdb->prefix}icl_translations WHERE trid=%d AND language_code=%s
+                SELECT translation_id FROM {$wpdb->prefix}icl_translations WHERE trid=%d AND language_code='%s'
             ", $trid, $lang));
             $md5 = $this->post_md5($original_post);
             
@@ -1040,7 +1040,7 @@ class TranslationManagement{
                 SELECT * 
                 FROM {$wpdb->prefix}icl_translations tr 
                 JOIN {$wpdb->prefix}icl_translation_status ts ON tr.translation_id = ts.translation_id 
-                WHERE tr.trid=%s AND tr.language_code=%s
+                WHERE tr.trid=%s AND tr.language_code='%s'
             ", $trid, $language));        
         }
         return $translation;
@@ -1653,7 +1653,7 @@ class TranslationManagement{
                 SELECT p.ID, p.post_title 
                 FROM {$wpdb->prefix}icl_translations t 
                     JOIN {$wpdb->posts} p ON p.ID = t.element_id
-                WHERE t.trid = %d AND t.language_code = %s", $row->trid, $row->source_language_code));
+                WHERE t.trid = %d AND t.language_code = '%s'", $row->trid, $row->source_language_code));
             
             $jobs[$k]->post_title = $doc->post_title;
             $jobs[$k]->edit_link = get_edit_post_link($doc->ID);
@@ -1683,7 +1683,7 @@ class TranslationManagement{
             SELECT t.element_id, p.post_title, p.post_type
             FROM {$wpdb->prefix}icl_translations t 
             JOIN {$wpdb->posts} p ON t.element_id = p.ID AND t.trid = %d 
-            WHERE t.language_code = %s", $job->trid, $job->source_language_code));
+            WHERE t.language_code = '%s'", $job->trid, $job->source_language_code));
         $job->original_doc_title = $original->post_title;
         $job->original_doc_id = $original->element_id;
         $job->original_post_type = $original->post_type;
@@ -1724,7 +1724,7 @@ class TranslationManagement{
             SELECT tj.job_id FROM {$wpdb->prefix}icl_translate_job tj 
                 JOIN {$wpdb->prefix}icl_translation_status ts ON tj.rid = ts.rid
                 JOIN {$wpdb->prefix}icl_translations t ON ts.translation_id = t.translation_id
-                WHERE t.trid = %d AND t.language_code=%s
+                WHERE t.trid = %d AND t.language_code='%s'
                 ORDER BY tj.job_id DESC LIMIT 1                
         ", $trid, $language_code));
         

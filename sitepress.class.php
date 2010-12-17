@@ -1906,7 +1906,7 @@ class SitePress{
                     array('element_type'=>$el_type, 'element_id'=>$el_id));
                 $this->icl_translations_cache->clear();
             } elseif($translation_id = $wpdb->get_var($wpdb->prepare("
-                SELECT translation_id FROM {$wpdb->prefix}icl_translations WHERE trid=%d AND language_code=%s AND element_id IS NULL", 
+                SELECT translation_id FROM {$wpdb->prefix}icl_translations WHERE trid=%d AND language_code='%s' AND element_id IS NULL", 
                 $trid, $language_code ))){                
                     $wpdb->update($wpdb->prefix.'icl_translations', 
                         array('element_id'=>$el_id), 

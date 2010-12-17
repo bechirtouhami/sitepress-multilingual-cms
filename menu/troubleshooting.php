@@ -111,6 +111,33 @@ switch($_GET['debug_action']){
         }        
         exit;
         break;
+
+    case 'icl_cleanup':
+        global $sitepress, $wpdb, $wp_post_types;
+        $post_types = array_keys($wp_post_types);
+        foreach($post_types as $pt){
+            $types[] = 'post_' . $pt;
+        }
+        /*
+         * Messed up on 2.0 upgrade
+         */
+        // fix source_language_code
+        // all source documents must have null
+        $wpdb->query($wpdb->prepare("UPDATE {$wpdb->prefix}icl_translations SET source_language_code = NULL
+            WHERE element_type IN('".join("','", $types)."') AND source_language_code = '' AND language_code='%s'", $sitepress->get_default_language()));
+        // get translated documents with missing source language
+        $res = $wpdb->get_results($wpdb->prepare("
+            SELECT translation_id, trid, language_code
+            FROM {$wpdb->prefix}icl_translations
+            WHERE (source_language_code = '' OR source_language_code IS NULL)
+                AND element_type IN('".join("','", $types)."')
+                AND language_code <> %s
+                ", $sitepress->get_default_language()
+            ));
+        foreach($res as $row){
+            $wpdb->query($wpdb->prepare("UPDATE {$wpdb->prefix}icl_translations SET source_language_code = '%s' WHERE translation_id=%d", $sitepress->get_default_language(), $row->translation_id));
+        }
+        break;
 }
 /* DEBUG ACTION */
 
@@ -278,7 +305,17 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
                     jQuery('#icl_sync_jobs').next().fadeOut();
                     
                 });
-            })            
+            })
+            jQuery('#icl_cleanup').click(function(){
+                jQuery(this).attr('disabled', 'disabled');
+                jQuery(this).after(icl_ajxloaderimg);
+                jQuery.post(location.href + '&debug_action=icl_cleanup&nonce=<?php echo wp_create_nonce('icl_cleanup'); ?>', function(){
+                    jQuery('#icl_cleanup').removeAttr('disabled');
+                    alert('<?php echo esc_js(__('Done', 'sitepress')) ?>');
+                    jQuery('#icl_cleanup').next().fadeOut();
+
+                });
+            })
         })
     </script>
     <div class="icl_cyan_box" >           
@@ -288,6 +325,7 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
     <?php if($sitepress_settings['site_id'] && $sitepress_settings['access_key']):?>
     <input id="icl_sync_jobs" type="button" class="button-secondary" value="<?php _e('Synchronize translation jobs with ICanLocalize', 'sitepress')?>" />&nbsp;
     <?php endif; ?>
+    <input id="icl_cleanup" type="button" class="button-secondary" value="<?php _e('General clean up', 'sitepress')?>" />&nbsp;
     
 
     </div>    
@@ -379,4 +417,3 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
     
     <?php do_action('icl_menu_footer'); ?>
 </div>
-

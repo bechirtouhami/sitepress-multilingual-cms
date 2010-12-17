@@ -451,7 +451,7 @@ class ICL_Pro_Translation{
                     SELECT origin, target FROM {$wpdb->prefix}icl_core_status WHERE rid=%d ORDER BY id DESC LIMIT 1
                 ", $request_id), ARRAY_N);
                 $translation_id = $wpdb->get_var($wpdb->prepare("
-                    SELECT translation_id FROM {$wpdb->prefix}icl_translations WHERE trid=%d and language_code=%s
+                    SELECT translation_id FROM {$wpdb->prefix}icl_translations WHERE trid=%d and language_code='%s'
                 ", $trid, $lang_to));
                 
                 if(!$translation_id){
@@ -1741,7 +1741,7 @@ class ICL_Pro_Translation{
                         WHERE element_id=%d AND post_type LIKE 'post\_%'", $nid)
                     );                    
                     $cms_id = $wpdb->get_var($wpdb->prepare("SELECT translation_id FROM {$wpdb->prefix}icl_translations 
-                        WHERE trid=%d AND language_code=%s", $trid, $cms_request_info->target)
+                        WHERE trid=%d AND language_code='%s'", $trid, $cms_request_info->target)
                     );
                 }
                 

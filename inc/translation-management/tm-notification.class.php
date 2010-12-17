@@ -27,9 +27,9 @@ class TM_Notification{
             if(empty($user_language)){
                 $user_language = $sitepress->get_admin_language();
             }
-            $lang_from = $wpdb->get_var($wpdb->prepare("SELECT name FROM {$wpdb->prefix}icl_languages_translations WHERE language_code=%s AND display_language_code=%s",
+            $lang_from = $wpdb->get_var($wpdb->prepare("SELECT name FROM {$wpdb->prefix}icl_languages_translations WHERE language_code='%s' AND display_language_code='%s'",
                 $job->source_language_code, $user_language));
-            $lang_to = $wpdb->get_var($wpdb->prepare("SELECT name FROM {$wpdb->prefix}icl_languages_translations WHERE language_code=%s AND display_language_code=%s",
+            $lang_to = $wpdb->get_var($wpdb->prepare("SELECT name FROM {$wpdb->prefix}icl_languages_translations WHERE language_code='%s' AND display_language_code='%s'",
                 $job->language_code, $user_language));
 
             // hack current user language            
@@ -65,9 +65,9 @@ class TM_Notification{
         if(empty($user_language)){
             $user_language = $sitepress->get_admin_language();
         }
-        $lang_from = $wpdb->get_var($wpdb->prepare("SELECT name FROM {$wpdb->prefix}icl_languages_translations WHERE language_code=%s AND display_language_code=%s",
+        $lang_from = $wpdb->get_var($wpdb->prepare("SELECT name FROM {$wpdb->prefix}icl_languages_translations WHERE language_code='%s' AND display_language_code='%s'",
             $job->source_language_code, $user_language));
-        $lang_to = $wpdb->get_var($wpdb->prepare("SELECT name FROM {$wpdb->prefix}icl_languages_translations WHERE language_code=%s AND display_language_code=%s",
+        $lang_to = $wpdb->get_var($wpdb->prepare("SELECT name FROM {$wpdb->prefix}icl_languages_translations WHERE language_code='%s' AND display_language_code='%s'",
             $job->language_code, $user_language));
 
         // hack current user language            
@@ -94,9 +94,9 @@ class TM_Notification{
         if(empty($user_language)){
             $user_language = $sitepress->get_admin_language();
         }
-        $lang_from = $wpdb->get_var($wpdb->prepare("SELECT name FROM {$wpdb->prefix}icl_languages_translations WHERE language_code=%s AND display_language_code=%s",
+        $lang_from = $wpdb->get_var($wpdb->prepare("SELECT name FROM {$wpdb->prefix}icl_languages_translations WHERE language_code='%s' AND display_language_code='%s'",
             $job->source_language_code, $user_language));
-        $lang_to = $wpdb->get_var($wpdb->prepare("SELECT name FROM {$wpdb->prefix}icl_languages_translations WHERE language_code=%s AND display_language_code=%s",
+        $lang_to = $wpdb->get_var($wpdb->prepare("SELECT name FROM {$wpdb->prefix}icl_languages_translations WHERE language_code='%s' AND display_language_code='%s'",
             $job->language_code, $user_language));
         
         $tj_url = get_option('siteurl') . '/wp-admin/admin.php?page=' . ICL_PLUGIN_FOLDER . '/menu/translation-management.php&sm=jobs';
@@ -134,9 +134,9 @@ class TM_Notification{
         if(empty($user_language)){
             $user_language = $sitepress->get_admin_language();
         }
-        $lang_from = $wpdb->get_var($wpdb->prepare("SELECT name FROM {$wpdb->prefix}icl_languages_translations WHERE language_code=%s AND display_language_code=%s",
+        $lang_from = $wpdb->get_var($wpdb->prepare("SELECT name FROM {$wpdb->prefix}icl_languages_translations WHERE language_code='%s' AND display_language_code='%s'",
             $job->source_language_code, $user_language));
-        $lang_to = $wpdb->get_var($wpdb->prepare("SELECT name FROM {$wpdb->prefix}icl_languages_translations WHERE language_code=%s AND display_language_code=%s",
+        $lang_to = $wpdb->get_var($wpdb->prepare("SELECT name FROM {$wpdb->prefix}icl_languages_translations WHERE language_code='%s' AND display_language_code='%s'",
             $job->language_code, $user_language));        
         
         if($iclTranslationManagement->settings['notification']['resigned'] == ICL_TM_NOTIFICATION_IMMEDIATELY){
