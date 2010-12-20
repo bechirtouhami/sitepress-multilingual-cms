@@ -1,6 +1,7 @@
 <?php //included from menu translation-management.php ?>
 <?php 
 
+
 if(isset($_SESSION['translation_dashboard_filter'])){
     $icl_translation_filter = $_SESSION['translation_dashboard_filter'];
 }
