@@ -122,6 +122,7 @@ if (isset($data['submit-for-later'])) {
         $data['wc_description'] = $wc_description;
         $data['site_id'] = $site_id = $sitepress_settings['site_id'];
         $data['accesskey'] = $access_key = $sitepress_settings['access_key'];
+        $data['ignore_languages'] = 1;
         require_once ICL_PLUGIN_PATH . '/lib/icl_api.php';
         $icl_query = new ICanLocalizeQuery();
         if ($icl_query->updateAccount($data) !== 0) {
