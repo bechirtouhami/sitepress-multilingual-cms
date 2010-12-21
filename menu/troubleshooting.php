@@ -96,6 +96,7 @@ switch($_GET['debug_action']){
                             AND element_type LIKE 'post\\_%'
                         ", ARRAY_N);
                     if($trid){
+                        $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE trid={$trid} AND language_code='{$target_language}'");
                         $recover = array(
                             'translation_id' => $request['cms_id'],
                             'element_type'   => $element_type,
