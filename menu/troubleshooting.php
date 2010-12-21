@@ -1,144 +1,184 @@
 <?php 
 
 /* DEBUG ACTION */
-if(isset($_GET['debug_action']) && $_GET['nonce']==wp_create_nonce($_GET['debug_action']))
-switch($_GET['debug_action']){
-    case 'reset_pro_translation_configuration':
-        $sitepress_settings = get_option('icl_sitepress_settings');
-        
-        $sitepress_settings['content_translation_languages_setup'] = false;
-        $sitepress_settings['content_translation_setup_complete'] = false;        
-        unset($sitepress_settings['content_translation_setup_wizard_step']);
-        unset($sitepress_settings['site_id']);
-        unset($sitepress_settings['access_key']);
-        unset($sitepress_settings['translator_choice']);
-        unset($sitepress_settings['icl_lang_status']);
-        unset($sitepress_settings['icl_balance']);
-        unset($sitepress_settings['icl_support_ticket_id']);
-        unset($sitepress_settings['icl_current_session']);
-        unset($sitepress_settings['last_get_translator_status_call']);
-        unset($sitepress_settings['last_icl_reminder_fetch']);
-        unset($sitepress_settings['icl_account_email']);
+if(isset($_GET['debug_action']) && $_GET['nonce']==wp_create_nonce($_GET['debug_action'])){
+    ob_end_clean();
+    switch($_GET['debug_action']){
+        case 'reset_pro_translation_configuration':
+            $sitepress_settings = get_option('icl_sitepress_settings');
+            
+            $sitepress_settings['content_translation_languages_setup'] = false;
+            $sitepress_settings['content_translation_setup_complete'] = false;        
+            unset($sitepress_settings['content_translation_setup_wizard_step']);
+            unset($sitepress_settings['site_id']);
+            unset($sitepress_settings['access_key']);
+            unset($sitepress_settings['translator_choice']);
+            unset($sitepress_settings['icl_lang_status']);
+            unset($sitepress_settings['icl_balance']);
+            unset($sitepress_settings['icl_support_ticket_id']);
+            unset($sitepress_settings['icl_current_session']);
+            unset($sitepress_settings['last_get_translator_status_call']);
+            unset($sitepress_settings['last_icl_reminder_fetch']);
+            unset($sitepress_settings['icl_account_email']);
 
-        update_option('icl_sitepress_settings', $sitepress_settings);
-        
-        mysql_query("TRUNCATE TABLE {$wpdb->prefix}icl_core_status");
-        mysql_query("TRUNCATE TABLE {$wpdb->prefix}icl_content_status");
-        mysql_query("TRUNCATE TABLE {$wpdb->prefix}icl_string_status");
-        mysql_query("TRUNCATE TABLE {$wpdb->prefix}icl_node");
-        mysql_query("TRUNCATE TABLE {$wpdb->prefix}icl_reminders");
-        
-        echo "<script type=\"text/javascript\">location.href='admin.php?page=". 
-            basename(ICL_PLUGIN_PATH).'/menu/troubleshooting.php&message=' . __('PRO translation was reset.', 'sitepress')."'</script>";
-        exit;
-    case 'ghost_clean':
-        
-        // clean the icl_translations table 
-        $orphans = $wpdb->get_col("
-            SELECT t.translation_id 
-            FROM {$wpdb->prefix}icl_translations t 
-            LEFT JOIN {$wpdb->posts} p ON t.element_id = p.ID 
-            WHERE t.element_id IS NOT NULL AND t.element_type LIKE 'post\\_%' AND p.ID IS NULL
-        ");   
-        if(!empty($orphans)){
-            $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id IN (".join(',',$orphans).")");
-        }
-        
-        $orphans = $wpdb->get_col("
-            SELECT t.translation_id 
-            FROM {$wpdb->prefix}icl_translations t 
-            LEFT JOIN {$wpdb->term_taxonomy} p ON t.element_id = p.term_taxonomy_id 
-            WHERE t.element_id IS NOT NULL AND t.element_type LIKE 'tax\\_%' AND p.term_taxonomy_id IS NULL");   
-        if(!empty($orphans)){
-            $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id IN (".join(',',$orphans).")");
-        }
-        
-        global $wp_taxonomies;
-        if (is_array($wp_taxonomies)) {
-            foreach ($wp_taxonomies as $t => $v) {
-                $orphans = $wpdb->get_col("
-            SELECT t.translation_id 
-            FROM {$wpdb->prefix}icl_translations t 
-            LEFT JOIN {$wpdb->term_taxonomy} p 
-            ON t.element_id = p.term_taxonomy_id 
-            WHERE t.element_type = 'tax_{$t}' 
-            AND p.taxonomy <> '{$t}'
-                ");
-                if (!empty($orphans)) {
-                    $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id IN (".join(',',$orphans).")");
-                }
+            update_option('icl_sitepress_settings', $sitepress_settings);
+            
+            mysql_query("TRUNCATE TABLE {$wpdb->prefix}icl_core_status");
+            mysql_query("TRUNCATE TABLE {$wpdb->prefix}icl_content_status");
+            mysql_query("TRUNCATE TABLE {$wpdb->prefix}icl_string_status");
+            mysql_query("TRUNCATE TABLE {$wpdb->prefix}icl_node");
+            mysql_query("TRUNCATE TABLE {$wpdb->prefix}icl_reminders");
+            
+            echo "<script type=\"text/javascript\">location.href='admin.php?page=". 
+                basename(ICL_PLUGIN_PATH).'/menu/troubleshooting.php&message=' . __('PRO translation was reset.', 'sitepress')."'</script>";
+            exit;
+        case 'ghost_clean':
+            
+            // clean the icl_translations table 
+            $orphans = $wpdb->get_col("
+                SELECT t.translation_id 
+                FROM {$wpdb->prefix}icl_translations t 
+                LEFT JOIN {$wpdb->posts} p ON t.element_id = p.ID 
+                WHERE t.element_id IS NOT NULL AND t.element_type LIKE 'post\\_%' AND p.ID IS NULL
+            ");   
+            if(!empty($orphans)){
+                $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id IN (".join(',',$orphans).")");
             }
-        } 
-        exit;       
-        break;        
-    case 'icl_sync_jobs':
-    
-        $iclq = new ICanLocalizeQuery($sitepress_settings['site_id'], $sitepress_settings['access_key']);                                
-        $requests = $iclq->cms_requests_all();        
-        if(!empty($requests))
-        foreach($requests as $request){
-            $source_language = ICL_Pro_Translation::server_languages_map($request['language_name'], true);
-            $target_language = ICL_Pro_Translation::server_languages_map($request['target']['language_name'], true);
             
-            $source_language = $wpdb->get_var($wpdb->prepare("SELECT code FROM {$wpdb->prefix}icl_languages WHERE english_name=%s", $source_language));
-            $target_language = $wpdb->get_var($wpdb->prepare("SELECT code FROM {$wpdb->prefix}icl_languages WHERE english_name=%s", $target_language));
+            $orphans = $wpdb->get_col("
+                SELECT t.translation_id 
+                FROM {$wpdb->prefix}icl_translations t 
+                LEFT JOIN {$wpdb->term_taxonomy} p ON t.element_id = p.term_taxonomy_id 
+                WHERE t.element_id IS NOT NULL AND t.element_type LIKE 'tax\\_%' AND p.term_taxonomy_id IS NULL");   
+            if(!empty($orphans)){
+                $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id IN (".join(',',$orphans).")");
+            }
             
-            $tr  = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}icl_translations WHERE translation_id=%d", $request['cms_id']));   
-            if(empty($tr)){
-                $trs = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}icl_translation_status WHERE translation_id=%d", $request['cms_id']));
-                if(!empty($trs)){
-                    $tpack = unserialize($trs->translation_package);
-                    $original_id = $tpack['contents']['original_id']['data'];
-                    list($trid, $element_type) = $wpdb->get_row("
-                            SELECT trid, element_type 
-                            FROM {$wpdb->prefix}icl_translations 
-                            WHERE element_id={$original_id}
-                            AND element_type LIKE 'post\\_%'
-                        ", ARRAY_N);
-                    if($trid){
-                        $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE trid={$trid} AND language_code='{$target_language}'");
-                        $recover = array(
-                            'translation_id' => $request['cms_id'],
-                            'element_type'   => $element_type,
-                            //'element_id'     => this is NULL
-                            'trid'           => $trid,
-                            'language_code'  => $target_language,     
-                            'source_language_code' => $source_language
-                        );
-                        $wpdb->insert($wpdb->prefix . 'icl_translations', $recover);
+            global $wp_taxonomies;
+            if (is_array($wp_taxonomies)) {
+                foreach ($wp_taxonomies as $t => $v) {
+                    $orphans = $wpdb->get_col("
+                SELECT t.translation_id 
+                FROM {$wpdb->prefix}icl_translations t 
+                LEFT JOIN {$wpdb->term_taxonomy} p 
+                ON t.element_id = p.term_taxonomy_id 
+                WHERE t.element_type = 'tax_{$t}' 
+                AND p.taxonomy <> '{$t}'
+                    ");
+                    if (!empty($orphans)) {
+                        $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id IN (".join(',',$orphans).")");
                     }
                 }
+            } 
+            exit;       
+            break;        
+        case 'icl_sync_jobs':
+        
+            $iclq = new ICanLocalizeQuery($sitepress_settings['site_id'], $sitepress_settings['access_key']);                                
+            $requests = $iclq->cms_requests_all();        
+            if(!empty($requests))
+            foreach($requests as $request){
+                $source_language = ICL_Pro_Translation::server_languages_map($request['language_name'], true);
+                $target_language = ICL_Pro_Translation::server_languages_map($request['target']['language_name'], true);
+                
+                $source_language = $wpdb->get_var($wpdb->prepare("SELECT code FROM {$wpdb->prefix}icl_languages WHERE english_name=%s", $source_language));
+                $target_language = $wpdb->get_var($wpdb->prepare("SELECT code FROM {$wpdb->prefix}icl_languages WHERE english_name=%s", $target_language));
+                
+                // only handle old-style cms_id values
+                if(!is_numeric($request['cms_id'])) continue;
+                
+                $tr  = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}icl_translations WHERE translation_id=%d", $request['cms_id']));   
+                if(empty($tr)){
+                    $trs = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}icl_translation_status WHERE translation_id=%d", $request['cms_id']));
+                    if(!empty($trs)){
+                        $tpack = unserialize($trs->translation_package);
+                        $original_id = $tpack['contents']['original_id']['data'];
+                        list($trid, $element_type) = $wpdb->get_row("
+                                SELECT trid, element_type 
+                                FROM {$wpdb->prefix}icl_translations 
+                                WHERE element_id={$original_id}
+                                AND element_type LIKE 'post\\_%'
+                            ", ARRAY_N);
+                        if($trid){
+                            $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE trid={$trid} AND language_code='{$target_language}'");
+                            $recover = array(
+                                'translation_id' => $request['cms_id'],
+                                'element_type'   => $element_type,
+                                //'element_id'     => this is NULL
+                                'trid'           => $trid,
+                                'language_code'  => $target_language,     
+                                'source_language_code' => $source_language
+                            );
+                            $wpdb->insert($wpdb->prefix . 'icl_translations', $recover);
+                        }
+                    }
+                }
+            }        
+            
+            exit;
+            //break; 
+            
+          case 'icl_cms_id_fix':  
+            $iclq = new ICanLocalizeQuery($sitepress_settings['site_id'], $sitepress_settings['access_key']);                                
+            
+            $p = $wpdb->get_row("SELECT t.* FROM {$wpdb->prefix}icl_translations t JOIN {$wpdb->prefix}icl_translation_status s ON t.translation_id=s.translation_id
+                WHERE t.element_type LIKE 'post\\_%' AND t.source_language_code IS NOT NULL AND s.translation_service='icanlocalize' LIMIT {$_REQUEST['offset']}, 1");
+            if(!empty($p)){
+                
+                $original_id = $wpdb->get_var($wpdb->prepare("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid=%d AND source_language_code IS NULL", $p->trid));
+                if($p->element_type=='post_page'){
+                    $permalink   = get_option('home') . '?page_id=' . $original_id;
+                }else{
+                    $permalink   = get_option('home') . '?p=' . $original_id;    
+                }
+                $_lang_details = $sitepress->get_language_details($p->source_language_code);
+                $from_language = ICL_Pro_Translation::server_languages_map($_lang_details['english_name']); 
+                $_lang_details = $sitepress->get_language_details($p->language_code);
+                $to_language = ICL_Pro_Translation::server_languages_map($_lang_details['english_name']); 
+                $cms_id = sprintf('%s_%d_%s_%s', preg_replace('#^post_#','',$p->element_type), $original_id, $p->source_language_code, $p->language_code);
+                
+                $ret = $iclq->update_cms_id(compact('permalink', 'from_language', 'to_language', 'cms_id'));                    
+                
+                if($ret != $cms_id && $iclq->error()){
+                    echo json_encode(array('errors'=>1, 'message'=>$iclq->error(), 'cont'=>0));
+                }else{
+                    echo json_encode(array('errors'=>0, 'message'=>'OK', 'cont'=>1));
+                }
+                
+            }else{
+                echo json_encode(array('errors'=>0, 'message'=>__('Done', 'sitepress'), 'cont'=>0));
             }
-        }        
-        exit;
-        break;
+            
+            exit;
+            //break; 
 
-    case 'icl_cleanup':
-        global $sitepress, $wpdb, $wp_post_types;
-        $post_types = array_keys($wp_post_types);
-        foreach($post_types as $pt){
-            $types[] = 'post_' . $pt;
-        }
-        /*
-         * Messed up on 2.0 upgrade
-         */
-        // fix source_language_code
-        // all source documents must have null
-        $wpdb->query($wpdb->prepare("UPDATE {$wpdb->prefix}icl_translations SET source_language_code = NULL
-            WHERE element_type IN('".join("','", $types)."') AND source_language_code = '' AND language_code='%s'", $sitepress->get_default_language()));
-        // get translated documents with missing source language
-        $res = $wpdb->get_results($wpdb->prepare("
-            SELECT translation_id, trid, language_code
-            FROM {$wpdb->prefix}icl_translations
-            WHERE (source_language_code = '' OR source_language_code IS NULL)
-                AND element_type IN('".join("','", $types)."')
-                AND language_code <> %s
-                ", $sitepress->get_default_language()
-            ));
-        foreach($res as $row){
-            $wpdb->query($wpdb->prepare("UPDATE {$wpdb->prefix}icl_translations SET source_language_code = '%s' WHERE translation_id=%d", $sitepress->get_default_language(), $row->translation_id));
-        }
-        break;
+        case 'icl_cleanup':
+            global $sitepress, $wpdb, $wp_post_types;
+            $post_types = array_keys($wp_post_types);
+            foreach($post_types as $pt){
+                $types[] = 'post_' . $pt;
+            }
+            /*
+             * Messed up on 2.0 upgrade
+             */
+            // fix source_language_code
+            // all source documents must have null
+            $wpdb->query($wpdb->prepare("UPDATE {$wpdb->prefix}icl_translations SET source_language_code = NULL
+                WHERE element_type IN('".join("','", $types)."') AND source_language_code = '' AND language_code='%s'", $sitepress->get_default_language()));
+            // get translated documents with missing source language
+            $res = $wpdb->get_results($wpdb->prepare("
+                SELECT translation_id, trid, language_code
+                FROM {$wpdb->prefix}icl_translations
+                WHERE (source_language_code = '' OR source_language_code IS NULL)
+                    AND element_type IN('".join("','", $types)."')
+                    AND language_code <> %s
+                    ", $sitepress->get_default_language()
+                ));
+            foreach($res as $row){
+                $wpdb->query($wpdb->prepare("UPDATE {$wpdb->prefix}icl_translations SET source_language_code = '%s' WHERE translation_id=%d", $sitepress->get_default_language(), $row->translation_id));
+            }
+            break;
+    }
 }
 /* DEBUG ACTION */
 
@@ -317,6 +357,40 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
 
                 });
             })
+            
+            function _icl_sync_cms_id(offset){
+                jQuery('#icl_cms_id_fix_prgs_cnt').html(offset+1);
+                jQuery.ajax({
+                    type: "POST", 
+                    url: location.href + '&debug_action=icl_cms_id_fix&nonce=<?php echo wp_create_nonce('icl_cms_id_fix'); ?>&offset='+offset, 
+                    data: 'debug_action=icl_cms_id_fix&nonce=<?php echo wp_create_nonce('icl_cms_id_fix'); ?>&offset='+offset,
+                    dataType: 'json',
+                    success: function(msg){
+                            if(msg.errors > 0){
+                                alert(msg.message)
+                            }else{
+                                offset++;
+                                if(msg.cont){
+                                    _icl_sync_cms_id(offset);    
+                                }else{
+                                    alert(msg.message);    
+                                    jQuery('#icl_cms_id_fix').removeAttr('disabled');                            
+                                    jQuery('#icl_cms_id_fix').next().fadeOut();
+                                    jQuery('#icl_cms_id_fix_prgs').fadeOut();
+                                }
+                            }
+                        }
+                });
+            }
+            
+            jQuery('#icl_cms_id_fix').click(function(){
+                jQuery(this).attr('disabled', 'disabled');
+                jQuery(this).after(icl_ajxloaderimg);                
+                jQuery('#icl_cms_id_fix_prgs').fadeIn();                
+                _icl_sync_cms_id(0);
+            })
+            
+            
         })
     </script>
     <div class="icl_cyan_box" >           
@@ -325,6 +399,8 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
     <input id="icl_remove_ghost" type="button" class="button-secondary" value="<?php _e('Remove ghost entries from the translation tables', 'sitepress')?>" />&nbsp;
     <?php if($sitepress_settings['site_id'] && $sitepress_settings['access_key']):?>
     <input id="icl_sync_jobs" type="button" class="button-secondary" value="<?php _e('Synchronize translation jobs with ICanLocalize', 'sitepress')?>" />&nbsp;
+    <input id="icl_cms_id_fix" type="button" class="button-secondary" value="<?php _e('CMS ID fix', 'sitepress')?>" />&nbsp;
+    <span id="icl_cms_id_fix_prgs" style="display: none;"><?php printf('fixing %s/%d', '<span id="icl_cms_id_fix_prgs_cnt">0</span>', $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}icl_translations t JOIN {$wpdb->prefix}icl_translation_status s ON t.translation_id=s.translation_id WHERE t.element_type LIKE 'post\\_%' AND t.source_language_code IS NOT NULL AND s.translation_service='icanlocalize'")) ?></span>
     <?php endif; ?>
     <input id="icl_cleanup" type="button" class="button-secondary" value="<?php _e('General clean up', 'sitepress')?>" />&nbsp;
     

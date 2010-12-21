@@ -31,6 +31,10 @@ class SitePress{
             }                        
         }
         
+        if(isset($_GET['page']) && $_GET['page']== ICL_PLUGIN_FOLDER . '/menu/troubleshooting.php' && isset($_GET['debug_action'])){
+            ob_start();
+        }
+        
         if(isset($_REQUEST['icl_ajx_action'])){
             add_action('init', array($this, 'ajax_setup'));
         }

@@ -698,8 +698,8 @@ class IclCommentsTranslation{
         
         $from_lang = $sitepress->get_language_details($this->user_language);
         $to_lang   = $sitepress->get_language_details($to_language);
-        $from_lang_server = apply_filters('icl_server_languages_map', $from_lang['english_name']);
-        $to_lang_server = apply_filters('icl_server_languages_map', $to_lang['english_name']);
+        $from_lang_server = ICL_Pro_Translation::server_languages_map($from_lang['english_name']);
+        $to_lang_server = ICL_Pro_Translation::server_languages_map($to_lang['english_name']);
         $body = $wpdb->get_var("SELECT comment_content FROM {$wpdb->comments} WHERE comment_ID={$comment_id}");
         $rid = $iclq->cms_create_message($body, $from_lang_server, $to_lang_server);
         if($rid > 0){

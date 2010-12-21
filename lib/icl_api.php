@@ -354,6 +354,23 @@ class ICanLocalizeQuery{
             return array();
         }        
     }
+
+    function update_cms_id($args){
+        $request_url = ICL_API_ENDPOINT . '/websites/' . $this->site_id . '/cms_requests/update_cms_id.xml';               
+        $parameters['accesskey'] = $this->access_key;
+        $parameters['permlink'] = $args['permalink'];
+        $parameters['from_language'] = $args['from_language'];
+        $parameters['to_language'] = $args['to_language'];
+        $parameters['cms_id'] = $args['cms_id'];
+        
+        $res = $this->_request($request_url, 'POST', $parameters);
+        
+        if(isset($res['info']['status']['attr']['err_code'])){
+            return $res['info']['updated']['cms_request']['attr']['cms_id'];
+        }else{
+            return array();
+        }        
+    }
     
     function _gzdecode($data){
         

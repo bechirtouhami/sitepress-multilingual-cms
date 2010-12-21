@@ -533,7 +533,7 @@ class ICL_Pro_Translation{
             }
             
             // decode cms_id
-            $int = preg_match('#(.+)_([0-9]+)_([^_]+)_(.+)#', $cms_id, $matches);
+            $int = preg_match('#(.+)_([0-9]+)_([^_]+)_([^_]+)#', $cms_id, $matches);
             
             $_element_type  = $matches[1];
             $_element_id    = $matches[2];
@@ -1726,7 +1726,7 @@ class ICL_Pro_Translation{
         
         
         // decode cms_id
-        $int = preg_match('#(.+)_([0-9]+)_([^_]+)_(.+)#', $cms_id, $matches);
+        $int = preg_match('#(.+)_([0-9]+)_([^_]+)_([^_]+)#', $cms_id, $matches);
         
         $_element_type  = $matches[1];
         $_element_id    = $matches[2];
