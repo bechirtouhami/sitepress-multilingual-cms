@@ -1886,19 +1886,10 @@ class SitePress{
     function set_element_language_details($el_id, $el_type='post_post', $trid, $language_code, $src_language_code = null){
         global $wpdb;
         
-        if($trid){  // it's a translation of an existing element  
-                                                         
-            // check whether we have an orphan translation - the same trid and language but a different element id                                                     
-            $translation_id = $wpdb->get_var("
-                SELECT translation_id FROM {$wpdb->prefix}icl_translations 
-                WHERE   trid = '{$trid}' 
-                    AND language_code = '{$language_code}' 
-                    AND element_id <> '{$el_id}'
-            "); 
-            
-            // special case for posts and taxonomies
-            // check if a different record exists for the same ID
-            // if it exists don't save the new element and get out
+        // special case for posts and taxonomies
+        // check if a different record exists for the same ID
+        // if it exists don't save the new element and get out
+        if($el_id){
             $exp = explode('_', $el_type);
             $_type = $exp[0];
             if(in_array($_type, array('post', 'tax'))){
@@ -1910,7 +1901,18 @@ class SitePress{
                     return false;    
                 }
             }
-                       
+        }
+        
+        if($trid){  // it's a translation of an existing element  
+                                                         
+            // check whether we have an orphan translation - the same trid and language but a different element id                                                     
+            $translation_id = $wpdb->get_var("
+                SELECT translation_id FROM {$wpdb->prefix}icl_translations 
+                WHERE   trid = '{$trid}' 
+                    AND language_code = '{$language_code}' 
+                    AND element_id <> '{$el_id}'
+            "); 
+                                   
             if($translation_id){
                 $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id={$translation_id}");
                 $this->icl_translations_cache->clear();

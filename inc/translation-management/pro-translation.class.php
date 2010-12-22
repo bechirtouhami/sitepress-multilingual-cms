@@ -326,6 +326,27 @@ class ICL_Pro_Translation{
                         'needs_update' => 0
                     ));
                 }else{
+                    $_prevstate = $wpdb->get_var($wpdb->prepare("SELECT _prevstate FROM {$wpdb->prefix}icl_translation_status WHERE translation_id=%d", $translation->translation_id));
+                    if(!empty($_prevstate)){
+                        $_prevstate = unserialize($_prevstate);
+                        $wpdb->update($wpdb->prefix . 'icl_translation_status', 
+                                                array(
+                                                    'status'                => $_prevstate['status'], 
+                                                    'translator_id'         => $_prevstate['translator_id'], 
+                                                    'status'                => $_prevstate['status'], 
+                                                    'needs_update'          => $_prevstate['needs_update'], 
+                                                    'md5'                   => $_prevstate['md5'], 
+                                                    'translation_service'   => $_prevstate['translation_service'], 
+                                                    'translation_package'   => $_prevstate['translation_package'], 
+                                                    'timestamp'             => $_prevstate['timestamp'], 
+                                                    'links_fixed'           => $_prevstate['links_fixed'] 
+                                                ), 
+                                                array('translation_id'=>$translation->translation_id)
+                                            ); 
+                    }else{
+                        $wpdb->update($wpdb->prefix . 'icl_translation_status', 
+                            array('status'=>ICL_TM_NOT_TRANSLATED, 'needs_update'=>0), array('translation_id'=>$translation->translation_id));                         
+                    }
                     $err = true;
                 }
             } // if needs translation
@@ -1748,6 +1769,7 @@ class ICL_Pro_Translation{
                 if($job_id){
                     $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->prefix}icl_translate_job WHERE job_id=%d", $job_id));    
                     $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->prefix}icl_translate WHERE job_id=%d", $job_id));    
+                    $wpdb->query($wpdb->prepare("UPDATE {$wpdb->prefix}icl_translate_job SET revision = NULL WHERE rid=%d ORDER BY job_id DESC LIMIT 1", $translation_entry->rid));
                 }
                 
                 if(!empty($translation_entry->_prevstate)){

@@ -1399,17 +1399,23 @@ class TranslationManagement{
                 $job_ids[] = $this->add_translation_job($rid, $translator_id, $translation_package);                                                
                 if( $service == 'icanlocalize' ){
                     global $ICL_Pro_Translation;
-                    $ICL_Pro_Translation->send_post($post->ID, array($lang), $translator_id);
+                    $sent = $ICL_Pro_Translation->send_post($post->ID, array($lang), $translator_id);
+                    if(!$sent){
+                        $job_id = array_pop($job_ids);
+                        $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->prefix}icl_translate_job WHERE job_id=%d", $job_id));
+                        $wpdb->query($wpdb->prepare("UPDATE {$wpdb->prefix}icl_translate_job SET revision = NULL WHERE rid=%d ORDER BY job_id DESC LIMIT 1", $rid));
+                        $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->prefix}icl_translate WHERE job_id=%d", $job_id));
+                    }
                 }
             }                
             
         }
         
         $job_ids = array_unique($job_ids);
-        if(array(false) == $job_ids){
+        if(array(false) == $job_ids || empty($job_ids)){
             $this->messages[] = array(
                 'type'=>'error',
-                'text' => __('No documents were not sent to translation. Make sure that translations are not currently in progress for the selected language(s).', 'sitepress')
+                'text' => __('No documents were sent to translation. Make sure that translations are not currently in progress or already translated for the selected language(s).', 'sitepress')
             );            
         }elseif(in_array(false, $job_ids)){
             $this->messages[] = array(
