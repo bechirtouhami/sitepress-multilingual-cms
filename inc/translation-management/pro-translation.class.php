@@ -555,14 +555,14 @@ class ICL_Pro_Translation{
                     'language_code'         => $_lang,
                     'source_language_code'  => $_original_lang
                 ));
-                
+
                 $translation_id = $wpdb->insert_id;
-                            
+                
                 $md5 = $this->tmg->post_md5($_element_id);
             
                 $translation_package = $this->tmg->create_translation_package($_element_id);
                      
-                $translator_id = 0; //TO FIX!!          
+                $translator_id = 0; //TO FIX!          
                 list($rid, $update) = $this->tmg->update_translation_status(array(
                     'translation_id'        => $translation_id,
                     'status'                => ICL_TM_IN_PROGRESS,
@@ -573,7 +573,6 @@ class ICL_Pro_Translation{
                     'translation_package'   => serialize($translation_package)
                 ));
                 $this->tmg->add_translation_job($rid, $translator_id, $translation_package);                                                
-            
             
             }else{
                 

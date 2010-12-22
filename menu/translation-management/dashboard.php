@@ -438,6 +438,7 @@ if (!empty($icl_translation_services)) {
     
     <br />
     <?php $ICL_Pro_Translation->get_icl_manually_tranlations_box('icl_cyan_box'); // shows only when translation polling is on and there are translations in progress ?>
+    <br />
 
 <?php if ($sitepress->icl_account_configured() && $sitepress_settings['icl_html_status']): ?>
     <div class="icl_cyan_box">

@@ -70,6 +70,31 @@ if(isset($_GET['debug_action']) && $_GET['nonce']==wp_create_nonce($_GET['debug_
                     }
                 }
             } 
+            
+            // remove ghost translations
+            // get unlinked rids
+            $rids = $wpdb->get_col("SELECT rid FROM {$wpdb->prefix}icl_translation_status WHERE translation_id NOT IN (SELECT translation_id FROM {$wpdb->prefix}icl_translations)");
+            $jids = $wpdb->get_col("SELECT job_id FROM {$wpdb->prefix}icl_translate_job WHERE rids IN (".join(',', $rids).")");
+            $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translate WHERE job_id IN (".join(',', $jids).")");
+            $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translate_job WHERE job_id IN (".join(',', $jids).")");
+            $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translation_status WHERE rid IN (".join(',', $rids).")");
+            
+            // remove any duplicates in icl_translations
+            $trs = $wpdb->get_results("SELECT element_id, GROUP_CONCAT(translation_id) AS tids FROM {$wpdb->prefix}icl_translations 
+                WHERE element_id > 0 AND element_type LIKE 'post\\_%' GROUP BY element_id");
+            foreach($trs as $r){
+                $exp = explode(',', $r->tids);                
+                if(count($exp) > 1){
+                    $maxtid = max($exp);
+                    foreach($exp as $e){
+                        if($e != $maxtid){
+                            $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id=%d", $e));
+                        }                        
+                    }        
+                }
+            }
+            
+            
             exit;       
             break;        
         case 'icl_sync_jobs':
@@ -367,7 +392,10 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
                     dataType: 'json',
                     success: function(msg){
                             if(msg.errors > 0){
-                                alert(msg.message)
+                                alert(msg.message);
+                                jQuery('#icl_cms_id_fix').removeAttr('disabled');                            
+                                jQuery('#icl_cms_id_fix').next().fadeOut();
+                                jQuery('#icl_cms_id_fix_prgs').fadeOut();                                
                             }else{
                                 offset++;
                                 if(msg.cont){
@@ -396,13 +424,25 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
     <div class="icl_cyan_box" >           
     <h3><?php _e('Clean up', 'sitepress')?></h3>
     <p class="error" style="padding:6px;"><?php _e('Please make backup of your database before using this.', 'sitepress') ?></p>    
-    <input id="icl_remove_ghost" type="button" class="button-secondary" value="<?php _e('Remove ghost entries from the translation tables', 'sitepress')?>" />&nbsp;
+    <p>
+    <input id="icl_remove_ghost" type="button" class="button-secondary" value="<?php _e('Remove ghost entries from the translation tables', 'sitepress')?>" /><br />
+    <small style="margin-left:10px;">Removes entries from the WPML tables that are not linked properly. Cleans the table off entries left over upgrades, bug fixes or undetermined factors.</small>
+    </p>
     <?php if($sitepress_settings['site_id'] && $sitepress_settings['access_key']):?>
-    <input id="icl_sync_jobs" type="button" class="button-secondary" value="<?php _e('Synchronize translation jobs with ICanLocalize', 'sitepress')?>" />&nbsp;
-    <input id="icl_cms_id_fix" type="button" class="button-secondary" value="<?php _e('CMS ID fix', 'sitepress')?>" />&nbsp;
-    <span id="icl_cms_id_fix_prgs" style="display: none;"><?php printf('fixing %s/%d', '<span id="icl_cms_id_fix_prgs_cnt">0</span>', $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}icl_translations t JOIN {$wpdb->prefix}icl_translation_status s ON t.translation_id=s.translation_id WHERE t.element_type LIKE 'post\\_%' AND t.source_language_code IS NOT NULL AND s.translation_service='icanlocalize'")) ?></span>
+    <p>
+    <input id="icl_sync_jobs" type="button" class="button-secondary" value="<?php _e('Synchronize translation jobs with ICanLocalize', 'sitepress')?>" /><br />
+    <small style="margin-left:10px;">Fixes links between translation entries in the database and ICanLocalize.</small>
+    </p>
+    <p>
+    <input id="icl_cms_id_fix" type="button" class="button-secondary" value="<?php _e('CMS ID fix', 'sitepress')?>" />    
+    <span id="icl_cms_id_fix_prgs" style="display: none;"><?php printf('fixing %s/%d', '<span id="icl_cms_id_fix_prgs_cnt">0</span>', $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}icl_translations t JOIN {$wpdb->prefix}icl_translation_status s ON t.translation_id=s.translation_id WHERE t.element_type LIKE 'post\\_%' AND t.source_language_code IS NOT NULL AND s.translation_service='icanlocalize'")) ?></span><br />
+    <small style="margin-left:10px;">Updates translation in progress with new style identifiers for documents. The new identifiers depend on the document being translated and the languages so it's not possible to get out of sync when translations are being deleted locally.</small>
+    </p>
     <?php endif; ?>
-    <input id="icl_cleanup" type="button" class="button-secondary" value="<?php _e('General clean up', 'sitepress')?>" />&nbsp;
+    <p>
+    <input id="icl_cleanup" type="button" class="button-secondary" value="<?php _e('General clean up', 'sitepress')?>" /><br />
+    <small style="margin-left:10px;">Sets source languuge to NULL in the icl_translations table. </small>
+    </p>
     
 
     </div>    
