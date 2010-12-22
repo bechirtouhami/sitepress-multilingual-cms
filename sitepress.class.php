@@ -560,11 +560,13 @@ class SitePress{
         $custom_wp_query->query_vars['suppress_filters'] = 0;
         
         if(isset($custom_wp_query->query_vars['pagename']) && !empty($custom_wp_query->query_vars['pagename'])){
-            // urlencode added for languages that have urlencoded post_name field value
-            $custom_wp_query->query_vars['pagename'] = urlencode($custom_wp_query->query_vars['pagename']);
-            $page_id = $wpdb->get_var("SELECT ID FROM {$wpdb->posts} WHERE post_name='{$custom_wp_query->query_vars['pagename']}' AND post_type='page'");
-            // Srdjan suggest using this:
-            //$page_id = $custom_wp_query->queried_object_id;
+            if (isset($custom_wp_query->queried_object_id) && !empty($custom_wp_query->queried_object_id)) {
+                $page_id = $custom_wp_query->queried_object_id;
+            } else {
+                // urlencode added for languages that have urlencoded post_name field value
+                $custom_wp_query->query_vars['pagename'] = urlencode($custom_wp_query->query_vars['pagename']);
+                $page_id = $wpdb->get_var("SELECT ID FROM {$wpdb->posts} WHERE post_name='{$custom_wp_query->query_vars['pagename']}' AND post_type='page'");
+            }
             if($page_id){
                 $tr_page_id = icl_object_id($page_id, 'page', false, $this->get_default_language());
                 if($tr_page_id){
