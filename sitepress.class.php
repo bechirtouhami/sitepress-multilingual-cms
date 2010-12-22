@@ -1895,6 +1895,21 @@ class SitePress{
                     AND language_code = '{$language_code}' 
                     AND element_id <> '{$el_id}'
             "); 
+            
+            // special case for posts and taxonomies
+            // check if a different record exists for the same ID
+            // if it exists don't save the new element and get out
+            $exp = explode('_', $el_type);
+            $_type = $exp[0];
+            if(in_array($_type, array('post', 'tax'))){
+                $_el_exists = $wpdb->get_var("
+                    SELECT translation_id FROM {$wpdb->prefix}icl_translations 
+                    WHERE element_id={$el_id} AND element_type <> '{$el_type}' AND element_type LIKE '{$_type}\\_%'");
+                if($_el_exists){
+                    trigger_error('Element ID already exists with a different type', E_USER_ERROR);
+                    return false;    
+                }
+            }
                        
             if($translation_id){
                 $wpdb->query("DELETE FROM {$wpdb->prefix}icl_translations WHERE translation_id={$translation_id}");
