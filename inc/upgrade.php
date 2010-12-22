@@ -498,6 +498,15 @@ function icl_plugin_upgrade(){
         
         if($mig_debug) fwrite($mig_debug, "Upgraded to 2.0.0 \n");
     }
+
+    if(get_option('icl_sitepress_version') && version_compare(get_option('icl_sitepress_version'), '2.0.4', '<')){    
+        if($mig_debug) fwrite($mig_debug, "Upgrading to 2.0.4 \n");        
+        
+        $sql = "ALTER TABLE {$wpdb->prefix}icl_translation_status ADD COLUMN `_prevstate` longtext";
+        mysql_query($sql);
+        
+        if($mig_debug) fwrite($mig_debug, "Upgraded to 2.0.4 \n");
+    }
     
     if(version_compare(get_option('icl_sitepress_version'), ICL_SITEPRESS_VERSION, '<')){
         if($mig_debug) fwrite($mig_debug, "Update plugin version in the database \n");
