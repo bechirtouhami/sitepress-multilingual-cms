@@ -99,7 +99,7 @@ function icl_sitepress_activate(){
     } 
 
     // translation_status table
-    $table_name = $wpdb->prefix.'icl_translation_status';
+    $table_name = $wpdb->prefix.'[icl_translation_status]';
     if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
         $sql = "
             CREATE TABLE `{$table_name}` (
@@ -113,6 +113,7 @@ function icl_sitepress_activate(){
              `translation_package` text NOT NULL,
              `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
              `links_fixed` tinyint(4) NOT NULL DEFAULT 0,
+             `_prevstate` longtext,
              PRIMARY KEY (`rid`),
              UNIQUE KEY `translation_id` (`translation_id`)
             ) ENGINE=MyISAM {$charset_collate}    

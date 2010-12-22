@@ -1375,15 +1375,27 @@ class TranslationManagement{
                 }
                 
                 // add translation_status record        
-                list($rid, $update) = $this->update_translation_status(array(
+                $data = array(
                     'translation_id'        => $translation_id,
                     'status'                => $_status,
                     'translator_id'         => $translator_id,
                     'needs_update'          => 0,
                     'md5'                   => $md5,
                     'translation_service'   => $service,
-                    'translation_package'   => serialize($translation_package)
-                ));
+                    'translation_package'   => serialize($translation_package)                    
+                );
+                
+                $_prevstate = $wpdb->get_row($wpdb->prepare("
+                    SELECT status, translator_id, needs_update, md5, translation_service, translation_package, timestamp, links_fixed
+                    FROM {$wpdb->prefix}icl_translation_status
+                    WHERE translation_id = %d                    
+                ", $translation_id), ARRAY_A);
+                if(!empty($_prevstate)){
+                    $data['_prevstate'] = serialize($_prevstate);
+                }                
+                
+                list($rid, $update) = $this->update_translation_status($data);
+                                
                 $job_ids[] = $this->add_translation_job($rid, $translator_id, $translation_package);                                                
                 if( $service == 'icanlocalize' ){
                     global $ICL_Pro_Translation;
