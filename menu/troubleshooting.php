@@ -441,7 +441,7 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
     <?php endif; ?>
     <p>
     <input id="icl_cleanup" type="button" class="button-secondary" value="<?php _e('General clean up', 'sitepress')?>" /><br />
-    <small style="margin-left:10px;">Sets source languuge to NULL in the icl_translations table. </small>
+    <small style="margin-left:10px;">Sets source language to NULL in the icl_translations table. </small>
     </p>
     
 
