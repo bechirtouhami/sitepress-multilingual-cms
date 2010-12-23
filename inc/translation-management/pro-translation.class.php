@@ -1753,14 +1753,13 @@ class ICL_Pro_Translation{
         $_lang          = $matches[4];
         
         $trid = $sitepress->get_element_trid($_element_id, 'post_' . $_element_type);
-        $_element_id = $wpdb->get_var($wpdb->prepare("SELECT element_id FROM {$wpdb->prefix}icl_translations WHERE trid=%d AND language_code=%s", $trid, $_lang));        
         
         if (sha1 ( $checksum ) == $signature) {
             $wid = $sitepress_settings['site_id'];
             if ($website_id == $wid) {
                 $translation_entry = $wpdb->get_row("SELECT * 
                     FROM {$wpdb->prefix}icl_translation_status s JOIN {$wpdb->prefix}icl_translations t ON t.translation_id = s.translation_id
-                    WHERE t.element_id={$_element_id} AND t.element_type='post_{$_element_type}'");
+                    WHERE t.trid={$trid} AND t.language_code='{$_lang}'");
                     
                 if (empty($translation_entry)){
                     return 4; // cms_request not found
