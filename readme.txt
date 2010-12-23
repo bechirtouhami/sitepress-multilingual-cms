@@ -2,7 +2,7 @@
 Contributors: icanlocalize
 Donate link: http://wpml.org/?page_id=2312
 Tags: CMS, navigation, menus, menu, dropdown, css, sidebar, pages, i18n, translation, localization, language, multilingual, WPML
-Requires at least: 2.7
+Requires at least: 2.8
 Tested up to: 3.0.3
 Stable tag: 2.0.3.1
 
@@ -14,7 +14,7 @@ Allows building complete multilingual sites with WordPress.
 
 = Features =
 
-WPML makes it possible to turn WordPress blogs multilingual in a few minutes with no knowledge of PHP or WordPress.
+[WPML](http://wpml.org) makes it possible to turn WordPress blogs multilingual in a few minutes with no knowledge of PHP or WordPress.
 Its advanced features allow professional web developers to build full multilingual websites.
 
  * Turns a single WordPress site into a multilingual site.
@@ -66,6 +66,16 @@ To be able to use languages in directories, you should use a non-default permlin
 4. Language setup admin screen.
 
 == Changelog ==
+
+= 2.0.4 =
+* Fixed the interface with ICanLocalize. Some jobs became stuck and this release allows to complete them.
+* Fixed bugs in the translation management section related with custom types and canceling / redoing jobs.
+* Added project summary on ICanLocalize to the translation dashboard.
+* Translate page slugs too, for fine control over multilingual SEO.
+* Fixed problem with URL redirection related to URLs with Russian or Asian characters.
+* Fixed a bug that causes wp_list_pages to drop pages after sending jobs to translation.
+* Added back the option to send jobs to the first available translator in ICanLocalize.
+* Fixed PHP bug when adding more local translators.
 
 = 2.0.3 =
 * Fix bug with pages disappearing from wp_list_pages and ICanLocalize translations not being returned
