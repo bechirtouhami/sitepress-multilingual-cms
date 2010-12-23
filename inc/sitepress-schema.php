@@ -99,7 +99,7 @@ function icl_sitepress_activate(){
     } 
 
     // translation_status table
-    $table_name = $wpdb->prefix.'[icl_translation_status]';
+    $table_name = $wpdb->prefix.'icl_translation_status';
     if($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name){
         $sql = "
             CREATE TABLE `{$table_name}` (
