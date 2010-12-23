@@ -504,16 +504,7 @@ function icl_plugin_upgrade(){
         
         $sql = "ALTER TABLE {$wpdb->prefix}icl_translation_status ADD COLUMN `_prevstate` longtext";
         mysql_query($sql);
-        
-        /*
-        $sql = "ALTER TABLE `{$wpdb->prefix}icl_translations` ADD  `master_element_type` VARCHAR( 32 ) NOT NULL AFTER  `element_type`";
-        mysql_query($sql);
-        $sql = "UPDATE {$wpdb->prefix}icl_translations SET `master_element_type` = 'post' WHERE element_type LIKE 'post\\_%'";
-        mysql_query($sql);
-        $sql = "UPDATE {$wpdb->prefix}icl_translations SET `master_element_type` = 'tax' WHERE element_type LIKE 'tax\\_%'";
-        mysql_query($sql);        
-        */
-        
+                
         if($mig_debug) fwrite($mig_debug, "Upgraded to 2.0.4 \n");
     }
     
