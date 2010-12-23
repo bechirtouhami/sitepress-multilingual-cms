@@ -1304,7 +1304,7 @@ class TranslationManagement{
     /* TRANSLATION JOBS */
     /* ******************************************************************************************** */   
     
-    function send_jobs($data){        
+    function send_jobs($data){                                
         global $wpdb, $sitepress;
         
         // translate_from
@@ -1359,7 +1359,14 @@ class TranslationManagement{
                 }     
                 
                 $current_translation_status = $this->get_element_translation($post_id, $lang, 'post_' . $post->post_type);                
-                if(!empty($current_translation_status) && $current_translation_status->md5 == $md5 && !$current_translation_status->needs_update) continue;
+                
+                // don't send documents that are in progress
+                // don't send documents that are already translated and don't need update
+                
+                if(!empty($current_translation_status)){
+                    if($current_translation_status->status == ICL_TM_IN_PROGRESS) continue;
+                    if($current_translation_status->status == ICL_TM_COMPLETE && !$current_translation_status->needs_update) continue;
+                }
                     
                 $_status = ICL_TM_WAITING_FOR_TRANSLATOR;
                 
