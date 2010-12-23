@@ -199,7 +199,7 @@ $other_service_translators = TranslationManagement::icanlocalize_translators_lis
             
             </table>
         <?php else: ?>
-            <center><?php _e('You did not add any translator accounts yet.', 'sitepress'); ?></center>
+            <center><?php _e("You haven't added any translator accounts yet.", 'sitepress'); ?></center>
         <?php endif; ?>
     
     <?php endif; //if ( current_user_can('list_users') ) ?>
