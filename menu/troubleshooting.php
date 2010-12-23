@@ -140,6 +140,33 @@ if(isset($_GET['debug_action']) && $_GET['nonce']==wp_create_nonce($_GET['debug_
                 }
             }        
             
+            // Do a check to see if the icl_translation_status is consistant.
+            // There was a problem with the cancel logic leaving it in a status where
+            // Translations couldn't be sent.
+            
+            global $iclTranslationManagement;
+
+            $res = $wpdb->get_results($wpdb->prepare("
+                SELECT rid, status, needs_update, md5, translation_package
+                FROM {$wpdb->prefix}icl_translation_status"
+                ));
+            foreach($res as $row){
+                if ($row->status == ICL_TM_NOT_TRANSLATED || $row->needs_update == 1) {
+                    
+                    $tpack = unserialize($row->translation_package);
+                    $original_id = $tpack['contents']['original_id']['data'];
+                
+                    $post_md5 = $iclTranslationManagement->post_md5($original_id);
+                    
+                    if ($post_md5 == $row->md5) {
+                        // The md5 shouldn't be the same if it's not translated or needs update.
+                        // Add a dummy md5 and mark it as needs_update.
+                        $data = array('needs_update' => 1, 'md5' => 'XXXX');
+                        $wpdb->update($wpdb->prefix.'icl_translation_status', $data, array('rid'=>$row->rid));
+                    }
+                }
+            }
+                
             exit;
             //break; 
             
