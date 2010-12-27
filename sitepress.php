@@ -99,18 +99,7 @@ if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQ
         
     $sitepress = new SitePress();
     $sitepress_settings = $sitepress->get_settings();    
-    
-    // modules load
-    // CMS Navigation
-    if(isset($_GET['enable-cms-navigation'])){
-        $sitepress_settings['modules']['cms-navigation']['enabled'] = intval($_GET['enable-cms-navigation']);
-        $sitepress->save_settings($sitepress_settings);
-    }    
-    if($sitepress_settings['modules']['cms-navigation']['enabled']){
-        require ICL_PLUGIN_PATH . '/modules/cms-navigation/cms-navigation.php';
-        $iclCMSNavigation = new CMSNavigation();
-    }
-    
+        
     // Sticky Links
     if(isset($_REQUEST['icl_enable_alp'])){
         $sitepress_settings['modules']['absolute-links']['enabled'] = intval($_REQUEST['icl_enable_alp']);
