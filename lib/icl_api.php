@@ -266,6 +266,9 @@ class ICanLocalizeQuery{
     function cms_requests_all(){
         $request_url = ICL_API_ENDPOINT . '/websites/' . $this->site_id . '/cms_requests.xml?show_languages=1&accesskey=' . $this->access_key;        
         $res = $this->_request($request_url);
+        
+        if($res === false) return false;
+        
         if(empty($res['info']['pending_cms_requests']['cms_request'])){
             $pending_requests = array();
         }elseif(count($res['info']['pending_cms_requests']['cms_request'])==1){
