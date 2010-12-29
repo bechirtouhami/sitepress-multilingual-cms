@@ -236,7 +236,10 @@ if(isset($_GET['debug_action']) && $_GET['nonce']==wp_create_nonce($_GET['debug_
             $iclq = new ICanLocalizeQuery($sitepress_settings['site_id'], $sitepress_settings['access_key']);                                
             $requests = $iclq->cms_requests_all();        
             
-            if($requests === false) exit;
+            if($requests === false) {
+                echo json_encode(array('errors'=>1, 'message'=>'Failed fetching jobs list from the server.'));
+                exit;   
+            }
             
             $cms_ids = array();
             if(!empty($requests))
