@@ -391,6 +391,39 @@ switch($_REQUEST['icl_ajx_action']){
             echo 0;
         }                
         break;
+    case 'icl_navigation_form':   
+        $iclsettings = $this->get_settings();
+        $iclsettings['modules']['cms-navigation']['page_order'] = $_POST['icl_navigation_page_order'];
+        $iclsettings['modules']['cms-navigation']['show_cat_menu'] = $_POST['icl_navigation_show_cat_menu'];
+        if($_POST['icl_navigation_cat_menu_title']){
+            $iclsettings['modules']['cms-navigation']['cat_menu_title'] = stripslashes($_POST['icl_navigation_cat_menu_title']);
+            icl_register_string('WPML', 'Categories Menu', stripslashes($_POST['icl_navigation_cat_menu_title']));
+        }        
+        $iclsettings['modules']['cms-navigation']['cat_menu_page_order'] = $_POST['icl_navigation_cat_menu_page_order'];
+        $iclsettings['modules']['cms-navigation']['cat_menu_contents'] = $_POST['icl_blog_menu_contents'];
+        $iclsettings['modules']['cms-navigation']['heading_start'] = stripslashes($_POST['icl_navigation_heading_start']);
+        $iclsettings['modules']['cms-navigation']['heading_end'] = stripslashes($_POST['icl_navigation_heading_end']);
+
+        $iclsettings['modules']['cms-navigation']['cache'] = $_POST['icl_navigation_caching'];
+
+        $iclsettings['modules']['cms-navigation']['breadcrumbs_separator'] = stripslashes($_POST['icl_breadcrumbs_separator']);
+        
+        $this->save_settings($iclsettings);
+        
+        // clear the cms navigation caches
+        $this->icl_cms_nav_offsite_url_cache->clear();
+        @mysql_query("TRUNCATE {$wpdb->prefix}icl_cms_nav_cache");
+        
+        echo '1|';
+        break;
+
+    case 'icl_clear_nav_cache':
+        // clear the cms navigation caches
+        $this->icl_cms_nav_offsite_url_cache->clear();
+        @mysql_query("TRUNCATE {$wpdb->prefix}icl_cms_nav_cache");
+        echo '1|';
+        
+            
     case 'send_translation_request':
         global $iclTranslationManagement, $current_user;   
         $post_ids = explode(',',$_POST['post_ids']);

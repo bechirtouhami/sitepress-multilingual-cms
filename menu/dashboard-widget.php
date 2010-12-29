@@ -167,6 +167,23 @@ foreach ($docs_statuses as $doc_status) {
 
     <?php endif; ?>
                 </div>
+
+                <div><a href="javascript:void(0)" onclick="jQuery(this).parent().next('.wrapper').slideToggle();" style="display:block; padding:5px; border: 1px solid #eee; margin-bottom:2px; background-color: #F7F7F7;"><?php _e('Navigation', 'sitepress') ?></a></div>
+                <div class="wrapper" style="display:none; padding: 5px 10px; border: 1px solid #eee; border-top: 0px; margin:-11px 0 2px 0;"><p>
+        <?php echo __('WPML provides advanced menus and navigation to go with your WordPress website, including drop-down menus, breadcrumbs and sidebar navigation.', 'sitepress') ?>
+                </p>
+    <?php if (!$sitepress_settings['modules']['cms-navigation']['enabled']): ?>
+                        <p><b><?php echo __('CMS Navigation is disabled.', 'sitepress') ?></b></p>
+                        <p><a class="button secondary" href="<?php echo 'index.php?enable-cms-navigation=1' ?>"><?php echo __('Enable CMS navigation', 'sitepress') ?></a></p>
+    <?php else: ?>
+                            <p><b><?php echo __('CMS Navigation is enabled.', 'sitepress') ?></b></p>
+                            <p>
+                                <a class="button secondary" href="<?php echo 'admin.php?page=' . basename(ICL_PLUGIN_PATH) . '/menu/navigation.php' ?>"><?php echo __('Configure navigation', 'sitepress') ?></a>
+                                <a class="button secondary" href="<?php echo 'index.php?enable-cms-navigation=0' ?>"><?php echo __('Disable CMS navigation', 'sitepress') ?></a>
+                            </p>
+    <?php endif; ?>
+                        </div>
+
                         <div><a href="javascript:void(0)" onclick="jQuery(this).parent().next('.wrapper').slideToggle();" style="display:block; padding:5px; border: 1px solid #eee; margin-bottom:2px; background-color: #F7F7F7;"><?php _e('Sticky links', 'sitepress') ?></a></div>
 
                         <div class="wrapper" style="display:none; padding: 5px 10px; border: 1px solid #eee; border-top: 0px; margin:-11px 0 2px 0;"><p><?php echo __('With Sticky Links, WPML can automatically ensure that all links on posts and pages are up-to-date, should their URL change.', 'sitepress'); ?></p>
@@ -191,8 +208,6 @@ foreach ($docs_statuses as $doc_status) {
                                     <!-- <p><?php printf(__('Support Subscription - %s', 'sitepress'), $pss_string_status); ?>
     <?php if (!$pss_status['valid']): ?>(<a href="admin.php?page=<?php echo ICL_PLUGIN_FOLDER ?>/menu/support.php"><?php _e('purchase', 'sitepress'); ?></a>)<?php endif; ?></p> -->
                                     </div>
-                                    
-<?php do_action('icl_dashboard_widget_content'); ?>
 
 <?php
 $rss = fetch_feed('http://wpml.org/feed/');
@@ -217,3 +232,4 @@ if ($maxitems != 0) {
 <?php
 }
 ?>
+<?php do_action('icl_dashboard_widget_content'); ?>

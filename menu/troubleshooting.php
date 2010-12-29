@@ -230,101 +230,6 @@ if(isset($_GET['debug_action']) && $_GET['nonce']==wp_create_nonce($_GET['debug_
                 $wpdb->query($wpdb->prepare("UPDATE {$wpdb->prefix}icl_translations SET source_language_code = '%s' WHERE translation_id=%d", $sitepress->get_default_language(), $row->translation_id));
             }
             break;
-            
-        case 'sync_cancelled':
-        
-            $iclq = new ICanLocalizeQuery($sitepress_settings['site_id'], $sitepress_settings['access_key']);                                
-            $requests = $iclq->cms_requests_all();        
-            
-            if($requests === false) {
-                echo json_encode(array('errors'=>1, 'message'=>'Failed fetching jobs list from the server.'));
-                exit;   
-            }
-            
-            $cms_ids = array();
-            if(!empty($requests))
-            foreach($requests as $request){
-                $cms_ids[] = $request['cms_id'];
-            }
-            
-            // get jobs that are in progress
-            $translations = $wpdb->get_results("
-                SELECT t.element_id, t.element_type, t.language_code, t.source_language_code, t.trid, 
-                    s.rid, s._prevstate, s.translation_id 
-                FROM {$wpdb->prefix}icl_translation_status s 
-                JOIN {$wpdb->prefix}icl_translations t
-                    ON t.translation_id = s.translation_id    
-                WHERE s.translation_service='icanlocalize'
-                AND s.status = ".ICL_TM_IN_PROGRESS."
-            ");
-            
-            $job2delete = $rids2cancel = array();
-            foreach($translations as $t){
-                $original_id = $wpdb->get_var($wpdb->prepare("SELECT element_id FROM {$wpdb->prefix}icl_translations 
-                    WHERE trid=%d AND source_language_code IS NULL", $t->trid));
-                $cms_id = sprintf('%s_%d_%s_%s', preg_replace('#^post_#','', $t->element_type), $original_id, $t->source_language_code, $t->language_code);
-                if(!in_array($cms_id, $cms_ids)){
-                    $_lang_details = $sitepress->get_language_details($t->language_code);
-                    $lang_from = $_lang_details['english_name'];
-                    $_lang_details = $sitepress->get_language_details($t->source_language_code);
-                    $lang_to = $_lang_details['english_name'];
-                    $jobs2delete[] = '<a href="'.get_permalink($original_id).'">'.get_the_title($original_id).'</a>' . sprintf(' - from %s to %s', 
-                        $lang_from, $lang_to);
-                    $translations2cancel[] = $t;
-                }
-            }
-            
-            if(!empty($jobs2delete)){
-                echo json_encode(array('errors'=>0, 
-                    'message'=> '<div class="error" style="padding-top:5px;font-size:11px;">About to cancel these jobs:<br />
-                                <ul style="margin-left:10px;"><li>' . join('</li><li>', $jobs2delete) . '</li></ul><br />
-                                <a id="icl_ts_cancel_ok" href="#" class="button-secondary">OK</a>&nbsp;
-                                    <a id="icl_ts_cancel_cancel" href="#" class="button-secondary">Cancel</a><br clear="all" /><br />
-                                </div>',
-                     'data' => array('t2c'=>serialize($translations2cancel))    
-                    )
-                );
-            }else{
-                echo json_encode(array('errors'=>0, 'message'=> 'Nothing to cancel.'));    
-            }
-            
-            exit;
-        
-        case 'sync_cancelled_do_delete':
-            $translations = unserialize(stripslashes($_POST['t2c']));
-            if(is_array($translations)) foreach($translations as $t){
-                $job_id = $wpdb->get_var($wpdb->prepare("SELECT job_id FROM {$wpdb->prefix}icl_translate_job WHERE rid=%d AND revision IS NULL", $t->rid));
-                if($job_id){
-                    $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->prefix}icl_translate_job WHERE job_id=%d", $job_id));    
-                    $wpdb->query($wpdb->prepare("DELETE FROM {$wpdb->prefix}icl_translate WHERE job_id=%d", $job_id));    
-                    $wpdb->query($wpdb->prepare("UPDATE {$wpdb->prefix}icl_translate_job SET revision = NULL WHERE rid=%d ORDER BY job_id DESC LIMIT 1", $t->rid));
-                }
-                
-                if(!empty($t->_prevstate)){
-                    $_prevstate = unserialize($t->_prevstate);
-                    $wpdb->update($wpdb->prefix . 'icl_translation_status', 
-                        array(
-                            'status'                => $_prevstate['status'], 
-                            'translator_id'         => $_prevstate['translator_id'], 
-                            'status'                => $_prevstate['status'], 
-                            'needs_update'          => $_prevstate['needs_update'], 
-                            'md5'                   => $_prevstate['md5'], 
-                            'translation_service'   => $_prevstate['translation_service'], 
-                            'translation_package'   => $_prevstate['translation_package'], 
-                            'timestamp'             => $_prevstate['timestamp'], 
-                            'links_fixed'           => $_prevstate['links_fixed'] 
-                        ), 
-                        array('translation_id'=>$t->translation_id)
-                    ); 
-                    $wpdb->query($wpdb->prepare("UPDATE {$wpdb->prefix}icl_translation_status SET _prevstate = NULL WHERE translation_id=%d",$t->translation_id));
-                }else{
-                    $wpdb->update($wpdb->prefix . 'icl_translation_status', array('status'=>ICL_TM_NOT_TRANSLATED, 'needs_update'=>0), array('translation_id'=>$t->translation_id)); 
-                }
-            }    
-            
-            echo json_encode(array('errors'=>0, 'message'=> 'OK'));
-                                                        
-            exit;
     }
 }
 /* DEBUG ACTION */
@@ -540,57 +445,6 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
                 _icl_sync_cms_id(0);
             })
             
-            jQuery('#icl_sync_cancelled').click(function(){
-                jQuery(this).attr('disabled', 'disabled');
-                jQuery(this).after(icl_ajxloaderimg);
-                jQuery('#icl_sync_cancelled_resp').html('');
-                jQuery.ajax({
-                    type: "POST", 
-                    url: location.href.replace(/#/,'') + '&debug_action=sync_cancelled&nonce=<?php echo wp_create_nonce('sync_cancelled'); ?>', 
-                    data: 'debug_action=sync_cancelled&nonce=<?php echo wp_create_nonce('sync_cancelled'); ?>',
-                    dataType: 'json',
-                    success: function(msg){                            
-                            if(msg.errors > 0){
-                                jQuery('#icl_sync_cancelled_resp').html(msg.message);
-                            }else{
-                                jQuery('#icl_sync_cancelled_resp').html(msg.message);
-                                if(msg.data){
-                                    jQuery('#icl_ts_t2c').val(msg.data.t2c);
-                                }
-                            }
-                            jQuery('#icl_sync_cancelled').removeAttr('disabled');
-                            jQuery('#icl_sync_cancelled').next().fadeOut();
-                        }
-                });
-            });
-            
-            jQuery('#icl_ts_cancel_cancel').live('click', function(){
-                jQuery('#icl_sync_cancelled_resp').html('');                    
-                return false;
-            });                                    
-            
-            jQuery('#icl_ts_cancel_ok').live('click', function(){
-                jQuery(this).attr('disabled', 'disabled');
-                jQuery(this).after(icl_ajxloaderimg);
-                jQuery.ajax({
-                    type: "POST", 
-                    url: location.href.replace(/#/,'') + '&debug_action=sync_cancelled_do_delete&nonce=<?php echo wp_create_nonce('sync_cancelled_do_delete'); ?>', 
-                    data: 'debug_action=sync_cancelled_do_delete&nonce=<?php echo wp_create_nonce('sync_cancelled_do_delete'); ?>&t2c='+jQuery('#icl_ts_t2c').val(),
-                    dataType: 'json',
-                    success: function(msg){                            
-                            if(msg.errors > 0){
-                                jQuery('#icl_sync_cancelled_resp').html(msg.message);
-                            }else{                                
-                                alert('Done');
-                                jQuery('#icl_sync_cancelled_resp').html('');
-                            }
-                            jQuery('#icl_ts_cancel_ok').removeAttr('disabled');
-                            jQuery('#icl_ts_cancel_ok').next().fadeOut();
-                        }
-                });
-                return false;
-            });                                    
-            
             
         })
     </script>
@@ -616,13 +470,6 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
     <input id="icl_cleanup" type="button" class="button-secondary" value="<?php _e('General clean up', 'sitepress')?>" /><br />
     <small style="margin-left:10px;">Sets source language to NULL in the icl_translations table. </small>
     </p>
-
-    <p>
-    <input id="icl_sync_cancelled" type="button" class="button-secondary" value="<?php _e('Check cancelled jobs on ICanLocalize', 'sitepress')?>" /><br />
-    <small style="margin-left:10px;">When using the translation pickup mode cancelled jobs on ICanLocalize need to be synced manually.</small>
-    </p>
-    <span id="icl_sync_cancelled_resp"></span>
-    <input type="hidden" id="icl_ts_t2c" value="" />
     
 
     </div>    
