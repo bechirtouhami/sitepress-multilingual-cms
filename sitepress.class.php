@@ -24,7 +24,7 @@ class SitePress{
             elseif($_GET['icl_action']=='dismiss_help'){
                 $this->settings['dont_show_help_admin_nonotice'] = true;
                 $this->save_settings();                
-            }elseif($_GET['icl_action']=='dbdump'){
+            }elseif($_GET['icl_action']=='dbdump' && $_GET['nonce'] == wp_create_nonce('dbdump') && is_admin() &&  current_user_can('manage_options')){ // ONLY allow authenticated users
                 include_once ICL_PLUGIN_PATH . '/inc/functions-troubleshooting.php';
                 icl_troubleshooting_dumpdb();
                 exit;
