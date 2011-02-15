@@ -36,6 +36,10 @@ if(defined('WP_ADMIN') && defined('FORCE_SSL_ADMIN') && FORCE_SSL_ADMIN){
     define('ICL_PLUGIN_URL', rtrim(get_option('siteurl'),'/') . '/'. PLUGINDIR . '/' . basename(dirname(__FILE__)) );
 }
 if(defined('WP_ADMIN')){
+    add_action('admin_notices', 'wpml_new_promotion_notice');
+    function wpml_new_promotion_notice() {
+        echo '<div class="updated message fade"><p>' . __('New promotion', 'sitepress') . '</p></div>';
+    }
     require ICL_PLUGIN_PATH . '/inc/php-version-check.php';
     if(defined('PHP_VERSION_INCOMPATIBLE')) return;
 }
@@ -82,6 +86,7 @@ require ICL_PLUGIN_PATH . '/inc/language-switcher.php';
 require ICL_PLUGIN_PATH . '/inc/import-xml.php';
 
 if(is_admin() || defined('XMLRPC_REQUEST')){
+    require ICL_PLUGIN_PATH . '/inc/upgrade_plugins.php';
     require ICL_PLUGIN_PATH . '/lib/icl_api.php';
     require ICL_PLUGIN_PATH . '/lib/xml2array.php';
     require ICL_PLUGIN_PATH . '/lib/Snoopy.class.php';
