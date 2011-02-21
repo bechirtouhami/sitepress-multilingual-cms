@@ -12,6 +12,8 @@ Allows building complete multilingual sites with WordPress.
 
 **WPML combines multilingual content authoring with powerful translation management. It powers corporate sites and is simple enough for bloggers.**
 
+> New versions of WPML are available from <a href="http://wpml.org">WPML.org</a> and offer performance, stability and functionality improvements. <a href="http://wpml.org/purchase/why-upgrade/#upgrade-reasons">What’s new and why you should upgrade</a>
+
 = Features =
 
 [WPML](http://wpml.org) makes it possible to turn WordPress blogs multilingual in a few minutes with no knowledge of PHP or WordPress.
