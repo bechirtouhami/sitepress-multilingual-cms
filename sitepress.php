@@ -37,16 +37,41 @@ if(defined('WP_ADMIN') && defined('FORCE_SSL_ADMIN') && FORCE_SSL_ADMIN){
 }
 if(defined('WP_ADMIN')){
     add_action('admin_notices', 'wpml_new_promotion_notice');
+    if (isset($_GET['action'])) {
+        if ($_GET['action'] == 'wpml_new_promotion_notice_hide') {
+            update_option('wpml_new_promotion_notice_show', 0);
+            echo 'wpml_new_promotion_notice_hide';
+            die();
+        } else if ($_GET['action'] == 'wpml_new_promotion_notice_show') {
+            update_option('wpml_new_promotion_notice_show', 1);
+            echo 'wpml_new_promotion_notice_show';
+            die();
+        }
+    }
     function wpml_new_promotion_notice() {
-        
+        $long_message = intval(get_option('wpml_new_promotion_notice_show', 1));
         $mtchs = array(ICL_PLUGIN_FOLDER);
         
         if (!isset($_GET['page']) || !preg_match('@^('.join('|', $mtchs).')/@', $_GET['page'])) {
             return;
         }
         
-		$message = '<h4>' . __('WPML has turned commercial','sitepress') . '</h4><p>' . __('A new version of WPML is available. This version contains important security fixes, improved performance, new and powerful features and works perfectly with WordPress 3.1.','sitepress') . '</p><p><a class="button secondary" href="http://wpml.org/purchase/">' . __('Upgrade now','sitepress') . '</a> &nbsp; <a href="http://wpml.org/purchase/why-upgrade/">' . __('What’s new and why you should upgrade »','sitepress') . '</a></p>';
+        $message = '<div id="wpml_new_promotion_notice"';
+        $message .= $long_message ? '' : ' style="display:none;"';
+        $message .= '>' . '<h4>' . __('WPML has turned commercial','sitepress')
+                . '</h4><p>' . __('A new version of WPML is available. This version contains important security fixes, improved performance, new and powerful features and works perfectly with WordPress 3.1.','sitepress')
+                . '</p><p><a class="button secondary" href="http://wpml.org/purchase/">'
+                . __('Upgrade now','sitepress')
+                . '</a> &nbsp; <a href="http://wpml.org/purchase/why-upgrade/">'
+                . __('What�s new and why you should upgrade �','sitepress')
+                . '</a></p><a href="javascript:void(0);" onclick="jQuery.get(\'admin-ajax.php\', {action: \'wpml_new_promotion_notice_hide\'}); jQuery(\'#wpml_new_promotion_notice\').hide(); jQuery(\'#wpml_new_promotion_notice_short\').show();">Hide</a></p></div>';
 
+        $message_short = '<div id="wpml_new_promotion_notice_short"';
+        $message_short .= $long_message ? ' style="display:none;"' : '';
+        $message_short .= '>' . '<p>' . __('Upgrade available for WPML', 'sitepress') . ' - <a href="javascript:void(0);" onclick="jQuery.get(\'admin-ajax.php\', {action: \'wpml_new_promotion_notice_show\'}); jQuery(\'#wpml_new_promotion_notice_short\').hide(); jQuery(\'#wpml_new_promotion_notice\').show();">show</a></p>' . '</div>';
+        $hide_link = '';
+        $show_link = '';
+        $message = $long_message ? $message . $message_short . $hide_link : $message . $message_short . $show_link;
         echo '<div class="updated message fade">' . $message . '</div>';
     }
     require ICL_PLUGIN_PATH . '/inc/php-version-check.php';
@@ -95,7 +120,6 @@ require ICL_PLUGIN_PATH . '/inc/language-switcher.php';
 require ICL_PLUGIN_PATH . '/inc/import-xml.php';
 
 if(is_admin() || defined('XMLRPC_REQUEST')){
-    require ICL_PLUGIN_PATH . '/inc/upgrade_plugins.php';
     require ICL_PLUGIN_PATH . '/lib/icl_api.php';
     require ICL_PLUGIN_PATH . '/lib/xml2array.php';
     require ICL_PLUGIN_PATH . '/lib/Snoopy.class.php';
@@ -148,7 +172,7 @@ if( !isset($_REQUEST['action'])     || ($_REQUEST['action']!='activate' && $_REQ
     
     require ICL_PLUGIN_PATH . '/inc/compatibility-packages/init-packages.php';
     require ICL_PLUGIN_PATH . '/modules/cache-plugins-integration/cache-plugins-integration.php';
-
+    require ICL_PLUGIN_PATH . '/inc/upgrade_plugins.php';
     
 }
  
