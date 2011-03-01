@@ -45,9 +45,7 @@ if(defined('WP_ADMIN')){
             return;
         }
         
-        $message = sprintf(__('<p>WPML has turned commercial.  <a href="%s">What’s new and why you should upgrade »</a></p>
-                    <p>A new version of WPML is available. This version contains important security fixes, improved performance, new and powerful features and works perfectly with WordPress 3.1.
-                    <a href="%s">Upgrade now</a></p>', 'sitepress'), 'http://wpml.org/purchase/why-upgrade/', 'http://wpml.org/purchase/');
+		$message = '<h4>' . __('WPML has turned commercial','sitepress') . '</h4><p>' . __('A new version of WPML is available. This version contains important security fixes, improved performance, new and powerful features and works perfectly with WordPress 3.1.','sitepress') . '</p><p><a class="button secondary" href="http://wpml.org/purchase/">' . __('Upgrade now','sitepress') . '</a> &nbsp; <a href="http://wpml.org/purchase/why-upgrade/">' . __('What’s new and why you should upgrade »','sitepress') . '</a></p>';
 
         echo '<div class="updated message fade">' . $message . '</div>';
     }
