@@ -22,6 +22,12 @@ foreach ($active_languages as $lang) {
 //    }
 //}
 
+$message = sprintf(__('<p>WPML has turned commercial.  <a href="%s">What’s new and why you should upgrade »</a></p>
+            <p>A new version of WPML is available. This version contains important security fixes, improved performance, new and powerful features and works perfectly with WordPress 3.1.
+            <a href="%s">Upgrade now</a></p>', 'sitepress'), 'http://wpml.org/purchase/why-upgrade/', rtrim(get_option('siteurl'),'/') . '/wp-admin/plugins.php?s=wpml');
+
+echo '<div class="icl_yellow_box">' . $message . '</div>';
+
 $docs_sent = 0;
 $docs_completed = 0;
 $docs_waiting = 0;
