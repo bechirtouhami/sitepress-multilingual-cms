@@ -38,7 +38,9 @@ if(defined('WP_ADMIN') && defined('FORCE_SSL_ADMIN') && FORCE_SSL_ADMIN){
 if(defined('WP_ADMIN')){
     add_action('admin_notices', 'wpml_new_promotion_notice');
     function wpml_new_promotion_notice() {
-        echo '<div class="updated message fade"><p>' . __('New promotion', 'sitepress') . '</p></div>';
+        $message = sprintf(__('A new version of WPML is available. This version contains important security fixes, improved performance and new features. <a href="%s">Upgrade now</a>', 'sitepress'), rtrim(get_option('siteurl'),'/') . '/wp-admin/plugins.php?s=wpml');
+
+        echo '<div class="updated message fade"><p>' . $message . '</p></div>';
     }
     require ICL_PLUGIN_PATH . '/inc/php-version-check.php';
     if(defined('PHP_VERSION_INCOMPATIBLE')) return;

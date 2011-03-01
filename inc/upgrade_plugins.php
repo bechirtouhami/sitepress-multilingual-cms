@@ -12,6 +12,19 @@
     add_filter('pre_set_site_transient_update_plugins', 'check_for_WPML_plugin_updates');
     add_filter('plugins_api', 'get_WPML_plugin_page', 1, 3);
 
+    // Force WP to check for plugin updates
+    if (function_exists('get_site_transient')) {
+        $WPML_check_done = get_option('WPML_check_done', false);
+        if (!$WPML_check_done) {
+            $current = get_site_transient( 'update_plugins' );
+            $current->last_checked = 0;
+            set_site_transient( 'update_plugins', $current );
+            
+            update_option('WPML_check_done', true);
+        }
+    }
+    
+
     function check_for_WPML_plugin_updates($value) {
         // called when the update_plugins transient is saved.
         
