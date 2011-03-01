@@ -85,7 +85,7 @@ class ICanLocalizeQuery{
         $debugvars =  array(
             'debug_cms' => 'WordPress',
             'debug_module' => 'WPML ' . ICL_SITEPRESS_VERSION,
-            'debug_url'     => get_bloginfo('siteurl')
+            'debug_url'     => get_bloginfo('url')
         );
         
         if($method == 'GET'){
