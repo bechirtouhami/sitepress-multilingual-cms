@@ -63,7 +63,7 @@ if(defined('WP_ADMIN')){
                 . '</p><p><a class="button secondary" href="http://wpml.org/purchase/">'
                 . __('Upgrade now','sitepress')
                 . '</a> &nbsp; <a href="http://wpml.org/purchase/why-upgrade/">'
-                . __('What�s new and why you should upgrade �','sitepress')
+                . __('What\'s new and why you should upgrade &raquo;','sitepress')
                 . '</a></p><a href="javascript:void(0);" onclick="jQuery.get(\'admin-ajax.php\', {action: \'wpml_new_promotion_notice_hide\'}); jQuery(\'#wpml_new_promotion_notice\').hide(); jQuery(\'#wpml_new_promotion_notice_short\').show();">Hide</a></p></div>';
 
         $message_short = '<div id="wpml_new_promotion_notice_short"';
