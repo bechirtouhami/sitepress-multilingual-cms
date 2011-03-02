@@ -12,12 +12,11 @@ Allows building complete multilingual sites with WordPress.
 
 **WPML combines multilingual content authoring with powerful translation management. It powers corporate sites and is simple enough for bloggers.**
 
-> New versions of WPML are available exclusively from <a href="http://wpml.org">WPML.org</a> and offer huge performance, stability and functionality improvements.
+> WPML 2.1.2 includes full support for WordPress 3.1. You can <a href="http://wpml.org/purchase/">purchase it from WPML.org</a>. Read the <a href="http://wpml.org/2011/02/wpml-2-1-2-complete-support-for-wordpress-3-1/">release notes</a>.
 
 = Features =
 
 [WPML](http://wpml.org) makes it possible to turn WordPress blogs multilingual in a few minutes with no knowledge of PHP or WordPress.
-
 Its advanced features allow professional web developers to build full multilingual websites.
 
  * Turns a single WordPress site into a multilingual site.
@@ -28,13 +27,11 @@ Its advanced features allow professional web developers to build full multilingu
  * Includes CMS navigation elements for drop down menus, breadcrumbs trail and sidebar navigation.
  * Robust links to posts and pages that never break.
 
-= Commercial Support =
+= Stay up-to-date =
 
-[ICanLocalize](http://www.icanlocalize.com/site/) offers reliable commercial support for WPML. This support provides timely and dependable help directly from the developers.
+Newer WPML versions are available exclusively from <a href="http://wpml.org">WPML.org</a>.
 
-= Learn More =
-
-[WPML website](http://wpml.org)
+The commercial WPML versions are intended for web developers who need to deliver working websites without compromise on quality, performance or schedule. You will receive a polished product, backed by <a href="http://forum.wpml.org">support</a> directly from WPML's developers.
 
 == Installation ==
 
