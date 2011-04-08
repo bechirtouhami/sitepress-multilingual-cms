@@ -257,18 +257,24 @@ $icl_tables = array(
 
 if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_create_nonce('icl_reset_all'))){
     if($_POST['icl-reset-all']=='on'){
-        foreach($icl_tables as $icl_table){
-            mysql_query("DROP TABLE " . $icl_table);
+        
+        if(function_exists('is_multisite') && is_multisite()){
+            echo '<div class="error"><p>This function is not allowed in the Multisite mode.</p></div>';
+        }else{
+            foreach($icl_tables as $icl_table){
+                mysql_query("DROP TABLE " . $icl_table);
+            }
+            delete_option('icl_sitepress_settings');
+            delete_option('icl_sitepress_version');
+            delete_option('_icl_cache');
+            delete_option('WPLANG');                
+            deactivate_plugins(basename(ICL_PLUGIN_PATH) . '/sitepress.php');
+            $ra = get_option('recently_activated');
+            $ra[basename(ICL_PLUGIN_PATH) . '/sitepress.php'] = time();
+            update_option('recently_activated', $ra);        
+            echo '<script type="text/javascript">location.href=\''.admin_url('plugins.php?deactivate=true').'\'</script>';
         }
-        delete_option('icl_sitepress_settings');
-        delete_option('icl_sitepress_version');
-        delete_option('_icl_cache');
-        delete_option('WPLANG');                
-        deactivate_plugins(basename(ICL_PLUGIN_PATH) . '/sitepress.php');
-        $ra = get_option('recently_activated');
-        $ra[basename(ICL_PLUGIN_PATH) . '/sitepress.php'] = time();
-        update_option('recently_activated', $ra);        
-        echo '<script type="text/javascript">location.href=\''.admin_url('plugins.php?deactivate=true').'\'</script>';
+        
     }
 }                                    
 
@@ -549,11 +555,19 @@ if( (isset($_POST['icl_reset_allnonce']) && $_POST['icl_reset_allnonce']==wp_cre
     <div class="icl_cyan_box" >       
     <?php    
     echo '<h3 id="wpml-settings"> ' . __('Reset', 'sitepress') . '</h3>';
+    
+    if(function_exists('is_multisite') && is_multisite()){
+        echo '<p style="color:red;font-weight:bold;">This function is not allowed in the Multisite mode.</p>';
+        $_icl_reset_disabled = 'disabled ="disabled"';
+    }else{
+        $_icl_reset_disabled = '';
+    }
+    
     echo '<form method="post" onsubmit="return confirm(\''.__('Are you sure you want to reset all languages data? This operation cannot be reversed.', 'sitepress').'\')">';
     wp_nonce_field('icl_reset_all','icl_reset_allnonce');
     echo '<p class="error" style="padding:6px;">' . __("All translations you have sent to ICanLocalize will be lost if you reset WPML's data. They cannot be recovered later.", 'sitepress') 
         . '</p>';
-    echo '<label><input type="checkbox" name="icl-reset-all" onchange="if(this.checked) jQuery(\'#reset-all-but\').removeAttr(\'disabled\'); else  jQuery(\'#reset-all-but\').attr(\'disabled\',\'disabled\');" /> ' . __('I am about to reset all language data.', 'sitepress') . '</label><br /><br />';
+    echo '<label><input '.$_icl_reset_disabled.' type="checkbox" name="icl-reset-all" onchange="if(this.checked) jQuery(\'#reset-all-but\').removeAttr(\'disabled\'); else  jQuery(\'#reset-all-but\').attr(\'disabled\',\'disabled\');" /> ' . __('I am about to reset all language data.', 'sitepress') . '</label><br /><br />';
     echo '<input id="reset-all-but" type="submit" disabled="disabled" class="button-primary" value="'.__('Reset all language data and deactivate WPML', 'sitepress').'" />';    
     echo '</form>';
     ?>
