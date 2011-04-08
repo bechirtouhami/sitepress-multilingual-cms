@@ -4333,6 +4333,11 @@ class SitePress{
     function locale(){
         global $wpdb, $locale;
         
+        // make sure it's only running oen time 
+        static $runonce;
+        if(isset($runonce)) return $locale;
+        $runonce = true; 
+                
         if(defined('WP_ADMIN')){            
             $l = $this->get_locale($this->admin_language);
         }else{
