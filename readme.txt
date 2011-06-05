@@ -12,7 +12,7 @@ Allows building complete multilingual sites with WordPress.
 
 **WPML combines multilingual content authoring with powerful translation management. It powers corporate sites and is simple enough for bloggers.**
 
-> <strong>WPML 2.3.0 includes full support up to WordPress 3.2. You can <a href="http://wpml.org/purchase/">purchase it from WPML.org</a></strong>.
+> <strong>This version supports only older WordPress versions (up to 3.0.5). For current WordPress, you need the commercial WPML from <a href="http://wpml.org">WPML.org</a></strong>.
 
 = Features =
 
